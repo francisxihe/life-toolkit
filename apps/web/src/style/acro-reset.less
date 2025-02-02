@@ -1,0 +1,32 @@
+html body {
+  --border-radius-small: 4px;
+  --border-radius-medium: 6px;
+  --border-radius-large: 8px;
+}
+
+.arco-popover-content {
+  padding: 4px !important;
+  border-radius: var(--border-radius-large) !important;
+}
+
+.arco-divider-vertical {
+  border-color: var(--color-border-1) !important;
+}
+
+.arco-modal.arco-modal-simple {
+  padding: 20px;
+
+  .arco-modal-header {
+    margin-bottom: 16px;
+
+    & > .arco-modal-title {
+      text-align: left;
+    }
+  }
+
+  .arco-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+  }
+}
