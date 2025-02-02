@@ -1,18 +1,14 @@
 {
-  "name": "my-monorepo",
-  "version": "0.0.0",
+  "name": "life-toolkit",
   "private": true,
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "test": "turbo run test",
-    "clean": "turbo run clean",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "build": "turbo run build",
+    "clean": "turbo run clean"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",
