@@ -12,6 +12,11 @@
       "persistent": true,
       "inputs": ["apps/**/*.ts", "packages/**/*.ts"]
     },
+    "pre-commit": {
+      "cache": false,
+      "persistent": true,
+      "inputs": ["apps/**/*.ts", "packages/**/*.ts"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
