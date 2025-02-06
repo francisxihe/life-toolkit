@@ -13,18 +13,18 @@ export class ExcelService {
     private dataSource: DataSource
   ) {}
 
-  async processExcelFile(file: Express.Multer.File) {
-    const workbook = read(file.buffer);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = utils.sheet_to_json(worksheet);
+  // async processExcelFile(file: Express.Multer.File) {
+  //   const workbook = read(file.buffer);
+  //   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  //   const jsonData = utils.sheet_to_json(worksheet);
 
-    const excelData = this.excelRepository.create({
-      filename: file.originalname,
-      data: jsonData,
-    });
+  //   const excelData = this.excelRepository.create({
+  //     filename: file.originalname,
+  //     data: jsonData,
+  //   });
 
-    return this.excelRepository.save(excelData);
-  }
+  //   return this.excelRepository.save(excelData);
+  // }
 
   async getData(search?: string) {
     if (search) {

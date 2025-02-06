@@ -19,6 +19,8 @@ export class BaseEntity {
   updatedAt: Date;
 
   /** 是否删除 */
-  @DeleteDateColumn()
-  deletedAt: Date;
+  @DeleteDateColumn({
+    nullable: true,
+  })
+  deletedAt: Date | null;
 }

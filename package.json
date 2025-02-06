@@ -8,7 +8,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "clean": "turbo run clean"
+    "clean": "turbo run clean",
+    "predeploy": "npm run build",
+    "prepare": "husky install && husky add .husky/pre-commit 'turbo run pre-commit --filter=life-toolkit-web'",
+    "pre-commit": "turbo run pre-commit"
   },
   "devDependencies": {
     "@types/node": "^22.10.5",

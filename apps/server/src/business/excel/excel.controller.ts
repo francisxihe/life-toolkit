@@ -8,9 +8,9 @@ export class ExcelController {
 
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.excelService.processExcelFile(file);
-  }
+  // async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  //   return this.excelService.processExcelFile(file);
+  // }
 
   @Get()
   async getData(@Query('search') search: string) {

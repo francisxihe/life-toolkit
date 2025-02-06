@@ -10,7 +10,12 @@ import {
   Like,
 } from "typeorm";
 import { Todo, SubTodo, TodoStatus } from "../entities";
-import { CreateTodoDto, UpdateTodoDto, TodoPageFilterDto, TodoListFilterDto } from "./todo-dto";
+import {
+  CreateTodoDto,
+  UpdateTodoDto,
+  TodoPageFilterDto,
+  TodoListFilterDto,
+} from "./todo-dto";
 import dayjs from "dayjs";
 
 function getWhere(filter: TodoPageFilterDto) {
@@ -25,6 +30,7 @@ function getWhere(filter: TodoPageFilterDto) {
   } else if (filter.planDateEnd) {
     where.planDate = LessThan(new Date(filter.planDateEnd + "T23:59:59"));
   }
+
   if (filter.doneDateStart && filter.doneDateEnd) {
     where.doneAt = Between(
       new Date(filter.doneDateStart + "T00:00:00"),
@@ -84,63 +90,54 @@ export class TodoService {
 
   async findAll(filter: TodoListFilterDto): Promise<CreateTodoDto[]> {
     const todos = await this.todoRepository.find({
-      where: {
-        ...filter,
-        planDate: filter.planDateStart
-          ? Between(
-              dayjs(filter.planDateStart).toDate(),
-              dayjs(filter.planDateEnd).toDate()
-            )
-          : undefined,
-      },
+      where: getWhere(filter),
     });
 
-    return todos.map(todo => ({
+    console.log("====", JSON.stringify(dayjs));
+
+    return todos.map((todo) => ({
       name: todo.name,
       description: todo.description,
       status: todo.status,
       tags: todo.tags,
       importance: todo.importance,
       urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format('YYYY-MM-DD'),
+      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
       repeat: todo.repeat,
     }));
   }
 
-  async page(filter: TodoPageFilterDto): Promise<{ records: CreateTodoDto[]; total: number }> {
+  async page(
+    filter: TodoPageFilterDto
+  ): Promise<{ records: CreateTodoDto[]; total: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
 
     const [todos, total] = await this.todoRepository.findAndCount({
-      where: {
-        ...filter,
-        planDate: filter.planDateStart
-          ? Between(
-              dayjs(filter.planDateStart).toDate(),
-              dayjs(filter.planDateEnd).toDate()
-            )
-          : undefined,
-      },
+      where: getWhere(filter),
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
 
     return {
-      records: todos.map(todo => ({
+      records: todos.map((todo) => ({
         name: todo.name,
         description: todo.description,
         status: todo.status,
         tags: todo.tags,
         importance: todo.importance,
         urgency: todo.urgency,
-        planDate: dayjs(todo.planDate).format('YYYY-MM-DD'),
+        planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
         repeat: todo.repeat,
       })),
       total,
     };
   }
 
-  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<UpdateTodoDto> {
+  async update(
+    id: string,
+    updateTodoDto: UpdateTodoDto
+  ): Promise<UpdateTodoDto> {
     const todo = await this.todoRepository.findOneBy({ id });
     if (!todo) {
       throw new Error("Todo not found");
@@ -148,7 +145,9 @@ export class TodoService {
 
     await this.todoRepository.update(id, {
       ...updateTodoDto,
-      planDate: updateTodoDto.planDate ? dayjs(updateTodoDto.planDate).toDate() : undefined,
+      planDate: updateTodoDto.planDate
+        ? dayjs(updateTodoDto.planDate).toDate()
+        : undefined,
     });
 
     return updateTodoDto;
@@ -171,7 +170,7 @@ export class TodoService {
       tags: todo.tags,
       importance: todo.importance,
       urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format('YYYY-MM-DD'),
+      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
       repeat: todo.repeat,
     };
   }
@@ -193,7 +192,7 @@ export class TodoService {
       tags: todo.tags,
       importance: todo.importance,
       urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format('YYYY-MM-DD'),
+      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
       repeat: todo.repeat,
     };
   }

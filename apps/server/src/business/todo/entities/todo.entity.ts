@@ -24,11 +24,11 @@ export class Todo extends BaseTodoEntity {
   planDate: Date;
 
   @ApiProperty(TodoRepeatMeta)
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   repeat: TodoRepeat;
 
   /** 待办重复间隔 */
-  @Column({ nullable: true })
+  @Column({ nullable: true, select: false })
   repeatInterval: string;
 
   /** 子待办 */
