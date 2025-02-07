@@ -1,37 +1,44 @@
-import dayjs from 'dayjs';
-import {
-  Todo,
-  SubTodo,
-  TodoNode,
-  SubTodoNode,
-  GetTodoListParams,
-} from './types';
-import { get, post, put, remove } from '@/service/axios';
 import { Message } from '@arco-design/web-react';
+import TodoController from '@life-toolkit/api/controller/todo/todo';
+import SubTodoController from '@life-toolkit/api/controller/todo/sub-todo';
+import {
+  TodoVO,
+  CreateTodoVO,
+  TodoPageVO,
+  TodoListVO,
+  TodoWithSubVO,
+  TodoPageFiltersVO,
+  TodoListFiltersVO,
+} from '@life-toolkit/vo/todo/todo';
+import {
+  SubTodoVO,
+  CreateSubTodoVO,
+  SubTodoWithSubVO,
+} from '@life-toolkit/vo/todo/sub-todo';
 
 export default class TodoService {
   static async getTodoTree() {
-    const todoList = await this.getTodoList();
+    const todoList = (await this.getTodoList()).list;
     // 递归获取子待办
-    const getSubTodoList = async (todo: Todo | SubTodo) => {
-      const subTodoList = await this.getSubTodoList(todo.id);
-      return subTodoList.map(async (t) => ({
-        ...t,
-        subTodoList: await getSubTodoList(t),
-      }));
-    };
+    // const getSubTodoList = async (todo: TodoVO) => {
+    //   const subTodoList = await this.getSubTodoList(todo.id);
+    //   return subTodoList.map(async (t) => ({
+    //     ...t,
+    //     subTodoList: await getSubTodoList(t),
+    //   }));
+    // };
 
     const todoTree = todoList.map(async (todo) => ({
       ...todo,
-      subTodoList: await getSubTodoList(todo),
+      // subTodoList: await getSubTodoList(todo),
     }));
 
     return todoTree;
   }
 
   static async getTodoSubTodoIdList(todoId: string): Promise<string[]> {
-    const todoList: Todo[] = JSON.parse(
-      localStorage.getItem('todoList') || '[]'
+    const todoList: TodoVO[] = JSON.parse(
+      localStorage.getItem('todoList') || '[]',
     );
     const todo = todoList.find((todo) => todo.id === todoId);
     if (!todo) {
@@ -54,25 +61,24 @@ export default class TodoService {
     return todoSubTodoIdList;
   }
 
-  static async getTodoNode(todoId: string): Promise<TodoNode> {
+  static async getTodoNode(todoId: string) {
     try {
-      const res = await get<TodoNode>(`/todo/todo-with-sub/${todoId}`);
-      return res;
+      return TodoController.getTodoWithSub(todoId);
     } catch (error) {
       Message.error(error.message);
     }
   }
 
-  static async getSubTodoList(todoId: string): Promise<SubTodo[]> {
-    const todoList: SubTodo[] = JSON.parse(
-      localStorage.getItem('todoList') || '[]'
+  static async getSubTodoList(todoId: string) {
+    const todoList: SubTodoVO[] = JSON.parse(
+      localStorage.getItem('todoList') || '[]',
     );
     return todoList.filter((todo) => todo.parentId === todoId);
   }
 
   static async batchDoneTodo(idList: string[]) {
     try {
-      const res = await put<Todo[]>(`/todo/batch-done`, { idList });
+      const res = TodoController.batchDoneTodo(idList);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -82,7 +88,7 @@ export default class TodoService {
 
   static async restoreTodo(id: string) {
     try {
-      const res = await put(`/todo/restore/${id}`);
+      const res = TodoController.restoreTodo(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -92,7 +98,7 @@ export default class TodoService {
 
   static async abandonTodo(id: string) {
     try {
-      const res = await put(`/todo/abandon/${id}`);
+      const res = TodoController.abandonTodo(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -100,9 +106,9 @@ export default class TodoService {
     }
   }
 
-  static async addTodo(todo: Omit<Todo, 'id' | 'status' | 'createdAt'>) {
+  static async addTodo(todo: CreateTodoVO) {
     try {
-      const res = await post('/todo/create', todo);
+      const res = TodoController.addTodo(todo);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -112,7 +118,7 @@ export default class TodoService {
 
   static async deleteTodo(id: string) {
     try {
-      const res = await remove(`/todo/delete/${id}`);
+      const res = await TodoController.deleteTodo(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -120,9 +126,9 @@ export default class TodoService {
     }
   }
 
-  static async updateTodo(id: string, todo: Partial<Todo>) {
+  static async updateTodo(id: string, todo: Partial<CreateTodoVO>) {
     try {
-      const res = await put<Todo>(`/todo/update/${id}`, todo);
+      const res = TodoController.updateTodo(id, todo);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -130,43 +136,25 @@ export default class TodoService {
     }
   }
 
-  static async getTodoList(params: GetTodoListParams = {}): Promise<Todo[]> {
+  static async getTodoList(params: TodoListFiltersVO = {}) {
     try {
-      const res = await get<Todo[]>('/todo/list', params);
-      return res;
+      return TodoController.getTodoList(params);
     } catch (error) {
       Message.error(error.message);
     }
   }
 
-  static async getTodoPage(params: GetTodoListParams = {}): Promise<{
-    records: Todo[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
+  static async getTodoPage(params: TodoPageFiltersVO = {}) {
     try {
-      const res = await get<{
-        records: Todo[];
-        total: number;
-        pageNum: number;
-        pageSize: number;
-      }>('/todo/page', params);
-      return res;
+      return TodoController.getTodoPage(params);
     } catch (error) {
       Message.error(error.message);
     }
   }
 
-  static async addSubTodo(
-    todoId: string,
-    subTodo: Omit<SubTodo, 'id' | 'status' | 'createdAt' | 'parentId'>
-  ) {
+  static async addSubTodo(todoId: string, subTodo: CreateSubTodoVO) {
     try {
-      const res = await post('/sub-todo/create', {
-        ...subTodo,
-        parentId: todoId,
-      });
+      const res = SubTodoController.addSubTodo(subTodo);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -174,10 +162,9 @@ export default class TodoService {
     }
   }
 
-  static async getSubTodoNode(todoId: string): Promise<TodoNode> {
+  static async getSubTodoNode(todoId: string) {
     try {
-      const res = await get<TodoNode>(`/sub-todo/sub-todo-with-sub/${todoId}`);
-      return res;
+      return SubTodoController.getSubTodoWithSub(todoId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -185,7 +172,7 @@ export default class TodoService {
 
   static async restoreSubTodo(id: string) {
     try {
-      const res = await put(`/sub-todo/restore/${id}`);
+      const res = SubTodoController.restoreSubTodo(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -195,12 +182,11 @@ export default class TodoService {
 
   static async abandonSubTodo(id: string) {
     try {
-      const res = await put(`/sub-todo/abandon/${id}`);
+      const res = SubTodoController.abandonSubTodo(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
       Message.error(error.message);
     }
   }
-
 }

@@ -9,7 +9,7 @@ import {
   SetStateAction,
 } from 'react';
 import { Todo } from './service/types';
-import TodoService from './service/api';
+import TodoService from './service';
 import { GetTodoListParams } from './service/types';
 
 interface TodoContextType {

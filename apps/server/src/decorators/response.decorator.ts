@@ -49,7 +49,7 @@ export function PageResponse(data: any) {
 
         // 否则包装成功响应
         return PaginationResponseDto.success({
-          records: result.records,
+          list: result.list,
           total: result.total,
           pageNum: result.pageNum,
           pageSize: result.pageSize,

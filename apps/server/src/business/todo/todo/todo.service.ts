@@ -93,8 +93,6 @@ export class TodoService {
       where: getWhere(filter),
     });
 
-    console.log("====", JSON.stringify(dayjs));
-
     return todos.map((todo) => ({
       name: todo.name,
       description: todo.description,
@@ -109,7 +107,7 @@ export class TodoService {
 
   async page(
     filter: TodoPageFilterDto
-  ): Promise<{ records: CreateTodoDto[]; total: number }> {
+  ): Promise<{ list: CreateTodoDto[]; total: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
 
@@ -120,7 +118,7 @@ export class TodoService {
     });
 
     return {
-      records: todos.map((todo) => ({
+      list: todos.map((todo) => ({
         name: todo.name,
         description: todo.description,
         status: todo.status,

@@ -39,7 +39,7 @@ export class ResponseDto<T> {
 export class PaginationResponseDto<T> {
   message: string;
   data: {
-    records: T[];
+    list: T[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -47,18 +47,18 @@ export class PaginationResponseDto<T> {
   code: number;
 
   static success<T>({
-    records,
+    list,
     total,
     pageNum,
     pageSize,
   }: {
-    records: T[];
+    list: T[];
     total: number;
     pageNum: number;
     pageSize: number;
   }) {
     return createResponse<{
-      records: T[];
+      list: T[];
       total: number;
       pageNum: number;
       pageSize: number;
@@ -66,7 +66,7 @@ export class PaginationResponseDto<T> {
       code: 200,
       message: "SUCCESS",
       data: {
-        records,
+        list,
         total,
         pageNum,
         pageSize,

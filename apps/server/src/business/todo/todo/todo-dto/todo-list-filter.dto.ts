@@ -9,20 +9,12 @@ import {
 import { ApiProperty } from "@nestjs/swagger";
 
 export class TodoListFilterDto {
-  @ApiProperty({ 
-    description: '计划开始日期',
-    required: false,
-    example: '2024-01-01'
-  })
+  /** 计划开始日期 */
   @IsOptional()
   @IsDateString()
   planDateStart?: string;
 
-  @ApiProperty({ 
-    description: '计划结束日期',
-    required: false,
-    example: '2024-01-31'
-  })
+  /** 计划结束日期 */
   @IsOptional()
   @IsDateString()
   planDateEnd?: string;

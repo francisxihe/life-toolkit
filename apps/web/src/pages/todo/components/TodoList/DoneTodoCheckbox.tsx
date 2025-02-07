@@ -1,6 +1,6 @@
 import { Checkbox, Modal } from '@arco-design/web-react';
 import styles from './style.module.less';
-import TodoService from '../../service/api';
+import TodoService from '../../service';
 import { Todo } from '../../service/types';
 
 export default function DoneTodoCheckbox(props: {

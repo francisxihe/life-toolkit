@@ -11,7 +11,7 @@ import {
 } from 'react';
 import { Todo, TodoNode, SubTodo } from '../../service/types';
 import { TodoFormData } from '../../types';
-import TodoService from '../../service/api';
+import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 
 export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<

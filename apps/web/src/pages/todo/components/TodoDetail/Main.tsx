@@ -1,6 +1,6 @@
 import { Input, Button, Popover } from '@arco-design/web-react';
 import { useTodoDetailContext } from './context';
-import TodoService from '../../service/api';
+import TodoService from '../../service';
 import TodoList from '../TodoList';
 import SiteIcon from '@/components/SiteIcon';
 import AddTodo from '../AddTodo';

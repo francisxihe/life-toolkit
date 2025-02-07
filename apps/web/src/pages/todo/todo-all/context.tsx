@@ -11,7 +11,7 @@ import {
   useEffect,
 } from 'react';
 import { Todo } from '../service/types';
-import TodoService from '../service/api';
+import TodoService from '../service';
 import { TodoFilters } from '../types';
 import { createInjectState } from '@/utils/createInjectState';
 
@@ -57,10 +57,10 @@ export const [TodoAllProvider, useTodoAllContext] = createInjectState<{
   });
 
   async function getTodoPage() {
-    const { records, total } = await TodoService.getTodoPage(
+    const { list, total } = await TodoService.getTodoPage(
       filtersRef.current
     );
-    setTodoList(records);
+    setTodoList(list);
   }
 
   const clearFilters = async () => {

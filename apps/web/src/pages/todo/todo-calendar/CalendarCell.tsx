@@ -3,7 +3,7 @@ import { useCalendarContext } from './context';
 import { Todo } from '../service/types';
 import TodoDetail from '../components/TodoDetail';
 import { openModal } from '@/hooks/OpenModal';
-import TodoService from '../service/api';
+import TodoService from '../service';
 import { TodoFormData } from '../types';
 import { useState, useRef, useMemo } from 'react';
 import AddTodo from '../components/AddTodo';

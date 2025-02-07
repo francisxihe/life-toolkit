@@ -1,4 +1,3 @@
-import { SubTodo } from "../../entities/sub-todo.entity";
 import { IsString, IsOptional, IsEnum, IsArray, IsNumber } from "class-validator";
 import { TodoStatus } from "../../entities/base.entity";
 

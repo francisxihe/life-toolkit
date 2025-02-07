@@ -6,7 +6,7 @@ import FlexibleContainer from '@/components/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
-import TodoService from '../service/api';
+import TodoService from '../service';
 import { Todo } from '../service/types';
 import { flushSync } from 'react-dom';
 

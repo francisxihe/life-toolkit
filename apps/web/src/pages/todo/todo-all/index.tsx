@@ -10,7 +10,7 @@ import { openModal } from '@/hooks/OpenModal';
 import AddTodo from '../components/AddTodo';
 import { useRef } from 'react';
 import { TodoFormData } from '../types';
-import TodoService from '../service/api';
+import TodoService from '../service';
 import { useTodoAllContext } from './context';
 
 function TodoAll() {

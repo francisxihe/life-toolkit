@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTodoAllContext } from './context';
 import { useEffect, useState } from 'react';
-import TodoService from '../service/api';
+import TodoService from '../service';
 import { Todo, TodoNode } from '../service/types';
 import { openModal } from '@/hooks/OpenModal';
 import TodoDetail from '../components/TodoDetail';

@@ -79,7 +79,9 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "vite": "^2.6.14",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-html": "^3.2.2",
+    "@life-toolkit/api": "workspace:*",
+    "@life-toolkit/vo": "workspace:*"
   },
   "browserslist": {
     "production": [

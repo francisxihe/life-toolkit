@@ -8,7 +8,7 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../IconSelector';
 import DoneTodoCheckbox from './DoneTodoCheckbox';
 import SiteIcon from '@/components/SiteIcon';
-import TodoService from '../../service/api';
+import TodoService from '../../service';
 
 const { Text, Paragraph } = Typography;
 
