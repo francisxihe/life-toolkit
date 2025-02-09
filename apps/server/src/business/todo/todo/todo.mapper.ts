@@ -1,4 +1,4 @@
-import { Todo } from "../entities/todo.entity";
+import { SubTodoMapper } from "../sub-todo/sub-todo.mapper";
 import {
   TodoVO,
   TodoWithSubVO,
@@ -7,26 +7,30 @@ import {
   CreateTodoVO,
 } from "@life-toolkit/vo/todo/todo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto } from "./todo-dto";
+import { SubTodoDto } from "../sub-todo/sub-todo-dto";
 import { TodoStatus } from "../entities/base.entity";
 import { TodoRepeat } from "../entities/todo.entity";
+import { Todo } from "../entities/todo.entity";
+import dayjs from "dayjs";
 
 export class TodoMapper {
   static dtoToVO(dto: TodoDto): TodoVO {
     const vo: TodoVO = {
       name: dto.name || "",
-      description: dto.description || null,
+      description: dto.description,
       status: dto.status || TodoStatus.TODO,
-      tags: dto.tags || null,
-      importance: dto.importance || null,
-      urgency: dto.urgency || null,
-      planDate: dto.planDate || "",
-      planTimeRange: null,
+      tags: dto.tags,
+      importance: dto.importance,
+      urgency: dto.urgency,
+      planDate: dayjs(dto.planDate).format("YYYY-MM-DD"),
+      planStartAt: dto.planStartAt,
+      planEndAt: dto.planEndAt,
       repeat: dto.repeat || TodoRepeat.NONE,
-      id: dto.id,
-      updatedAt: dto.updatedAt,
-      createdAt: dto.createdAt,
       doneAt: dto.doneAt,
       abandonedAt: dto.abandonedAt,
+      id: dto.id,
+      updatedAt: dayjs(dto.updatedAt).format("YYYY/MM/DD HH:mm:ss"),
+      createdAt: dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss"),
     };
     return vo;
   }
@@ -37,11 +41,11 @@ export class TodoMapper {
 
   static dtoToWithSubVO(
     dto: TodoDto,
-    subDtoList: (CreateTodoDto | UpdateTodoDto)[] = []
+    subDtoList: SubTodoDto[] = []
   ): TodoWithSubVO {
     const vo = {
       ...this.dtoToVO(dto),
-      subTodoList: this.dtoToVOList(subDtoList),
+      subTodoList: SubTodoMapper.dtoToVOList(subDtoList),
     };
     return vo;
   }
@@ -91,6 +95,27 @@ export class TodoMapper {
     dto.urgency = vo.urgency;
     dto.planDate = vo.planDate;
     dto.repeat = vo.repeat as TodoRepeat;
+    return dto;
+  }
+
+  static entityToDto(entity: Todo): TodoDto {
+    const dto = new TodoDto();
+    dto.id = entity.id;
+    dto.name = entity.name;
+    dto.description = entity.description;
+    dto.status = entity.status;
+    dto.tags = entity.tags;
+    dto.importance = entity.importance;
+    dto.urgency = entity.urgency;
+    dto.planDate = entity.planDate;
+    dto.repeat = entity.repeat;
+    dto.doneAt = entity.doneAt;
+    dto.abandonedAt = entity.abandonedAt;
+    dto.updatedAt = entity.updatedAt;
+    dto.createdAt = entity.createdAt;
+    dto.planStartAt = entity.planStartAt;
+    dto.planEndAt = entity.planEndAt;
+    dto.deletedAt = entity.deletedAt;
     return dto;
   }
 }

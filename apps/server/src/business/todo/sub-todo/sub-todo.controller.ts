@@ -11,22 +11,9 @@ import {
 import { SubTodoService } from "./sub-todo.service";
 import { TodoStatusService } from "../todo-status.service";
 import { Response } from "@/decorators/response.decorator";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiParam,
-  ApiBody,
-  ApiResponse,
-} from "@nestjs/swagger";
-import {
-  CreateSubTodoVO,
-  SubTodoResponseVO,
-  SubTodoListResponseVO,
-  SubTodoOperationResponseVO,
-} from "./sub-todo-vo";
+import { CreateSubTodoVO } from "@life-toolkit/vo/todo/sub-todo";
 import { SubTodoMapper } from "./sub-todo.mapper";
 
-@ApiTags("SubTodoController")
 @Controller("sub-todo")
 export class SubTodoController {
   constructor(
@@ -34,16 +21,7 @@ export class SubTodoController {
     private readonly todoStatusService: TodoStatusService
   ) {}
 
-  @ApiOperation({
-    summary: "获取子待办及其子待办",
-    operationId: "subTodoWithSub",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办ID" })
-  @ApiResponse({
-    status: 200,
-    description: "获取成功",
-    type: SubTodoResponseVO,
-  })
+  /** 获取子待办及其子待办 */
   @Get("sub-todo-with-sub/:id")
   @Response()
   async subTodoWithSub(@Param("id") id: string) {
@@ -51,16 +29,7 @@ export class SubTodoController {
     return SubTodoMapper.dtoToVO(dto);
   }
 
-  @ApiOperation({
-    summary: "放弃子待办",
-    operationId: "abandon",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办ID" })
-  @ApiResponse({
-    status: 200,
-    description: "放弃成功",
-    type: SubTodoOperationResponseVO,
-  })
+  /** 放弃子待办 */
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
@@ -68,16 +37,7 @@ export class SubTodoController {
     return { result };
   }
 
-  @ApiOperation({
-    summary: "恢复子待办",
-    operationId: "restore",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办ID" })
-  @ApiResponse({
-    status: 200,
-    description: "恢复成功",
-    type: SubTodoOperationResponseVO,
-  })
+  /** 恢复子待办 */
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
@@ -89,71 +49,35 @@ export class SubTodoController {
 
   // getSubTodoList
 
-  @ApiOperation({
-    summary: "创建子待办事项",
-    operationId: "create",
-  })
-  @ApiBody({ type: CreateSubTodoVO })
-  @ApiResponse({
-    status: 200,
-    description: "创建成功",
-    type: SubTodoResponseVO,
-  })
+  /** 创建子待办事项 */
   @Post("create")
   @Response()
   async create(@Body() createSubTodoVO: CreateSubTodoVO) {
-    const dto = SubTodoMapper.voToCreateDto(createSubTodoVO);
-    const createdDto = await this.subTodoService.create(dto);
-    return SubTodoMapper.dtoToVO(createdDto);
+    const createdDto = SubTodoMapper.voToCreateDto(createSubTodoVO);
+    const todoDto = await this.subTodoService.create(createdDto);
+    return SubTodoMapper.dtoToVO(todoDto);
   }
 
-  @ApiOperation({
-    summary: "删除子待办事项",
-    operationId: "delete",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办事项ID" })
-  @ApiResponse({
-    status: 200,
-    description: "删除成功",
-  })
+  /** 删除子待办事项 */
   @Delete("delete/:id")
   @Response()
   async delete(@Param("id") id: string) {
     return this.subTodoService.delete(id);
   }
 
-  @ApiOperation({
-    summary: "更新子待办事项",
-    operationId: "update",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办事项ID" })
-  @ApiBody({ type: CreateSubTodoVO })
-  @ApiResponse({
-    status: 200,
-    description: "更新成功",
-    type: SubTodoResponseVO,
-  })
+  /** 更新子待办事项 */
   @Put("update/:id")
   @Response()
   async update(
     @Param("id") id: string,
     @Body() updateSubTodoVO: CreateSubTodoVO
   ) {
-    const dto = SubTodoMapper.voToUpdateDto(updateSubTodoVO);
-    const updatedDto = await this.subTodoService.update(id, dto);
-    return SubTodoMapper.dtoToVO(updatedDto);
+    const updatedDto = SubTodoMapper.voToUpdateDto(updateSubTodoVO);
+    const todoDto = await this.subTodoService.update(id, updatedDto);
+    return SubTodoMapper.dtoToVO(todoDto);
   }
 
-  @ApiOperation({
-    summary: "获取子待办事项详情",
-    operationId: "getDetail",
-  })
-  @ApiParam({ name: "id", type: String, description: "子待办事项ID" })
-  @ApiResponse({
-    status: 200,
-    description: "获取成功",
-    type: SubTodoResponseVO,
-  })
+  /** 获取子待办事项详情 */
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
@@ -161,19 +85,11 @@ export class SubTodoController {
     return SubTodoMapper.dtoToVO(dto);
   }
 
-  @ApiOperation({
-    summary: "获取子待办列表",
-    operationId: "list",
-  })
-  @ApiResponse({
-    status: 200,
-    description: "获取成功",
-    type: SubTodoListResponseVO,
-  })
+  /** 获取子待办列表 */
   @Get("list")
   @Response()
   async list() {
-    const dtos = await this.subTodoService.findAll();
-    return SubTodoMapper.dtoToVOList(dtos);
+    const dtoList = await this.subTodoService.findAll();
+    return SubTodoMapper.dtoToVOList(dtoList);
   }
 }

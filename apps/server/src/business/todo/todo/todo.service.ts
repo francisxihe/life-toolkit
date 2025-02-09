@@ -9,12 +9,13 @@ import {
   LessThan,
   Like,
 } from "typeorm";
-import { Todo, SubTodo, TodoStatus } from "../entities";
+import { Todo } from "../entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
   TodoPageFilterDto,
   TodoListFilterDto,
+  TodoDto,
 } from "./todo-dto";
 import dayjs from "dayjs";
 
@@ -79,35 +80,30 @@ export class TodoService {
     private readonly todoRepository: Repository<Todo>
   ) {}
 
-  async create(createTodoDto: CreateTodoDto): Promise<CreateTodoDto> {
+  async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
     const todo = this.todoRepository.create({
       ...createTodoDto,
       planDate: dayjs(createTodoDto.planDate).toDate(),
     });
     await this.todoRepository.save(todo);
-    return createTodoDto;
+    return {
+      ...todo,
+    };
   }
 
-  async findAll(filter: TodoListFilterDto): Promise<CreateTodoDto[]> {
+  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
     const todos = await this.todoRepository.find({
       where: getWhere(filter),
     });
 
     return todos.map((todo) => ({
-      name: todo.name,
-      description: todo.description,
-      status: todo.status,
-      tags: todo.tags,
-      importance: todo.importance,
-      urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
-      repeat: todo.repeat,
+      ...todo,
     }));
   }
 
   async page(
     filter: TodoPageFilterDto
-  ): Promise<{ list: CreateTodoDto[]; total: number }> {
+  ): Promise<{ list: TodoDto[]; total: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
 
@@ -119,23 +115,13 @@ export class TodoService {
 
     return {
       list: todos.map((todo) => ({
-        name: todo.name,
-        description: todo.description,
-        status: todo.status,
-        tags: todo.tags,
-        importance: todo.importance,
-        urgency: todo.urgency,
-        planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
-        repeat: todo.repeat,
+        ...todo,
       })),
       total,
     };
   }
 
-  async update(
-    id: string,
-    updateTodoDto: UpdateTodoDto
-  ): Promise<UpdateTodoDto> {
+  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
     const todo = await this.todoRepository.findOneBy({ id });
     if (!todo) {
       throw new Error("Todo not found");
@@ -148,32 +134,25 @@ export class TodoService {
         : undefined,
     });
 
-    return updateTodoDto;
+    return this.findById(id);
   }
 
   async delete(id: string): Promise<void> {
     await this.todoRepository.delete(id);
   }
 
-  async findById(id: string): Promise<CreateTodoDto> {
+  async findById(id: string): Promise<TodoDto> {
     const todo = await this.todoRepository.findOneBy({ id });
     if (!todo) {
       throw new Error("Todo not found");
     }
 
     return {
-      name: todo.name,
-      description: todo.description,
-      status: todo.status,
-      tags: todo.tags,
-      importance: todo.importance,
-      urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
-      repeat: todo.repeat,
+      ...todo,
     };
   }
 
-  async todoWithSub(id: string): Promise<CreateTodoDto> {
+  async todoWithSub(id: string): Promise<TodoDto> {
     const todo = await this.todoRepository.findOne({
       where: { id },
       relations: ["subTodoList"],
@@ -184,14 +163,7 @@ export class TodoService {
     }
 
     return {
-      name: todo.name,
-      description: todo.description,
-      status: todo.status,
-      tags: todo.tags,
-      importance: todo.importance,
-      urgency: todo.urgency,
-      planDate: dayjs(todo.planDate).format("YYYY-MM-DD"),
-      repeat: todo.repeat,
+      ...todo,
     };
   }
 }

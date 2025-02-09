@@ -22,5 +22,5 @@ export class BaseEntity {
   @DeleteDateColumn({
     nullable: true,
   })
-  deletedAt: Date | null;
+  deletedAt?: Date;
 }

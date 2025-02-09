@@ -1,7 +1,6 @@
 import { Entity, Column, OneToMany } from "typeorm";
 import { BaseTodoEntity } from "./base.entity";
 import { SubTodo } from "./sub-todo.entity";
-import { ApiProperty } from "@nestjs/swagger";
 
 export enum TodoRepeat {
   NONE = "none",
@@ -23,13 +22,12 @@ export class Todo extends BaseTodoEntity {
   @Column("date")
   planDate: Date;
 
-  @ApiProperty(TodoRepeatMeta)
   @Column({ nullable: true })
-  repeat: TodoRepeat;
+  repeat?: TodoRepeat;
 
   /** 待办重复间隔 */
   @Column({ nullable: true })
-  repeatInterval: string;
+  repeatInterval?: string;
 
   /** 子待办 */
   @OneToMany(() => SubTodo, (subTodo) => subTodo.parentId)

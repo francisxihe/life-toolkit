@@ -16,20 +16,23 @@ export default function TodoDashboardPage() {
 
   useEffect(() => {
     async function initData() {
-      const todos = await ApiService.getTodoList();
-      setTodoList(todos);
+      const { list } = await ApiService.getTodoList();
+      setTodoList(list);
     }
     initData();
   }, []);
 
   const chartData = useMemo(() => {
     const data: { date: string; completed: number }[] = [];
-    const grouped = todoList.reduce((acc, todo) => {
-      if (todo.status !== 'done') return acc;
-      const date = format(new Date(todo.doneAt), 'yyyy-MM-dd');
-      acc[date] = (acc[date] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const grouped = todoList.reduce(
+      (acc, todo) => {
+        if (todo.status !== 'done') return acc;
+        const date = format(new Date(todo.doneAt), 'yyyy-MM-dd');
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     Object.entries(grouped).forEach(([date, count]) => {
       data.push({
@@ -46,7 +49,7 @@ export default function TodoDashboardPage() {
   const stats = useMemo(() => {
     const total = todoList.length;
     const highPriority = todoList.filter(
-      (todo) => todo.importance === 1 && todo.urgency === 1
+      (todo) => todo.importance === 1 && todo.urgency === 1,
     ).length;
     const avgCompletionTime =
       todoList.reduce((acc, todo) => {

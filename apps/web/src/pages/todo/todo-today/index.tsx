@@ -7,41 +7,41 @@ import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
-import { Todo } from '../service/types';
+import { TodoVO } from '@life-toolkit/vo/todo/todo';
 import { flushSync } from 'react-dom';
 const today = dayjs().format('YYYY-MM-DD');
 const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 
 export default function TodoToday() {
-  const [todayTodoList, setTodayTodoList] = useState<Todo[]>([]);
-  const [todayDoneTodoList, setTodayDoneTodoList] = useState<Todo[]>([]);
-  const [expiredTodoList, setExpiredTodoList] = useState<Todo[]>([]);
-  const [todayAbandonedTodoList, setTodayAbandonedTodoList] = useState<Todo[]>(
-    []
+  const [todayTodoList, setTodayTodoList] = useState<TodoVO[]>([]);
+  const [todayDoneTodoList, setTodayDoneTodoList] = useState<TodoVO[]>([]);
+  const [expiredTodoList, setExpiredTodoList] = useState<TodoVO[]>([]);
+  const [todayAbandonedTodoList, setTodayAbandonedTodoList] = useState<TodoVO[]>(
+    [],
   );
 
   async function refreshData() {
-    const todos = await TodoService.getTodoList({
+    const { list: todos } = await TodoService.getTodoList({
       status: 'todo',
       planDateStart: today,
       planDateEnd: today,
     });
     setTodayTodoList(todos);
 
-    const doneTodos = await TodoService.getTodoList({
+    const { list: doneTodos } = await TodoService.getTodoList({
       status: 'done',
       doneDateStart: today,
       doneDateEnd: today,
     });
     setTodayDoneTodoList(doneTodos);
 
-    const expiredTodos = await TodoService.getTodoList({
+    const { list: expiredTodos } = await TodoService.getTodoList({
       status: 'todo',
       planDateEnd: yesterday,
     });
     setExpiredTodoList(expiredTodos);
 
-    const abandonedTodos = await TodoService.getTodoList({
+    const { list: abandonedTodos } = await TodoService.getTodoList({
       status: 'abandoned',
       abandonedDateStart: today,
       abandonedDateEnd: today,
@@ -57,9 +57,9 @@ export default function TodoToday() {
     refreshData();
   }, []);
 
-  const [currentTodo, setCurrentTodo] = useState<Todo | null>(null);
+  const [currentTodo, setCurrentTodo] = useState<TodoVO | null>(null);
 
-  async function showTodoDetail(todo: Todo) {
+  async function showTodoDetail(todo: TodoVO) {
     flushSync(() => {
       setCurrentTodo(null);
     });
@@ -83,7 +83,7 @@ export default function TodoToday() {
                 planDate: todoFormData.planDate || undefined,
                 planStartAt: todoFormData.planTimeRange?.[0] || undefined,
                 planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                recurring: todoFormData.recurring,
+                repeat: todoFormData.recurring,
                 tags: todoFormData.tags,
               });
               refreshData();

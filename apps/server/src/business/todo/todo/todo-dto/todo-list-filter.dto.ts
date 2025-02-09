@@ -6,7 +6,6 @@ import {
   IsNumber,
   IsEnum,
 } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
 
 export class TodoListFilterDto {
   /** 计划开始日期 */
@@ -19,63 +18,37 @@ export class TodoListFilterDto {
   @IsDateString()
   planDateEnd?: string;
 
-  @ApiProperty({ 
-    description: '重要程度',
-    required: false,
-    minimum: 1,
-    maximum: 5
-  })
+  /** 重要程度 */
   @IsOptional()
   @IsNumber()
   importance?: number;
 
-  @ApiProperty({ 
-    description: '紧急程度',
-    required: false,
-    minimum: 1,
-    maximum: 5
-  })
+  /** 紧急程度 */
   @IsOptional()
   @IsNumber()
   urgency?: number;
 
-  @ApiProperty({ ...TodoStatusMeta, required: false })
+  /** 待办事项状态 */
   @IsOptional()
   @IsEnum(TodoStatus)
   status?: TodoStatus;
 
-  @ApiProperty({ 
-    description: '完成开始日期',
-    required: false,
-    example: '2024-01-01'
-  })
+  /** 完成开始日期 */
   @IsOptional()
   @IsDateString()
   doneDateStart?: string;
 
-  @ApiProperty({ 
-    description: '完成结束日期',
-    required: false,
-    example: '2024-01-31'
-  })
+  /** 完成结束日期 */
   @IsOptional()
   @IsDateString()
   doneDateEnd?: string;
 
-  @ApiProperty({ 
-    description: '放弃开始日期',
-    required: false,
-    example: '2024-01-01'
-  })
+  /** 放弃开始日期 */
   @IsOptional()
   @IsDateString()
   abandonedDateStart?: string;
 
-  @ApiProperty({ 
-    description: '放弃结束日期',
-    required: false,
-    example: '2024-01-31'
-  })
+  /** 放弃结束日期 */
   @IsOptional()
   @IsDateString()
   abandonedDateEnd?: string;

@@ -1,5 +1,4 @@
-import { TodoStatus } from "../../entities/base.entity";
-import { TodoRepeat } from "../../entities/todo.entity";
+import { TodoStatus, TodoStatusMeta } from "../../entities/base.entity";
 import {
   IsString,
   IsOptional,
@@ -8,8 +7,9 @@ import {
   IsNumber,
   IsISO8601,
 } from "class-validator";
+import { BaseModelDto } from "@/base/base-model.dto";
 
-export class CreateTodoDto {
+export class SubTodoDto extends BaseModelDto {
   /** 待办事项名称 */
   @IsString()
   name: string;
@@ -40,12 +40,18 @@ export class CreateTodoDto {
   @IsOptional()
   urgency?: number;
 
-  /** 计划日期 */
-  @IsISO8601()
-  planDate: string;
+  /** 计划开始时间 */
+  planStartAt?: string;
 
-  /** 重复 */
-  @IsEnum(TodoRepeat)
-  @IsOptional()
-  repeat?: TodoRepeat;
+  /** 计划结束时间 */
+  planEndAt?: string;
+
+  /** 待办完成时间 */
+  doneAt?: Date;
+
+  /** 放弃待办时间 */
+  abandonedAt?: Date;
+
+  /** 父级待办事项ID */
+  parentId: string;
 }

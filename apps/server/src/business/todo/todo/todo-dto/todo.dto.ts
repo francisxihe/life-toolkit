@@ -8,83 +8,57 @@ import {
   IsNumber,
   IsISO8601,
 } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-import { BaseModelEntity } from "@/base/base-model.dto";
+import { BaseModelDto } from "@/base/base-model.dto";
 
-export class TodoDto extends BaseModelEntity {
+export class TodoDto extends BaseModelDto {
   /** "待办事项名称" */
   @IsString()
   name: string;
 
-  @ApiProperty({ description: "待办事项描述", required: false })
+  /** 待办事项描述 */
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ ...TodoStatusMeta, required: false })
+  /** 待办事项状态 */
   @IsEnum(TodoStatus)
   @IsOptional()
   status?: TodoStatus;
 
-  @ApiProperty({
-    description: "标签列表",
-    type: [String],
-    required: false,
-  })
+  /** 标签列表 */
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   tags?: string[];
 
-  @ApiProperty({
-    description: "重要程度 1-5",
-    minimum: 1,
-    maximum: 5,
-    required: false,
-    default: 3,
-  })
+  /** 重要程度 1-5 */
   @IsNumber()
   @IsOptional()
   importance?: number;
 
-  @ApiProperty({
-    description: "紧急程度 1-5",
-    minimum: 1,
-    maximum: 5,
-    required: false,
-    default: 3,
-  })
+  /** 紧急程度 1-5 */
   @IsNumber()
   @IsOptional()
   urgency?: number;
 
-  @ApiProperty({
-    description: "计划日期，ISO8601格式",
-    example: "2024-01-01",
-  })
+  /** 计划日期 */
   @IsISO8601()
-  planDate: string;
+  planDate: Date;
 
-  @ApiProperty({
-    description: "计划时间范围",
-    type: [String],
-    example: ["09:00", "10:00"],
-    required: false,
-  })
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  planTimeRange?: [string, string];
+  /** 计划开始时间 */
+  planStartAt?: string;
 
-  @ApiProperty({ ...TodoRepeatMeta, required: false })
+  /** 计划结束时间 */
+  planEndAt?: string;
+
+  /** 重复 */
   @IsEnum(TodoRepeat)
   @IsOptional()
   repeat?: TodoRepeat;
 
-
   /** 待办完成时间 */
-  doneAt: Date | null;
+  doneAt?: Date;
 
   /** 放弃待办时间 */
-  abandonedAt: Date | null;
+  abandonedAt?: Date;
 }

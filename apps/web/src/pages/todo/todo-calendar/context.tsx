@@ -41,8 +41,8 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
   }
 
   const getTodoList = async () => {
-    const events = await ApiService.getTodoList();
-    setTodoList(events);
+    const { list } = await ApiService.getTodoList();
+    setTodoList(list);
   };
 
   useEffect(() => {

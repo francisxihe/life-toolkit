@@ -1,6 +1,5 @@
-import { Column, OneToMany } from "typeorm";
+import { Column } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
-import { ApiProperty } from "@nestjs/swagger";
 
 export enum TodoStatus {
   TODO = "todo",
@@ -20,7 +19,7 @@ export class BaseTodoEntity extends BaseEntity {
   @Column()
   name: string;
 
-  @ApiProperty(TodoStatusMeta)
+  /** 待办事项状态 */
   @Column({ nullable: true })
   status: TodoStatus;
 
@@ -44,13 +43,13 @@ export class BaseTodoEntity extends BaseEntity {
   @Column("datetime", {
     nullable: true,
   })
-  doneAt: Date | null;
+  doneAt?: Date;
 
   /** 放弃待办时间 */
   @Column("datetime", {
     nullable: true,
   })
-  abandonedAt: Date | null;
+  abandonedAt?: Date;
 
   /** 计划待办开始时间 */
   @Column("time", { nullable: true })

@@ -10,7 +10,7 @@ export type SubTodoModelVO = {
   /** 待办紧急程度 */
   urgency?: number;
   /** 待办标签 */
-  tags: string[];
+  tags?: string[];
   /** 待办完成时间 */
   doneAt?: string;
   /** 计划待办开始时间 */

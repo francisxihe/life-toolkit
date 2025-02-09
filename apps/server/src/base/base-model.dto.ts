@@ -1,4 +1,4 @@
-export class BaseModelEntity {
+export class BaseModelDto {
   id: string;
 
   /** 创建时间 */
@@ -7,5 +7,6 @@ export class BaseModelEntity {
   /** 更新时间 */
   updatedAt: Date;
 
-  deletedAt: Date | null;
+  /** 删除时间 */
+  deletedAt?: Date;
 }

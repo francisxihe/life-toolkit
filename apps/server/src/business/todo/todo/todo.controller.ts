@@ -9,29 +9,12 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoPageFilterDto, TodoListFilterDto } from "./todo-dto";
+import { TodoPageFilterDto, TodoListFilterDto, TodoDto } from "./todo-dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "../todo-status.service";
-import {
-  ApiTags,
-  ApiOperation,
-  ApiParam,
-  ApiBody,
-  ApiResponse,
-} from "@nestjs/swagger";
-import {
-  CreateTodoVO,
-  TodoVO,
-  TodoResponseVO,
-  TodoWithSubResponseVO,
-  TodoPageResponseVO,
-  TodoListResponseVO,
-  TodoBatchOperationResponseVO,
-  TodoOperationResponseVO,
-} from "@life-toolkit/vo/todo/todo";
+import { CreateTodoVO, TodoVO } from "@life-toolkit/vo/todo/todo";
 import { TodoMapper } from "./todo.mapper";
 
-@ApiTags("TodoController")
 @Controller("todo")
 export class TodoController {
   constructor(
@@ -69,9 +52,9 @@ export class TodoController {
   @Post("create")
   @Response()
   async create(@Body() createTodoVO: CreateTodoVO) {
-    const dto = TodoMapper.voToCreateDto(createTodoVO);
-    const createdDto = await this.todoService.create(dto);
-    return TodoMapper.dtoToVO(createdDto);
+    const createdDto = TodoMapper.voToCreateDto(createTodoVO);
+    const dto = await this.todoService.create(createdDto);
+    return TodoMapper.dtoToVO(dto);
   }
 
   @Delete("delete/:id")
@@ -82,9 +65,9 @@ export class TodoController {
   @Put("update/:id")
   @Response()
   async update(@Param("id") id: string, @Body() updateTodoVO: CreateTodoVO) {
-    const dto = TodoMapper.voToUpdateDto(updateTodoVO);
-    const updatedDto = await this.todoService.update(id, dto);
-    return TodoMapper.dtoToVO(updatedDto);
+    const updatedDto = TodoMapper.voToUpdateDto(updateTodoVO);
+    const dto = await this.todoService.update(id, updatedDto);
+    return TodoMapper.dtoToVO(dto);
   }
 
   @Get("page")
@@ -102,8 +85,8 @@ export class TodoController {
   @Get("list")
   @Response()
   async list(@Query() filter: TodoListFilterDto) {
-    const todos = await this.todoService.findAll(filter);
-    return TodoMapper.dtoToListVO(todos);
+    const todoList = await this.todoService.findAll(filter);
+    return TodoMapper.dtoToListVO(todoList);
   }
 
   @Get("detail/:id")

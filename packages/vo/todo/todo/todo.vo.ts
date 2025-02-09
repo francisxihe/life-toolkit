@@ -3,25 +3,27 @@ import { BaseModelVo } from "../../base/model.vo";
 export type TodoModelVO = {
   name: string;
 
-  description: string | null;
+  description?: string;
 
   status?: "todo" | "done" | "abandoned";
 
-  tags: string[] | null;
+  tags?: string[];
 
-  importance: number | null;
+  importance?: number;
 
-  urgency: number | null;
+  urgency?: number;
 
   planDate: string;
 
-  planTimeRange: [string, string] | null;
+  planStartAt?: string;
+
+  planEndAt?: string;
 
   repeat?: "none" | "daily" | "weekly" | "monthly";
 
-  doneAt: Date | null;
+  doneAt?: Date;
 
-  abandonedAt: Date | null;
+  abandonedAt?: Date;
 };
 
 export type TodoVO = BaseModelVo & TodoModelVO;
