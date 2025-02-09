@@ -31,7 +31,7 @@ export class SubTodoService {
     return SubTodoMapper.entityToDto(savedEntity);
   }
 
-  async findById(id: string): Promise<SubTodoDto> {
+  async findById(id: string) {
     const subTodo = await this.subTodoRepository.findOneBy({ id });
     if (!subTodo) {
       throw new NotFoundException(`SubTodo #${id} not found`);
@@ -39,17 +39,14 @@ export class SubTodoService {
     return SubTodoMapper.entityToDto(subTodo);
   }
 
-  async findAll(): Promise<SubTodoDto[]> {
+  async findAll() {
     const entities = await this.subTodoRepository.find({
       order: { createdAt: "DESC" },
     });
     return entities.map((entity) => SubTodoMapper.entityToDto(entity));
   }
 
-  async update(
-    id: string,
-    updateSubTodoDto: UpdateSubTodoDto
-  ): Promise<SubTodoDto> {
+  async update(id: string, updateSubTodoDto: UpdateSubTodoDto) {
     const subTodo = await this.subTodoRepository.findOneBy({ id });
     if (!subTodo) {
       throw new NotFoundException(`SubTodo #${id} not found`);
@@ -89,7 +86,7 @@ export class SubTodoService {
     }
 
     // 递归获取子待办
-    const recursiveGetSub = async (todoId: string): Promise<SubTodoDto[]> => {
+    const recursiveGetSub = async (todoId: string) => {
       const subTodoList = await this.subTodoRepository.find({
         where: { parentId: todoId },
       });

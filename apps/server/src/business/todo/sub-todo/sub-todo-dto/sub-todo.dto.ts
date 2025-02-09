@@ -1,4 +1,4 @@
-import { TodoStatus, TodoStatusMeta } from "../../entities/base.entity";
+import { TodoStatus } from "../../entities/base.entity";
 import {
   IsString,
   IsOptional,

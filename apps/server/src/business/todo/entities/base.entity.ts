@@ -7,13 +7,6 @@ export enum TodoStatus {
   ABANDONED = "abandoned",
 }
 
-export const TodoStatusMeta = {
-  description: "待办事项状态",
-  enum: TodoStatus,
-  enumName: "TodoStatus",
-  default: TodoStatus.TODO,
-} as const;
-
 export class BaseTodoEntity extends BaseEntity {
   /** 待办名称 */
   @Column()

@@ -1,5 +1,5 @@
-import { TodoStatus, TodoStatusMeta } from "../../entities/base.entity";
-import { TodoRepeat, TodoRepeatMeta } from "../../entities/todo.entity";
+import { TodoStatus } from "../../entities/base.entity";
+import { TodoRepeat } from "../../entities/todo.entity";
 import {
   IsString,
   IsOptional,

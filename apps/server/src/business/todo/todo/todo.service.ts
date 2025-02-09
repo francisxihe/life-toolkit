@@ -16,6 +16,7 @@ import {
   TodoPageFilterDto,
   TodoListFilterDto,
   TodoDto,
+  TodoWithSubDto,
 } from "./todo-dto";
 import dayjs from "dayjs";
 
@@ -152,11 +153,12 @@ export class TodoService {
     };
   }
 
-  async todoWithSub(id: string): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOne({
-      where: { id },
-      relations: ["subTodoList"],
-    });
+  async todoWithSub(id: string): Promise<TodoWithSubDto> {
+    const todo = await this.todoRepository
+      .createQueryBuilder("todo")
+      .leftJoinAndSelect("todo.subTodoList", "subTodos")
+      .where("todo.id = :id", { id })
+      .getOne();
 
     if (!todo) {
       throw new Error("Todo not found");
@@ -164,6 +166,9 @@ export class TodoService {
 
     return {
       ...todo,
+      subTodoList: todo.subTodoList.map((subTodo) => ({
+        ...subTodo,
+      })),
     };
   }
 }

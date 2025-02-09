@@ -12,7 +12,7 @@ import { TodoStatus } from "../entities/base.entity";
 import { TodoRepeat } from "../entities/todo.entity";
 import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
-
+import { TodoWithSubDto } from "./todo-dto";
 export class TodoMapper {
   static dtoToVO(dto: TodoDto): TodoVO {
     const vo: TodoVO = {
@@ -39,13 +39,10 @@ export class TodoMapper {
     return dtoList.map((dto) => this.dtoToVO(dto));
   }
 
-  static dtoToWithSubVO(
-    dto: TodoDto,
-    subDtoList: SubTodoDto[] = []
-  ): TodoWithSubVO {
+  static dtoToWithSubVO(dto: TodoWithSubDto): TodoWithSubVO {
     const vo = {
       ...this.dtoToVO(dto),
-      subTodoList: SubTodoMapper.dtoToVOList(subDtoList),
+      subTodoList: SubTodoMapper.dtoToVOList(dto.subTodoList),
     };
     return vo;
   }

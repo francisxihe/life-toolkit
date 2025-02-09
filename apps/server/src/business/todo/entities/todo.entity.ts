@@ -9,19 +9,13 @@ export enum TodoRepeat {
   MONTHLY = "monthly",
 }
 
-export const TodoRepeatMeta = {
-  description: "重复类型",
-  enum: TodoRepeat,
-  enumName: "TodoRepeat",
-  default: TodoRepeat.NONE,
-} as const;
-
 @Entity("todo")
 export class Todo extends BaseTodoEntity {
   /** 计划待办日期 */
   @Column("date")
   planDate: Date;
 
+  /** 重复类型 */
   @Column({ nullable: true })
   repeat?: TodoRepeat;
 
@@ -30,6 +24,6 @@ export class Todo extends BaseTodoEntity {
   repeatInterval?: string;
 
   /** 子待办 */
-  @OneToMany(() => SubTodo, (subTodo) => subTodo.parentId)
-  subTodoList?: SubTodo[];
+  @OneToMany(() => SubTodo, (subTodo) => subTodo.parentTodo)
+  subTodoList: SubTodo[];
 }
