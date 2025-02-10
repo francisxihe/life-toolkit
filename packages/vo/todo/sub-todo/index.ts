@@ -6,3 +6,7 @@ export type CreateSubTodoVO = Omit<SubTodoModelVO, "doneAt" | "abandonedAt">;
 export type SubTodoWithSubVO = SubTodoVO & {
   subTodoList: SubTodoVO[];
 };
+
+export type SubTodoListFilterVO = {
+  parentId: string;
+};

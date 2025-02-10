@@ -1,9 +1,37 @@
-import { SubTodoVO, CreateSubTodoVO } from "@life-toolkit/vo/todo/sub-todo";
-import { CreateSubTodoDto, UpdateSubTodoDto, SubTodoDto } from "./sub-todo-dto";
-import { TodoStatus } from "../entities/base.entity";
+import {
+  SubTodoVO,
+  CreateSubTodoVO,
+  SubTodoWithSubVO,
+} from "@life-toolkit/vo/todo/sub-todo";
+import {
+  CreateSubTodoDto,
+  UpdateSubTodoDto,
+  SubTodoDto,
+  SubTodoWithSubDto,
+} from "../dto";
+import { SubTodo, TodoStatus } from "../entities";
 import dayjs from "dayjs";
-import { SubTodo } from "../entities/sub-todo.entity";
+
 export class SubTodoMapper {
+  static entityToDto(entity: SubTodo): SubTodoDto {
+    return {
+      id: entity.id,
+      name: entity.name,
+      description: entity.description,
+      status: entity.status,
+      tags: entity.tags,
+      importance: entity.importance,
+      urgency: entity.urgency,
+      parentId: entity.parentId,
+      planStartAt: entity.planStartAt,
+      planEndAt: entity.planEndAt,
+      doneAt: entity.doneAt,
+      abandonedAt: entity.abandonedAt,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
+  }
+
   static dtoToVO(dto: SubTodoDto): SubTodoVO {
     const vo: SubTodoVO = {
       name: dto.name,
@@ -24,6 +52,13 @@ export class SubTodoMapper {
 
   static dtoToVOList(dtoList: SubTodoDto[]): SubTodoVO[] {
     return dtoList.map((dto) => this.dtoToVO(dto));
+  }
+
+  static dtoToWithSubVO(dto: SubTodoWithSubDto): SubTodoWithSubVO {
+    return {
+      ...this.dtoToVO(dto),
+      subTodoList: this.dtoToVOList(dto.subTodoList),
+    };
   }
 
   static voToCreateDto(vo: CreateSubTodoVO): CreateSubTodoDto {
@@ -48,24 +83,5 @@ export class SubTodoMapper {
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
     return dto;
-  }
-
-  static entityToDto(entity: SubTodo): SubTodoDto {
-    return {
-      id: entity.id,
-      name: entity.name,
-      description: entity.description,
-      status: entity.status,
-      tags: entity.tags,
-      importance: entity.importance,
-      urgency: entity.urgency,
-      parentId: entity.parentId,
-      planStartAt: entity.planStartAt,
-      planEndAt: entity.planEndAt,
-      doneAt: entity.doneAt,
-      abandonedAt: entity.abandonedAt,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    };
   }
 }

@@ -1,17 +1,16 @@
-import { TodoStatus } from "../../entities/base.entity";
-import { TodoRepeat } from "../../entities/todo.entity";
+import { TodoStatus } from "../entities";
 import {
   IsString,
   IsOptional,
   IsEnum,
   IsArray,
   IsNumber,
-  IsISO8601,
 } from "class-validator";
 import { BaseModelDto } from "@/base/base-model.dto";
+import { PartialType } from "@nestjs/swagger";
 
-export class TodoDto extends BaseModelDto {
-  /** "待办事项名称" */
+export class SubTodoDto extends BaseModelDto {
+  /** 待办事项名称 */
   @IsString()
   name: string;
 
@@ -41,24 +40,54 @@ export class TodoDto extends BaseModelDto {
   @IsOptional()
   urgency?: number;
 
-  /** 计划日期 */
-  @IsISO8601()
-  planDate: Date;
-
   /** 计划开始时间 */
   planStartAt?: string;
 
   /** 计划结束时间 */
   planEndAt?: string;
 
-  /** 重复 */
-  @IsEnum(TodoRepeat)
-  @IsOptional()
-  repeat?: TodoRepeat;
-
   /** 待办完成时间 */
   doneAt?: Date;
 
   /** 放弃待办时间 */
   abandonedAt?: Date;
+
+  /** 父级待办事项ID */
+  parentId: string;
+}
+
+export class CreateSubTodoDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  @IsOptional()
+  description?: string;
+
+  @IsEnum(TodoStatus)
+  @IsOptional()
+  status?: TodoStatus;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  @IsNumber()
+  @IsOptional()
+  importance?: number;
+
+  @IsNumber()
+  @IsOptional()
+  urgency?: number;
+
+  @IsString()
+  planDate: string;
+
+  @IsString()
+  parentId: string;
+}
+
+export class UpdateSubTodoDto extends PartialType(CreateSubTodoDto) {
+  id: string;
 }

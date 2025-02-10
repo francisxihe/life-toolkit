@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { SubTodo } from "../entities/sub-todo.entity";
-import { CreateSubTodoDto, UpdateSubTodoDto, SubTodoDto } from "./sub-todo-dto";
-import { TodoStatus } from "../entities/base.entity";
+import { SubTodo, TodoStatus } from "../entities";
+import { CreateSubTodoDto, UpdateSubTodoDto, SubTodoDto, SubTodoListFilterDto } from "../dto";
 import { SubTodoMapper } from "./sub-todo.mapper";
 import dayjs from "dayjs";
 
@@ -15,18 +14,14 @@ export class SubTodoService {
   ) {}
 
   async create(createSubTodoDto: CreateSubTodoDto) {
-    const subTodo = this.subTodoRepository.create();
-    subTodo.name = createSubTodoDto.name;
-    subTodo.description = createSubTodoDto.description;
-    subTodo.status = createSubTodoDto.status || TodoStatus.TODO;
-    subTodo.tags = createSubTodoDto.tags || [];
-    subTodo.importance = createSubTodoDto.importance;
-    subTodo.urgency = createSubTodoDto.urgency;
-    subTodo.parentId = createSubTodoDto.parentId;
-    subTodo.planStartAt = createSubTodoDto.planDate
-      ? dayjs(createSubTodoDto.planDate).format("HH:mm")
-      : undefined;
-
+    const subTodo = this.subTodoRepository.create({
+      ...createSubTodoDto,
+      status: createSubTodoDto.status || TodoStatus.TODO,
+      tags: createSubTodoDto.tags || [],
+      planStartAt: createSubTodoDto.planDate
+        ? dayjs(createSubTodoDto.planDate).format("HH:mm")
+        : undefined,
+    });
     const savedEntity = await this.subTodoRepository.save(subTodo);
     return SubTodoMapper.entityToDto(savedEntity);
   }
@@ -39,8 +34,9 @@ export class SubTodoService {
     return SubTodoMapper.entityToDto(subTodo);
   }
 
-  async findAll() {
+  async findAll(subTodoListFilterDto: SubTodoListFilterDto) {
     const entities = await this.subTodoRepository.find({
+      where: { parentId: subTodoListFilterDto.parentId },
       order: { createdAt: "DESC" },
     });
     return entities.map((entity) => SubTodoMapper.entityToDto(entity));
@@ -52,21 +48,17 @@ export class SubTodoService {
       throw new NotFoundException(`SubTodo #${id} not found`);
     }
 
-    if (updateSubTodoDto.name) subTodo.name = updateSubTodoDto.name;
-    if (updateSubTodoDto.description !== undefined)
-      subTodo.description = updateSubTodoDto.description;
-    if (updateSubTodoDto.status) subTodo.status = updateSubTodoDto.status;
-    if (updateSubTodoDto.tags) subTodo.tags = updateSubTodoDto.tags;
-    if (updateSubTodoDto.importance !== undefined)
-      subTodo.importance = updateSubTodoDto.importance;
-    if (updateSubTodoDto.urgency !== undefined)
-      subTodo.urgency = updateSubTodoDto.urgency;
-    if (updateSubTodoDto.parentId) subTodo.parentId = updateSubTodoDto.parentId;
-    if (updateSubTodoDto.planDate) {
-      subTodo.planStartAt = dayjs(updateSubTodoDto.planDate).format("HH:mm");
-    }
+    const updateData = {
+      ...updateSubTodoDto,
+      planDate: updateSubTodoDto.planDate
+        ? dayjs(updateSubTodoDto.planDate).format("YYYY-MM-DD")
+        : undefined,
+    };
 
-    const savedEntity = await this.subTodoRepository.save(subTodo);
+    const savedEntity = await this.subTodoRepository.save({
+      ...subTodo,
+      ...updateData,
+    });
     return SubTodoMapper.entityToDto(savedEntity);
   }
 
@@ -95,10 +87,10 @@ export class SubTodoService {
     };
 
     const dto = SubTodoMapper.entityToDto(subTodo);
-    const subDtoList = await recursiveGetSub(subTodo.id);
+    const subTodoDtoList = await recursiveGetSub(subTodo.id);
     return {
       ...dto,
-      subTodoList: subDtoList,
+      subTodoList: subTodoDtoList,
     };
   }
 }

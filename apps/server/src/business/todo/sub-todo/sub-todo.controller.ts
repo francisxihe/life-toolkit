@@ -11,7 +11,10 @@ import {
 import { SubTodoService } from "./sub-todo.service";
 import { TodoStatusService } from "../todo-status.service";
 import { Response } from "@/decorators/response.decorator";
-import { CreateSubTodoVO } from "@life-toolkit/vo/todo/sub-todo";
+import {
+  CreateSubTodoVO,
+  SubTodoListFilterVO,
+} from "@life-toolkit/vo/todo/sub-todo";
 import { SubTodoMapper } from "./sub-todo.mapper";
 
 @Controller("sub-todo")
@@ -26,7 +29,7 @@ export class SubTodoController {
   @Response()
   async subTodoWithSub(@Param("id") id: string) {
     const dto = await this.subTodoService.subTodoWithSub(id);
-    return SubTodoMapper.dtoToVO(dto);
+    return SubTodoMapper.dtoToWithSubVO(dto);
   }
 
   /** 放弃子待办 */
@@ -46,8 +49,6 @@ export class SubTodoController {
   }
 
   // getTodoSubTodoIdList
-
-  // getSubTodoList
 
   /** 创建子待办事项 */
   @Post("create")
@@ -88,8 +89,8 @@ export class SubTodoController {
   /** 获取子待办列表 */
   @Get("list")
   @Response()
-  async list() {
-    const dtoList = await this.subTodoService.findAll();
+  async list(@Query() subTodoListFilterVO: SubTodoListFilterVO) {
+    const dtoList = await this.subTodoService.findAll(subTodoListFilterVO);
     return SubTodoMapper.dtoToVOList(dtoList);
   }
 }

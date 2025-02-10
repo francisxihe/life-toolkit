@@ -1,11 +1,6 @@
 import { Column } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
-
-export enum TodoStatus {
-  TODO = "todo",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
+import { TodoStatus } from "./enum";
 
 export class BaseTodoEntity extends BaseEntity {
   /** 待办名称 */

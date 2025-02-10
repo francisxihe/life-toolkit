@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@life-toolkit/vo':
+        specifier: workspace:*
+        version: link:packages/vo
       '@types/node':
         specifier: ^22.10.5
         version: 22.13.0
@@ -93,9 +96,6 @@ importers:
         specifier: ^0.18.5
         version: 0.18.5
     devDependencies:
-      '@life-toolkit/vo':
-        specifier: workspace:*
-        version: link:../../packages/vo
       '@nestjs/cli':
         specifier: ^10.0.0
         version: 10.4.9
@@ -162,9 +162,6 @@ importers:
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
-      axios:
-        specifier: ^0.24.0
-        version: 0.24.0
       bizcharts:
         specifier: ^4.1.11
         version: 4.1.23(@babel/core@7.26.7)(react@18.3.1)
@@ -244,6 +241,9 @@ importers:
       '@arco-plugins/vite-plugin-svgr':
         specifier: ^0.7.2
         version: 0.7.2(vite@2.9.18(less@4.2.2))
+      '@life-toolkit/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@svgr/webpack':
         specifier: ^5.5.0
         version: 5.5.0
@@ -318,10 +318,10 @@ importers:
         version: 3.2.2(vite@2.9.18(less@4.2.2))
 
   packages/api:
-    dependencies:
-      '@life-toolkit/vo':
-        specifier: workspace:*
-        version: link:../vo
+    devDependencies:
+      axios:
+        specifier: ^0.24.0
+        version: 0.24.0
 
   packages/vo: {}
 

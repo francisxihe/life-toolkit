@@ -9,7 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoPageFilterDto, TodoListFilterDto, TodoDto } from "./todo-dto";
+import { TodoPageFilterDto, TodoListFilterDto } from "../dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "../todo-status.service";
 import { CreateTodoVO, TodoVO } from "@life-toolkit/vo/todo/todo";

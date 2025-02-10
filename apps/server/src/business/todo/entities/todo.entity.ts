@@ -1,14 +1,7 @@
 import { Entity, Column, OneToMany } from "typeorm";
 import { BaseTodoEntity } from "./base.entity";
 import { SubTodo } from "./sub-todo.entity";
-
-export enum TodoRepeat {
-  NONE = "none",
-  DAILY = "daily",
-  WEEKLY = "weekly",
-  MONTHLY = "monthly",
-}
-
+import { TodoRepeat } from "./enum";
 @Entity("todo")
 export class Todo extends BaseTodoEntity {
   /** 计划待办日期 */

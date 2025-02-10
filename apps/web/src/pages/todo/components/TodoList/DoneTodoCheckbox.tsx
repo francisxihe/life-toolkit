@@ -1,11 +1,11 @@
 import { Checkbox, Modal } from '@arco-design/web-react';
 import styles from './style.module.less';
 import TodoService from '../../service';
-import { Todo } from '../../service/types';
+import { TodoVO } from '@life-toolkit/vo/todo/todo';
 
 export default function DoneTodoCheckbox(props: {
   todo: {
-    status: Todo['status'];
+    status: TodoVO['status'];
     id: string;
   };
   onChange: () => Promise<void>;
@@ -22,10 +22,12 @@ export default function DoneTodoCheckbox(props: {
             await props.onChange();
             return;
           }
-          const todoSubTodoIdList = await TodoService.getTodoSubTodoIdList(
-            props.todo.id
-          );
-          if (todoSubTodoIdList.length === 0) {
+          
+          const todoSubTodoList = await TodoService.getSubTodoList({
+            parentId: props.todo.id,
+          });
+
+          if (todoSubTodoList.length === 0) {
             await TodoService.batchDoneTodo([props.todo.id]);
             await props.onChange();
             return;
@@ -37,7 +39,7 @@ export default function DoneTodoCheckbox(props: {
             onOk: async () => {
               await TodoService.batchDoneTodo([
                 props.todo.id,
-                ...todoSubTodoIdList,
+                ...todoSubTodoList.map((todo) => todo.id),
               ]);
               await props.onChange();
             },

@@ -3,6 +3,7 @@ import {
   SubTodoVO,
   CreateSubTodoVO,
   SubTodoWithSubVO,
+  SubTodoListFilterVO,
 } from "@life-toolkit/vo/todo/sub-todo";
 
 export default class SubTodoController {
@@ -20,5 +21,11 @@ export default class SubTodoController {
 
   static async abandonSubTodo(id: string) {
     return await put(`/sub-todo/abandon/${id}`);
+  }
+
+  static async getSubTodoList(params: SubTodoListFilterVO) {
+    return await get<SubTodoVO[]>(`/sub-todo/list`, {
+      params,
+    });
   }
 }

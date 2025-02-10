@@ -6,14 +6,33 @@ import {
   TodoListVO,
   CreateTodoVO,
 } from "@life-toolkit/vo/todo/todo";
-import { CreateTodoDto, UpdateTodoDto, TodoDto } from "./todo-dto";
-import { SubTodoDto } from "../sub-todo/sub-todo-dto";
-import { TodoStatus } from "../entities/base.entity";
-import { TodoRepeat } from "../entities/todo.entity";
+import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoWithSubDto } from "../dto";
+import { TodoStatus, TodoRepeat } from "../entities";
 import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
-import { TodoWithSubDto } from "./todo-dto";
+
 export class TodoMapper {
+  static entityToDto(entity: Todo): TodoDto {
+    const dto = new TodoDto();
+    dto.id = entity.id;
+    dto.name = entity.name;
+    dto.description = entity.description;
+    dto.status = entity.status;
+    dto.tags = entity.tags;
+    dto.importance = entity.importance;
+    dto.urgency = entity.urgency;
+    dto.planDate = entity.planDate;
+    dto.repeat = entity.repeat;
+    dto.doneAt = entity.doneAt;
+    dto.abandonedAt = entity.abandonedAt;
+    dto.updatedAt = entity.updatedAt;
+    dto.createdAt = entity.createdAt;
+    dto.planStartAt = entity.planStartAt;
+    dto.planEndAt = entity.planEndAt;
+    dto.deletedAt = entity.deletedAt;
+    return dto;
+  }
+
   static dtoToVO(dto: TodoDto): TodoVO {
     const vo: TodoVO = {
       name: dto.name || "",
@@ -92,27 +111,6 @@ export class TodoMapper {
     dto.urgency = vo.urgency;
     dto.planDate = vo.planDate;
     dto.repeat = vo.repeat as TodoRepeat;
-    return dto;
-  }
-
-  static entityToDto(entity: Todo): TodoDto {
-    const dto = new TodoDto();
-    dto.id = entity.id;
-    dto.name = entity.name;
-    dto.description = entity.description;
-    dto.status = entity.status;
-    dto.tags = entity.tags;
-    dto.importance = entity.importance;
-    dto.urgency = entity.urgency;
-    dto.planDate = entity.planDate;
-    dto.repeat = entity.repeat;
-    dto.doneAt = entity.doneAt;
-    dto.abandonedAt = entity.abandonedAt;
-    dto.updatedAt = entity.updatedAt;
-    dto.createdAt = entity.createdAt;
-    dto.planStartAt = entity.planStartAt;
-    dto.planEndAt = entity.planEndAt;
-    dto.deletedAt = entity.deletedAt;
     return dto;
   }
 }

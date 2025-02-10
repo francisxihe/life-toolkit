@@ -10,10 +10,10 @@ export class SubTodo extends BaseTodoEntity {
 
   /** 子待办列表 */
   @OneToMany(() => SubTodo, (subTodo) => subTodo.parentSubTodo)
-  children: SubTodo[];
+  subTodoList: SubTodo[];
 
   /** 父级SubTodo */
-  @ManyToOne(() => SubTodo, (subTodo) => subTodo.children)
+  @ManyToOne(() => SubTodo, (subTodo) => subTodo.subTodoList)
   @JoinColumn({ name: "parentId" })
   parentSubTodo: SubTodo;
 

@@ -9,7 +9,7 @@ import {
   LessThan,
   Like,
 } from "typeorm";
-import { Todo } from "../entities";
+import { Todo, TodoStatus } from "../entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -17,7 +17,7 @@ import {
   TodoListFilterDto,
   TodoDto,
   TodoWithSubDto,
-} from "./todo-dto";
+} from "../dto";
 import dayjs from "dayjs";
 
 function getWhere(filter: TodoPageFilterDto) {
@@ -84,7 +84,11 @@ export class TodoService {
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
     const todo = this.todoRepository.create({
       ...createTodoDto,
-      planDate: dayjs(createTodoDto.planDate).toDate(),
+      status: createTodoDto.status || TodoStatus.TODO,
+      tags: createTodoDto.tags || [],
+      planDate: createTodoDto.planDate
+        ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
+        : undefined,
     });
     await this.todoRepository.save(todo);
     return {

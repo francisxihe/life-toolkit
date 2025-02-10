@@ -14,53 +14,10 @@ import {
   SubTodoVO,
   CreateSubTodoVO,
   SubTodoWithSubVO,
+  SubTodoListFilterVO,
 } from '@life-toolkit/vo/todo/sub-todo';
 
 export default class TodoService {
-  static async getTodoTree() {
-    const todoList = (await this.getTodoList()).list;
-    // 递归获取子待办
-    // const getSubTodoList = async (todo: TodoVO) => {
-    //   const subTodoList = await this.getSubTodoList(todo.id);
-    //   return subTodoList.map(async (t) => ({
-    //     ...t,
-    //     subTodoList: await getSubTodoList(t),
-    //   }));
-    // };
-
-    const todoTree = todoList.map(async (todo) => ({
-      ...todo,
-      // subTodoList: await getSubTodoList(todo),
-    }));
-
-    return todoTree;
-  }
-
-  static async getTodoSubTodoIdList(todoId: string): Promise<string[]> {
-    const todoList: TodoVO[] = JSON.parse(
-      localStorage.getItem('todoList') || '[]',
-    );
-    const todo = todoList.find((todo) => todo.id === todoId);
-    if (!todo) {
-      throw new Error('Todo not found');
-    }
-
-    const todoSubTodoIdList: string[] = [];
-
-    const recursiveSub = async (todoId: string) => {
-      (await this.getSubTodoList(todoId)).forEach((t) => {
-        if (t.status === 'todo') {
-          todoSubTodoIdList.push(t.id);
-        }
-        recursiveSub(t.id);
-      });
-    };
-
-    await recursiveSub(todoId);
-
-    return todoSubTodoIdList;
-  }
-
   static async getTodoNode(todoId: string) {
     try {
       return TodoController.getTodoWithSub(todoId);
@@ -69,11 +26,13 @@ export default class TodoService {
     }
   }
 
-  static async getSubTodoList(todoId: string) {
-    const todoList: SubTodoVO[] = JSON.parse(
-      localStorage.getItem('todoList') || '[]',
-    );
-    return todoList.filter((todo) => todo.parentId === todoId);
+  static async getSubTodoList(params: SubTodoListFilterVO) {
+    try {
+      const res = SubTodoController.getSubTodoList(params);
+      return res;
+    } catch (error) {
+      Message.error(error.message);
+    }
   }
 
   static async batchDoneTodo(idList: string[]) {
