@@ -33,12 +33,12 @@ export default function DateTimeTool(props: {
   formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    recurring: string | undefined;
+    repeat: string | undefined;
   };
   onChangeData: (formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    recurring: string | undefined;
+    repeat: string | undefined;
   }) => void;
 }) {
   const { formData, onChangeData } = props;
@@ -135,14 +135,14 @@ export default function DateTimeTool(props: {
           </div>
           <div className="px-3">
             <Select
-              value={formData.recurring}
+              value={formData.repeat}
               placeholder="选择重复模式"
               className="rounded-md"
               allowClear
               onChange={(value) => {
                 onChangeData({
                   ...formData,
-                  recurring: value,
+                  repeat: value,
                 });
               }}
             >

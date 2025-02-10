@@ -1,7 +1,7 @@
 import {
-  SubTodoVO,
-  CreateSubTodoVO,
-  SubTodoWithSubVO,
+  SubTodoVo,
+  CreateSubTodoVo,
+  SubTodoWithSubVo,
 } from "@life-toolkit/vo/todo/sub-todo";
 import {
   CreateSubTodoDto,
@@ -32,8 +32,8 @@ export class SubTodoMapper {
     };
   }
 
-  static dtoToVO(dto: SubTodoDto): SubTodoVO {
-    const vo: SubTodoVO = {
+  static dtoToVo(dto: SubTodoDto): SubTodoVo {
+    const vo: SubTodoVo = {
       name: dto.name,
       description: dto.description,
       status: dto.status || TodoStatus.TODO,
@@ -43,6 +43,12 @@ export class SubTodoMapper {
       planStartAt: dto.planStartAt,
       planEndAt: dto.planEndAt,
       parentId: dto.parentId,
+      doneAt: dto.doneAt
+        ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
+        : undefined,
+      abandonedAt: dto.abandonedAt
+        ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
+        : undefined,
       id: dto.id,
       updatedAt: dayjs(dto.updatedAt).format("YYYY/MM/DD HH:mm:ss"),
       createdAt: dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss"),
@@ -50,22 +56,21 @@ export class SubTodoMapper {
     return vo;
   }
 
-  static dtoToVOList(dtoList: SubTodoDto[]): SubTodoVO[] {
-    return dtoList.map((dto) => this.dtoToVO(dto));
+  static dtoToVoList(dtoList: SubTodoDto[]): SubTodoVo[] {
+    return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVO(dto: SubTodoWithSubDto): SubTodoWithSubVO {
+  static dtoToWithSubVo(dto: SubTodoWithSubDto): SubTodoWithSubVo {
     return {
-      ...this.dtoToVO(dto),
-      subTodoList: this.dtoToVOList(dto.subTodoList),
+      ...this.dtoToVo(dto),
+      subTodoList: this.dtoToVoList(dto.subTodoList),
     };
   }
 
-  static voToCreateDto(vo: CreateSubTodoVO): CreateSubTodoDto {
+  static voToCreateDto(vo: CreateSubTodoVo): CreateSubTodoDto {
     const dto = new CreateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.status = vo.status as TodoStatus;
     dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
@@ -73,11 +78,10 @@ export class SubTodoMapper {
     return dto;
   }
 
-  static voToUpdateDto(vo: CreateSubTodoVO): UpdateSubTodoDto {
+  static voToUpdateDto(vo: CreateSubTodoVo): UpdateSubTodoDto {
     const dto = new UpdateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.status = vo.status as TodoStatus;
     dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;

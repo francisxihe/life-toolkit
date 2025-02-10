@@ -10,9 +10,8 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { Todo } from '../service/types';
+import { TodoVo, TodoPageFiltersVo } from '@life-toolkit/vo/todo';
 import TodoService from '../service';
-import { TodoFilters } from '../types';
 import { createInjectState } from '@/utils/createInjectState';
 
 function useSyncState<T>(
@@ -34,15 +33,15 @@ function useSyncState<T>(
 }
 
 export const [TodoAllProvider, useTodoAllContext] = createInjectState<{
-  todoList: Todo[];
+  todoList: TodoVo[];
   getTodoPage: () => Promise<void>;
-  filters: TodoFilters;
-  setFilters: Dispatch<SetStateAction<TodoFilters>>;
+  filters: TodoPageFiltersVo;
+  setFilters: Dispatch<SetStateAction<TodoPageFiltersVo>>;
   clearFilters: () => Promise<void>;
 }>(() => {
-  const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<TodoVo[]>([]);
 
-  const [filters, setFilters, filtersRef] = useSyncState<TodoFilters>({
+  const [filters, setFilters, filtersRef] = useSyncState<TodoPageFiltersVo>({
     keyword: '',
     importance: undefined,
     urgency: undefined,

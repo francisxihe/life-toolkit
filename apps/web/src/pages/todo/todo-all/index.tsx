@@ -46,7 +46,7 @@ function TodoAll() {
                       planDate: todoFormData.planDate || undefined,
                       planStartAt: todoFormData.planTimeRange?.[0] || undefined,
                       planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                      recurring: todoFormData.recurring,
+                      repeat: todoFormData.repeat,
                       tags: todoFormData.tags,
                     });
                     getTodoPage();
@@ -62,7 +62,7 @@ function TodoAll() {
                   planDate: todoFormData.planDate || undefined,
                   planStartAt: todoFormData.planTimeRange?.[0] || undefined,
                   planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                  recurring: todoFormData.recurring,
+                  repeat: todoFormData.repeat,
                   tags: todoFormData.tags,
                 });
                 getTodoPage();

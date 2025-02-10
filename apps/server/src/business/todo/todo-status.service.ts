@@ -1,15 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Todo } from "./entities/todo.entity";
-import { TodoStatus } from "./entities";
-import { In } from "typeorm";
-
+import { Repository, In } from "typeorm";
+import { TodoStatus, SubTodo, Todo } from "./entities";
+import {
+  OperationByIdListDto,
+  OperationByIdListResultDto,
+} from "@/common/operation";
 @Injectable()
 export class TodoStatusService {
   constructor(
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>
+    private readonly todoRepository: Repository<Todo>,
+    @InjectRepository(SubTodo)
+    private readonly subTodoRepository: Repository<SubTodo>
   ) {}
 
   private async updateStatus(
@@ -30,24 +33,46 @@ export class TodoStatusService {
     return true;
   }
 
-  async batchDone(
-    idList: string[]
-  ): Promise<{ id: string; result: boolean }[]> {
-    const todos = await this.todoRepository.findBy({
-      id: In(idList),
-    });
-    const updatedTodos = await Promise.all(
-      todos.map(async (todo) => {
-        await this.updateStatus(todo.id, TodoStatus.DONE, "doneAt");
+  private async updateStatusSub(
+    id: string,
+    status: TodoStatus,
+    dateField: keyof SubTodo
+  ): Promise<boolean> {
+    const subTodo = await this.subTodoRepository.findOneBy({ id });
+    if (!subTodo) {
+      throw new Error("SubTodo not found");
+    }
 
-        return {
-          id: todo.id,
-          result: true,
-        };
-      })
+    await this.subTodoRepository.update(id, {
+      status,
+      [dateField]: new Date(),
+    });
+
+    return true;
+  }
+
+  async batchDone(
+    params: OperationByIdListDto
+  ): Promise<OperationByIdListResultDto> {
+    await this.todoRepository.update(
+      { id: In(params.idList) },
+      {
+        status: TodoStatus.DONE,
+        doneAt: new Date(),
+      }
     );
 
-    return updatedTodos;
+    await this.subTodoRepository.update(
+      { id: In(params.idList) },
+      {
+        status: TodoStatus.DONE,
+        doneAt: new Date(),
+      }
+    );
+
+    return {
+      result: true,
+    };
   }
 
   async abandon(id: string): Promise<boolean> {
@@ -56,5 +81,13 @@ export class TodoStatusService {
 
   async restore(id: string): Promise<boolean> {
     return this.updateStatus(id, TodoStatus.TODO, "updatedAt");
+  }
+
+  async abandonSub(id: string): Promise<boolean> {
+    return this.updateStatusSub(id, TodoStatus.ABANDONED, "abandonedAt");
+  }
+
+  async restoreSub(id: string): Promise<boolean> {
+    return this.updateStatusSub(id, TodoStatus.TODO, "updatedAt");
   }
 }

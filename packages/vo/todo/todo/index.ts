@@ -1,13 +1,13 @@
 export * from "./todo.vo";
-import { SubTodoVO } from "../sub-todo";
-import { TodoModelVO, TodoVO } from "./todo.vo";
+import { SubTodoVo } from "../sub-todo";
+import { TodoModelVo, TodoVo } from "./todo.vo";
 
-export type TodoWithSubVO = TodoVO & {
-  subTodoList: SubTodoVO[];
+export type TodoWithSubVo = TodoVo & {
+  subTodoList: SubTodoVo[];
 };
 
-export type TodoPageVO = {
-  list: TodoVO[];
+export type TodoPageVo = {
+  list: TodoVo[];
 
   total: number;
 
@@ -16,34 +16,38 @@ export type TodoPageVO = {
   pageSize: number;
 };
 
-export type CreateTodoVO = Omit<TodoModelVO, "doneAt" | "abandonedAt">;
+export type CreateTodoVo = Omit<
+  TodoModelVo,
+  "doneAt" | "abandonedAt" | "status"
+>;
 
-export type TodoListVO = {
-  list: TodoVO[];
+export type TodoListVo = {
+  list: TodoVo[];
 };
 
-export type TodoListFiltersVO = {
+export type TodoListFiltersVo = {
   keyword?: string;
   planDateStart?: string;
   planDateEnd?: string;
-  importance?: TodoVO["importance"];
-  urgency?: TodoVO["urgency"];
-  status?: TodoVO["status"];
+  importance?: TodoVo["importance"];
+  urgency?: TodoVo["urgency"];
+  status?: TodoVo["status"];
   doneDateStart?: string;
   doneDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
 };
 
-export type TodoPageFiltersVO = {
+export type TodoPageFiltersVo = {
   keyword?: string;
   planDateStart?: string;
   planDateEnd?: string;
-  importance?: TodoVO["importance"];
-  urgency?: TodoVO["urgency"];
-  status?: TodoVO["status"];
+  importance?: TodoVo["importance"];
+  urgency?: TodoVo["urgency"];
+  status?: TodoVo["status"];
   doneDateStart?: string;
   doneDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
+  tags?: string[];
 };

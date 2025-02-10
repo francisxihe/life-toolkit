@@ -2,23 +2,19 @@ import { Message } from '@arco-design/web-react';
 import TodoController from '@life-toolkit/api/controller/todo/todo';
 import SubTodoController from '@life-toolkit/api/controller/todo/sub-todo';
 import {
-  TodoVO,
-  CreateTodoVO,
-  TodoPageVO,
-  TodoListVO,
-  TodoWithSubVO,
-  TodoPageFiltersVO,
-  TodoListFiltersVO,
-} from '@life-toolkit/vo/todo/todo';
+  CreateTodoVo,
+  TodoPageFiltersVo,
+  TodoListFiltersVo,
+} from '@life-toolkit/vo/todo';
 import {
-  SubTodoVO,
-  CreateSubTodoVO,
-  SubTodoWithSubVO,
-  SubTodoListFilterVO,
+  SubTodoVo,
+  CreateSubTodoVo,
+  SubTodoWithSubVo,
+  SubTodoListFilterVo,
 } from '@life-toolkit/vo/todo/sub-todo';
-
+import { OperationByIdListVo } from '@life-toolkit/vo';
 export default class TodoService {
-  static async getTodoNode(todoId: string) {
+  static async getTodoWithSub(todoId: string) {
     try {
       return TodoController.getTodoWithSub(todoId);
     } catch (error) {
@@ -26,7 +22,7 @@ export default class TodoService {
     }
   }
 
-  static async getSubTodoList(params: SubTodoListFilterVO) {
+  static async getSubTodoList(params: SubTodoListFilterVo) {
     try {
       const res = SubTodoController.getSubTodoList(params);
       return res;
@@ -35,9 +31,9 @@ export default class TodoService {
     }
   }
 
-  static async batchDoneTodo(idList: string[]) {
+  static async batchDoneTodo(params: OperationByIdListVo) {
     try {
-      const res = TodoController.batchDoneTodo(idList);
+      const res = TodoController.batchDoneTodo(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -65,7 +61,7 @@ export default class TodoService {
     }
   }
 
-  static async addTodo(todo: CreateTodoVO) {
+  static async addTodo(todo: CreateTodoVo) {
     try {
       const res = TodoController.addTodo(todo);
       Message.success('操作成功');
@@ -85,7 +81,7 @@ export default class TodoService {
     }
   }
 
-  static async updateTodo(id: string, todo: Partial<CreateTodoVO>) {
+  static async updateTodo(id: string, todo: Partial<CreateTodoVo>) {
     try {
       const res = TodoController.updateTodo(id, todo);
       Message.success('操作成功');
@@ -95,7 +91,7 @@ export default class TodoService {
     }
   }
 
-  static async getTodoList(params: TodoListFiltersVO = {}) {
+  static async getTodoList(params: TodoListFiltersVo = {}) {
     try {
       return TodoController.getTodoList(params);
     } catch (error) {
@@ -103,7 +99,7 @@ export default class TodoService {
     }
   }
 
-  static async getTodoPage(params: TodoPageFiltersVO = {}) {
+  static async getTodoPage(params: TodoPageFiltersVo = {}) {
     try {
       return TodoController.getTodoPage(params);
     } catch (error) {
@@ -111,7 +107,7 @@ export default class TodoService {
     }
   }
 
-  static async addSubTodo(todoId: string, subTodo: CreateSubTodoVO) {
+  static async addSubTodo(subTodo: CreateSubTodoVo) {
     try {
       const res = SubTodoController.addSubTodo(subTodo);
       Message.success('操作成功');

@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 import {
   interceptorErrorHandler,
   responseErrorHandler,
   responseSuccessHandler,
   setRequestToken,
-} from './AxiosHelpers';
+} from "./AxiosHelpers";
 
 const apiBaseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
@@ -12,7 +12,7 @@ export const httpInstance = axios.create({
   baseURL: apiBaseURL,
   timeout: 5 * 60 * 1000,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
   },
 });
 
@@ -48,6 +48,9 @@ export function put<T>(
   options = {}
 ): Promise<T> {
   return httpInstance.put(url, data, {
+    headers: {
+      "Content-Type": "application/json;charset=UTF-8",
+    },
     ...options,
   });
 }
@@ -60,7 +63,7 @@ export function remove<T>(
   return httpInstance.delete(url, {
     params: params,
     headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
+      "Content-Type": "application/json;charset=UTF-8",
     },
     ...options,
   });
@@ -73,7 +76,7 @@ export function post<T>(
 ): Promise<T> {
   return httpInstance.post(url, data, {
     headers: {
-      'Content-Type': 'application/json;charset=UTF-8',
+      "Content-Type": "application/json;charset=UTF-8",
     },
     ...options,
   });

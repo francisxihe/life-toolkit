@@ -12,8 +12,10 @@ import { TodoService } from "./todo.service";
 import { TodoPageFilterDto, TodoListFilterDto } from "../dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "../todo-status.service";
-import { CreateTodoVO, TodoVO } from "@life-toolkit/vo/todo/todo";
+import { CreateTodoVo, TodoVo } from "@life-toolkit/vo/todo";
 import { TodoMapper } from "./todo.mapper";
+import { OperationByIdListVo } from "@life-toolkit/vo";
+import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
 export class TodoController {
@@ -24,8 +26,10 @@ export class TodoController {
 
   @Put("batch-done")
   @Response()
-  async batchDone(@Body() idList: string[]) {
-    return await this.todoStatusService.batchDone(idList);
+  async batchDone(@Body() idList: OperationByIdListVo) {
+    return await this.todoStatusService.batchDone(
+      OperationMapper.voToOperationByIdListDto(idList)
+    );
   }
 
   @Put("abandon/:id")
@@ -46,15 +50,15 @@ export class TodoController {
   @Response()
   async todoWithSub(@Param("id") id: string) {
     const dto = await this.todoService.todoWithSub(id);
-    return TodoMapper.dtoToWithSubVO(dto);
+    return TodoMapper.dtoToWithSubVo(dto);
   }
 
   @Post("create")
   @Response()
-  async create(@Body() createTodoVO: CreateTodoVO) {
-    const createdDto = TodoMapper.voToCreateDto(createTodoVO);
+  async create(@Body() createTodoVo: CreateTodoVo) {
+    const createdDto = TodoMapper.voToCreateDto(createTodoVo);
     const dto = await this.todoService.create(createdDto);
-    return TodoMapper.dtoToVO(dto);
+    return TodoMapper.dtoToVo(dto);
   }
 
   @Delete("delete/:id")
@@ -62,19 +66,20 @@ export class TodoController {
   async delete(@Param("id") id: string) {
     return this.todoService.delete(id);
   }
+  
   @Put("update/:id")
   @Response()
-  async update(@Param("id") id: string, @Body() updateTodoVO: CreateTodoVO) {
-    const updatedDto = TodoMapper.voToUpdateDto(updateTodoVO);
+  async update(@Param("id") id: string, @Body() updateTodoVo: CreateTodoVo) {
+    const updatedDto = TodoMapper.voToUpdateDto(updateTodoVo);
     const dto = await this.todoService.update(id, updatedDto);
-    return TodoMapper.dtoToVO(dto);
+    return TodoMapper.dtoToVo(dto);
   }
 
   @Get("page")
   @Response()
   async page(@Query() filter: TodoPageFilterDto) {
     const { list, total } = await this.todoService.page(filter);
-    return TodoMapper.dtoToPageVO(
+    return TodoMapper.dtoToPageVo(
       list,
       total,
       filter.pageNum || 1,
@@ -86,13 +91,13 @@ export class TodoController {
   @Response()
   async list(@Query() filter: TodoListFilterDto) {
     const todoList = await this.todoService.findAll(filter);
-    return TodoMapper.dtoToListVO(todoList);
+    return TodoMapper.dtoToListVo(todoList);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
     const todo = await this.todoService.findById(id);
-    return TodoMapper.dtoToVO(todo);
+    return TodoMapper.dtoToVo(todo);
   }
 }

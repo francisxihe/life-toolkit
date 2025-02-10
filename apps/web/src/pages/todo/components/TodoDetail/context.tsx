@@ -9,29 +9,30 @@ import {
   useRef,
   useCallback,
 } from 'react';
-import { Todo, TodoNode, SubTodo } from '../../service/types';
+import { TodoVo, TodoWithSubVo } from '@life-toolkit/vo/todo';
+import { SubTodoVo } from '@life-toolkit/vo/todo/sub-todo';
 import { TodoFormData } from '../../types';
 import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-
+import { CreateTodoVo } from '@life-toolkit/vo/todo';
 export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
   {
-    todoNode: TodoNode;
+    todoNode: TodoWithSubVo;
     todoFormData: TodoFormData;
     setTodoFormData: Dispatch<React.SetStateAction<TodoFormData>>;
     onClose: () => Promise<void> | null;
     onChange: (todo: TodoFormData) => Promise<void>;
-    refreshSubTodoFormData: (todo: Todo | SubTodo) => Promise<void>;
-    initTodoFormData: (todo: Todo) => Promise<void>;
+    refreshSubTodoFormData: (id: string) => Promise<void>;
+    initTodoFormData: (todo: TodoVo) => Promise<void>;
   },
   {
     children: React.ReactNode;
-    todo: Todo;
+    todo: TodoVo;
     onClose: () => Promise<void> | null;
-    onChange: (todo: Todo) => Promise<void>;
+    onChange: (todo: TodoVo) => Promise<void>;
   }
 >((props) => {
-  function transformTodo(todo: TodoNode): TodoFormData {
+  function transformTodoVoToFormData(todo: TodoWithSubVo): TodoFormData {
     return {
       name: todo.name,
       description: todo.description,
@@ -40,12 +41,12 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
       urgency: todo.urgency,
       planDate: todo.planDate,
       planTimeRange: [todo.planStartAt, todo.planEndAt],
-      recurring: todo.recurring,
-      subTodoList: todo.subTodoList,
+      repeat: todo.repeat,
+      subTodoList: [...todo.subTodoList],
     };
   }
 
-  function transformTodoFormData(todoFormData: TodoFormData): TodoNode {
+  function transformFormDataToCreateVo(todoFormData: TodoFormData): CreateTodoVo {
     return {
       name: todoFormData.name,
       description: todoFormData.description,
@@ -55,34 +56,32 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
       planDate: todoFormData.planDate,
       planStartAt: todoFormData.planTimeRange?.[0],
       planEndAt: todoFormData.planTimeRange?.[1],
-      recurring: todoFormData.recurring,
-      id: todoNode.id,
-      createdAt: todoNode.createdAt,
-      status: todoNode.status,
-      subTodoList: todoNode.subTodoList,
+      repeat: todoFormData.repeat,
     };
   }
 
   const [todoFormData, setTodoFormData] = useState<TodoFormData>();
 
-  const [todoNode, setTodoNode] = useState<TodoNode>(props.todo as TodoNode);
-  const todoNodeRef = useRef<TodoNode>();
+  const [todoNode, setTodoNode] = useState<TodoWithSubVo>(
+    props.todo as TodoWithSubVo,
+  );
+  const todoNodeRef = useRef<TodoWithSubVo>();
 
-  const refreshSubTodoFormData = async (todo: Todo | SubTodo) => {
-    const fetchedTodoNode = await TodoService.getSubTodoNode(todo.id);
+  const refreshSubTodoFormData = async (id: string) => {
+    const fetchedTodoNode = await TodoService.getSubTodoNode(id);
     todoNodeRef.current = {
       ...fetchedTodoNode,
       planDate: todoNode.planDate,
     };
     setTodoNode(todoNodeRef.current);
-    setTodoFormData(transformTodo(todoNodeRef.current));
+    setTodoFormData(transformTodoVoToFormData(todoNodeRef.current));
   };
 
   const initTodoFormData = useCallback(async () => {
-    const fetchedTodoNode = await TodoService.getTodoNode(props.todo.id);
+    const fetchedTodoNode = await TodoService.getTodoWithSub(props.todo.id);
     setTodoNode(fetchedTodoNode);
     todoNodeRef.current = fetchedTodoNode;
-    setTodoFormData(transformTodo(todoNodeRef.current));
+    setTodoFormData(transformTodoVoToFormData(todoNodeRef.current));
   }, [props.todo]);
 
   useEffect(() => {
@@ -99,9 +98,9 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
 
   async function onChange(todoFormData: TodoFormData) {
     setTodoFormData(todoFormData);
-    const todo = transformTodoFormData(todoFormData);
-    await TodoService.updateTodo(todo.id, todo);
-    await props.onChange(todo);
+    const todo = transformFormDataToCreateVo(todoFormData);
+    const updatedTodo = await TodoService.updateTodo(todoNode.id, todo);
+    await props.onChange(updatedTodo);
   }
 
   return {

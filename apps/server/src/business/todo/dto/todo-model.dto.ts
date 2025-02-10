@@ -19,11 +19,6 @@ export class CreateTodoDto {
   @IsOptional()
   description?: string;
 
-  /** 待办事项状态 */
-  @IsEnum(TodoStatus)
-  @IsOptional()
-  status?: TodoStatus;
-
   /** 标签列表 */
   @IsArray()
   @IsString({ each: true })

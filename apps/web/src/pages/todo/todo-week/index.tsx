@@ -1,4 +1,4 @@
-import TodoList from '../components/TodoList';
+import TodoList from '../components/TodoList/TodoList';
 import AddTodo from '../components/AddTodo';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
@@ -8,16 +8,16 @@ import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
 import { flushSync } from 'react-dom';
-import { TodoVO } from '@life-toolkit/vo/todo/todo';
+import { TodoVo } from '@life-toolkit/vo/todo';
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
 
 export default function TodoWeek() {
-  const [weekTodoList, setWeekTodoList] = useState<TodoVO[]>([]);
-  const [weekDoneTodoList, setWeekDoneTodoList] = useState<TodoVO[]>([]);
-  const [expiredTodoList, setExpiredTodoList] = useState<TodoVO[]>([]);
-  const [weekAbandonedTodoList, setWeekAbandonedTodoList] = useState<TodoVO[]>(
+  const [weekTodoList, setWeekTodoList] = useState<TodoVo[]>([]);
+  const [weekDoneTodoList, setWeekDoneTodoList] = useState<TodoVo[]>([]);
+  const [expiredTodoList, setExpiredTodoList] = useState<TodoVo[]>([]);
+  const [weekAbandonedTodoList, setWeekAbandonedTodoList] = useState<TodoVo[]>(
     [],
   );
 
@@ -50,7 +50,7 @@ export default function TodoWeek() {
     setWeekAbandonedTodoList(abandonedTodos);
 
     if (currentTodo) {
-      showTodoDetail(currentTodo);
+      showTodoDetail(currentTodo.id);
     }
   }
 
@@ -58,12 +58,13 @@ export default function TodoWeek() {
     refreshData();
   }, []);
 
-  const [currentTodo, setCurrentTodo] = useState<TodoVO | null>(null);
+  const [currentTodo, setCurrentTodo] = useState<TodoVo | null>(null);
 
-  async function showTodoDetail(todo: TodoVO) {
+  async function showTodoDetail(id: string) {
     flushSync(() => {
       setCurrentTodo(null);
     });
+    const todo = await TodoService.getTodoWithSub(id);
     setCurrentTodo(todo);
   }
 
@@ -79,12 +80,13 @@ export default function TodoWeek() {
             onSubmit={async (todoFormData) => {
               await TodoService.addTodo({
                 name: todoFormData.name,
+                description: todoFormData.description,
                 importance: todoFormData.importance,
                 urgency: todoFormData.urgency,
                 planDate: todoFormData.planDate || undefined,
                 planStartAt: todoFormData.planTimeRange?.[0] || undefined,
                 planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                repeat: todoFormData.recurring,
+                repeat: todoFormData.repeat,
                 tags: todoFormData.tags,
               });
               refreshData();
@@ -103,8 +105,8 @@ export default function TodoWeek() {
               >
                 <TodoList
                   todoList={expiredTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
+                  onClickTodo={async (id) => {
+                    await showTodoDetail(id);
                   }}
                   refreshTodoList={async () => {
                     await refreshData();
@@ -120,8 +122,8 @@ export default function TodoWeek() {
               >
                 <TodoList
                   todoList={weekTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
+                  onClickTodo={async (id) => {
+                    await showTodoDetail(id);
                   }}
                   refreshTodoList={async () => {
                     await refreshData();
@@ -137,8 +139,8 @@ export default function TodoWeek() {
               >
                 <TodoList
                   todoList={weekDoneTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
+                  onClickTodo={async (id) => {
+                    await showTodoDetail(id);
                   }}
                   refreshTodoList={async () => {
                     await refreshData();
@@ -154,8 +156,8 @@ export default function TodoWeek() {
               >
                 <TodoList
                   todoList={weekAbandonedTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
+                  onClickTodo={async (id) => {
+                    await showTodoDetail(id);
                   }}
                   refreshTodoList={async () => {
                     await refreshData();

@@ -1,16 +1,15 @@
 import { SubTodoMapper } from "../sub-todo/sub-todo.mapper";
 import {
-  TodoVO,
-  TodoWithSubVO,
-  TodoPageVO,
-  TodoListVO,
-  CreateTodoVO,
-} from "@life-toolkit/vo/todo/todo";
+  TodoVo,
+  TodoWithSubVo,
+  TodoPageVo,
+  TodoListVo,
+  CreateTodoVo,
+} from "@life-toolkit/vo/todo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoWithSubDto } from "../dto";
 import { TodoStatus, TodoRepeat } from "../entities";
 import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
-
 export class TodoMapper {
   static entityToDto(entity: Todo): TodoDto {
     const dto = new TodoDto();
@@ -33,8 +32,8 @@ export class TodoMapper {
     return dto;
   }
 
-  static dtoToVO(dto: TodoDto): TodoVO {
-    const vo: TodoVO = {
+  static dtoToVo(dto: TodoDto): TodoVo {
+    const vo: TodoVo = {
       name: dto.name || "",
       description: dto.description,
       status: dto.status || TodoStatus.TODO,
@@ -45,8 +44,12 @@ export class TodoMapper {
       planStartAt: dto.planStartAt,
       planEndAt: dto.planEndAt,
       repeat: dto.repeat || TodoRepeat.NONE,
-      doneAt: dto.doneAt,
-      abandonedAt: dto.abandonedAt,
+      doneAt: dto.doneAt
+        ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
+        : undefined,
+      abandonedAt: dto.abandonedAt
+        ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
+        : undefined,
       id: dto.id,
       updatedAt: dayjs(dto.updatedAt).format("YYYY/MM/DD HH:mm:ss"),
       createdAt: dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss"),
@@ -54,26 +57,26 @@ export class TodoMapper {
     return vo;
   }
 
-  static dtoToVOList(dtoList: TodoDto[]): TodoVO[] {
-    return dtoList.map((dto) => this.dtoToVO(dto));
+  static dtoToVoList(dtoList: TodoDto[]): TodoVo[] {
+    return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVO(dto: TodoWithSubDto): TodoWithSubVO {
+  static dtoToWithSubVo(dto: TodoWithSubDto): TodoWithSubVo {
     const vo = {
-      ...this.dtoToVO(dto),
-      subTodoList: SubTodoMapper.dtoToVOList(dto.subTodoList),
+      ...this.dtoToVo(dto),
+      subTodoList: SubTodoMapper.dtoToVoList(dto.subTodoList),
     };
     return vo;
   }
 
-  static dtoToPageVO(
+  static dtoToPageVo(
     dtoList: TodoDto[],
     total: number,
     pageNum: number,
     pageSize: number
-  ): TodoPageVO {
+  ): TodoPageVo {
     const vo = {
-      list: this.dtoToVOList(dtoList),
+      list: this.dtoToVoList(dtoList),
       total,
       pageNum,
       pageSize,
@@ -81,18 +84,17 @@ export class TodoMapper {
     return vo;
   }
 
-  static dtoToListVO(dtoList: TodoDto[]): TodoListVO {
+  static dtoToListVo(dtoList: TodoDto[]): TodoListVo {
     const vo = {
-      list: this.dtoToVOList(dtoList),
+      list: this.dtoToVoList(dtoList),
     };
     return vo;
   }
 
-  static voToCreateDto(vo: CreateTodoVO): CreateTodoDto {
+  static voToCreateDto(vo: CreateTodoVo): CreateTodoDto {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.status = vo.status as TodoStatus;
     dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
@@ -101,11 +103,10 @@ export class TodoMapper {
     return dto;
   }
 
-  static voToUpdateDto(vo: CreateTodoVO): UpdateTodoDto {
+  static voToUpdateDto(vo: CreateTodoVo): UpdateTodoDto {
     const dto = new UpdateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.status = vo.status as TodoStatus;
     dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;

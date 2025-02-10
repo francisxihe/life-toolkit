@@ -19,6 +19,7 @@ import {
   TodoWithSubDto,
 } from "../dto";
 import dayjs from "dayjs";
+import { CreateTodoVo } from "@life-toolkit/vo/todo";
 
 function getWhere(filter: TodoPageFilterDto) {
   const where: FindOptionsWhere<Todo> = {};
@@ -84,7 +85,7 @@ export class TodoService {
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
     const todo = this.todoRepository.create({
       ...createTodoDto,
-      status: createTodoDto.status || TodoStatus.TODO,
+      status: TodoStatus.TODO,
       tags: createTodoDto.tags || [],
       planDate: createTodoDto.planDate
         ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")

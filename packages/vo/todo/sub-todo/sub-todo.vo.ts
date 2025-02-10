@@ -1,6 +1,6 @@
 import { BaseModelVo } from "../../base/model.vo";
 
-export type SubTodoModelVO = {
+export type SubTodoModelVo = {
   /** 待办名称 */
   name: string;
   /** 待办描述 */
@@ -17,8 +17,6 @@ export type SubTodoModelVO = {
   planStartAt?: string;
   /** 计划待办结束时间 */
   planEndAt?: string;
-  /** 待办创建时间 */
-  createdAt: string;
   /** 放弃待办时间 */
   abandonedAt?: string;
   /** 待办状态 */
@@ -28,4 +26,4 @@ export type SubTodoModelVO = {
 };
 
 
-export type SubTodoVO = BaseModelVo & SubTodoModelVO;
+export type SubTodoVo = BaseModelVo & SubTodoModelVo;

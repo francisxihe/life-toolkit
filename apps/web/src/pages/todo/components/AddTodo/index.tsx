@@ -60,14 +60,14 @@ export default function AddTodo(props: {
             formData={{
               date: dayjs(formData.planDate),
               timeRange: formData.planTimeRange as [string, string],
-              recurring: formData.recurring,
+              repeat: formData.repeat,
             }}
             onChangeData={(data) => {
               const _formData = {
                 ...formData,
                 planDate: data.date.format('YYYY-MM-DD'),
                 planTimeRange: data.timeRange,
-                recurring: data.recurring as TodoFormData['recurring'],
+                repeat: data.repeat as TodoFormData['repeat'],
               };
               setFormData(_formData);
               props.onChange?.(_formData);

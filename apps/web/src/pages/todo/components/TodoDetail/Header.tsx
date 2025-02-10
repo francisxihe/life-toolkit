@@ -20,14 +20,14 @@ export default function TodoDetailHeader() {
           formData={{
             date: dayjs(todoFormData.planDate),
             timeRange: todoFormData.planTimeRange,
-            recurring: todoFormData.recurring,
+            repeat: todoFormData.repeat,
           }}
           onChangeData={async (formData) => {
             setTodoFormData({
               ...todoFormData,
               planDate: formData.date.format('YYYY-MM-DD'),
               planTimeRange: formData.timeRange,
-              recurring: formData.recurring as
+              repeat: formData.repeat as
                 | 'none'
                 | 'daily'
                 | 'weekly'

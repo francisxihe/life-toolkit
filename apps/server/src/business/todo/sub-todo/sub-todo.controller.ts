@@ -12,8 +12,8 @@ import { SubTodoService } from "./sub-todo.service";
 import { TodoStatusService } from "../todo-status.service";
 import { Response } from "@/decorators/response.decorator";
 import {
-  CreateSubTodoVO,
-  SubTodoListFilterVO,
+  CreateSubTodoVo,
+  SubTodoListFilterVo,
 } from "@life-toolkit/vo/todo/sub-todo";
 import { SubTodoMapper } from "./sub-todo.mapper";
 
@@ -29,14 +29,14 @@ export class SubTodoController {
   @Response()
   async subTodoWithSub(@Param("id") id: string) {
     const dto = await this.subTodoService.subTodoWithSub(id);
-    return SubTodoMapper.dtoToWithSubVO(dto);
+    return SubTodoMapper.dtoToWithSubVo(dto);
   }
 
   /** 放弃子待办 */
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.todoStatusService.abandon(id);
+    const result = await this.todoStatusService.abandonSub(id);
     return { result };
   }
 
@@ -44,7 +44,7 @@ export class SubTodoController {
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.todoStatusService.restore(id);
+    const result = await this.todoStatusService.restoreSub(id);
     return { result };
   }
 
@@ -53,10 +53,10 @@ export class SubTodoController {
   /** 创建子待办事项 */
   @Post("create")
   @Response()
-  async create(@Body() createSubTodoVO: CreateSubTodoVO) {
-    const createdDto = SubTodoMapper.voToCreateDto(createSubTodoVO);
+  async create(@Body() createSubTodoVo: CreateSubTodoVo) {
+    const createdDto = SubTodoMapper.voToCreateDto(createSubTodoVo);
     const todoDto = await this.subTodoService.create(createdDto);
-    return SubTodoMapper.dtoToVO(todoDto);
+    return SubTodoMapper.dtoToVo(todoDto);
   }
 
   /** 删除子待办事项 */
@@ -71,11 +71,11 @@ export class SubTodoController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateSubTodoVO: CreateSubTodoVO
+    @Body() updateSubTodoVo: CreateSubTodoVo
   ) {
-    const updatedDto = SubTodoMapper.voToUpdateDto(updateSubTodoVO);
+    const updatedDto = SubTodoMapper.voToUpdateDto(updateSubTodoVo);
     const todoDto = await this.subTodoService.update(id, updatedDto);
-    return SubTodoMapper.dtoToVO(todoDto);
+    return SubTodoMapper.dtoToVo(todoDto);
   }
 
   /** 获取子待办事项详情 */
@@ -83,14 +83,14 @@ export class SubTodoController {
   @Response()
   async findById(@Param("id") id: string) {
     const dto = await this.subTodoService.findById(id);
-    return SubTodoMapper.dtoToVO(dto);
+    return SubTodoMapper.dtoToVo(dto);
   }
 
   /** 获取子待办列表 */
   @Get("list")
   @Response()
-  async list(@Query() subTodoListFilterVO: SubTodoListFilterVO) {
-    const dtoList = await this.subTodoService.findAll(subTodoListFilterVO);
-    return SubTodoMapper.dtoToVOList(dtoList);
+  async list(@Query() subTodoListFilterVo: SubTodoListFilterVo) {
+    const dtoList = await this.subTodoService.findAll(subTodoListFilterVo);
+    return SubTodoMapper.dtoToVoList(dtoList);
   }
 }

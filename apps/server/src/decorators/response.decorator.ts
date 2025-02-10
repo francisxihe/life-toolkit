@@ -22,7 +22,10 @@ export function Response() {
           data: result,
         });
       } catch (error) {
-        return ResponseDto.error(error);
+        return ResponseDto.error({
+          message: error.message,
+          code: 600,
+        });
       }
     };
 

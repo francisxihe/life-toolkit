@@ -1,7 +1,7 @@
 import { Input, Button, Popover } from '@arco-design/web-react';
 import { useTodoDetailContext } from './context';
 import TodoService from '../../service';
-import TodoList from '../TodoList';
+import SubTodoList from '../TodoList/SubTodoList';
 import SiteIcon from '@/components/SiteIcon';
 import AddTodo from '../AddTodo';
 import { useState, useCallback } from 'react';
@@ -26,11 +26,12 @@ export default function TodoDetailMain() {
     (todoFormData: TodoFormData) => {
       setSubTodoFormData(todoFormData);
     },
-    [setSubTodoFormData]
+    [setSubTodoFormData],
   );
 
   const onClickSubmitSubTodo = useCallback(async () => {
-    await TodoService.addSubTodo(todoNode.id, {
+    await TodoService.addSubTodo({
+      parentId: todoNode.id,
       name: subTodoFormData.name,
       importance: subTodoFormData.importance,
       urgency: subTodoFormData.urgency,
@@ -39,7 +40,7 @@ export default function TodoDetailMain() {
       tags: subTodoFormData.tags,
     });
 
-    await refreshSubTodoFormData(todoNode);
+    await refreshSubTodoFormData(todoNode.id);
     setAddSubTodoVisible(false);
   }, [subTodoFormData, todoNode, refreshSubTodoFormData]);
 
@@ -71,13 +72,13 @@ export default function TodoDetailMain() {
         }}
       />
       <div>
-        <TodoList
+        <SubTodoList
           todoList={todoNode.subTodoList}
-          onClickTodo={async (todo) => {
-            await refreshSubTodoFormData(todo);
+          onClickTodo={async (id) => {
+            await refreshSubTodoFormData(id);
           }}
           refreshTodoList={async () => {
-            await refreshSubTodoFormData(todoNode);
+            await refreshSubTodoFormData(todoNode.id);
           }}
         />
       </div>

@@ -139,7 +139,7 @@ export default function TodoTable() {
       return;
     }
     setSubTodoLoadingStatus((prev) => ({ ...prev, [record.id]: 'loading' }));
-    const todoNode = await TodoService.getTodoNode(record.id);
+    const todoNode = await TodoService.getTodoWithSub(record.id);
     setExpandedData((prev) => ({
       ...prev,
       [record.id]: todoNode,

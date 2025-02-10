@@ -67,7 +67,7 @@ export function responseErrorHandler(error: any) {
     errorText = "未知错误";
   }
 
-  switch (error.response && error.response.status) {
+  switch (error.response && error.response.code) {
     case 401:
       handleAuthError(error);
       break;
