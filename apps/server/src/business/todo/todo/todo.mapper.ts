@@ -1,11 +1,5 @@
 import { SubTodoMapper } from "../sub-todo/sub-todo.mapper";
-import {
-  TodoVo,
-  TodoWithSubVo,
-  TodoPageVo,
-  TodoListVo,
-  CreateTodoVo,
-} from "@life-toolkit/vo/todo";
+import type { Todo as TodoVO} from "@life-toolkit/vo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoWithSubDto } from "../dto";
 import { TodoStatus, TodoRepeat } from "../entities";
 import { Todo } from "../entities/todo.entity";
@@ -32,8 +26,8 @@ export class TodoMapper {
     return dto;
   }
 
-  static dtoToVo(dto: TodoDto): TodoVo {
-    const vo: TodoVo = {
+  static dtoToVo(dto: TodoDto): TodoVO.TodoVo {
+    const vo: TodoVO.TodoVo = {
       name: dto.name || "",
       description: dto.description,
       status: dto.status || TodoStatus.TODO,
@@ -57,11 +51,11 @@ export class TodoMapper {
     return vo;
   }
 
-  static dtoToVoList(dtoList: TodoDto[]): TodoVo[] {
+  static dtoToVoList(dtoList: TodoDto[]): TodoVO.TodoVo[] {
     return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVo(dto: TodoWithSubDto): TodoWithSubVo {
+  static dtoToWithSubVo(dto: TodoWithSubDto): TodoVO.TodoWithSubVo {
     const vo = {
       ...this.dtoToVo(dto),
       subTodoList: SubTodoMapper.dtoToVoList(dto.subTodoList),
@@ -74,7 +68,7 @@ export class TodoMapper {
     total: number,
     pageNum: number,
     pageSize: number
-  ): TodoPageVo {
+  ): TodoVO.TodoPageVo {
     const vo = {
       list: this.dtoToVoList(dtoList),
       total,
@@ -84,14 +78,14 @@ export class TodoMapper {
     return vo;
   }
 
-  static dtoToListVo(dtoList: TodoDto[]): TodoListVo {
+  static dtoToListVo(dtoList: TodoDto[]): TodoVO.TodoListVo {
     const vo = {
       list: this.dtoToVoList(dtoList),
     };
     return vo;
   }
 
-  static voToCreateDto(vo: CreateTodoVo): CreateTodoDto {
+  static voToCreateDto(vo: TodoVO.CreateTodoVo): CreateTodoDto {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
@@ -103,7 +97,7 @@ export class TodoMapper {
     return dto;
   }
 
-  static voToUpdateDto(vo: CreateTodoVo): UpdateTodoDto {
+  static voToUpdateDto(vo: TodoVO.CreateTodoVo): UpdateTodoDto {
     const dto = new UpdateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;

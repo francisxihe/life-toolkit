@@ -1,14 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import {
-  Repository,
-  FindOperator,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-} from "typeorm";
+import { EntityManager, FilterQuery } from "@mikro-orm/core";
+import { InjectRepository } from "@mikro-orm/nestjs";
+import { EntityRepository } from "@mikro-orm/mysql";
 import { Todo, TodoStatus } from "../entities";
 import {
   CreateTodoDto,
@@ -19,48 +12,59 @@ import {
   TodoWithSubDto,
 } from "../dto";
 import dayjs from "dayjs";
-import { CreateTodoVo } from "@life-toolkit/vo/todo";
 
-function getWhere(filter: TodoPageFilterDto) {
-  const where: FindOptionsWhere<Todo> = {};
+function getQuery(filter: TodoPageFilterDto) {
+  const where: FilterQuery<Todo> = {};
   if (filter.planDateStart && filter.planDateEnd) {
-    where.planDate = Between(
-      new Date(filter.planDateStart + "T00:00:00"),
-      new Date(filter.planDateEnd + "T23:59:59")
-    );
+    where.planDate = {
+      $gte: new Date(filter.planDateStart + "T00:00:00"),
+      $lte: filter.planDateEnd
+        ? new Date(filter.planDateEnd + "T23:59:59")
+        : undefined,
+    };
   } else if (filter.planDateStart) {
-    where.planDate = MoreThan(new Date(filter.planDateStart + "T00:00:00"));
+    where.planDate = {
+      $gte: new Date(filter.planDateStart + "T00:00:00"),
+    };
   } else if (filter.planDateEnd) {
-    where.planDate = LessThan(new Date(filter.planDateEnd + "T23:59:59"));
+    where.planDate = {
+      $lte: new Date(filter.planDateEnd + "T23:59:59"),
+    };
   }
 
   if (filter.doneDateStart && filter.doneDateEnd) {
-    where.doneAt = Between(
-      new Date(filter.doneDateStart + "T00:00:00"),
-      new Date(filter.doneDateEnd + "T23:59:59")
-    );
+    where.doneAt = {
+      $gte: new Date(filter.doneDateStart + "T00:00:00"),
+      $lte: filter.doneDateEnd
+        ? new Date(filter.doneDateEnd + "T23:59:59")
+        : undefined,
+    };
   } else if (filter.doneDateStart) {
-    where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
+    where.doneAt = {
+      $gte: new Date(filter.doneDateStart + "T00:00:00"),
+    };
   } else if (filter.doneDateEnd) {
-    where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
+    where.doneAt = {
+      $lte: new Date(filter.doneDateEnd + "T23:59:59"),
+    };
   }
 
   if (filter.abandonedDateStart && filter.abandonedDateEnd) {
-    where.abandonedAt = Between(
-      new Date(filter.abandonedDateStart + "T00:00:00"),
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
+    where.abandonedAt = {
+      $gte: new Date(filter.abandonedDateStart + "T00:00:00"),
+      $lte: new Date(filter.abandonedDateEnd + "T23:59:59"),
+    };
   } else if (filter.abandonedDateStart) {
-    where.abandonedAt = MoreThan(
-      new Date(filter.abandonedDateStart + "T00:00:00")
-    );
+    where.abandonedAt = {
+      $gte: new Date(filter.abandonedDateStart + "T00:00:00"),
+    };
   } else if (filter.abandonedDateEnd) {
-    where.abandonedAt = LessThan(
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
+    where.abandonedAt = {
+      $lte: new Date(filter.abandonedDateEnd + "T23:59:59"),
+    };
   }
   if (filter.keyword) {
-    where.name = Like(`%${filter.keyword}%`);
+    where.name = { $like: `%${filter.keyword}%` };
   }
   if (filter.status) {
     where.status = filter.status;
@@ -79,7 +83,8 @@ function getWhere(filter: TodoPageFilterDto) {
 export class TodoService {
   constructor(
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>
+    private readonly todoRepository: EntityRepository<Todo>,
+    private readonly em: EntityManager
   ) {}
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
@@ -87,24 +92,27 @@ export class TodoService {
       ...createTodoDto,
       status: TodoStatus.TODO,
       tags: createTodoDto.tags || [],
-      planDate: createTodoDto.planDate
-        ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
-        : undefined,
+      planDate: dayjs(createTodoDto.planDate).format("YYYY-MM-DD"),
+      createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      updatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
     });
-    await this.todoRepository.save(todo);
+    await this.em.persistAndFlush(todo);
     return {
       ...todo,
     };
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const todos = await this.todoRepository.find({
-      where: getWhere(filter),
-    });
+    try {
+      const todoList = await this.todoRepository.find(getQuery(filter));
 
-    return todos.map((todo) => ({
-      ...todo,
-    }));
+      return todoList.map((todo) => ({
+        ...todo,
+      }));
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async page(
@@ -113,11 +121,13 @@ export class TodoService {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
 
-    const [todos, total] = await this.todoRepository.findAndCount({
-      where: getWhere(filter),
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-    });
+    const [todos, total] = await this.todoRepository.findAndCount(
+      getQuery(filter),
+      {
+        limit: pageSize,
+        offset: (pageNum - 1) * pageSize,
+      }
+    );
 
     return {
       list: todos.map((todo) => ({
@@ -128,27 +138,31 @@ export class TodoService {
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOneBy({ id });
+    const todo = await this.todoRepository.findOne({ id });
     if (!todo) {
       throw new Error("Todo not found");
     }
 
-    await this.todoRepository.update(id, {
-      ...updateTodoDto,
-      planDate: updateTodoDto.planDate
-        ? dayjs(updateTodoDto.planDate).toDate()
-        : undefined,
-    });
+    await this.em.nativeUpdate(
+      Todo,
+      { id },
+      {
+        ...updateTodoDto,
+        planDate: updateTodoDto.planDate
+          ? dayjs(updateTodoDto.planDate).toDate()
+          : undefined,
+      }
+    );
 
     return this.findById(id);
   }
 
   async delete(id: string): Promise<void> {
-    await this.todoRepository.delete(id);
+    await this.todoRepository.nativeDelete(id);
   }
 
   async findById(id: string): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOneBy({ id });
+    const todo = await this.todoRepository.findOne({ id });
     if (!todo) {
       throw new Error("Todo not found");
     }
@@ -159,11 +173,10 @@ export class TodoService {
   }
 
   async todoWithSub(id: string): Promise<TodoWithSubDto> {
-    const todo = await this.todoRepository
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.subTodoList", "subTodos")
-      .where("todo.id = :id", { id })
-      .getOne();
+    const todo = await this.todoRepository.findOne(
+      { id },
+      { populate: ["subTodoList"] }
+    );
 
     if (!todo) {
       throw new Error("Todo not found");
@@ -171,7 +184,7 @@ export class TodoService {
 
     return {
       ...todo,
-      subTodoList: todo.subTodoList.map((subTodo) => ({
+      subTodoList: todo.subTodoList.getItems().map((subTodo) => ({
         ...subTodo,
       })),
     };

@@ -1,0 +1,21 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "./src",
+  "root": "./",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "./tsconfig.json"
+  },
+  "projects": {
+    "server": {
+      "type": "application",
+      "root": "./",
+      "entryFile": "main",
+      "sourceRoot": "./src",
+      "compilerOptions": {
+        "tsConfigPath": "./tsconfig.json",
+        "webpackConfigPath": "./webpack.config.js"
+      }
+    }
+  }
+}

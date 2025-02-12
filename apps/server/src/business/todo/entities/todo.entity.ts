@@ -1,22 +1,26 @@
-import { Entity, Column, OneToMany } from "typeorm";
+import { Entity, Property, PrimaryKey, OneToMany, Collection } from "@mikro-orm/core";
 import { BaseTodoEntity } from "./base.entity";
 import { SubTodo } from "./sub-todo.entity";
 import { TodoRepeat } from "./enum";
-@Entity("todo")
+
+@Entity({ tableName: "todo" })
 export class Todo extends BaseTodoEntity {
   /** 计划待办日期 */
-  @Column("date")
+  @Property({ fieldName: "planDate", type: "date" })
   planDate: Date;
 
   /** 重复类型 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "repeat", nullable: true })
   repeat?: TodoRepeat;
 
   /** 待办重复间隔 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "repeatInterval", nullable: true })
   repeatInterval?: string;
 
   /** 子待办 */
-  @OneToMany(() => SubTodo, (subTodo) => subTodo.parentTodo)
-  subTodoList: SubTodo[];
+  @OneToMany({
+    entity: () => SubTodo,
+    mappedBy: "parentTodo"
+  })
+  subTodoList = new Collection<SubTodo>(this);
 }

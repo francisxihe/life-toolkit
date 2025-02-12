@@ -1,6 +1,6 @@
 'use client';
 
-import { SubTodoVo } from '@life-toolkit/vo/todo/sub-todo';
+import { SubTodoVo } from '@life-toolkit/vo/todo';
 import TriggerStatusCheckbox from './TriggerStatusCheckbox';
 import TodoItem from './TodoItem';
 

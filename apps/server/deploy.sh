@@ -10,7 +10,7 @@ ECS_PATH="/root/project/life_toolkit"
 ssh -p 22 $ECS_USERNAME@$ECS_IP "cd $ECS_PATH && rm -rf *" || { echo "清空远程目录失败！"; exit 1; }
 
 # 使用 rsync 同步文件
-/opt/homebrew/bin/rsync -avz --include 'dist/***' --include '.env.production.local' --include 'package.json' --include 'ecosystem.config.js' --exclude '*' -e "ssh" "$LOCAL_DIR" "${ECS_USERNAME}@${ECS_IP}:$ECS_PATH"
+/opt/homebrew/bin/rsync -avz --include 'dist/***' --include 'package.json' --include 'ecosystem.config.js' --exclude '*' -e "ssh" "$LOCAL_DIR" "${ECS_USERNAME}@${ECS_IP}:$ECS_PATH"
 
 # 安装node_modules
 ssh -p 22 $ECS_USERNAME@$ECS_IP "cd $ECS_PATH && pnpm install" || { echo "安装node_modules失败！"; exit 1; }

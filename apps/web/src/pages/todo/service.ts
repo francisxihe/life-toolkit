@@ -5,14 +5,11 @@ import {
   CreateTodoVo,
   TodoPageFiltersVo,
   TodoListFiltersVo,
-} from '@life-toolkit/vo/todo';
-import {
-  SubTodoVo,
   CreateSubTodoVo,
-  SubTodoWithSubVo,
   SubTodoListFilterVo,
-} from '@life-toolkit/vo/todo/sub-todo';
+} from '@life-toolkit/vo/todo';
 import { OperationByIdListVo } from '@life-toolkit/vo';
+
 export default class TodoService {
   static async getTodoWithSub(todoId: string) {
     try {

@@ -1,4 +1,4 @@
-import { OperationByIdListVo } from "@life-toolkit/vo";
+import type { OperationByIdListVo } from "@life-toolkit/vo";
 import { OperationByIdListDto } from "./operation.dto";
 
 export class OperationMapper {

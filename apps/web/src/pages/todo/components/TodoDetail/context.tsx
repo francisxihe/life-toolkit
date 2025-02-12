@@ -9,30 +9,29 @@ import {
   useRef,
   useCallback,
 } from 'react';
-import { TodoVo, TodoWithSubVo } from '@life-toolkit/vo/todo';
-import { SubTodoVo } from '@life-toolkit/vo/todo/sub-todo';
+import type { Todo } from '@life-toolkit/vo';
 import { TodoFormData } from '../../types';
 import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { CreateTodoVo } from '@life-toolkit/vo/todo';
+
 export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
   {
-    todoNode: TodoWithSubVo;
+    todoNode: Todo.TodoWithSubVo;
     todoFormData: TodoFormData;
     setTodoFormData: Dispatch<React.SetStateAction<TodoFormData>>;
     onClose: () => Promise<void> | null;
     onChange: (todo: TodoFormData) => Promise<void>;
     refreshSubTodoFormData: (id: string) => Promise<void>;
-    initTodoFormData: (todo: TodoVo) => Promise<void>;
+    initTodoFormData: (todo: Todo.TodoVo) => Promise<void>;
   },
   {
     children: React.ReactNode;
-    todo: TodoVo;
+    todo: Todo.TodoVo;
     onClose: () => Promise<void> | null;
-    onChange: (todo: TodoVo) => Promise<void>;
+    onChange: (todo: Todo.TodoVo) => Promise<void>;
   }
 >((props) => {
-  function transformTodoVoToFormData(todo: TodoWithSubVo): TodoFormData {
+  function transformTodoVoToFormData(todo: Todo.TodoWithSubVo): TodoFormData {
     return {
       name: todo.name,
       description: todo.description,
@@ -46,7 +45,9 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
     };
   }
 
-  function transformFormDataToCreateVo(todoFormData: TodoFormData): CreateTodoVo {
+  function transformFormDataToCreateVo(
+    todoFormData: TodoFormData,
+  ): Todo.CreateTodoVo {
     return {
       name: todoFormData.name,
       description: todoFormData.description,
@@ -62,10 +63,10 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
 
   const [todoFormData, setTodoFormData] = useState<TodoFormData>();
 
-  const [todoNode, setTodoNode] = useState<TodoWithSubVo>(
-    props.todo as TodoWithSubVo,
+  const [todoNode, setTodoNode] = useState<Todo.TodoWithSubVo>(
+    props.todo as Todo.TodoWithSubVo,
   );
-  const todoNodeRef = useRef<TodoWithSubVo>();
+  const todoNodeRef = useRef<Todo.TodoWithSubVo>();
 
   const refreshSubTodoFormData = async (id: string) => {
     const fetchedTodoNode = await TodoService.getSubTodoNode(id);

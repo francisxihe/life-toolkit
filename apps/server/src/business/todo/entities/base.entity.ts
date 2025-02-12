@@ -1,49 +1,45 @@
-import { Column } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import { TodoStatus } from "./enum";
+import { Property } from "@mikro-orm/core";
 
 export class BaseTodoEntity extends BaseEntity {
   /** 待办名称 */
-  @Column()
+  @Property({ fieldName: "name" })
   name: string;
 
   /** 待办事项状态 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "status", nullable: true })
   status: TodoStatus;
 
   /** 待办描述 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "description", nullable: true })
   description?: string;
 
   /** 待办重要程度 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "importance", nullable: true })
   importance?: number;
 
   /** 待办紧急程度 */
-  @Column({ nullable: true })
+  @Property({ fieldName: "urgency", nullable: true })
   urgency?: number;
 
   /** 待办标签 */
-  @Column("simple-array")
+  @Property({ fieldName: "tags", type: "simple-array" })
   tags: string[];
 
   /** 待办完成时间 */
-  @Column("datetime", {
-    nullable: true,
-  })
+  @Property({ fieldName: "doneAt", type: "datetime", nullable: true })
   doneAt?: Date;
 
   /** 放弃待办时间 */
-  @Column("datetime", {
-    nullable: true,
-  })
+  @Property({ fieldName: "abandonedAt", type: "datetime", nullable: true })
   abandonedAt?: Date;
 
   /** 计划待办开始时间 */
-  @Column("time", { nullable: true })
+  @Property({ fieldName: "planStartAt", type: "time", nullable: true })
   planStartAt?: string;
 
   /** 计划待办结束时间 */
-  @Column("time", { nullable: true })
+  @Property({ fieldName: "planEndAt", type: "time", nullable: true })
   planEndAt?: string;
 }

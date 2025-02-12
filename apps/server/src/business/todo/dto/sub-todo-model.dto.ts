@@ -7,7 +7,7 @@ import {
   IsNumber,
 } from "class-validator";
 import { BaseModelDto } from "@/base/base-model.dto";
-import { PartialType } from "@nestjs/swagger";
+import { PartialType } from "@nestjs/mapped-types";
 
 export class SubTodoDto extends BaseModelDto {
   /** 待办事项名称 */
@@ -86,6 +86,12 @@ export class CreateSubTodoDto {
 
   @IsString()
   parentId: string;
+
+  /** 计划开始时间 */
+  planStartAt?: string;
+
+  /** 计划结束时间 */
+  planEndAt?: string;
 }
 
 export class UpdateSubTodoDto extends PartialType(CreateSubTodoDto) {

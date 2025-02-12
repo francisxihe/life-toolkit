@@ -4,7 +4,7 @@ import {
   CreateSubTodoVo,
   SubTodoWithSubVo,
   SubTodoListFilterVo,
-} from "@life-toolkit/vo/todo/sub-todo";
+} from "@life-toolkit/vo/todo";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class SubTodoController {

@@ -1,8 +1,4 @@
-import {
-  SubTodoVo,
-  CreateSubTodoVo,
-  SubTodoWithSubVo,
-} from "@life-toolkit/vo/todo/sub-todo";
+import type { Todo } from "@life-toolkit/vo";
 import {
   CreateSubTodoDto,
   UpdateSubTodoDto,
@@ -32,8 +28,8 @@ export class SubTodoMapper {
     };
   }
 
-  static dtoToVo(dto: SubTodoDto): SubTodoVo {
-    const vo: SubTodoVo = {
+  static dtoToVo(dto: SubTodoDto): Todo.SubTodoVo {
+    const vo: Todo.SubTodoVo = {
       name: dto.name,
       description: dto.description,
       status: dto.status || TodoStatus.TODO,
@@ -56,18 +52,18 @@ export class SubTodoMapper {
     return vo;
   }
 
-  static dtoToVoList(dtoList: SubTodoDto[]): SubTodoVo[] {
+  static dtoToVoList(dtoList: SubTodoDto[]): Todo.SubTodoVo[] {
     return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVo(dto: SubTodoWithSubDto): SubTodoWithSubVo {
+  static dtoToWithSubVo(dto: SubTodoWithSubDto): Todo.SubTodoWithSubVo {
     return {
       ...this.dtoToVo(dto),
       subTodoList: this.dtoToVoList(dto.subTodoList),
     };
   }
 
-  static voToCreateDto(vo: CreateSubTodoVo): CreateSubTodoDto {
+  static voToCreateDto(vo: Todo.CreateSubTodoVo): CreateSubTodoDto {
     const dto = new CreateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
@@ -78,7 +74,7 @@ export class SubTodoMapper {
     return dto;
   }
 
-  static voToUpdateDto(vo: CreateSubTodoVo): UpdateSubTodoDto {
+  static voToUpdateDto(vo: Todo.CreateSubTodoVo): UpdateSubTodoDto {
     const dto = new UpdateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;

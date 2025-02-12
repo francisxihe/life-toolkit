@@ -12,9 +12,8 @@ import { TodoService } from "./todo.service";
 import { TodoPageFilterDto, TodoListFilterDto } from "../dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "../todo-status.service";
-import { CreateTodoVo, TodoVo } from "@life-toolkit/vo/todo";
+import type { Todo, OperationByIdListVo } from "@life-toolkit/vo";
 import { TodoMapper } from "./todo.mapper";
-import { OperationByIdListVo } from "@life-toolkit/vo";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
@@ -55,7 +54,7 @@ export class TodoController {
 
   @Post("create")
   @Response()
-  async create(@Body() createTodoVo: CreateTodoVo) {
+  async create(@Body() createTodoVo: Todo.CreateTodoVo) {
     const createdDto = TodoMapper.voToCreateDto(createTodoVo);
     const dto = await this.todoService.create(createdDto);
     return TodoMapper.dtoToVo(dto);
@@ -66,10 +65,10 @@ export class TodoController {
   async delete(@Param("id") id: string) {
     return this.todoService.delete(id);
   }
-  
+
   @Put("update/:id")
   @Response()
-  async update(@Param("id") id: string, @Body() updateTodoVo: CreateTodoVo) {
+  async update(@Param("id") id: string, @Body() updateTodoVo: Todo.CreateTodoVo) {
     const updatedDto = TodoMapper.voToUpdateDto(updateTodoVo);
     const dto = await this.todoService.update(id, updatedDto);
     return TodoMapper.dtoToVo(dto);

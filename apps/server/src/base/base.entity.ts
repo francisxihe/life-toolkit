@@ -1,26 +1,19 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn,
-} from "typeorm";
+
+import {  PrimaryKey, Property } from "@mikro-orm/core";
 
 export class BaseEntity {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryKey()
   id: string;
 
   /** 创建时间 */
-  @CreateDateColumn()
+  @Property({ type: "date" })
   createdAt: Date;
 
   /** 更新时间 */
-  @UpdateDateColumn()
+  @Property({ type: "date" })
   updatedAt: Date;
 
   /** 是否删除 */
-  @DeleteDateColumn({
-    nullable: true,
-  })
+  @Property({ type: "date", nullable: true })
   deletedAt?: Date;
 }

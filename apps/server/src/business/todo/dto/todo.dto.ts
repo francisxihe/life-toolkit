@@ -1,6 +1,6 @@
 import { TodoDto } from "./todo-model.dto";
 import { SubTodoDto } from ".";
-import { PartialType } from "@nestjs/swagger";
+import { PartialType } from "@nestjs/mapped-types";
 import { CreateTodoDto } from "./todo-model.dto";
 
 export class UpdateTodoDto extends PartialType(CreateTodoDto) {
