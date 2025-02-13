@@ -67,7 +67,7 @@ export class SubTodoMapper {
     const dto = new CreateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.tags = vo.tags;
+    dto.tags = vo.tags || [];
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
@@ -78,7 +78,7 @@ export class SubTodoMapper {
     const dto = new UpdateSubTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.tags = vo.tags;
+    dto.tags = vo.tags || [];
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;

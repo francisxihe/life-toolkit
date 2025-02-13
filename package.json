@@ -11,7 +11,11 @@
     "clean": "turbo run clean",
     "predeploy": "npm run build",
     "prepare": "husky install && husky add .husky/pre-commit 'turbo run pre-commit --filter=life-toolkit-web'",
-    "pre-commit": "turbo run pre-commit"
+    "pre-commit": "turbo run pre-commit",
+    "dev:server": "turbo run dev --filter=life-toolkit-server",
+    "dev:web": "turbo run dev --filter=life-toolkit-web",
+    "deploy:server": "turbo run deploy --filter=life-toolkit-server",
+    "deploy:web": "turbo run deploy --filter=life-toolkit-web"
   },
   "devDependencies": {
     "@life-toolkit/vo": "workspace:*",

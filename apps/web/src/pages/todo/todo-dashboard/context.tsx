@@ -1,30 +1,22 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  Dispatch,
-  SetStateAction,
-} from 'react';
-import { Todo } from './service/types';
-import TodoService from './service';
-import { GetTodoListParams } from './service/types';
+import { createContext, useContext, useState } from 'react';
+import { TodoVo, TodoListFiltersVo } from '@life-toolkit/vo/todo';
+import TodoService from '../service';
 
 interface TodoContextType {
-  todoList: Todo[];
-  loadTodoList: (params?: GetTodoListParams) => Promise<void>;
+  todoList: TodoVo[];
+  loadTodoList: (params?: TodoListFiltersVo) => Promise<void>;
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
 
 export function TodoProvider({ children }: { children: React.ReactNode }) {
-  const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<TodoVo[]>([]);
 
-  async function loadTodoList(params?: GetTodoListParams) {
-    const todoList = await TodoService.getTodoList(params);
-    setTodoList(todoList);
+  async function loadTodoList(params?: TodoListFiltersVo) {
+    const res = await TodoService.getTodoList(params);
+    setTodoList(res.list);
   }
 
   return (

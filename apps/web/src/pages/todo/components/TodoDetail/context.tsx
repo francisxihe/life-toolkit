@@ -22,6 +22,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
     onClose: () => Promise<void> | null;
     onChange: (todo: TodoFormData) => Promise<void>;
     refreshSubTodoFormData: (id: string) => Promise<void>;
+    refreshSubTodoList: (id: string) => Promise<void>;
     initTodoFormData: (todo: Todo.TodoVo) => Promise<void>;
   },
   {
@@ -66,23 +67,39 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
   const [todoNode, setTodoNode] = useState<Todo.TodoWithSubVo>(
     props.todo as Todo.TodoWithSubVo,
   );
-  const todoNodeRef = useRef<Todo.TodoWithSubVo>();
+  const todoWithSubRef = useRef<Todo.TodoWithSubVo>();
 
   const refreshSubTodoFormData = async (id: string) => {
-    const fetchedTodoNode = await TodoService.getSubTodoNode(id);
-    todoNodeRef.current = {
-      ...fetchedTodoNode,
+    const fetchedTodoWithSub = await TodoService.getSubTodoWithSub(id);
+    const subTodoList = await TodoService.getSubTodoList({
+      parentId: id,
+    });
+    todoWithSubRef.current = {
+      ...fetchedTodoWithSub,
+      subTodoList,
       planDate: todoNode.planDate,
     };
-    setTodoNode(todoNodeRef.current);
-    setTodoFormData(transformTodoVoToFormData(todoNodeRef.current));
+    setTodoNode(todoWithSubRef.current);
+    setTodoFormData(transformTodoVoToFormData(todoWithSubRef.current));
+  };
+
+  const refreshSubTodoList = async (id: string) => {
+    const subTodoList = await TodoService.getSubTodoList({
+      parentId: id,
+    });
+    todoWithSubRef.current = {
+      ...todoWithSubRef.current,
+      subTodoList,
+    };
+    setTodoNode(todoWithSubRef.current);
+    setTodoFormData(transformTodoVoToFormData(todoWithSubRef.current));
   };
 
   const initTodoFormData = useCallback(async () => {
-    const fetchedTodoNode = await TodoService.getTodoWithSub(props.todo.id);
-    setTodoNode(fetchedTodoNode);
-    todoNodeRef.current = fetchedTodoNode;
-    setTodoFormData(transformTodoVoToFormData(todoNodeRef.current));
+    const fetchedTodoWithSub = await TodoService.getTodoWithSub(props.todo.id);
+    setTodoNode(fetchedTodoWithSub);
+    todoWithSubRef.current = fetchedTodoWithSub;
+    setTodoFormData(transformTodoVoToFormData(todoWithSubRef.current));
   }, [props.todo]);
 
   useEffect(() => {
@@ -111,6 +128,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
     onClose,
     onChange,
     refreshSubTodoFormData,
+    refreshSubTodoList,
     initTodoFormData,
   };
 });

@@ -73,6 +73,9 @@ function TodoItem(props: TodoItemProps) {
                 }
               >
                 <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                   iconOnly
                   type="text"
                   size="mini"

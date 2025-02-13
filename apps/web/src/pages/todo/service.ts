@@ -114,7 +114,7 @@ export default class TodoService {
     }
   }
 
-  static async getSubTodoNode(todoId: string) {
+  static async getSubTodoWithSub(todoId: string) {
     try {
       return SubTodoController.getSubTodoWithSub(todoId);
     } catch (error) {

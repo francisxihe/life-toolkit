@@ -25,8 +25,6 @@ export default class SubTodoController {
   }
 
   static async getSubTodoList(params: SubTodoListFilterVo) {
-    return await get<SubTodoVo[]>(`/sub-todo/list`, {
-      params,
-    });
+    return await get<SubTodoVo[]>(`/sub-todo/list`, params);
   }
 }

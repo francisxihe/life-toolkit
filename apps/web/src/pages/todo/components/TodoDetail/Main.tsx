@@ -16,6 +16,7 @@ export default function TodoDetailMain() {
     setTodoFormData,
     onChange,
     refreshSubTodoFormData,
+    refreshSubTodoList,
   } = useTodoDetailContext();
 
   const [subTodoFormData, setSubTodoFormData] =
@@ -40,9 +41,9 @@ export default function TodoDetailMain() {
       tags: subTodoFormData.tags,
     });
 
-    await refreshSubTodoFormData(todoNode.id);
+    await refreshSubTodoList(todoNode.id);
     setAddSubTodoVisible(false);
-  }, [subTodoFormData, todoNode, refreshSubTodoFormData]);
+  }, [subTodoFormData, todoNode, refreshSubTodoList]);
 
   return todoFormData ? (
     <>
@@ -71,17 +72,15 @@ export default function TodoDetailMain() {
           }));
         }}
       />
-      <div>
-        <SubTodoList
-          todoList={todoNode.subTodoList}
-          onClickTodo={async (id) => {
-            await refreshSubTodoFormData(id);
-          }}
-          refreshTodoList={async () => {
-            await refreshSubTodoFormData(todoNode.id);
-          }}
-        />
-      </div>
+      <SubTodoList
+        todoList={todoNode.subTodoList}
+        onClickTodo={async (id) => {
+          await refreshSubTodoFormData(id);
+        }}
+        refreshTodoList={async () => {
+          await refreshSubTodoList(todoNode.id);
+        }}
+      />
       <Popover
         popupVisible={addSubTodoVisible}
         trigger="click"

@@ -1,6 +1,0 @@
-{
-  "compilerOptions": {
-    "webpack": true,
-    "tsConfigPath": "apps/server/tsconfig.json"
-  }
-} 

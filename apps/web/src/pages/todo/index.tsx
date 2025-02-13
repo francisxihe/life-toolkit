@@ -1,7 +1,12 @@
 'use client';
 
 import { Outlet } from 'react-router-dom';
-import TodoLayout from './layout';
+
+import { TodoProvider } from './todo-dashboard/context';
+
+export function TodoLayout({ children }: { children: React.ReactNode }) {
+  return <TodoProvider>{children}</TodoProvider>;
+}
 
 export default function TodoPage() {
   return (

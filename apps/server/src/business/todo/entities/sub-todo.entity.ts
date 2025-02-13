@@ -1,11 +1,13 @@
 import { Entity, Column, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { BaseTodoEntity } from "./base.entity";
 import { Todo } from "./todo.entity";
+import { IsString } from "class-validator";
 
 @Entity("sub_todo")
 export class SubTodo extends BaseTodoEntity {
   /** 父待办id */
   @Column()
+  @IsString()
   parentId: string;
 
   /** 子待办列表 */

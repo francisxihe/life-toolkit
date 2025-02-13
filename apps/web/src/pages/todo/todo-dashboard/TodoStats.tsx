@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Card, Grid, Typography } from '@arco-design/web-react';
-import { useTodoContext } from '../context';
+import { useTodoContext } from './context';
 
 const { Row, Col } = Grid;
 const { Title, Text } = Typography;
