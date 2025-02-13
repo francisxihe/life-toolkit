@@ -10,3 +10,5 @@ export class BaseModelDto {
   /** 删除时间 */
   deletedAt?: Date;
 }
+
+export const BaseModelDtoKeys = ["id", "createdAt", "updatedAt", "deletedAt"] as const;

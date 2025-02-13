@@ -1,5 +1,5 @@
 import { SubTodoMapper } from "../sub-todo/sub-todo.mapper";
-import type { Todo as TodoVO} from "@life-toolkit/vo";
+import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoWithSubDto } from "../dto";
 import { TodoStatus, TodoRepeat } from "../entities";
 import { Todo } from "../entities/todo.entity";
@@ -89,10 +89,10 @@ export class TodoMapper {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.tags = vo.tags;
+    dto.tags = vo.tags || [];
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
-    dto.planDate = vo.planDate;
+    dto.planDate = dayjs(vo.planDate).toDate();
     dto.repeat = vo.repeat as TodoRepeat;
     return dto;
   }
@@ -104,7 +104,7 @@ export class TodoMapper {
     dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
-    dto.planDate = vo.planDate;
+    dto.planDate = dayjs(vo.planDate).toDate();
     dto.repeat = vo.repeat as TodoRepeat;
     return dto;
   }

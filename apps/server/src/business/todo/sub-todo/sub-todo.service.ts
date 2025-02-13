@@ -2,7 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { SubTodo, TodoStatus } from "../entities";
-import { CreateSubTodoDto, UpdateSubTodoDto, SubTodoDto, SubTodoListFilterDto } from "../dto";
+import {
+  CreateSubTodoDto,
+  UpdateSubTodoDto,
+  SubTodoDto,
+  SubTodoListFilterDto,
+} from "../dto";
 import { SubTodoMapper } from "./sub-todo.mapper";
 import dayjs from "dayjs";
 
@@ -16,11 +21,8 @@ export class SubTodoService {
   async create(createSubTodoDto: CreateSubTodoDto) {
     const subTodo = this.subTodoRepository.create({
       ...createSubTodoDto,
-      status: createSubTodoDto.status || TodoStatus.TODO,
+      status: TodoStatus.TODO,
       tags: createSubTodoDto.tags || [],
-      planStartAt: createSubTodoDto.planDate
-        ? dayjs(createSubTodoDto.planDate).format("HH:mm")
-        : undefined,
     });
     const savedEntity = await this.subTodoRepository.save(subTodo);
     return SubTodoMapper.entityToDto(savedEntity);
@@ -48,16 +50,9 @@ export class SubTodoService {
       throw new NotFoundException(`SubTodo #${id} not found`);
     }
 
-    const updateData = {
-      ...updateSubTodoDto,
-      planDate: updateSubTodoDto.planDate
-        ? dayjs(updateSubTodoDto.planDate).format("YYYY-MM-DD")
-        : undefined,
-    };
-
     const savedEntity = await this.subTodoRepository.save({
       ...subTodo,
-      ...updateData,
+      ...updateSubTodoDto,
     });
     return SubTodoMapper.entityToDto(savedEntity);
   }

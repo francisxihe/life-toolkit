@@ -98,11 +98,11 @@ export class TodoService {
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const todos = await this.todoRepository.find({
+    const todoList = await this.todoRepository.find({
       where: getWhere(filter),
     });
 
-    return todos.map((todo) => ({
+    return todoList.map((todo) => ({
       ...todo,
     }));
   }
@@ -113,14 +113,14 @@ export class TodoService {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
 
-    const [todos, total] = await this.todoRepository.findAndCount({
+    const [todoList, total] = await this.todoRepository.findAndCount({
       where: getWhere(filter),
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
 
     return {
-      list: todos.map((todo) => ({
+      list: todoList.map((todo) => ({
         ...todo,
       })),
       total,

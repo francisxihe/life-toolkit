@@ -11,7 +11,7 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "deploy:server": "pnpm run build && ./deploy.sh"
+    "deploy": "pnpm run build && ./deploy.sh"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

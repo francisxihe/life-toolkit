@@ -1,14 +1,12 @@
-import { TodoStatus } from "../entities";
-import {
-  IsOptional,
-  IsString,
-  IsDateString,
-  IsNumber,
-  IsEnum,
-} from "class-validator";
+import { IsOptional, IsString, IsDateString } from "class-validator";
 import { PageDto } from "@/base/page.dto";
+import { TodoDto } from "./todo.dto";
+import { PickType, IntersectionType } from "@nestjs/mapped-types";
 
-export class TodoPageFilterDto extends PageDto {
+export class TodoPageFilterDto extends IntersectionType(
+  PageDto,
+  PickType(TodoDto, ["importance", "urgency", "status"] as const)
+) {
   /** 搜索关键词 */
   @IsOptional()
   @IsString()
@@ -23,21 +21,6 @@ export class TodoPageFilterDto extends PageDto {
   @IsOptional()
   @IsDateString()
   planDateEnd?: string;
-
-  /** 重要程度 */
-  @IsOptional()
-  @IsNumber()
-  importance?: number;
-
-  /** 紧急程度 */
-  @IsOptional()
-  @IsNumber()
-  urgency?: number;
-
-  /** 待办事项状态 */
-  @IsOptional()
-  @IsEnum(TodoStatus)
-  status?: TodoStatus;
 
   /** 完成开始日期 */
   @IsOptional()
@@ -58,19 +41,13 @@ export class TodoPageFilterDto extends PageDto {
   @IsOptional()
   @IsDateString()
   abandonedDateEnd?: string;
-
-  /** 页码 */
-  @IsOptional()
-  @IsNumber()
-  pageNum?: number | undefined;
-
-  /** 每页数量 */
-  @IsOptional()
-  @IsNumber()
-  pageSize?: number | undefined;
 }
 
-export class TodoListFilterDto {
+export class TodoListFilterDto extends PickType(TodoDto, [
+  "importance",
+  "urgency",
+  "status",
+] as const) {
   /** 计划开始日期 */
   @IsOptional()
   @IsDateString()
@@ -80,21 +57,6 @@ export class TodoListFilterDto {
   @IsOptional()
   @IsDateString()
   planDateEnd?: string;
-
-  /** 重要程度 */
-  @IsOptional()
-  @IsNumber()
-  importance?: number;
-
-  /** 紧急程度 */
-  @IsOptional()
-  @IsNumber()
-  urgency?: number;
-
-  /** 待办事项状态 */
-  @IsOptional()
-  @IsEnum(TodoStatus)
-  status?: TodoStatus;
 
   /** 完成开始日期 */
   @IsOptional()
