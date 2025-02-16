@@ -1,4 +1,4 @@
-import cs from 'classnames';
+import cs from 'clsx';
 import { isArray } from 'lodash-es';
 import {
   IconDoubleLeft,

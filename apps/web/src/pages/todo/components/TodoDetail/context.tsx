@@ -20,7 +20,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
     todoFormData: TodoFormData;
     setTodoFormData: Dispatch<React.SetStateAction<TodoFormData>>;
     onClose: () => Promise<void> | null;
-    onChange: (todo: TodoFormData) => Promise<void>;
+    onChange: (data: Todo.UpdateTodoVo) => Promise<void>;
     refreshSubTodoFormData: (id: string) => Promise<void>;
     refreshSubTodoList: (id: string) => Promise<void>;
     initTodoFormData: (todo: Todo.TodoVo) => Promise<void>;
@@ -114,10 +114,12 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<
     };
   }
 
-  async function onChange(todoFormData: TodoFormData) {
-    setTodoFormData(todoFormData);
-    const todo = transformFormDataToCreateVo(todoFormData);
-    const updatedTodo = await TodoService.updateTodo(todoNode.id, todo);
+  async function onChange(data: Todo.UpdateTodoVo) {
+    setTodoFormData({
+      ...todoFormData,
+      ...data,
+    });
+    const updatedTodo = await TodoService.updateTodo(todoNode.id, data);
     await props.onChange(updatedTodo);
   }
 

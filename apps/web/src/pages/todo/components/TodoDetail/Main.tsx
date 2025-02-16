@@ -6,6 +6,7 @@ import SiteIcon from '@/components/SiteIcon';
 import AddTodo from '../AddTodo';
 import { useState, useCallback } from 'react';
 import { SubTodoFormData, TodoFormData } from '../../types';
+import clsx from 'clsx';
 
 const TextArea = Input.TextArea;
 
@@ -64,7 +65,9 @@ export default function TodoDetailMain() {
         autoSize={false}
         value={todoFormData.description}
         placeholder="描述一下"
-        className="!text-text-3 !text-body-1 !bg-transparent !border-none mb-1"
+        className={clsx(
+          '!text-text-3 !text-body-1 !bg-transparent !border-none mb-1',
+        )}
         onChange={(value) => {
           setTodoFormData((prev) => ({
             ...prev,

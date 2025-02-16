@@ -6,7 +6,6 @@ import { Card, Grid, Typography, Statistic } from '@arco-design/web-react';
 import { Todo } from '../service/types';
 import ApiService from '../service';
 // 引入 ECharts
-import ReactECharts from 'echarts-for-react';
 
 const { Row, Col } = Grid;
 const { Title } = Typography;
@@ -92,22 +91,6 @@ export default function TodoDashboardPage() {
           </Card>
         </Col>
       </Row>
-
-      <Card>
-        <Title heading={5}>Completion Trend</Title>
-        <div style={{ height: 300 }}>
-          <ReactECharts
-            option={{
-              xAxis: {
-                data: chartData.map((item) => item.date),
-              },
-              yAxis: {
-                data: chartData.map((item) => item.completed),
-              },
-            }}
-          />
-        </div>
-      </Card>
     </div>
   );
 }

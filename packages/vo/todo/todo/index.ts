@@ -21,6 +21,8 @@ export type CreateTodoVo = Omit<
   "doneAt" | "abandonedAt" | "status"
 >;
 
+export type UpdateTodoVo = Partial<CreateTodoVo>;
+
 export type TodoListVo = {
   list: TodoVo[];
 };

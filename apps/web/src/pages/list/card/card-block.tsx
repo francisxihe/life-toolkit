@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import cs from 'classnames';
+import cs from 'clsx';
 import {
   Button,
   Switch,

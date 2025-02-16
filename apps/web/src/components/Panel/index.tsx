@@ -1,6 +1,6 @@
 import React, { CSSProperties, ReactNode } from 'react';
 import { Typography } from '@arco-design/web-react';
-import cs from 'classnames';
+import cs from 'clsx';
 import styles from './style/index.module.less';
 
 interface PanelProps {

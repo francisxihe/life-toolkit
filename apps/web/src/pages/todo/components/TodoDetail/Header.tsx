@@ -6,9 +6,11 @@ import DateTimeTool from '../AddTodo/DateTimeTool';
 import { useTodoDetailContext } from './context';
 import IconSelector from '../IconSelector';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
+import TodoService from '../../service';
 
 export default function TodoDetailHeader() {
-  const { todoFormData, setTodoFormData, onClose } = useTodoDetailContext();
+  const { todoFormData, setTodoFormData, onClose, onChange } =
+    useTodoDetailContext();
 
   return todoFormData ? (
     <FlexibleContainer
@@ -31,9 +33,10 @@ export default function TodoDetailHeader() {
                 | 'none'
                 | 'daily'
                 | 'weekly'
-                | 'monthly'
-                | 'yearly',
+                | 'monthly',
+              // | 'yearly',
             });
+            await onChange({ planDate: formData.date.format('YYYY-MM-DD') });
           }}
         />
 

@@ -33,6 +33,7 @@ export default function TriggerStatusCheckbox(props: {
             await restore();
             return;
           }
+          console.log('todo.id', todo.id);
           const todoSubTodoList = await TodoService.getSubTodoList({
             parentId: todo.id,
           });

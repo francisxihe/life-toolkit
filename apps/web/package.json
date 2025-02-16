@@ -1,7 +1,7 @@
 {
   "name": "life-toolkit-web",
   "version": "1.0.0",
-  "description": "Arco Design Pro",
+  "description": "Life ToolKit Web",
   "homepage": "https://francisxihe.github.io/life-toolkit",
   "scripts": {
     "start": "vite",
@@ -28,12 +28,11 @@
     "@turf/turf": "^6.5.0",
     "@types/lodash-es": "^4.17.12",
     "bizcharts": "^4.1.11",
-    "classnames": "^2.3.1",
+    "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.13",
     "echarts": "^5.5.1",
-    "echarts-for-react": "^3.0.2",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.460.0",
     "mockjs": "^1.1.0",
@@ -43,7 +42,6 @@
     "react": "^18.0.2",
     "react-color": "^2.18.1",
     "react-dom": "^18.0.2",
-    "react-hook-form": "^7.54.2",
     "react-redux": "^7.2.6",
     "react-router": "^5.2.0",
     "react-router-dom": "^6.25.1",
@@ -54,6 +52,7 @@
   "devDependencies": {
     "@arco-design/webpack-plugin": "^1.6.0",
     "@arco-plugins/vite-plugin-svgr": "^0.7.2",
+    "@life-toolkit/api": "workspace:*",
     "@svgr/webpack": "^5.5.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -77,8 +76,7 @@
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
     "vite": "^2.6.14",
-    "vite-plugin-html": "^3.2.2",
-    "@life-toolkit/api": "workspace:*"
+    "vite-plugin-html": "^3.2.2"
   },
   "browserslist": {
     "production": [

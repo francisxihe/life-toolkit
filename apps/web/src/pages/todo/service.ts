@@ -7,6 +7,7 @@ import {
   TodoListFiltersVo,
   CreateSubTodoVo,
   SubTodoListFilterVo,
+  UpdateTodoVo,
 } from '@life-toolkit/vo/todo';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
@@ -78,7 +79,7 @@ export default class TodoService {
     }
   }
 
-  static async updateTodo(id: string, todo: Partial<CreateTodoVo>) {
+  static async updateTodo(id: string, todo: UpdateTodoVo) {
     try {
       const res = TodoController.updateTodo(id, todo);
       Message.success('操作成功');

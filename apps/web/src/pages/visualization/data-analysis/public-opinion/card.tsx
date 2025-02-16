@@ -1,6 +1,6 @@
 import React from 'react';
 import { Skeleton, Statistic, Typography } from '@arco-design/web-react';
-import cs from 'classnames';
+import cs from 'clsx';
 import {
   Chart,
   Line,

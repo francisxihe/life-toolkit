@@ -8,6 +8,7 @@ import IconSelector from '../IconSelector';
 import SiteIcon from '@/components/SiteIcon';
 import TodoService from '../../service';
 import { TodoVo } from '@life-toolkit/vo/todo';
+import dayjs from 'dayjs';
 const { Text, Paragraph } = Typography;
 
 export type TodoItemProps = {
@@ -117,14 +118,20 @@ function TodoItem(props: TodoItemProps) {
             )}
 
             {!isToday(todo.planDate) && (
-              <Text type="error">
+              <span
+                className={
+                  todo.planDate < dayjs().format('YYYY-MM-DD')
+                    ? 'text-error'
+                    : 'text-text-3'
+                }
+              >
                 {todo.planDate}
                 {todo.planStartAt && todo.planEndAt && (
                   <>
                     {todo.planStartAt}-{todo.planEndAt}
                   </>
                 )}
-              </Text>
+              </span>
             )}
             {todo.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1">

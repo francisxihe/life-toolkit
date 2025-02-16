@@ -7,7 +7,7 @@ import {
   Card,
   Skeleton,
 } from '@arco-design/web-react';
-import cs from 'classnames';
+import cs from 'clsx';
 import { Chart, Line, Interval, Tooltip, Interaction } from 'bizcharts';
 import axios from 'axios';
 import useLocale from '@/utils/useLocale';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@arco-design/web-react';
-import cs from 'classnames';
+import cs from 'clsx';
 import { IconPlus } from '@arco-design/web-react/icon';
 import styles from './style/index.module.less';
 
