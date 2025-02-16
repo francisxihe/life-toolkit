@@ -4,7 +4,7 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTodoAllContext } from './context';
 import { useEffect, useState } from 'react';
 import TodoService from '../service';
-import { Todo, TodoNode } from '../service/types';
+import { TodoVo, TodoWithSubVo } from '@life-toolkit/vo/todo';
 import { openModal } from '@/hooks/OpenModal';
 import TodoDetail from '../components/TodoDetail';
 
@@ -128,13 +128,13 @@ export default function TodoTable() {
     },
   ];
 
-  const [expandedData, setExpandedData] = useState<Record<string, TodoNode>>(
-    {}
-  );
+  const [expandedData, setExpandedData] = useState<
+    Record<string, TodoWithSubVo>
+  >({});
   const [subTodoLoadingStatus, setSubTodoLoadingStatus] = useState<
     Record<string, 'unLoading' | 'loading' | 'loaded' | 'error'>
   >({});
-  const onExpandTable = async (record: Todo, expanded: boolean) => {
+  const onExpandTable = async (record: TodoVo, expanded: boolean) => {
     if (!expanded) {
       return;
     }

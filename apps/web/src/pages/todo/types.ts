@@ -10,7 +10,6 @@ export type TodoFormData = {
   planDate: string;
   planTimeRange?: [string, string];
   repeat?: TodoVo['repeat'];
-  subTodoList: SubTodoFormData[];
 };
 
 export type SubTodoFormData = {
@@ -21,5 +20,4 @@ export type SubTodoFormData = {
   importance?: number;
   urgency?: number;
   planTimeRange?: [string, string];
-  subTodoList: SubTodoFormData[];
 };

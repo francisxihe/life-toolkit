@@ -13,11 +13,12 @@ const TextArea = Input.TextArea;
 export default function TodoDetailMain() {
   const {
     todoFormData,
-    todoNode,
+    currentTodo,
     setTodoFormData,
     onChange,
-    refreshSubTodoFormData,
-    refreshSubTodoList,
+    showSubTodo,
+    getSubTodoList,
+    subTodoList,
   } = useTodoDetailContext();
 
   const [subTodoFormData, setSubTodoFormData] =
@@ -33,7 +34,7 @@ export default function TodoDetailMain() {
 
   const onClickSubmitSubTodo = useCallback(async () => {
     await TodoService.addSubTodo({
-      parentId: todoNode.id,
+      parentId: currentTodo.id,
       name: subTodoFormData.name,
       importance: subTodoFormData.importance,
       urgency: subTodoFormData.urgency,
@@ -42,9 +43,9 @@ export default function TodoDetailMain() {
       tags: subTodoFormData.tags,
     });
 
-    await refreshSubTodoList(todoNode.id);
+    await getSubTodoList(currentTodo.id);
     setAddSubTodoVisible(false);
-  }, [subTodoFormData, todoNode, refreshSubTodoList]);
+  }, [subTodoFormData, currentTodo, getSubTodoList]);
 
   return todoFormData ? (
     <>
@@ -76,12 +77,12 @@ export default function TodoDetailMain() {
         }}
       />
       <SubTodoList
-        todoList={todoNode.subTodoList}
+        todoList={subTodoList}
         onClickTodo={async (id) => {
-          await refreshSubTodoFormData(id);
+          await showSubTodo(id);
         }}
         refreshTodoList={async () => {
-          await refreshSubTodoList(todoNode.id);
+          await getSubTodoList(currentTodo.id);
         }}
       />
       <Popover

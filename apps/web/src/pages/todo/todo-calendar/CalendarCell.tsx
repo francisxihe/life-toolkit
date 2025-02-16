@@ -1,14 +1,15 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { Todo } from '../service/types';
+import { TodoVo } from '@life-toolkit/vo/todo';
 import TodoDetail from '../components/TodoDetail';
 import { openModal } from '@/hooks/OpenModal';
 import TodoService from '../service';
 import { TodoFormData } from '../types';
 import { useState, useRef, useMemo } from 'react';
 import AddTodo from '../components/AddTodo';
+import clsx from 'clsx';
 
-function TodoItem({ todo }: { todo: Todo }) {
+function TodoItem({ todo }: { todo: TodoVo }) {
   const { getTodoList } = useCalendarContext();
   return (
     <div
@@ -32,15 +33,15 @@ function TodoItem({ todo }: { todo: Todo }) {
           },
         });
       }}
-      className={`min-w-[200px] text-body-1 px-1.5 leading-[20px] rounded-[2px] truncate cursor-pointer ${
+      className={clsx([
+        `min-w-[200px] text-body-1 px-1.5 leading-[20px] rounded-[2px] truncate cursor-pointer`,
         todo.status === 'done'
           ? 'text-success bg-success-light hover:bg-success-light-hover active:bg-success-light-active'
-          : ''
-      } ${
+          : '',
         todo.status === 'todo'
           ? 'text-warning bg-warning-light hover:bg-warning-light-hover active:bg-warning-light-active'
-          : ''
-      }`}
+          : '',
+      ])}
     >
       {todo.name}
     </div>
@@ -53,7 +54,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
 
   const todayTodoList = useMemo(() => {
     return todoList.filter((todo) =>
-      dayjs(todo.planDate).isSame(cellDate, 'day')
+      dayjs(todo.planDate).isSame(cellDate, 'day'),
     );
   }, [cellDate, todoList]);
 
@@ -62,7 +63,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const todoFormDataRef = useRef<TodoFormData>();
 
   return (
-    <div className={`!text-body-3 h-full`}>
+    <div className={`!text-body-3 text-text-1 h-full`}>
       <div
         className={`p-1 h-full cursor-pointer ${
           cellDate.isBefore(pageShowDate, 'month') ||

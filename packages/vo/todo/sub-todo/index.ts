@@ -6,6 +6,8 @@ export type CreateSubTodoVo = Omit<
   "doneAt" | "abandonedAt" | "status"
 >;
 
+export type UpdateSubTodoVo = Partial<CreateSubTodoVo>;
+
 export type SubTodoWithSubVo = SubTodoVo & {
   subTodoList: SubTodoVo[];
 };

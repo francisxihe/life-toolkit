@@ -1,14 +1,16 @@
 import TodoDetailHeader from './Header';
 import FlexibleContainer from '@/components/FlexibleContainer';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo, SubTodoVo } from '@life-toolkit/vo/todo';
 import { TodoDetailProvider } from './context';
 import TodoDetailMain from './Main';
 
-export default function TodoDetail(props: {
+export type TodoDetailProps = {
   todo: TodoVo;
   onClose: () => Promise<void>;
-  onChange: (todo: TodoVo) => Promise<void>;
-}) {
+  onChange: (todo: TodoVo | SubTodoVo) => Promise<void>;
+};
+
+export default function TodoDetail(props: TodoDetailProps) {
   return (
     <TodoDetailProvider
       todo={props.todo}

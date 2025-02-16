@@ -9,7 +9,9 @@ import SiteIcon from '@/components/SiteIcon';
 import TodoService from '../../service';
 import { TodoVo } from '@life-toolkit/vo/todo';
 import dayjs from 'dayjs';
-const { Text, Paragraph } = Typography;
+import clsx from 'clsx';
+
+const { Paragraph } = Typography;
 
 export type TodoItemProps = {
   todo: {
@@ -42,10 +44,15 @@ function TodoItem(props: TodoItemProps) {
         </FlexibleContainer.Fixed>
         <FlexibleContainer.Shrink
           onClick={() => props.onClickTodo(todo.id)}
-          className="cursor-pointer border-b after:content-[''] after:block after:h-1 after:w-full"
+          className={clsx([
+            'cursor-pointer border-b',
+            'after:content-[""] after:block after:h-1 after:w-full',
+          ])}
         >
-          <div className="leading-8 flex items-center justify-between">
-            {todo.name}
+          <div
+            className={clsx(['flex items-center justify-between', 'leading-8'])}
+          >
+            <span className="text-text-1">{todo.name}</span>
 
             <div className="h-8 flex items-center">
               <Popover
@@ -98,7 +105,7 @@ function TodoItem(props: TodoItemProps) {
               {todo.description}
             </Paragraph>
           )}
-          <div className="text-body-2 flex items-center gap-2">
+          <div className={clsx(['flex items-center gap-2', 'text-body-2'])}>
             {todo.importance && (
               <IconSelector
                 map={IMPORTANCE_MAP}
@@ -121,7 +128,7 @@ function TodoItem(props: TodoItemProps) {
               <span
                 className={
                   todo.planDate < dayjs().format('YYYY-MM-DD')
-                    ? 'text-error'
+                    ? 'text-danger'
                     : 'text-text-3'
                 }
               >

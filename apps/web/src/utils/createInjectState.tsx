@@ -2,9 +2,9 @@ import { createContext, useContext } from 'react';
 
 export function createInjectState<
   ContextType,
-  PropsType extends Record<string, unknown> = Record<string, unknown>
+  PropsType extends Record<string, unknown> = Record<string, unknown>,
 >(
-  initializer: (props: PropsType) => ContextType
+  initializer: (props: PropsType) => ContextType,
 ): [React.FC<React.PropsWithChildren<PropsType>>, () => ContextType] {
   const Context = createContext<ContextType | null>(null);
 

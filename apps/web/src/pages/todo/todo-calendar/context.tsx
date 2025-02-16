@@ -2,10 +2,10 @@ import { createInjectState } from '@/utils/createInjectState';
 import { useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import ApiService from '../service';
-import { Todo } from '../service/types';
+import { TodoVo } from '@life-toolkit/vo/todo';
 
 export const [CalendarProvider, useCalendarContext] = createInjectState<{
-  todoList: Todo[];
+  todoList: TodoVo[];
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   pageShowDate: Dayjs;
@@ -17,7 +17,7 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
   getTodoList: () => Promise<void>;
 }>((props) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<TodoVo[]>([]);
   const [pageShowDate, setPageShowDate] = useState(dayjs());
   const [calendarMode, setCalendarMode] = useState<'month' | 'year'>('month');
 

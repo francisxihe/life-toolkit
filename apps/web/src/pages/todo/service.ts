@@ -1,13 +1,14 @@
 import { Message } from '@arco-design/web-react';
 import TodoController from '@life-toolkit/api/controller/todo/todo';
 import SubTodoController from '@life-toolkit/api/controller/todo/sub-todo';
-import {
+import type {
   CreateTodoVo,
   TodoPageFiltersVo,
   TodoListFiltersVo,
   CreateSubTodoVo,
   SubTodoListFilterVo,
   UpdateTodoVo,
+  UpdateSubTodoVo,
 } from '@life-toolkit/vo/todo';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
@@ -22,8 +23,7 @@ export default class TodoService {
 
   static async getSubTodoList(params: SubTodoListFilterVo) {
     try {
-      const res = SubTodoController.getSubTodoList(params);
-      return res;
+      return SubTodoController.getSubTodoList(params);
     } catch (error) {
       Message.error(error.message);
     }
@@ -138,6 +138,14 @@ export default class TodoService {
       const res = SubTodoController.abandonSubTodo(id);
       Message.success('操作成功');
       return res;
+    } catch (error) {
+      Message.error(error.message);
+    }
+  }
+
+  static async updateSubTodo(id: string, todo: UpdateSubTodoVo) {
+    try {
+      return SubTodoController.updateSubTodo(id, todo);
     } catch (error) {
       Message.error(error.message);
     }

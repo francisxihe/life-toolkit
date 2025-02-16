@@ -19,7 +19,6 @@ import {
   TodoWithSubDto,
 } from "../dto";
 import dayjs from "dayjs";
-import { CreateTodoVo } from "@life-toolkit/vo/todo";
 
 function getWhere(filter: TodoPageFilterDto) {
   const where: FindOptionsWhere<Todo> = {};

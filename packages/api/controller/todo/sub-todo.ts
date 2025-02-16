@@ -4,8 +4,8 @@ import {
   CreateSubTodoVo,
   SubTodoWithSubVo,
   SubTodoListFilterVo,
+  UpdateSubTodoVo,
 } from "@life-toolkit/vo/todo";
-import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class SubTodoController {
   static async addSubTodo(subTodo: CreateSubTodoVo) {
@@ -26,5 +26,9 @@ export default class SubTodoController {
 
   static async getSubTodoList(params: SubTodoListFilterVo) {
     return await get<SubTodoVo[]>(`/sub-todo/list`, params);
+  }
+
+  static async updateSubTodo(id: string, todo: Partial<UpdateSubTodoVo>) {
+    return await put<SubTodoVo>(`/sub-todo/update/${id}`, todo);
   }
 }

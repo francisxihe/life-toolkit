@@ -1,11 +1,11 @@
 import { IsOptional, IsString, IsDateString } from "class-validator";
 import { PageDto } from "@/base/page.dto";
 import { TodoDto } from "./todo.dto";
-import { PickType, IntersectionType } from "@nestjs/mapped-types";
+import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 export class TodoPageFilterDto extends IntersectionType(
   PageDto,
-  PickType(TodoDto, ["importance", "urgency", "status"] as const)
+  PartialType(PickType(TodoDto, ["importance", "urgency", "status"] as const))
 ) {
   /** 搜索关键词 */
   @IsOptional()
@@ -43,11 +43,9 @@ export class TodoPageFilterDto extends IntersectionType(
   abandonedDateEnd?: string;
 }
 
-export class TodoListFilterDto extends PickType(TodoDto, [
-  "importance",
-  "urgency",
-  "status",
-] as const) {
+export class TodoListFilterDto extends PartialType(
+  PickType(TodoDto, ["importance", "urgency", "status"] as const)
+) {
   /** 计划开始日期 */
   @IsOptional()
   @IsDateString()

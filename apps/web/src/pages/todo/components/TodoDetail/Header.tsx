@@ -6,7 +6,6 @@ import DateTimeTool from '../AddTodo/DateTimeTool';
 import { useTodoDetailContext } from './context';
 import IconSelector from '../IconSelector';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
-import TodoService from '../../service';
 
 export default function TodoDetailHeader() {
   const { todoFormData, setTodoFormData, onClose, onChange } =
