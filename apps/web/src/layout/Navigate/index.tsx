@@ -14,6 +14,7 @@ import {
 import styles from '../layout.module.less';
 import { IRoute } from '@/router/routes';
 import useRouter from '@/router/useRouter';
+import SiteIcon from '@/components/SiteIcon';
 
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;
@@ -48,14 +49,14 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
         const { breadcrumb = true, ignore } = route;
         const iconDom = getIconFromKey(route.fullPath);
         const titleDom = (
-          <>
+          <div className="flex items-center gap-2">
             {iconDom} {locale[route.name] || route.name}
-          </>
+          </div>
         );
 
         routeMap.current.set(
           `/${route.fullPath}`,
-          breadcrumb ? [...parentNode, route.name] : []
+          breadcrumb ? [...parentNode, route.name] : [],
         );
 
         const visibleChildren = (route.children || []).filter((child) => {
@@ -63,7 +64,7 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
           if (ignore || route.ignore) {
             routeMap.current.set(
               `/${child.fullPath}`,
-              breadcrumb ? [...parentNode, route.name, child.name] : []
+              breadcrumb ? [...parentNode, route.name, child.name] : [],
             );
           }
 
@@ -135,6 +136,8 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
 
 function getIconFromKey(key) {
   switch (key) {
+    case '/todo':
+      return <SiteIcon id="list-sidebar" className={styles.icon} />;
     case '/dashboard':
       return <IconDashboard className={styles.icon} />;
     case '/list':

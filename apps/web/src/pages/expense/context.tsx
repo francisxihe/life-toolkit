@@ -7,34 +7,35 @@ import {
   useCallback,
   useMemo,
 } from 'react';
+import { TransactionFilters, TransactionStats } from './types';
 import {
-  Transaction,
-  Budget,
-  TransactionFilters,
-  TransactionStats,
-} from '../types';
-
+  TransactionVo,
+  CreateTransactionVo,
+  BudgetVo,
+  CreateBudgetVo,
+} from '@life-toolkit/vo/expense';
+import dayjs from 'dayjs';
 interface ExpensesContextType {
-  transactions: Transaction[];
-  budgets: Budget[];
+  transactionList: TransactionVo[];
+  budgetList: BudgetVo[];
   filters: TransactionFilters;
   stats: TransactionStats;
-  addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
-  updateTransaction: (id: number, updates: Partial<Transaction>) => void;
-  deleteTransaction: (id: number) => void;
-  addBudget: (budget: Omit<Budget, 'id' | 'spent'>) => void;
-  updateBudget: (id: number, updates: Partial<Budget>) => void;
-  deleteBudget: (id: number) => void;
+  addTransaction: (transaction: CreateTransactionVo) => void;
+  updateTransaction: (id: string, updates: Partial<TransactionVo>) => void;
+  deleteTransaction: (id: string) => void;
+  addBudget: (budget: CreateBudgetVo) => void;
+  updateBudget: (id: string, updates: Partial<BudgetVo>) => void;
+  deleteBudget: (id: string) => void;
   setFilters: (filters: TransactionFilters) => void;
 }
 
 const ExpensesContext = createContext<ExpensesContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export function ExpensesProvider({ children }: { children: React.ReactNode }) {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [transactionList, setTransactions] = useState<TransactionVo[]>([]);
+  const [budgetList, setBudgetList] = useState<BudgetVo[]>([]);
   const [filters, setFilters] = useState<TransactionFilters>({
     dateRange: {
       from: undefined,
@@ -45,47 +46,68 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
     period: 'all',
   });
 
-  const addTransaction = useCallback((transaction: Omit<Transaction, 'id'>) => {
-    setTransactions((prev) => [...prev, { ...transaction, id: Date.now() }]);
-  }, []);
-
-  const updateTransaction = useCallback(
-    (id: number, updates: Partial<Transaction>) => {
-      setTransactions((prev) =>
-        prev.map((transaction) =>
-          transaction.id === id ? { ...transaction, ...updates } : transaction
-        )
-      );
+  const addTransaction = useCallback(
+    (transaction: CreateTransactionVo) => {
+      console.log('transaction', transaction);
+      setTransactions((prev) => [
+        ...prev,
+        {
+          ...transaction,
+          id: Date.now().toString(),
+          createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+          updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        },
+      ]);
     },
-    []
+    [],
   );
 
-  const deleteTransaction = useCallback((id: number) => {
+  const updateTransaction = useCallback(
+    (id: string, updates: Partial<TransactionVo>) => {
+      setTransactions((prev) =>
+        prev.map((transaction) =>
+          transaction.id === id ? { ...transaction, ...updates } : transaction,
+        ),
+      );
+    },
+    [],
+  );
+
+  const deleteTransaction = useCallback((id: string) => {
     setTransactions((prev) =>
-      prev.filter((transaction) => transaction.id !== id)
+      prev.filter((transaction) => transaction.id !== id),
     );
   }, []);
 
-  const addBudget = useCallback((budget: Omit<Budget, 'id' | 'spent'>) => {
-    setBudgets((prev) => [...prev, { ...budget, id: Date.now(), spent: 0 }]);
+  const addBudget = useCallback((budget: CreateBudgetVo) => {
+    setBudgetList((prev) => [
+      ...prev,
+      {
+        ...budget,
+        id: Date.now().toString(),
+        spent: 0,
+        createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      },
+    ]);
   }, []);
 
-  const updateBudget = useCallback((id: number, updates: Partial<Budget>) => {
-    setBudgets((prev) =>
+  const updateBudget = useCallback((id: string, updates: Partial<BudgetVo>) => {
+    setBudgetList((prev) =>
       prev.map((budget) =>
-        budget.id === id ? { ...budget, ...updates } : budget
-      )
+        budget.id === id ? { ...budget, ...updates } : budget,
+      ),
     );
   }, []);
 
-  const deleteBudget = useCallback((id: number) => {
-    setBudgets((prev) => prev.filter((budget) => budget.id !== id));
+  const deleteBudget = useCallback((id: string) => {
+    setBudgetList((prev) => prev.filter((budget) => budget.id !== id));
   }, []);
 
   const stats = useMemo(() => {
-    const filteredTransactions = transactions.filter((transaction) => {
+    const filteredTransactions = transactionList.filter((transaction) => {
       if (filters.dateRange.from && filters.dateRange.to) {
-        const transactionDate = new Date(transaction.date);
+        const transactionDate = new Date(transaction.transactionDateTime);
         if (
           transactionDate < filters.dateRange.from ||
           transactionDate > filters.dateRange.to
@@ -123,10 +145,13 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
       .filter((t) => t.type === 'expense')
       .reduce((sum, t) => sum + t.amount, 0);
 
-    const categoryBreakdown = filteredTransactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
-      return acc;
-    }, {} as Record<string, number>);
+    const categoryBreakdown = filteredTransactions.reduce(
+      (acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + t.amount;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Calculate period comparison
     const currentTotal = totalIncome - totalExpenses;
@@ -145,12 +170,12 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
           : 0,
       },
     };
-  }, [transactions, filters]);
+  }, [transactionList, filters]);
 
   const value = useMemo(
     () => ({
-      transactions,
-      budgets,
+      transactionList,
+      budgetList,
       filters,
       stats,
       addTransaction,
@@ -162,8 +187,8 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
       setFilters,
     }),
     [
-      transactions,
-      budgets,
+      transactionList,
+      budgetList,
       filters,
       stats,
       addTransaction,
@@ -172,7 +197,7 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
       addBudget,
       updateBudget,
       deleteBudget,
-    ]
+    ],
   );
 
   return (

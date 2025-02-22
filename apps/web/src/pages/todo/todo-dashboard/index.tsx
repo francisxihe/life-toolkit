@@ -3,15 +3,18 @@
 import { useMemo, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card, Grid, Typography, Statistic } from '@arco-design/web-react';
-import { Todo } from '../service/types';
+import { TodoVo } from '@life-toolkit/vo/todo';
 import ApiService from '../service';
-// 引入 ECharts
+import styles from './style/index.module.less';
+import { Space } from '@arco-design/web-react';
+import Overview from './overview';
+
 
 const { Row, Col } = Grid;
 const { Title } = Typography;
 
 export default function TodoDashboardPage() {
-  const [todoList, setTodoList] = useState<Todo[]>([]);
+  const [todoList, setTodoList] = useState<TodoVo[]>([]);
 
   useEffect(() => {
     async function initData() {
@@ -65,32 +68,51 @@ export default function TodoDashboardPage() {
   }, [todoList]);
 
   return (
-    <div className="space-y-6">
-      <Title heading={3}>待办看板</Title>
-
-      <Row gutter={16}>
-        <Col span={8}>
-          <Card>
-            <Statistic title="总完成" value={stats.total} />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card>
-            <Statistic title="高优先级完成" value={stats.highPriority} />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="平均完成时间"
-              value={stats.avgCompletionTime}
-              suffix="天"
-            />
-          </Card>
-        </Col>
-      </Row>
+    <div className={styles.wrapper}>
+      <Space size={16} direction="vertical" className={styles.left}>
+        <Overview />
+        {/* <Row gutter={gutter}>
+          <Col span={12}>
+            <PopularContents />
+          </Col>
+          <Col span={12}>
+            <ContentPercentage />
+          </Col>
+        </Row>
+      </Space>
+      <Space className={styles.right} size={16} direction="vertical">
+        <Shortcuts />
+        <Carousel />
+        <Announcement />
+        <Docs /> */}
+      </Space>
     </div>
+    // <div className="space-y-6">
+    //   <Title heading={3}>待办看板</Title>
+
+    //   <Row gutter={16}>
+    //     <Col span={8}>
+    //       <Card>
+    //         <Statistic title="总完成" value={stats.total} />
+    //       </Card>
+    //     </Col>
+
+    //     <Col span={8}>
+    //       <Card>
+    //         <Statistic title="高优先级完成" value={stats.highPriority} />
+    //       </Card>
+    //     </Col>
+
+    //     <Col span={8}>
+    //       <Card>
+    //         <Statistic
+    //           title="平均完成时间"
+    //           value={stats.avgCompletionTime}
+    //           suffix="天"
+    //         />
+    //       </Card>
+    //     </Col>
+    //   </Row>
+    // </div>
   );
 }

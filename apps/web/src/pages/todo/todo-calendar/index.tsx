@@ -1,5 +1,4 @@
 import { Calendar } from '@arco-design/web-react';
-import SearchBar from './SearchBar';
 import { CalendarProvider } from './context';
 import CalendarCell from './CalendarCell';
 import { useCalendarContext } from './context';
@@ -11,7 +10,6 @@ function CalendarPage() {
 
   return (
     <div className="bg-bg-2 rounded-lg w-full max-h-full">
-      <SearchBar />
       <Calendar
         className={`${styles['custom-calendar']}`}
         pageShowDate={pageShowDate}

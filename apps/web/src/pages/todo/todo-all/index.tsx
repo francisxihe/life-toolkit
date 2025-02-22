@@ -1,17 +1,16 @@
 'use client';
 
 import { TodoFilters } from './TodoFilters';
-import { Button } from '@arco-design/web-react';
 import FlexibleContainer from '@/components/FlexibleContainer';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
-import SiteIcon from '@/components/SiteIcon';
 import { openModal } from '@/hooks/OpenModal';
 import AddTodo from '../components/AddTodo';
 import { useRef } from 'react';
 import { TodoFormData } from '../types';
 import TodoService from '../service';
 import { useTodoAllContext } from './context';
+import { CreateButton } from '@/components/Button/CreateButton';
 
 function TodoAll() {
   const todoFormDataRef = useRef<TodoFormData | null>(null);
@@ -28,8 +27,7 @@ function TodoAll() {
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Fixed className="px-5 flex my-3">
-        <Button
-          type="primary"
+        <CreateButton
           onClick={() => {
             openModal({
               title: <div className="text-title">添加待办</div>,
@@ -70,11 +68,8 @@ function TodoAll() {
             });
           }}
         >
-          <div className="flex items-center gap-2">
-            <SiteIcon id="add" width={14} height={14} />
-            新建
-          </div>
-        </Button>
+          新建
+        </CreateButton>
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Shrink className="px-5 w-full h-full flex">

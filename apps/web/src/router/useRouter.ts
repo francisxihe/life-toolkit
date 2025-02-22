@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { GlobalState } from '@/store';
 import useRoute from '@/router/routes';
 import { useMemo } from 'react';
+import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { useNavigate } from 'react-router-dom';
 import { createContext } from 'react';

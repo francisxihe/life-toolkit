@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, Grid } from "@arco-design/web-react";
-import { useExpenses } from "../context/expenses-context";
+import { useExpenses } from "../context";
 import { IconArrowRise, IconArrowFall } from "@arco-design/web-react/icon";
 
 const GridItem = Grid.Col;

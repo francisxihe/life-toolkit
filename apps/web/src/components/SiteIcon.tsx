@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 
 export default function SiteIcon({
   id,
@@ -17,7 +18,7 @@ export default function SiteIcon({
     <svg
       width={width}
       height={height}
-      className={`${className} fill-[currentColor]`}
+      className={clsx(className, 'fill-[currentColor]')}
       onClick={onClick}
       style={style}
     >

@@ -10,7 +10,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
-import { TagInput } from '../components/TagInput';
+import { TagSelector } from '../../../components/TagSelector';
 import type { TodoPageFiltersVo } from '@life-toolkit/vo/todo';
 import { useTodoAllContext } from './context';
 
@@ -67,7 +67,7 @@ export function TodoFilters() {
                 <Select.Option key={key} value={key}>
                   {label}
                 </Select.Option>
-              )
+              ),
             )}
           </Select>
         </Col>
@@ -108,7 +108,8 @@ export function TodoFilters() {
           </Select>
         </Col>
         <Col span={6}>
-          <TagInput
+          <TagSelector
+            multiple={true}
             value={filters.tags}
             onChange={(value) => {
               setFilters((prev: TodoPageFiltersVo) => ({
@@ -116,7 +117,6 @@ export function TodoFilters() {
                 tags: value,
               }));
             }}
-            placeholder="标签"
           />
         </Col>
         <Col span={6} className="">

@@ -63,6 +63,10 @@ const i18n = {
     'menu.todo.all': 'All Todo',
     'menu.todo.dashboard': 'Dashboard',
     'menu.todo.calendar': 'Calendar',
+    'menu.expense': 'Expenses',
+    'menu.expense.transaction': 'Transactions',
+    'menu.expense.budget': 'Budgets',
+    'menu.expense.overview': 'Overview',
   },
   'zh-CN': {
     'menu.dashboard': '仪表盘',
@@ -127,6 +131,10 @@ const i18n = {
     'menu.todo.all': '全部待办',
     'menu.todo.dashboard': '待办统计',
     'menu.todo.calendar': '待办日历',
+    'menu.expense': '记账',
+    'menu.expense.transaction': '账单',
+    'menu.expense.budget': '预算',
+    'menu.expense.overview': '总览',
   },
 };
 

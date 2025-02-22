@@ -1,10 +1,6 @@
-import cs from 'clsx';
-import { isArray } from 'lodash-es';
 import {
-  IconDoubleLeft,
   IconLeft,
   IconRight,
-  IconDoubleRight,
 } from '@arco-design/web-react/icon';
 import { dayjs } from './utils';
 import { useCalendarContext } from './context';
