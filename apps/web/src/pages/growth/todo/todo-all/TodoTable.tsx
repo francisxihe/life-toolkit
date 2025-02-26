@@ -2,9 +2,8 @@ import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
 import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTodoAllContext } from './context';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import TodoService from '../service';
-import { TodoVo, TodoWithSubVo } from '@life-toolkit/vo/todo';
 import { openModal } from '@/hooks/OpenModal';
 import TodoDetail from '../components/TodoDetail';
 
@@ -12,16 +11,7 @@ export default function TodoTable() {
   const { todoList, getTodoPage } = useTodoAllContext();
 
   useEffect(() => {
-    async function initData() {
-      await getTodoPage();
-      todoList.forEach((item) => {
-        setSubTodoLoadingStatus((prev) => ({
-          ...prev,
-          [item.id]: 'unLoading',
-        }));
-      });
-    }
-    initData();
+    getTodoPage();
   }, []);
 
   const columns = [
@@ -128,25 +118,6 @@ export default function TodoTable() {
     },
   ];
 
-  const [expandedData, setExpandedData] = useState<
-    Record<string, TodoWithSubVo>
-  >({});
-  const [subTodoLoadingStatus, setSubTodoLoadingStatus] = useState<
-    Record<string, 'unLoading' | 'loading' | 'loaded' | 'error'>
-  >({});
-  const onExpandTable = async (record: TodoVo, expanded: boolean) => {
-    if (!expanded) {
-      return;
-    }
-    setSubTodoLoadingStatus((prev) => ({ ...prev, [record.id]: 'loading' }));
-    const todoNode = await TodoService.getTodoWithSub(record.id);
-    setExpandedData((prev) => ({
-      ...prev,
-      [record.id]: todoNode,
-    }));
-    setSubTodoLoadingStatus((prev) => ({ ...prev, [record.id]: 'loaded' }));
-  };
-
   return (
     <>
       <Table
@@ -155,26 +126,6 @@ export default function TodoTable() {
         data={todoList}
         pagination={false}
         rowKey="id"
-        onExpand={onExpandTable}
-        expandedRowRender={(record) => {
-          if (subTodoLoadingStatus[record.id] === 'unLoading') return true;
-          if (subTodoLoadingStatus[record.id] === 'loading') {
-            return (
-              <Card
-                loading={subTodoLoadingStatus[record.id] === 'loading'}
-              ></Card>
-            );
-          }
-          if (subTodoLoadingStatus[record.id] === 'loaded') {
-            return expandedData[record.id]?.subTodoList?.length ? (
-              <Card>
-                {expandedData[record.id]?.subTodoList
-                  .map((item) => item.name)
-                  .join(',')}
-              </Card>
-            ) : null;
-          }
-        }}
       />
     </>
   );

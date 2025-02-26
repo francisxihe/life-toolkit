@@ -14,11 +14,7 @@ export default function TriggerStatusCheckbox(props: {
   const { todo } = props;
 
   async function restore() {
-    if (props.type === 'todo') {
-      await TodoService.restoreTodo(todo.id);
-    } else {
-      await TodoService.restoreSubTodo(todo.id);
-    }
+    await TodoService.restoreTodo(todo.id);
     await props.onChange();
   }
 
@@ -33,32 +29,10 @@ export default function TriggerStatusCheckbox(props: {
             await restore();
             return;
           }
-          console.log('todo.id', todo.id);
-          const todoSubTodoList = await TodoService.getSubTodoList({
-            parentId: todo.id,
+          await TodoService.batchDoneTodo({
+            idList: [todo.id],
           });
-
-          if (todoSubTodoList.length === 0) {
-            await TodoService.batchDoneTodo({
-              idList: [todo.id],
-            });
-            await props.onChange();
-            return;
-          }
-
-          Modal.confirm({
-            title: '完成待办',
-            content: `完成待办后，将自动完成其所有子待办。`,
-            onOk: async () => {
-              await TodoService.batchDoneTodo({
-                idList: [
-                  todo.id,
-                  ...todoSubTodoList.map((subTodo) => subTodo.id),
-                ],
-              });
-              await props.onChange();
-            },
-          });
+          await props.onChange();
         }}
       />
     </div>

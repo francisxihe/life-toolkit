@@ -11,13 +11,3 @@ export type TodoFormData = {
   planTimeRange?: [string, string];
   repeat?: TodoVo['repeat'];
 };
-
-export type SubTodoFormData = {
-  name: string;
-  description?: string;
-  status?: TodoVo['status'];
-  tags?: string[];
-  importance?: number;
-  urgency?: number;
-  planTimeRange?: [string, string];
-};

@@ -19,18 +19,6 @@ function CalendarPage() {
           <PanelHeader prefixCls="arco-calendar"></PanelHeader>
         )}
       />
-
-      {/* <TodoEditorDrawer
-        visible={drawerVisible}
-        todo={currentTodo}
-        onCancel={async () => {
-          setDrawerVisible(false);
-          await getTodoList();
-          if (subTodoLoadingStatus[currentTodo.id] === 'loaded') {
-            onExpandTable(currentTodo, true);
-          }
-        }}
-      /> */}
     </div>
   );
 }

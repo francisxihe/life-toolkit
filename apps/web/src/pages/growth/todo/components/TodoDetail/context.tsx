@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import type { SubTodoVo, UpdateTodoVo } from '@life-toolkit/vo/todo';
+import type { UpdateTodoVo } from '@life-toolkit/vo/todo';
 import { TodoFormData } from '../../types';
 import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
@@ -31,12 +31,9 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   ContextType: {
     currentTodo: CurrentTodo;
     todoFormData: TodoFormData;
-    subTodoList: SubTodoVo[];
     setTodoFormData: Dispatch<React.SetStateAction<TodoFormData>>;
     onClose: () => Promise<void> | null;
     onChange: (data: UpdateTodoVo) => Promise<void>;
-    showSubTodo: (id: string) => Promise<void>;
-    getSubTodoList: (id: string) => Promise<void>;
   };
 }>((props) => {
   function transformTodoVoToFormData(todo: CurrentTodo): TodoFormData {
@@ -52,43 +49,15 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
     };
   }
 
-  const [level, setLevel] = useState(0);
-
   const [currentTodo, setCurrentTodo] = useState<CurrentTodo>(props.todo);
 
   const [todoFormData, setTodoFormData] = useState<TodoFormData>();
 
-  const [subTodoList, setSubTodoList] = useState<SubTodoVo[]>([]);
-
   const currentTodoRef = useRef<CurrentTodo>();
-
-  const showSubTodo = async (id: string) => {
-    setLevel(level + 1);
-    await refreshTodoDetail(id);
-  };
-
-  const refreshTodoDetail = async (id: string) => {
-    const fetchedTodoWithSub = await TodoService.getSubTodoWithSub(id);
-    currentTodoRef.current = {
-      ...fetchedTodoWithSub,
-      planDate: currentTodo.planDate,
-    };
-    setCurrentTodo(currentTodoRef.current);
-    setTodoFormData(transformTodoVoToFormData(currentTodoRef.current));
-    await getSubTodoList(id);
-  };
-
-  const getSubTodoList = async (id: string) => {
-    const subTodoList = await TodoService.getSubTodoList({
-      parentId: id,
-    });
-    setSubTodoList(subTodoList);
-  };
 
   const initTodoFormData = useCallback(async () => {
     currentTodoRef.current = props.todo;
     setTodoFormData(transformTodoVoToFormData(currentTodoRef.current));
-    await getSubTodoList(props.todo.id);
   }, [props.todo]);
 
   useEffect(() => {
@@ -108,13 +77,8 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
       ...todoFormData,
       ...data,
     });
-    if (level > 0) {
-      const updatedTodo = await TodoService.updateSubTodo(currentTodo.id, data);
-      await refreshTodoDetail(updatedTodo.id);
-    } else {
-      const updatedTodo = await TodoService.updateTodo(currentTodo.id, data);
-      await props.onChange(updatedTodo);
-    }
+    const updatedTodo = await TodoService.updateTodo(currentTodo.id, data);
+    await props.onChange(updatedTodo);
   }
 
   return {
@@ -123,8 +87,5 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
     setTodoFormData,
     onClose,
     onChange,
-    showSubTodo,
-    getSubTodoList,
-    subTodoList,
   };
 });

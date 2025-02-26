@@ -19,7 +19,6 @@ export default function AddTodo(props: {
   const defaultFormData = {
     name: '',
     planDate: dayjs().format('YYYY-MM-DD'),
-    subTodoList: [],
     ...props.initialFormData,
   };
   const [formData, setFormData] = useState<TodoFormData>({
