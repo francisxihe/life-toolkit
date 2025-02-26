@@ -1,6 +1,8 @@
 export enum GoalStatus {
-  DONE = "1",
-  ABANDONED = "2",
+  TODO = "1",
+  IN_PROGRESS = "2",
+  DONE = "3",
+  ABANDONED = "4",
 }
 
 export enum GoalType {

@@ -1,23 +1,27 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { TrackTimeVo } from "../../track-time/track-time.vo";
 
-export enum TaskStatus {
-  TODO = "todo",
-  DOING = "doing",
-  DONE = "done",
-  ABANDONED = "abandoned",
+export enum GoalStatus {
+  TODO = "1",
+  IN_PROGRESS = "2",
+  DONE = "3",
+  ABANDONED = "4",
 }
 
-export type TaskModelVo = {
+export enum GoalType {
+  OBJECTIVE = "1",
+  KEY_RESULT = "2",
+}
+
+
+export type GoalModelVo = {
   name: string;
 
   parentId?: string;
 
-  status: TaskStatus;
+  status: GoalStatus;
 
   description?: string;
-
-  tags?: string[];
 
   importance?: number;
 
@@ -31,14 +35,12 @@ export type TaskModelVo = {
 
   abandonedAt?: string;
 
-  estimateTime?: string;
-
-  children: TaskModelVo[];
+  children: GoalModelVo[];
 };
 
-export type TaskVo = BaseModelVo &
-  TaskModelVo & {
-    children: TaskVo[];
-    parent?: TaskVo;
+export type GoalVo = BaseModelVo &
+  GoalModelVo & {
+    children: GoalVo[];
+    parent?: GoalVo;
     trackTimeList?: TrackTimeVo[];
   };

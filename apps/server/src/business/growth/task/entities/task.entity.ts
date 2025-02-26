@@ -88,11 +88,11 @@ export class Task extends BaseEntity {
 
   /** 计划任务开始时间 */
   @Column("datetime", { nullable: true })
-  planStartAt?: Date;
+  startAt?: Date;
 
   /** 计划任务结束时间 */
   @Column("datetime", { nullable: true })
-  planEndAt?: Date;
+  endAt?: Date;
 
   /** 父任务 */
   @TreeParent({

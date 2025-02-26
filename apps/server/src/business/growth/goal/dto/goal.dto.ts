@@ -1,4 +1,4 @@
-import { Task } from "../entities";
+import { Goal } from "../entities";
 import { BaseModelDto, BaseModelDtoKeys } from "@/base/base-model.dto";
 import {
   OmitType,
@@ -8,26 +8,24 @@ import {
 } from "@nestjs/mapped-types";
 import { TrackTimeDto } from "../../track-time";
 
-export class TaskDto extends IntersectionType(
+export class GoalDto extends IntersectionType(
   BaseModelDto,
-  PickType(Task, [
+  PickType(Goal, [
     "name",
     "description",
     "status",
-    "tags",
     "importance",
     "urgency",
     "startAt",
     "endAt",
     "doneAt",
     "abandonedAt",
-    "estimateTime",
     "children",
     "parent",
   ] as const)
 ) {}
 
-export class CreateTaskDto extends OmitType(TaskDto, [
+export class CreateGoalDto extends OmitType(GoalDto, [
   "status",
   "doneAt",
   "abandonedAt",
@@ -37,14 +35,14 @@ export class CreateTaskDto extends OmitType(TaskDto, [
   parentId?: string;
 }
 
-export class UpdateTaskDto extends IntersectionType(
-  PartialType(CreateTaskDto),
-  PickType(Task, ["id"] as const)
+export class UpdateGoalDto extends IntersectionType(
+  PartialType(CreateGoalDto),
+  PickType(Goal, ["id"] as const)
 ) {}
 
-export class TaskWithTrackTimeDto extends IntersectionType(
-  TaskDto,
-  PickType(Task, [] as const)
+export class GoalWithTrackTimeDto extends IntersectionType(
+  GoalDto,
+  PickType(Goal, [] as const)
 ) {
   trackTimeList: TrackTimeDto[];
 }

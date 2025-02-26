@@ -22,8 +22,8 @@ export type TaskItemProps = {
     tags?: TaskVo['tags'];
     importance?: TaskVo['importance'];
     urgency?: TaskVo['urgency'];
-    planStartAt?: TaskVo['planStartAt'];
-    planEndAt?: TaskVo['planEndAt'];
+    startAt?: TaskVo['startAt'];
+    endAt?: TaskVo['endAt'];
     doneAt?: TaskVo['doneAt'];
     abandonedAt?: TaskVo['abandonedAt'];
   };
@@ -131,9 +131,9 @@ function TaskItem(props: TaskItemProps) {
                 }
               >
                 {todo.planDate}
-                {todo.planStartAt && todo.planEndAt && (
+                {todo.startAt && todo.endAt && (
                   <>
-                    {todo.planStartAt}-{todo.planEndAt}
+                    {todo.startAt}-{todo.endAt}
                   </>
                 )}
               </span>

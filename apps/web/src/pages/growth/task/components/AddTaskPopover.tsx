@@ -32,8 +32,8 @@ export default function AddTaskPopover(
     }
     await TaskService.addTask({
       name: formData.name,
-      planStartAt: formData.planTimeRange?.[0] || undefined,
-      planEndAt: formData.planTimeRange?.[1] || undefined,
+      startAt: formData.planTimeRange?.[0] || undefined,
+      endAt: formData.planTimeRange?.[1] || undefined,
       parentId: formData.parentId,
       children: [],
     });

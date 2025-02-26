@@ -1,44 +1,41 @@
-import type { Task as TaskVO } from "@life-toolkit/vo";
+import type { Goal as GoalVO } from "@life-toolkit/vo";
 import {
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskDto,
-  TaskWithTrackTimeDto,
+  CreateGoalDto,
+  UpdateGoalDto,
+  GoalDto,
+  GoalWithTrackTimeDto,
 } from "../dto";
-import { TaskStatus, Task } from "../entities";
+import { GoalStatus, Goal } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../../track-time";
 
-class TaskMapperEntity {
-  static entityToDto(entity: Task): TaskDto {
-    const dto = new TaskDto();
+class GoalMapperEntity {
+  static entityToDto(entity: Goal): GoalDto {
+    const dto = new GoalDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
     dto.name = entity.name;
     dto.description = entity.description;
     dto.status = entity.status;
-    dto.tags = entity.tags;
     dto.importance = entity.importance;
     dto.urgency = entity.urgency;
     dto.doneAt = entity.doneAt;
     dto.abandonedAt = entity.abandonedAt;
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
-    dto.estimateTime = entity.estimateTime;
     dto.parent = entity.parent;
     dto.children = entity.children;
     return dto;
   }
 }
 
-class TaskMapperDto extends TaskMapperEntity {
-  static dtoToVo(dto: TaskDto): TaskVO.TaskVo {
-    const vo: TaskVO.TaskVo = {
+class GoalMapperDto extends GoalMapperEntity {
+  static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
+    const vo: GoalVO.GoalVo = {
       ...BaseMapper.dtoToVo(dto),
       name: dto.name || "",
       description: dto.description,
-      status: dto.status || TaskStatus.TODO,
-      tags: dto.tags,
+      status: dto.status || GoalStatus.TODO,
       importance: dto.importance,
       urgency: dto.urgency,
       startAt: dto.startAt
@@ -53,23 +50,22 @@ class TaskMapperDto extends TaskMapperEntity {
       abandonedAt: dto.abandonedAt
         ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
-      estimateTime: dto.estimateTime,
       parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
     };
     return vo;
   }
 
-  static dtoToVoList(dtoList: TaskDto[]): TaskVO.TaskVo[] {
+  static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalVo[] {
     return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
   static dtoToPageVo(
-    dtoList: TaskDto[],
+    dtoList: GoalDto[],
     total: number,
     pageNum: number,
     pageSize: number
-  ): TaskVO.TaskPageVo {
+  ): GoalVO.GoalPageVo {
     const vo = {
       list: this.dtoToVoList(dtoList),
       total,
@@ -79,7 +75,7 @@ class TaskMapperDto extends TaskMapperEntity {
     return vo;
   }
 
-  static dtoToListVo(dtoList: TaskDto[]): TaskVO.TaskListVo {
+  static dtoToListVo(dtoList: GoalDto[]): GoalVO.GoalListVo {
     const vo = {
       list: this.dtoToVoList(dtoList),
     };
@@ -87,23 +83,21 @@ class TaskMapperDto extends TaskMapperEntity {
   }
 }
 
-class TaskMapperVo extends TaskMapperDto {
-  static voToCreateDto(vo: TaskVO.CreateTaskVo): CreateTaskDto {
-    const dto = new CreateTaskDto();
+class GoalMapperVo extends GoalMapperDto {
+  static voToCreateDto(vo: GoalVO.CreateGoalVo): CreateGoalDto {
+    const dto = new CreateGoalDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.tags = vo.tags || [];
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
     return dto;
   }
 
-  static voToUpdateDto(vo: TaskVO.CreateTaskVo): UpdateTaskDto {
-    const dto = new UpdateTaskDto();
+  static voToUpdateDto(vo: GoalVO.CreateGoalVo): UpdateGoalDto {
+    const dto = new UpdateGoalDto();
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.tags = vo.tags;
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
@@ -111,17 +105,5 @@ class TaskMapperVo extends TaskMapperDto {
   }
 }
 
-export class TaskMapper extends TaskMapperVo {
-  static dtoToWithTrackTimeVo(
-    dto: TaskWithTrackTimeDto
-  ): TaskVO.TaskWithTrackTimeVo {
-    const vo: TaskVO.TaskWithTrackTimeVo = {
-      ...this.dtoToVo(dto),
-      trackTimeList:
-        dto.trackTimeList?.map((trackTime) => {
-          return TrackTimeMapper.dtoToVo(trackTime);
-        }) || [],
-    };
-    return vo;
-  }
+export class GoalMapper extends GoalMapperVo {
 }

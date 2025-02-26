@@ -55,7 +55,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
 
   const todayTaskList = useMemo(() => {
     return taskList.filter((task) =>
-      dayjs(cellDate).isBetween(task.planStartAt, task.planEndAt, 'day'),
+      dayjs(cellDate).isBetween(task.startAt, task.endAt, 'day'),
     );
   }, [cellDate, taskList]);
 

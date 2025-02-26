@@ -84,8 +84,8 @@ export default function TodoWeek() {
                 importance: todoFormData.importance,
                 urgency: todoFormData.urgency,
                 planDate: todoFormData.planDate || undefined,
-                planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-                planEndAt: todoFormData.planTimeRange?.[1] || undefined,
+                startAt: todoFormData.planTimeRange?.[0] || undefined,
+                endAt: todoFormData.planTimeRange?.[1] || undefined,
                 repeat: todoFormData.repeat,
                 tags: todoFormData.tags,
               });

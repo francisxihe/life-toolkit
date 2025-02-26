@@ -10,8 +10,8 @@ import type { TodoDetailProps } from '.';
 export type CurrentTodo = {
   id: string;
   planDate: string;
-  planStartAt?: string;
-  planEndAt?: string;
+  startAt?: string;
+  endAt?: string;
   repeat?: 'none' | 'daily' | 'weekly' | 'monthly';
   importance?: number;
   urgency?: number;
@@ -44,7 +44,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
       importance: todo.importance,
       urgency: todo.urgency,
       planDate: todo.planDate,
-      planTimeRange: [todo.planStartAt, todo.planEndAt],
+      planTimeRange: [todo.startAt, todo.endAt],
       repeat: todo.repeat,
     };
   }

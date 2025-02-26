@@ -9,14 +9,14 @@ export class TaskMapping {
       tags: taskVo.tags,
       importance: taskVo.importance,
       urgency: taskVo.urgency,
-      planTimeRange: [taskVo.planStartAt, taskVo.planEndAt],
+      planTimeRange: [taskVo.startAt, taskVo.endAt],
       estimateTime: taskVo.estimateTime,
       trackTimeList: taskVo.trackTimeList,
       children:
         taskVo.children?.map((child) => {
           return {
             ...child,
-            planTimeRange: [child.planStartAt, child.planEndAt],
+            planTimeRange: [child.startAt, child.endAt],
           };
         }) || [],
     };
