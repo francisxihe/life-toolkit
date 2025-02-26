@@ -21,7 +21,7 @@ export class SubTodoService {
   async create(createSubTodoDto: CreateSubTodoDto) {
     const subTodo = this.subTodoRepository.create({
       ...createSubTodoDto,
-      status: TodoStatus.TODO,
+      status: TodoStatus.TODO, 
       tags: createSubTodoDto.tags || [],
     });
     const savedEntity = await this.subTodoRepository.save(subTodo);

@@ -33,5 +33,5 @@ export class UpdateSubTodoDto extends OmitType(SubTodoDto, [
 ] as const) {}
 
 export class SubTodoWithSubDto extends SubTodoDto {
-  subTodoList: SubTodoDto[];
+  // subTodoList: SubTodoDto[];
 }

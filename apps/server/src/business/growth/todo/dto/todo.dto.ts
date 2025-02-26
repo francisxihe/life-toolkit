@@ -49,5 +49,5 @@ export class UpdateTodoDto extends PartialType(CreateTodoDto) {
 }
 
 export class TodoWithSubDto extends TodoDto {
-  subTodoList: SubTodoDto[];
+  // subTodoList: SubTodoDto[];
 }

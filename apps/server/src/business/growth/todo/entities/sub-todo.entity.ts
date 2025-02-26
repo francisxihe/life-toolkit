@@ -18,9 +18,4 @@ export class SubTodo extends BaseTodoEntity {
   @ManyToOne(() => SubTodo, (subTodo) => subTodo.subTodoList)
   @JoinColumn({ name: "parentId" })
   parentSubTodo: SubTodo;
-
-  /** 关联的顶级Todo */
-  @ManyToOne(() => Todo, (todo) => todo.subTodoList)
-  @JoinColumn({ name: "parentId" })
-  parentTodo: Todo;
 }

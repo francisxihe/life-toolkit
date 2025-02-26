@@ -2,7 +2,7 @@ import { IRoute } from '@/router/routes';
 
 export const todoRoutes: IRoute = {
   name: 'menu.todo',
-  key: '/goal/todo',
+  key: '/growth/todo',
   breadcrumb: true,
   children: [
     {
@@ -35,7 +35,7 @@ export const todoRoutes: IRoute = {
 
 export const taskRoutes: IRoute = {
   name: 'menu.task',
-  key: '/goal/task',
+  key: '/growth/task',
   breadcrumb: true,
   children: [
     {

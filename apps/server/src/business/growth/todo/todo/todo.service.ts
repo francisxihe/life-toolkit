@@ -170,9 +170,9 @@ export class TodoService {
 
     return {
       ...todo,
-      subTodoList: todo.subTodoList.map((subTodo) => ({
-        ...subTodo,
-      })),
+      // subTodoList: todo.subTodoList.map((subTodo) => ({
+      //   ...subTodo,
+      // })),
     };
   }
 }

@@ -11,8 +11,8 @@ export class TodoStatusService {
   constructor(
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
-    @InjectRepository(SubTodo)
-    private readonly subTodoRepository: Repository<SubTodo>
+    // @InjectRepository(SubTodo)
+    // private readonly subTodoRepository: Repository<SubTodo>
   ) {}
 
   private async updateStatus(
@@ -33,23 +33,23 @@ export class TodoStatusService {
     return true;
   }
 
-  private async updateStatusSub(
-    id: string,
-    status: TodoStatus,
-    dateField: keyof SubTodo
-  ): Promise<boolean> {
-    const subTodo = await this.subTodoRepository.findOneBy({ id });
-    if (!subTodo) {
-      throw new Error("SubTodo not found");
-    }
+  // private async updateStatusSub(
+  //   id: string,
+  //   status: TodoStatus,
+  //   dateField: keyof SubTodo
+  // ): Promise<boolean> {
+  //   const subTodo = await this.subTodoRepository.findOneBy({ id });
+  //   if (!subTodo) {
+  //     throw new Error("SubTodo not found");
+  //   }
 
-    await this.subTodoRepository.update(id, {
-      status,
-      [dateField]: new Date(),
-    });
+  //   await this.subTodoRepository.update(id, {
+  //     status,
+  //     [dateField]: new Date(),
+  //   });
 
-    return true;
-  }
+  //   return true;
+  // }
 
   async batchDone(
     params: OperationByIdListDto
@@ -62,13 +62,13 @@ export class TodoStatusService {
       }
     );
 
-    await this.subTodoRepository.update(
-      { id: In(params.idList) },
-      {
-        status: TodoStatus.DONE,
-        doneAt: new Date(),
-      }
-    );
+    // await this.subTodoRepository.update(
+    //   { id: In(params.idList) },
+    //   {
+    //     status: TodoStatus.DONE,
+    //     doneAt: new Date(),
+    //   }
+    // );
 
     return {
       result: true,
@@ -83,11 +83,11 @@ export class TodoStatusService {
     return this.updateStatus(id, TodoStatus.TODO, "updatedAt");
   }
 
-  async abandonSub(id: string): Promise<boolean> {
-    return this.updateStatusSub(id, TodoStatus.ABANDONED, "abandonedAt");
-  }
+  // async abandonSub(id: string): Promise<boolean> {
+  //   return this.updateStatusSub(id, TodoStatus.ABANDONED, "abandonedAt");
+  // }
 
-  async restoreSub(id: string): Promise<boolean> {
-    return this.updateStatusSub(id, TodoStatus.TODO, "updatedAt");
-  }
+  // async restoreSub(id: string): Promise<boolean> {
+  //   return this.updateStatusSub(id, TodoStatus.TODO, "updatedAt");
+  // }
 }

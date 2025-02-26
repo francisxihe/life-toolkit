@@ -56,13 +56,6 @@ export class SubTodoMapper {
     return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVo(dto: SubTodoWithSubDto): Todo.SubTodoWithSubVo {
-    return {
-      ...this.dtoToVo(dto),
-      subTodoList: this.dtoToVoList(dto.subTodoList),
-    };
-  }
-
   static voToCreateDto(vo: Todo.CreateSubTodoVo): CreateSubTodoDto {
     const dto = new CreateSubTodoDto();
     dto.name = vo.name;

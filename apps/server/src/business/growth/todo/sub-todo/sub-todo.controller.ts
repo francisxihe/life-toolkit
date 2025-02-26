@@ -16,36 +16,7 @@ import { SubTodoMapper } from "./sub-todo.mapper";
 
 @Controller("sub-todo")
 export class SubTodoController {
-  constructor(
-    private readonly subTodoService: SubTodoService,
-    private readonly todoStatusService: TodoStatusService
-  ) {}
-
-  /** 获取子待办及其子待办 */
-  @Get("sub-todo-with-sub/:id")
-  @Response()
-  async subTodoWithSub(@Param("id") id: string) {
-    const dto = await this.subTodoService.subTodoWithSub(id);
-    return SubTodoMapper.dtoToWithSubVo(dto);
-  }
-
-  /** 放弃子待办 */
-  @Put("abandon/:id")
-  @Response()
-  async abandon(@Param("id") id: string) {
-    const result = await this.todoStatusService.abandonSub(id);
-    return { result };
-  }
-
-  /** 恢复子待办 */
-  @Put("restore/:id")
-  @Response()
-  async restore(@Param("id") id: string) {
-    const result = await this.todoStatusService.restoreSub(id);
-    return { result };
-  }
-
-  // getTodoSubTodoIdList
+  constructor(private readonly subTodoService: SubTodoService) {}
 
   /** 创建子待办事项 */
   @Post("create")

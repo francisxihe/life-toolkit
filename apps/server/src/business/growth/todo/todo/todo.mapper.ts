@@ -55,14 +55,6 @@ export class TodoMapper {
     return dtoList.map((dto) => this.dtoToVo(dto));
   }
 
-  static dtoToWithSubVo(dto: TodoWithSubDto): TodoVO.TodoWithSubVo {
-    const vo = {
-      ...this.dtoToVo(dto),
-      subTodoList: SubTodoMapper.dtoToVoList(dto.subTodoList),
-    };
-    return vo;
-  }
-
   static dtoToPageVo(
     dtoList: TodoDto[],
     total: number,

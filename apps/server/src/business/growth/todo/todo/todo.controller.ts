@@ -45,13 +45,6 @@ export class TodoController {
     return { result };
   }
 
-  @Get("todo-with-sub/:id")
-  @Response()
-  async todoWithSub(@Param("id") id: string) {
-    const dto = await this.todoService.todoWithSub(id);
-    return TodoMapper.dtoToWithSubVo(dto);
-  }
-
   @Post("create")
   @Response()
   async create(@Body() createTodoVo: Todo.CreateTodoVo) {

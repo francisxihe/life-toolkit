@@ -13,5 +13,5 @@ export class TrackTime extends BaseEntity {
   duration?: number;
 
   @Column({ nullable: true })
-  notes?: string;
-}
+  notes?: string;  
+}  

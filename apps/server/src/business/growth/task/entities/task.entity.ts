@@ -1,18 +1,14 @@
 import {
   Entity,
   Column,
-  OneToMany,
-  ManyToOne,
   TreeChildren,
   TreeParent,
   Tree,
-  TreeLevelColumn,
 } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
   IsOptional,
-  IsISO8601,
   IsString,
   IsNumber,
   IsArray,

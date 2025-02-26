@@ -1,6 +1,6 @@
 import { Entity, Column, OneToMany } from "typeorm";
 import { BaseTodoEntity } from "./base.entity";
-import { SubTodo } from "./sub-todo.entity";
+// import { SubTodo } from "./sub-todo.entity";
 import { TodoRepeat } from "./enum";
 import {
   IsEnum,
@@ -30,7 +30,7 @@ export class Todo extends BaseTodoEntity {
   @IsOptional()
   repeatInterval?: string;
 
-  /** 子待办 */
-  @OneToMany(() => SubTodo, (subTodo) => subTodo.parentTodo)
-  subTodoList: SubTodo[];
+  // /** 子待办 */
+  // @OneToMany(() => SubTodo, (subTodo) => subTodo.parentTodo)
+  // subTodoList: SubTodo[];
 }
