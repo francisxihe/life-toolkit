@@ -1,9 +1,9 @@
 import auth, { AuthParams } from '@/utils/authentication';
 import { useEffect, useMemo, useState } from 'react';
-import { todoRoutes } from '@/router/routes/todo.routes';
 import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
+import { taskRoutes, todoRoutes } from '@/router/routes/goal.routes';
 
 export type IRoute = AuthParams & {
   name: string;
@@ -20,6 +20,7 @@ export type IRoute = AuthParams & {
 
 export const routes: IRoute[] = [
   todoRoutes,
+  taskRoutes,
   expensesRoutes,
   aiRoutes,
   erpRoutes,

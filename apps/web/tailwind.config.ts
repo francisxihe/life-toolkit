@@ -13,9 +13,9 @@ const config: Config = {
         'body-2': '13px',
         'body-3': '14px',
         caption: '12px',
-        'title-1': '16px',
-        'title-2': '20px',
-        'title-3': '24px',
+        'title-1': 'var(--font-size-title-1)',
+        'title-2': 'var(--font-size-title-2)',
+        'title-3': 'var(--font-size-title-3)',
       },
       borderRadius: {
         lg: 'var(--border-radius-large)',

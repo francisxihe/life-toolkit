@@ -4,11 +4,11 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 // import { UsersModule } from "./users/users.module";
 // import { AuthModule } from "./auth/auth.module";
-import { TodoModule } from "./business/todo/todo.module";
+import { TodoModule } from "./business/growth/todo/todo.module";
+import { TaskModule } from "./business/growth/task/task.module";
 // import { ExpensesModule } from "./expenses/expenses.module";
 import { AiModule } from "./business/ai/ai.module";
 import { getDatabaseConfig } from "./config/database.config";
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +26,7 @@ import { getDatabaseConfig } from "./config/database.config";
     // UsersModule,
     // AuthModule,
     TodoModule,
+    TaskModule,
     // ExpensesModule,
     AiModule,
   ],

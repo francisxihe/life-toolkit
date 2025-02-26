@@ -1,18 +1,20 @@
 import { createContext, useContext } from 'react';
 
 export function createInjectState<
-  ContextType,
-  PropsType extends Record<string, unknown> = Record<string, unknown>,
+  T extends {
+    PropsType?: Record<string, unknown>;
+    ContextType: Record<string, unknown>;
+  },
 >(
-  initializer: (props: PropsType) => ContextType,
-): [React.FC<React.PropsWithChildren<PropsType>>, () => ContextType] {
-  const Context = createContext<ContextType | null>(null);
+  initializer: (props: T['PropsType']) => T['ContextType'],
+): [React.FC<React.PropsWithChildren<T['PropsType']>>, () => T['ContextType']] {
+  const Context = createContext<T['ContextType'] | null>(null);
 
   const Provider = ({
     children,
     ...props
-  }: React.PropsWithChildren<PropsType>) => {
-    const contextValue = initializer(props as PropsType);
+  }: React.PropsWithChildren<T['PropsType']>) => {
+    const contextValue = initializer(props as T['PropsType']);
     return <Context.Provider value={contextValue}>{children}</Context.Provider>;
   };
 

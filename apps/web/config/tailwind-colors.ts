@@ -27,8 +27,11 @@ export const colors = {
   },
   fill: {
     DEFAULT: 'var(--color-fill-1)',
+    /** 填充色1 */
     1: 'var(--color-fill-1)',
+    /** 填充色2 */
     2: 'var(--color-fill-2)',
+    /** 填充色3 */
     3: 'var(--color-fill-3)',
   },
   danger: {
@@ -115,6 +118,12 @@ export const colors = {
       active: 'var(--color-primary-light-3)',
     },
   },
+  secondary: {
+    DEFAULT: 'var(--color-secondary)',
+    hover: 'var(--color-secondary-hover)',
+    active: 'var(--color-secondary-active)',
+    disabled: 'var(--color-secondary-disabled)',
+  },
   link: {
     1: 'rgb(var(--link-1))',
     2: 'rgb(var(--link-2))',
@@ -140,10 +149,6 @@ export const colors = {
   input: 'hsl(var(--input))',
   ring: 'hsl(var(--ring))',
   foreground: 'hsl(var(--foreground))',
-  secondary: {
-    DEFAULT: 'hsl(var(--secondary))',
-    foreground: 'hsl(var(--secondary-foreground))',
-  },
   destructive: {
     DEFAULT: 'hsl(var(--destructive))',
     foreground: 'hsl(var(--destructive-foreground))',

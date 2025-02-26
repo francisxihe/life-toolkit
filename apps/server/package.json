@@ -32,6 +32,7 @@
     "rxjs": "^7.8.1",
     "ts-loader": "^9.5.2",
     "typeorm": "^0.3.17",
+    "typeorm-naming-strategies": "^4.1.0",
     "uuid": "^11.0.5",
     "xlsx": "^0.18.5"
   },

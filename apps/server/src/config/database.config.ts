@@ -1,6 +1,6 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { ConfigService } from "@nestjs/config";
-
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 export const getDatabaseConfig = (
   configService: ConfigService
 ): TypeOrmModuleOptions => ({
@@ -16,4 +16,5 @@ export const getDatabaseConfig = (
   timezone: "+08:00",
   dateStrings: true,
   autoLoadEntities: true,
+  namingStrategy: new SnakeNamingStrategy(),
 });
