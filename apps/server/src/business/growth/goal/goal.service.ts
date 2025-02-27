@@ -51,6 +51,9 @@ function getWhere(filter: GoalPageFilterDto) {
   if (filter.keyword) {
     where.name = Like(`%${filter.keyword}%`);
   }
+  if (filter.type) {
+    where.type = filter.type;
+  }
   if (filter.status) {
     where.status = filter.status;
   }

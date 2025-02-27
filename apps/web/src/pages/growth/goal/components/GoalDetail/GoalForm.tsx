@@ -4,10 +4,10 @@ import {
   Popover,
   Grid,
   DatePicker,
+  Select,
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
-import clsx from 'clsx';
-import TrackTime from '../../../components/TrackTime';
+import { GoalType } from '@life-toolkit/vo/goal';
 import FlexibleContainer from '@/components/FlexibleContainer';
 
 const { Shrink, Fixed } = FlexibleContainer;
@@ -49,6 +49,26 @@ export default function GoalForm() {
               }));
             }}
           />
+        </Item>
+        <Item span={24} label="目标类型">
+          <Select
+            value={goalFormData.type}
+            allowClear
+            placeholder="请选择目标类型"
+            options={[
+              {
+                label: '战略规划',
+                value: GoalType.OBJECTIVE,
+              },
+              {
+                label: '成果指标',
+                value: GoalType.KEY_RESULT,
+              },
+            ]}
+            onChange={(value) => {
+              setGoalFormData((prev) => ({ ...prev, type: value }));
+            }}
+          ></Select>
         </Item>
         <Item span={24} label="描述">
           <TextArea

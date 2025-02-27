@@ -5,7 +5,9 @@ import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 export class GoalPageFilterDto extends IntersectionType(
   PageDto,
-  PartialType(PickType(GoalDto, ["importance", "urgency", "status"] as const))
+  PartialType(
+    PickType(GoalDto, ["importance", "urgency", "status", "type"] as const)
+  )
 ) {
   /** 搜索关键词 */
   @IsOptional()
@@ -44,7 +46,7 @@ export class GoalPageFilterDto extends IntersectionType(
 }
 
 export class GoalListFilterDto extends PartialType(
-  PickType(GoalDto, ["importance", "urgency", "status"] as const)
+  PickType(GoalDto, ["importance", "urgency", "status", "type"] as const)
 ) {
   /** 计划开始日期 */
   @IsOptional()

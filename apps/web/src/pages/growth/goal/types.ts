@@ -1,13 +1,11 @@
 import { GoalVo } from '@life-toolkit/vo/goal';
-import { TrackTimeModelVo } from '@life-toolkit/vo/track-time';
 
-export type GoalFormData = {
+
+export type GoalFormData = Pick<
+  GoalVo,
+  'name' | 'status' | 'importance' | 'urgency' | 'type' | 'description'
+> & {
   id?: string;
-  name: string;
-  description?: string;
-  status?: GoalVo['status'];
-  importance?: number;
-  urgency?: number;
   planTimeRange: [string | undefined, string | undefined];
   children: GoalFormData[];
   parentId?: string;

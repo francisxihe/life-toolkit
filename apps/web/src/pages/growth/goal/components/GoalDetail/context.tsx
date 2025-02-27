@@ -43,13 +43,13 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
       ...fetched,
     };
     setCurrentGoal(currentGoalRef.current);
-    setGoalFormData(GoalMapping.goalVoToGoalFormData(currentGoalRef.current));
+    setGoalFormData(GoalMapping.voToGoalFormData(currentGoalRef.current));
   };
 
   const initGoalFormData = useCallback(async () => {
     const goal = await GoalService.getDetail(props.goal.id);
     currentGoalRef.current = goal;
-    setGoalFormData(GoalMapping.goalVoToGoalFormData(currentGoalRef.current));
+    setGoalFormData(GoalMapping.voToGoalFormData(currentGoalRef.current));
   }, [props.goal]);
 
   useEffect(() => {

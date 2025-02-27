@@ -18,6 +18,8 @@ export type GoalModelVo = {
 
   status: GoalStatus;
 
+  type: GoalType;
+
   description?: string;
 
   importance?: number;

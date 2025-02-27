@@ -38,6 +38,7 @@ class GoalMapperDto extends GoalMapperEntity {
       name: dto.name || "",
       description: dto.description,
       status: dto.status || GoalStatus.TODO,
+      type: dto.type,
       importance: dto.importance,
       urgency: dto.urgency,
       startAt: dto.startAt
@@ -100,6 +101,7 @@ class GoalMapperVo extends GoalMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.type = vo.type;
     dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
     dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     return dto;
@@ -112,6 +114,7 @@ class GoalMapperVo extends GoalMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.type = vo.type;
     dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
     dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     return dto;

@@ -93,4 +93,10 @@ export class Goal extends BaseEntity {
     cascade: true,
   })
   children?: Goal[];
+
+  /** 目标优先级 */
+  @Column({ nullable: true })
+  @IsOptional()
+  @IsNumber()
+  priority?: number;
 }

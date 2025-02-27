@@ -1,5 +1,5 @@
 export * from "./goal.vo";
-import { GoalModelVo, GoalVo } from "./goal.vo";
+import { GoalModelVo, GoalVo, GoalItemVo } from "./goal.vo";
 
 export type CreateGoalVo = Omit<
   GoalModelVo,
@@ -11,42 +11,35 @@ export type CreateGoalVo = Omit<
 export type UpdateGoalVo = Partial<CreateGoalVo>;
 
 export type GoalListVo = {
-  list: GoalModelVo[];
+  list: GoalItemVo[];
 };
 
 export type GoalPageVo = {
-  list: GoalModelVo[];
-
+  list: GoalItemVo[];
   total: number;
-
   pageNum: number;
-
   pageSize: number;
 };
 
-export type GoalListFiltersVo = {
-  keyword?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
-  importance?: GoalVo["importance"];
-  urgency?: GoalVo["urgency"];
-  status?: GoalVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
-};
+export type GoalListFiltersVo = Partial<
+  Pick<GoalVo, "startAt" | "endAt" | "importance" | "urgency" | "status"> & {
+    keyword?: string;
+    doneDateStart?: string;
+    doneDateEnd?: string;
+    abandonedDateStart?: string;
+    abandonedDateEnd?: string;
+  }
+>;
 
-export type GoalPageFiltersVo = {
-  keyword?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
-  importance?: GoalVo["importance"];
-  urgency?: GoalVo["urgency"];
-  status?: GoalVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
-  tags?: string[];
-};
+export type GoalPageFiltersVo = Partial<
+  Pick<
+    GoalVo,
+    "startAt" | "endAt" | "importance" | "urgency" | "status" | "type"
+  > & {
+    keyword?: string;
+    doneDateStart?: string;
+    doneDateEnd?: string;
+    abandonedDateStart?: string;
+    abandonedDateEnd?: string;
+  }
+>;

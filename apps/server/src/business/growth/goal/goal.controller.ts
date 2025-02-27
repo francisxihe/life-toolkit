@@ -48,9 +48,7 @@ export class GoalController {
   @Post("create")
   @Response()
   async create(@Body() createGoalVo: Goal.CreateGoalVo) {
-    console.log("createGoalVo", createGoalVo);
     const createdDto = GoalMapper.voToCreateDto(createGoalVo);
-    console.log("dto", createdDto);
     const dto = await this.goalService.create(createdDto);
     return GoalMapper.dtoToVo(dto);
   }

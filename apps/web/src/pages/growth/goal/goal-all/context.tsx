@@ -10,7 +10,13 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { GoalVo, GoalPageFiltersVo, GoalStatus } from '@life-toolkit/vo/goal';
+import {
+  GoalVo,
+  GoalItemVo,
+  GoalPageFiltersVo,
+  GoalStatus,
+  GoalType,
+} from '@life-toolkit/vo/goal';
 import GoalService from '../service';
 import { createInjectState } from '@/utils/createInjectState';
 
@@ -34,26 +40,23 @@ function useSyncState<T>(
 
 export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   ContextType: {
-    goalList: GoalVo[];
+    goalList: GoalItemVo[];
     getGoalPage: () => Promise<void>;
     filters: GoalPageFiltersVo;
     setFilters: Dispatch<SetStateAction<GoalPageFiltersVo>>;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
-  const [goalList, setGoalList] = useState<GoalVo[]>([]);
+  const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
 
   const [filters, setFilters, filtersRef] = useSyncState<GoalPageFiltersVo>({
-    keyword: '',
+    keyword: undefined,
     importance: undefined,
     urgency: undefined,
     status: GoalStatus.TODO,
-    planDateStart: undefined,
-    planDateEnd: undefined,
-    doneDateStart: undefined,
-    doneDateEnd: undefined,
-    abandonedDateStart: undefined,
-    abandonedDateEnd: undefined,
+    type: undefined,
+    startAt: undefined,
+    endAt: undefined,
   });
 
   async function getGoalPage() {
@@ -63,16 +66,13 @@ export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
 
   const clearFilters = async () => {
     setFilters({
-      keyword: '',
+      keyword: undefined,
       importance: undefined,
       urgency: undefined,
       status: undefined,
-      planDateStart: undefined,
-      planDateEnd: undefined,
-      doneDateStart: undefined,
-      doneDateEnd: undefined,
-      abandonedDateStart: undefined,
-      abandonedDateEnd: undefined,
+      type: undefined,
+      startAt: undefined,
+      endAt: undefined,
     });
     await getGoalPage();
   };
