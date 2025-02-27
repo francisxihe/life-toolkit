@@ -10,16 +10,15 @@ import {
 } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
-import { TagSelector } from '../../../../components/TagSelector';
-import { TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/task';
-import { useTaskAllContext } from './context';
+import { GoalPageFiltersVo, GoalStatus } from '@life-toolkit/vo/goal';
+import { useGoalAllContext } from './context';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
 
-export function TaskFilters() {
-  const { getTaskPage, filters, setFilters, clearFilters } =
-    useTaskAllContext();
+export function GoalFilters() {
+  const { getGoalPage, filters, setFilters, clearFilters } =
+    useGoalAllContext();
 
   return (
     <Space className="w-full my-3" direction="vertical" size="large">
@@ -30,7 +29,7 @@ export function TaskFilters() {
             placeholder="关键字"
             value={filters.keyword}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: GoalPageFiltersVo) => ({
                 ...prev,
                 keyword: value,
               }));
@@ -42,7 +41,7 @@ export function TaskFilters() {
             placeholder={['计划开始日期', '计划结束日期']}
             value={[filters.planDateStart, filters.planDateEnd]}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: GoalPageFiltersVo) => ({
                 ...prev,
                 planDateStart: value[0],
                 planDateEnd: value[1],
@@ -54,7 +53,7 @@ export function TaskFilters() {
           <Select
             value={filters.importance}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: GoalPageFiltersVo) => ({
                 ...prev,
                 importance: value,
               }));
@@ -75,7 +74,7 @@ export function TaskFilters() {
           <Select
             value={filters.urgency}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: GoalPageFiltersVo) => ({
                 ...prev,
                 urgency: value,
               }));
@@ -94,30 +93,18 @@ export function TaskFilters() {
           <Select
             value={filters.status}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: GoalPageFiltersVo) => ({
                 ...prev,
                 status: value,
               }));
             }}
             allowClear
-            placeholder="任务状态"
+            placeholder="目标状态"
           >
-            <Select.Option value={TaskStatus.TODO}>未完成</Select.Option>
-            <Select.Option value={TaskStatus.DONE}>已完成</Select.Option>
-            <Select.Option value={TaskStatus.ABANDONED}>已放弃</Select.Option>
+            <Select.Option value={GoalStatus.TODO}>未完成</Select.Option>
+            <Select.Option value={GoalStatus.DONE}>已完成</Select.Option>
+            <Select.Option value={GoalStatus.ABANDONED}>已放弃</Select.Option>
           </Select>
-        </Col>
-        <Col span={6}>
-          <TagSelector
-            multiple={true}
-            value={filters.tags}
-            onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
-                ...prev,
-                tags: value,
-              }));
-            }}
-          />
         </Col>
         <Col span={6} className="">
           <div className="flex justify-end gap-2">
@@ -131,7 +118,7 @@ export function TaskFilters() {
             <Button
               type="primary"
               onClick={async () => {
-                await getTaskPage();
+                await getGoalPage();
               }}
             >
               查询

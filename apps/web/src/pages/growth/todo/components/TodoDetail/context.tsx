@@ -6,6 +6,7 @@ import { TodoFormData } from '../../types';
 import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { TodoDetailProps } from '.';
+import { TodoStatus } from '@life-toolkit/vo/todo';
 
 export type CurrentTodo = {
   id: string;
@@ -18,7 +19,7 @@ export type CurrentTodo = {
   tags?: string[];
   description?: string;
   name: string;
-  status: 'todo' | 'done' | 'abandoned';
+  status: TodoStatus;
 };
 
 export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{

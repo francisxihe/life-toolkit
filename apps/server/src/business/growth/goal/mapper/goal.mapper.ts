@@ -1,28 +1,30 @@
 import type { Goal as GoalVO } from "@life-toolkit/vo";
-import {
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalDto,
-  GoalWithTrackTimeDto,
-} from "../dto";
+import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "../dto";
 import { GoalStatus, Goal } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
-import { TrackTimeMapper } from "../../track-time";
 
 class GoalMapperEntity {
-  static entityToDto(entity: Goal): GoalDto {
-    const dto = new GoalDto();
+  static entityToModelDto(entity: Goal): GoalModelDto {
+    const dto = new GoalModelDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
     dto.name = entity.name;
     dto.description = entity.description;
     dto.status = entity.status;
+    dto.type = entity.type;
     dto.importance = entity.importance;
     dto.urgency = entity.urgency;
     dto.doneAt = entity.doneAt;
     dto.abandonedAt = entity.abandonedAt;
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
+    return dto;
+  }
+
+  static entityToDto(entity: Goal): GoalDto {
+    const dto = new GoalDto();
+    Object.assign(dto, BaseMapper.entityToDto(entity));
+    Object.assign(dto, this.entityToModelDto(entity));
     dto.parent = entity.parent;
     dto.children = entity.children;
     return dto;
@@ -30,8 +32,8 @@ class GoalMapperEntity {
 }
 
 class GoalMapperDto extends GoalMapperEntity {
-  static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
-    const vo: GoalVO.GoalVo = {
+  static dtoToItemVo(dto: GoalDto) {
+    const vo: GoalVO.GoalItemVo = {
       ...BaseMapper.dtoToVo(dto),
       name: dto.name || "",
       description: dto.description,
@@ -50,14 +52,21 @@ class GoalMapperDto extends GoalMapperEntity {
       abandonedAt: dto.abandonedAt
         ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
+    };
+    return vo;
+  }
+
+  static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
+    const vo: GoalVO.GoalVo = {
+      ...this.dtoToItemVo(dto),
       parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
     };
     return vo;
   }
 
-  static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalVo[] {
-    return dtoList.map((dto) => this.dtoToVo(dto));
+  static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalItemVo[] {
+    return dtoList.map((dto) => this.dtoToItemVo(dto));
   }
 
   static dtoToPageVo(
@@ -91,6 +100,8 @@ class GoalMapperVo extends GoalMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+    dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     return dto;
   }
 
@@ -101,9 +112,10 @@ class GoalMapperVo extends GoalMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+    dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     return dto;
   }
 }
 
-export class GoalMapper extends GoalMapperVo {
-}
+export class GoalMapper extends GoalMapperVo {}

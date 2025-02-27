@@ -8,7 +8,7 @@ import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
 import { flushSync } from 'react-dom';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
@@ -23,27 +23,27 @@ export default function TodoWeek() {
 
   async function refreshData() {
     const { list: todos } = await TodoService.getTodoList({
-      status: 'todo',
+      status: TodoStatus.TODO,
       planDateStart: weekStart,
       planDateEnd: weekEnd,
     });
     setWeekTodoList(todos);
 
     const { list: doneTodos } = await TodoService.getTodoList({
-      status: 'done',
+      status: TodoStatus.DONE,
       doneDateStart: weekStart,
       doneDateEnd: weekEnd,
     });
     setWeekDoneTodoList(doneTodos);
 
     const { list: expiredTodos } = await TodoService.getTodoList({
-      status: 'todo',
+      status: TodoStatus.TODO,
       planDateEnd: weekStart,
     });
     setExpiredTodoList(expiredTodos);
 
     const { list: abandonedTodos } = await TodoService.getTodoList({
-      status: 'abandoned',
+      status: TodoStatus.ABANDONED,
       abandonedDateStart: weekStart,
       abandonedDateEnd: weekEnd,
     });

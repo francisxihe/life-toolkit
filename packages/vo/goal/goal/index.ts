@@ -1,30 +1,27 @@
 export * from "./goal.vo";
 import { GoalModelVo, GoalVo } from "./goal.vo";
-import { TrackTimeVo } from "../../track-time";
 
-export type GoalWithTrackTimeVo = GoalVo & {
-  trackTimeList: TrackTimeVo[];
+export type CreateGoalVo = Omit<
+  GoalModelVo,
+  "doneAt" | "abandonedAt" | "status"
+> & {
+  parentId?: string;
+};
+
+export type UpdateGoalVo = Partial<CreateGoalVo>;
+
+export type GoalListVo = {
+  list: GoalModelVo[];
 };
 
 export type GoalPageVo = {
-  list: GoalVo[];
+  list: GoalModelVo[];
 
   total: number;
 
   pageNum: number;
 
   pageSize: number;
-};
-
-export type CreateGoalVo = Omit<
-  GoalModelVo,
-  "doneAt" | "abandonedAt" | "status"
->;
-
-export type UpdateGoalVo = Partial<CreateGoalVo>;
-
-export type GoalListVo = {
-  list: GoalVo[];
 };
 
 export type GoalListFiltersVo = {

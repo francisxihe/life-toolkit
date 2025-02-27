@@ -17,7 +17,6 @@ import {
   GoalPageFilterDto,
   GoalListFilterDto,
   GoalDto,
-  GoalWithTrackTimeDto,
 } from "./dto";
 import { GoalMapper } from "./mapper";
 
@@ -69,7 +68,7 @@ function getWhere(filter: GoalPageFilterDto) {
 export class GoalService {
   constructor(
     @InjectRepository(Goal)
-    private readonly goalRepository: Repository<Goal>,
+    private readonly goalRepository: Repository<Goal>
   ) {}
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
@@ -178,11 +177,13 @@ export class GoalService {
   }
 
   async findById(id: string): Promise<GoalDto> {
-    const goal = await this.goalRepository.findOneBy({ id });
+    const goal = await this.goalRepository.findOne({
+      where: { id },
+      relations: ["children", "parent"],
+    });
     if (!goal) {
       throw new Error("Goal not found");
     }
-
     return GoalMapper.entityToDto(goal);
   }
 }

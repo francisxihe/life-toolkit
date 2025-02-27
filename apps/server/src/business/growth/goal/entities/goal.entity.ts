@@ -1,10 +1,4 @@
-import {
-  Entity,
-  Column,
-  TreeChildren,
-  TreeParent,
-  Tree,
-} from "typeorm";
+import { Entity, Column, TreeChildren, TreeParent, Tree } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
@@ -31,7 +25,7 @@ export class Goal extends BaseEntity {
     nullable: true,
   })
   @IsEnum(GoalType)
-  type: GoalType; 
+  type: GoalType;
 
   /** 目标事项状态 */
   @Column({
@@ -43,14 +37,18 @@ export class Goal extends BaseEntity {
   status: GoalStatus;
 
   /** 目标开始时间 */
-  @Column()
+  @Column("datetime", {
+    nullable: true,
+  })
   @IsString()
-  startAt: string;
+  startAt?: Date;
 
   /** 目标结束时间 */
-  @Column()
+  @Column("datetime", {
+    nullable: true,
+  })
   @IsString()
-  endAt: string;
+  endAt?: Date;
 
   /** 目标描述 */
   @Column({ nullable: true })

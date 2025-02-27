@@ -10,8 +10,8 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { TodoVo, TodoPageFiltersVo, TodoStatus } from '@life-toolkit/vo/todo';
-import TodoService from '../service';
+import { GoalVo, GoalPageFiltersVo, GoalStatus } from '@life-toolkit/vo/goal';
+import GoalService from '../service';
 import { createInjectState } from '@/utils/createInjectState';
 
 function useSyncState<T>(
@@ -32,34 +32,33 @@ function useSyncState<T>(
   return [state, setSyncState, stateRef];
 }
 
-export const [TodoAllProvider, useTodoAllContext] = createInjectState<{
+export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   ContextType: {
-    todoList: TodoVo[];
-    getTodoPage: () => Promise<void>;
-    filters: TodoPageFiltersVo;
-    setFilters: Dispatch<SetStateAction<TodoPageFiltersVo>>;
+    goalList: GoalVo[];
+    getGoalPage: () => Promise<void>;
+    filters: GoalPageFiltersVo;
+    setFilters: Dispatch<SetStateAction<GoalPageFiltersVo>>;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
-  const [todoList, setTodoList] = useState<TodoVo[]>([]);
+  const [goalList, setGoalList] = useState<GoalVo[]>([]);
 
-  const [filters, setFilters, filtersRef] = useSyncState<TodoPageFiltersVo>({
+  const [filters, setFilters, filtersRef] = useSyncState<GoalPageFiltersVo>({
     keyword: '',
     importance: undefined,
     urgency: undefined,
-    status: TodoStatus.TODO,
+    status: GoalStatus.TODO,
     planDateStart: undefined,
     planDateEnd: undefined,
     doneDateStart: undefined,
     doneDateEnd: undefined,
     abandonedDateStart: undefined,
     abandonedDateEnd: undefined,
-    tags: [],
   });
 
-  async function getTodoPage() {
-    const { list, total } = await TodoService.getTodoPage(filtersRef.current);
-    setTodoList(list);
+  async function getGoalPage() {
+    const { list, total } = await GoalService.getGoalPage(filtersRef.current);
+    setGoalList(list);
   }
 
   const clearFilters = async () => {
@@ -74,10 +73,9 @@ export const [TodoAllProvider, useTodoAllContext] = createInjectState<{
       doneDateEnd: undefined,
       abandonedDateStart: undefined,
       abandonedDateEnd: undefined,
-      tags: [],
     });
-    await getTodoPage();
+    await getGoalPage();
   };
 
-  return { todoList, getTodoPage, filters, setFilters, clearFilters };
+  return { goalList, getGoalPage, filters, setFilters, clearFilters };
 });

@@ -55,3 +55,16 @@ export const taskRoutes: IRoute = {
     },
   ],
 };
+
+export const goalRoutes: IRoute = {
+  name: 'menu.goal',
+  key: '/growth/goal',
+  breadcrumb: true,
+  children: [
+    {
+      name: 'menu.goal.all',
+      key: 'goal-all',
+      breadcrumb: true,
+    },
+  ],
+};

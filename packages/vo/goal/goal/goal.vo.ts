@@ -13,11 +13,8 @@ export enum GoalType {
   KEY_RESULT = "2",
 }
 
-
 export type GoalModelVo = {
   name: string;
-
-  parentId?: string;
 
   status: GoalStatus;
 
@@ -34,13 +31,11 @@ export type GoalModelVo = {
   doneAt?: string;
 
   abandonedAt?: string;
-
-  children: GoalModelVo[];
 };
 
-export type GoalVo = BaseModelVo &
-  GoalModelVo & {
-    children: GoalVo[];
-    parent?: GoalVo;
-    trackTimeList?: TrackTimeVo[];
-  };
+export type GoalItemVo = BaseModelVo & GoalModelVo;
+
+export type GoalVo = GoalItemVo & {
+  children: GoalVo[];
+  parent?: GoalVo;
+};

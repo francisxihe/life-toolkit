@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import TodoService from '../service';
 import { openModal } from '@/hooks/OpenModal';
 import TodoDetail from '../components/TodoDetail';
+import { TodoStatus } from '@life-toolkit/vo/todo';
 
 export default function TodoTable() {
   const { todoList, getTodoPage } = useTodoAllContext();
@@ -22,15 +23,15 @@ export default function TodoTable() {
       key: 'status',
       render: (_, record) => {
         switch (record.status) {
-          case 'done':
+          case TodoStatus.DONE:
             return (
               <div className="text-success">
                 已完成({dayjs(record.doneAt).format('YY-MM-DD HH:mm')})
               </div>
             );
-          case 'todo':
+          case TodoStatus.TODO:
             return <div className="text-warning">未完成</div>;
-          case 'abandoned':
+          case TodoStatus.ABANDONED:
             return (
               <div className="text-danger">
                 已放弃({dayjs(record.abandonedAt).format('YY-MM-DD HH:mm')})

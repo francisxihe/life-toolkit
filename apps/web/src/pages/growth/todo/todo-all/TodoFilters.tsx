@@ -13,6 +13,7 @@ import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import type { TodoPageFiltersVo } from '@life-toolkit/vo/todo';
 import { useTodoAllContext } from './context';
+import { TodoStatus } from '@life-toolkit/vo/todo';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
@@ -102,9 +103,9 @@ export function TodoFilters() {
             allowClear
             placeholder="待办状态"
           >
-            <Select.Option value="todo">未完成</Select.Option>
-            <Select.Option value="done">已完成</Select.Option>
-            <Select.Option value="abandoned">已放弃</Select.Option>
+            <Select.Option value={TodoStatus.TODO}>未完成</Select.Option>
+            <Select.Option value={TodoStatus.DONE}>已完成</Select.Option>
+            <Select.Option value={TodoStatus.ABANDONED}>已放弃</Select.Option>
           </Select>
         </Col>
         <Col span={6}>

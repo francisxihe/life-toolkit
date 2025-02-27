@@ -1,9 +1,15 @@
 import { BaseModelVo } from "../../base/model.vo";
 
+export enum TodoStatus {
+  TODO = "todo",
+  DONE = "done",
+  ABANDONED = "abandoned",
+}
+
 export type TodoModelVo = {
   name: string;
 
-  status: "todo" | "done" | "abandoned";
+  status: TodoStatus;
 
   planDate: string;
 

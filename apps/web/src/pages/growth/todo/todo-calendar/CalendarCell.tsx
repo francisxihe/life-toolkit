@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
 import TodoDetail from '../components/TodoDetail';
 import { openModal } from '@/hooks/OpenModal';
 import TodoService from '../service';
@@ -35,10 +35,10 @@ function TodoItem({ todo }: { todo: TodoVo }) {
       }}
       className={clsx([
         `min-w-[200px] text-body-1 px-1.5 leading-[20px] rounded-[2px] truncate cursor-pointer`,
-        todo.status === 'done'
+        todo.status === TodoStatus.DONE
           ? 'text-success bg-success-light hover:bg-success-light-hover active:bg-success-light-active'
           : '',
-        todo.status === 'todo'
+        todo.status === TodoStatus.TODO
           ? 'text-warning bg-warning-light hover:bg-warning-light-hover active:bg-warning-light-active'
           : '',
       ])}

@@ -1,14 +1,13 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { TaskVo } from '@life-toolkit/vo/task';
+import { TaskVo, TaskStatus } from '@life-toolkit/vo/task';
 import TaskDetail from '../components/TaskDetail';
 import { openModal } from '@/hooks/OpenModal';
-import TaskService from '../service';
-import { TaskFormData } from '../types';
 import { useState, useRef, useMemo } from 'react';
 import AddTaskPopover from '../components/AddTaskPopover';
 import clsx from 'clsx';
 import SiteIcon from '@/components/SiteIcon';
+
 function TaskItem({ task }: { task: TaskVo }) {
   const { getTaskList } = useCalendarContext();
   return (
@@ -36,10 +35,10 @@ function TaskItem({ task }: { task: TaskVo }) {
       className={clsx([
         `min-w-[200px] text-body-1 px-1.5 leading-[20px] rounded-[2px]`,
         'truncate cursor-pointer',
-        task.status === 'done'
+        task.status === TaskStatus.DONE
           ? 'text-success bg-success-light hover:bg-success-light-hover active:bg-success-light-active'
           : '',
-        task.status === 'todo'
+        task.status === TaskStatus.TODO
           ? 'text-warning bg-warning-light hover:bg-warning-light-hover active:bg-warning-light-active'
           : '',
       ])}

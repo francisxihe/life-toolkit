@@ -7,8 +7,9 @@ import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
 import { flushSync } from 'react-dom';
+
 const today = dayjs().format('YYYY-MM-DD');
 const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
 
@@ -22,27 +23,27 @@ export default function TodoToday() {
 
   async function refreshData() {
     const { list: todos } = await TodoService.getTodoList({
-      status: 'todo',
+      status: TodoStatus.TODO,
       planDateStart: today,
       planDateEnd: today,
     });
     setTodayTodoList(todos);
 
     const { list: doneTodos } = await TodoService.getTodoList({
-      status: 'done',
+      status: TodoStatus.DONE,
       doneDateStart: today,
       doneDateEnd: today,
     });
     setTodayDoneTodoList(doneTodos);
 
     const { list: expiredTodos } = await TodoService.getTodoList({
-      status: 'todo',
+      status: TodoStatus.TODO,
       planDateEnd: yesterday,
     });
     setExpiredTodoList(expiredTodos);
 
     const { list: abandonedTodos } = await TodoService.getTodoList({
-      status: 'abandoned',
+      status: TodoStatus.ABANDONED,
       abandonedDateStart: today,
       abandonedDateEnd: today,
     });
