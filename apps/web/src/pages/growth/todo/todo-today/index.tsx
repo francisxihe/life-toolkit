@@ -64,7 +64,7 @@ export default function TodoToday() {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodoWithSub(id);
+    const todo = await TodoService.getTodo(id);
     setCurrentTodo(todo);
   }
 
@@ -84,8 +84,8 @@ export default function TodoToday() {
                 importance: todoFormData.importance,
                 urgency: todoFormData.urgency,
                 planDate: todoFormData.planDate || undefined,
-                startAt: todoFormData.planTimeRange?.[0] || undefined,
-                endAt: todoFormData.planTimeRange?.[1] || undefined,
+                planStartAt: todoFormData.planTimeRange?.[0] || undefined,
+                planEndAt: todoFormData.planTimeRange?.[1] || undefined,
                 repeat: todoFormData.repeat,
                 tags: todoFormData.tags,
               });

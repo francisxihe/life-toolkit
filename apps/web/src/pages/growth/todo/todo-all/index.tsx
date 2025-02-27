@@ -42,8 +42,8 @@ function TodoAll() {
                       importance: todoFormData.importance,
                       urgency: todoFormData.urgency,
                       planDate: todoFormData.planDate || undefined,
-                      startAt: todoFormData.planTimeRange?.[0] || undefined,
-                      endAt: todoFormData.planTimeRange?.[1] || undefined,
+                      planStartAt: todoFormData.planTimeRange?.[0] || undefined,
+                      planEndAt: todoFormData.planTimeRange?.[1] || undefined,
                       repeat: todoFormData.repeat,
                       tags: todoFormData.tags,
                     });
@@ -58,8 +58,8 @@ function TodoAll() {
                   importance: todoFormData.importance,
                   urgency: todoFormData.urgency,
                   planDate: todoFormData.planDate || undefined,
-                  startAt: todoFormData.planTimeRange?.[0] || undefined,
-                  endAt: todoFormData.planTimeRange?.[1] || undefined,
+                  planStartAt: todoFormData.planTimeRange?.[0] || undefined,
+                  planEndAt: todoFormData.planTimeRange?.[1] || undefined,
                   repeat: todoFormData.repeat,
                   tags: todoFormData.tags,
                 });

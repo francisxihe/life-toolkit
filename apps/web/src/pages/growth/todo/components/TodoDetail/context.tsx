@@ -11,8 +11,8 @@ import { TodoStatus } from '@life-toolkit/vo/todo';
 export type CurrentTodo = {
   id: string;
   planDate: string;
-  startAt?: string;
-  endAt?: string;
+  planStartAt?: string;
+  planEndAt?: string;
   repeat?: 'none' | 'daily' | 'weekly' | 'monthly';
   importance?: number;
   urgency?: number;
@@ -45,7 +45,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
       importance: todo.importance,
       urgency: todo.urgency,
       planDate: todo.planDate,
-      planTimeRange: [todo.startAt, todo.endAt],
+      planTimeRange: [todo.planStartAt, todo.planEndAt],
       repeat: todo.repeat,
     };
   }

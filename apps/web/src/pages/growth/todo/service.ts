@@ -9,9 +9,9 @@ import type {
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
 export default class TodoService {
-  static async getTodoWithSub(todoId: string) {
+  static async getTodo(todoId: string) {
     try {
-      return TodoController.getTodoWithSub(todoId);
+      return TodoController.getTodo(todoId);
     } catch (error) {
       Message.error(error.message);
     }

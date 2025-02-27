@@ -23,8 +23,8 @@ export type TodoItemProps = {
     importance?: TodoVo['importance'];
     urgency?: TodoVo['urgency'];
     planDate?: TodoVo['planDate'];
-    startAt?: TodoVo['startAt'];
-    endAt?: TodoVo['endAt'];
+    planStartAt?: TodoVo['planStartAt'];
+    planEndAt?: TodoVo['planEndAt'];
     repeat?: TodoVo['repeat'];
     doneAt?: TodoVo['doneAt'];
     abandonedAt?: TodoVo['abandonedAt'];
@@ -133,9 +133,9 @@ function TodoItem(props: TodoItemProps) {
                 }
               >
                 {todo.planDate}
-                {todo.startAt && todo.endAt && (
+                {todo.planStartAt && todo.planEndAt && (
                   <>
-                    {todo.startAt}-{todo.endAt}
+                    {todo.planStartAt}-{todo.planEndAt}
                   </>
                 )}
               </span>

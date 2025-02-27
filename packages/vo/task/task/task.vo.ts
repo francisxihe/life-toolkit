@@ -3,7 +3,7 @@ import { TrackTimeVo } from "../../track-time/track-time.vo";
 
 export enum TaskStatus {
   TODO = "todo",
-  DOING = "doing",
+  IN_PROGRESS = "in_progress",
   DONE = "done",
   ABANDONED = "abandoned",
 }

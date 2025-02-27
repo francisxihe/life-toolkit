@@ -4,15 +4,14 @@ import {
   CreateTodoVo,
   TodoPageVo,
   TodoListVo,
-  TodoWithSubVo,
   TodoPageFiltersVo,
   TodoListFiltersVo,
 } from "@life-toolkit/vo/todo";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class TodoController {
-  static async getTodoWithSub(todoId: string) {
-    return await get<TodoWithSubVo>(`/todo/todo-with-sub/${todoId}`);
+  static async getTodo(todoId: string) {
+    return await get<TodoVo>(`/todo/detail/${todoId}`);
   }
 
   static async batchDoneTodo(params: OperationByIdListVo) {

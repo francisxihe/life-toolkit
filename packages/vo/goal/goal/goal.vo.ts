@@ -2,15 +2,15 @@ import { BaseModelVo } from "../../base/model.vo";
 import { TrackTimeVo } from "../../track-time/track-time.vo";
 
 export enum GoalStatus {
-  TODO = "1",
-  IN_PROGRESS = "2",
-  DONE = "3",
-  ABANDONED = "4",
+  TODO = "todo",
+  IN_PROGRESS = "in_progress",
+  DONE = "done",
+  ABANDONED = "abandoned",
 }
 
 export enum GoalType {
-  OBJECTIVE = "1",
-  KEY_RESULT = "2",
+  OBJECTIVE = "objective",
+  KEY_RESULT = "key_result",
 }
 
 export type GoalModelVo = {

@@ -1,10 +1,5 @@
 export * from "./todo.vo";
-import { SubTodoVo } from "../sub-todo";
 import { TodoModelVo, TodoVo } from "./todo.vo";
-
-export type TodoWithSubVo = TodoVo & {
-  subTodoList: SubTodoVo[];
-};
 
 export type TodoPageVo = {
   list: TodoVo[];
