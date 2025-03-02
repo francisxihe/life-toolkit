@@ -1,9 +1,9 @@
 import { FieldType } from '../types/index.js';
 
 export const TYPE_DECORATORS: Record<FieldType, string> = {
-  string: "@Column()",
-  number: "@Column()",
-  boolean: "@Column()",
+  string: "@Column('varchar')",
+  number: "@Column('int')",
+  boolean: "@Column('boolean')",
   Date: '@Column("datetime")',
   enum: '@Column({ type: "enum", enum: TYPE })',
   object: '@Column("json")',

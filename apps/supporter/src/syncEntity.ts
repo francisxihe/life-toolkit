@@ -13,6 +13,7 @@ import { updateVoInterface } from "./services/updateVoInterface.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+const VO_PATH = "packages/vo";
 
 async function main() {
   try {
@@ -47,14 +48,17 @@ async function main() {
     const dtoResult = await updateDtoFiles(dtoPath, fieldInfo);
     logUpdateResult(dtoResult);
 
-    // const voPath = resolveProjectPath(
-    //   "apps/server/src/business",
-    //   `${fieldInfo.entityName}/vo/${entityName}.vo.ts`
-    // );
-    // // 更新 VO
-    // console.log(chalk.blue("\n正在更新 VO..."));
-    // const voResult = await fileUpdateService.updateVoInterface(voPath, fieldInfo);
-    // logUpdateResult(voResult);
+    const voPath = resolveProjectPath(
+      "VO_PATH",
+      `${fieldInfo.entityName}/${entityName}.vo.ts`
+    );
+    // 更新 VO
+    console.log(chalk.blue("\n正在更新 VO..."));
+    const voResult = await fileUpdateService.updateVoInterface(
+      voPath,
+      fieldInfo
+    );
+    logUpdateResult(voResult);
 
     const mapperPath = resolveProjectPath(
       "apps/server/src/business",

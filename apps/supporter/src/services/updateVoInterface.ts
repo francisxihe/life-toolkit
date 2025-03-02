@@ -1,14 +1,14 @@
 import fs from "fs";
 import { FieldInfo } from "../types/index.js";
 import { FileUpdateResult } from "../types/index.js";
-import { resolveProjectPath } from "../utils/path.js";
+import { resolve } from "path";
 
 export async function updateVoInterface(
   basePath: string,
   fieldInfo: FieldInfo
 ): Promise<FileUpdateResult> {
   try {
-    const voPath = resolveProjectPath("packages/vo/src/goal.ts");
+    const voPath = resolve(basePath, "goal-model.vo.ts");
     let content = fs.readFileSync(voPath, "utf8");
 
     const voFieldDefinition = `

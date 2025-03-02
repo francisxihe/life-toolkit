@@ -20,10 +20,7 @@ export async function updateDtoFiles(
       let content = fs.readFileSync(filePath, "utf8");
 
       for (const dtoClass of dtoClasses) {
-        const dtoFieldDefinition = `
-  /** ${fieldInfo.description} */
-  ${fieldInfo.isNullable ? "@IsOptional()\n  " : ""}${VALIDATOR_DECORATORS[fieldInfo.fieldType]}
-  ${fieldInfo.fieldName}${fieldInfo.isNullable ? "?" : ""}: ${fieldInfo.fieldType};`;
+        const dtoFieldDefinition = `\n/** ${fieldInfo.description} */\n${fieldInfo.fieldName}${fieldInfo.isNullable ? "?" : ""}: ${fieldInfo.fieldType};\n`;
 
         const classEndIndex = content.indexOf(
           "}",
