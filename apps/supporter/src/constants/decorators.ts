@@ -1,4 +1,4 @@
-import { FieldType } from '../types';
+import { FieldType } from '../types/index.js';
 
 export const TYPE_DECORATORS: Record<FieldType, string> = {
   string: "@Column()",

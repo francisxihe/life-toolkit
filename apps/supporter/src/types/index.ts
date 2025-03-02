@@ -1,5 +1,5 @@
 export interface FieldInfo {
-  path: string;
+  entityName: string;
   fieldName: string;
   fieldType: FieldType;
   isNullable: boolean;

@@ -16,8 +16,8 @@ export class FieldInfoService {
     const questions = [
       {
         type: "input",
-        name: "path",
-        message: "请输入文件路径:",
+        name: "entityName",
+        message: "请输入模块名:",
       },
       {
         type: "input",
