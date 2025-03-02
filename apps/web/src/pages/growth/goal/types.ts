@@ -7,6 +7,6 @@ export type GoalFormData = Pick<
 > & {
   id?: string;
   planTimeRange: [string | undefined, string | undefined];
-  children: GoalFormData[];
+  children?: GoalFormData[];
   parentId?: string;
 };

@@ -17,7 +17,7 @@ export type GoalModelVo = {
 
   status: GoalStatus;
 
-  type: GoalType;
+  type?: GoalType;
 
   description?: string;
 
@@ -36,7 +36,8 @@ export type GoalModelVo = {
 
 export type GoalItemVo = BaseModelVo & GoalModelVo;
 
-export type GoalVo = GoalItemVo & {
+export type GoalVo = {
   children: GoalVo[];
   parent?: GoalVo;
-};
+} & BaseModelVo &
+  GoalModelVo;

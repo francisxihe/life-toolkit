@@ -7,10 +7,15 @@ import {
   Space,
   Grid,
   DatePicker,
+  Divider,
 } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
-import { GoalPageFiltersVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
+import {
+  GoalPageFiltersVo,
+  GoalStatus,
+  GoalType,
+} from '@life-toolkit/vo/growth';
 import { useGoalAllContext } from './context';
 
 const DatePickerRange = DatePicker.RangePicker;
@@ -21,9 +26,9 @@ export function GoalFilters() {
     useGoalAllContext();
 
   return (
-    <Space className="w-full my-3" direction="vertical" size="large">
+    <Space className="w-full my-3" direction="horizontal" size="large">
       <Row gutter={[16, 16]}>
-        <Col span={4}>
+        <Col span={6}>
           <Input
             prefix={<IconSearch />}
             placeholder="关键字"
@@ -36,7 +41,7 @@ export function GoalFilters() {
             }}
           />
         </Col>
-        <Col span={8}>
+        <Col span={12}>
           <DatePickerRange
             className="w-full"
             placeholder={['开始时间', '结束时间']}
@@ -51,7 +56,7 @@ export function GoalFilters() {
             }}
           />
         </Col>
-        <Col span={4}>
+        <Col span={6}>
           <Select
             value={filters.type}
             onChange={(value) => {
@@ -74,7 +79,7 @@ export function GoalFilters() {
             ]}
           />
         </Col>
-        <Col span={4}>
+        <Col span={6}>
           <Select
             value={filters.status}
             onChange={(value) => {
@@ -105,7 +110,7 @@ export function GoalFilters() {
             ]}
           />
         </Col>
-        <Col span={4}>
+        <Col span={6}>
           <Select
             value={filters.importance}
             onChange={(value) => {
@@ -126,7 +131,7 @@ export function GoalFilters() {
             )}
           </Select>
         </Col>
-        <Col span={4}>
+        <Col span={6}>
           <Select
             value={filters.urgency}
             onChange={(value) => {
@@ -145,29 +150,27 @@ export function GoalFilters() {
             ))}
           </Select>
         </Col>
-        <Col span={4}></Col>
-        <Col span={4}></Col>
-        <Col span={4}></Col>
-        <Col span={8} className="flex justify-end">
-          <div className="flex justify-end gap-2">
-            <Button
-              onClick={async () => {
-                clearFilters();
-              }}
-            >
-              重置
-            </Button>
-            <Button
-              type="primary"
-              onClick={async () => {
-                await getGoalPage();
-              }}
-            >
-              查询
-            </Button>
-          </div>
-        </Col>
       </Row>
+
+      <Divider type="vertical" style={{ height: '80px' }} />
+
+      <div className="flex flex-col gap-4">
+        <Button
+          onClick={async () => {
+            clearFilters();
+          }}
+        >
+          重置
+        </Button>
+        <Button
+          type="primary"
+          onClick={async () => {
+            await getGoalPage();
+          }}
+        >
+          查询
+        </Button>
+      </div>
     </Space>
   );
 }

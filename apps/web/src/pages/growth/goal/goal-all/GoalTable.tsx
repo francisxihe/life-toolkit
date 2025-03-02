@@ -4,7 +4,7 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import GoalService from '../service';
-import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
+import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
 import { openModal } from '@/hooks/OpenModal';
 import GoalDetail from '../components/GoalDetail';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
@@ -50,6 +50,16 @@ export default function GoalTable() {
             return '--';
         }
       },
+    },
+    {
+      title: '类型',
+      key: 'type',
+      render: (_, record) => (
+        <div>
+          {record.type === GoalType.OBJECTIVE && '规划目标'}
+          {record.type === GoalType.KEY_RESULT && '成果目标'}
+        </div>
+      ),
     },
     {
       title: '计划日期',

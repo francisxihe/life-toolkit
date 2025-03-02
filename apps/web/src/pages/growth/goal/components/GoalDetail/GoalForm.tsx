@@ -1,16 +1,7 @@
-import {
-  Input,
-  Button,
-  Popover,
-  Grid,
-  DatePicker,
-  Select,
-} from '@arco-design/web-react';
+import { Input, Grid, DatePicker, Select, Form } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
 import { GoalType } from '@life-toolkit/vo/growth';
-import FlexibleContainer from '@/components/FlexibleContainer';
 
-const { Shrink, Fixed } = FlexibleContainer;
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
@@ -18,17 +9,20 @@ const TextArea = Input.TextArea;
 export default function GoalForm() {
   const { goalFormData, setGoalFormData, onChange } = useGoalDetailContext();
 
+  const [form] = Form.useForm();
+
   return goalFormData ? (
-    <>
+    <Form
+      form={form}
+      initialValues={goalFormData}
+      onValuesChange={(changedValues) => {
+        setGoalFormData((prev) => ({ ...prev, ...changedValues }));
+      }}
+    >
       <Row gutter={[16, 16]} className="p-2">
-        <Item span={24} label="目标名称">
+        <Item span={24} label="目标名称" name="name">
           <Input
-            value={goalFormData.name}
             placeholder="准备做什么?"
-            type="primary"
-            onChange={(value) => {
-              setGoalFormData((prev) => ({ ...prev, name: value }));
-            }}
             onBlur={() => {
               onChange({
                 name: goalFormData.name.trim(),
@@ -36,23 +30,21 @@ export default function GoalForm() {
             }}
           />
         </Item>
-        <Item span={24} label="日期">
+        <Item span={24} label="日期" name="planTimeRange">
           <RangePicker
-            value={goalFormData.planTimeRange}
             className="w-full rounded-md"
             allowClear
-            showTime
-            onChange={(time) => {
-              setGoalFormData((prev) => ({
-                ...prev,
-                planTimeRange: [time[0], time[1]],
-              }));
+            format="YYYY-MM-DD"
+            onOk={(value) => {
+              onChange({
+                startAt: value[0],
+                endAt: value[1],
+              });
             }}
           />
         </Item>
-        <Item span={24} label="目标类型">
+        <Item span={24} label="目标类型" name="type">
           <Select
-            value={goalFormData.type}
             allowClear
             placeholder="请选择目标类型"
             options={[
@@ -65,26 +57,18 @@ export default function GoalForm() {
                 value: GoalType.KEY_RESULT,
               },
             ]}
-            onChange={(value) => {
-              setGoalFormData((prev) => ({ ...prev, type: value }));
+            onBlur={() => {
+              onChange({
+                type: goalFormData.type,
+              });
             }}
           ></Select>
         </Item>
-        <Item span={24} label="描述">
-          <TextArea
-            autoSize={false}
-            value={goalFormData.description}
-            placeholder="描述一下"
-            onChange={(value) => {
-              setGoalFormData((prev) => ({
-                ...prev,
-                description: value,
-              }));
-            }}
-          />
+        <Item span={24} label="描述" name="description">
+          <TextArea autoSize={false} placeholder="描述一下" />
         </Item>
       </Row>
-    </>
+    </Form>
   ) : (
     <></>
   );
@@ -94,13 +78,13 @@ function Item(props: {
   span: number;
   label: string;
   children: React.ReactNode;
+  name: string;
 }) {
   return (
-    <Col span={props.span} className="flex items-center">
-      <FlexibleContainer direction="vertical">
-        <Fixed className="leading-[32px] w-24">{props.label}</Fixed>
-        <Shrink>{props.children}</Shrink>
-      </FlexibleContainer>
+    <Col span={props.span} className="w-full flex items-center">
+      <Form.Item field={props.name} label={props.label}>
+        {props.children}
+      </Form.Item>
     </Col>
   );
 }

@@ -41,10 +41,10 @@ function useSyncState<T>(
 export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   ContextType: {
     goalList: GoalItemVo[];
-    getGoalPage: () => Promise<void>;
     filters: GoalPageFiltersVo;
     setFilters: Dispatch<SetStateAction<GoalPageFiltersVo>>;
     clearFilters: () => Promise<void>;
+    getGoalPage: () => Promise<void>;
   };
 }>(() => {
   const [goalList, setGoalList] = useState<GoalItemVo[]>([]);

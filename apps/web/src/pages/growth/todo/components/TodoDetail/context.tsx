@@ -1,12 +1,11 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import type { UpdateTodoVo } from '@life-toolkit/vo/growth';
-import { TodoFormData } from '../../types';
+import type { TodoFormData } from '../../types';
 import TodoService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { TodoDetailProps } from '.';
-import { TodoStatus } from '@life-toolkit/vo/growth';
+import { TodoStatus, UpdateTodoVo } from '@life-toolkit/vo/growth';
 
 export type CurrentTodo = {
   id: string;

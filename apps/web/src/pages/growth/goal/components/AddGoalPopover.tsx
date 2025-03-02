@@ -5,6 +5,7 @@ import { useState } from 'react';
 import dayjs from 'dayjs';
 import { GoalFormData } from '../types';
 import GoalService from '../service';
+import { GoalStatus } from '@life-toolkit/vo/growth';
 const RangePicker = DatePicker.RangePicker;
 
 export default function AddGoalPopover(
@@ -16,7 +17,7 @@ export default function AddGoalPopover(
   const defaultFormData: GoalFormData = {
     name: '',
     planTimeRange: [undefined, undefined],
-    children: [],
+    status: GoalStatus.TODO,
     ...props.initialFormData,
   };
 
@@ -35,7 +36,6 @@ export default function AddGoalPopover(
       startAt: formData.planTimeRange?.[0] || undefined,
       endAt: formData.planTimeRange?.[1] || undefined,
       parentId: formData.parentId,
-      children: [],
     });
     setPopupVisible(false);
     setFormData(defaultFormData);
@@ -78,8 +78,7 @@ export default function AddGoalPopover(
               value={formData.planTimeRange}
               className="w-full rounded-md"
               allowClear
-              showTime
-              format="YYYY-MM-DD HH:mm"
+              format="YYYY-MM-DD"
               onChange={(time) => {
                 if (!time?.[0] || !time?.[1]) {
                   return;
