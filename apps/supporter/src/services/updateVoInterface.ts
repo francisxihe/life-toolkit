@@ -18,17 +18,17 @@ export async function updateVoInterface(
     // 更新 GoalVo 接口
     const goalVoEndIndex = content.indexOf(
       "}",
-      content.indexOf("export interface GoalVo")
+      content.indexOf("export type GoalVo")
     );
     content =
       content.slice(0, goalVoEndIndex) +
       voFieldDefinition +
       content.slice(goalVoEndIndex);
 
-    // 更新 GoalItemVo 接口
+    // 更新 GoalModelVo 接口
     const itemVoEndIndex = content.indexOf(
       "}",
-      content.indexOf("export interface GoalItemVo")
+      content.indexOf("export type GoalModelVo")
     );
     content =
       content.slice(0, itemVoEndIndex) +
