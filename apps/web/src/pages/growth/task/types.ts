@@ -1,5 +1,4 @@
-import { TaskVo } from '@life-toolkit/vo/task';
-import { TrackTimeModelVo } from '@life-toolkit/vo/track-time';
+import { TaskVo, TrackTimeModelVo } from '@life-toolkit/vo/growth';
 
 export type TaskFormData = {
   id?: string;

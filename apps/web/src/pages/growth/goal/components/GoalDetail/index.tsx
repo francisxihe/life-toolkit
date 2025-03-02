@@ -1,5 +1,5 @@
 import FlexibleContainer from '@/components/FlexibleContainer';
-import { GoalVo } from '@life-toolkit/vo/goal';
+import { GoalVo } from '@life-toolkit/vo/growth';
 import { GoalDetailProvider } from './context';
 import GoalForm from './GoalForm';
 import SubGoalList from './SubGoalList';

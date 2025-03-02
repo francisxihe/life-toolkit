@@ -8,7 +8,7 @@ import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
 import { flushSync } from 'react-dom';
-import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');

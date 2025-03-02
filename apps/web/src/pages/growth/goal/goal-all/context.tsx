@@ -16,7 +16,7 @@ import {
   GoalPageFiltersVo,
   GoalStatus,
   GoalType,
-} from '@life-toolkit/vo/goal';
+} from '@life-toolkit/vo/growth';
 import GoalService from '../service';
 import { createInjectState } from '@/utils/createInjectState';
 

@@ -7,7 +7,7 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../IconSelector';
 import SiteIcon from '@/components/SiteIcon';
 import TodoService from '../../service';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 

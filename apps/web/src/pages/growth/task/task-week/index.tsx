@@ -8,7 +8,7 @@ import TaskDetail from '../components/TaskDetail';
 import styles from './style.module.less';
 import TaskService from '../service';
 import { flushSync } from 'react-dom';
-import { TaskVo, TaskStatus } from '@life-toolkit/vo/task';
+import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import SiteIcon from '@/components/SiteIcon';
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');

@@ -10,7 +10,7 @@ import {
 } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
-import { GoalPageFiltersVo, GoalStatus, GoalType } from '@life-toolkit/vo/goal';
+import { GoalPageFiltersVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
 import { useGoalAllContext } from './context';
 
 const DatePickerRange = DatePicker.RangePicker;

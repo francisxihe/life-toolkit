@@ -11,7 +11,7 @@ import {
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
 import { TagSelector } from '../../../../components/TagSelector';
-import { TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/task';
+import { TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
 import { useTaskAllContext } from './context';
 
 const DatePickerRange = DatePicker.RangePicker;

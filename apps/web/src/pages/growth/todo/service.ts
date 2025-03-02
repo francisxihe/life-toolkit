@@ -5,7 +5,7 @@ import type {
   TodoPageFiltersVo,
   TodoListFiltersVo,
   UpdateTodoVo,
-} from '@life-toolkit/vo/todo';
+} from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
 export default class TodoService {

@@ -4,7 +4,7 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTaskAllContext } from './context';
 import { useEffect, useState } from 'react';
 import TaskService from '../service';
-import { TaskVo, TaskStatus } from '@life-toolkit/vo/task';
+import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import { openModal } from '@/hooks/OpenModal';
 import TaskDetail from '../components/TaskDetail';
 

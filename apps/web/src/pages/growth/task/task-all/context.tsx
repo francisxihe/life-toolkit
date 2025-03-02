@@ -10,7 +10,7 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { TaskVo, TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/task';
+import { TaskVo, TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
 import TaskService from '../service';
 import { createInjectState } from '@/utils/createInjectState';
 

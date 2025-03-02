@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card, Grid, Typography, Statistic } from '@arco-design/web-react';
-import { TodoVo } from '@life-toolkit/vo/todo';
+import { TodoVo } from '@life-toolkit/vo/growth';
 import ApiService from '../service';
 import styles from './style/index.module.less';
 import { Space } from '@arco-design/web-react';

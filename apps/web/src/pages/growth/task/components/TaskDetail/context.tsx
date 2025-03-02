@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/task';
+import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/growth';
 import { TaskFormData } from '../../types';
 import TaskService from '../../service';
 import { createInjectState } from '@/utils/createInjectState';

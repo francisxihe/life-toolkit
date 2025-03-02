@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 import TodoDetail from '../components/TodoDetail';
 import { openModal } from '@/hooks/OpenModal';
 import TodoService from '../service';

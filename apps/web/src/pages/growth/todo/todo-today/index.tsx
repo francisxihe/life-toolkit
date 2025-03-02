@@ -7,7 +7,7 @@ import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import TodoService from '../service';
-import { TodoVo, TodoStatus } from '@life-toolkit/vo/todo';
+import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 import { flushSync } from 'react-dom';
 
 const today = dayjs().format('YYYY-MM-DD');

@@ -5,7 +5,7 @@ import type {
   TaskPageFiltersVo,
   TaskListFiltersVo,
   UpdateTaskVo,
-} from '@life-toolkit/vo/task';
+} from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
 export default class TaskService {

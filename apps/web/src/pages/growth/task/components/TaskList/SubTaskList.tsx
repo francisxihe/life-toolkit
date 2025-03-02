@@ -1,6 +1,6 @@
 'use client';
 
-import { TaskVo } from '@life-toolkit/vo/task';
+import { TaskVo } from '@life-toolkit/vo/growth';
 import TriggerStatusCheckbox from './TriggerStatusCheckbox';
 import TaskItem from './TaskItem';
 

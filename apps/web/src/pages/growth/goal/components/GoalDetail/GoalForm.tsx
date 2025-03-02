@@ -7,7 +7,7 @@ import {
   Select,
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
-import { GoalType } from '@life-toolkit/vo/goal';
+import { GoalType } from '@life-toolkit/vo/growth';
 import FlexibleContainer from '@/components/FlexibleContainer';
 
 const { Shrink, Fixed } = FlexibleContainer;

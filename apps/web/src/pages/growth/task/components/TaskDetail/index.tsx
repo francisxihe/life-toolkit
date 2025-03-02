@@ -1,5 +1,5 @@
 import FlexibleContainer from '@/components/FlexibleContainer';
-import { TaskVo } from '@life-toolkit/vo/task';
+import { TaskVo } from '@life-toolkit/vo/growth';
 import { TaskDetailProvider } from './context';
 import TaskForm from './TaskForm';
 import SubTaskList from './SubTaskList';
