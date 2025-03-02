@@ -48,16 +48,10 @@ async function main() {
     const dtoResult = await updateDtoFiles(dtoPath, fieldInfo);
     logUpdateResult(dtoResult);
 
-    const voPath = resolveProjectPath(
-      "VO_PATH",
-      `${fieldInfo.entityName}/${entityName}.vo.ts`
-    );
+    const voPath = resolveProjectPath(VO_PATH, `${entityName}`);
     // 更新 VO
     console.log(chalk.blue("\n正在更新 VO..."));
-    const voResult = await fileUpdateService.updateVoInterface(
-      voPath,
-      fieldInfo
-    );
+    const voResult = await updateVoInterface(voPath, fieldInfo);
     logUpdateResult(voResult);
 
     const mapperPath = resolveProjectPath(
