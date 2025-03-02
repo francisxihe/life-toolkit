@@ -7,7 +7,7 @@ import {
   TaskWithChildrenVo,
   TaskPageFiltersVo,
   TaskListFiltersVo,
-} from "@life-toolkit/vo/task";
+} from "@life-toolkit/vo/growth";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class TaskController {

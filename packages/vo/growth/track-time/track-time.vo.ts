@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../base";
+import { BaseModelVo } from "../../base/model.vo";
 
 export type TrackTimeModelVo = {
   startAt?: string;

@@ -1,5 +1,4 @@
 import { BaseModelVo } from "../../base/model.vo";
-import { TrackTimeVo } from "../../track-time/track-time.vo";
 
 export enum GoalStatus {
   TODO = "todo",

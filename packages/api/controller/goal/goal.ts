@@ -6,7 +6,7 @@ import {
   GoalListVo,
   GoalPageFiltersVo,
   GoalListFiltersVo,
-} from "@life-toolkit/vo/goal";
+} from "@life-toolkit/vo/growth";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class GoalController {

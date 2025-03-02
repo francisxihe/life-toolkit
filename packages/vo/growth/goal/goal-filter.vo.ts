@@ -1,25 +1,5 @@
-export * from "./goal.vo";
-import { GoalModelVo, GoalVo, GoalItemVo } from "./goal.vo";
-
-export type CreateGoalVo = Omit<
-  GoalModelVo,
-  "doneAt" | "abandonedAt" | "status"
-> & {
-  parentId?: string;
-};
-
-export type UpdateGoalVo = Partial<CreateGoalVo>;
-
-export type GoalListVo = {
-  list: GoalItemVo[];
-};
-
-export type GoalPageVo = {
-  list: GoalItemVo[];
-  total: number;
-  pageNum: number;
-  pageSize: number;
-};
+export * from "./goal-model.vo";
+import { GoalVo, GoalItemVo } from "./goal-model.vo";
 
 export type GoalListFiltersVo = Partial<
   Pick<GoalVo, "startAt" | "endAt" | "importance" | "urgency" | "status"> & {
@@ -43,3 +23,14 @@ export type GoalPageFiltersVo = Partial<
     abandonedDateEnd?: string;
   }
 >;
+
+export type GoalListVo = {
+  list: GoalItemVo[];
+};
+
+export type GoalPageVo = {
+  list: GoalItemVo[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+};

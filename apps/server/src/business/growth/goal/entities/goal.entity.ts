@@ -99,4 +99,10 @@ export class Goal extends BaseEntity {
   @IsOptional()
   @IsNumber()
   priority?: number;
+
+  /** aaaa */
+  @Column('varchar', { nullable: true })
+  @IsOptional()
+  @IsString()
+  sda?: string;
 }

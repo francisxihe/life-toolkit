@@ -1,10 +1,5 @@
-export * from "./task.vo";
-import { TaskModelVo, TaskVo } from "./task.vo";
-import { TrackTimeVo } from "../../track-time";
-
-export type TaskWithTrackTimeVo = TaskVo & {
-  trackTimeList: TrackTimeVo[];
-};
+export * from "./task-model.vo";
+import { TaskVo } from "./task-model.vo";
 
 export type TaskPageVo = {
   list: TaskVo[];
@@ -15,13 +10,6 @@ export type TaskPageVo = {
 
   pageSize: number;
 };
-
-export type CreateTaskVo = Omit<
-  TaskModelVo,
-  "doneAt" | "abandonedAt" | "status"
->;
-
-export type UpdateTaskVo = Partial<CreateTaskVo>;
 
 export type TaskListVo = {
   list: TaskVo[];

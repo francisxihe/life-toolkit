@@ -43,6 +43,9 @@ export class GoalPageFilterDto extends IntersectionType(
   @IsOptional()
   @IsDateString()
   abandonedDateEnd?: string;
+
+/** aaaa */
+sda?: string;
 }
 
 export class GoalListFilterDto extends PartialType(
@@ -77,4 +80,7 @@ export class GoalListFilterDto extends PartialType(
   @IsOptional()
   @IsDateString()
   abandonedDateEnd?: string;
+
+/** aaaa */
+sda?: string;
 }

@@ -18,7 +18,6 @@ const VO_PATH = "packages/vo";
 async function main() {
   try {
     const fieldInfoService = new FieldInfoService();
-    const fileUpdateService = new FileUpdateService();
 
     console.log(chalk.blue("开始收集字段信息..."));
     const fieldInfo = await fieldInfoService.getFieldInfo();
@@ -48,7 +47,7 @@ async function main() {
     const dtoResult = await updateDtoFiles(dtoPath, fieldInfo);
     logUpdateResult(dtoResult);
 
-    const voPath = resolveProjectPath(VO_PATH, `${entityName}`);
+    const voPath = resolveProjectPath(VO_PATH, `${fieldInfo.entityName}`);
     // 更新 VO
     console.log(chalk.blue("\n正在更新 VO..."));
     const voResult = await updateVoInterface(voPath, fieldInfo);

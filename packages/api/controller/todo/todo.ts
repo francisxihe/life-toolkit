@@ -6,7 +6,7 @@ import {
   TodoListVo,
   TodoPageFiltersVo,
   TodoListFiltersVo,
-} from "@life-toolkit/vo/todo";
+} from "@life-toolkit/vo/growth";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class TodoController {

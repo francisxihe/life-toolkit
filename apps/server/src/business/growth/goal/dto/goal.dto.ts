@@ -10,7 +10,10 @@ import {
 export class GoalDto extends IntersectionType(
   BaseModelDto,
   OmitType(Goal, [] as const)
-) {}
+) {
+/** aaaa */
+sda?: string;
+}
 
 export class GoalModelDto extends OmitType(GoalDto, [
   "children",
@@ -24,9 +27,15 @@ export class CreateGoalDto extends OmitType(GoalDto, [
   ...BaseModelDtoKeys,
 ] as const) {
   parentId?: string;
+
+/** aaaa */
+sda?: string;
 }
 
 export class UpdateGoalDto extends IntersectionType(
   PartialType(CreateGoalDto),
   PickType(Goal, ["id"] as const)
-) {}
+) {
+/** aaaa */
+sda?: string;
+}

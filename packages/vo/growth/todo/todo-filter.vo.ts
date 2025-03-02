@@ -1,5 +1,4 @@
-export * from "./todo.vo";
-import { TodoModelVo, TodoVo } from "./todo.vo";
+import { TodoVo } from "./todo-model.vo";
 
 export type TodoPageVo = {
   list: TodoVo[];
@@ -10,13 +9,6 @@ export type TodoPageVo = {
 
   pageSize: number;
 };
-
-export type CreateTodoVo = Omit<
-  TodoModelVo,
-  "doneAt" | "abandonedAt" | "status"
->;
-
-export type UpdateTodoVo = Partial<CreateTodoVo>;
 
 export type TodoListVo = {
   list: TodoVo[];

@@ -18,6 +18,7 @@ class GoalMapperEntity {
     dto.abandonedAt = entity.abandonedAt;
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
+        dto.sda = entity.sda;
     return dto;
   }
 
@@ -54,7 +55,8 @@ class GoalMapperDto extends GoalMapperEntity {
         ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
     };
-    return vo;
+          sda: dto.sda,
+      return vo;
   }
 
   static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
