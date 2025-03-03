@@ -3,7 +3,7 @@ import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "../dto";
 import { GoalStatus, Goal } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
-
+import { TaskMapper } from "@/business/growth/task/mapper/task.mapper";
 class GoalMapperEntity {
   static entityToModelDto(entity: Goal): GoalModelDto {
     const dto = new GoalModelDto();
@@ -18,7 +18,6 @@ class GoalMapperEntity {
     dto.abandonedAt = entity.abandonedAt;
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
-        dto.sda = entity.sda;
     return dto;
   }
 
@@ -28,6 +27,7 @@ class GoalMapperEntity {
     Object.assign(dto, this.entityToModelDto(entity));
     dto.parent = entity.parent;
     dto.children = entity.children;
+    dto.taskList = entity.taskList;
     return dto;
   }
 }
@@ -55,8 +55,7 @@ class GoalMapperDto extends GoalMapperEntity {
         ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
     };
-          sda: dto.sda,
-      return vo;
+    return vo;
   }
 
   static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
@@ -64,6 +63,7 @@ class GoalMapperDto extends GoalMapperEntity {
       ...this.dtoToItemVo(dto),
       parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
+      taskList: dto.taskList?.map((task) => TaskMapper.dtoToVo(task)) || [],
     };
     return vo;
   }

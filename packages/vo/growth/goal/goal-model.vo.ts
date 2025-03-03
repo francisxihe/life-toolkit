@@ -1,4 +1,5 @@
 import { BaseModelVo } from "../../base/model.vo";
+import { TaskVo } from "../task/task-model.vo";
 
 export enum GoalStatus {
   TODO = "todo",
@@ -39,5 +40,7 @@ export type GoalItemVo = BaseModelVo & GoalModelVo;
 export type GoalVo = {
   children: GoalVo[];
   parent?: GoalVo;
+  /** 任务 */
+  taskList?: TaskVo[];
 } & BaseModelVo &
   GoalModelVo;

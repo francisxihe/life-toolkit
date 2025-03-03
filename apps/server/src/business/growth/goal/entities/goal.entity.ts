@@ -1,4 +1,4 @@
-import { Entity, Column, TreeChildren, TreeParent, Tree } from "typeorm";
+import { Entity, Column, TreeChildren, TreeParent, Tree, OneToMany } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
@@ -9,7 +9,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { GoalStatus, GoalType } from "./enum";
-
+import { Task } from "../../task/entities";
 @Entity("goal")
 @Tree("closure-table")
 export class Goal extends BaseEntity {
@@ -25,7 +25,8 @@ export class Goal extends BaseEntity {
     nullable: true,
   })
   @IsEnum(GoalType)
-  type: GoalType;
+  @IsOptional()
+  type?: GoalType;
 
   /** 目标事项状态 */
   @Column({
@@ -100,9 +101,7 @@ export class Goal extends BaseEntity {
   @IsNumber()
   priority?: number;
 
-  /** aaaa */
-  @Column('varchar', { nullable: true })
-  @IsOptional()
-  @IsString()
-  sda?: string;
+  /** 任务 */
+  @OneToMany(() => Task, (task) => task.goal)
+  taskList: Task[];
 }

@@ -65,7 +65,15 @@ export default function GoalForm() {
           ></Select>
         </Item>
         <Item span={24} label="描述" name="description">
-          <TextArea autoSize={false} placeholder="描述一下" />
+          <TextArea
+            autoSize={false}
+            placeholder="描述一下"
+            onBlur={() => {
+              onChange({
+                description: goalFormData.description.trim(),
+              });
+            }}
+          />
         </Item>
       </Row>
     </Form>

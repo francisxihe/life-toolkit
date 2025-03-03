@@ -21,7 +21,7 @@ async function main() {
 
     console.log(chalk.blue("开始收集字段信息..."));
     const fieldInfo = await fieldInfoService.getFieldInfo();
-
+    
     console.log(chalk.blue("\n开始更新文件..."));
 
     const entityNameArray = fieldInfo.entityName.split("/");

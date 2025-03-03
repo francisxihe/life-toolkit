@@ -6,36 +6,25 @@ import {
   IntersectionType,
   PickType,
 } from "@nestjs/mapped-types";
+import { GoalDto } from "./goal-model.dto";
 
-export class GoalDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Goal, [] as const)
-) {
-/** aaaa */
-sda?: string;
-}
-
-export class GoalModelDto extends OmitType(GoalDto, [
-  "children",
-  "parent",
-] as const) {}
-
-export class CreateGoalDto extends OmitType(GoalDto, [
+export class CreateGoalDto extends PickType(GoalDto, [
+  "name",
   "status",
+  "type",
   "doneAt",
+  "startAt",
+  "endAt",
   "abandonedAt",
-  ...BaseModelDtoKeys,
+  "description",
+  "importance",
+  "urgency",
+  "parent",
 ] as const) {
   parentId?: string;
-
-/** aaaa */
-sda?: string;
 }
 
 export class UpdateGoalDto extends IntersectionType(
   PartialType(CreateGoalDto),
   PickType(Goal, ["id"] as const)
-) {
-/** aaaa */
-sda?: string;
-}
+) {}

@@ -18,6 +18,7 @@ export class FieldInfoService {
         type: "input",
         name: "entityName",
         message: "请输入模块名:",
+        transform: (input: string) => input.trim(),
       },
       {
         type: "input",

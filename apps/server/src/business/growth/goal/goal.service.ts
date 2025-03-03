@@ -182,7 +182,7 @@ export class GoalService {
   async findById(id: string): Promise<GoalDto> {
     const goal = await this.goalRepository.findOne({
       where: { id },
-      relations: ["children", "parent"],
+      relations: ["children", "parent", "taskList"],
     });
     if (!goal) {
       throw new Error("Goal not found");
