@@ -12,13 +12,9 @@ export class TaskMapping {
       planTimeRange: [taskVo.startAt, taskVo.endAt],
       estimateTime: taskVo.estimateTime,
       trackTimeList: taskVo.trackTimeList,
-      children:
-        taskVo.children?.map((child) => {
-          return {
-            ...child,
-            planTimeRange: [child.startAt, child.endAt],
-          };
-        }) || [],
+      goalId: taskVo.goal?.id,
+      parentId: taskVo.parent?.id,
+      children: taskVo.children || [],
     };
   }
 }

@@ -1,6 +1,5 @@
-import { SubTodoMapper } from "../sub-todo/sub-todo.mapper";
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoWithSubDto } from "../dto";
+import { CreateTodoDto, UpdateTodoDto, TodoDto } from "../dto";
 import { TodoStatus, TodoRepeat } from "../entities";
 import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";

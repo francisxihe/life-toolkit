@@ -2,7 +2,6 @@
 
 import { Input, DatePicker, Popover, Button } from '@arco-design/web-react';
 import { useState } from 'react';
-import dayjs from 'dayjs';
 import { TaskFormData } from '../types';
 import TaskService from '../service';
 const RangePicker = DatePicker.RangePicker;

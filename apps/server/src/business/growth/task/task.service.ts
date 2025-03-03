@@ -126,6 +126,9 @@ export class TaskService {
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
     const task = await this.taskRepository.findOneBy({ id });
+
+    console.log("=========================", updateTaskDto);
+
     if (!task) {
       throw new Error("Task not found");
     }
@@ -182,7 +185,10 @@ export class TaskService {
   }
 
   async findById(id: string): Promise<TaskDto> {
-    const task = await this.taskRepository.findOneBy({ id });
+    const task = await this.taskRepository.findOne({
+      where: { id },
+      relations: ["children", "parent", "goal"],
+    });
     if (!task) {
       throw new Error("Task not found");
     }
@@ -194,7 +200,7 @@ export class TaskService {
     // 先查询任务
     const task = await this.taskRepository.findOne({
       where: { id: taskId },
-      relations: ["children"],
+      relations: ["children", "parent", "goal"],
     });
 
     if (!task) {

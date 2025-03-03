@@ -24,6 +24,7 @@ export class TaskDto extends IntersectionType(
     "estimateTime",
     "children",
     "parent",
+    "goal",
   ] as const)
 ) {}
 

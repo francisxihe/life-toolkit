@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
-import { TodoStatus, SubTodo, Todo } from "./entities";
+import { TodoStatus, Todo } from "./entities";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,

@@ -1,14 +1,4 @@
-import { SubTodoDto } from ".";
-import { TodoStatus, TodoRepeat, Todo } from "../entities";
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsArray,
-  IsNumber,
-  IsISO8601,
-} from "class-validator";
-import { Type } from "class-transformer";
+import { Todo } from "../entities";
 import { BaseModelDto, BaseModelDtoKeys } from "@/base/base-model.dto";
 import {
   OmitType,

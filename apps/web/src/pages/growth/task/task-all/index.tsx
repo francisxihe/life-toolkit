@@ -4,16 +4,11 @@ import { TaskFilters } from './TaskFilters';
 import FlexibleContainer from '@/components/FlexibleContainer';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
-import { openModal } from '@/hooks/OpenModal';
 import AddTaskPopover from '../components/AddTaskPopover';
-import { useRef } from 'react';
-import { TaskFormData } from '../types';
-import TaskService from '../service';
 import { useTaskAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
-import TaskDetail from '../components/TaskDetail';
+
 function TaskAll() {
-  const todoFormDataRef = useRef<TaskFormData | null>(null);
   const { getTaskPage } = useTaskAllContext();
 
   return (

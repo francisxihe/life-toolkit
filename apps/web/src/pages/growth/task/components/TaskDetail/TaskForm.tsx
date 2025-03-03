@@ -6,9 +6,12 @@ import {
   DatePicker,
 } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
-import clsx from 'clsx';
 import TrackTime from '../../../components/TrackTime';
 import FlexibleContainer from '@/components/FlexibleContainer';
+import { Select } from '@arco-design/web-react';
+import GoalService from '../../../goal/service';
+import { useState, useEffect, useCallback } from 'react';
+import { GoalItemVo } from '@life-toolkit/vo/growth';
 
 const { Shrink, Fixed } = FlexibleContainer;
 const { Row, Col } = Grid;
@@ -17,6 +20,17 @@ const TextArea = Input.TextArea;
 
 export default function TaskForm() {
   const { taskFormData, setTaskFormData, onChange } = useTaskDetailContext();
+
+  const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
+
+  const initGoalList = useCallback(async () => {
+    const res = await GoalService.getGoalList();
+    setGoalList(res.list);
+  }, []);
+
+  useEffect(() => {
+    initGoalList();
+  }, []);
 
   return taskFormData ? (
     <>
@@ -33,6 +47,18 @@ export default function TaskForm() {
               onChange({
                 name: taskFormData.name.trim(),
               });
+            }}
+          />
+        </Item>
+        <Item span={24} label="目标">
+          <Select
+            options={goalList.map((goal) => ({
+              label: goal.name,
+              value: goal.id,
+            }))}
+            value={taskFormData.goalId}
+            onChange={(value) => {
+              setTaskFormData((prev) => ({ ...prev, goalId: value }));
             }}
           />
         </Item>

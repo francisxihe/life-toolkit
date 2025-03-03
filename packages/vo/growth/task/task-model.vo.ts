@@ -1,5 +1,6 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { TrackTimeVo } from "../track-time/track-time.vo";
+import { GoalVo } from "../goal/goal-model.vo";
 
 export enum TaskStatus {
   TODO = "todo",
@@ -10,8 +11,6 @@ export enum TaskStatus {
 
 export type TaskModelVo = {
   name: string;
-
-  parentId?: string;
 
   status: TaskStatus;
 
@@ -41,4 +40,5 @@ export type TaskVo = BaseModelVo &
     children: TaskVo[];
     parent?: TaskVo;
     trackTimeList?: TrackTimeVo[];
+    goal?: GoalVo;
   };

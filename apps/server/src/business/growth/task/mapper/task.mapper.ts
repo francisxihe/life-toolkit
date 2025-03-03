@@ -9,6 +9,7 @@ import { TaskStatus, Task } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../../track-time";
+import { GoalMapper } from "../../goal/mapper";
 
 class TaskMapperEntity {
   static entityToDto(entity: Task): TaskDto {
@@ -27,13 +28,14 @@ class TaskMapperEntity {
     dto.estimateTime = entity.estimateTime;
     dto.parent = entity.parent;
     dto.children = entity.children;
+    dto.goal = entity.goal;
     return dto;
   }
 }
 
 class TaskMapperDto extends TaskMapperEntity {
   static dtoToVo(dto: TaskDto): TaskVO.TaskVo {
-    const vo: TaskVO.TaskVo = {
+    return {
       ...BaseMapper.dtoToVo(dto),
       name: dto.name || "",
       description: dto.description,
@@ -56,8 +58,8 @@ class TaskMapperDto extends TaskMapperEntity {
       estimateTime: dto.estimateTime,
       parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
+      goal: dto.goal ? GoalMapper.dtoToVo(dto.goal) : undefined,
     };
-    return vo;
   }
 
   static dtoToVoList(dtoList: TaskDto[]): TaskVO.TaskVo[] {
