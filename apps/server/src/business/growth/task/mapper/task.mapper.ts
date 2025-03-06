@@ -5,12 +5,12 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
 } from "../dto";
-import { TaskStatus, Task } from "../entities";
+import { TaskStatus, Task } from "../entity";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../../track-time";
 import { GoalMapper } from "../../goal/mapper";
-
+import { TodoMapper } from "../../todo/mapper";
 class TaskMapperEntity {
   static entityToDto(entity: Task): TaskDto {
     const dto = new TaskDto();
@@ -26,9 +26,16 @@ class TaskMapperEntity {
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
     dto.estimateTime = entity.estimateTime;
-    dto.parent = entity.parent;
-    dto.children = entity.children;
-    dto.goal = entity.goal;
+    dto.parent = entity.parent
+      ? TaskMapperEntity.entityToDto(entity.parent)
+      : undefined;
+    dto.children =
+      entity.children?.map((child) => TaskMapperEntity.entityToDto(child)) ||
+      [];
+    dto.goal = entity.goal ? GoalMapper.entityToDto(entity.goal) : undefined;
+    dto.trackTimeList = [];
+    dto.todoList =
+      entity.todoList?.map((todo) => TodoMapper.entityToDto(todo)) || [];
     return dto;
   }
 }
@@ -59,6 +66,10 @@ class TaskMapperDto extends TaskMapperEntity {
       parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
       goal: dto.goal ? GoalMapper.dtoToVo(dto.goal) : undefined,
+      trackTimeList: dto.trackTimeList?.map((trackTime) =>
+        TrackTimeMapper.dtoToVo(trackTime)
+      ),
+      todoList: dto.todoList?.map((todo) => TodoMapper.dtoToVo(todo)),
     };
   }
 
@@ -118,7 +129,7 @@ export class TaskMapper extends TaskMapperVo {
     dto: TaskWithTrackTimeDto
   ): TaskVO.TaskWithTrackTimeVo {
     const vo: TaskVO.TaskWithTrackTimeVo = {
-      ...this.dtoToVo(dto),
+      ...this.dtoToVo(dto as unknown as TaskDto),
       trackTimeList:
         dto.trackTimeList?.map((trackTime) => {
           return TrackTimeMapper.dtoToVo(trackTime);

@@ -1,10 +1,10 @@
-import { TrackTime } from "./track-time.entity";
+import { TrackTime } from "./entity";
 import { BaseMapper } from "@/base/base.mapper";
 import {
   TrackTimeDto,
   CreateTrackTimeDto,
   UpdateTrackTimeDto,
-} from "./track-time.dto";
+} from "./dto";
 import { TrackTime as TrackTimeVO } from "@life-toolkit/vo";
 import dayjs from "dayjs";
 

@@ -1,4 +1,5 @@
 import { BaseModelVo } from "../../base/model.vo";
+import { TaskVo } from "../task/task-model.vo";
 
 export enum TodoStatus {
   TODO = "todo",
@@ -30,6 +31,9 @@ export type TodoModelVo = {
   doneAt?: string;
 
   abandonedAt?: string;
+
+  /** 关联的任务 */
+  task?: TaskVo;
 };
 
 export type TodoVo = BaseModelVo & TodoModelVo;

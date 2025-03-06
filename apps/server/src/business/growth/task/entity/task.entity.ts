@@ -1,4 +1,4 @@
-import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne } from "typeorm";
+import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne, OneToMany } from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
@@ -10,6 +10,7 @@ import {
 import { Type } from "class-transformer";
 import { TaskStatus } from "./enum";
 import { Goal } from "../../goal/entities/goal.entity";
+import { Todo } from "../../todo/entities/todo.entity";
 
 @Entity("task")
 @Tree("closure-table")
@@ -104,4 +105,9 @@ export class Task extends BaseEntity {
   /** 目标 */
   @ManyToOne(() => Goal, (goal) => goal.taskList)
   goal: Goal;
+
+
+  /** 任务事项列表 */
+  @OneToMany(() => Todo, (todo) => todo.task)
+  todoList?: Todo[];
 }

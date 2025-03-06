@@ -1,11 +1,5 @@
 import { Goal } from "../entities";
-import { BaseModelDto, BaseModelDtoKeys } from "@/base/base-model.dto";
-import {
-  OmitType,
-  PartialType,
-  IntersectionType,
-  PickType,
-} from "@nestjs/mapped-types";
+import { PartialType, IntersectionType, PickType } from "@nestjs/mapped-types";
 import { GoalDto } from "./goal-model.dto";
 
 export class CreateGoalDto extends PickType(GoalDto, [

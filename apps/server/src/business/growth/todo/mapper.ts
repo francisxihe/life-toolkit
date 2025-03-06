@@ -1,12 +1,15 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { CreateTodoDto, UpdateTodoDto, TodoDto } from "../dto";
-import { TodoStatus, TodoRepeat } from "../entities";
-import { Todo } from "../entities/todo.entity";
+import { CreateTodoDto, UpdateTodoDto, TodoDto } from "./dto";
+import { TodoStatus, TodoRepeat } from "./entities";
+import { Todo } from "./entities/todo.entity";
 import dayjs from "dayjs";
-export class TodoMapper {
+import { BaseMapper } from "@/base/base.mapper";
+import { TaskMapper } from "../task/mapper";
+
+export class TodoMapperEntity {
   static entityToDto(entity: Todo): TodoDto {
     const dto = new TodoDto();
-    dto.id = entity.id;
+    Object.assign(dto, BaseMapper.entityToDto(entity));
     dto.name = entity.name;
     dto.description = entity.description;
     dto.status = entity.status;
@@ -17,16 +20,17 @@ export class TodoMapper {
     dto.repeat = entity.repeat;
     dto.doneAt = entity.doneAt;
     dto.abandonedAt = entity.abandonedAt;
-    dto.updatedAt = entity.updatedAt;
-    dto.createdAt = entity.createdAt;
     dto.planStartAt = entity.planStartAt;
     dto.planEndAt = entity.planEndAt;
-    dto.deletedAt = entity.deletedAt;
+    dto.task = entity.task ? TaskMapper.entityToDto(entity.task) : undefined;
     return dto;
   }
+}
 
+class TodoMapperDto extends TodoMapperEntity {
   static dtoToVo(dto: TodoDto): TodoVO.TodoVo {
     const vo: TodoVO.TodoVo = {
+      ...BaseMapper.dtoToVo(dto),
       name: dto.name || "",
       description: dto.description,
       status: dto.status || TodoStatus.TODO,
@@ -43,9 +47,7 @@ export class TodoMapper {
       abandonedAt: dto.abandonedAt
         ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
-      id: dto.id,
-      updatedAt: dayjs(dto.updatedAt).format("YYYY/MM/DD HH:mm:ss"),
-      createdAt: dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss"),
+      task: dto.task ? TaskMapper.dtoToVo(dto.task) : undefined,
     };
     return vo;
   }
@@ -75,7 +77,9 @@ export class TodoMapper {
     };
     return vo;
   }
+}
 
+class TodoMapperVo extends TodoMapperDto {
   static voToCreateDto(vo: TodoVO.CreateTodoVo): CreateTodoDto {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
@@ -100,3 +104,5 @@ export class TodoMapper {
     return dto;
   }
 }
+
+export class TodoMapper extends TodoMapperVo {}

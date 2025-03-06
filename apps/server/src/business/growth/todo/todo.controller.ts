@@ -9,11 +9,11 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoPageFilterDto, TodoListFilterDto } from "../dto";
+import { TodoPageFilterDto, TodoListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
-import { TodoStatusService } from "../todo-status.service";
+import { TodoStatusService } from "./todo-status.service";
 import type { Todo, OperationByIdListVo } from "@life-toolkit/vo";
-import { TodoMapper } from "./todo.mapper";
+import { TodoMapper } from "./mapper";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")

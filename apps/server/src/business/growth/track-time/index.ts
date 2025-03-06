@@ -1,3 +1,3 @@
-export * from "./track-time.entity";
-export * from "./track-time.dto";
-export * from "./track-time.mapper";
+export * from "./entity";
+export * from "./dto";
+export * from "./mapper";

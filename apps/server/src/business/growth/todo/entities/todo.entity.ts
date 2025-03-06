@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany } from "typeorm";
+import { Entity, Column, OneToMany, ManyToOne } from "typeorm";
 import { TodoRepeat } from "./enum";
 import {
   IsString,
@@ -11,6 +11,8 @@ import {
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 import { TodoStatus } from "./enum";
+import { Task } from "../../task/entity";
+
 @Entity("todo")
 export class Todo extends BaseEntity {
   /** 待办名称 */
@@ -92,4 +94,8 @@ export class Todo extends BaseEntity {
   @Column({ nullable: true })
   @IsOptional()
   repeatInterval?: string;
+
+  /** 关联的任务 */
+  @ManyToOne(() => Task)
+  task?: Task;
 }

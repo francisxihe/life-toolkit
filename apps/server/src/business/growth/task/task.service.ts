@@ -10,7 +10,7 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Task, TaskStatus } from "./entities";
+import { Task, TaskStatus } from "./entity";
 import { TrackTime } from "../track-time";
 import {
   CreateTaskDto,
@@ -76,6 +76,7 @@ export class TaskService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
+    const createTask = this.taskRepository.create(createTaskDto);
     if (createTaskDto.parentId) {
       const parentTask = await this.taskRepository.findOneBy({
         id: createTaskDto.parentId,
@@ -83,16 +84,13 @@ export class TaskService {
       if (!parentTask) {
         throw new Error("Parent task not found");
       }
-      createTaskDto.parent = parentTask;
+      createTask.parent = parentTask;
     }
+    createTask.status = TaskStatus.TODO;
+    createTask.tags =  createTaskDto.tags || [];
 
-    const task = this.taskRepository.create({
-      ...createTaskDto,
-      status: TaskStatus.TODO,
-      tags: createTaskDto.tags || [],
-    });
-    await this.taskRepository.save(task);
-    return TaskMapper.entityToDto(task);
+    await this.taskRepository.save(createTask);
+    return TaskMapper.entityToDto(createTask);
   }
 
   async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
@@ -126,8 +124,6 @@ export class TaskService {
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
     const task = await this.taskRepository.findOneBy({ id });
-
-    console.log("=========================", updateTaskDto);
 
     if (!task) {
       throw new Error("Task not found");
@@ -187,7 +183,7 @@ export class TaskService {
   async findById(id: string): Promise<TaskDto> {
     const task = await this.taskRepository.findOne({
       where: { id },
-      relations: ["children", "parent", "goal"],
+      relations: ["children", "parent", "goal", "todoList"],
     });
     if (!task) {
       throw new Error("Task not found");
@@ -200,8 +196,10 @@ export class TaskService {
     // 先查询任务
     const task = await this.taskRepository.findOne({
       where: { id: taskId },
-      relations: ["children", "parent", "goal"],
+      relations: ["children", "parent", "goal", "todoList"],
     });
+
+    console.log("=========================", task);
 
     if (!task) {
       throw new Error("Task not found");

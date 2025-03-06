@@ -9,15 +9,14 @@ import {
   LessThan,
   Like,
 } from "typeorm";
-import { Todo, TodoStatus } from "../entities";
+import { Todo, TodoStatus } from "./entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
   TodoPageFilterDto,
   TodoListFilterDto,
   TodoDto,
-  TodoWithSubDto,
-} from "../dto";
+} from "./dto";
 import dayjs from "dayjs";
 
 function getWhere(filter: TodoPageFilterDto) {
@@ -154,25 +153,6 @@ export class TodoService {
 
     return {
       ...todo,
-    };
-  }
-
-  async todoWithSub(id: string): Promise<TodoWithSubDto> {
-    const todo = await this.todoRepository
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.subTodoList", "subTodos")
-      .where("todo.id = :id", { id })
-      .getOne();
-
-    if (!todo) {
-      throw new Error("Todo not found");
-    }
-
-    return {
-      ...todo,
-      // subTodoList: todo.subTodoList.map((subTodo) => ({
-      //   ...subTodo,
-      // })),
     };
   }
 }

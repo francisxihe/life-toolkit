@@ -1,4 +1,4 @@
-import { TrackTime } from "./track-time.entity";
+import { TrackTime } from "./entity";
 import { BaseModelDto, BaseModelDtoKeys } from "@/base/base-model.dto";
 import {
   OmitType,
