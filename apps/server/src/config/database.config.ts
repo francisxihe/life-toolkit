@@ -17,4 +17,8 @@ export const getDatabaseConfig = (
   dateStrings: true,
   autoLoadEntities: true,
   namingStrategy: new SnakeNamingStrategy(),
+  extra: {
+    connectionLimit: 10,
+    dateStrings: ["DATE", "DATETIME"]
+  }
 });

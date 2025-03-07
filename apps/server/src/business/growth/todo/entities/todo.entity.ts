@@ -78,7 +78,7 @@ export class Todo extends BaseEntity {
   /** 计划待办日期 */
   @Column("date")
   @IsISO8601()
-  planDate: Date;
+  planDate: Date = new Date();
 
   /** 重复类型 */
   @Column({

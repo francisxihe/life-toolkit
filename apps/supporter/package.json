@@ -5,9 +5,6 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "ts-node-esm src/index.ts",
-    "dev": "ts-node-dev --esm src/index.ts",
     "sync:entity": "NODE_OPTIONS='--loader ts-node/esm' ts-node-esm src/syncEntity.ts"
   },
   "dependencies": {
