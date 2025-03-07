@@ -19,7 +19,7 @@ export default class TaskService {
 
   static async batchDoneTask(params: OperationByIdListVo) {
     try {
-      const res = TaskController.batchDoneTask(params);
+      const res = await TaskController.batchDoneTask(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -29,7 +29,7 @@ export default class TaskService {
 
   static async restoreTask(id: string) {
     try {
-      const res = TaskController.restoreTask(id);
+      const res = await TaskController.restoreTask(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -39,7 +39,7 @@ export default class TaskService {
 
   static async abandonTask(id: string) {
     try {
-      const res = TaskController.abandonTask(id);
+      const res = await TaskController.abandonTask(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -49,7 +49,7 @@ export default class TaskService {
 
   static async addTask(task: CreateTaskVo) {
     try {
-      const res = TaskController.addTask(task);
+      const res = await TaskController.addTask(task);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -69,7 +69,7 @@ export default class TaskService {
 
   static async updateTask(id: string, task: UpdateTaskVo) {
     try {
-      const res = TaskController.updateTask(id, task);
+      const res = await TaskController.updateTask(id, task);
       Message.success('操作成功');
       return res;
     } catch (error) {

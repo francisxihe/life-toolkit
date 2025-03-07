@@ -19,7 +19,7 @@ export default class GoalService {
 
   static async batchDoneGoal(params: OperationByIdListVo) {
     try {
-      const res = GoalController.batchDoneGoal(params);
+      const res = await GoalController.batchDoneGoal(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -29,7 +29,7 @@ export default class GoalService {
 
   static async restoreGoal(id: string) {
     try {
-      const res = GoalController.restoreGoal(id);
+      const res = await GoalController.restoreGoal(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -39,7 +39,7 @@ export default class GoalService {
 
   static async abandonGoal(id: string) {
     try {
-      const res = GoalController.abandonGoal(id);
+      const res = await GoalController.abandonGoal(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -49,7 +49,7 @@ export default class GoalService {
 
   static async addGoal(goal: CreateGoalVo) {
     try {
-      const res = GoalController.addGoal(goal);
+      const res = await GoalController.addGoal(goal);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -69,7 +69,7 @@ export default class GoalService {
 
   static async updateGoal(id: string, goal: UpdateGoalVo) {
     try {
-      const res = GoalController.updateGoal(id, goal);
+      const res = await GoalController.updateGoal(id, goal);
       Message.success('操作成功');
       return res;
     } catch (error) {

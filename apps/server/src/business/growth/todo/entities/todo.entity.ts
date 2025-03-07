@@ -96,6 +96,6 @@ export class Todo extends BaseEntity {
   repeatInterval?: string;
 
   /** 关联的任务 */
-  @ManyToOne(() => Task)
+  @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
 }
