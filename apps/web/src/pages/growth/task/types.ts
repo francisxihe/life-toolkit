@@ -1,4 +1,4 @@
-import { GoalVo, TaskVo, TrackTimeModelVo } from '@life-toolkit/vo/growth';
+import { GoalVo, TaskVo, TrackTimeModelVo, TodoVo } from '@life-toolkit/vo/growth';
 
 export type TaskFormData = {
   id?: string;
@@ -14,4 +14,5 @@ export type TaskFormData = {
   trackTimeList?: TrackTimeModelVo[];
   children: TaskVo[];
   parentId?: string;
+  todoList: TodoVo[];
 };

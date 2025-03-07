@@ -1,12 +1,11 @@
-import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
+import { Table, Button, Modal, Card } from '@arco-design/web-react';
 import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTaskAllContext } from './context';
 import { useEffect, useState } from 'react';
 import TaskService from '../service';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
-import { openModal } from '@/hooks/OpenModal';
-import TaskDetail from '../components/TaskDetail';
+import { useTaskDetailDrawer } from '../components/TaskDetail';
 
 export default function TaskTable() {
   const { taskList, getTaskPage } = useTaskAllContext();
@@ -23,6 +22,18 @@ export default function TaskTable() {
     }
     initData();
   }, []);
+
+  const {
+    open: openTaskDetailDrawer,
+    close: closeTaskDetailDrawer,
+    TaskDetailDrawer,
+  } = useTaskDetailDrawer({
+    title: <div className="text-body-3">编辑</div>,
+    onCancel: () => {
+      closeTaskDetailDrawer();
+      getTaskPage();
+    },
+  });
 
   const columns = [
     { title: '任务', dataIndex: 'name', key: 'name' },
@@ -87,21 +98,11 @@ export default function TaskTable() {
           <Button
             type="text"
             onClick={() => {
-              openModal({
-                title: <div className="text-body-3">编辑</div>,
-                content: (
-                  <div className="ml-[-6px]">
-                    <TaskDetail
-                      task={record}
-                      onClose={null}
-                      onChange={async () => {
-                        console.log('onChange');
-                      }}
-                    />
-                  </div>
-                ),
-                onCancel: () => {
-                  getTaskPage();
+              openTaskDetailDrawer({
+                task: record,
+                onClose: null,
+                onChange: async () => {
+                  console.log('onChange');
                 },
               });
             }}
@@ -174,6 +175,7 @@ export default function TaskTable() {
           }
         }}
       />
+      <TaskDetailDrawer />
     </>
   );
 }

@@ -14,11 +14,7 @@ export default function TriggerStatusCheckbox(props: {
   const { todo } = props;
 
   async function restore() {
-    if (props.type === 'todo') {
-      await TaskService.restoreTask(todo.id);
-    } else {
-      await TaskService.restoreSubTask(todo.id);
-    }
+    await TaskService.restoreTask(todo.id);
     await props.onChange();
   }
 
@@ -33,8 +29,7 @@ export default function TriggerStatusCheckbox(props: {
             await restore();
             return;
           }
-          console.log('todo.id', todo.id);
-          const todoSubTaskList = await TaskService.getSubTaskList({
+          const { list: todoSubTaskList } = await TaskService.getTaskList({
             parentId: todo.id,
           });
 

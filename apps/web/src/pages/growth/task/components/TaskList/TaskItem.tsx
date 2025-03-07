@@ -121,23 +121,6 @@ function TaskItem(props: TaskItemProps) {
                 readonly
               />
             )}
-
-            {!isToday(todo.planDate) && (
-              <span
-                className={
-                  todo.planDate < dayjs().format('YYYY-MM-DD')
-                    ? 'text-danger'
-                    : 'text-text-3'
-                }
-              >
-                {todo.planDate}
-                {todo.startAt && todo.endAt && (
-                  <>
-                    {todo.startAt}-{todo.endAt}
-                  </>
-                )}
-              </span>
-            )}
             {todo.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1">
                 {todo.tags.map((tag, index) => (

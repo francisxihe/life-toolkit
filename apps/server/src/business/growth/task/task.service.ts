@@ -199,8 +199,6 @@ export class TaskService {
       relations: ["children", "parent", "goal", "todoList"],
     });
 
-    console.log("=========================", task);
-
     if (!task) {
       throw new Error("Task not found");
     }

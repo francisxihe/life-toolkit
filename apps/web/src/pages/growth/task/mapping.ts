@@ -15,6 +15,7 @@ export class TaskMapping {
       goalId: taskVo.goal?.id,
       parentId: taskVo.parent?.id,
       children: taskVo.children || [],
+      todoList: taskVo.todoList || [],
     };
   }
 }

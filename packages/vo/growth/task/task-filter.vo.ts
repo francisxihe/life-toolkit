@@ -17,6 +17,7 @@ export type TaskListVo = {
 
 export type TaskListFiltersVo = {
   keyword?: string;
+  parentId?: string;
   planDateStart?: string;
   planDateEnd?: string;
   importance?: TaskVo["importance"];
@@ -28,16 +29,6 @@ export type TaskListFiltersVo = {
   abandonedDateEnd?: string;
 };
 
-export type TaskPageFiltersVo = {
-  keyword?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
-  importance?: TaskVo["importance"];
-  urgency?: TaskVo["urgency"];
-  status?: TaskVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
+export type TaskPageFiltersVo = TaskListFiltersVo & {
   tags?: string[];
 };

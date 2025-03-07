@@ -51,6 +51,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   const initTaskFormData = useCallback(async () => {
     const task = await TaskService.getTaskWithTrackTime(props.task.id);
     currentTaskRef.current = task;
+    setCurrentTask(currentTaskRef.current);
     setTaskFormData(TaskMapping.taskVoToTaskFormData(currentTaskRef.current));
   }, [props.task]);
 

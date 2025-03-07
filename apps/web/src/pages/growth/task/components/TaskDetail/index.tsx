@@ -3,7 +3,10 @@ import { TaskVo } from '@life-toolkit/vo/growth';
 import { TaskDetailProvider } from './context';
 import TaskForm from './TaskForm';
 import SubTaskList from './SubTaskList';
-
+import TodoList from './TodoList';
+import { Drawer } from '@arco-design/web-react';
+import { useState } from 'react';
+import { DrawerProps } from '@arco-design/web-react/es/drawer';
 const { Shrink, Fixed } = FlexibleContainer;
 
 export type TaskDetailProps = {
@@ -23,10 +26,43 @@ export default function TaskDetail(props: TaskDetailProps) {
         <Fixed>
           <TaskForm />
         </Fixed>
-        <Shrink>
-          <SubTaskList />
+        <Shrink className="overflow-auto">
+          <div className="h-1/2">
+            <SubTaskList />
+          </div>
+          <div className="h-1/2">
+            <TodoList />
+          </div>
         </Shrink>
       </FlexibleContainer>
     </TaskDetailProvider>
   );
+}
+
+export function useTaskDetailDrawer(props: DrawerProps) {
+  const [visible, setVisible] = useState(false);
+  const [drawerProps, setDrawerProps] = useState<TaskDetailProps>();
+
+  const open = (props: TaskDetailProps) => {
+    setDrawerProps(props);
+    setVisible(true);
+  };
+
+  const close = () => {
+    setVisible(false);
+  };
+
+  const TaskDetailDrawer = () => {
+    return (
+      <Drawer visible={visible} width={800} {...props}>
+        {drawerProps && <TaskDetail {...drawerProps} />}
+      </Drawer>
+    );
+  };
+
+  return {
+    open,
+    close,
+    TaskDetailDrawer,
+  };
 }

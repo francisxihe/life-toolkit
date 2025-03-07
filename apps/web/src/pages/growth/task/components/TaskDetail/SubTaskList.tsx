@@ -6,20 +6,23 @@ import {
   DatePicker,
 } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
-import SubTaskList from '../TaskList/SubTaskList';
+import TaskList from '../TaskList';
 import SiteIcon from '@/components/SiteIcon';
 import AddTaskPopover from '../AddTaskPopover';
 import clsx from 'clsx';
+import FlexibleContainer from '@/components/FlexibleContainer';
+
+const { Shrink, Fixed } = FlexibleContainer;
 
 export default function TaskDetailSubTaskList() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
 
   return (
-    <div className="w-full flex flex-col gap-2">
+    <FlexibleContainer className="gap-2 border-b">
       <div className="text-title-1 text-text-1 font-medium px-2">子任务</div>
       {currentTask?.children && (
-        <SubTaskList
+        <TaskList
           taskList={currentTask.children}
           onClickTask={async (id) => {
             await showSubTask(id);
@@ -45,6 +48,6 @@ export default function TaskDetailSubTaskList() {
           </div>
         </Button>
       </AddTaskPopover>
-    </div>
+    </FlexibleContainer>
   );
 }

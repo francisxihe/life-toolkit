@@ -1,4 +1,4 @@
-import TaskList from '../components/TaskList/TaskList';
+import TaskList from '../components/TaskList';
 import AddTaskPopover from '../components/AddTaskPopover';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
