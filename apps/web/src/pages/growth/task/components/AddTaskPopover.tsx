@@ -2,8 +2,8 @@
 
 import { Input, DatePicker, Popover, Button } from '@arco-design/web-react';
 import { useState } from 'react';
-import { TaskFormData } from '../types';
-import TaskService from '../service';
+import { TaskFormData, TaskService } from '../../service';
+
 const RangePicker = DatePicker.RangePicker;
 
 export default function AddTaskPopover(

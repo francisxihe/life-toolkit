@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 import { TodoVo, TodoListFiltersVo } from '@life-toolkit/vo/growth';
-import TodoService from '../service';
+import { TodoService } from '../../service';
 
 interface TodoContextType {
   todoList: TodoVo[];

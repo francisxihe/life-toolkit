@@ -11,7 +11,7 @@ import {
   useEffect,
 } from 'react';
 import { TodoVo, TodoPageFiltersVo, TodoStatus } from '@life-toolkit/vo/growth';
-import TodoService from '../service';
+import {TodoService} from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 
 function useSyncState<T>(

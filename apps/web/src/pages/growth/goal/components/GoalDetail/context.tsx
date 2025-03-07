@@ -2,11 +2,10 @@
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { GoalVo, UpdateGoalVo } from '@life-toolkit/vo/growth';
-import { GoalFormData } from '../../types';
-import GoalService from '../../service';
+import { GoalFormData, GoalService, GoalMapping } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { GoalDetailProps } from '.';
-import { GoalMapping } from '../../mapping';
+
 export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   PropsType: {
     children: React.ReactNode;

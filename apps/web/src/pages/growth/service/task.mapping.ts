@@ -1,5 +1,5 @@
 import type { TaskVo } from '@life-toolkit/vo/growth';
-import type { TaskFormData } from './types';
+import type { TaskFormData } from './task.types';
 
 export class TaskMapping {
   static taskVoToTaskFormData(taskVo: TaskVo): TaskFormData {

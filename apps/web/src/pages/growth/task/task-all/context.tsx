@@ -11,7 +11,7 @@ import {
   useEffect,
 } from 'react';
 import { TaskVo, TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
-import TaskService from '../service';
+import {TaskService} from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 
 function useSyncState<T>(

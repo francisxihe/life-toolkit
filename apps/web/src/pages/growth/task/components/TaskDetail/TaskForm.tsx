@@ -9,7 +9,7 @@ import { useTaskDetailContext } from './context';
 import TrackTime from '../../../components/TrackTime';
 import FlexibleContainer from '@/components/FlexibleContainer';
 import { Select } from '@arco-design/web-react';
-import GoalService from '../../../goal/service';
+import {GoalService} from '../../../service';
 import { useState, useEffect, useCallback } from 'react';
 import { GoalItemVo } from '@life-toolkit/vo/growth';
 

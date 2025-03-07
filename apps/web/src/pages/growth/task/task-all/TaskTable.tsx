@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useTaskAllContext } from './context';
 import { useEffect, useState } from 'react';
-import TaskService from '../service';
+import { TaskService } from '../../service';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import { useTaskDetailDrawer } from '../components/TaskDetail';
 

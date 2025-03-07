@@ -5,7 +5,7 @@ export function Container(
     direction?: 'vertical' | 'horizontal';
     className?: string;
     children: React.ReactNode;
-  } & React.HTMLAttributes<HTMLDivElement>
+  } & React.HTMLAttributes<HTMLDivElement>,
 ) {
   const { direction = 'horizontal', className, children, ...rest } = props;
   return (
@@ -26,7 +26,7 @@ export function ContainerFixed(
   props: {
     className?: string;
     children: React.ReactNode;
-  } & React.HTMLAttributes<HTMLDivElement>
+  } & React.HTMLAttributes<HTMLDivElement>,
 ) {
   const { className, children, ...rest } = props;
   return (
@@ -45,10 +45,20 @@ export function ContainerShrink(
   props: {
     className?: string;
     children: React.ReactNode;
-  } & React.HTMLAttributes<HTMLDivElement>
+    absolute?: boolean;
+  } & React.HTMLAttributes<HTMLDivElement>,
 ) {
-  const { className, children, ...rest } = props;
-  return (
+  const { className, children, absolute, ...rest } = props;
+  return absolute ? (
+    <div
+      className={`${styles['container-shrink']} relative container-shrink ${
+        className ?? ''
+      }`}
+      {...rest}
+    >
+      <div className="absolute w-full h-full">{children}</div>
+    </div>
+  ) : (
     <div
       className={`${styles['container-shrink']} container-shrink ${
         className ?? ''

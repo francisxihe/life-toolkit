@@ -20,34 +20,43 @@ export default function TaskDetailSubTaskList() {
 
   return (
     <FlexibleContainer className="gap-2 border-b">
-      <div className="text-title-1 text-text-1 font-medium px-2">子任务</div>
-      {currentTask?.children && (
-        <TaskList
-          taskList={currentTask.children}
-          onClickTask={async (id) => {
-            await showSubTask(id);
+      <Fixed
+        className={clsx([
+          'text-title-1 text-text-1 font-medium p-2',
+          'flex justify-between items-center',
+        ])}
+      >
+        子任务
+        <AddTaskPopover
+          key={currentTask.id}
+          initialFormData={{
+            parentId: currentTask.id,
           }}
-          refreshTaskList={async () => {
+          afterSubmit={async () => {
             await refreshTaskDetail(currentTask.id);
           }}
-        />
-      )}
-      <AddTaskPopover
-        key={currentTask.id}
-        initialFormData={{
-          parentId: currentTask.id,
-        }}
-        afterSubmit={async () => {
-          await refreshTaskDetail(currentTask.id);
-        }}
-      >
-        <Button className="!px-2" type="text" size="small">
-          <div className="flex items-center gap-1">
-            <SiteIcon id="add" />
-            添加子任务
-          </div>
-        </Button>
-      </AddTaskPopover>
+        >
+          <Button className="!px-2" type="text" size="small">
+            <div className="flex items-center gap-1">
+              <SiteIcon id="add" />
+              添加子任务
+            </div>
+          </Button>
+        </AddTaskPopover>
+      </Fixed>
+      <Shrink className="overflow-auto">
+        {currentTask?.children && (
+          <TaskList
+            taskList={currentTask.children}
+            onClickTask={async (id) => {
+              await showSubTask(id);
+            }}
+            refreshTaskList={async () => {
+              await refreshTaskDetail(currentTask.id);
+            }}
+          />
+        )}
+      </Shrink>
     </FlexibleContainer>
   );
 }

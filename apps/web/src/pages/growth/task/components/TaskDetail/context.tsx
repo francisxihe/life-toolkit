@@ -2,12 +2,9 @@
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/growth';
-import { TaskFormData } from '../../types';
-import TaskService from '../../service';
+import { TaskFormData, TaskService, TaskMapping } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { TaskDetailProps } from '.';
-import { TaskMapping } from '../../mapping';
-
 
 export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   PropsType: {

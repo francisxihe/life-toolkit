@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { TaskStatus } from '@life-toolkit/vo/growth';
-import { getApiBaseUrl } from '../../../../jest-e2e.setup';
+import { getApiBaseUrl } from '../../../jest-e2e.setup';
 
 describe('TrackTime (e2e)', () => {
   const baseUrl = getApiBaseUrl();

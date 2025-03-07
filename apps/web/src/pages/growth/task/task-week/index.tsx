@@ -6,7 +6,7 @@ import FlexibleContainer from '@/components/FlexibleContainer';
 import { Collapse, Divider, Button } from '@arco-design/web-react';
 import TaskDetail from '../components/TaskDetail';
 import styles from './style.module.less';
-import TaskService from '../service';
+import {TaskService} from '../../service';
 import { flushSync } from 'react-dom';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import SiteIcon from '@/components/SiteIcon';

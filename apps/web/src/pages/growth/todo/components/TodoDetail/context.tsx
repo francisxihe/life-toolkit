@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import type { TodoFormData } from '../../types';
-import TodoService from '../../service';
+import { TodoFormData, TodoService } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { TodoDetailProps } from '.';
 import { TodoStatus, UpdateTodoVo } from '@life-toolkit/vo/growth';

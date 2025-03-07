@@ -26,11 +26,11 @@ export default function TaskDetail(props: TaskDetailProps) {
         <Fixed>
           <TaskForm />
         </Fixed>
-        <Shrink className="overflow-auto">
-          <div className="h-1/2">
+        <Shrink absolute>
+          <div className="h-1/2 overflow-hidden">
             <SubTaskList />
           </div>
-          <div className="h-1/2">
+          <div className="h-1/2 overflow-hidden">
             <TodoList />
           </div>
         </Shrink>

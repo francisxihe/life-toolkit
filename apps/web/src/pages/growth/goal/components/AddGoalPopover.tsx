@@ -3,8 +3,7 @@
 import { Input, DatePicker, Popover, Button } from '@arco-design/web-react';
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import { GoalFormData } from '../types';
-import GoalService from '../service';
+import { GoalFormData, GoalService } from '../../service';
 import { GoalStatus } from '@life-toolkit/vo/growth';
 const RangePicker = DatePicker.RangePicker;
 

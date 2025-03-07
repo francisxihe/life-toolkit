@@ -3,11 +3,10 @@ import { useCalendarContext } from './context';
 import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 import TodoDetail from '../components/TodoDetail';
 import { openModal } from '@/hooks/OpenModal';
-import TodoService from '../service';
-import { TodoFormData } from '../types';
+import { TodoFormData } from '../../service';
 import { useState, useRef, useMemo } from 'react';
-import AddTodo from '../components/AddTodo';
 import clsx from 'clsx';
+import { useAddTodoModal } from '../components/AddTodo';
 
 function TodoItem({ todo }: { todo: TodoVo }) {
   const { getTodoList } = useCalendarContext();
@@ -60,6 +59,8 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
 
   // const [showMoreTodo, setShowMoreTodo] = useState(false);
 
+  const { open: openAddTodoModal } = useAddTodoModal();
+
   const todoFormDataRef = useRef<TodoFormData>();
 
   return (
@@ -72,43 +73,11 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
             : ''
         }`}
         onDoubleClick={() => {
-          openModal({
-            title: <div className="text-title">添加待办</div>,
-            content: (
-              <AddTodo
-                initialFormData={{
-                  planDate: cellDate.format('YYYY-MM-DD'),
-                }}
-                onChange={(todoFormData) => {
-                  todoFormDataRef.current = todoFormData;
-                }}
-                onSubmit={async (todoFormData) => {
-                  await TodoService.addTodo({
-                    name: todoFormData.name,
-                    importance: todoFormData.importance,
-                    urgency: todoFormData.urgency,
-                    planDate: todoFormData.planDate || undefined,
-                    planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-                    planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                    repeat: todoFormData.repeat,
-                    tags: todoFormData.tags,
-                  });
-                  getTodoList();
-                }}
-              />
-            ),
-            onOk: async () => {
-              const todoFormData = todoFormDataRef.current;
-              await TodoService.addTodo({
-                name: todoFormData.name,
-                importance: todoFormData.importance,
-                urgency: todoFormData.urgency,
-                planDate: todoFormData.planDate || undefined,
-                planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-                planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                repeat: todoFormData.repeat,
-                tags: todoFormData.tags,
-              });
+          openAddTodoModal({
+            initialFormData: {
+              planDate: cellDate.format('YYYY-MM-DD'),
+            },
+            afterSubmit: async (todoFormData) => {
               getTodoList();
             },
           });

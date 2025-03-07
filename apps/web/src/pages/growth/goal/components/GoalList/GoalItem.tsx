@@ -6,7 +6,7 @@ import FlexibleContainer from '@/components/FlexibleContainer';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../IconSelector';
 import SiteIcon from '@/components/SiteIcon';
-import GoalService from '../../service';
+import {GoalService} from '../../../service';
 import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';

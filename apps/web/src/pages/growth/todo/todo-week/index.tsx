@@ -6,7 +6,7 @@ import FlexibleContainer from '@/components/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
-import TodoService from '../service';
+import { TodoService } from '../../service';
 import { flushSync } from 'react-dom';
 import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 
@@ -71,7 +71,9 @@ export default function TodoWeek() {
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
       <FlexibleContainer.Fixed className="px-5 py-2 flex justify-between items-center border-b">
-        <div className="text-text-1 text-title-2 font-medium py-1">本周待办</div>
+        <div className="text-text-1 text-title-2 font-medium py-1">
+          本周待办
+        </div>
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Shrink className="px-5 w-full h-full flex">

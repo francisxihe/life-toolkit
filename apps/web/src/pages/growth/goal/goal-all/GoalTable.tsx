@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
-import GoalService from '../service';
+import { GoalService } from '../../service';
 import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
 import { openModal } from '@/hooks/OpenModal';
 import GoalDetail from '../components/GoalDetail';

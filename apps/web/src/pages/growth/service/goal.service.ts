@@ -67,10 +67,12 @@ export default class GoalService {
     }
   }
 
-  static async updateGoal(id: string, goal: UpdateGoalVo) {
+  static async updateGoal(id: string, goal: UpdateGoalVo, silent = false) {
     try {
       const res = await GoalController.updateGoal(id, goal);
-      Message.success('操作成功');
+      if (!silent) {
+        Message.success('操作成功');
+      }
       return res;
     } catch (error) {
       Message.error(error.message);
@@ -91,5 +93,5 @@ export default class GoalService {
     } catch (error) {
       Message.error(error.message);
     }
-  }  
+  }
 }

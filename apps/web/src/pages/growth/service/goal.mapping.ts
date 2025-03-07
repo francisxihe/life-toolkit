@@ -1,5 +1,5 @@
 import type { GoalVo } from '@life-toolkit/vo/growth';
-import type { GoalFormData } from './types';
+import type { GoalFormData } from './goal.types';
 
 export class GoalMapping {
   static voToGoalFormData(goalVo: GoalVo): GoalFormData {

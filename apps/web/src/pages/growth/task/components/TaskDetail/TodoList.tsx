@@ -9,9 +9,10 @@ import { useTaskDetailContext } from './context';
 import TaskList from '../TaskList';
 import TodoList from '../../../todo/components/TodoList/TodoList';
 import SiteIcon from '@/components/SiteIcon';
-import AddTaskPopover from '../AddTaskPopover';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/FlexibleContainer';
+import { CreateButton } from '@/components/Button/CreateButton';
+import { useAddTodoModal } from '../../../todo/components/AddTodo';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
@@ -19,10 +20,38 @@ export default function TaskDetailSubTaskList() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
 
+  const { open: openAddTodoModal } = useAddTodoModal();
   return (
     <FlexibleContainer className="gap-2">
-      <Fixed className="text-title-1 text-text-1 font-medium p-2">
+      <Fixed
+        className={clsx([
+          'text-title-1 text-text-1 font-medium p-2',
+          'flex justify-between items-center',
+        ])}
+      >
         待办列表
+        {/* <AddTodoPopover
+          key={currentTask.id}
+          initialFormData={{
+            parentId: currentTask.id,
+          }}
+          afterSubmit={async () => {
+            await refreshTaskDetail(currentTask.id);
+          }}
+        > */}
+        <CreateButton
+          type="text"
+          onClick={() => {
+            openAddTodoModal({
+              initialFormData: {
+                parentId: currentTask.id,
+              },
+            });
+          }}
+        >
+          添加待办
+        </CreateButton>
+        {/* </AddTodoPopover> */}
       </Fixed>
       <Shrink className="overflow-auto">
         {currentTask?.todoList && (
@@ -37,24 +66,6 @@ export default function TaskDetailSubTaskList() {
           />
         )}
       </Shrink>
-      <Fixed>
-        <AddTaskPopover
-          key={currentTask.id}
-          initialFormData={{
-            parentId: currentTask.id,
-          }}
-          afterSubmit={async () => {
-            await refreshTaskDetail(currentTask.id);
-          }}
-        >
-          <Button className="!px-2" type="text" size="small">
-            <div className="flex items-center gap-1">
-              <SiteIcon id="add" />
-              添加待办
-            </div>
-          </Button>
-        </AddTaskPopover>
-      </Fixed>
     </FlexibleContainer>
   );
 }

@@ -1,6 +1,6 @@
 import { Checkbox, Modal } from '@arco-design/web-react';
 import styles from './style.module.less';
-import TodoService from '../../service';
+import { TodoService } from '../../../service';
 import { TodoVo } from '@life-toolkit/vo/growth';
 
 export default function TriggerStatusCheckbox(props: {

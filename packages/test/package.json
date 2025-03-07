@@ -4,9 +4,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "jest --config ./jest-e2e.config.js",
-    "build": "tsc",
-    "dev": "tsc -w"
+    "test": "tsc && jest --config ./jest-e2e.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

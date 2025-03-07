@@ -4,11 +4,10 @@ import { useMemo, useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Card, Grid, Typography, Statistic } from '@arco-design/web-react';
 import { TodoVo } from '@life-toolkit/vo/growth';
-import ApiService from '../service';
+import { TodoService } from '../../service';
 import styles from './style/index.module.less';
 import { Space } from '@arco-design/web-react';
 import Overview from './overview';
-
 
 const { Row, Col } = Grid;
 const { Title } = Typography;
@@ -18,7 +17,7 @@ export default function TodoDashboardPage() {
 
   useEffect(() => {
     async function initData() {
-      const { list } = await ApiService.getTodoList();
+      const { list } = await TodoService.getTodoList();
       setTodoList(list);
     }
     initData();
