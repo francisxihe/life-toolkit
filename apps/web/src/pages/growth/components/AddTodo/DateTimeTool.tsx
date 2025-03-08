@@ -1,7 +1,7 @@
 import { Popover, Calendar, Select, TimePicker } from '@arco-design/web-react';
 import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
-import { RECURRENCE_PATTERNS } from '../../constants';
+import { RECURRENCE_PATTERNS } from '../../service';
 import SiteIcon from '@/components/SiteIcon';
 import { useState } from 'react';
 import 'dayjs/locale/zh-cn';

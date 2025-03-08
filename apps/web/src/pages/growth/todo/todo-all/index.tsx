@@ -4,7 +4,7 @@ import { TodoFilters } from './TodoFilters';
 import FlexibleContainer from '@/components/FlexibleContainer';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
-import AddTodo, { useAddTodoModal } from '../components/AddTodo';
+import { useAddTodoModal } from '../../components/AddTodo';
 import { useRef } from 'react';
 import { TodoFormData } from '../../service';
 import { useTodoAllContext } from './context';

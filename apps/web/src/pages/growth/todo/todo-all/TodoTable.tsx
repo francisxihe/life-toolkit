@@ -1,6 +1,6 @@
 import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
 import dayjs from 'dayjs';
-import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
+import { URGENCY_MAP, IMPORTANCE_MAP } from '../../service/todo.constants';
 import { useTodoAllContext } from './context';
 import { useEffect } from 'react';
 import {TodoService} from '../../service';

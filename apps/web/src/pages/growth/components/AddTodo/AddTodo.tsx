@@ -1,14 +1,14 @@
 'use client';
 
 import { Input, Select, Popover } from '@arco-design/web-react';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service';
 import { useState, useEffect } from 'react';
 import SiteIcon from '@/components/SiteIcon';
 import IconSelector from '../IconSelector';
 const TextArea = Input.TextArea;
 import DateTimeTool from './DateTimeTool';
 import dayjs from 'dayjs';
-import { TodoFormData } from '../../../service';
+import { TodoFormData } from '../../service';
 
 export default function AddTodo(props: {
   hiddenDate?: boolean;

@@ -1,5 +1,5 @@
 import TodoList from '../components/TodoList/TodoList';
-import AddTodo from '../components/AddTodo';
+import AddTodo from '../../components/AddTodo';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/FlexibleContainer';

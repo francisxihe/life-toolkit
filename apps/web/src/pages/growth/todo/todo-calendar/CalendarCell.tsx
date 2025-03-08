@@ -6,7 +6,7 @@ import { openModal } from '@/hooks/OpenModal';
 import { TodoFormData } from '../../service';
 import { useState, useRef, useMemo } from 'react';
 import clsx from 'clsx';
-import { useAddTodoModal } from '../components/AddTodo';
+import { useAddTodoModal } from '../../components/AddTodo';
 
 function TodoItem({ todo }: { todo: TodoVo }) {
   const { getTodoList } = useCalendarContext();

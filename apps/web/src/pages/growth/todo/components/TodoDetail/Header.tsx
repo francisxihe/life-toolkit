@@ -2,10 +2,10 @@ import { Button } from '@arco-design/web-react';
 import { IconClose } from '@arco-design/web-react/icon';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/FlexibleContainer';
-import DateTimeTool from '../AddTodo/DateTimeTool';
+import DateTimeTool from '../../../components/AddTodo/DateTimeTool';
 import { useTodoDetailContext } from './context';
-import IconSelector from '../IconSelector';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
+import IconSelector from '../../../components/IconSelector';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../../service/todo.constants';
 
 export default function TodoDetailHeader() {
   const { todoFormData, setTodoFormData, onClose, onChange } =

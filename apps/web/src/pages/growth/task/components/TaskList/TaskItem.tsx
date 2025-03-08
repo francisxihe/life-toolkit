@@ -3,10 +3,9 @@
 import { Tag, Typography, Popover, Button } from '@arco-design/web-react';
 import { isToday } from 'date-fns';
 import FlexibleContainer from '@/components/FlexibleContainer';
-import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../IconSelector';
 import SiteIcon from '@/components/SiteIcon';
-import { TaskService } from '../../../service';
+import { URGENCY_MAP, IMPORTANCE_MAP, TaskService } from '../../../service';
 import { TaskVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';

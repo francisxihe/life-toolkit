@@ -1,7 +1,7 @@
 import { createInjectState } from '@/utils/createInjectState';
 import { useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import ApiService from '../../service';
+import { TaskService } from '../../service';
 import { TaskVo } from '@life-toolkit/vo/growth';
 
 export const [CalendarProvider, useCalendarContext] = createInjectState<{
@@ -43,7 +43,7 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
   }
 
   const getTaskList = async () => {
-    const { list } = await ApiService.getTaskList();
+    const { list } = await TaskService.getTaskList();
     setTaskList(list);
   };
 

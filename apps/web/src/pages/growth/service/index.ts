@@ -7,3 +7,5 @@ export * from './goal.mapping';
 export { default as TaskService } from './task.service';
 export * from './task.types';
 export * from './task.mapping';
+export * from './todo.constants';
+

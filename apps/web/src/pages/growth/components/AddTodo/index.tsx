@@ -1,4 +1,4 @@
-import { TodoFormData, TodoService } from '../../../service';
+import { TodoFormData, TodoService } from '../../service';
 import { openModal } from '@/hooks/OpenModal';
 import AddTodo from './AddTodo';
 import { useRef } from 'react';

@@ -12,7 +12,7 @@ import SiteIcon from '@/components/SiteIcon';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useAddTodoModal } from '../../../todo/components/AddTodo';
+import { useAddTodoModal } from '../../../components/AddTodo';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
