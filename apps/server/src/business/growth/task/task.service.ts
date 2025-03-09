@@ -10,7 +10,7 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Task, TaskStatus } from "./entity";
+import { Task, TaskStatus } from "./entities";
 import { TrackTime } from "../track-time";
 import {
   CreateTaskDto,
@@ -180,6 +180,50 @@ export class TaskService {
     );
   }
 
+  async batchDelete(ids: string[]): Promise<void> {
+    const treeRepository = this.taskRepository.manager.getTreeRepository(Task);
+    const taskToDelete = await treeRepository.findOne({
+      where: { id: In(ids) },
+      relations: ["children"],
+    });
+
+    if (!taskToDelete) {
+      throw new Error("Task not found");
+    }
+
+    // 获取所有子节点
+    const descendantsTree =
+      await treeRepository.findDescendantsTree(taskToDelete);
+
+    const getAllDescendantIds = (node: Task): string[] => {
+      const ids = [node.id];
+      if (node.children) {
+        node.children.forEach((child) => {
+          ids.push(...getAllDescendantIds(child));
+        });
+      }
+      return ids;
+    };
+
+    const allIds = getAllDescendantIds(descendantsTree);
+
+    // 使用事务确保数据一致性
+    await this.taskRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        // 删除闭包表中的所有相关记录
+        for (const nodeId of allIds) {
+          await transactionalEntityManager.query(
+            `DELETE FROM task_closure WHERE id_ancestor = ? OR id_descendant = ?`,
+            [nodeId, nodeId]
+          );
+        }
+
+        // 删除所有节点
+        await transactionalEntityManager.delete(Task, allIds);
+      }
+    );
+  }
+
   async findById(id: string): Promise<TaskDto> {
     const task = await this.taskRepository.findOne({
       where: { id },
@@ -212,5 +256,14 @@ export class TaskService {
     }
 
     return { ...task, trackTimeList: [] };
+  }
+
+
+
+  async findByGoalIds(goalIds: string[]): Promise<Task[]> {
+    const tasks = await this.taskRepository.find({
+      where: { goalId: In(goalIds) },
+    });
+    return tasks;
   }
 }

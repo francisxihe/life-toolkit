@@ -9,7 +9,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { GoalStatus, GoalType } from "./enum";
-import { Task } from "../../task/entity";
+import { Task } from "../../task/entities";
 @Entity("goal")
 @Tree("closure-table")
 export class Goal extends BaseEntity {

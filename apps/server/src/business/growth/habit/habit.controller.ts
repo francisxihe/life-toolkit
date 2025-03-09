@@ -12,15 +12,14 @@ import { HabitService } from "./habit.service";
 import { HabitPageFilterDto, HabitFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { HabitMapper } from "./mapper";
-import { OperationByIdListVo } from "@life-toolkit/vo";
+import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
 import { OperationMapper } from "@/common/operation";
-import * as HabitVo from "@life-toolkit/vo/growth/habit";
 
 @Controller("habit")
 export class HabitController {
   constructor(
     private readonly habitService: HabitService,
-    private readonly habitMapper: HabitMapper,
+    private readonly habitMapper: HabitMapper
   ) {}
 
   @Put("batch-complete")
@@ -61,9 +60,9 @@ export class HabitController {
 
   @Post("create")
   @Response()
-  async create(@Body() createHabitVo: HabitVo.CreateHabitVo) {
+  async create(@Body() createHabitVO: Habit.CreateHabitVo) {
     const habit = await this.habitService.create(
-      this.habitMapper.voToDtoFromVo(createHabitVo)
+      this.habitMapper.voToDtoFromVo(createHabitVO)
     );
     return this.habitMapper.toVo(habit);
   }
@@ -78,11 +77,11 @@ export class HabitController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateHabitVo: HabitVo.UpdateHabitVo
+    @Body() updateHabitVO: Habit.UpdateHabitVo
   ) {
     const habit = await this.habitService.update(
       id,
-      this.habitMapper.voToUpdateDtoFromVo(updateHabitVo)
+      this.habitMapper.voToUpdateDtoFromVo(updateHabitVO)
     );
     return this.habitMapper.toVo(habit);
   }
@@ -114,4 +113,4 @@ export class HabitController {
     const habit = await this.habitService.findOne(id);
     return this.habitMapper.toVo(habit);
   }
-} 
+}

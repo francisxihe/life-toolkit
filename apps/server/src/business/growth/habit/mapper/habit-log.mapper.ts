@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { HabitLog } from '../entities';
-import { CreateHabitLogDto, UpdateHabitLogDto } from '../dto';
-import * as HabitVo from '@life-toolkit/vo/growth/habit';
+import { Injectable } from "@nestjs/common";
+import { HabitLog } from "../entities";
+import { CreateHabitLogDto, UpdateHabitLogDto } from "../dto";
+import type { Habit } from "@life-toolkit/vo";
 
 @Injectable()
 export class HabitLogMapper {
@@ -23,7 +23,7 @@ export class HabitLogMapper {
     };
   }
 
-  toVo(entity: HabitLog): HabitVo.HabitLogVo {
+  toVo(entity: HabitLog): Habit.HabitLogVo {
     return {
       id: entity.id,
       habitId: entity.habitId,
@@ -36,7 +36,7 @@ export class HabitLogMapper {
     };
   }
 
-  voToDtoFromVo(vo: HabitVo.CreateHabitLogVo): CreateHabitLogDto {
+  voToDtoFromVo(vo: Habit.CreateHabitLogVo): CreateHabitLogDto {
     const dto = new CreateHabitLogDto();
     dto.habitId = vo.habitId;
     dto.logDate = vo.logDate;
@@ -46,11 +46,11 @@ export class HabitLogMapper {
     return dto;
   }
 
-  voToUpdateDtoFromVo(vo: HabitVo.UpdateHabitLogVo): UpdateHabitLogDto {
+  voToUpdateDtoFromVo(vo: Habit.UpdateHabitLogVo): UpdateHabitLogDto {
     const dto = new UpdateHabitLogDto();
     dto.completionScore = vo.completionScore;
     dto.note = vo.note;
     dto.mood = vo.mood;
     return dto;
   }
-} 
+}

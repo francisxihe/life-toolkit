@@ -19,6 +19,8 @@ import {
   GoalDto,
 } from "./dto";
 import { GoalMapper } from "./mapper";
+import { TaskService } from "../task/task.service";
+import { Task } from "../task/entities";
 
 function getWhere(filter: GoalPageFilterDto) {
   const where: FindOptionsWhere<Goal> = {};
@@ -71,7 +73,8 @@ function getWhere(filter: GoalPageFilterDto) {
 export class GoalService {
   constructor(
     @InjectRepository(Goal)
-    private readonly goalRepository: Repository<Goal>
+    private readonly goalRepository: Repository<Goal>,
+    private readonly taskService: TaskService
   ) {}
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
@@ -136,6 +139,7 @@ export class GoalService {
   }
 
   async delete(id: string): Promise<void> {
+    console.log("===========", id);
     const treeRepository = this.goalRepository.manager.getTreeRepository(Goal);
     const goalToDelete = await treeRepository.findOne({
       where: { id },
@@ -161,6 +165,10 @@ export class GoalService {
     };
 
     const allIds = getAllDescendantIds(descendantsTree);
+    console.log("===========", allIds);
+    const taskIds = await this.taskService.findByGoalIds(allIds);
+    console.log("===========", taskIds);
+    await this.taskService.batchDelete(taskIds.map((task) => task.id));
 
     // 使用事务确保数据一致性
     await this.goalRepository.manager.transaction(

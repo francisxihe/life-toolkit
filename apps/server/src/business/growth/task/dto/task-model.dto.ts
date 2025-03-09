@@ -1,4 +1,4 @@
-import { Task } from "../entity";
+import { Task } from "../entities";
 import { BaseModelDto } from "@/base/base-model.dto";
 import { OmitType, IntersectionType } from "@nestjs/mapped-types";
 import { GoalDto } from "../../goal/dto";

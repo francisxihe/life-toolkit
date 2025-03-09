@@ -38,9 +38,12 @@ export class HabitLogService {
       this.habitLogMapper.toEntity(createHabitLogDto)
     );
     const savedLog = await this.habitLogRepository.save(habitLog);
-    
+
     // 根据完成情况更新习惯的连续天数
-    if (createHabitLogDto.completionScore > 0) {
+    if (
+      createHabitLogDto.completionScore !== undefined &&
+      createHabitLogDto.completionScore > 0
+    ) {
       // 如果完成了（部分或全部），增加连续天数
       await this.habitService.updateStreak(createHabitLogDto.habitId, true);
     } else {

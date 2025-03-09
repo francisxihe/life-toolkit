@@ -1,4 +1,4 @@
-import { Task } from "../entity";
+import { Task } from "../entities";
 import { TaskDto } from "./task-model.dto";
 import {
   IntersectionType,

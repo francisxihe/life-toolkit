@@ -11,7 +11,7 @@ import {
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 import { TodoStatus } from "./enum";
-import { Task } from "../../task/entity";
+import { Task } from "../../task/entities";
 
 @Entity("todo")
 export class Todo extends BaseEntity {

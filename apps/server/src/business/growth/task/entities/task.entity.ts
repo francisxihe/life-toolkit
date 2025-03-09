@@ -1,4 +1,12 @@
-import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne, OneToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  TreeChildren,
+  TreeParent,
+  Tree,
+  ManyToOne,
+  OneToMany,
+} from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
@@ -106,6 +114,10 @@ export class Task extends BaseEntity {
   @ManyToOne(() => Goal, (goal) => goal.taskList)
   goal: Goal;
 
+  /** 目标ID */
+  @Column()
+  @IsString()
+  goalId: string;
 
   /** 任务事项列表 */
   @OneToMany(() => Todo, (todo) => todo.task)

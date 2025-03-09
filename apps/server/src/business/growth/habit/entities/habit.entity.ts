@@ -15,23 +15,23 @@ import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 
 export enum HabitStatus {
-  ACTIVE = "active",      // 活跃中
-  PAUSED = "paused",      // 暂停
+  ACTIVE = "active", // 活跃中
+  PAUSED = "paused", // 暂停
   COMPLETED = "completed", // 已完成
   ABANDONED = "abandoned", // 已放弃
 }
 
 export enum HabitFrequency {
-  DAILY = "daily",        // 每天
-  WEEKLY = "weekly",      // 每周
-  MONTHLY = "monthly",    // 每月
-  CUSTOM = "custom",      // 自定义
+  DAILY = "daily", // 每天
+  WEEKLY = "weekly", // 每周
+  MONTHLY = "monthly", // 每月
+  CUSTOM = "custom", // 自定义
 }
 
 export enum HabitDifficulty {
-  EASY = "easy",          // 容易
-  MEDIUM = "medium",      // 中等
-  HARD = "hard",          // 困难
+  EASY = "easy", // 容易
+  MEDIUM = "medium", // 中等
+  HARD = "hard", // 困难
 }
 
 @Entity("habit")
@@ -67,7 +67,9 @@ export class Habit extends BaseEntity {
   importance?: number = 3;
 
   /** 习惯标签 */
-  @Column("simple-array", { default: [] })
+  @Column("simple-array", {
+    nullable: true,
+  })
   @IsArray()
   @IsString({ each: true })
   tags: string[] = [];
@@ -129,10 +131,10 @@ export class Habit extends BaseEntity {
   @IsString()
   @IsOptional()
   reminderTime?: string;
-  
+
   /** 累计完成次数 */
   @Column({ default: 0 })
   @IsNumber()
   @Type(() => Number)
   completedCount: number = 0;
-} 
+}

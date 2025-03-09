@@ -53,9 +53,10 @@ export class GoalController {
     return GoalMapper.dtoToVo(dto);
   }
 
-  @Delete("delete/:id") 
+  @Delete("delete/:id")
   @Response()
-  async delete(@Param("id") id: string) {
+  async remove(@Param("id") id: string) {
+    console.log("===========", id);
     return this.goalService.delete(id);
   }
 

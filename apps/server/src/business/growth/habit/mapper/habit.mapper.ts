@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Habit } from '../entities';
-import { CreateHabitDto, UpdateHabitDto } from '../dto';
-import * as HabitVo from '@life-toolkit/vo/growth/habit';
+import { Injectable } from "@nestjs/common";
+import { Habit } from "../entities";
+import { CreateHabitDto, UpdateHabitDto } from "../dto";
+import type { Habit as HabitVO } from "@life-toolkit/vo";
 
 @Injectable()
 export class HabitMapper {
@@ -38,7 +38,7 @@ export class HabitMapper {
     return result;
   }
 
-  toVo(entity: Habit): HabitVo.HabitVo {
+  toVo(entity: Habit): HabitVO.HabitVo {
     return {
       id: entity.id,
       name: entity.name,
@@ -61,7 +61,7 @@ export class HabitMapper {
     };
   }
 
-  voToDtoFromVo(vo: HabitVo.CreateHabitVo): CreateHabitDto {
+  voToDtoFromVo(vo: HabitVO.CreateHabitVo): CreateHabitDto {
     const dto = new CreateHabitDto();
     dto.name = vo.name;
     dto.description = vo.description;
@@ -77,11 +77,44 @@ export class HabitMapper {
     return dto;
   }
 
-  voToUpdateDtoFromVo(vo: HabitVo.UpdateHabitVo): UpdateHabitDto {
-    const dto = this.voToDtoFromVo(vo) as UpdateHabitDto;
+  voToUpdateDtoFromVo(vo: HabitVO.UpdateHabitVo): UpdateHabitDto {
+    const dto = new UpdateHabitDto();
+    if (vo.name !== undefined) {
+      dto.name = vo.name;
+    }
+    if (vo.description !== undefined) {
+      dto.description = vo.description;
+    }
+    if (vo.importance !== undefined) {
+      dto.importance = vo.importance;
+    }
+    if (vo.tags !== undefined) {
+      dto.tags = vo.tags;
+    }
+    if (vo.frequency !== undefined) {
+      dto.frequency = vo.frequency as any;
+    }
+    if (vo.customFrequency !== undefined) {
+      dto.customFrequency = vo.customFrequency;
+    }
+    if (vo.difficulty !== undefined) {
+      dto.difficulty = vo.difficulty as any;
+    }
+    if (vo.startDate !== undefined) {
+      dto.startDate = vo.startDate;
+    }
+    if (vo.targetDate !== undefined) {
+      dto.targetDate = vo.targetDate;
+    }
+    if (vo.needReminder !== undefined) {
+      dto.needReminder = vo.needReminder;
+    }
+    if (vo.reminderTime !== undefined) {
+      dto.reminderTime = vo.reminderTime;
+    }
     if (vo.status !== undefined) {
       dto.status = vo.status as any;
     }
     return dto;
   }
-} 
+}

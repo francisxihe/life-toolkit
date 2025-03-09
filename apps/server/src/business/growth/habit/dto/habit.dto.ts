@@ -1,7 +1,7 @@
 import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsBoolean, IsISO8601, IsInt, Min, Max } from 'class-validator';
 import { Type } from 'class-transformer';
 import { HabitStatus, HabitFrequency, HabitDifficulty } from '../entities';
-import { PaginationDto } from '@/common/pagination';
+import { PageDto } from "@/base/page.dto";
 
 export class CreateHabitDto {
   @IsString()
@@ -96,7 +96,7 @@ export class HabitFilterDto {
   tags?: string[];
 }
 
-export class HabitPageFilterDto extends PaginationDto {
+export class HabitPageFilterDto extends PageDto {
   @IsString()
   @IsOptional()
   keyword?: string;

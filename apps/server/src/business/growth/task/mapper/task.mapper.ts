@@ -5,7 +5,7 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
 } from "../dto";
-import { TaskStatus, Task } from "../entity";
+import { TaskStatus, Task } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../../track-time";

@@ -1,21 +1,21 @@
 export enum HabitStatus {
-  ACTIVE = "active",      // 活跃中
-  PAUSED = "paused",      // 暂停
+  ACTIVE = "active", // 活跃中
+  PAUSED = "paused", // 暂停
   COMPLETED = "completed", // 已完成
   ABANDONED = "abandoned", // 已放弃
 }
 
 export enum HabitFrequency {
-  DAILY = "daily",        // 每天
-  WEEKLY = "weekly",      // 每周
-  MONTHLY = "monthly",    // 每月
-  CUSTOM = "custom",      // 自定义
+  DAILY = "daily", // 每天
+  WEEKLY = "weekly", // 每周
+  MONTHLY = "monthly", // 每月
+  CUSTOM = "custom", // 自定义
 }
 
 export enum HabitDifficulty {
-  EASY = "easy",          // 容易
-  MEDIUM = "medium",      // 中等
-  HARD = "hard",          // 困难
+  EASY = "easy", // 容易
+  MEDIUM = "medium", // 中等
+  HARD = "hard", // 困难
 }
 
 // 创建习惯的VO
@@ -31,12 +31,12 @@ export type CreateHabitVo = {
   targetDate?: Date;
   needReminder?: boolean;
   reminderTime?: string;
-}
+};
 
 // 更新习惯的VO
 export type UpdateHabitVo = Partial<CreateHabitVo> & {
   status?: HabitStatus;
-}
+};
 
 // 习惯VO
 export type HabitVo = {
@@ -58,7 +58,7 @@ export type HabitVo = {
   completedCount: number;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // 创建习惯日志的VO
 export type CreateHabitLogVo = {
@@ -67,14 +67,14 @@ export type CreateHabitLogVo = {
   completionScore?: number;
   note?: string;
   mood?: number;
-}
+};
 
 // 更新习惯日志的VO
 export type UpdateHabitLogVo = {
   completionScore?: number;
   note?: string;
   mood?: number;
-}
+};
 
 // 习惯日志VO
 export type HabitLogVo = {
@@ -86,4 +86,4 @@ export type HabitLogVo = {
   mood?: number;
   createdAt: Date;
   updatedAt: Date;
-} 
+};

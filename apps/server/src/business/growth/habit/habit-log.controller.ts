@@ -11,19 +11,18 @@ import {
 import { HabitLogService } from "./habit-log.service";
 import { Response } from "@/decorators/response.decorator";
 import { HabitLogMapper } from "./mapper";
-import * as HabitVo from "@life-toolkit/vo/growth/habit";
-import { ParseDatePipe } from "@/common/pipes/parse-date.pipe";
+import type { Habit } from "@life-toolkit/vo";
 
 @Controller("habit-log")
 export class HabitLogController {
   constructor(
     private readonly habitLogService: HabitLogService,
-    private readonly habitLogMapper: HabitLogMapper,
+    private readonly habitLogMapper: HabitLogMapper
   ) {}
 
   @Post("create")
   @Response()
-  async create(@Body() createHabitLogVo: HabitVo.CreateHabitLogVo) {
+  async create(@Body() createHabitLogVo: Habit.CreateHabitLogVo) {
     const habitLog = await this.habitLogService.create(
       this.habitLogMapper.voToDtoFromVo(createHabitLogVo)
     );
@@ -40,7 +39,7 @@ export class HabitLogController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateHabitLogVo: HabitVo.UpdateHabitLogVo
+    @Body() updateHabitLogVo: Habit.UpdateHabitLogVo
   ) {
     const habitLog = await this.habitLogService.update(
       id,
@@ -69,13 +68,13 @@ export class HabitLogController {
   @Response()
   async findByDate(
     @Param("habitId") habitId: string,
-    @Param("date", ParseDatePipe) date: Date
+    @Param("date") date: Date
   ) {
     try {
       const habitLog = await this.habitLogService.findByDate(habitId, date);
       return this.habitLogMapper.toVo(habitLog);
     } catch (error) {
-      if (error.name === 'NotFoundException') {
+      if (error.name === "NotFoundException") {
         return null; // 如果没有找到记录，返回null
       }
       throw error;
@@ -86,8 +85,8 @@ export class HabitLogController {
   @Response()
   async findByDateRange(
     @Param("habitId") habitId: string,
-    @Query("startDate", ParseDatePipe) startDate: Date,
-    @Query("endDate", ParseDatePipe) endDate: Date
+    @Query("startDate") startDate: Date,
+    @Query("endDate") endDate: Date
   ) {
     const habitLogs = await this.habitLogService.findByDateRange(
       habitId,
@@ -98,4 +97,4 @@ export class HabitLogController {
       list: habitLogs.map((log) => this.habitLogMapper.toVo(log)),
     };
   }
-} 
+}

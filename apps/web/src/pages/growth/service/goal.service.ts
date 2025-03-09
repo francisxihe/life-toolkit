@@ -14,6 +14,7 @@ export default class GoalService {
       return GoalController.getDetail(todoId);
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -24,6 +25,7 @@ export default class GoalService {
       return res;
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -44,6 +46,7 @@ export default class GoalService {
       return res;
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -54,6 +57,7 @@ export default class GoalService {
       return res;
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -64,6 +68,7 @@ export default class GoalService {
       return res;
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -76,6 +81,7 @@ export default class GoalService {
       return res;
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -84,6 +90,7 @@ export default class GoalService {
       return GoalController.getGoalList(params);
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 
@@ -92,6 +99,7 @@ export default class GoalService {
       return GoalController.getGoalPage(params);
     } catch (error) {
       Message.error(error.message);
+      throw error;
     }
   }
 }

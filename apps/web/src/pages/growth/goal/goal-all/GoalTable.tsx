@@ -121,9 +121,9 @@ export default function GoalTable() {
               Modal.confirm({
                 title: '确定删除吗？',
                 content: '删除后将无法恢复',
-                onOk: () => {
-                  GoalService.deleteGoal(record.id);
-                  getGoalPage();
+                onOk: async () => {
+                  await GoalService.deleteGoal(record.id);
+                  await getGoalPage();
                 },
               })
             }
