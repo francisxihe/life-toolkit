@@ -1,0 +1,107 @@
+import { HabitStatus, HabitFrequency, HabitDifficulty } from '@life-toolkit/vo/growth/habit';
+
+export const HABIT_STATUS_OPTIONS = [
+  {
+    label: '活跃中',
+    value: HabitStatus.ACTIVE,
+    color: 'green',
+  },
+  {
+    label: '已暂停',
+    value: HabitStatus.PAUSED,
+    color: 'orange',
+  },
+  {
+    label: '已完成',
+    value: HabitStatus.COMPLETED,
+    color: 'blue',
+  },
+  {
+    label: '已放弃',
+    value: HabitStatus.ABANDONED,
+    color: 'red',
+  },
+];
+
+export const HABIT_FREQUENCY_OPTIONS = [
+  {
+    label: '每天',
+    value: HabitFrequency.DAILY,
+  },
+  {
+    label: '每周',
+    value: HabitFrequency.WEEKLY,
+  },
+  {
+    label: '每月',
+    value: HabitFrequency.MONTHLY,
+  },
+  {
+    label: '自定义',
+    value: HabitFrequency.CUSTOM,
+  },
+];
+
+export const HABIT_DIFFICULTY_OPTIONS = [
+  {
+    label: '容易',
+    value: HabitDifficulty.EASY,
+    color: 'green',
+  },
+  {
+    label: '中等',
+    value: HabitDifficulty.MEDIUM,
+    color: 'orange',
+  },
+  {
+    label: '困难',
+    value: HabitDifficulty.HARD,
+    color: 'red',
+  },
+];
+
+export const COMPLETION_SCORE_OPTIONS = [
+  {
+    label: '未完成',
+    value: 0,
+    color: 'red',
+  },
+  {
+    label: '部分完成',
+    value: 1,
+    color: 'orange',
+  },
+  {
+    label: '完全完成',
+    value: 2,
+    color: 'green',
+  },
+];
+
+export const MOOD_OPTIONS = [
+  {
+    label: '很差',
+    value: 1,
+    icon: '😞',
+  },
+  {
+    label: '较差',
+    value: 2,
+    icon: '😕',
+  },
+  {
+    label: '一般',
+    value: 3,
+    icon: '😐',
+  },
+  {
+    label: '良好',
+    value: 4,
+    icon: '🙂',
+  },
+  {
+    label: '很好',
+    value: 5,
+    icon: '😄',
+  },
+]; 

@@ -9,6 +9,7 @@ import { TaskModule } from "./business/growth/task/task.module";
 import { AiModule } from "./business/ai/ai.module";
 import { getDatabaseConfig } from "./config/database.config";
 import { GoalModule } from "./business/growth/goal/goal.module";
+import { HabitModule } from "./business/growth/habit/habit.module";
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { GoalModule } from "./business/growth/goal/goal.module";
     GoalModule,
     // ExpensesModule,
     AiModule,
+    HabitModule,
   ],
   controllers: [],
   providers: [],

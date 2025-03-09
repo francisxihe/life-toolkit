@@ -8,4 +8,7 @@ export { default as TaskService } from './task.service';
 export * from './task.types';
 export * from './task.mapping';
 export * from './todo.constants';
+import HabitService from './habit.service';
+
+export { HabitService };
 
