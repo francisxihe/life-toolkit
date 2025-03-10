@@ -72,7 +72,7 @@ export default class GoalService {
     }
   }
 
-  static async updateGoal(id: string, goal: UpdateGoalVo, silent = false) {
+  static async updateGoal(id: string, goal: UpdateGoalVo, silent = true) {
     try {
       const res = await GoalController.updateGoal(id, goal);
       if (!silent) {

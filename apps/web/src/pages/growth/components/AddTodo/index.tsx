@@ -8,6 +8,22 @@ export default AddTodo;
 export function useAddTodoModal() {
   const todoFormDataRef = useRef<TodoFormData>();
 
+  const onSubmit = async () => {
+    const todoFormData = todoFormDataRef.current;
+
+    await TodoService.addTodo({
+      name: todoFormData.name,
+      importance: todoFormData.importance,
+      urgency: todoFormData.urgency,
+      planDate: todoFormData.planDate || undefined,
+      planStartAt: todoFormData.planTimeRange?.[0] || undefined,
+      planEndAt: todoFormData.planTimeRange?.[1] || undefined,
+      repeat: todoFormData.repeat,
+      tags: todoFormData.tags,
+      taskId: todoFormData.taskId,
+    });
+  };
+
   const open = ({
     initialFormData,
     afterSubmit,
@@ -24,32 +40,14 @@ export function useAddTodoModal() {
             todoFormDataRef.current = todoFormData;
           }}
           onSubmit={async (todoFormData) => {
-            await TodoService.addTodo({
-              name: todoFormData.name,
-              importance: todoFormData.importance,
-              urgency: todoFormData.urgency,
-              planDate: todoFormData.planDate || undefined,
-              planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-              planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-              repeat: todoFormData.repeat,
-              tags: todoFormData.tags,
-            });
+            await onSubmit();
             afterSubmit?.(todoFormData);
           }}
         />
       ),
       onOk: async () => {
         const todoFormData = todoFormDataRef.current;
-        await TodoService.addTodo({
-          name: todoFormData.name,
-          importance: todoFormData.importance,
-          urgency: todoFormData.urgency,
-          planDate: todoFormData.planDate || undefined,
-          planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-          planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-          repeat: todoFormData.repeat,
-          tags: todoFormData.tags,
-        });
+        await onSubmit();
         afterSubmit?.(todoFormData);
       },
     });

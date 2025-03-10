@@ -1,14 +1,5 @@
-import {
-  Input,
-  Button,
-  Popover,
-  Grid,
-  DatePicker,
-} from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
-import TaskList from '../TaskList';
 import TodoList from '../../../todo/components/TodoList/TodoList';
-import SiteIcon from '@/components/SiteIcon';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
@@ -16,9 +7,8 @@ import { useAddTodoModal } from '../../../components/AddTodo';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
-export default function TaskDetailSubTaskList() {
-  const { currentTask, showSubTask, refreshTaskDetail } =
-    useTaskDetailContext();
+export default function TaskDetailTodoList() {
+  const { currentTask, refreshTaskDetail } = useTaskDetailContext();
 
   const { open: openAddTodoModal } = useAddTodoModal();
   return (
@@ -30,35 +20,28 @@ export default function TaskDetailSubTaskList() {
         ])}
       >
         待办列表
-        {/* <AddTodoPopover
-          key={currentTask.id}
-          initialFormData={{
-            parentId: currentTask.id,
-          }}
-          afterSubmit={async () => {
-            await refreshTaskDetail(currentTask.id);
-          }}
-        > */}
         <CreateButton
           type="text"
           onClick={() => {
             openAddTodoModal({
               initialFormData: {
-                parentId: currentTask.id,
+                taskId: currentTask.id,
+              },
+              afterSubmit: async () => {
+                await refreshTaskDetail(currentTask.id);
               },
             });
           }}
         >
           添加待办
         </CreateButton>
-        {/* </AddTodoPopover> */}
       </Fixed>
       <Shrink className="overflow-auto">
         {currentTask?.todoList && (
           <TodoList
             todoList={currentTask.todoList}
-            onClickTodo={async (id) => {
-              await showSubTask(id);
+            onClickTodo={async () => {
+              //
             }}
             refreshTodoList={async () => {
               await refreshTaskDetail(currentTask.id);

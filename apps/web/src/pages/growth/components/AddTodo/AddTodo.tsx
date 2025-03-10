@@ -25,11 +25,11 @@ export default function AddTodo(props: {
     ...defaultFormData,
   });
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!formData.name) {
       return;
     }
-    props.onSubmit?.(formData);
+    await props.onSubmit?.(formData);
     setFormData(defaultFormData);
   };
 

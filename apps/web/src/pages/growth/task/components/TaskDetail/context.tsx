@@ -23,8 +23,6 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     refreshTaskDetail: (id: string) => Promise<void>;
   };
 }>((props) => {
-  const [level, setLevel] = useState(0);
-
   const [currentTask, setCurrentTask] = useState<TaskVo>(props.task);
 
   const [taskFormData, setTaskFormData] = useState<TaskFormData>();
@@ -32,7 +30,6 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   const currentTaskRef = useRef<TaskVo>();
 
   const showSubTask = async (id: string) => {
-    setLevel(level + 1);
     await refreshTaskDetail(id);
   };
 
@@ -65,13 +62,8 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   }
 
   async function onChange(data: Partial<UpdateTaskVo>) {
-    if (level > 0) {
-      const updatedTask = await TaskService.updateTask(currentTask.id, data);
-      await refreshTaskDetail(updatedTask.id);
-    } else {
-      const updatedTask = await TaskService.updateTask(currentTask.id, data);
-      await props.onChange(updatedTask);
-    }
+    const updatedTask = await TaskService.updateTask(currentTask.id, data);
+    await props.onChange(updatedTask);
   }
 
   return {

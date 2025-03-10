@@ -67,10 +67,12 @@ export default class TaskService {
     }
   }
 
-  static async updateTask(id: string, task: UpdateTaskVo) {
+  static async updateTask(id: string, task: UpdateTaskVo, silent = true) {
     try {
       const res = await TaskController.updateTask(id, task);
-      Message.success('操作成功');
+      if (!silent) {
+        Message.success('操作成功');
+      }
       return res;
     } catch (error) {
       Message.error(error.message);

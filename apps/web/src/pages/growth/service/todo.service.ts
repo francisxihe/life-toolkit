@@ -67,10 +67,12 @@ export default class TodoService {
     }
   }
 
-  static async updateTodo(id: string, todo: UpdateTodoVo) {
+  static async updateTodo(id: string, todo: UpdateTodoVo, silent = true) {
     try {
       const res = await TodoController.updateTodo(id, todo);
-      Message.success('操作成功');
+      if (!silent) {
+        Message.success('操作成功');
+      }
       return res;
     } catch (error) {
       Message.error(error.message);

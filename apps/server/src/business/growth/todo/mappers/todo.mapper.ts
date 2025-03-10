@@ -89,10 +89,11 @@ class TodoMapperVo extends TodoMapperDto {
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
     dto.repeat = vo.repeat as TodoRepeat;
+    dto.taskId = vo.taskId;
     return dto;
   }
 
-  static voToUpdateDto(vo: TodoVO.CreateTodoVo): UpdateTodoDto {
+  static voToUpdateDto(vo: TodoVO.UpdateTodoVo): UpdateTodoDto {
     const dto = new UpdateTodoDto();
     dto.name = vo.name;
     dto.description = vo.description;
@@ -101,6 +102,7 @@ class TodoMapperVo extends TodoMapperDto {
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
     dto.repeat = vo.repeat as TodoRepeat;
+    dto.taskId = vo.taskId;
     return dto;
   }
 }
