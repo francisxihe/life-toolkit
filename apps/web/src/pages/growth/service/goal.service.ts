@@ -5,9 +5,10 @@ import type {
   GoalPageFiltersVo,
   GoalListFiltersVo,
   UpdateGoalVo,
+  GoalItemVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
-
+import { useState, useEffect } from 'react';
 export default class GoalService {
   static async getDetail(todoId: string) {
     try {
@@ -93,6 +94,24 @@ export default class GoalService {
       throw error;
     }
   }
+
+  static useGoalList = (params: GoalListFiltersVo = {}) => {
+    const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchGoalList = async () => {
+      setLoading(true);
+      const res = await GoalService.getGoalList(params);
+      setGoalList(res.list);
+      setLoading(false);
+    };
+
+    useEffect(() => {
+      fetchGoalList();
+    }, []);
+
+    return { goalList, loading };
+  };
 
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
     try {

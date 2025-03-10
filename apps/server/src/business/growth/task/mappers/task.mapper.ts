@@ -110,6 +110,7 @@ class TaskMapperVo extends TaskMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.goalId = vo.goalId;
     return dto;
   }
 
@@ -121,6 +122,7 @@ class TaskMapperVo extends TaskMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.parentId = vo.parentId;
+    dto.goalId = vo.goalId;
     return dto;
   }
 }

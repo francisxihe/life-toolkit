@@ -1,8 +1,6 @@
 'use client';
 
 import {
-  createContext,
-  useContext,
   useState,
   useCallback,
   Dispatch,
@@ -10,8 +8,13 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { TaskVo, TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
-import {TaskService} from '../../service';
+import {
+  TaskVo,
+  TaskItemVo,
+  TaskPageFiltersVo,
+  TaskStatus,
+} from '@life-toolkit/vo/growth';
+import { TaskService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 
 function useSyncState<T>(
@@ -34,22 +37,22 @@ function useSyncState<T>(
 
 export const [TaskAllProvider, useTaskAllContext] = createInjectState<{
   ContextType: {
-    taskList: TaskVo[];
+    taskList: TaskItemVo[];
     getTaskPage: () => Promise<void>;
     filters: TaskPageFiltersVo;
     setFilters: Dispatch<SetStateAction<TaskPageFiltersVo>>;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
-  const [taskList, setTaskList] = useState<TaskVo[]>([]);
+  const [taskList, setTaskList] = useState<TaskItemVo[]>([]);
 
   const [filters, setFilters, filtersRef] = useSyncState<TaskPageFiltersVo>({
     keyword: '',
     importance: undefined,
     urgency: undefined,
     status: TaskStatus.TODO,
-    planDateStart: undefined,
-    planDateEnd: undefined,
+    startAt: undefined,
+    endAt: undefined,
     doneDateStart: undefined,
     doneDateEnd: undefined,
     abandonedDateStart: undefined,
@@ -68,8 +71,8 @@ export const [TaskAllProvider, useTaskAllContext] = createInjectState<{
       importance: undefined,
       urgency: undefined,
       status: undefined,
-      planDateStart: undefined,
-      planDateEnd: undefined,
+      startAt: undefined,
+      endAt: undefined,
       doneDateStart: undefined,
       doneDateEnd: undefined,
       abandonedDateStart: undefined,

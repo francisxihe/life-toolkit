@@ -1,12 +1,12 @@
 import TaskList from '../components/TaskList';
-import AddTaskPopover from '../components/AddTaskPopover';
+import AddTaskPopover from '../components/TaskDetail/TaskCreator';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider, Button } from '@arco-design/web-react';
-import TaskDetail from '../components/TaskDetail';
+import { TaskEditor } from '../components/TaskDetail';
 import styles from './style.module.less';
-import {TaskService} from '../../service';
+import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import SiteIcon from '@/components/SiteIcon';
@@ -170,7 +170,7 @@ export default function TaskWeek() {
           <>
             <Divider type="vertical" className="!h-full" />
             <div className="w-full py-2">
-              <TaskDetail
+              <TaskEditor
                 task={currentTask}
                 onClose={async () => {
                   showTaskDetail(null);

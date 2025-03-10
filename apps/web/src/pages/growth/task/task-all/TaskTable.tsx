@@ -5,10 +5,14 @@ import { useTaskAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { TaskService } from '../../service';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
-import { useTaskDetailDrawer } from '../components/TaskDetail';
+import { useTaskDetail } from '../components/TaskDetail';
 
 export default function TaskTable() {
   const { taskList, getTaskPage } = useTaskAllContext();
+  const {
+    openEditDrawer: openEditTaskDrawer,
+    closeEditDrawer: closeEditTaskDrawer,
+  } = useTaskDetail();
 
   useEffect(() => {
     async function initData() {
@@ -22,18 +26,6 @@ export default function TaskTable() {
     }
     initData();
   }, []);
-
-  const {
-    open: openTaskDetailDrawer,
-    close: closeTaskDetailDrawer,
-    TaskDetailDrawer,
-  } = useTaskDetailDrawer({
-    title: <div className="text-body-3">编辑</div>,
-    onCancel: () => {
-      closeTaskDetailDrawer();
-      getTaskPage();
-    },
-  });
 
   const columns = [
     { title: '任务', dataIndex: 'name', key: 'name' },
@@ -98,11 +90,19 @@ export default function TaskTable() {
           <Button
             type="text"
             onClick={() => {
-              openTaskDetailDrawer({
-                task: record,
-                onClose: null,
-                onChange: async () => {
-                  console.log('onChange');
+              openEditTaskDrawer({
+                drawerProps: {
+                  title: <div className="text-body-3">编辑</div>,
+                  onCancel: () => {
+                    closeEditTaskDrawer();
+                    getTaskPage();
+                  },
+                },
+                editorProps: {
+                  task: record,
+                  afterSubmit: async () => {
+                    await getTaskPage();
+                  },
                 },
               });
             }}
@@ -175,7 +175,6 @@ export default function TaskTable() {
           }
         }}
       />
-      <TaskDetailDrawer />
     </>
   );
 }

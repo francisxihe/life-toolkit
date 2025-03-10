@@ -4,111 +4,83 @@ import {
   Popover,
   Grid,
   DatePicker,
+  Switch,
+  Spin,
 } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
 import TrackTime from '../../../components/TrackTime';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import { Select } from '@arco-design/web-react';
-import {GoalService} from '../../../service';
-import { useState, useEffect, useCallback } from 'react';
-import { GoalItemVo } from '@life-toolkit/vo/growth';
+import { Select, Form } from '@arco-design/web-react';
+import { useEffect, useState } from 'react';
 
-const { Shrink, Fixed } = FlexibleContainer;
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
 
 export default function TaskForm() {
-  const { taskFormData, setTaskFormData, onChange } = useTaskDetailContext();
+  const { taskFormData, setTaskFormData, loading, goalList, currentTask, taskList } =
+    useTaskDetailContext();
 
-  const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
-
-  const initGoalList = useCallback(async () => {
-    const res = await GoalService.getGoalList();
-    setGoalList(res.list);
-  }, []);
+  const [form] = Form.useForm();
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
-    initGoalList();
-  }, []);
+    if (currentTask?.id && !initialized) {
+      form.setFieldsValue(taskFormData);
+      setInitialized(true);
+    }
+  }, [form, taskFormData, initialized, currentTask]);
 
-  return taskFormData ? (
-    <>
+  if (loading) {
+    return <Spin dot />;
+  }
+
+  return (
+    <Form
+      form={form}
+      onValuesChange={(changedValues) => {
+        setTaskFormData((prev) => ({ ...prev, ...changedValues }));
+      }}
+    >
       <Row gutter={[16, 16]} className="p-2">
-        <Item span={24} label="任务名称">
-          <Input
-            value={taskFormData.name}
-            placeholder="准备做什么?"
-            type="primary"
-            onChange={(value) => {
-              setTaskFormData((prev) => ({ ...prev, name: value }));
-            }}
-            onBlur={() => {
-              onChange({
-                name: taskFormData.name.trim(),
-              });
-            }}
-          />
+        <Item span={24} label="任务名称" name="name">
+          <Input placeholder="准备做什么?" />
         </Item>
-        <Item span={24} label="目标">
-          <Select
-            options={goalList.map((goal) => ({
-              label: goal.name,
-              value: goal.id,
-            }))}
-            value={taskFormData.goalId}
-            onChange={(value) => {
-              setTaskFormData((prev) => ({ ...prev, goalId: value }));
-            }}
-          />
+        <Item span={24} label="是否子任务" name="isSubTask">
+          <Switch checked={taskFormData.isSubTask} />
         </Item>
-        <Item span={24} label="日期">
-          <RangePicker
-            value={taskFormData.planTimeRange}
-            className="w-full rounded-md"
-            allowClear
-            showTime
-            onChange={(time) => {
-              setTaskFormData((prev) => ({
-                ...prev,
-                planTimeRange: [time[0], time[1]],
-              }));
-            }}
-          />
+        {taskFormData.isSubTask ? (
+          <Item span={24} label="父任务" name="parentId">
+            <Select
+              options={taskList.map((task) => ({
+                label: task.name,
+                value: task.id,
+              }))}
+            />
+          </Item>
+        ) : (
+          <Item span={24} label="目标" name="goalId">
+            <Select
+              options={goalList.map((goal) => ({
+                label: goal.name,
+                value: goal.id,
+              }))}
+            />
+          </Item>
+        )}
+        <Item span={24} label="日期" name="planTimeRange">
+          <RangePicker className="w-full rounded-md" allowClear showTime />
         </Item>
-        <Item span={12} label="预估时间">
-          <Input
-            value={taskFormData.estimateTime}
-            onChange={(value) => {
-              setTaskFormData((prev) => ({ ...prev, estimateTime: value }));
-            }}
-            onBlur={() => {
-              onChange({
-                estimateTime: taskFormData.estimateTime.trim(),
-              });
-            }}
-          />
+        <Item span={12} label="预估时间" name="estimateTime">
+          <Input />
         </Item>
-        <Item span={12} label="跟踪时间">
+        <Item span={12} label="跟踪时间" name="trackTimeList">
           <TrackTime trackTimeList={taskFormData.trackTimeList} />
         </Item>
-        <Item span={24} label="描述">
-          <TextArea
-            autoSize={false}
-            value={taskFormData.description}
-            placeholder="描述一下"
-            onChange={(value) => {
-              setTaskFormData((prev) => ({
-                ...prev,
-                description: value,
-              }));
-            }}
-          />
+        <Item span={24} label="描述" name="description">
+          <TextArea autoSize={false} placeholder="描述一下" />
         </Item>
       </Row>
-    </>
-  ) : (
-    <></>
+    </Form>
   );
 }
 
@@ -116,13 +88,19 @@ function Item(props: {
   span: number;
   label: string;
   children: React.ReactNode;
+  name: string;
 }) {
   return (
-    <Col span={props.span} className="flex items-center">
-      <FlexibleContainer direction="vertical">
-        <Fixed className="leading-[32px] w-24">{props.label}</Fixed>
-        <Shrink>{props.children}</Shrink>
-      </FlexibleContainer>
+    <Col span={props.span} className="w-full flex items-center !py-0">
+      <Form.Item
+        field={props.name}
+        label={props.label}
+        labelAlign="left"
+        labelCol={{ span: (3 * 24) / props.span }}
+        wrapperCol={{ span: 24 - (3 * 24) / props.span }}
+      >
+        {props.children}
+      </Form.Item>
     </Col>
   );
 }

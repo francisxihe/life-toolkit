@@ -13,6 +13,7 @@
     "deploy": "pnpm run build && ./deploy.sh"
   },
   "dependencies": {
+    "@life-toolkit/vo": "workspace:*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",
@@ -33,17 +34,18 @@
     "typeorm": "^0.3.17",
     "typeorm-naming-strategies": "^4.1.0",
     "uuid": "^11.0.5",
-    "xlsx": "^0.18.5",
-    "@life-toolkit/vo": "workspace:*"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
+    "@types/module-alias": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "cross-env": "^7.0.3",
-    "ts-node": "^10.9.1"
+    "ts-node": "^10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.2.0"
   }
 }

@@ -1,15 +1,16 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
-import TaskDetail from '../components/TaskDetail';
+import { TaskEditor } from '../components/TaskDetail';
 import { openModal } from '@/hooks/OpenModal';
-import { useState, useRef, useMemo } from 'react';
-import AddTaskPopover from '../components/AddTaskPopover';
+import { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import SiteIcon from '@/components/SiteIcon';
+import { useTaskDetail } from '../components/TaskDetail';
 
 function TaskItem({ task }: { task: TaskVo }) {
   const { getTaskList } = useCalendarContext();
+
   return (
     <div
       onClick={(e) => {
@@ -18,7 +19,7 @@ function TaskItem({ task }: { task: TaskVo }) {
           title: <div className="text-body-3">编辑</div>,
           content: (
             <div className="ml-[-6px]">
-              <TaskDetail
+              <TaskEditor
                 task={task}
                 onClose={null}
                 onChange={async () => {
@@ -51,6 +52,8 @@ function TaskItem({ task }: { task: TaskVo }) {
 export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const { taskList, calendarMode, pageShowDate, getTaskList } =
     useCalendarContext();
+
+  const { openEditDrawer, closeEditDrawer, openCreateDrawer } = useTaskDetail();
 
   const todayTaskList = useMemo(() => {
     return taskList.filter((task) =>
@@ -86,29 +89,35 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
               ))}
             </div>
             {showAddTask && (
-              <AddTaskPopover
-                initialFormData={{
-                  planTimeRange: [
-                    cellDate.startOf('day').format('YYYY-MM-DD'),
-                    cellDate.endOf('day').format('YYYY-MM-DD'),
-                  ],
-                }}
-                afterSubmit={async (todoFormData) => {
-                  getTaskList();
+              <div
+                className={clsx([
+                  `w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]`,
+                  'flex items-center gap-1',
+                  'text-text-2 truncate cursor-pointer',
+                  'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
+                ])}
+                onClick={() => {
+                  openCreateDrawer({
+                    drawerProps: {
+                      title: '添加任务',
+                    },
+                    creatorProps: {
+                      initialFormData: {
+                        planTimeRange: [
+                          cellDate.startOf('day').format('YYYY-MM-DD'),
+                          cellDate.endOf('day').format('YYYY-MM-DD'),
+                        ],
+                      },
+                      afterSubmit: async (todoFormData) => {
+                        await getTaskList();
+                      },
+                    },
+                  });
                 }}
               >
-                <div
-                  className={clsx([
-                    `w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]`,
-                    'flex items-center gap-1',
-                    'text-text-2 truncate cursor-pointer',
-                    'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
-                  ])}
-                >
-                  <SiteIcon id="add" className="w-3 h-3" />
-                  添加任务
-                </div>
-              </AddTaskPopover>
+                <SiteIcon id="add" className="w-3 h-3" />
+                添加任务
+              </div>
             )}
           </>
         )}

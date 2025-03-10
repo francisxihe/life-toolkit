@@ -1,8 +1,9 @@
 export * from "./task-model.vo";
-import { TaskVo } from "./task-model.vo";
+import { TaskVo, TaskItemVo } from "./task-model.vo";
+import { self } from "../../base";
 
 export type TaskPageVo = {
-  list: TaskVo[];
+  list: TaskItemVo[];
 
   total: number;
 
@@ -12,22 +13,22 @@ export type TaskPageVo = {
 };
 
 export type TaskListVo = {
-  list: TaskVo[];
+  list: TaskItemVo[];
 };
 
 export type TaskListFiltersVo = {
   keyword?: string;
-  parentId?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
+  parentId?: TaskVo["parentId"];
+  startAt?: TaskVo["startAt"];
+  endAt?: TaskVo["endAt"];
   importance?: TaskVo["importance"];
   urgency?: TaskVo["urgency"];
   status?: TaskVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
-};
+  doneDateStart?: TaskVo["doneAt"];
+  doneDateEnd?: TaskVo["doneAt"];
+  abandonedDateStart?: TaskVo["abandonedAt"];
+  abandonedDateEnd?: TaskVo["abandonedAt"];
+} & self;
 
 export type TaskPageFiltersVo = TaskListFiltersVo & {
   tags?: string[];

@@ -4,12 +4,13 @@ import { TaskFilters } from './TaskFilters';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
-import AddTaskPopover from '../components/AddTaskPopover';
 import { useTaskAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
+import { useTaskDetail } from '../components/TaskDetail';
 
 function TaskAll() {
   const { getTaskPage } = useTaskAllContext();
+  const { openCreateDrawer: openCreateTaskDrawer } = useTaskDetail();
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
@@ -24,13 +25,19 @@ function TaskAll() {
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Fixed className="px-5 flex my-3">
-        <AddTaskPopover
-          afterSubmit={async () => {
-            getTaskPage();
+        <CreateButton
+          onClick={() => {
+            openCreateTaskDrawer({
+              creatorProps: {
+                afterSubmit: async () => {
+                  await getTaskPage();
+                },
+              },
+            });
           }}
         >
-          <CreateButton>新建</CreateButton>
-        </AddTaskPopover>
+          新建
+        </CreateButton>
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Shrink className="px-5 w-full h-full flex">

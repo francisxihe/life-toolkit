@@ -1,4 +1,9 @@
-import { GoalVo, TaskVo, TrackTimeModelVo, TodoVo } from '@life-toolkit/vo/growth';
+import {
+  GoalVo,
+  TaskVo,
+  TrackTimeModelVo,
+  TodoVo,
+} from '@life-toolkit/vo/growth';
 
 export type TaskFormData = {
   id?: string;
@@ -10,9 +15,11 @@ export type TaskFormData = {
   urgency?: number;
   planTimeRange: [string | undefined, string | undefined];
   estimateTime?: string;
+  isSubTask: boolean;
+  // 以下为关联数据
   goalId?: string;
-  trackTimeList?: TrackTimeModelVo[];
-  children: TaskVo[];
   parentId?: string;
-  todoList: TodoVo[];
+  children: TaskVo[];
+  todoList?: TodoVo[];
+  trackTimeList?: TrackTimeModelVo[];
 };

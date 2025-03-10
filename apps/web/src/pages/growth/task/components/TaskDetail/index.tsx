@@ -1,68 +1,88 @@
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import { TaskVo } from '@life-toolkit/vo/growth';
-import { TaskDetailProvider } from './context';
-import TaskForm from './TaskForm';
-import SubTaskList from './SubTaskList';
-import TodoList from './TodoList';
-import { Drawer } from '@arco-design/web-react';
+import { Popover } from '@arco-design/web-react';
 import { useState } from 'react';
-import { DrawerProps } from '@arco-design/web-react/es/drawer';
-const { Shrink, Fixed } = FlexibleContainer;
+import TaskEditor, { TaskEditorProps } from './TaskEditor';
+import TaskCreator, { TaskCreatorProps } from './TaskCreator';
+import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 
-export type TaskDetailProps = {
-  task: TaskVo;
-  onClose: () => Promise<void>;
-  onChange: (task: TaskVo) => Promise<void>;
-};
+export { TaskEditor, TaskCreator };
 
-export default function TaskDetail(props: TaskDetailProps) {
-  return (
-    <TaskDetailProvider
-      task={props.task}
-      onClose={props.onClose}
-      onChange={props.onChange}
-    >
-      <FlexibleContainer>
-        <Fixed>
-          <TaskForm />
-        </Fixed>
-        <Shrink absolute>
-          <div className="h-1/2 overflow-hidden">
-            <SubTaskList />
-          </div>
-          <div className="h-1/2 overflow-hidden">
-            <TodoList />
-          </div>
-        </Shrink>
-      </FlexibleContainer>
-    </TaskDetailProvider>
-  );
-}
+export function useTaskDetail() {
+  let closeEditDrawer: () => void;
 
-export function useTaskDetailDrawer(props: DrawerProps) {
-  const [visible, setVisible] = useState(false);
-  const [drawerProps, setDrawerProps] = useState<TaskDetailProps>();
-
-  const open = (props: TaskDetailProps) => {
-    setDrawerProps(props);
-    setVisible(true);
+  const openEditDrawer = ({
+    drawerProps,
+    editorProps,
+  }: {
+    drawerProps?: Omit<IDrawerOption, 'content'>;
+    editorProps: TaskEditorProps;
+  }) => {
+    const { closeDrawer } = openDrawer({
+      ...drawerProps,
+      title: '编辑任务',
+      width: 800,
+      content: (props) => {
+        return <TaskEditor {...editorProps} onClose={props.onClose} />;
+      },
+    });
+    closeEditDrawer = closeDrawer;
   };
 
-  const close = () => {
-    setVisible(false);
+  let closeCreateDrawer: () => void;
+  const openCreateDrawer = ({
+    drawerProps,
+    creatorProps,
+  }: {
+    drawerProps?: Omit<IDrawerOption, 'content'>;
+    creatorProps: TaskCreatorProps;
+  }) => {
+    const { closeDrawer } = openDrawer({
+      ...drawerProps,
+      title: '新建任务',
+      width: 800,
+      content: (props) => {
+        return <TaskCreator {...creatorProps} onClose={props.onClose} />;
+      },
+    });
+    closeCreateDrawer = closeDrawer;
   };
 
-  const TaskDetailDrawer = () => {
+  const [createPopoverVisible, setCreatePopoverVisible] = useState(false);
+
+  const CreateTaskPopover = ({
+    children,
+    creatorProps,
+  }: {
+    children: React.ReactNode;
+    creatorProps: TaskCreatorProps;
+  }) => {
     return (
-      <Drawer visible={visible} width={800} {...props}>
-        {drawerProps && <TaskDetail {...drawerProps} />}
-      </Drawer>
+      <Popover
+        trigger="click"
+        popupVisible={createPopoverVisible}
+        onVisibleChange={(visible) => {
+          setCreatePopoverVisible(visible);
+        }}
+        position="bl"
+        style={{
+          maxWidth: 'unset',
+        }}
+        content={<TaskCreator {...creatorProps} />}
+      >
+        <span
+          className="cursor-pointer"
+          onClick={() => setCreatePopoverVisible(true)}
+        >
+          {children}
+        </span>
+      </Popover>
     );
   };
 
   return {
-    open,
-    close,
-    TaskDetailDrawer,
+    openEditDrawer,
+    closeEditDrawer,
+    openCreateDrawer,
+    closeCreateDrawer,
+    CreateTaskPopover,
   };
 }

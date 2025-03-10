@@ -1,10 +1,6 @@
 import { Task } from "../entities";
 import { TaskDto } from "./task-model.dto";
-import {
-  IntersectionType,
-  PartialType,
-  PickType,
-} from "@nestjs/mapped-types";
+import { IntersectionType, PartialType, PickType } from "@nestjs/mapped-types";
 
 export class CreateTaskDto extends PickType(TaskDto, [
   "name",
@@ -15,9 +11,10 @@ export class CreateTaskDto extends PickType(TaskDto, [
   "estimateTime",
   "importance",
   "urgency",
+  "goalId",
+  "parent",
 ] as const) {
   parentId?: string;
-  goalId?: string;
   trackTimeIds?: string[];
 }
 

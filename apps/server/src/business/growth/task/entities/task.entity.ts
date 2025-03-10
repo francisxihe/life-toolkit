@@ -102,6 +102,7 @@ export class Task extends BaseEntity {
   @TreeParent({
     onDelete: "CASCADE",
   })
+  @IsOptional()
   parent?: Task;
 
   /** 子任务 */
@@ -110,16 +111,18 @@ export class Task extends BaseEntity {
   })
   children?: Task[];
 
-  /** 目标 */
-  @ManyToOne(() => Goal, (goal) => goal.taskList)
-  goal: Goal;
-
-  /** 目标ID */
-  @Column()
-  @IsString()
-  goalId: string;
-
   /** 任务事项列表 */
   @OneToMany(() => Todo, (todo) => todo.task)
   todoList?: Todo[];
+
+  /** 目标 */
+  @ManyToOne(() => Goal, (goal) => goal.taskList)
+  @IsOptional()
+  goal?: Goal;
+
+  /** 目标ID */
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  goalId?: string;
 }

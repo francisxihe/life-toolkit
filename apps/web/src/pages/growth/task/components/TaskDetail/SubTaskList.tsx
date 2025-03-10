@@ -1,23 +1,19 @@
-import {
-  Input,
-  Button,
-  Popover,
-  Grid,
-  DatePicker,
-} from '@arco-design/web-react';
+import { Input, Button } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
 import TaskList from '../TaskList';
 import SiteIcon from '@/components/SiteIcon';
-import AddTaskPopover from '../AddTaskPopover';
+import AddTaskPopover from './TaskCreator';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { useTaskDetail } from './';
+import { CreateButton } from '@/components/Button/CreateButton';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
 export default function TaskDetailSubTaskList() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
-
+  const { openCreateDrawer: openCreateTaskDrawer } = useTaskDetail();
   return (
     <FlexibleContainer className="gap-2 border-b">
       <Fixed
@@ -27,22 +23,25 @@ export default function TaskDetailSubTaskList() {
         ])}
       >
         子任务
-        <AddTaskPopover
-          key={currentTask.id}
-          initialFormData={{
-            parentId: currentTask.id,
-          }}
-          afterSubmit={async () => {
-            await refreshTaskDetail(currentTask.id);
+        <CreateButton
+          className="!px-2"
+          type="text"
+          size="small"
+          onClick={() => {
+            openCreateTaskDrawer({
+              creatorProps: {
+                initialFormData: {
+                  parentId: currentTask.id,
+                },
+                afterSubmit: async () => {
+                  await refreshTaskDetail(currentTask.id);
+                },
+              },
+            });
           }}
         >
-          <Button className="!px-2" type="text" size="small">
-            <div className="flex items-center gap-1">
-              <SiteIcon id="add" />
-              添加子任务
-            </div>
-          </Button>
-        </AddTaskPopover>
+          添加子任务
+        </CreateButton>
       </Fixed>
       <Shrink className="overflow-auto">
         {currentTask?.children && (

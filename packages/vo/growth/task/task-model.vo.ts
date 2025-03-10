@@ -16,8 +16,6 @@ export type TaskModelVo = {
 
   description?: string;
 
-  tags?: string[];
-
   importance?: number;
 
   urgency?: number;
@@ -32,8 +30,16 @@ export type TaskModelVo = {
 
   estimateTime?: string;
 
+  goalId?: string;
+
+  parentId?: string;
+
   children: TaskModelVo[];
+
+  tags?: string[];
 };
+
+export type TaskItemVo = BaseModelVo & TaskModelVo;
 
 export type TaskVo = BaseModelVo &
   TaskModelVo & {

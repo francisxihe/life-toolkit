@@ -10,6 +10,7 @@ import {
   Like,
   In,
   IsNull,
+  Not,
 } from "typeorm";
 import { Task, TaskStatus } from "./entities";
 import { TrackTime } from "../track-time";
@@ -23,7 +24,6 @@ import {
 } from "./dto";
 import { TaskMapper } from "./mappers";
 import { TodoService } from "../todo/todo.service";
-import { TodoModule } from "../todo/todo.module";
 
 function getWhere(filter: TaskPageFilterDto) {
   const where: FindOptionsWhere<Task> = {};
@@ -38,7 +38,6 @@ function getWhere(filter: TaskPageFilterDto) {
   } else if (filter.doneDateEnd) {
     where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
   }
-
   if (filter.abandonedDateStart && filter.abandonedDateEnd) {
     where.abandonedAt = Between(
       new Date(filter.abandonedDateStart + "T00:00:00"),
@@ -53,6 +52,12 @@ function getWhere(filter: TaskPageFilterDto) {
       new Date(filter.abandonedDateEnd + "T23:59:59")
     );
   }
+  if (filter.startAt) {
+    where.startAt = MoreThan(new Date(filter.startAt));
+  }
+  if (filter.endAt) {
+    where.endAt = LessThan(new Date(filter.endAt));
+  }
   if (filter.keyword) {
     where.name = Like(`%${filter.keyword}%`);
   }
@@ -65,7 +70,6 @@ function getWhere(filter: TaskPageFilterDto) {
   if (filter.urgency) {
     where.urgency = filter.urgency;
   }
-
   return where;
 }
 
@@ -80,27 +84,67 @@ export class TaskService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
+    // 使用树形存储库
+    const treeRepo = this.taskRepository.manager.getTreeRepository(Task);
+
+    // 创建新任务
     const createTask = this.taskRepository.create(createTaskDto);
-    if (createTaskDto.parentId) {
-      const parentTask = await this.taskRepository.findOneBy({
-        id: createTaskDto.parentId,
-      });
-      if (!parentTask) {
-        throw new Error("Parent task not found");
-      }
-      createTask.parent = parentTask;
-    }
     createTask.status = TaskStatus.TODO;
     createTask.tags = createTaskDto.tags || [];
 
-    await this.taskRepository.save(createTask);
+    await this.taskRepository.manager.transaction(
+      async (transactionalManager) => {
+        if (createTaskDto.parentId) {
+          const parentTask = await treeRepo.findOne({
+            where: { id: createTaskDto.parentId },
+            relations: ["children"],
+          });
+          if (!parentTask) {
+            throw new Error("Parent task not found");
+          }
+          if (!parentTask.children) {
+            parentTask.children = [];
+          }
+          parentTask.children.push(createTask);
+          await treeRepo.save(parentTask);
+          createTask.parent = {
+            ...parentTask,
+            children: undefined,
+          };
+        }
+
+        await treeRepo.save(createTask);
+      }
+    );
+
+    // 返回结果
     return TaskMapper.entityToDto(createTask);
   }
 
   async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
+    let flatChildrenIds: string[] = [];
+
+    if (filter.withoutSelf && filter.id) {
+      const treeRepository =
+        this.taskRepository.manager.getTreeRepository(Task);
+      const task = await this.taskRepository.findOne({
+        where: { id: filter.id },
+        relations: ["children"],
+      });
+      if (task) {
+        const flatChildren = await treeRepository.findDescendants(task);
+        flatChildrenIds = flatChildren.map((child) => child.id);
+      }
+    }
+
+    console.log("============flatChildrenIds", flatChildrenIds);
+
     const taskList = await this.taskRepository.find({
-      where: getWhere(filter),
-      relations: ["children", "parent"],
+      where: {
+        ...getWhere(filter),
+        id: Not(In(flatChildrenIds)),
+      },
+      relations: ["children"],
     });
 
     return taskList
@@ -173,17 +217,17 @@ export class TaskService {
 
     // 使用事务确保数据一致性
     await this.taskRepository.manager.transaction(
-      async (transactionalEntityManager) => {
+      async (transactionalManager) => {
         // 删除闭包表中的所有相关记录
         for (const nodeId of allIds) {
-          await transactionalEntityManager.query(
+          await transactionalManager.query(
             `DELETE FROM task_closure WHERE id_ancestor = ? OR id_descendant = ?`,
             [nodeId, nodeId]
           );
         }
 
         // 删除所有节点
-        await transactionalEntityManager.delete(Task, allIds);
+        await transactionalManager.delete(Task, allIds);
       }
     );
   }

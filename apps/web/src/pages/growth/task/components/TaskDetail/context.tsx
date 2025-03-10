@@ -1,31 +1,58 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/growth';
+import type {
+  TaskVo,
+  UpdateTaskVo,
+  GoalItemVo,
+  TaskItemVo,
+} from '@life-toolkit/vo/growth';
 import { TaskFormData, TaskService, TaskMapping } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import type { TaskDetailProps } from '.';
+import { GoalService } from '../../../service';
+
+export type TaskDetailContextProps = {
+  children: React.ReactNode;
+  task?: TaskVo;
+  initialFormData?: Partial<TaskFormData>;
+  mode: 'editor' | 'creator';
+  afterSubmit?: () => Promise<void>;
+};
 
 export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
-  PropsType: {
-    children: React.ReactNode;
-    task: TaskDetailProps['task'];
-    onClose: TaskDetailProps['onClose'];
-    onChange: TaskDetailProps['onChange'];
-  };
+  PropsType: TaskDetailContextProps;
   ContextType: {
     currentTask: TaskVo;
     taskFormData: TaskFormData;
     setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;
-    onClose: () => Promise<void> | null;
-    onChange: (data: Partial<UpdateTaskVo>) => Promise<void>;
     showSubTask: (id: string) => Promise<void>;
     refreshTaskDetail: (id: string) => Promise<void>;
+    onSubmit: () => Promise<void>;
+    goalList: GoalItemVo[];
+    taskList: TaskItemVo[];
+    loading: boolean;
   };
 }>((props) => {
-  const [currentTask, setCurrentTask] = useState<TaskVo>(props.task);
+  const [loading, setLoading] = useState(false);
+  const [currentTask, setCurrentTask] = useState<TaskVo>();
 
-  const [taskFormData, setTaskFormData] = useState<TaskFormData>();
+  const defaultFormData: TaskFormData = {
+    name: '',
+    planTimeRange: [undefined, undefined],
+    children: [],
+    trackTimeList: [],
+    isSubTask: false,
+    ...props.initialFormData,
+  };
+
+  const [taskFormData, setTaskFormData] =
+    useState<TaskFormData>(defaultFormData);
+
+  const { taskList } = TaskService.useTaskList({
+    withoutSelf: true,
+    id: props.task?.id,
+  });
+  const { goalList } = GoalService.useGoalList();
 
   const currentTaskRef = useRef<TaskVo>();
 
@@ -39,40 +66,63 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
       ...fetched,
     };
     setCurrentTask(currentTaskRef.current);
-    setTaskFormData(TaskMapping.taskVoToTaskFormData(currentTaskRef.current));
+    setTaskFormData(TaskMapping.voToFormData(currentTaskRef.current));
   };
 
   const initTaskFormData = useCallback(async () => {
     const task = await TaskService.getTaskWithTrackTime(props.task.id);
     currentTaskRef.current = task;
     setCurrentTask(currentTaskRef.current);
-    setTaskFormData(TaskMapping.taskVoToTaskFormData(currentTaskRef.current));
+    setTaskFormData(TaskMapping.voToFormData(currentTaskRef.current));
   }, [props.task]);
 
   useEffect(() => {
-    initTaskFormData();
-  }, [initTaskFormData]);
+    async function init() {
+      setLoading(true);
+      if (props.mode === 'editor') {
+        await initTaskFormData();
+      }
+      setLoading(false);
+    }
+    init();
+  }, [props.mode, initTaskFormData]);
 
-  let onClose = null;
-  if (props.onClose) {
-    onClose = async () => {
-      setTaskFormData(null);
-      await props.onClose();
-    };
+  async function handleCreate() {
+    if (!taskFormData.name) {
+      return;
+    }
+    await TaskService.addTask({
+      name: taskFormData.name,
+      startAt: taskFormData.planTimeRange?.[0] || undefined,
+      endAt: taskFormData.planTimeRange?.[1] || undefined,
+      parentId: taskFormData.parentId,
+      children: [],
+    });
+    setTaskFormData(defaultFormData);
+    await props.afterSubmit?.();
   }
 
-  async function onChange(data: Partial<UpdateTaskVo>) {
-    const updatedTask = await TaskService.updateTask(currentTask.id, data);
-    await props.onChange(updatedTask);
+  async function handleUpdate(data: Partial<UpdateTaskVo>) {
+    await TaskService.updateTask(currentTask.id, data);
   }
+
+  const onSubmit = async () => {
+    if (props.mode === 'creator') {
+      await handleCreate();
+    } else {
+      await handleUpdate(TaskMapping.formDataToUpdateVo(taskFormData));
+    }
+  };
 
   return {
     currentTask,
     taskFormData,
+    goalList,
+    taskList,
     setTaskFormData,
-    onClose,
-    onChange,
     showSubTask,
     refreshTaskDetail,
+    onSubmit,
+    loading,
   };
 });

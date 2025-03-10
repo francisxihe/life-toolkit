@@ -12,13 +12,16 @@ export const getDatabaseConfig = (
   database: configService.get("DB_DATABASE"),
   entities: ["dist/**/*.entity{.ts,.js}"],
   synchronize: true,
-  logging: configService.get("NODE_ENV") === "development",
+  logging:
+    configService.get("NODE_ENV") === "development"
+      ? ["error", "warn"]
+      : ["error"],
   timezone: "+08:00",
   dateStrings: true,
   autoLoadEntities: true,
   namingStrategy: new SnakeNamingStrategy(),
   extra: {
     connectionLimit: 10,
-    dateStrings: ["DATE", "DATETIME"]
-  }
+    dateStrings: ["DATE", "DATETIME"],
+  },
 });

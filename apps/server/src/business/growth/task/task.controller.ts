@@ -12,7 +12,7 @@ import { TaskService } from "./task.service";
 import { TaskPageFilterDto, TaskListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { TaskStatusService } from "./task-status.service";
-import type { Task, OperationByIdListVo } from "@life-toolkit/vo";
+import type { Task, OperationByIdListVo, TaskListFiltersVo } from "@life-toolkit/vo";
 import { TaskMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
@@ -88,9 +88,17 @@ export class TaskController {
 
   @Get("list")
   @Response()
-  async list(@Query() filter: TaskListFilterDto) {
-    const taskList = await this.taskService.findAll(filter);
-    return TaskMapper.dtoToListVo(taskList);
+  async list(@Query() filter: TaskListFiltersVo) {
+    const taskListFilterDto = new TaskListFilterDto();
+    taskListFilterDto.withoutSelf = filter.withoutSelf;
+    taskListFilterDto.id = filter.id;
+    taskListFilterDto.importance = filter.importance;
+    taskListFilterDto.urgency = filter.urgency;
+    taskListFilterDto.status = filter.status;
+    taskListFilterDto.startAt = filter.startAt ? new Date(filter.startAt) : undefined;
+    taskListFilterDto.endAt = filter.endAt ? new Date(filter.endAt) : undefined;
+    const taskList = await this.taskService.findAll(taskListFilterDto);
+    return TaskMapper.dtoToListVo(taskList); 
   }
 
   @Get("detail/:id")
@@ -100,3 +108,4 @@ export class TaskController {
     return TaskMapper.dtoToVo(task);
   }
 }
+ 

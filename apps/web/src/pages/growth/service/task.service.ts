@@ -4,14 +4,15 @@ import type {
   CreateTaskVo,
   TaskPageFiltersVo,
   TaskListFiltersVo,
+  TaskItemVo,
   UpdateTaskVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
-
+import { useState, useEffect } from 'react';
 export default class TaskService {
-  static async getTaskWithTrackTime(todoId: string) {
+  static async getTaskWithTrackTime(taskId: string) {
     try {
-      return TaskController.getTaskWithTrackTime(todoId);
+      return TaskController.getTaskWithTrackTime(taskId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -87,11 +88,29 @@ export default class TaskService {
     }
   }
 
+  static useTaskList = (params: TaskListFiltersVo = {}) => {
+    const [taskList, setTaskList] = useState<TaskItemVo[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchTaskList = async () => {
+      setLoading(true);
+      const res = await TaskService.getTaskList(params);
+      setTaskList(res.list);
+      setLoading(false);
+    };
+
+    useEffect(() => {
+      fetchTaskList();
+    }, []);
+
+    return { taskList, loading };
+  };
+
   static async getTaskPage(params: TaskPageFiltersVo = {}) {
     try {
       return TaskController.getTaskPage(params);
     } catch (error) {
       Message.error(error.message);
     }
-  }  
+  }
 }
