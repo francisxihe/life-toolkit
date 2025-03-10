@@ -1,7 +1,7 @@
 'use client';
 
 import { TaskFilters } from './TaskFilters';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import AddTaskPopover from '../components/AddTaskPopover';

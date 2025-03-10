@@ -13,6 +13,7 @@ import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
 import { useTaskAllContext } from './context';
+import { TableFilter } from '@/components/Layout/TableFilter';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
@@ -22,9 +23,16 @@ export function TaskFilters() {
     useTaskAllContext();
 
   return (
-    <Space className="w-full my-3" direction="vertical" size="large">
+    <TableFilter
+      clearFilters={async () => {
+        await clearFilters();
+      }}
+      search={async () => {
+        await getTaskPage();
+      }}
+    >
       <Row gutter={[16, 16]}>
-        <Col flex="auto" span={6}>
+        <Col span={6}>
           <Input
             prefix={<IconSearch />}
             placeholder="关键字"
@@ -37,10 +45,11 @@ export function TaskFilters() {
             }}
           />
         </Col>
-        <Col flex="auto" span={12}>
+        <Col span={12}>
           <DatePickerRange
             placeholder={['计划开始日期', '计划结束日期']}
             value={[filters.planDateStart, filters.planDateEnd]}
+            className="w-full"
             onChange={(value) => {
               setFilters((prev: TaskPageFiltersVo) => ({
                 ...prev,
@@ -119,26 +128,7 @@ export function TaskFilters() {
             }}
           />
         </Col>
-        <Col span={6} className="">
-          <div className="flex justify-end gap-2">
-            <Button
-              onClick={async () => {
-                clearFilters();
-              }}
-            >
-              重置
-            </Button>
-            <Button
-              type="primary"
-              onClick={async () => {
-                await getTaskPage();
-              }}
-            >
-              查询
-            </Button>
-          </div>
-        </Col>
       </Row>
-    </Space>
+    </TableFilter>
   );
 }

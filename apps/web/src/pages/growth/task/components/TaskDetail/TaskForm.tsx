@@ -7,7 +7,7 @@ import {
 } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
 import TrackTime from '../../../components/TrackTime';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Select } from '@arco-design/web-react';
 import {GoalService} from '../../../service';
 import { useState, useEffect, useCallback } from 'react';

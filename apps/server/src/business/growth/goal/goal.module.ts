@@ -7,8 +7,10 @@ import { GoalStatusService } from "./goal-status.service";
 import { TaskService } from "../task/task.service";
 import { Task } from "../task/entities";
 import { TrackTime } from "../track-time/entity";
+import { TodoModule } from "../todo/todo.module";
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Goal, Task, TrackTime])],
+  imports: [TypeOrmModule.forFeature([Goal, Task, TrackTime]), TodoModule],
   controllers: [GoalController],
   providers: [GoalService, GoalStatusService, TaskService],
   exports: [GoalService],

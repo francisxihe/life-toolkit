@@ -98,4 +98,10 @@ export class Todo extends BaseEntity {
   /** 关联的任务 */
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
+
+  /** 任务ID */
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  taskId?: string;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   Repository,
@@ -9,6 +9,7 @@ import {
   LessThan,
   Like,
   In,
+  IsNull,
 } from "typeorm";
 import { Task, TaskStatus } from "./entities";
 import { TrackTime } from "../track-time";
@@ -20,7 +21,9 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
 } from "./dto";
-import { TaskMapper } from "./mapper";
+import { TaskMapper } from "./mappers";
+import { TodoService } from "../todo/todo.service";
+import { TodoModule } from "../todo/todo.module";
 
 function getWhere(filter: TaskPageFilterDto) {
   const where: FindOptionsWhere<Task> = {};
@@ -72,7 +75,8 @@ export class TaskService {
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(TrackTime)
-    private readonly trackTimeRepository: Repository<TrackTime>
+    private readonly trackTimeRepository: Repository<TrackTime>,
+    private readonly todoService: TodoService
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
@@ -87,7 +91,7 @@ export class TaskService {
       createTask.parent = parentTask;
     }
     createTask.status = TaskStatus.TODO;
-    createTask.tags =  createTaskDto.tags || [];
+    createTask.tags = createTaskDto.tags || [];
 
     await this.taskRepository.save(createTask);
     return TaskMapper.entityToDto(createTask);
@@ -147,6 +151,10 @@ export class TaskService {
       throw new Error("Task not found");
     }
 
+    await this.todoService.deleteByFilter({
+      taskId: taskToDelete.id,
+    });
+
     // 获取所有子节点
     const descendantsTree =
       await treeRepository.findDescendantsTree(taskToDelete);
@@ -181,19 +189,19 @@ export class TaskService {
   }
 
   async batchDelete(ids: string[]): Promise<void> {
+    if (ids.length === 0) {
+      return;
+    }
+
     const treeRepository = this.taskRepository.manager.getTreeRepository(Task);
-    const taskToDelete = await treeRepository.findOne({
+    const taskListToDelete = await treeRepository.find({
       where: { id: In(ids) },
       relations: ["children"],
     });
 
-    if (!taskToDelete) {
+    if (taskListToDelete.length === 0) {
       throw new Error("Task not found");
     }
-
-    // 获取所有子节点
-    const descendantsTree =
-      await treeRepository.findDescendantsTree(taskToDelete);
 
     const getAllDescendantIds = (node: Task): string[] => {
       const ids = [node.id];
@@ -205,7 +213,12 @@ export class TaskService {
       return ids;
     };
 
-    const allIds = getAllDescendantIds(descendantsTree);
+    // 获取所有子节点
+    const allIds: string[] = [];
+    for (const task of taskListToDelete) {
+      const descendantsTree = await treeRepository.findDescendantsTree(task);
+      allIds.push(...getAllDescendantIds(descendantsTree));
+    }
 
     // 使用事务确保数据一致性
     await this.taskRepository.manager.transaction(
@@ -258,11 +271,9 @@ export class TaskService {
     return { ...task, trackTimeList: [] };
   }
 
-
-
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
     const tasks = await this.taskRepository.find({
-      where: { goalId: In(goalIds) },
+      where: { goalId: In(goalIds), deletedAt: IsNull() },
     });
     return tasks;
   }

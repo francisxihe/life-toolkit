@@ -13,7 +13,7 @@ import { TodoPageFilterDto, TodoListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "./todo-status.service";
 import type { Todo, OperationByIdListVo } from "@life-toolkit/vo";
-import { TodoMapper } from "./mapper";
+import { TodoMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
@@ -61,7 +61,10 @@ export class TodoController {
 
   @Put("update/:id")
   @Response()
-  async update(@Param("id") id: string, @Body() updateTodoVo: Todo.CreateTodoVo) {
+  async update(
+    @Param("id") id: string,
+    @Body() updateTodoVo: Todo.CreateTodoVo
+  ) {
     const updatedDto = TodoMapper.voToUpdateDto(updateTodoVo);
     const dto = await this.todoService.update(id, updatedDto);
     return TodoMapper.dtoToVo(dto);

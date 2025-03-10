@@ -10,7 +10,7 @@ import TaskList from '../TaskList';
 import TodoList from '../../../todo/components/TodoList/TodoList';
 import SiteIcon from '@/components/SiteIcon';
 import clsx from 'clsx';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useAddTodoModal } from '../../../components/AddTodo';
 

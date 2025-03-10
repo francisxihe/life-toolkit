@@ -10,7 +10,7 @@ import TaskList from '../TaskList';
 import SiteIcon from '@/components/SiteIcon';
 import AddTaskPopover from '../AddTaskPopover';
 import clsx from 'clsx';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 
 const { Shrink, Fixed } = FlexibleContainer;
 

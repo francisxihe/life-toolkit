@@ -1,7 +1,7 @@
 'use client';
 
 import { GoalFilters } from './GoalFilters';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { GoalAllProvider } from './context';
 import GoalTable from './GoalTable';
 import AddGoalPopover from '../components/AddGoalPopover';

@@ -1,18 +1,12 @@
 'use client';
 
-import {
-  Input,
-  Select,
-  Button,
-  Space,
-  Grid,
-  DatePicker,
-} from '@arco-design/web-react';
+import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service/todo.constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { useTodoAllContext } from './context';
 import { TodoStatus, TodoPageFiltersVo } from '@life-toolkit/vo/growth';
+import { TableFilter } from '@/components/Layout/TableFilter';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
@@ -22,9 +16,16 @@ export function TodoFilters() {
     useTodoAllContext();
 
   return (
-    <Space className="w-full my-3" direction="vertical" size="large">
+    <TableFilter
+      clearFilters={async () => {
+        await clearFilters();
+      }}
+      search={async () => {
+        await getTodoPage();
+      }}
+    >
       <Row gutter={[16, 16]}>
-        <Col flex="auto" span={6}>
+        <Col span={6}>
           <Input
             prefix={<IconSearch />}
             placeholder="关键字"
@@ -37,10 +38,11 @@ export function TodoFilters() {
             }}
           />
         </Col>
-        <Col flex="auto" span={12}>
+        <Col span={12}>
           <DatePickerRange
             placeholder={['计划开始日期', '计划结束日期']}
             value={[filters.planDateStart, filters.planDateEnd]}
+            className="w-full"
             onChange={(value) => {
               setFilters((prev: TodoPageFiltersVo) => ({
                 ...prev,
@@ -119,26 +121,7 @@ export function TodoFilters() {
             }}
           />
         </Col>
-        <Col span={6} className="">
-          <div className="flex justify-end gap-2">
-            <Button
-              onClick={async () => {
-                clearFilters();
-              }}
-            >
-              重置
-            </Button>
-            <Button
-              type="primary"
-              onClick={async () => {
-                await getTodoPage();
-              }}
-            >
-              查询
-            </Button>
-          </div>
-        </Col>
       </Row>
-    </Space>
+    </TableFilter>
   );
 }

@@ -9,6 +9,7 @@ import {
   LessThan,
   Like,
   In,
+  IsNull,
 } from "typeorm";
 import { Goal, GoalStatus } from "./entities";
 import {
@@ -18,12 +19,13 @@ import {
   GoalListFilterDto,
   GoalDto,
 } from "./dto";
-import { GoalMapper } from "./mapper";
+import { GoalMapper } from "./mappers";
 import { TaskService } from "../task/task.service";
-import { Task } from "../task/entities";
 
 function getWhere(filter: GoalPageFilterDto) {
-  const where: FindOptionsWhere<Goal> = {};
+  const where: FindOptionsWhere<Goal> = {
+    deletedAt: IsNull(),
+  };
 
   if (filter.doneDateStart && filter.doneDateEnd) {
     where.doneAt = Between(
@@ -139,7 +141,6 @@ export class GoalService {
   }
 
   async delete(id: string): Promise<void> {
-    console.log("===========", id);
     const treeRepository = this.goalRepository.manager.getTreeRepository(Goal);
     const goalToDelete = await treeRepository.findOne({
       where: { id },
@@ -165,10 +166,8 @@ export class GoalService {
     };
 
     const allIds = getAllDescendantIds(descendantsTree);
-    console.log("===========", allIds);
-    const taskIds = await this.taskService.findByGoalIds(allIds);
-    console.log("===========", taskIds);
-    await this.taskService.batchDelete(taskIds.map((task) => task.id));
+    const taskList = await this.taskService.findByGoalIds(allIds);
+    await this.taskService.batchDelete(taskList.map((task) => task.id));
 
     // 使用事务确保数据一致性
     await this.goalRepository.manager.transaction(
@@ -182,7 +181,7 @@ export class GoalService {
         }
 
         // 删除所有节点
-        await transactionalEntityManager.delete(Goal, allIds);
+        await transactionalEntityManager.softDelete(Goal, allIds);
       }
     );
   }

@@ -1,4 +1,4 @@
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { BudgetOverview } from '../overview/budget-overview';
 
 const { Fixed, Shrink } = FlexibleContainer;

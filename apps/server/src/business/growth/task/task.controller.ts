@@ -13,7 +13,7 @@ import { TaskPageFilterDto, TaskListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { TaskStatusService } from "./task-status.service";
 import type { Task, OperationByIdListVo } from "@life-toolkit/vo";
-import { TaskMapper } from "./mapper";
+import { TaskMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("task")

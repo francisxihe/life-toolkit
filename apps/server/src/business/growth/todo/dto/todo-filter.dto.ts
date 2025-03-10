@@ -40,6 +40,11 @@ export class TodoListFilterDto extends PartialType(
   @IsOptional()
   @IsDateString()
   abandonedDateEnd?: string;
+
+  /** 任务ID */
+  @IsOptional()
+  @IsString()
+  taskId?: string;
 }
 
 export class TodoPageFilterDto extends IntersectionType(

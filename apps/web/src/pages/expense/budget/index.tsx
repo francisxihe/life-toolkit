@@ -1,4 +1,4 @@
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Button } from '@arco-design/web-react';
 import { useCreateBudget } from './CreateBudget';
 import { useExpenses } from '../context';

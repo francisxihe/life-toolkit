@@ -5,9 +5,10 @@ import { TrackTime } from "../track-time";
 import { TaskController } from "./task.controller";
 import { TaskService } from "./task.service";
 import { TaskStatusService } from "./task-status.service";
+import { TodoModule } from "../todo/todo.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Task, TrackTime])],
+  imports: [TypeOrmModule.forFeature([Task, TrackTime]), TodoModule],
   controllers: [TaskController],
   providers: [TaskService, TaskStatusService],
   exports: [TaskService, TaskStatusService],

@@ -1,7 +1,7 @@
 'use client';
 
 import { TodoFilters } from './TodoFilters';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
 import { useAddTodoModal } from '../../components/AddTodo';

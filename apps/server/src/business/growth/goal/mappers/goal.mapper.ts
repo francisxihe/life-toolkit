@@ -3,7 +3,7 @@ import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "../dto";
 import { GoalStatus, Goal } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
-import { TaskMapper } from "@/business/growth/task/mapper/task.mapper";
+import { TaskMapper } from "@/business/growth/task/mappers/task.mapper";
 class GoalMapperEntity {
   static entityToModelDto(entity: Goal): GoalModelDto {
     const dto = new GoalModelDto();

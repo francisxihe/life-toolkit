@@ -1,10 +1,10 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { CreateTodoDto, UpdateTodoDto, TodoDto } from "./dto";
-import { TodoStatus, TodoRepeat } from "./entities";
-import { Todo } from "./entities/todo.entity";
+import { CreateTodoDto, UpdateTodoDto, TodoDto } from "../dto";
+import { TodoStatus, TodoRepeat } from "../entities";
+import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
 import { BaseMapper } from "@/base/base.mapper";
-import { TaskMapper } from "../task/mapper";
+import { TaskMapper } from "../../task/mappers";
 
 export class TodoMapperEntity {
   static entityToDto(entity: Todo): TodoDto {

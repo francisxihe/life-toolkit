@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Input,
-  Select,
-  Button,
-  Space,
-  Grid,
-  DatePicker,
-  Divider,
-} from '@arco-design/web-react';
+import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
 import {
@@ -17,6 +9,7 @@ import {
   GoalType,
 } from '@life-toolkit/vo/growth';
 import { useGoalAllContext } from './context';
+import { TableFilter } from '@/components/Layout/TableFilter';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
@@ -26,7 +19,14 @@ export function GoalFilters() {
     useGoalAllContext();
 
   return (
-    <Space className="w-full my-3" direction="horizontal" size="large">
+    <TableFilter
+      clearFilters={async () => {
+        await clearFilters();
+      }}
+      search={async () => {
+        await getGoalPage();
+      }}
+    >
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input
@@ -151,26 +151,6 @@ export function GoalFilters() {
           </Select>
         </Col>
       </Row>
-
-      <Divider type="vertical" style={{ height: '80px' }} />
-
-      <div className="flex flex-col gap-4">
-        <Button
-          onClick={async () => {
-            clearFilters();
-          }}
-        >
-          重置
-        </Button>
-        <Button
-          type="primary"
-          onClick={async () => {
-            await getGoalPage();
-          }}
-        >
-          查询
-        </Button>
-      </div>
-    </Space>
+    </TableFilter>
   );
 }

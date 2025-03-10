@@ -13,7 +13,7 @@ import { GoalPageFilterDto, GoalListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { GoalStatusService } from "./goal-status.service";
 import type { Goal, OperationByIdListVo } from "@life-toolkit/vo";
-import { GoalMapper } from "./mapper";
+import { GoalMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("goal")
@@ -56,7 +56,6 @@ export class GoalController {
   @Delete("delete/:id")
   @Response()
   async remove(@Param("id") id: string) {
-    console.log("===========", id);
     return this.goalService.delete(id);
   }
 

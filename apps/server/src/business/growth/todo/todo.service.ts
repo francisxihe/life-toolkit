@@ -69,6 +69,9 @@ function getWhere(filter: TodoPageFilterDto) {
   if (filter.urgency) {
     where.urgency = filter.urgency;
   }
+  if (filter.taskId) {
+    where.taskId = filter.taskId;
+  }
 
   return where;
 }
@@ -143,6 +146,10 @@ export class TodoService {
 
   async delete(id: string): Promise<void> {
     await this.todoRepository.delete(id);
+  }
+
+  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
+    await this.todoRepository.delete(getWhere(filter));
   }
 
   async findById(id: string): Promise<TodoDto> {

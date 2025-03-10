@@ -9,8 +9,9 @@ import { TaskStatus, Task } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../../track-time";
-import { GoalMapper } from "../../goal/mapper";
-import { TodoMapper } from "../../todo/mapper";
+import { GoalMapper } from "../../goal/mappers";
+import { TodoMapper } from "../../todo/mappers";
+
 class TaskMapperEntity {
   static entityToDto(entity: Task): TaskDto {
     const dto = new TaskDto();

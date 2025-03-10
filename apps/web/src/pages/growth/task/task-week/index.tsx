@@ -2,7 +2,7 @@ import TaskList from '../components/TaskList';
 import AddTaskPopover from '../components/AddTaskPopover';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider, Button } from '@arco-design/web-react';
 import TaskDetail from '../components/TaskDetail';
 import styles from './style.module.less';

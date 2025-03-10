@@ -1,7 +1,7 @@
 import { Button } from '@arco-design/web-react';
 import { IconClose } from '@arco-design/web-react/icon';
 import dayjs from 'dayjs';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import DateTimeTool from '../../../components/AddTodo/DateTimeTool';
 import { useTodoDetailContext } from './context';
 import IconSelector from '../../../components/IconSelector';

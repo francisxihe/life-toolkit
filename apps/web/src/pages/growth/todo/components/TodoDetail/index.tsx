@@ -1,5 +1,5 @@
 import TodoDetailHeader from './Header';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TodoVo } from '@life-toolkit/vo/growth';
 import { TodoDetailProvider } from './context';
 import TodoDetailMain from './Main';

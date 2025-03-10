@@ -2,7 +2,7 @@ import TodoList from '../components/TodoList/TodoList';
 import AddTodo from '../../components/AddTodo';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import FlexibleContainer from '@/components/FlexibleContainer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
 import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
