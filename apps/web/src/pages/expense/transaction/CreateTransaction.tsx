@@ -128,7 +128,7 @@ export function useCreateTransaction({
           }}
         />
       ),
-      onOk: () => {
+      onOk: async () => {
         onConfirm(formDataRef.current as CreateTransactionVo);
       },
     });

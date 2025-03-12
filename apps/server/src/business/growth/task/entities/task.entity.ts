@@ -109,7 +109,7 @@ export class Task extends BaseEntity {
   @TreeChildren({
     cascade: true,
   })
-  children?: Task[];
+  children: Task[];
 
   /** 任务事项列表 */
   @OneToMany(() => Todo, (todo) => todo.task)

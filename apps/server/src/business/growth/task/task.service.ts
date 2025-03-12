@@ -11,6 +11,7 @@ import {
   In,
   IsNull,
   Not,
+  TreeRepository,
 } from "typeorm";
 import { Task, TaskStatus } from "./entities";
 import { TrackTime } from "../track-time";
@@ -24,6 +25,7 @@ import {
 } from "./dto";
 import { TaskMapper } from "./mappers";
 import { TodoService } from "../todo/todo.service";
+import { TaskTreeService } from "./task-tree.service";
 
 function getWhere(filter: TaskPageFilterDto) {
   const where: FindOptionsWhere<Task> = {};
@@ -80,12 +82,12 @@ export class TaskService {
     private readonly taskRepository: Repository<Task>,
     @InjectRepository(TrackTime)
     private readonly trackTimeRepository: Repository<TrackTime>,
-    private readonly todoService: TodoService
+    private readonly todoService: TodoService,
+    private readonly taskTreeService: TaskTreeService
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
-    // 使用树形存储库
-    const treeRepo = this.taskRepository.manager.getTreeRepository(Task);
+    const treeRepo = this.taskTreeService.getTreeRepo();
 
     // 创建新任务
     const createTask = this.taskRepository.create(createTaskDto);
@@ -95,24 +97,14 @@ export class TaskService {
     await this.taskRepository.manager.transaction(
       async (transactionalManager) => {
         if (createTaskDto.parentId) {
-          const parentTask = await treeRepo.findOne({
-            where: { id: createTaskDto.parentId },
-            relations: ["children"],
-          });
-          if (!parentTask) {
-            throw new Error("Parent task not found");
-          }
-          if (!parentTask.children) {
-            parentTask.children = [];
-          }
-          parentTask.children.push(createTask);
-          await treeRepo.save(parentTask);
-          createTask.parent = {
-            ...parentTask,
-            children: undefined,
-          };
+          await this.taskTreeService.updateParent(
+            {
+              task: createTask,
+              parentId: createTaskDto.parentId,
+            },
+            treeRepo
+          );
         }
-
         await treeRepo.save(createTask);
       }
     );
@@ -121,23 +113,104 @@ export class TaskService {
     return TaskMapper.entityToDto(createTask);
   }
 
+  async delete(id: string): Promise<void> {
+    const treeRepo = this.taskTreeService.getTreeRepo();
+    const taskToDelete = await treeRepo.findOne({
+      where: { id },
+      relations: ["children"],
+    });
+
+    if (!taskToDelete) {
+      throw new Error("Task not found");
+    }
+
+    // 使用事务确保数据一致性
+    await this.taskRepository.manager.transaction(async (taskManager) => {
+      await this.taskTreeService.deleteChildren(
+        taskToDelete,
+        taskManager.getTreeRepository(Task)
+      );
+      await taskManager.delete(Task, taskToDelete.id);
+    });
+  }
+
+  async batchDelete(ids: string[]): Promise<void> {
+    if (ids.length === 0) {
+      return;
+    }
+
+    const treeRepo = this.taskTreeService.getTreeRepo();
+
+    const taskListToDelete = await treeRepo.find({
+      where: { id: In(ids) },
+      relations: ["children"],
+    });
+
+    if (taskListToDelete.length === 0) {
+      throw new Error("Task not found");
+    }
+
+    // 使用事务确保数据一致性
+    await this.taskRepository.manager.transaction(async (taskManager) => {
+      await this.taskTreeService.deleteChildren(
+        taskListToDelete,
+        taskManager.getTreeRepository(Task)
+      );
+
+      // 删除所有节点
+      await taskManager.delete(Task, taskListToDelete);
+    });
+  }
+
+  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
+    const updateTask = await this.taskTreeService
+      .getTreeRepo()
+      .findOneBy({ id });
+
+    if (!updateTask) {
+      throw new Error("Task not found");
+    }
+
+    await this.taskRepository.manager.transaction(
+      async (transactionalManager) => {
+        const treeRepo = transactionalManager.getTreeRepository(Task);
+
+        if (updateTaskDto.parentId) {
+          await this.taskTreeService.updateParent(
+            {
+              task: updateTask,
+              parentId: updateTaskDto.parentId,
+            },
+            treeRepo
+          );
+        }
+
+        const updateTaskEntity = TaskMapper.updateDtoToEntity(
+          updateTaskDto,
+          updateTask
+        );
+        delete updateTaskDto.parentId;
+        await treeRepo.update(id, updateTaskEntity);
+      }
+    );
+
+    return this.findById(id);
+  }
+
   async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
     let flatChildrenIds: string[] = [];
 
     if (filter.withoutSelf && filter.id) {
-      const treeRepository =
-        this.taskRepository.manager.getTreeRepository(Task);
+      const treeRepo = this.taskRepository.manager.getTreeRepository(Task);
       const task = await this.taskRepository.findOne({
         where: { id: filter.id },
         relations: ["children"],
       });
       if (task) {
-        const flatChildren = await treeRepository.findDescendants(task);
+        const flatChildren = await treeRepo.findDescendants(task);
         flatChildrenIds = flatChildren.map((child) => child.id);
       }
     }
-
-    console.log("============flatChildrenIds", flatChildrenIds);
 
     const taskList = await this.taskRepository.find({
       where: {
@@ -168,117 +241,6 @@ export class TaskService {
       list: taskList.map((task) => TaskMapper.entityToDto(task)),
       total,
     };
-  }
-
-  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
-    const task = await this.taskRepository.findOneBy({ id });
-
-    if (!task) {
-      throw new Error("Task not found");
-    }
-
-    await this.taskRepository.update(id, {
-      ...updateTaskDto,
-    });
-
-    return this.findById(id);
-  }
-
-  async delete(id: string): Promise<void> {
-    const treeRepository = this.taskRepository.manager.getTreeRepository(Task);
-    const taskToDelete = await treeRepository.findOne({
-      where: { id },
-      relations: ["children"],
-    });
-
-    if (!taskToDelete) {
-      throw new Error("Task not found");
-    }
-
-    await this.todoService.deleteByFilter({
-      taskId: taskToDelete.id,
-    });
-
-    // 获取所有子节点
-    const descendantsTree =
-      await treeRepository.findDescendantsTree(taskToDelete);
-
-    const getAllDescendantIds = (node: Task): string[] => {
-      const ids = [node.id];
-      if (node.children) {
-        node.children.forEach((child) => {
-          ids.push(...getAllDescendantIds(child));
-        });
-      }
-      return ids;
-    };
-
-    const allIds = getAllDescendantIds(descendantsTree);
-
-    // 使用事务确保数据一致性
-    await this.taskRepository.manager.transaction(
-      async (transactionalManager) => {
-        // 删除闭包表中的所有相关记录
-        for (const nodeId of allIds) {
-          await transactionalManager.query(
-            `DELETE FROM task_closure WHERE id_ancestor = ? OR id_descendant = ?`,
-            [nodeId, nodeId]
-          );
-        }
-
-        // 删除所有节点
-        await transactionalManager.delete(Task, allIds);
-      }
-    );
-  }
-
-  async batchDelete(ids: string[]): Promise<void> {
-    if (ids.length === 0) {
-      return;
-    }
-
-    const treeRepository = this.taskRepository.manager.getTreeRepository(Task);
-    const taskListToDelete = await treeRepository.find({
-      where: { id: In(ids) },
-      relations: ["children"],
-    });
-
-    if (taskListToDelete.length === 0) {
-      throw new Error("Task not found");
-    }
-
-    const getAllDescendantIds = (node: Task): string[] => {
-      const ids = [node.id];
-      if (node.children) {
-        node.children.forEach((child) => {
-          ids.push(...getAllDescendantIds(child));
-        });
-      }
-      return ids;
-    };
-
-    // 获取所有子节点
-    const allIds: string[] = [];
-    for (const task of taskListToDelete) {
-      const descendantsTree = await treeRepository.findDescendantsTree(task);
-      allIds.push(...getAllDescendantIds(descendantsTree));
-    }
-
-    // 使用事务确保数据一致性
-    await this.taskRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        // 删除闭包表中的所有相关记录
-        for (const nodeId of allIds) {
-          await transactionalEntityManager.query(
-            `DELETE FROM task_closure WHERE id_ancestor = ? OR id_descendant = ?`,
-            [nodeId, nodeId]
-          );
-        }
-
-        // 删除所有节点
-        await transactionalEntityManager.delete(Task, allIds);
-      }
-    );
   }
 
   async findById(id: string): Promise<TaskDto> {

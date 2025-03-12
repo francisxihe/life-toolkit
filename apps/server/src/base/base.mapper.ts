@@ -12,6 +12,15 @@ export class BaseMapper {
     };
   }
 
+  static dtoToEntity(dto: BaseModelDto): BaseEntity {
+    const entity = new BaseEntity();
+    entity.id = dto.id;
+    entity.createdAt = dto.createdAt;
+    entity.updatedAt = dto.updatedAt;
+    entity.deletedAt = dto.deletedAt;
+    return entity;
+  }
+
   static dtoToVo(dto: BaseModelDto): BaseModelVo {
     return {
       id: dto.id,

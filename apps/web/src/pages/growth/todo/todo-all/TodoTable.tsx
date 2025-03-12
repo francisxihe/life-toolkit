@@ -105,9 +105,9 @@ export default function TodoTable() {
               Modal.confirm({
                 title: '确定删除吗？',
                 content: '删除后将无法恢复',
-                onOk: () => {
-                  TodoService.deleteTodo(record.id);
-                  getTodoPage();
+                onOk: async () => {
+                  await TodoService.deleteTodo(record.id);
+                  await getTodoPage();
                 },
               })
             }

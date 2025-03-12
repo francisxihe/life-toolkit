@@ -115,9 +115,9 @@ export default function TaskTable() {
               Modal.confirm({
                 title: '确定删除吗？',
                 content: '删除后将无法恢复',
-                onOk: () => {
-                  TaskService.deleteTask(record.id);
-                  getTaskPage();
+                onOk: async () => {
+                  await TaskService.deleteTask(record.id);
+                  await getTaskPage();
                 },
               })
             }

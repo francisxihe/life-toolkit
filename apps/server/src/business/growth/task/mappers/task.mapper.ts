@@ -19,7 +19,6 @@ class TaskMapperEntity {
     dto.name = entity.name;
     dto.description = entity.description;
     dto.status = entity.status;
-    dto.tags = entity.tags;
     dto.importance = entity.importance;
     dto.urgency = entity.urgency;
     dto.doneAt = entity.doneAt;
@@ -27,6 +26,7 @@ class TaskMapperEntity {
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
     dto.estimateTime = entity.estimateTime;
+    // 关联属性
     dto.parent = entity.parent
       ? TaskMapperEntity.entityToDto(entity.parent)
       : undefined;
@@ -37,6 +37,7 @@ class TaskMapperEntity {
     dto.trackTimeList = [];
     dto.todoList =
       entity.todoList?.map((todo) => TodoMapper.entityToDto(todo)) || [];
+    dto.tags = entity.tags;
     return dto;
   }
 }
@@ -99,6 +100,24 @@ class TaskMapperDto extends TaskMapperEntity {
     };
     return vo;
   }
+
+
+  static updateDtoToEntity(dto: UpdateTaskDto, entity?: Task): Task {
+    if (!entity) {
+      entity = new Task();
+    }
+    if (dto.name) entity.name = dto.name;
+    if (dto.description) entity.description = dto.description;
+    if (dto.importance) entity.importance = dto.importance;
+    if (dto.urgency) entity.urgency = dto.urgency;
+    if (dto.abandonedAt) entity.abandonedAt = dto.abandonedAt;
+    if (dto.startAt) entity.startAt = dto.startAt;
+    if (dto.endAt) entity.endAt = dto.endAt;
+    if (dto.estimateTime) entity.estimateTime = dto.estimateTime;
+    // 关联属性不走dtoToEntity
+    return entity;
+  }
+
 }
 
 class TaskMapperVo extends TaskMapperDto {

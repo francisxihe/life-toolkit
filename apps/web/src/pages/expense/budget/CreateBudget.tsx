@@ -101,7 +101,7 @@ export function useCreateBudget({
           }}
         />
       ),
-      onOk: () => {
+      onOk:async () => {
         onConfirm(formDataRef.current as CreateBudgetVo);
       },
     });

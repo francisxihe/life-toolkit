@@ -12,7 +12,8 @@ export class CreateTaskDto extends PickType(TaskDto, [
   "importance",
   "urgency",
   "goalId",
-  "parent",
+  "startAt",
+  "endAt",
 ] as const) {
   parentId?: string;
   trackTimeIds?: string[];
