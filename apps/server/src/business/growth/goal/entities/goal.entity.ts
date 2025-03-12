@@ -93,7 +93,7 @@ export class Goal extends BaseEntity {
   @TreeChildren({
     cascade: true,
   })
-  children?: Goal[];
+  children: Goal[];
 
   /** 目标优先级 */
   @Column({ nullable: true })

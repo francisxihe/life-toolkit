@@ -87,27 +87,24 @@ export class TaskService {
   ) {}
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
-    const treeRepo = this.taskTreeService.getTreeRepo();
-
     // 创建新任务
     const createTask = this.taskRepository.create(createTaskDto);
     createTask.status = TaskStatus.TODO;
     createTask.tags = createTaskDto.tags || [];
 
-    await this.taskRepository.manager.transaction(
-      async (transactionalManager) => {
-        if (createTaskDto.parentId) {
-          await this.taskTreeService.updateParent(
-            {
-              task: createTask,
-              parentId: createTaskDto.parentId,
-            },
-            treeRepo
-          );
-        }
-        await treeRepo.save(createTask);
+    await this.taskRepository.manager.transaction(async (taskManager) => {
+      const treeRepo = taskManager.getTreeRepository(Task);
+      if (createTaskDto.parentId) {
+        await this.taskTreeService.updateParent(
+          {
+            task: createTask,
+            parentId: createTaskDto.parentId,
+          },
+          treeRepo
+        );
       }
-    );
+      await treeRepo.save(createTask);
+    });
 
     // 返回结果
     return TaskMapper.entityToDto(createTask);

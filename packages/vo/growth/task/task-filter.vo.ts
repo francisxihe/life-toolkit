@@ -16,20 +16,23 @@ export type TaskListVo = {
   list: TaskItemVo[];
 };
 
-export type TaskListFiltersVo = {
-  keyword?: string;
-  parentId?: TaskVo["parentId"];
-  startAt?: TaskVo["startAt"];
-  endAt?: TaskVo["endAt"];
-  importance?: TaskVo["importance"];
-  urgency?: TaskVo["urgency"];
-  status?: TaskVo["status"];
-  doneDateStart?: TaskVo["doneAt"];
-  doneDateEnd?: TaskVo["doneAt"];
-  abandonedDateStart?: TaskVo["abandonedAt"];
-  abandonedDateEnd?: TaskVo["abandonedAt"];
-} & self;
+export type TaskListFiltersVo = Partial<
+  Pick<
+    TaskVo,
+    "startAt" | "endAt" | "importance" | "urgency" | "status"
+  > & {
+    keyword?: string;
+    parentId?: TaskVo["parentId"];
+    doneDateStart?: TaskVo["doneAt"];
+    doneDateEnd?: TaskVo["doneAt"];
+    abandonedDateStart?: TaskVo["abandonedAt"];
+    abandonedDateEnd?: TaskVo["abandonedAt"];
+  }
+> &
+  self;
 
 export type TaskPageFiltersVo = TaskListFiltersVo & {
   tags?: string[];
+  pageNum?: number;
+  pageSize?: number;
 };

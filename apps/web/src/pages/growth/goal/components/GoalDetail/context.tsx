@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import { GoalVo, UpdateGoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo, UpdateGoalVo, GoalItemVo } from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import type { GoalDetailProps } from '.';
@@ -16,6 +16,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   ContextType: {
     currentGoal: GoalVo;
     goalFormData: GoalFormData;
+    goalList: GoalItemVo[];
     setGoalFormData: Dispatch<React.SetStateAction<GoalFormData>>;
     onClose: () => Promise<void> | null;
     onChange: (data: Partial<UpdateGoalVo>) => Promise<void>;
@@ -44,6 +45,11 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
     setCurrentGoal(currentGoalRef.current);
     setGoalFormData(GoalMapping.voToGoalFormData(currentGoalRef.current));
   };
+
+  const { goalList } = GoalService.useGoalList({
+    withoutSelf: true,
+    id: props.goal?.id,
+  });
 
   const initGoalFormData = useCallback(async () => {
     const goal = await GoalService.getDetail(props.goal.id);
@@ -76,6 +82,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   return {
     currentGoal,
     goalFormData,
+    goalList,
     setGoalFormData,
     onClose,
     onChange,

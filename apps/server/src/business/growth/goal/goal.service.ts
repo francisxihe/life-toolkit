@@ -10,6 +10,7 @@ import {
   Like,
   In,
   IsNull,
+  Not,
 } from "typeorm";
 import { Goal, GoalStatus } from "./entities";
 import {
@@ -21,7 +22,7 @@ import {
 } from "./dto";
 import { GoalMapper } from "./mappers";
 import { TaskService } from "../task/task.service";
-
+import { GoalTreeService } from "./goal-tree.service";
 function getWhere(filter: GoalPageFilterDto) {
   const where: FindOptionsWhere<Goal> = {
     deletedAt: IsNull(),
@@ -76,32 +77,54 @@ export class GoalService {
   constructor(
     @InjectRepository(Goal)
     private readonly goalRepository: Repository<Goal>,
-    private readonly taskService: TaskService
+    private readonly taskService: TaskService,
+    private readonly goalTreeService: GoalTreeService
   ) {}
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
-    if (createGoalDto.parentId) {
-      const parentGoal = await this.goalRepository.findOneBy({
-        id: createGoalDto.parentId,
-      });
-      if (!parentGoal) {
-        throw new Error("Parent goal not found");
-      }
-      createGoalDto.parent = parentGoal;
-    }
-
-    const goal = this.goalRepository.create({
+    const createGoal = this.goalRepository.create({
       ...createGoalDto,
       status: GoalStatus.TODO,
     });
-    await this.goalRepository.save(goal);
-    return GoalMapper.entityToDto(goal);
+
+    await this.goalRepository.manager.transaction(async (goalManager) => {
+      const treeRepo = goalManager.getTreeRepository(Goal);
+      if (createGoalDto.parentId) {
+        await this.goalTreeService.updateParent(
+          {
+            currentGoal: createGoal,
+            parentId: createGoalDto.parentId,
+          },
+          treeRepo
+        );
+      }
+      await treeRepo.save(createGoal);
+    });
+
+    return GoalMapper.entityToDto(createGoal);
   }
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
+    let filterIds: string[] = [];
+
+    if (filter.withoutSelf && filter.id) {
+      const treeRepo = this.goalRepository.manager.getTreeRepository(Goal);
+      const goal = await this.goalRepository.findOne({
+        where: { id: filter.id },
+        relations: ["children"],
+      });
+      if (goal) {
+        const flatChildren = await treeRepo.findDescendants(goal);
+        filterIds = flatChildren.map((child) => child.id);
+        filterIds.push(goal.id);
+      }
+    }
+
     const goalList = await this.goalRepository.find({
-      where: getWhere(filter),
-      relations: ["children", "parent"],
+      where: {
+        ...getWhere(filter),
+        id: Not(In(filterIds)),
+      },
     });
 
     return goalList
@@ -137,7 +160,7 @@ export class GoalService {
       ...updateGoalDto,
     });
 
-    return this.findById(id);
+    return this.findDetail(id);
   }
 
   async delete(id: string): Promise<void> {
@@ -152,41 +175,23 @@ export class GoalService {
     }
 
     // 获取所有子节点
-    const descendantsTree =
-      await treeRepository.findDescendantsTree(goalToDelete);
+    const descendantsNodes = await treeRepository.findDescendants(goalToDelete);
 
-    const getAllDescendantIds = (node: Goal): string[] => {
-      const ids = [node.id];
-      if (node.children) {
-        node.children.forEach((child) => {
-          ids.push(...getAllDescendantIds(child));
-        });
-      }
-      return ids;
-    };
-
-    const allIds = getAllDescendantIds(descendantsTree);
+    const allIds = descendantsNodes.map((node) => node.id);
     const taskList = await this.taskService.findByGoalIds(allIds);
     await this.taskService.batchDelete(taskList.map((task) => task.id));
 
     // 使用事务确保数据一致性
-    await this.goalRepository.manager.transaction(
-      async (transactionalEntityManager) => {
-        // 删除闭包表中的所有相关记录
-        for (const nodeId of allIds) {
-          await transactionalEntityManager.query(
-            `DELETE FROM goal_closure WHERE id_ancestor = ? OR id_descendant = ?`,
-            [nodeId, nodeId]
-          );
-        }
+    await this.goalRepository.manager.transaction(async (goalManager) => {
+      const treeRepo = goalManager.getTreeRepository(Goal);
+      await this.goalTreeService.deleteChildren(goalToDelete, treeRepo);
 
-        // 删除所有节点
-        await transactionalEntityManager.softDelete(Goal, allIds);
-      }
-    );
+      // 删除所有节点
+      await goalManager.delete(Goal, goalToDelete);
+    });
   }
 
-  async findById(id: string): Promise<GoalDto> {
+  async findDetail(id: string): Promise<GoalDto> {
     const goal = await this.goalRepository.findOne({
       where: { id },
       relations: ["children", "parent", "taskList"],

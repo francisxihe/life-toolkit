@@ -12,7 +12,11 @@ import { GoalService } from "./goal.service";
 import { GoalPageFilterDto, GoalListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { GoalStatusService } from "./goal-status.service";
-import type { Goal, OperationByIdListVo } from "@life-toolkit/vo";
+import type {
+  Goal,
+  GoalListFiltersVo,
+  OperationByIdListVo,
+} from "@life-toolkit/vo";
 import { GoalMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
@@ -61,7 +65,10 @@ export class GoalController {
 
   @Put("update/:id")
   @Response()
-  async update(@Param("id") id: string, @Body() updateGoalVo: Goal.CreateGoalVo) {
+  async update(
+    @Param("id") id: string,
+    @Body() updateGoalVo: Goal.CreateGoalVo
+  ) {
     const updatedDto = GoalMapper.voToUpdateDto(updateGoalVo);
     const dto = await this.goalService.update(id, updatedDto);
     return GoalMapper.dtoToVo(dto);
@@ -81,15 +88,28 @@ export class GoalController {
 
   @Get("list")
   @Response()
-  async list(@Query() filter: GoalListFilterDto) {
-    const goalList = await this.goalService.findAll(filter);
+  async list(@Query() filter: GoalListFiltersVo) {
+    const goalListFilterDto = new GoalListFilterDto();
+    
+    goalListFilterDto.withoutSelf = filter.withoutSelf;
+    goalListFilterDto.id = filter.id;
+    goalListFilterDto.importance = filter.importance;
+    goalListFilterDto.urgency = filter.urgency;
+    goalListFilterDto.status = filter.status;
+    goalListFilterDto.startAt = filter.startAt
+      ? new Date(filter.startAt)
+      : undefined;
+    goalListFilterDto.endAt = filter.endAt ? new Date(filter.endAt) : undefined;
+
+    const goalList = await this.goalService.findAll(goalListFilterDto);
+
     return GoalMapper.dtoToListVo(goalList);
   }
 
   @Get("detail/:id")
   @Response()
-  async findById(@Param("id") id: string) {
-    const goal = await this.goalService.findById(id);
+  async findDetail(@Param("id") id: string) {
+    const goal = await this.goalService.findDetail(id);
     return GoalMapper.dtoToVo(goal);
   }
 }

@@ -1,4 +1,11 @@
-import { Input, Grid, DatePicker, Select, Form } from '@arco-design/web-react';
+import {
+  Input,
+  Grid,
+  DatePicker,
+  Select,
+  Form,
+  Radio,
+} from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
 import { GoalType } from '@life-toolkit/vo/growth';
 
@@ -7,7 +14,8 @@ const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
 
 export default function GoalForm() {
-  const { goalFormData, setGoalFormData, onChange } = useGoalDetailContext();
+  const { goalFormData, setGoalFormData, onChange, goalList } =
+    useGoalDetailContext();
 
   const [form] = Form.useForm();
 
@@ -44,26 +52,29 @@ export default function GoalForm() {
           />
         </Item>
         <Item span={24} label="目标类型" name="type">
-          <Select
-            allowClear
-            placeholder="请选择目标类型"
-            options={[
-              {
-                label: '战略规划',
-                value: GoalType.OBJECTIVE,
-              },
-              {
-                label: '成果指标',
-                value: GoalType.KEY_RESULT,
-              },
-            ]}
-            onBlur={() => {
+          <Radio.Group
+            onChange={() => {
               onChange({
                 type: goalFormData.type,
               });
             }}
+          >
+            <Radio value={GoalType.OBJECTIVE}>战略规划</Radio>
+            <Radio value={GoalType.KEY_RESULT}>成果指标</Radio>
+          </Radio.Group>
+        </Item>
+
+        <Item span={24} label="父级目标" name="parentId">
+          <Select
+            allowClear
+            placeholder="请选择父级目标"
+            options={goalList.map((goal) => ({
+              label: goal.name,
+              value: goal.id,
+            }))}
           ></Select>
         </Item>
+
         <Item span={24} label="描述" name="description">
           <TextArea
             autoSize={false}
@@ -89,7 +100,7 @@ function Item(props: {
   name: string;
 }) {
   return (
-    <Col span={props.span} className="w-full flex items-center">
+    <Col span={props.span} className="w-full flex items-center !py-0">
       <Form.Item field={props.name} label={props.label}>
         {props.children}
       </Form.Item>
