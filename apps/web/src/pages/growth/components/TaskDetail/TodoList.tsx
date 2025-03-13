@@ -1,9 +1,9 @@
 import { useTaskDetailContext } from './context';
-import TodoList from '../../../todo/components/TodoList/TodoList';
+import TodoList from '../TodoList';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useAddTodoModal } from '../../../components/AddTodo';
+import { useAddTodoModal } from '../AddTodo';
 
 const { Shrink, Fixed } = FlexibleContainer;
 

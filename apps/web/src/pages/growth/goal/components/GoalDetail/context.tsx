@@ -1,34 +1,54 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import { GoalVo, UpdateGoalVo, GoalItemVo } from '@life-toolkit/vo/growth';
+import {
+  GoalVo,
+  UpdateGoalVo,
+  GoalItemVo,
+  GoalStatus,
+} from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import type { GoalDetailProps } from '.';
+
+export type GoalDetailContextProps = {
+  children: React.ReactNode;
+  goal?: GoalVo | GoalItemVo;
+  initialFormData?: Partial<GoalFormData>;
+  mode: 'editor' | 'creator';
+  size?: 'small' | 'default';
+  afterSubmit?: () => Promise<void>;
+};
 
 export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
-  PropsType: {
-    children: React.ReactNode;
-    goal: GoalDetailProps['goal'];
-    onClose: GoalDetailProps['onClose'];
-    onChange: GoalDetailProps['onChange'];
-  };
+  PropsType: GoalDetailContextProps;
   ContextType: {
     currentGoal: GoalVo;
     goalFormData: GoalFormData;
     goalList: GoalItemVo[];
+    size: 'small' | 'default';
+    loading: boolean;
     setGoalFormData: Dispatch<React.SetStateAction<GoalFormData>>;
-    onClose: () => Promise<void> | null;
-    onChange: (data: Partial<UpdateGoalVo>) => Promise<void>;
+    onSubmit: () => Promise<void>;
     showSubGoal: (id: string) => Promise<void>;
     refreshGoalDetail: (id: string) => Promise<void>;
   };
 }>((props) => {
   const [level, setLevel] = useState(0);
 
-  const [currentGoal, setCurrentGoal] = useState<GoalVo>(props.goal);
+  const [loading, setLoading] = useState(false);
 
-  const [goalFormData, setGoalFormData] = useState<GoalFormData>();
+  const [currentGoal, setCurrentGoal] = useState<GoalVo>();
+
+  const defaultFormData: GoalFormData = {
+    name: '',
+    status: GoalStatus.TODO,
+    planTimeRange: [undefined, undefined],
+    children: [],
+    ...props.initialFormData,
+  };
+
+  const [goalFormData, setGoalFormData] =
+    useState<GoalFormData>(defaultFormData);
 
   const currentGoalRef = useRef<GoalVo>();
 
@@ -54,39 +74,56 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   const initGoalFormData = useCallback(async () => {
     const goal = await GoalService.getDetail(props.goal.id);
     currentGoalRef.current = goal;
+    setCurrentGoal(currentGoalRef.current);
     setGoalFormData(GoalMapping.voToGoalFormData(currentGoalRef.current));
   }, [props.goal]);
 
   useEffect(() => {
-    initGoalFormData();
-  }, [initGoalFormData]);
-
-  let onClose = null;
-  if (props.onClose) {
-    onClose = async () => {
-      setGoalFormData(null);
-      await props.onClose();
-    };
-  }
-
-  async function onChange(data: Partial<UpdateGoalVo>) {
-    if (level > 0) {
-      const updatedGoal = await GoalService.updateGoal(currentGoal.id, data);
-      await refreshGoalDetail(updatedGoal.id);
-    } else {
-      const updatedGoal = await GoalService.updateGoal(currentGoal.id, data);
-      await props.onChange(updatedGoal);
+    async function init() {
+      if (props.mode === 'editor') {
+        setLoading(true);
+        await initGoalFormData();
+        setLoading(false);
+      }
     }
+    init();
+  }, [initGoalFormData, props.mode]);
+
+  async function handleCreate() {
+    if (!goalFormData.name) {
+      return;
+    }
+    await GoalService.addGoal({
+      name: goalFormData.name,
+      startAt: goalFormData.planTimeRange?.[0] || undefined,
+      endAt: goalFormData.planTimeRange?.[1] || undefined,
+      parentId: goalFormData.parentId,
+    });
+    setGoalFormData(defaultFormData);
+    await props.afterSubmit?.();
   }
+
+  async function handleUpdate(data: Partial<UpdateGoalVo>) {
+    await GoalService.updateGoal(currentGoal.id, data);
+  }
+
+  const onSubmit = async () => {
+    if (props.mode === 'creator') {
+      await handleCreate();
+    } else {
+      await handleUpdate(GoalMapping.formDataToUpdateVo(goalFormData));
+    }
+  };
 
   return {
     currentGoal,
     goalFormData,
     goalList,
     setGoalFormData,
-    onClose,
-    onChange,
+    onSubmit,
     showSubGoal,
     refreshGoalDetail,
+    size: props.size || 'default',
+    loading,
   };
 });

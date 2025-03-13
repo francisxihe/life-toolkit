@@ -90,9 +90,10 @@ export class GoalController {
   @Response()
   async list(@Query() filter: GoalListFiltersVo) {
     const goalListFilterDto = new GoalListFilterDto();
-    
+
     goalListFilterDto.withoutSelf = filter.withoutSelf;
     goalListFilterDto.id = filter.id;
+    goalListFilterDto.parentId = filter.parentId;
     goalListFilterDto.importance = filter.importance;
     goalListFilterDto.urgency = filter.urgency;
     goalListFilterDto.status = filter.status;

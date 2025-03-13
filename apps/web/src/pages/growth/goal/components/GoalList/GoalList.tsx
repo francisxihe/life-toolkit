@@ -11,16 +11,15 @@ function GoalList(props: {
 }) {
   return (
     <div className="w-full mt-[-8px]">
-      {props.goalList.map((todo) => (
+      {props.goalList.map((goal) => (
         <GoalItem
-          key={todo.id}
-          todo={todo}
+          key={goal.id}
+          goal={goal}
           onClickGoal={props.onClickGoal}
           refreshGoalList={props.refreshGoalList}
           TriggerCheckbox={
             <TriggerStatusCheckbox
-              todo={todo}
-              type="todo"
+              goal={goal}
               onChange={props.refreshGoalList}
             />
           }

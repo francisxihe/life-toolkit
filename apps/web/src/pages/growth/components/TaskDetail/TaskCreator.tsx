@@ -11,7 +11,7 @@ const { Fixed, Shrink } = FlexibleContainer;
 
 export type TaskCreatorProps = {
   initialFormData?: TaskDetailContextProps['initialFormData'];
-  size?: 'small' | 'default';
+  size?: TaskDetailContextProps['size'];
   afterSubmit?: TaskDetailContextProps['afterSubmit'];
   onClose?: () => void;
 } & React.ComponentProps<typeof Popover>;

@@ -6,7 +6,7 @@ import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import { useTaskAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useTaskDetail } from '../components/TaskDetail';
+import { useTaskDetail } from '../../components';
 
 function TaskAll() {
   const { getTaskPage } = useTaskAllContext();

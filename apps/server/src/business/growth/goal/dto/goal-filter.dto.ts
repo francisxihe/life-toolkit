@@ -32,6 +32,9 @@ export class GoalListFilterDto extends PartialType(
 
   /** 任务ID */
   id?: string;
+
+  /** 父任务ID */
+  parentId?: string;
 }
 
 export class GoalPageFilterDto extends IntersectionType(

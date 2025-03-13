@@ -3,10 +3,10 @@
 import { Tag, Typography, Popover, Button } from '@arco-design/web-react';
 import { isToday } from 'date-fns';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import { URGENCY_MAP, IMPORTANCE_MAP } from '../../../service/todo.constants';
-import IconSelector from '../../../components/IconSelector';
+import { URGENCY_MAP, IMPORTANCE_MAP } from '../../service/todo.constants';
+import IconSelector from '../../components/IconSelector';
 import SiteIcon from '@/components/SiteIcon';
-import { TodoService } from '../../../service';
+import { TodoService } from '../../service';
 import { TodoVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';

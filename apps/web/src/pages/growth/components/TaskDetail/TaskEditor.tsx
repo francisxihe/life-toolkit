@@ -2,7 +2,7 @@ import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import type { TaskVo, TaskItemVo } from '@life-toolkit/vo/growth';
 import { TaskDetailProvider } from './context';
 import TaskForm from './TaskForm';
-import SubTaskList from './SubTaskList';
+import TaskChildren from './TaskChildren';
 import TodoList from './TodoList';
 import { TaskDetailContextProps, useTaskDetailContext } from './context';
 import { Button } from '@arco-design/web-react';
@@ -10,8 +10,8 @@ import { Button } from '@arco-design/web-react';
 const { Shrink, Fixed } = FlexibleContainer;
 
 export type TaskEditorProps = {
-  task: TaskVo | TaskItemVo;
-  size?: 'small' | 'default';
+  task: TaskDetailContextProps['task'];
+  size?: TaskDetailContextProps['size'];
   afterSubmit?: TaskDetailContextProps['afterSubmit'];
   onClose?: () => void;
 };
@@ -30,7 +30,7 @@ export default function TaskEditor(props: TaskEditorProps) {
         </Fixed>
         <Shrink absolute>
           <div className="h-1/2 overflow-hidden">
-            <SubTaskList />
+            <TaskChildren />
           </div>
           <div className="h-1/2 overflow-hidden">
             <TodoList />

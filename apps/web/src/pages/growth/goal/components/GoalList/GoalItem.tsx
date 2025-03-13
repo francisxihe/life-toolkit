@@ -1,19 +1,17 @@
 'use client';
 
-import { Tag, Typography, Popover, Button } from '@arco-design/web-react';
-import { isToday } from 'date-fns';
+import { Typography, Popover, Button } from '@arco-design/web-react';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import IconSelector from '../IconSelector';
+import IconSelector from '../../../components/IconSelector';
 import SiteIcon from '@/components/SiteIcon';
 import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../../service';
 import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
-import dayjs from 'dayjs';
 import clsx from 'clsx';
 
 const { Paragraph } = Typography;
 
 export type GoalItemProps = {
-  todo: {
+  goal: {
     id: GoalVo['id'];
     name: GoalVo['name'];
     description?: GoalVo['description'];
@@ -31,15 +29,15 @@ export type GoalItemProps = {
 };
 
 function GoalItem(props: GoalItemProps) {
-  const { todo } = props;
+  const { goal } = props;
   return (
-    <div className={'w-full pl-4 py-2 bg-bg-3'} key={todo.id}>
+    <div className={'w-full pl-4 py-2 bg-bg-3'} key={goal.id}>
       <FlexibleContainer direction="vertical" className="items-start">
         <FlexibleContainer.Fixed className="flex items-start ">
           {props.TriggerCheckbox}
         </FlexibleContainer.Fixed>
         <FlexibleContainer.Shrink
-          onClick={() => props.onClickGoal(todo.id)}
+          onClick={() => props.onClickGoal(goal.id)}
           className={clsx([
             'cursor-pointer border-b',
             'after:content-[""] after:block after:h-1 after:w-full',
@@ -48,7 +46,7 @@ function GoalItem(props: GoalItemProps) {
           <div
             className={clsx(['flex items-center justify-between', 'leading-8'])}
           >
-            <span className="text-text-1">{todo.name}</span>
+            <span className="text-text-1">{goal.name}</span>
 
             <div className="h-8 flex items-center">
               <Popover
@@ -58,7 +56,7 @@ function GoalItem(props: GoalItemProps) {
                     <div
                       className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
                       onClick={() => {
-                        GoalService.abandonGoal(todo.id);
+                        GoalService.abandonGoal(goal.id);
                         props.refreshGoalList();
                       }}
                     >
@@ -67,7 +65,7 @@ function GoalItem(props: GoalItemProps) {
                     <div
                       className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
                       onClick={() => {
-                        GoalService.deleteGoal(todo.id);
+                        GoalService.deleteGoal(goal.id);
                         props.refreshGoalList();
                       }}
                     >
@@ -89,33 +87,33 @@ function GoalItem(props: GoalItemProps) {
               </Popover>
             </div>
           </div>
-          {todo.description && (
+          {goal.description && (
             <Paragraph
               className="text-body-1 !mb-0.5"
               style={{
                 textDecoration:
-                  todo.status === GoalStatus.DONE ? 'line-through' : 'none',
+                  goal.status === GoalStatus.DONE ? 'line-through' : 'none',
                 color: 'var(--color-text-3)',
               }}
             >
-              {todo.description}
+              {goal.description}
             </Paragraph>
           )}
           <div className={clsx(['flex items-center gap-2', 'text-body-2'])}>
-            {todo.importance && (
+            {goal.importance && (
               <IconSelector
                 map={IMPORTANCE_MAP}
                 iconName="priority-0"
-                value={todo.importance}
+                value={goal.importance}
                 readonly
               />
             )}
 
-            {todo.urgency && (
+            {goal.urgency && (
               <IconSelector
                 map={URGENCY_MAP}
                 iconName="urgency"
-                value={todo.urgency}
+                value={goal.urgency}
                 readonly
               />
             )}

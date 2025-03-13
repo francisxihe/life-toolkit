@@ -23,7 +23,10 @@ import {
 import { GoalMapper } from "./mappers";
 import { TaskService } from "../task/task.service";
 import { GoalTreeService } from "./goal-tree.service";
-function getWhere(filter: GoalPageFilterDto) {
+
+function getWhere(
+  filter: GoalPageFilterDto & { excludeIds?: string[]; includeIds?: string[] }
+) {
   const where: FindOptionsWhere<Goal> = {
     deletedAt: IsNull(),
   };
@@ -53,6 +56,14 @@ function getWhere(filter: GoalPageFilterDto) {
       new Date(filter.abandonedDateEnd + "T23:59:59")
     );
   }
+
+  if (filter.startAt) {
+    where.startAt = MoreThan(new Date(filter.startAt + "T00:00:00"));
+  }
+  if (filter.endAt) {
+    where.endAt = LessThan(new Date(filter.endAt + "T23:59:59"));
+  }
+
   if (filter.keyword) {
     where.name = Like(`%${filter.keyword}%`);
   }
@@ -67,6 +78,12 @@ function getWhere(filter: GoalPageFilterDto) {
   }
   if (filter.urgency) {
     where.urgency = filter.urgency;
+  }
+
+  if (filter.includeIds && filter.includeIds.length > 0) {
+    where.id = In(filter.includeIds);
+  } else if (filter.excludeIds && filter.excludeIds.length > 0) {
+    where.id = Not(In(filter.excludeIds));
   }
 
   return where;
@@ -105,26 +122,40 @@ export class GoalService {
   }
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
-    let filterIds: string[] = [];
+    let excludeIds: string[] = [];
+    const treeRepo = this.goalTreeService.getTreeRepo();
 
     if (filter.withoutSelf && filter.id) {
-      const treeRepo = this.goalRepository.manager.getTreeRepository(Goal);
       const goal = await this.goalRepository.findOne({
         where: { id: filter.id },
         relations: ["children"],
       });
       if (goal) {
         const flatChildren = await treeRepo.findDescendants(goal);
-        filterIds = flatChildren.map((child) => child.id);
-        filterIds.push(goal.id);
+        excludeIds = flatChildren.map((child) => child.id);
+        excludeIds.push(goal.id);
       }
     }
 
-    const goalList = await this.goalRepository.find({
-      where: {
-        ...getWhere(filter),
-        id: Not(In(filterIds)),
-      },
+    let includeIds: string[] = [];
+    if (filter.parentId) {
+      const goal = await this.goalRepository.findOne({
+        where: { id: filter.parentId },
+        relations: ["children"],
+      });
+      if (goal) {
+        const flatChildren = await treeRepo.findDescendants(goal);
+        includeIds = flatChildren.map((child) => child.id);
+        includeIds.push(goal.id);
+      }
+    }
+
+    const goalList = await treeRepo.find({
+      where: getWhere({
+        ...filter,
+        excludeIds,
+        includeIds,
+      }),
     });
 
     return goalList

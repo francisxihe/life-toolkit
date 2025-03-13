@@ -7,17 +7,21 @@ import type {
   GoalItemVo,
   TaskItemVo,
 } from '@life-toolkit/vo/growth';
-import { TaskFormData, TaskService, TaskMapping } from '../../../service';
+import {
+  TaskFormData,
+  TaskService,
+  TaskMapping,
+  GoalService,
+} from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { GoalService } from '../../../service';
 
 export type TaskDetailContextProps = {
   children: React.ReactNode;
   task?: TaskVo | TaskItemVo;
   initialFormData?: Partial<TaskFormData>;
   mode: 'editor' | 'creator';
-  afterSubmit?: () => Promise<void>;
   size?: 'small' | 'default';
+  afterSubmit?: () => Promise<void>;
 };
 
 export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{

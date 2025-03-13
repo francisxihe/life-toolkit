@@ -1,24 +1,19 @@
 import { Checkbox, Modal } from '@arco-design/web-react';
 import styles from './style.module.less';
-import {GoalService} from '../../../service';
+import { GoalService } from '../../../service';
 import { GoalVo } from '@life-toolkit/vo/growth';
 
 export default function TriggerStatusCheckbox(props: {
-  todo: {
+  goal: {
     status: GoalVo['status'];
     id: string;
   };
-  type: 'todo' | 'sub-todo';
   onChange: () => Promise<void>;
 }) {
-  const { todo } = props;
+  const { goal } = props;
 
   async function restore() {
-    if (props.type === 'todo') {
-      await GoalService.restoreGoal(todo.id);
-    } else {
-      await GoalService.restoreSubGoal(todo.id);
-    }
+    await GoalService.restoreGoal(goal.id);
     await props.onChange();
   }
 
@@ -27,20 +22,19 @@ export default function TriggerStatusCheckbox(props: {
       className={`w-8 h-8 flex items-center ${styles['custom-checkbox-wrapper']}`}
     >
       <Checkbox
-        checked={todo.status === 'done'}
+        checked={goal.status === 'done'}
         onChange={async () => {
-          if (todo.status !== 'todo') {
+          if (goal.status !== 'todo') {
             await restore();
             return;
           }
-          console.log('todo.id', todo.id);
-          const todoSubGoalList = await GoalService.getSubGoalList({
-            parentId: todo.id,
+          const { list: children } = await GoalService.getGoalList({
+            parentId: goal.id,
           });
 
-          if (todoSubGoalList.length === 0) {
+          if (children.length === 0) {
             await GoalService.batchDoneGoal({
-              idList: [todo.id],
+              idList: [goal.id],
             });
             await props.onChange();
             return;
@@ -51,10 +45,7 @@ export default function TriggerStatusCheckbox(props: {
             content: `完成目标后，将自动完成其所有子目标。`,
             onOk: async () => {
               await GoalService.batchDoneGoal({
-                idList: [
-                  todo.id,
-                  ...todoSubGoalList.map((subGoal) => subGoal.id),
-                ],
+                idList: [goal.id, ...children.map((child) => child.id)],
               });
               await props.onChange();
             },

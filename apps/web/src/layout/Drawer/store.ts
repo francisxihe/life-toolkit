@@ -6,7 +6,7 @@ export type IDrawerOption = Omit<DrawerProps, 'visible'> & {
   content: (props: {
     param?: Record<string, unknown>;
     onConfirm: (data: unknown) => void;
-    onClose: () => void;
+    onClose: () => Promise<void>;
   }) => JSX.Element;
   onConfirm?: (data: unknown) => void;
   onClose?: () => void;

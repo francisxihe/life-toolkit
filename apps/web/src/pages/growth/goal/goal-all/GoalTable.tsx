@@ -5,12 +5,12 @@ import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
 import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
-import { openModal } from '@/hooks/OpenModal';
-import GoalDetail from '../components/GoalDetail';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
+import { useGoalDetail } from '../components/GoalDetail';
 
 export default function GoalTable() {
   const { goalList, getGoalPage } = useGoalAllContext();
+  const { openEditDrawer } = useGoalDetail();
 
   useEffect(() => {
     async function initData() {
@@ -94,21 +94,12 @@ export default function GoalTable() {
           <Button
             type="text"
             onClick={() => {
-              openModal({
-                title: <div className="text-body-3">编辑</div>,
-                content: (
-                  <div className="ml-[-6px]">
-                    <GoalDetail
-                      goal={record}
-                      onClose={null}
-                      onChange={async () => {
-                        console.log('onChange');
-                      }}
-                    />
-                  </div>
-                ),
-                onCancel: () => {
-                  getGoalPage();
+              openEditDrawer({
+                editorProps: {
+                  goal: record,
+                  afterSubmit: async () => {
+                    await getGoalPage();
+                  },
                 },
               });
             }}
@@ -120,7 +111,8 @@ export default function GoalTable() {
             onClick={() =>
               Modal.confirm({
                 title: '确定删除吗？',
-                content: '删除后将无法恢复',
+                content:
+                  '删除后将无法恢复,如果目标下有子目标,将一并删除,是否继续?',
                 onOk: async () => {
                   await GoalService.deleteGoal(record.id);
                   await getGoalPage();

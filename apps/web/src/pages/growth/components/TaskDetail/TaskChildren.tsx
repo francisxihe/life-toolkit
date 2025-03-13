@@ -1,16 +1,13 @@
-import { Input, Button } from '@arco-design/web-react';
 import { useTaskDetailContext } from './context';
 import TaskList from '../TaskList';
-import SiteIcon from '@/components/SiteIcon';
-import AddTaskPopover from './TaskCreator';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import { useTaskDetail } from './';
+import { useTaskDetail } from '.';
 import { CreateButton } from '@/components/Button/CreateButton';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
-export default function TaskDetailSubTaskList() {
+export default function TaskChildren() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
 

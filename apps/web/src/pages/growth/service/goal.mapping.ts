@@ -1,4 +1,4 @@
-import type { GoalVo } from '@life-toolkit/vo/growth';
+import type { GoalVo, UpdateGoalVo } from '@life-toolkit/vo/growth';
 import type { GoalFormData } from './goal.types';
 
 export class GoalMapping {
@@ -12,9 +12,16 @@ export class GoalMapping {
       type: goalVo.type,
       status: goalVo.status,
       children:
-        goalVo.children?.map((child) =>
-          GoalMapping.voToGoalFormData(child),
-        ) || [],
+        goalVo.children?.map((child) => GoalMapping.voToGoalFormData(child)) ||
+        [],
+    };
+  }
+
+  static formDataToUpdateVo(formData: GoalFormData): Partial<UpdateGoalVo> {
+    return {
+      ...formData,
+      startAt: formData.planTimeRange[0],
+      endAt: formData.planTimeRange[1],
     };
   }
 }
