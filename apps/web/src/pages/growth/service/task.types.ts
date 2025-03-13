@@ -13,7 +13,7 @@ export type TaskFormData = {
   tags?: string[];
   importance?: number;
   urgency?: number;
-  planTimeRange: [string | undefined, string | undefined];
+  planTimeRange: [TaskVo['startAt'], TaskVo['endAt']];
   estimateTime?: string;
   isSubTask: boolean;
   // 以下为关联数据

@@ -9,8 +9,8 @@ import {
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
 import { GoalType } from '@life-toolkit/vo/growth';
-import { useEffect, useState } from 'react';
 import { useComponentLoad } from '@/hooks/lifecycle';
+
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
@@ -31,8 +31,8 @@ export default function GoalForm() {
   if (loading) {
     return <Spin dot />;
   }
-
-  return goalFormData ? (
+  if (!goalFormData) return null;
+  return (
     <Form
       form={form}
       initialValues={goalFormData}
@@ -74,8 +74,6 @@ export default function GoalForm() {
         </Item>
       </Row>
     </Form>
-  ) : (
-    <></>
   );
 }
 

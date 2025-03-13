@@ -58,9 +58,8 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     withoutSelf: true,
     id: props.task?.id,
   });
-  const { goalList } = GoalService.useGoalList();
 
-  const currentTaskRef = useRef<TaskVo>();
+  const { goalList } = GoalService.useGoalList();
 
   const showSubTask = async (id: string) => {
     await refreshTaskDetail(id);
@@ -78,11 +77,11 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
 
   useEffect(() => {
     async function init() {
-      setLoading(true);
       if (props.mode === 'editor') {
+        setLoading(true);
         await initTaskFormData();
+        setLoading(false);
       }
-      setLoading(false);
     }
     init();
   }, [props.mode, initTaskFormData]);

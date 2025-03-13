@@ -98,7 +98,7 @@ function PageLayout() {
                   </Breadcrumb>
                 </Fixed>
               )}
-              <Shrink>
+              <Shrink overflowY="auto" absolute>
                 <Outlet />
               </Shrink>
               {/* {showFooter && <Footer />} */}

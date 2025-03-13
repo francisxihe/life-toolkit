@@ -119,11 +119,11 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
     currentGoal,
     goalFormData,
     goalList,
+    size: props.size || 'default',
+    loading,
     setGoalFormData,
     onSubmit,
     showSubGoal,
     refreshGoalDetail,
-    size: props.size || 'default',
-    loading,
   };
 });

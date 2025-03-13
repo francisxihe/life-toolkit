@@ -22,8 +22,11 @@ export class TaskMapping {
   }
 
   static formDataToUpdateVo(formData: TaskFormData): UpdateTaskVo {
+    const { isSubTask, ...rest } = formData;
     return {
-      ...formData,
+      ...rest,
+      parentId: isSubTask ? formData.parentId : undefined,
+      goalId: isSubTask ? undefined : formData.goalId,
       startAt: formData.planTimeRange[0],
       endAt: formData.planTimeRange[1],
       children: formData.children || [],

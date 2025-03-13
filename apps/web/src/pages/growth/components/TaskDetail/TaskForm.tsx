@@ -10,39 +10,38 @@ import {
 import { useTaskDetailContext } from './context';
 import TrackTime from '../TrackTime';
 import { Select, Form } from '@arco-design/web-react';
-import { useEffect, useState } from 'react';
-
+import { useComponentLoad } from '@/hooks/lifecycle';
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
 
 export default function TaskForm() {
   const {
-    taskFormData,
-    setTaskFormData,
     loading,
     goalList,
     currentTask,
     taskList,
+    taskFormData,
+    setTaskFormData,
   } = useTaskDetailContext();
 
   const [form] = Form.useForm();
-  const [initialized, setInitialized] = useState(false);
 
-  useEffect(() => {
-    if (currentTask?.id && !initialized) {
+  const { handleComponentLoaded } = useComponentLoad(async () => {
+    if (currentTask?.id) {
       form.setFieldsValue(taskFormData);
-      setInitialized(true);
+      handleComponentLoaded();
     }
-  }, [form, taskFormData, initialized, currentTask]);
+  });
 
   if (loading) {
     return <Spin dot />;
   }
-
+  if (!taskFormData) return null;
   return (
     <Form
       form={form}
+      initialValues={taskFormData}
       onValuesChange={(changedValues) => {
         setTaskFormData((prev) => ({ ...prev, ...changedValues }));
       }}

@@ -77,91 +77,95 @@ export default function TodoWeek() {
       </Fixed>
 
       <Shrink className="px-5 w-full h-full flex">
-        <div className="w-full py-2">
-          <TodoCreator
-            afterSubmit={async () => {
-              refreshData();
-            }}
-          />
-          <Collapse
-            defaultActiveKey={['expired', 'week']}
-            className={`${styles['custom-collapse']} mt-2`}
-            bordered={false}
-          >
-            {expiredTodoList.length > 0 && (
-              <Collapse.Item
-                header="已过期"
-                name="expired"
-                contentStyle={{ padding: 0 }}
-              >
-                <TodoList
-                  todoList={expiredTodoList}
-                  onClickTodo={async (id) => {
-                    await showTodoDetail(id);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Item>
-            )}
-            {weekTodoList.length > 0 && (
-              <Collapse.Item
-                header="本周"
-                name="week"
-                contentStyle={{ padding: 0 }}
-              >
-                <TodoList
-                  todoList={weekTodoList}
-                  onClickTodo={async (id) => {
-                    await showTodoDetail(id);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Item>
-            )}
-            {weekDoneTodoList.length > 0 && (
-              <Collapse.Item
-                header="已完成"
-                name="done"
-                contentStyle={{ padding: 0 }}
-              >
-                <TodoList
-                  todoList={weekDoneTodoList}
-                  onClickTodo={async (id) => {
-                    await showTodoDetail(id);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Item>
-            )}
-            {weekAbandonedTodoList.length > 0 && (
-              <Collapse.Item
-                header="已放弃"
-                name="abandoned"
-                contentStyle={{ padding: 0 }}
-              >
-                <TodoList
-                  todoList={weekAbandonedTodoList}
-                  onClickTodo={async (id) => {
-                    await showTodoDetail(id);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Item>
-            )}
-          </Collapse>
-        </div>
+        <Shrink className="py-2" direction="horizontal">
+          <Fixed>
+            <TodoCreator
+              afterSubmit={async () => {
+                refreshData();
+              }}
+            />
+          </Fixed>
+          <Shrink absolute overflowY="auto">
+            <Collapse
+              defaultActiveKey={['expired', 'week']}
+              className={`${styles['custom-collapse']} mt-2`}
+              bordered={false}
+            >
+              {expiredTodoList.length > 0 && (
+                <Collapse.Item
+                  header="已过期"
+                  name="expired"
+                  contentStyle={{ padding: 0 }}
+                >
+                  <TodoList
+                    todoList={expiredTodoList}
+                    onClickTodo={async (id) => {
+                      await showTodoDetail(id);
+                    }}
+                    refreshTodoList={async () => {
+                      await refreshData();
+                    }}
+                  />
+                </Collapse.Item>
+              )}
+              {weekTodoList.length > 0 && (
+                <Collapse.Item
+                  header="本周"
+                  name="week"
+                  contentStyle={{ padding: 0 }}
+                >
+                  <TodoList
+                    todoList={weekTodoList}
+                    onClickTodo={async (id) => {
+                      await showTodoDetail(id);
+                    }}
+                    refreshTodoList={async () => {
+                      await refreshData();
+                    }}
+                  />
+                </Collapse.Item>
+              )}
+              {weekDoneTodoList.length > 0 && (
+                <Collapse.Item
+                  header="已完成"
+                  name="done"
+                  contentStyle={{ padding: 0 }}
+                >
+                  <TodoList
+                    todoList={weekDoneTodoList}
+                    onClickTodo={async (id) => {
+                      await showTodoDetail(id);
+                    }}
+                    refreshTodoList={async () => {
+                      await refreshData();
+                    }}
+                  />
+                </Collapse.Item>
+              )}
+              {weekAbandonedTodoList.length > 0 && (
+                <Collapse.Item
+                  header="已放弃"
+                  name="abandoned"
+                  contentStyle={{ padding: 0 }}
+                >
+                  <TodoList
+                    todoList={weekAbandonedTodoList}
+                    onClickTodo={async (id) => {
+                      await showTodoDetail(id);
+                    }}
+                    refreshTodoList={async () => {
+                      await refreshData();
+                    }}
+                  />
+                </Collapse.Item>
+              )}
+            </Collapse>
+          </Shrink>
+        </Shrink>
         {currentTodo && (
           <>
             <Divider type="vertical" className="!h-full" />{' '}
-            <div className="w-full py-2">
+            <Shrink className="w-full py-2">
               <TodoEditor
                 todo={currentTodo}
                 onClose={async () => {
@@ -171,7 +175,7 @@ export default function TodoWeek() {
                   refreshData();
                 }}
               />
-            </div>
+            </Shrink>
           </>
         )}
       </Shrink>
