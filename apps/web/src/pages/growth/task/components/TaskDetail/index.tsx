@@ -66,7 +66,11 @@ export function useTaskDetail() {
         style={{
           maxWidth: 'unset',
         }}
-        content={<TaskCreator {...creatorProps} />}
+        content={
+          <div className="w-[600px] p-4">
+            <TaskCreator size="small" {...creatorProps} />
+          </div>
+        }
       >
         <span
           className="cursor-pointer"

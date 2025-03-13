@@ -1,5 +1,5 @@
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/growth';
+import type { TaskVo, TaskItemVo } from '@life-toolkit/vo/growth';
 import { TaskDetailProvider } from './context';
 import TaskForm from './TaskForm';
 import SubTaskList from './SubTaskList';
@@ -10,7 +10,8 @@ import { Button } from '@arco-design/web-react';
 const { Shrink, Fixed } = FlexibleContainer;
 
 export type TaskEditorProps = {
-  task: TaskVo;
+  task: TaskVo | TaskItemVo;
+  size?: 'small' | 'default';
   afterSubmit?: TaskDetailContextProps['afterSubmit'];
   onClose?: () => void;
 };
@@ -19,6 +20,7 @@ export default function TaskEditor(props: TaskEditorProps) {
   return (
     <TaskDetailProvider
       mode="editor"
+      size={props.size}
       task={props.task}
       afterSubmit={props.afterSubmit}
     >

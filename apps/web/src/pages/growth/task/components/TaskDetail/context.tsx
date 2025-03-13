@@ -13,10 +13,11 @@ import { GoalService } from '../../../service';
 
 export type TaskDetailContextProps = {
   children: React.ReactNode;
-  task?: TaskVo;
+  task?: TaskVo | TaskItemVo;
   initialFormData?: Partial<TaskFormData>;
   mode: 'editor' | 'creator';
   afterSubmit?: () => Promise<void>;
+  size?: 'small' | 'default';
 };
 
 export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
@@ -31,6 +32,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     goalList: GoalItemVo[];
     taskList: TaskItemVo[];
     loading: boolean;
+    size: 'small' | 'default';
   };
 }>((props) => {
   const [loading, setLoading] = useState(false);
@@ -124,5 +126,6 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     refreshTaskDetail,
     onSubmit,
     loading,
+    size: props.size || 'default',
   };
 });

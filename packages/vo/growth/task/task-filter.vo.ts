@@ -17,19 +17,15 @@ export type TaskListVo = {
 };
 
 export type TaskListFiltersVo = Partial<
-  Pick<
-    TaskVo,
-    "startAt" | "endAt" | "importance" | "urgency" | "status"
-  > & {
+  Pick<TaskVo, "startAt" | "endAt" | "importance" | "urgency" | "status"> & {
     keyword?: string;
     parentId?: TaskVo["parentId"];
     doneDateStart?: TaskVo["doneAt"];
     doneDateEnd?: TaskVo["doneAt"];
     abandonedDateStart?: TaskVo["abandonedAt"];
     abandonedDateEnd?: TaskVo["abandonedAt"];
-  }
-> &
-  self;
+  } & self
+>;
 
 export type TaskPageFiltersVo = TaskListFiltersVo & {
   tags?: string[];

@@ -1,11 +1,11 @@
 'use client';
 
-import { TaskVo } from '@life-toolkit/vo/growth';
+import { TaskItemVo } from '@life-toolkit/vo/growth';
 import TriggerStatusCheckbox from './TriggerStatusCheckbox';
 import TaskItem from './TaskItem';
 
 function TaskList(props: {
-  taskList: TaskVo[];
+  taskList: TaskItemVo[];
   onClickTask: (id: string) => Promise<void>;
   refreshTaskList: () => Promise<void>;
 }) {

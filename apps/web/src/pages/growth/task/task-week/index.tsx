@@ -1,5 +1,4 @@
 import TaskList from '../components/TaskList';
-import AddTaskPopover from '../components/TaskDetail/TaskCreator';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
@@ -8,25 +7,25 @@ import { TaskEditor } from '../components/TaskDetail';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
+import { TaskVo, TaskStatus, TaskItemVo } from '@life-toolkit/vo/growth';
 import SiteIcon from '@/components/SiteIcon';
-
+import { useTaskDetail } from '../components/TaskDetail';
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
 
 export default function TaskWeek() {
-  const [weekTaskList, setWeekTaskList] = useState<TaskVo[]>([]);
-  const [weekDoneTaskList, setWeekDoneTaskList] = useState<TaskVo[]>([]);
-  const [expiredTaskList, setExpiredTaskList] = useState<TaskVo[]>([]);
-  const [weekAbandonedTaskList, setWeekAbandonedTaskList] = useState<TaskVo[]>(
-    [],
-  );
+  const [weekTaskList, setWeekTaskList] = useState<TaskItemVo[]>([]);
+  const [weekDoneTaskList, setWeekDoneTaskList] = useState<TaskItemVo[]>([]);
+  const [expiredTaskList, setExpiredTaskList] = useState<TaskItemVo[]>([]);
+  const [weekAbandonedTaskList, setWeekAbandonedTaskList] = useState<
+    TaskItemVo[]
+  >([]);
 
   async function refreshData() {
     const { list: todos } = await TaskService.getTaskList({
       status: TaskStatus.TODO,
-      planDateStart: weekStart,
-      planDateEnd: weekEnd,
+      startAt: weekStart,
+      endAt: weekEnd,
     });
     setWeekTaskList(todos);
 
@@ -39,7 +38,7 @@ export default function TaskWeek() {
 
     const { list: expiredTasks } = await TaskService.getTaskList({
       status: TaskStatus.TODO,
-      planDateEnd: weekStart,
+      endAt: weekStart,
     });
     setExpiredTaskList(expiredTasks);
 
@@ -59,7 +58,7 @@ export default function TaskWeek() {
     refreshData();
   }, []);
 
-  const [currentTask, setCurrentTask] = useState<TaskVo | null>(null);
+  const [currentTask, setCurrentTask] = useState<TaskItemVo | null>(null);
 
   async function showTaskDetail(id: string) {
     flushSync(() => {
@@ -68,6 +67,8 @@ export default function TaskWeek() {
     const todo = await TaskService.getTaskWithTrackTime(id);
     setCurrentTask(todo);
   }
+
+  const { CreateTaskPopover } = useTaskDetail();
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
@@ -79,9 +80,11 @@ export default function TaskWeek() {
 
       <FlexibleContainer.Shrink className="px-5 w-full h-full flex">
         <div className="w-full py-2">
-          <AddTaskPopover
-            afterSubmit={async () => {
-              await refreshData();
+          <CreateTaskPopover
+            creatorProps={{
+              afterSubmit: async () => {
+                await refreshData();
+              },
             }}
           >
             <Button className="!px-2" type="text" size="small">
@@ -90,7 +93,7 @@ export default function TaskWeek() {
                 添加任务
               </div>
             </Button>
-          </AddTaskPopover>
+          </CreateTaskPopover>
           <Collapse
             defaultActiveKey={['expired', 'week']}
             className={`${styles['custom-collapse']} mt-2`}
@@ -171,12 +174,13 @@ export default function TaskWeek() {
             <Divider type="vertical" className="!h-full" />
             <div className="w-full py-2">
               <TaskEditor
+                size="small"
                 task={currentTask}
                 onClose={async () => {
                   showTaskDetail(null);
                 }}
-                onChange={async (task) => {
-                  refreshData();
+                afterSubmit={async () => {
+                  await refreshData();
                 }}
               />
             </div>

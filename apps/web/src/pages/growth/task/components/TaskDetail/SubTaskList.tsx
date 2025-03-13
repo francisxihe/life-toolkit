@@ -13,7 +13,9 @@ const { Shrink, Fixed } = FlexibleContainer;
 export default function TaskDetailSubTaskList() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
-  const { openCreateDrawer: openCreateTaskDrawer } = useTaskDetail();
+
+  const { CreateTaskPopover } = useTaskDetail();
+
   return (
     <FlexibleContainer className="gap-2 border-b">
       <Fixed
@@ -23,25 +25,20 @@ export default function TaskDetailSubTaskList() {
         ])}
       >
         子任务
-        <CreateButton
-          className="!px-2"
-          type="text"
-          size="small"
-          onClick={() => {
-            openCreateTaskDrawer({
-              creatorProps: {
-                initialFormData: {
-                  parentId: currentTask.id,
-                },
-                afterSubmit: async () => {
-                  await refreshTaskDetail(currentTask.id);
-                },
-              },
-            });
+        <CreateTaskPopover
+          creatorProps={{
+            initialFormData: {
+              parentId: currentTask?.id,
+            },
+            afterSubmit: async () => {
+              await refreshTaskDetail(currentTask?.id);
+            },
           }}
         >
-          添加子任务
-        </CreateButton>
+          <CreateButton className="!px-2" type="text" size="small">
+            添加子任务
+          </CreateButton>
+        </CreateTaskPopover>
       </Fixed>
       <Shrink className="overflow-auto">
         {currentTask?.children && (
