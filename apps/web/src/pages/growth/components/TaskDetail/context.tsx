@@ -29,14 +29,14 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   ContextType: {
     currentTask: TaskVo;
     taskFormData: TaskFormData;
-    setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;
-    showSubTask: (id: string) => Promise<void>;
-    refreshTaskDetail: (id: string) => Promise<void>;
-    onSubmit: () => Promise<void>;
     goalList: GoalItemVo[];
     taskList: TaskItemVo[];
     loading: boolean;
     size: 'small' | 'default';
+    setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;
+    showSubTask: (id: string) => Promise<void>;
+    refreshTaskDetail: (id: string) => Promise<void>;
+    onSubmit: () => Promise<void>;
   };
 }>((props) => {
   const [loading, setLoading] = useState(false);
@@ -67,19 +67,13 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   };
 
   const refreshTaskDetail = async (id: string) => {
-    const fetched = await TaskService.getTaskWithTrackTime(id);
-    currentTaskRef.current = {
-      ...fetched,
-    };
-    setCurrentTask(currentTaskRef.current);
-    setTaskFormData(TaskMapping.voToFormData(currentTaskRef.current));
+    const task = await TaskService.getTaskWithTrackTime(id);
+    setCurrentTask(task);
+    setTaskFormData(TaskMapping.voToFormData(task));
   };
 
   const initTaskFormData = useCallback(async () => {
-    const task = await TaskService.getTaskWithTrackTime(props.task.id);
-    currentTaskRef.current = task;
-    setCurrentTask(currentTaskRef.current);
-    setTaskFormData(TaskMapping.voToFormData(currentTaskRef.current));
+    await refreshTaskDetail(props.task.id);
   }, [props.task]);
 
   useEffect(() => {

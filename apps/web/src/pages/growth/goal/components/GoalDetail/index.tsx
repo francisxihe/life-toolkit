@@ -14,7 +14,7 @@ export function useGoalDetail() {
     drawerProps?: Omit<IDrawerOption, 'content'>;
     editorProps: GoalEditorProps;
   }) => {
-    const { closeDrawer } = openDrawer({
+    openDrawer({
       ...drawerProps,
       title: '编辑目标',
       width: 800,
@@ -29,7 +29,7 @@ export function useGoalDetail() {
       contentProps: GoalCreatorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
-    const { closeDrawer } = openDrawer({
+    openDrawer({
       ...props,
       title: '新建目标',
       width: 800,
@@ -41,7 +41,7 @@ export function useGoalDetail() {
 
   const [createPopoverVisible, setCreatePopoverVisible] = useState(false);
 
-  const CreateGoalPopover = ({
+  const CreatePopover = ({
     children,
     creatorProps,
   }: {
@@ -78,6 +78,6 @@ export function useGoalDetail() {
   return {
     openEditDrawer,
     openCreateDrawer,
-    CreateGoalPopover,
+    CreatePopover,
   };
 }

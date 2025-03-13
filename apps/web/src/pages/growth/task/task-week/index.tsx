@@ -68,7 +68,7 @@ export default function TaskWeek() {
     setCurrentTask(todo);
   }
 
-  const { CreateTaskPopover } = useTaskDetail();
+  const { CreatePopover: CreateTaskPopover } = useTaskDetail();
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">

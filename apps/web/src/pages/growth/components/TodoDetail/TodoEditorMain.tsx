@@ -1,11 +1,11 @@
-import { Input, Button, Popover } from '@arco-design/web-react';
-import { useTodoDetailContext } from './context';
+import { Input } from '@arco-design/web-react';
 import clsx from 'clsx';
+import { useTodoDetailContext } from './context';
 
 const TextArea = Input.TextArea;
 
-export default function TodoDetailMain() {
-  const { todoFormData, setTodoFormData, onChange } = useTodoDetailContext();
+export default function TodoEditorMain() {
+  const { todoFormData, setTodoFormData, onSubmit } = useTodoDetailContext();
 
   return todoFormData ? (
     <>
@@ -19,7 +19,7 @@ export default function TodoDetailMain() {
           setTodoFormData((prev) => ({ ...prev, name: value }));
         }}
         onBlur={() => {
-          onChange(todoFormData);
+          onSubmit();
         }}
       />
       <TextArea
@@ -37,7 +37,5 @@ export default function TodoDetailMain() {
         }}
       />
     </>
-  ) : (
-    <></>
-  );
+  ) : null;
 }

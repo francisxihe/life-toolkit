@@ -8,7 +8,7 @@ export default function GoalChildren() {
   const { currentGoal, showSubGoal, refreshGoalDetail } =
     useGoalDetailContext();
 
-  const { CreateGoalPopover } = useGoalDetail();
+  const { CreatePopover: CreateGoalPopover } = useGoalDetail();
 
   return currentGoal ? (
     <div className="w-full flex flex-col gap-2">

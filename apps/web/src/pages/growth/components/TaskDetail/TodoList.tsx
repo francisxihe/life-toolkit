@@ -3,14 +3,14 @@ import TodoList from '../TodoList';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useAddTodoModal } from '../AddTodo';
+import { useTodoDetail } from '../TodoDetail';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
 export default function TaskDetailTodoList() {
   const { currentTask, refreshTaskDetail } = useTaskDetailContext();
 
-  const { open: openAddTodoModal } = useAddTodoModal();
+  const { openCreateDrawer: openCreateTodoDrawer } = useTodoDetail();
   return (
     <FlexibleContainer className="gap-2">
       <Fixed
@@ -23,12 +23,14 @@ export default function TaskDetailTodoList() {
         <CreateButton
           type="text"
           onClick={() => {
-            openAddTodoModal({
-              initialFormData: {
-                taskId: currentTask.id,
-              },
-              afterSubmit: async () => {
-                await refreshTaskDetail(currentTask.id);
+            openCreateTodoDrawer({
+              contentProps: {
+                initialFormData: {
+                  taskId: currentTask.id,
+                },
+                afterSubmit: async () => {
+                  await refreshTaskDetail(currentTask.id);
+                },
               },
             });
           }}

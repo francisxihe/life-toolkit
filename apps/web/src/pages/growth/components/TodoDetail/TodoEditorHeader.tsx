@@ -1,15 +1,12 @@
-import { Button } from '@arco-design/web-react';
-import { IconClose } from '@arco-design/web-react/icon';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import DateTimeTool from '../../../components/AddTodo/DateTimeTool';
+import DateTimeTool from './DateTimeTool';
 import { useTodoDetailContext } from './context';
-import IconSelector from '../../../components/IconSelector';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../../service/todo.constants';
+import IconSelector from '../IconSelector';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service/todo.constants';
 
-export default function TodoDetailHeader() {
-  const { todoFormData, setTodoFormData, onClose, onChange } =
-    useTodoDetailContext();
+export default function TodoEditorHeader() {
+  const { todoFormData, setTodoFormData, onSubmit } = useTodoDetailContext();
 
   return todoFormData ? (
     <FlexibleContainer
@@ -35,7 +32,7 @@ export default function TodoDetailHeader() {
                 | 'monthly',
               // | 'yearly',
             });
-            await onChange({ planDate: formData.date.format('YYYY-MM-DD') });
+            await onSubmit();
           }}
         />
 
@@ -56,16 +53,6 @@ export default function TodoDetailHeader() {
           }}
         />
       </FlexibleContainer.Shrink>
-      <FlexibleContainer.Fixed className="flex items-center">
-        {onClose ? (
-          <Button
-            type="text"
-            size="small"
-            icon={<IconClose className="!text-text-3" />}
-            onClick={() => onClose()}
-          />
-        ) : null}
-      </FlexibleContainer.Fixed>
     </FlexibleContainer>
   ) : (
     <></>

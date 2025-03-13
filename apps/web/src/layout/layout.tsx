@@ -12,9 +12,11 @@ import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
 import { GlobalDrawer } from './Drawer';
+import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 
-const Sider = Layout.Sider;
-const Content = Layout.Content;
+const { Fixed, Shrink } = FlexibleContainer;
+
+const Aside = Layout.Sider;
 
 import { RouterContext } from '@/router/useRouter';
 
@@ -42,51 +44,51 @@ function PageLayout() {
     setCollapsed((collapsed) => !collapsed);
   }
 
-  const paddingLeft = showMenu ? { paddingLeft: menuWidth } : {};
-  const paddingTop = showNavbar ? { paddingTop: navbarHeight } : {};
-  const paddingStyle = { ...paddingLeft, ...paddingTop };
-
   useEffect(() => {
     const routeConfig = routeMap.current.get(pathname);
     setBreadCrumb(routeConfig || []);
   }, [pathname]);
 
   return (
-    <Layout className={styles.layout}>
-      <div
+    <FlexibleContainer>
+      <Fixed
         className={cs(styles['layout-navbar'], {
           [styles['layout-navbar-hidden']]: !showNavbar,
         })}
       >
         <Navbar show={showNavbar} />
-      </div>
-      {userLoading ? (
-        <Spin className={styles['spin']} />
-      ) : (
-        <Layout>
-          {showMenu && (
-            <Sider
-              className={styles['layout-sider']}
-              width={menuWidth}
-              collapsed={collapsed}
-              onCollapse={setCollapsed}
-              trigger={null}
-              collapsible
-              breakpoint="xl"
-              style={paddingTop}
-            >
-              <div className={styles['menu-wrapper']}>
-                <Navigate collapsed={collapsed} locale={locale} />
-              </div>
-              <div className={styles['collapse-btn']} onClick={toggleCollapse}>
-                {collapsed ? <IconMenuUnfold /> : <IconMenuFold />}
-              </div>
-            </Sider>
-          )}
-          <Layout className={styles['layout-content']} style={paddingStyle}>
-            <div className={styles['layout-content-wrapper']}>
+      </Fixed>
+      <Shrink direction="vertical">
+        {userLoading ? (
+          <Spin className={styles['spin']} />
+        ) : (
+          <>
+            {showMenu && (
+              <Fixed>
+                <Aside
+                  className={styles['layout-sider']}
+                  width={menuWidth}
+                  collapsed={collapsed}
+                  onCollapse={setCollapsed}
+                  trigger={null}
+                  collapsible
+                  breakpoint="xl"
+                >
+                  <div className={styles['menu-wrapper']}>
+                    <Navigate collapsed={collapsed} locale={locale} />
+                  </div>
+                  <div
+                    className={styles['collapse-btn']}
+                    onClick={toggleCollapse}
+                  >
+                    {collapsed ? <IconMenuUnfold /> : <IconMenuFold />}
+                  </div>
+                </Aside>
+              </Fixed>
+            )}
+            <Shrink className={styles['layout-content']} direction="vertical">
               {!!breadcrumb.length && (
-                <div className={styles['layout-breadcrumb']}>
+                <Fixed className={styles['layout-breadcrumb']}>
                   <Breadcrumb>
                     {breadcrumb.map((node, index) => (
                       <Breadcrumb.Item key={index}>
@@ -94,18 +96,18 @@ function PageLayout() {
                       </Breadcrumb.Item>
                     ))}
                   </Breadcrumb>
-                </div>
+                </Fixed>
               )}
-              <Content className={'h-full w-full'}>
+              <Shrink>
                 <Outlet />
-              </Content>
-            </div>
-            {/* {showFooter && <Footer />} */}
-          </Layout>
-        </Layout>
-      )}
+              </Shrink>
+              {/* {showFooter && <Footer />} */}
+            </Shrink>
+          </>
+        )}
+      </Shrink>
       <GlobalDrawer />
-    </Layout>
+    </FlexibleContainer>
   );
 }
 

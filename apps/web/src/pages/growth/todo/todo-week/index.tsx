@@ -1,14 +1,14 @@
-import TodoList from '../components/TodoList/TodoList';
-import AddTodo from '../../components/AddTodo';
+import { TodoList, TodoCreator, TodoEditor } from '../../components';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
-import TodoDetail from '../components/TodoDetail';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
 import { flushSync } from 'react-dom';
 import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
+
+const { Fixed, Shrink } = FlexibleContainer;
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
@@ -70,27 +70,16 @@ export default function TodoWeek() {
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
-      <FlexibleContainer.Fixed className="px-5 py-2 flex justify-between items-center border-b">
+      <Fixed className="px-5 py-2 flex justify-between items-center border-b">
         <div className="text-text-1 text-title-2 font-medium py-1">
           本周待办
         </div>
-      </FlexibleContainer.Fixed>
+      </Fixed>
 
-      <FlexibleContainer.Shrink className="px-5 w-full h-full flex">
+      <Shrink className="px-5 w-full h-full flex">
         <div className="w-full py-2">
-          <AddTodo
-            onSubmit={async (todoFormData) => {
-              await TodoService.addTodo({
-                name: todoFormData.name,
-                description: todoFormData.description,
-                importance: todoFormData.importance,
-                urgency: todoFormData.urgency,
-                planDate: todoFormData.planDate || undefined,
-                planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-                planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-                repeat: todoFormData.repeat,
-                tags: todoFormData.tags,
-              });
+          <TodoCreator
+            afterSubmit={async () => {
               refreshData();
             }}
           />
@@ -173,19 +162,19 @@ export default function TodoWeek() {
           <>
             <Divider type="vertical" className="!h-full" />{' '}
             <div className="w-full py-2">
-              <TodoDetail
+              <TodoEditor
                 todo={currentTodo}
                 onClose={async () => {
                   showTodoDetail(null);
                 }}
-                onChange={async (todo) => {
+                afterSubmit={async () => {
                   refreshData();
                 }}
               />
             </div>
           </>
         )}
-      </FlexibleContainer.Shrink>
+      </Shrink>
     </FlexibleContainer>
   );
 }

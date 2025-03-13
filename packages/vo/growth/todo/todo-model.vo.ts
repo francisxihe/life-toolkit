@@ -31,9 +31,11 @@ export type TodoModelVo = {
   doneAt?: string;
 
   abandonedAt?: string;
+};
 
+export type TodoItemVo = BaseModelVo & TodoModelVo;
+
+export type TodoVo = TodoItemVo & {
   /** 关联的任务 */
   task?: TaskVo;
 };
-
-export type TodoVo = BaseModelVo & TodoModelVo;

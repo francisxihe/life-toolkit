@@ -4,16 +4,13 @@ import { TodoFilters } from './TodoFilters';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
-import { useAddTodoModal } from '../../components/AddTodo';
-import { useRef } from 'react';
-import { TodoFormData } from '../../service';
+import { useTodoDetail } from '../../components';
 import { useTodoAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
 
 function TodoAll() {
-  const todoFormDataRef = useRef<TodoFormData | null>(null);
   const { getTodoPage } = useTodoAllContext();
-  const { open: openAddTodoModal } = useAddTodoModal();
+  const { CreatePopover: CreateTodoPopover } = useTodoDetail();
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
@@ -28,17 +25,16 @@ function TodoAll() {
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Fixed className="px-5 flex my-3">
-        <CreateButton
-          onClick={() => {
-            openAddTodoModal({
-              afterSubmit: async (todoFormData) => {
-                getTodoPage();
-              },
-            });
+        <CreateTodoPopover
+          creatorProps={{
+            showSubmitButton: true,
+            afterSubmit: async () => {
+              getTodoPage();
+            },
           }}
         >
-          新建
-        </CreateButton>
+          <CreateButton>新建</CreateButton>
+        </CreateTodoPopover>
       </FlexibleContainer.Fixed>
 
       <FlexibleContainer.Shrink className="px-5 w-full h-full flex">

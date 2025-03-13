@@ -1,7 +1,7 @@
 import { createInjectState } from '@/utils/createInjectState';
 import { useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
-import {TodoService} from '../../service';
+import { TodoService } from '../../service';
 import { TodoVo } from '@life-toolkit/vo/growth';
 
 export const [CalendarProvider, useCalendarContext] = createInjectState<{
@@ -43,7 +43,7 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
   }
 
   const getTodoList = async () => {
-    const { list } = await ApiService.getTodoList();
+    const { list } = await TodoService.getTodoList();
     setTodoList(list);
   };
 

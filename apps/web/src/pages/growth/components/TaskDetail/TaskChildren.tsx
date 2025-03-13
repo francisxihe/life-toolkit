@@ -11,7 +11,7 @@ export default function TaskChildren() {
   const { currentTask, showSubTask, refreshTaskDetail } =
     useTaskDetailContext();
 
-  const { CreateTaskPopover } = useTaskDetail();
+  const { CreatePopover: CreateTaskPopover } = useTaskDetail();
 
   return (
     <FlexibleContainer className="gap-2 border-b">

@@ -1,38 +1,38 @@
 import { Popover } from '@arco-design/web-react';
 import { useState } from 'react';
-import TaskEditor, { TaskEditorProps } from './TaskEditor';
-import TaskCreator, { TaskCreatorProps } from './TaskCreator';
+import TodoEditor, { TodoEditorProps } from './TodoEditor';
+import TodoCreator, { TodoCreatorProps } from './TodoCreator';
 import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 
-export { TaskEditor, TaskCreator };
+export { TodoEditor, TodoCreator };
 
-export function useTaskDetail() {
+export function useTodoDetail() {
   const openEditDrawer = (
     props: {
-      contentProps: TaskEditorProps;
+      contentProps: TodoEditorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
     openDrawer({
       ...props,
-      title: '编辑任务',
+      title: '编辑待办',
       width: 800,
       content: () => {
-        return <TaskEditor {...props.contentProps} onClose={props.onClose} />;
+        return <TodoEditor {...props.contentProps} onClose={props.onClose} />;
       },
     });
   };
 
   const openCreateDrawer = (
     props: {
-      contentProps: TaskCreatorProps;
+      contentProps: TodoCreatorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
     openDrawer({
       ...props,
-      title: '新建任务',
+      title: '新建待办',
       width: 800,
       content: () => {
-        return <TaskCreator {...props.contentProps} onClose={props.onClose} />;
+        return <TodoCreator {...props.contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -44,7 +44,7 @@ export function useTaskDetail() {
     creatorProps,
   }: {
     children: React.ReactNode;
-    creatorProps: TaskCreatorProps;
+    creatorProps: TodoCreatorProps;
   }) => {
     return (
       <Popover
@@ -58,8 +58,8 @@ export function useTaskDetail() {
           maxWidth: 'unset',
         }}
         content={
-          <div className="w-[600px] p-4">
-            <TaskCreator size="small" {...creatorProps} />
+          <div className="w-[400px] p-2">
+            <TodoCreator {...creatorProps} />
           </div>
         }
       >

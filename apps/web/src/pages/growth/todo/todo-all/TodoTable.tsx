@@ -3,9 +3,9 @@ import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../service/todo.constants';
 import { useTodoAllContext } from './context';
 import { useEffect } from 'react';
-import {TodoService} from '../../service';
+import { TodoService } from '../../service';
 import { openModal } from '@/hooks/OpenModal';
-import TodoDetail from '../components/TodoDetail';
+import { TodoEditor } from '../../components';
 import { TodoStatus } from '@life-toolkit/vo/growth';
 
 export default function TodoTable() {
@@ -82,11 +82,11 @@ export default function TodoTable() {
                 title: <div className="text-body-3">编辑</div>,
                 content: (
                   <div className="ml-[-6px]">
-                    <TodoDetail
+                    <TodoEditor
                       todo={record}
                       onClose={null}
-                      onChange={async () => {
-                        console.log('onChange');
+                      afterSubmit={async () => {
+                        await getTodoPage();
                       }}
                     />
                   </div>
