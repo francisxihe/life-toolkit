@@ -101,6 +101,11 @@ export default function GoalTable() {
                     await getGoalPage();
                   },
                 },
+                drawerProps: {
+                  onClose: async () => {
+                    await getGoalPage();
+                  },
+                },
               });
             }}
           >

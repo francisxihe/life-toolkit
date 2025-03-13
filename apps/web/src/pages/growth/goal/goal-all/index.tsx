@@ -10,7 +10,6 @@ import { useGoalDetail } from '../components/GoalDetail';
 
 function GoalAll() {
   const { getGoalPage } = useGoalAllContext();
-  const { CreateGoalPopover } = useGoalDetail();
   const { openCreateDrawer } = useGoalDetail();
 
   return (
@@ -29,7 +28,7 @@ function GoalAll() {
         <CreateButton
           onClick={() =>
             openCreateDrawer({
-              creatorProps: {
+              contentProps: {
                 afterSubmit: async () => {
                   getGoalPage();
                 },

@@ -28,7 +28,7 @@ function TaskAll() {
         <CreateButton
           onClick={() => {
             openCreateTaskDrawer({
-              creatorProps: {
+              contentProps: {
                 afterSubmit: async () => {
                   await getTaskPage();
                 },

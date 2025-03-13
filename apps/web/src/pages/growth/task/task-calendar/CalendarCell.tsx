@@ -1,35 +1,27 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
-import { TaskEditor } from '../components/TaskDetail';
-import { openModal } from '@/hooks/OpenModal';
+import { useTaskDetail } from '../../components/TaskDetail';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import SiteIcon from '@/components/SiteIcon';
-import { useTaskDetail } from '../components/TaskDetail';
 
 function TaskItem({ task }: { task: TaskVo }) {
   const { getTaskList } = useCalendarContext();
+
+  const { openEditDrawer } = useTaskDetail();
 
   return (
     <div
       onClick={(e) => {
         e.stopPropagation();
-        openModal({
-          title: <div className="text-body-3">编辑</div>,
-          content: (
-            <div className="ml-[-6px]">
-              <TaskEditor
-                task={task}
-                onClose={null}
-                onChange={async () => {
-                  console.log('onChange');
-                }}
-              />
-            </div>
-          ),
-          onCancel: () => {
-            getTaskList();
+        openEditDrawer({
+          contentProps: {
+            task: task,
+            onClose: null,
+            afterSubmit: async () => {
+              await getTaskList();
+            },
           },
         });
       }}
@@ -53,7 +45,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const { taskList, calendarMode, pageShowDate, getTaskList } =
     useCalendarContext();
 
-  const { openEditDrawer, closeEditDrawer, openCreateDrawer } = useTaskDetail();
+  const { openCreateDrawer } = useTaskDetail();
 
   const todayTaskList = useMemo(() => {
     return taskList.filter((task) =>
@@ -98,17 +90,14 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                 ])}
                 onClick={() => {
                   openCreateDrawer({
-                    drawerProps: {
-                      title: '添加任务',
-                    },
-                    creatorProps: {
+                    contentProps: {
                       initialFormData: {
                         planTimeRange: [
                           cellDate.startOf('day').format('YYYY-MM-DD'),
                           cellDate.endOf('day').format('YYYY-MM-DD'),
                         ],
                       },
-                      afterSubmit: async (todoFormData) => {
+                      afterSubmit: async () => {
                         await getTaskList();
                       },
                     },

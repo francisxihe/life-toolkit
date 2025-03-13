@@ -7,43 +7,35 @@ import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 export { TaskEditor, TaskCreator };
 
 export function useTaskDetail() {
-  let closeEditDrawer: () => void;
 
-  const openEditDrawer = ({
-    drawerProps,
-    editorProps,
-  }: {
-    drawerProps?: Omit<IDrawerOption, 'content'>;
-    editorProps: TaskEditorProps;
-  }) => {
+  const openEditDrawer = (
+    props: {
+      contentProps: TaskEditorProps;
+    } & Omit<IDrawerOption, 'content'>,
+  ) => {
     const { closeDrawer } = openDrawer({
-      ...drawerProps,
+      ...props,
       title: '编辑任务',
       width: 800,
-      content: (props) => {
-        return <TaskEditor {...editorProps} onClose={props.onClose} />;
+      content: () => {
+        return <TaskEditor {...props.contentProps} onClose={props.onClose} />;
       },
     });
-    closeEditDrawer = closeDrawer;
   };
 
-  let closeCreateDrawer: () => void;
-  const openCreateDrawer = ({
-    drawerProps,
-    creatorProps,
-  }: {
-    drawerProps?: Omit<IDrawerOption, 'content'>;
-    creatorProps: TaskCreatorProps;
-  }) => {
-    const { closeDrawer } = openDrawer({
-      ...drawerProps,
+  const openCreateDrawer = (
+    props: {
+      contentProps: TaskCreatorProps;
+    } & Omit<IDrawerOption, 'content'>,
+  ) => {
+    openDrawer({
+      ...props,
       title: '新建任务',
       width: 800,
-      content: (props) => {
-        return <TaskCreator {...creatorProps} onClose={props.onClose} />;
+      content: () => {
+        return <TaskCreator {...props.contentProps} onClose={props.onClose} />;
       },
     });
-    closeCreateDrawer = closeDrawer;
   };
 
   const [createPopoverVisible, setCreatePopoverVisible] = useState(false);
@@ -84,9 +76,7 @@ export function useTaskDetail() {
 
   return {
     openEditDrawer,
-    closeEditDrawer,
     openCreateDrawer,
-    closeCreateDrawer,
     CreateTaskPopover,
   };
 }

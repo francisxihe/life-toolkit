@@ -7,8 +7,6 @@ import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 export { GoalEditor, GoalCreator };
 
 export function useGoalDetail() {
-  let closeEditDrawer: () => void;
-
   const openEditDrawer = ({
     drawerProps,
     editorProps,
@@ -24,26 +22,21 @@ export function useGoalDetail() {
         return <GoalEditor {...editorProps} onClose={props.onClose} />;
       },
     });
-    closeEditDrawer = closeDrawer;
   };
 
-  let closeCreateDrawer: () => void;
-  const openCreateDrawer = ({
-    drawerProps,
-    creatorProps,
-  }: {
-    drawerProps?: Omit<IDrawerOption, 'content'>;
-    creatorProps: GoalCreatorProps;
-  }) => {
+  const openCreateDrawer = (
+    props: {
+      contentProps: GoalCreatorProps;
+    } & Omit<IDrawerOption, 'content'>,
+  ) => {
     const { closeDrawer } = openDrawer({
-      ...drawerProps,
+      ...props,
       title: '新建目标',
       width: 800,
-      content: (props) => {
-        return <GoalCreator {...creatorProps} onClose={props.onClose} />;
+      content: () => {
+        return <GoalCreator {...props.contentProps} onClose={props.onClose} />;
       },
     });
-    closeCreateDrawer = closeDrawer;
   };
 
   const [createPopoverVisible, setCreatePopoverVisible] = useState(false);
@@ -84,9 +77,7 @@ export function useGoalDetail() {
 
   return {
     openEditDrawer,
-    closeEditDrawer,
     openCreateDrawer,
-    closeCreateDrawer,
     CreateGoalPopover,
   };
 }

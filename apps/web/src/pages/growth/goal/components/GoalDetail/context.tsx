@@ -100,7 +100,6 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
       parentId: goalFormData.parentId,
     });
     setGoalFormData(defaultFormData);
-    await props.afterSubmit?.();
   }
 
   async function handleUpdate(data: Partial<UpdateGoalVo>) {
@@ -113,6 +112,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
     } else {
       await handleUpdate(GoalMapping.formDataToUpdateVo(goalFormData));
     }
+    await props.afterSubmit?.();
   };
 
   return {

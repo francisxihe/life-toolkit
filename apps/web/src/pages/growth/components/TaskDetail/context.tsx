@@ -105,7 +105,6 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
       children: [],
     });
     setTaskFormData(defaultFormData);
-    await props.afterSubmit?.();
   }
 
   async function handleUpdate(data: Partial<UpdateTaskVo>) {
@@ -118,6 +117,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     } else {
       await handleUpdate(TaskMapping.formDataToUpdateVo(taskFormData));
     }
+    await props.afterSubmit?.();
   };
 
   return {

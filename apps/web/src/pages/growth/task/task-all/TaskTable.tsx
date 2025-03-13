@@ -5,14 +5,11 @@ import { useTaskAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { TaskService } from '../../service';
 import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
-import { useTaskDetail } from '../components/TaskDetail';
+import { useTaskDetail } from '../../components';
 
 export default function TaskTable() {
   const { taskList, getTaskPage } = useTaskAllContext();
-  const {
-    openEditDrawer: openEditTaskDrawer,
-    closeEditDrawer: closeEditTaskDrawer,
-  } = useTaskDetail();
+  const { openEditDrawer: openEditTaskDrawer } = useTaskDetail();
 
   useEffect(() => {
     async function initData() {
@@ -91,14 +88,7 @@ export default function TaskTable() {
             type="text"
             onClick={() => {
               openEditTaskDrawer({
-                drawerProps: {
-                  title: <div className="text-body-3">编辑</div>,
-                  onCancel: () => {
-                    closeEditTaskDrawer();
-                    getTaskPage();
-                  },
-                },
-                editorProps: {
+                contentProps: {
                   task: record,
                   afterSubmit: async () => {
                     await getTaskPage();

@@ -24,7 +24,7 @@ export default function TaskDetailTodoList() {
           type="text"
           onClick={() => {
             openAddTaskDrawer({
-              creatorProps: {
+              contentProps: {
                 initialFormData: {
                   goalId: currentGoal.id,
                 },
