@@ -6,6 +6,7 @@ import type {
   UpdateTaskVo,
   GoalItemVo,
   TaskItemVo,
+  CreateTaskVo,
 } from '@life-toolkit/vo/growth';
 import {
   TaskFormData,
@@ -86,17 +87,11 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     init();
   }, [props.mode, initTaskFormData]);
 
-  async function handleCreate() {
+  async function handleCreate(createTaskVo: CreateTaskVo) {
     if (!taskFormData.name) {
       return;
     }
-    await TaskService.addTask({
-      name: taskFormData.name,
-      startAt: taskFormData.planTimeRange?.[0] || undefined,
-      endAt: taskFormData.planTimeRange?.[1] || undefined,
-      parentId: taskFormData.parentId,
-      children: [],
-    });
+    await TaskService.addTask(createTaskVo);
     setTaskFormData(defaultFormData);
   }
 
@@ -106,7 +101,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
 
   const onSubmit = async () => {
     if (props.mode === 'creator') {
-      await handleCreate();
+      await handleCreate(TaskMapping.formDataToCreateVo(taskFormData));
     } else {
       await handleUpdate(TaskMapping.formDataToUpdateVo(taskFormData));
     }

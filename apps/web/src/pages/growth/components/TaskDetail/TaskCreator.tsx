@@ -13,9 +13,8 @@ export type TaskCreatorProps = {
   initialFormData?: TaskDetailContextProps['initialFormData'];
   size?: TaskDetailContextProps['size'];
   afterSubmit?: TaskDetailContextProps['afterSubmit'];
-  onClose?: () => void;
+  onClose?: () => Promise<void>;
 } & React.ComponentProps<typeof Popover>;
-
 
 export default function TaskCreator(props: TaskCreatorProps) {
   return (
@@ -37,7 +36,7 @@ export default function TaskCreator(props: TaskCreatorProps) {
   );
 }
 
-function Footer(props: { onClose?: () => void }) {
+function Footer(props: { onClose?: () => Promise<void> }) {
   const { onSubmit } = useTaskDetailContext();
   return (
     <div className="flex justify-end gap-2">

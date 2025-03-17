@@ -12,6 +12,7 @@ import {
   IsNull,
   Not,
   TreeRepository,
+  EntityManager,
 } from "typeorm";
 import { Task, TaskStatus } from "./entities";
 import { TrackTime } from "../track-time";
@@ -26,7 +27,7 @@ import {
 import { TaskMapper } from "./mappers";
 import { TodoService } from "../todo/todo.service";
 import { TaskTreeService } from "./task-tree.service";
-
+import { GoalService } from "../goal/goal.service";
 function getWhere(filter: TaskPageFilterDto) {
   const where: FindOptionsWhere<Task> = {};
 
@@ -71,6 +72,9 @@ function getWhere(filter: TaskPageFilterDto) {
   }
   if (filter.urgency) {
     where.urgency = filter.urgency;
+  }
+  if (filter.goalIds) {
+    where.goalId = In(filter.goalIds);
   }
   return where;
 }
@@ -131,15 +135,17 @@ export class TaskService {
     });
   }
 
-  async batchDelete(ids: string[]): Promise<void> {
-    if (ids.length === 0) {
-      return;
-    }
+  async deleteByFilter(
+    filter: TaskListFilterDto,
+    transactionalManager?: EntityManager
+  ): Promise<void> {
+    const taskList = await this.findAll(filter);
 
-    const treeRepo = this.taskTreeService.getTreeRepo();
+    const taskManager = transactionalManager || this.taskRepository.manager;
+    const treeRepo = taskManager.getTreeRepository(Task);
 
     const taskListToDelete = await treeRepo.find({
-      where: { id: In(ids) },
+      where: { id: In(taskList.map((task) => task.id)) },
       relations: ["children"],
     });
 
@@ -148,14 +154,16 @@ export class TaskService {
     }
 
     // 使用事务确保数据一致性
-    await this.taskRepository.manager.transaction(async (taskManager) => {
+    await taskManager.transaction(async (taskManager) => {
       await this.taskTreeService.deleteChildren(
         taskListToDelete,
         taskManager.getTreeRepository(Task)
       );
 
       // 删除所有节点
-      await taskManager.delete(Task, taskListToDelete);
+      await taskManager.delete(Task, {
+        id: In(taskListToDelete.map((task) => task.id)),
+      });
     });
   }
 
@@ -182,11 +190,15 @@ export class TaskService {
           );
         }
 
+        if (updateTaskDto.goalId) {
+          updateTask.goalId = updateTaskDto.goalId;
+        }
+
         const updateTaskEntity = TaskMapper.updateDtoToEntity(
           updateTaskDto,
           updateTask
         );
-        delete updateTaskDto.parentId;
+
         await treeRepo.update(id, updateTaskEntity);
       }
     );
@@ -214,7 +226,7 @@ export class TaskService {
         ...getWhere(filter),
         id: Not(In(flatChildrenIds)),
       },
-      relations: ["children"],
+      relations: ["children", "goal"],
     });
 
     return taskList

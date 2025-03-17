@@ -12,12 +12,13 @@ export function useTaskDetail() {
       contentProps: TaskEditorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...props,
+      ...rest,
       title: '编辑任务',
       width: 800,
-      content: () => {
-        return <TaskEditor {...props.contentProps} onClose={props.onClose} />;
+      content: (props) => {
+        return <TaskEditor {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -27,12 +28,13 @@ export function useTaskDetail() {
       contentProps: TaskCreatorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...props,
+      ...rest,
       title: '新建任务',
       width: 800,
-      content: () => {
-        return <TaskCreator {...props.contentProps} onClose={props.onClose} />;
+      content: (props) => {
+        return <TaskCreator {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -59,7 +61,14 @@ export function useTaskDetail() {
         }}
         content={
           <div className="w-[600px] p-4">
-            <TaskCreator size="small" {...creatorProps} />
+            <TaskCreator
+              size="small"
+              {...creatorProps}
+              onClose={async () => {
+                await creatorProps.onClose?.();
+                setCreatePopoverVisible(false);
+              }}
+            />
           </div>
         }
       >

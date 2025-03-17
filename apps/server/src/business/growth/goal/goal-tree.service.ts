@@ -1,6 +1,6 @@
 import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, TreeRepository } from "typeorm";
+import { Repository, TreeRepository, In } from "typeorm";
 import { Goal } from "./entities";
 
 @Injectable()
@@ -64,6 +64,8 @@ export class GoalTreeService {
       allIds.push(...descendantsNodes.map((node) => node.id));
     }
 
-    await treeRepo.delete(allIds);
+    await treeRepo.delete({
+      id: In(allIds),
+    });
   }
 }

@@ -8,6 +8,7 @@ import {
   MoreThan,
   LessThan,
   Like,
+  In,
 } from "typeorm";
 import { Todo, TodoStatus } from "./entities";
 import {
@@ -71,6 +72,9 @@ function getWhere(filter: TodoPageFilterDto) {
   }
   if (filter.taskId) {
     where.taskId = filter.taskId;
+  }
+  if (filter.taskIds) {
+    where.taskId = In(filter.taskIds);
   }
 
   return where;

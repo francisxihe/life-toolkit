@@ -21,6 +21,9 @@ export class TaskListFilterDto extends PartialType(
   /** 放弃结束日期 */
   abandonedDateEnd?: string;
 
+  /** 目标ID */
+  goalIds?: string[];
+
   /** 不包含自身 */
   withoutSelf?: boolean;
 

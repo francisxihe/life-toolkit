@@ -209,16 +209,26 @@ export class GoalService {
     const descendantsNodes = await treeRepository.findDescendants(goalToDelete);
 
     const allIds = descendantsNodes.map((node) => node.id);
-    const taskList = await this.taskService.findByGoalIds(allIds);
-    await this.taskService.batchDelete(taskList.map((task) => task.id));
+    allIds.push(goalToDelete.id);
 
     // 使用事务确保数据一致性
     await this.goalRepository.manager.transaction(async (goalManager) => {
       const treeRepo = goalManager.getTreeRepository(Goal);
+
+      // 先删除关联的任务
+      await this.taskService.deleteByFilter(
+        {
+          goalIds: allIds,
+        },
+        goalManager
+      );
+
+      // 再删除目标及其子节点
       await this.goalTreeService.deleteChildren(goalToDelete, treeRepo);
 
-      // 删除所有节点
-      await goalManager.delete(Goal, goalToDelete);
+      await goalManager.delete(Goal, {
+        id: goalToDelete.id,
+      });
     });
   }
 

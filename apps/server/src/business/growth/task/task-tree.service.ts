@@ -1,13 +1,14 @@
 import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, TreeRepository } from "typeorm";
+import { Repository, TreeRepository, In } from "typeorm";
 import { Task } from "./entities";
-
+import { TodoService } from "../todo/todo.service";
 @Injectable()
 export class TaskTreeService {
   constructor(
     @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>
+    private readonly taskRepository: Repository<Task>,
+    private readonly todoService: TodoService
   ) {}
 
   /** 获取Task树形存储库 */
@@ -48,6 +49,7 @@ export class TaskTreeService {
     if (!treeRepo) {
       treeRepo = this.getTreeRepo();
     }
+
     const getAllDescendantIds = (node: Task): string[] => {
       const ids = [node.id];
       if (node.children) {
@@ -69,6 +71,12 @@ export class TaskTreeService {
       allIds.push(...getAllDescendantIds(descendantsTree));
     }
 
-    await treeRepo.delete(allIds);
+    await this.todoService.deleteByFilter({
+      taskIds: allIds,
+    });
+
+    await treeRepo.delete({
+      id: In(allIds),
+    });
   }
 }

@@ -7,9 +7,12 @@ import { TaskService } from "./task.service";
 import { TaskStatusService } from "./task-status.service";
 import { TodoModule } from "../todo/todo.module";
 import { TaskTreeService } from "./task-tree.service";
-
+import { GoalModule } from "../goal/goal.module";
 @Module({
-  imports: [TypeOrmModule.forFeature([Task, TrackTime]), TodoModule],
+  imports: [
+    TypeOrmModule.forFeature([Task, TrackTime]),
+    TodoModule,
+  ],
   controllers: [TaskController],
   providers: [TaskService, TaskStatusService, TaskTreeService],
   exports: [TaskService, TaskStatusService, TaskTreeService],

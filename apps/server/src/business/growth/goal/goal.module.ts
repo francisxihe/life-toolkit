@@ -17,6 +17,6 @@ import { GoalTreeService } from "./goal-tree.service";
   ],
   controllers: [GoalController],
   providers: [GoalService, GoalStatusService, GoalTreeService],
-  exports: [GoalService],
+  exports: [GoalService, GoalStatusService, GoalTreeService],
 })
 export class GoalModule {}

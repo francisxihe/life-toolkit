@@ -59,7 +59,13 @@ export function useTodoDetail() {
         }}
         content={
           <div className="w-[400px] p-2">
-            <TodoCreator {...creatorProps} />
+            <TodoCreator
+              {...creatorProps}
+              onClose={async () => {
+                await creatorProps.onClose?.();
+                setCreatePopoverVisible(false);
+              }}
+            />
           </div>
         }
       >

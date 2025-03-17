@@ -1,4 +1,4 @@
-import type { TaskVo, UpdateTaskVo } from '@life-toolkit/vo/growth';
+import type { TaskVo, UpdateTaskVo, CreateTaskVo } from '@life-toolkit/vo/growth';
 import type { TaskFormData } from './task.types';
 
 export class TaskMapping {
@@ -21,6 +21,17 @@ export class TaskMapping {
     };
   }
 
+  static formDataToCreateVo(formData: TaskFormData): CreateTaskVo {
+    const { isSubTask, ...rest } = formData;
+    return {
+      ...rest,
+      parentId: isSubTask ? formData.parentId : undefined,
+      goalId: isSubTask ? undefined : formData.goalId,
+      startAt: formData.planTimeRange[0],
+      endAt: formData.planTimeRange[1],
+      children: formData.children || [],
+    };
+  }
   static formDataToUpdateVo(formData: TaskFormData): UpdateTaskVo {
     const { isSubTask, ...rest } = formData;
     return {
@@ -30,7 +41,6 @@ export class TaskMapping {
       startAt: formData.planTimeRange[0],
       endAt: formData.planTimeRange[1],
       children: formData.children || [],
-      // trackTimeList: formData.trackTimeList || [],
     };
   }
 }

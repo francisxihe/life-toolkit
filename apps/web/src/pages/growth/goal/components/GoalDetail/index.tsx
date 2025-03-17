@@ -7,19 +7,18 @@ import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 export { GoalEditor, GoalCreator };
 
 export function useGoalDetail() {
-  const openEditDrawer = ({
-    drawerProps,
-    editorProps,
-  }: {
-    drawerProps?: Omit<IDrawerOption, 'content'>;
-    editorProps: GoalEditorProps;
-  }) => {
+  const openEditDrawer = (
+    props: {
+      contentProps: GoalEditorProps;
+    } & Omit<IDrawerOption, 'content'>,
+  ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...drawerProps,
+      ...rest,
       title: '编辑目标',
       width: 800,
       content: (props) => {
-        return <GoalEditor {...editorProps} onClose={props.onClose} />;
+        return <GoalEditor {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -29,12 +28,13 @@ export function useGoalDetail() {
       contentProps: GoalCreatorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...props,
+      ...rest,
       title: '新建目标',
       width: 800,
-      content: () => {
-        return <GoalCreator {...props.contentProps} onClose={props.onClose} />;
+      content: (props) => {
+        return <GoalCreator {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -61,7 +61,14 @@ export function useGoalDetail() {
         }}
         content={
           <div className="w-[600px] p-4">
-            <GoalCreator size="small" {...creatorProps} />
+            <GoalCreator
+              size="small"
+              {...creatorProps}
+              onClose={async () => {
+                await creatorProps.onClose?.();
+                setCreatePopoverVisible(false);
+              }}
+            />
           </div>
         }
       >

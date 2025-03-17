@@ -95,14 +95,9 @@ export default function GoalTable() {
             type="text"
             onClick={() => {
               openEditDrawer({
-                editorProps: {
+                contentProps: {
                   goal: record,
                   afterSubmit: async () => {
-                    await getGoalPage();
-                  },
-                },
-                drawerProps: {
-                  onClose: async () => {
                     await getGoalPage();
                   },
                 },
