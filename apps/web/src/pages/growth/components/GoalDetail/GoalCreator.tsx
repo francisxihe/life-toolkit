@@ -20,7 +20,6 @@ export default function GoalCreator(props: GoalCreatorProps) {
   return (
     <GoalDetailProvider
       initialFormData={props.initialFormData}
-      mode="creator"
       size={props.size}
       afterSubmit={props.afterSubmit}
     >
@@ -37,13 +36,17 @@ export default function GoalCreator(props: GoalCreatorProps) {
 }
 
 function Footer(props: { onClose?: () => void }) {
-  const { onSubmit } = useGoalDetailContext();
+  const { onSubmit, goalFormData, handleCreate } = useGoalDetailContext();
   return (
     <div className="flex justify-end gap-2">
       <Button onClick={() => props.onClose?.()}>取消</Button>
       <Button
         type="primary"
         onClick={async () => {
+          if (!goalFormData.name) {
+            return;
+          }
+          await handleCreate();
           await onSubmit();
           props.onClose?.();
         }}

@@ -5,33 +5,32 @@ import {
   Select,
   Form,
   Radio,
-  Spin,
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
 import { GoalType } from '@life-toolkit/vo/growth';
-import { useComponentLoad } from '@/hooks/lifecycle';
+import { useEffect } from 'react';
+import { GoalMapping } from '../../service';
 
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
 
 export default function GoalForm() {
-  const { goalFormData, setGoalFormData, goalList, currentGoal, loading } =
+  const { goalList, currentGoal, goalFormData, setGoalFormData } =
     useGoalDetailContext();
 
   const [form] = Form.useForm();
 
-  const { handleComponentLoaded } = useComponentLoad(async () => {
+  useEffect(() => {
     if (currentGoal?.id) {
-      form.setFieldsValue(goalFormData);
-      handleComponentLoaded();
+      const formData = GoalMapping.voToGoalFormData(currentGoal);
+      setGoalFormData(formData);
+      form.setFieldsValue(formData);
     }
-  });
+  }, [currentGoal, form, setGoalFormData]);
 
-  if (loading) {
-    return <Spin dot />;
-  }
   if (!goalFormData) return null;
+
   return (
     <Form
       form={form}

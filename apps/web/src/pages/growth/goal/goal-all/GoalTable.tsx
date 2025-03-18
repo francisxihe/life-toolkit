@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
 import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
-import { useGoalDetail } from '../components/GoalDetail';
+import { useGoalDetail } from '../../components/GoalDetail';
 
 export default function GoalTable() {
   const { goalList, getGoalPage } = useGoalAllContext();

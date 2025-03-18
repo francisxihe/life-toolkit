@@ -2,8 +2,8 @@ import { useGoalDetailContext } from './context';
 import clsx from 'clsx';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useTaskDetail } from '../../../components';
-import TaskList from '../../../components/TaskList';
+import { useTaskDetail } from '..';
+import TaskList from '../TaskList';
 
 const { Shrink, Fixed } = FlexibleContainer;
 
@@ -21,7 +21,7 @@ export default function TaskDetailTodoList() {
             'flex justify-between items-center',
           ])}
         >
-          待办列表
+          任务列表
           <CreateTaskPopover
             creatorProps={{
               initialFormData: {
@@ -43,7 +43,7 @@ export default function TaskDetailTodoList() {
             <TaskList
               taskList={currentGoal.taskList}
               onClickTask={async (id) => {
-                //
+                // 
               }}
               refreshTaskList={async () => {
                 await refreshGoalDetail(currentGoal.id);

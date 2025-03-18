@@ -10,7 +10,10 @@ const { Shrink, Fixed } = FlexibleContainer;
 export default function TaskDetailTodoList() {
   const { currentTask, refreshTaskDetail } = useTaskDetailContext();
 
-  const { openCreateDrawer: openCreateTodoDrawer } = useTodoDetail();
+  const { CreatePopover: CreateTodoPopover } = useTodoDetail();
+
+  if (!currentTask) return null;
+
   return (
     <FlexibleContainer className="gap-2">
       <Fixed
@@ -20,23 +23,18 @@ export default function TaskDetailTodoList() {
         ])}
       >
         待办列表
-        <CreateButton
-          type="text"
-          onClick={() => {
-            openCreateTodoDrawer({
-              contentProps: {
-                initialFormData: {
-                  taskId: currentTask.id,
-                },
-                afterSubmit: async () => {
-                  await refreshTaskDetail(currentTask.id);
-                },
-              },
-            });
+        <CreateTodoPopover
+          creatorProps={{
+            initialFormData: {
+              taskId: currentTask.id,
+            },
+            afterSubmit: async () => {
+              await refreshTaskDetail(currentTask.id);
+            },
           }}
         >
-          添加待办
-        </CreateButton>
+          <CreateButton type="text">添加待办</CreateButton>
+        </CreateTodoPopover>
       </Fixed>
       <Shrink className="overflow-auto">
         {currentTask?.todoList && (

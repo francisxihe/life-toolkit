@@ -6,7 +6,7 @@ import { GoalAllProvider } from './context';
 import GoalTable from './GoalTable';
 import { useGoalAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
-import { useGoalDetail } from '../components/GoalDetail';
+import { useGoalDetail } from '../../components/GoalDetail';
 
 function GoalAll() {
   const { getGoalPage } = useGoalAllContext();

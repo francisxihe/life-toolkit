@@ -1,4 +1,8 @@
-import type { GoalVo, UpdateGoalVo } from '@life-toolkit/vo/growth';
+import type {
+  GoalVo,
+  UpdateGoalVo,
+  CreateGoalVo,
+} from '@life-toolkit/vo/growth';
 import type { GoalFormData } from './goal.types';
 
 export class GoalMapping {
@@ -14,6 +18,14 @@ export class GoalMapping {
       children:
         goalVo.children?.map((child) => GoalMapping.voToGoalFormData(child)) ||
         [],
+    };
+  }
+
+  static formDataToCreateVo(formData: GoalFormData): CreateGoalVo {
+    return {
+      ...formData,
+      startAt: formData.planTimeRange[0],
+      endAt: formData.planTimeRange[1],
     };
   }
 

@@ -61,6 +61,7 @@ export class TaskTreeService {
     };
 
     const allIds: string[] = [];
+    
     if (Array.isArray(task)) {
       for (const t of task) {
         const descendantsTree = await treeRepo.findDescendantsTree(t);

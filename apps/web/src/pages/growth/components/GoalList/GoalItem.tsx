@@ -2,9 +2,9 @@
 
 import { Typography, Popover, Button } from '@arco-design/web-react';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
-import IconSelector from '../../../components/IconSelector';
+import IconSelector from '../IconSelector';
 import SiteIcon from '@/components/SiteIcon';
-import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../../service';
+import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../service';
 import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
 import clsx from 'clsx';
 
