@@ -71,6 +71,8 @@ const i18n = {
     'menu.expense.transaction': 'Transactions',
     'menu.expense.budget': 'Budgets',
     'menu.expense.overview': 'Overview',
+    'menu.goal': 'Goal',
+    'menu.goal.all': 'All Goals',
   },
   'zh-CN': {
     'menu.dashboard': '仪表盘',
@@ -143,6 +145,8 @@ const i18n = {
     'menu.expense.transaction': '账单',
     'menu.expense.budget': '预算',
     'menu.expense.overview': '总览',
+    'menu.goal': '目标',
+    'menu.goal.all': '全部目标',
   },
 };
 
