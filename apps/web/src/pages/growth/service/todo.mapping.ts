@@ -18,13 +18,8 @@ export default class TodoMapping {
   static formDataToUpdateVo(formData: TodoFormData): UpdateTodoVo {
     return {
       ...formData,
-      planStartAt: formData.planTimeRange[0],
-      planEndAt: formData.planTimeRange[1],
-      repeat: formData.repeat,
-      importance: formData.importance,
-      urgency: formData.urgency,
-      tags: formData.tags,
-      description: formData.description,
+      planStartAt: formData.planTimeRange?.[0],
+      planEndAt: formData.planTimeRange?.[1],
     };
   }
 }

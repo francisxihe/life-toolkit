@@ -5,7 +5,7 @@ import { RECURRENCE_PATTERNS } from '../../service';
 import SiteIcon from '@/components/SiteIcon';
 import { useState } from 'react';
 import 'dayjs/locale/zh-cn';
-
+import { RepeatSelector } from '../Repeat';
 const { RangePicker } = TimePicker;
 
 dayjs.locale('zh-cn');
@@ -82,7 +82,7 @@ export default function DateTimeTool(props: {
                     className="cursor-pointer px-2"
                   >
                     {pageShowDate?.format(
-                      mode === 'year' ? 'YYYY年' : 'YYYY年MM月'
+                      mode === 'year' ? 'YYYY年' : 'YYYY年MM月',
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -152,6 +152,12 @@ export default function DateTimeTool(props: {
                 </Select.Option>
               ))}
             </Select>
+
+            <RepeatSelector
+              onChange={(value) => {
+                onChangeData({ ...formData, repeat: value });
+              }}
+            />
           </div>
         </div>
       }

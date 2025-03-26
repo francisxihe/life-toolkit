@@ -1,6 +1,6 @@
 import { Input } from '@arco-design/web-react';
 import clsx from 'clsx';
-import { useTodoDetailContext } from './context';
+import { useTodoDetailContext } from '../context';
 
 const TextArea = Input.TextArea;
 

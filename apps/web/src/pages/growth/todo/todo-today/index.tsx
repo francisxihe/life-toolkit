@@ -1,6 +1,5 @@
-import { TodoList, TodoCreator, TodoEditor } from '../../components';
+import { TodoList, TodoCreatorSimple, TodoEditor } from '../../components';
 import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
@@ -8,13 +7,12 @@ import { TodoService } from '../../service';
 import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
+import { useTodoContext } from '../context';
 
 const { Fixed, Shrink } = FlexibleContainer;
 
-const today = dayjs().format('YYYY-MM-DD');
-const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-
 export default function TodoToday() {
+  const { today, yesterday } = useTodoContext();
   const [todayTodoList, setTodayTodoList] = useState<TodoVo[]>([]);
   const [todayDoneTodoList, setTodayDoneTodoList] = useState<TodoVo[]>([]);
   const [expiredTodoList, setExpiredTodoList] = useState<TodoVo[]>([]);
@@ -80,7 +78,7 @@ export default function TodoToday() {
       <Shrink className="px-5 flex" direction="vertical">
         <Shrink className="py-2" direction="horizontal">
           <Fixed>
-            <TodoCreator
+            <TodoCreatorSimple
               afterSubmit={async () => {
                 refreshData();
               }}

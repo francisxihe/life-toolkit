@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { useTodoDetailContext, TodoDetailProvider } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
 
-export type TodoCreatorProps = {
+export type TodoCreatorSimpleProps = {
   hiddenDate?: boolean;
   showSubmitButton?: boolean;
   initialFormData?: Partial<TodoFormData>;
@@ -17,7 +17,7 @@ export type TodoCreatorProps = {
   afterSubmit?: () => Promise<void>;
 };
 
-export default function TodoCreator(props: TodoCreatorProps) {
+export default function TodoCreatorSimple(props: TodoCreatorSimpleProps) {
   return (
     <TodoDetailProvider
       mode="creator"
@@ -50,6 +50,11 @@ function TodoCreatorMain(props: {
             className="text-body-3 !bg-transparent !border-none mb-1"
             onChange={async (value) => {
               setTodoFormData({ ...todoFormData, name: value });
+            }}
+            onPressEnter={() => {
+              if (!props.showSubmitButton) {
+                onSubmit();
+              }
             }}
           />
         </div>
@@ -145,17 +150,19 @@ function TodoCreatorMain(props: {
           </Popover>
         </div>
       </div>
-      <div className="flex justify-end mt-4">
-        <CreateButton
-          type="outline"
-          size="small"
-          onClick={() => {
-            onSubmit();
-          }}
-        >
-          提交
-        </CreateButton>
-      </div>
+      {props.showSubmitButton && (
+        <div className="flex justify-end mt-4">
+          <CreateButton
+            type="outline"
+            size="small"
+            onClick={() => {
+              onSubmit();
+            }}
+          >
+            提交
+          </CreateButton>
+        </div>
+      )}
     </>
   );
 }

@@ -107,6 +107,7 @@ export class TodoService {
       where: getWhere(filter),
     });
 
+
     return todoList.map((todo) => ({
       ...todo,
     }));

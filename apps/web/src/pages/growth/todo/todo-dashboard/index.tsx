@@ -8,6 +8,7 @@ import { TodoService } from '../../service';
 import styles from './style/index.module.less';
 import { Space } from '@arco-design/web-react';
 import Overview from './overview';
+import { TodoProvider } from './context';
 
 const { Row, Col } = Grid;
 const { Title } = Typography;
@@ -67,10 +68,11 @@ export default function TodoDashboardPage() {
   }, [todoList]);
 
   return (
-    <div className={styles.wrapper}>
-      <Space size={16} direction="vertical" className={styles.left}>
-        <Overview />
-        {/* <Row gutter={gutter}>
+    <TodoProvider>
+      <div className={styles.wrapper}>
+        <Space size={16} direction="vertical" className={styles.left}>
+          <Overview />
+          {/* <Row gutter={gutter}>
           <Col span={12}>
             <PopularContents />
           </Col>
@@ -83,9 +85,10 @@ export default function TodoDashboardPage() {
         <Shortcuts />
         <Carousel />
         <Announcement />
-        <Docs /> */}
-      </Space>
-    </div>
+          <Docs /> */}
+        </Space>
+      </div>
+    </TodoProvider>
     // <div className="space-y-6">
     //   <Title heading={3}>待办看板</Title>
 

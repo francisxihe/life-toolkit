@@ -40,7 +40,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   ContextType: {
     currentTodo: CurrentTodo;
     todoFormData: TodoFormData;
-    setTodoFormData: Dispatch<React.SetStateAction<TodoFormData>>;
+    setTodoFormData: (formData: Partial<TodoFormData>) => void;
     onSubmit: () => Promise<void>;
   };
 }>((props) => {
@@ -55,10 +55,13 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   const [todoFormData, setTodoFormData] =
     useState<TodoFormData>(defaultFormData);
 
+  const todoFormDataRef = useRef<TodoFormData>(todoFormData);
+
   const refreshTodoDetail = async (id: string) => {
     const todo = await TodoService.getTodo(id);
     setCurrentTodo(todo);
-    setTodoFormData(TodoMapping.voToFormData(todo));
+    todoFormDataRef.current = TodoMapping.voToFormData(todo);
+    setTodoFormData(todoFormDataRef.current);
   };
 
   const initTodoFormData = useCallback(async () => {
@@ -75,24 +78,26 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   }, [props.mode, initTodoFormData]);
 
   async function handleCreate() {
-    if (!todoFormData.name) {
+    if (!todoFormDataRef.current.name) {
       return;
     }
     await TodoService.addTodo({
-      name: todoFormData.name,
-      planDate: todoFormData.planDate,
-      planStartAt: todoFormData.planTimeRange?.[0] || undefined,
-      planEndAt: todoFormData.planTimeRange?.[1] || undefined,
-      repeat: todoFormData.repeat,
-      importance: todoFormData.importance,
-      urgency: todoFormData.urgency,
-      tags: todoFormData.tags,
-      description: todoFormData.description,
+      name: todoFormDataRef.current.name,
+      planDate: todoFormDataRef.current.planDate,
+      planStartAt: todoFormDataRef.current.planTimeRange?.[0] || undefined,
+      planEndAt: todoFormDataRef.current.planTimeRange?.[1] || undefined,
+      repeat: todoFormDataRef.current.repeat,
+      importance: todoFormDataRef.current.importance,
+      urgency: todoFormDataRef.current.urgency,
+      tags: todoFormDataRef.current.tags,
+      description: todoFormDataRef.current.description,
     });
-    setTodoFormData(defaultFormData);
+    todoFormDataRef.current = defaultFormData;
+    setTodoFormData(todoFormDataRef.current);
   }
 
-  async function handleUpdate(data: Partial<UpdateTodoVo>) {
+  async function handleUpdate() {
+    const data = TodoMapping.formDataToUpdateVo(todoFormDataRef.current);
     await TodoService.updateTodo(currentTodo.id, data);
   }
 
@@ -100,7 +105,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
     if (props.mode === 'creator') {
       await handleCreate();
     } else {
-      await handleUpdate(TodoMapping.formDataToUpdateVo(todoFormData));
+      await handleUpdate();
     }
     await props.afterSubmit?.();
   };
@@ -108,7 +113,10 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   return {
     currentTodo,
     todoFormData,
-    setTodoFormData,
+    setTodoFormData: (formData: Partial<TodoFormData>) => {
+      todoFormDataRef.current = { ...todoFormDataRef.current, ...formData };
+      setTodoFormData(todoFormDataRef.current);
+    },
     onSubmit,
   };
 });

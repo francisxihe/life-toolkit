@@ -19,7 +19,8 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@life-toolkit/vo": ["../../libs/vo/src/index.ts"]
     }
   },
   "include": ["src/**/*"],

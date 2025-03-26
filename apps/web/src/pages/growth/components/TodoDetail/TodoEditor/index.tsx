@@ -1,8 +1,9 @@
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { TodoVo } from '@life-toolkit/vo/growth';
-import { TodoDetailProvider } from './context';
+import { TodoDetailProvider, useTodoDetailContext } from '../context';
 import TodoEditorMain from './TodoEditorMain';
 import TodoEditorHeader from './TodoEditorHeader';
+import { Button } from '@arco-design/web-react';
 
 const { Fixed, Shrink } = FlexibleContainer;
 
@@ -26,7 +27,28 @@ export default function TodoEditor(props: TodoEditorProps) {
         <Shrink>
           <TodoEditorMain />
         </Shrink>
+        <Fixed>
+          <Footer onClose={props.onClose} />
+        </Fixed>
       </FlexibleContainer>
     </TodoDetailProvider>
+  );
+}
+
+function Footer(props: { onClose?: () => void }) {
+  const { onSubmit } = useTodoDetailContext();
+  return (
+    <div className="flex justify-end gap-2">
+      <Button onClick={() => props.onClose?.()}>取消</Button>
+      <Button
+        type="primary"
+        onClick={async () => {
+          await onSubmit();
+          props.onClose?.();
+        }}
+      >
+        确认
+      </Button>
+    </div>
   );
 }

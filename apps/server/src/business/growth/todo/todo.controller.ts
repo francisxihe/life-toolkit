@@ -12,7 +12,11 @@ import { TodoService } from "./todo.service";
 import { TodoPageFilterDto, TodoListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import { TodoStatusService } from "./todo-status.service";
-import type { Todo, OperationByIdListVo } from "@life-toolkit/vo";
+import type {
+  Todo,
+  OperationByIdListVo,
+  TodoListFiltersVo,
+} from "@life-toolkit/vo";
 import { TodoMapper } from "./mappers";
 import { OperationMapper } from "@/common/operation";
 
@@ -84,8 +88,20 @@ export class TodoController {
 
   @Get("list")
   @Response()
-  async list(@Query() filter: TodoListFilterDto) {
-    const todoList = await this.todoService.findAll(filter);
+  async list(@Query() filter: TodoListFiltersVo) {
+    const todoListFilterDto = new TodoListFilterDto();
+
+    todoListFilterDto.importance = filter.importance;
+    todoListFilterDto.urgency = filter.urgency;
+    todoListFilterDto.status = filter.status;
+    todoListFilterDto.planDateStart = filter.planDateStart;
+    todoListFilterDto.planDateEnd = filter.planDateEnd;
+    todoListFilterDto.doneDateStart = filter.doneDateStart;
+    todoListFilterDto.doneDateEnd = filter.doneDateEnd;
+    todoListFilterDto.abandonedDateStart = filter.abandonedDateStart;
+    todoListFilterDto.abandonedDateEnd = filter.abandonedDateEnd;
+
+    const todoList = await this.todoService.findAll(todoListFilterDto);
     return TodoMapper.dtoToListVo(todoList);
   }
 

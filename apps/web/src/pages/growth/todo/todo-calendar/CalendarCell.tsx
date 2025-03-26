@@ -25,7 +25,6 @@ function TodoItem({ todo }: { todo: TodoVo }) {
         openEditTodoDrawer({
           contentProps: {
             todo,
-            onClose: null,
             afterSubmit: async () => {
               getTodoList();
             },

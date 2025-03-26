@@ -1,10 +1,11 @@
 import { Popover } from '@arco-design/web-react';
 import { useState } from 'react';
 import TodoEditor, { TodoEditorProps } from './TodoEditor';
+import TodoCreatorSimple, { TodoCreatorSimpleProps } from './TodoCreatorSimple';
 import TodoCreator, { TodoCreatorProps } from './TodoCreator';
 import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 
-export { TodoEditor, TodoCreator };
+export { TodoEditor, TodoCreator, TodoCreatorSimple };
 
 export function useTodoDetail() {
   const openEditDrawer = (
@@ -12,12 +13,13 @@ export function useTodoDetail() {
       contentProps: TodoEditorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...props,
+      ...rest,
       title: '编辑待办',
       width: 800,
-      content: () => {
-        return <TodoEditor {...props.contentProps} onClose={props.onClose} />;
+      content: (props) => {
+        return <TodoEditor {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -27,12 +29,13 @@ export function useTodoDetail() {
       contentProps: TodoCreatorProps;
     } & Omit<IDrawerOption, 'content'>,
   ) => {
+    const { contentProps, ...rest } = props;
     openDrawer({
-      ...props,
+      ...rest,
       title: '新建待办',
       width: 800,
-      content: () => {
-        return <TodoCreator {...props.contentProps} onClose={props.onClose} />;
+      content: (props) => {
+        return <TodoCreator {...contentProps} onClose={props.onClose} />;
       },
     });
   };
@@ -44,7 +47,7 @@ export function useTodoDetail() {
     creatorProps,
   }: {
     children: React.ReactNode;
-    creatorProps: TodoCreatorProps;
+    creatorProps: TodoCreatorSimpleProps;
   }) => {
     return (
       <Popover
@@ -59,7 +62,7 @@ export function useTodoDetail() {
         }}
         content={
           <div className="w-[400px] p-2">
-            <TodoCreator
+            <TodoCreatorSimple
               {...creatorProps}
               onClose={async () => {
                 await creatorProps.onClose?.();

@@ -1,19 +1,17 @@
-import { TodoList, TodoCreator, TodoEditor } from '../../components';
+import { TodoList, TodoCreatorSimple, TodoEditor } from '../../components';
 import { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
 import { flushSync } from 'react-dom';
 import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
+import { useTodoContext } from '../context';
 
 const { Fixed, Shrink } = FlexibleContainer;
 
-const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
-const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
-
 export default function TodoWeek() {
+  const { weekStart, weekEnd } = useTodoContext();
   const [weekTodoList, setWeekTodoList] = useState<TodoVo[]>([]);
   const [weekDoneTodoList, setWeekDoneTodoList] = useState<TodoVo[]>([]);
   const [expiredTodoList, setExpiredTodoList] = useState<TodoVo[]>([]);
@@ -79,7 +77,7 @@ export default function TodoWeek() {
       <Shrink className="px-5 w-full h-full flex">
         <Shrink className="py-2" direction="horizontal">
           <Fixed>
-            <TodoCreator
+            <TodoCreatorSimple
               afterSubmit={async () => {
                 refreshData();
               }}
