@@ -8,12 +8,14 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
   ContextType: {
     todoList: TodoVo[];
     searchQuery: string;
-    setSearchQuery: (query: string) => void;
+    calendarMode: 'month' | 'year';
     pageShowDate: Dayjs;
+    showAddTaskDate: Dayjs | null;
+    setSearchQuery: (query: string) => void;
     setPageShowDate: (date: Dayjs) => void;
     move: (date: Dayjs) => void;
     changePageShowDate: (type: 'prev' | 'next', mode: 'month' | 'year') => void;
-    calendarMode: 'month' | 'year';
+    setShowAddTaskDate: (date: Dayjs | null) => void;
     setCalendarMode: (mode: 'month' | 'year') => void;
     getTodoList: () => Promise<void>;
   };
@@ -51,16 +53,20 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     getTodoList();
   }, []);
 
+  const [showAddTaskDate, setShowAddTaskDate] = useState<Dayjs | null>(null);
+
   return {
     todoList,
     searchQuery,
-    setSearchQuery,
+    calendarMode,
     pageShowDate,
+    showAddTaskDate,
+    setSearchQuery,
     setPageShowDate,
     move,
     changePageShowDate,
-    calendarMode,
     setCalendarMode,
     getTodoList,
+    setShowAddTaskDate,
   };
 });

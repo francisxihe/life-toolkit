@@ -38,8 +38,14 @@ function TodoItem({ todo }: { todo: TodoVo }) {
 }
 
 export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
-  const { todoList, calendarMode, pageShowDate, getTodoList } =
-    useCalendarContext();
+  const {
+    todoList,
+    calendarMode,
+    pageShowDate,
+    showAddTaskDate,
+    getTodoList,
+    setShowAddTaskDate,
+  } = useCalendarContext();
 
   const todayTodoList = useMemo(() => {
     return todoList.filter((todo) =>
@@ -47,9 +53,10 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
     );
   }, [cellDate, todoList]);
 
-  const [showAddTask, setShowAddTask] = useState(false);
-
-  const { CreatePopover: CreateTodoPopover } = useTodoDetail();
+  const {
+    CreatePopover: CreateTodoPopover,
+    createPopoverVisible: createTodoPopoverVisible,
+  } = useTodoDetail();
 
   return (
     <div className={`!text-body-3 text-text-1 h-full`}>
@@ -61,10 +68,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
             : ''
         }`}
         onMouseEnter={() => {
-          setShowAddTask(true);
-        }}
-        onMouseLeave={() => {
-          setShowAddTask(false);
+          setShowAddTaskDate(cellDate);
         }}
       >
         <div className={`leading-[24px]`}>{cellDate.date()}</div>
@@ -75,7 +79,8 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                 <TodoItem key={todo.id} todo={todo} />
               ))}
             </div>
-            {showAddTask && (
+            {(showAddTaskDate?.isSame(cellDate) ||
+              createTodoPopoverVisible) && (
               <CreateTodoPopover
                 creatorProps={{
                   showSubmitButton: true,
@@ -97,7 +102,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                   ])}
                 >
                   <SiteIcon id="add" className="w-3 h-3" />
-                  添加任务
+                  添加待办
                 </div>
               </CreateTodoPopover>
             )}
