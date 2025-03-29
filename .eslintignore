@@ -1,0 +1,20 @@
+# 依赖
+node_modules
+.pnp
+.pnp.js
+
+# 构建输出
+dist
+build
+.turbo
+.next
+out
+.vite
+
+# 缓存
+.cache
+.eslintcache
+
+# 其他
+coverage
+*.min.js 
