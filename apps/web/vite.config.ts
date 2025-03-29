@@ -5,13 +5,16 @@ import vitePluginForArco from '@arco-plugins/vite-react';
 import setting from './src/settings.json';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
+// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, __dirname);
+  const env = loadEnv(mode, process.cwd());
 
   return {
     base: '/',
     resolve: {
-      alias: [{ find: '@', replacement: '/src' }],
+      alias: {
+        '@': '/src',
+      },
     },
     plugins: [
       react(),
@@ -31,8 +34,7 @@ export default defineConfig(({ mode }) => {
             VITE_APP_STATIC_PATH: env.VITE_APP_STATIC_PATH || '/',
           },
           ejsOptions: {
-            // 配置 EJS 模板的选项
-            rmWhitespace: true, // 可选：是否移除空格
+            rmWhitespace: true,
           },
         },
       }),
@@ -43,6 +45,7 @@ export default defineConfig(({ mode }) => {
           javascriptEnabled: true,
         },
       },
+      devSourcemap: true,
     },
     server: {
       port: Number(env.VITE_APP_PORT),
@@ -53,6 +56,29 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
+    },
+    build: {
+      target: 'es2020',
+      minify: 'terser',
+      cssMinify: true,
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            react: ['react', 'react-dom'],
+            arco: ['@arco-design/web-react'],
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      include: ['react', 'react-dom'],
+      exclude: [],
     },
   };
 });

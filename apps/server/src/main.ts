@@ -20,7 +20,7 @@ async function bootstrap() {
     origin: true, // 允许所有来源
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    // credentials: true,
+    credentials: true,
   });
 
   app.use("api/docs-json", (req: unknown, res: any) => {
