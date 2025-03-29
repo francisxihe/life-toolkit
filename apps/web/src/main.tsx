@@ -88,7 +88,10 @@ function Index() {
   };
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ 
+      v7_startTransition: true,
+      v7_relativeSplatPath: true 
+    }}>
       <ConfigProvider
         locale={getArcoLocale()}
         componentConfig={{

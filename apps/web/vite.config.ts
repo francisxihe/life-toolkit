@@ -56,11 +56,13 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
+      warmup: {
+        clientFiles: ['src/main.tsx'],
+      },
     },
     build: {
       target: 'es2020',
       minify: 'terser',
-      cssMinify: true,
       terserOptions: {
         compress: {
           drop_console: true,
