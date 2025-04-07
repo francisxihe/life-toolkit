@@ -1,13 +1,12 @@
 'use client';
 
 import { Outlet } from 'react-router-dom';
-import { TodoProvider } from './context';
 import Tabs, { Tab } from '@life-toolkit/tabs/src/index';
 import { useState } from 'react';
 import clsx from 'clsx';
 import styles from './style.module.less';
 
-export default function TodoPage() {
+export default function Tabs({ children }: { children: React.ReactNode }) {
   // const [activeKey, setActiveKey] = useState('tab-1');
 
   // const handleTabClick = (id: string) => {
@@ -19,9 +18,8 @@ export default function TodoPage() {
   //   // 这里可以添加处理拖拽后的逻辑
   // };
 
-  return (
-    <TodoProvider>
-      {/* <div>
+  return {
+    /* <div>
         <Tabs
           activeKey={activeKey}
           onTabClick={handleTabClick}
@@ -52,8 +50,6 @@ export default function TodoPage() {
             </Tab>
           ))}
         </Tabs>
-      </div> */}
-      <Outlet></Outlet>
-    </TodoProvider>
-  );
+      </div> */
+  };
 }

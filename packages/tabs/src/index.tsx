@@ -1,8 +1,8 @@
 import { DndProvider } from "react-dnd";
 import { FC, PropsWithChildren } from "react";
 import { HTML5Backend } from "react-dnd-html5-backend";
-// import { Tabs } from "./Tabs";
-// import { TabsProvider } from "./store";
+import { Tabs } from "./Tabs";
+import { TabsProvider } from "./store";
 import { useEventCallback } from "./hooks";
 import type { XYCoord } from "dnd-core";
 
@@ -31,14 +31,14 @@ const TabContainer: FC<PropsWithChildren<TabsProps>> = ({
   const tabClick = useEventCallback(onTabClick!);
   const tabDrop = useEventCallback(onTabDrop!);
 
-  return (1
-    // <DndProvider backend={HTML5Backend}>
-    //   <TabsProvider
-    //     init={{ data: [], activeKey, onTabClick: tabClick, onTabDrop: tabDrop }}
-    //   >
-    //     <Tabs {...props} activeKey={activeKey} />
-    //   </TabsProvider>
-    // </DndProvider>
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <TabsProvider
+        init={{ data: [], activeKey, onTabClick: tabClick, onTabDrop: tabDrop }}
+      >
+        <Tabs {...props} activeKey={activeKey} />
+      </TabsProvider>
+    </DndProvider>
   );
 };
 
