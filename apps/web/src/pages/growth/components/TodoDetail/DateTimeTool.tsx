@@ -5,7 +5,10 @@ import { RECURRENCE_PATTERNS } from '../../service';
 import SiteIcon from '@/components/SiteIcon';
 import { useState } from 'react';
 import 'dayjs/locale/zh-cn';
-import { RepeatSelector } from '../Repeat';
+import { RepeatSelector } from '@life-toolkit/components-repeat/src';
+import { GlobalContext } from '@/context';
+import { useContext } from 'react';
+
 const { RangePicker } = TimePicker;
 
 dayjs.locale('zh-cn');
@@ -41,6 +44,7 @@ export default function DateTimeTool(props: {
     repeat: string | undefined;
   }) => void;
 }) {
+  const { lang } = useContext(GlobalContext);
   const { formData, onChangeData } = props;
   const [mode, setMode] = useState<'month' | 'year'>('month');
   return (
@@ -154,6 +158,7 @@ export default function DateTimeTool(props: {
             </Select>
 
             <RepeatSelector
+              lang={lang}
               onChange={(value) => {
                 onChangeData({ ...formData, repeat: value });
               }}

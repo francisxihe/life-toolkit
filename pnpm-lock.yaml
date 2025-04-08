@@ -257,6 +257,9 @@ importers:
       '@life-toolkit/api':
         specifier: workspace:*
         version: link:../../packages/api
+      '@life-toolkit/components-repeat':
+        specifier: workspace:*
+        version: link:../../packages/components/repeat
       '@life-toolkit/tabs':
         specifier: workspace:*
         version: link:../../packages/tabs
@@ -339,6 +342,18 @@ importers:
         specifier: ^0.24.0
         version: 0.24.0
 
+  packages/components/repeat:
+    dependencies:
+      '@arco-design/web-react':
+        specifier: '*'
+        version: 2.65.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@life-toolkit/web-utils':
+        specifier: workspace:*
+        version: link:../../web-common/utils
+      react:
+        specifier: '*'
+        version: 18.3.1
+
   packages/tabs:
     dependencies:
       dnd-core:
@@ -395,6 +410,12 @@ importers:
         version: 5.7.3
 
   packages/vo: {}
+
+  packages/web-common/utils:
+    dependencies:
+      react:
+        specifier: '*'
+        version: 18.3.1
 
 packages:
 
