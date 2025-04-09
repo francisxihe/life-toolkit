@@ -1,9 +1,8 @@
-import { Dayjs } from "dayjs";
-import { OrdinalWeek } from "../ordinal-selector/OrdinalWeekDaysSelector";
+import { OrdinalWeek } from "../web/ordinal-selector/OrdinalWeekDaysSelector";
 import {
   OrdinalDayType,
   OrdinalDay,
-} from "../ordinal-selector/OrdinalDaySelector";
+} from "../web/ordinal-selector/OrdinalDaySelector";
 import { WeekDay, TimeUnit } from "./base";
 
 export enum RepeatMode {
@@ -96,21 +95,21 @@ export type RepeatFormCustom = {
         interval: number;
         intervalUnit: TimeUnit.DAY;
       }
-    | ({
+    | {
         interval: number;
         intervalUnit: TimeUnit.WEEK;
         [TimeUnit.WEEK]: RepeatFormWeekly["config"];
-      })
-    | ({
+      }
+    | {
         interval: number;
         intervalUnit: TimeUnit.MONTH;
         [TimeUnit.MONTH]: RepeatFormMonthly["config"];
-      })
-    | ({
+      }
+    | {
         interval: number;
         intervalUnit: TimeUnit.YEAR;
         [TimeUnit.YEAR]: RepeatFormYearly["config"];
-      });
+      };
 };
 
 export type RepeatConfig =

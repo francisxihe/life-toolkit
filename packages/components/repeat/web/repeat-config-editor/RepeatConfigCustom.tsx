@@ -1,9 +1,8 @@
 import { Select, InputNumber } from "@arco-design/web-react";
-import { RepeatFormCustom } from "../types";
+import { RepeatFormCustom, TimeUnit } from "../../types";
 import RepeatConfigMonthly from "./RepeatConfigMonthly";
 import RepeatConfigYearly from "./RepeatConfigYearly";
 import RepeatConfigWeekly from "./RepeatConfigWeekly";
-import { MonthlyType, YearlyType, TimeUnit } from "../types";
 
 export default function RepeatConfigCustom(props: {
   config: RepeatFormCustom["config"];

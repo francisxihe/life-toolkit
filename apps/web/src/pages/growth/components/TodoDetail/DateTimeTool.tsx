@@ -4,7 +4,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import SiteIcon from '@/components/SiteIcon';
 import { useState } from 'react';
 import 'dayjs/locale/zh-cn';
-import { RepeatSelector } from '@life-toolkit/components-repeat/src';
+import { RepeatSelector } from '@life-toolkit/components-repeat/web';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';

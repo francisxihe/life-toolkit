@@ -1,14 +1,12 @@
-import { RepeatEndMode } from './types';
-import { DatePicker, InputNumber, Select } from '@arco-design/web-react';
-import dayjs from 'dayjs';
-import { useRepeatContext } from './context';
-import useLocale from '@/utils/useLocale';
-import i18n from './locale';
+import { RepeatEndMode } from "../types";
+import { DatePicker, InputNumber, Select } from "@arco-design/web-react";
+import dayjs from "dayjs";
+import { useRepeatContext } from "./context";
 
 export const repeatEndModeMap = new Map<RepeatEndMode, string>([
-  [RepeatEndMode.FOREVER, 'repeat.end.forever'],
-  [RepeatEndMode.FOR_TIMES, 'repeat.end.forTimes'],
-  [RepeatEndMode.TO_DATE, 'repeat.end.toDate'],
+  [RepeatEndMode.FOREVER, "repeat.end.forever"],
+  [RepeatEndMode.FOR_TIMES, "repeat.end.forTimes"],
+  [RepeatEndMode.TO_DATE, "repeat.end.toDate"],
 ]);
 
 export default function RepeatEndModeForm() {
@@ -46,7 +44,7 @@ export default function RepeatEndModeForm() {
             ([key, value]) => ({
               value: key,
               label: t[value],
-            }),
+            })
           )}
         />
       </div>

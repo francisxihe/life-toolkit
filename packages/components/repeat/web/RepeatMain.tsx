@@ -1,25 +1,25 @@
-import { Select } from '@arco-design/web-react';
-import RepeatEndModeForm from './RepeatEndMode';
-import { RepeatMode } from './types';
-import { useRepeatContext } from './context';
+import { Select } from "@arco-design/web-react";
+import RepeatEndModeForm from "./RepeatEndMode";
+import { RepeatMode } from "../types";
+import { useRepeatContext } from "./context";
 import {
   RepeatConfigCustom,
   RepeatConfigMonthly,
   RepeatConfigWeekly,
   RepeatConfigYearly,
-} from './repeat-config-editor';
+} from "./repeat-config-editor";
 
 export const RepeatModeMap = new Map<RepeatMode, string>([
-  [RepeatMode.NONE, 'repeat.mode.none'],
-  [RepeatMode.DAILY, 'repeat.mode.daily'],
-  [RepeatMode.WEEKLY, 'repeat.mode.weekly'],
-  [RepeatMode.WEEKDAYS, 'repeat.mode.weekdays'],
-  [RepeatMode.WEEKEND, 'repeat.mode.weekend'],
-  [RepeatMode.MONTHLY, 'repeat.mode.monthly'],
-  [RepeatMode.WORKDAYS, 'repeat.mode.workdays'],
-  [RepeatMode.HOLIDAY, 'repeat.mode.holiday'],
-  [RepeatMode.YEARLY, 'repeat.mode.yearly'],
-  [RepeatMode.CUSTOM, 'repeat.mode.custom'],
+  [RepeatMode.NONE, "repeat.mode.none"],
+  [RepeatMode.DAILY, "repeat.mode.daily"],
+  [RepeatMode.WEEKLY, "repeat.mode.weekly"],
+  [RepeatMode.WEEKDAYS, "repeat.mode.weekdays"],
+  [RepeatMode.WEEKEND, "repeat.mode.weekend"],
+  [RepeatMode.MONTHLY, "repeat.mode.monthly"],
+  [RepeatMode.WORKDAYS, "repeat.mode.workdays"],
+  [RepeatMode.HOLIDAY, "repeat.mode.holiday"],
+  [RepeatMode.YEARLY, "repeat.mode.yearly"],
+  [RepeatMode.CUSTOM, "repeat.mode.custom"],
 ]);
 
 export function RepeatSelectorMain() {

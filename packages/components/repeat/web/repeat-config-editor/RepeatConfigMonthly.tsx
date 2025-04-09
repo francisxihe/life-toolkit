@@ -1,5 +1,5 @@
-import { Radio, Select, Calendar } from '@arco-design/web-react';
-import { RepeatFormMonthly, MonthlyType, WeekDay } from '../types';
+import { Radio, Calendar } from '@arco-design/web-react';
+import { RepeatFormMonthly, MonthlyType, WeekDay } from '../../types';
 import OrdinalDaySelector, {
   OrdinalDayType,
   OrdinalDay,

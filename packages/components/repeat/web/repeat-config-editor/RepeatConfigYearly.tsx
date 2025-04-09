@@ -1,4 +1,4 @@
-import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay } from '../types';
+import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay } from '../../types';
 import { Radio } from '@arco-design/web-react';
 import { OrdinalWeek } from '../ordinal-selector/OrdinalWeekDaysSelector';
 import RepeatConfigMonthly from './RepeatConfigMonthly';
