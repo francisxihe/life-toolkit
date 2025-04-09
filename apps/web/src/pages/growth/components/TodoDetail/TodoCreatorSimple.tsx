@@ -72,7 +72,7 @@ function TodoCreatorMain(props: {
                   ...todoFormData,
                   planDate: data.date.format('YYYY-MM-DD'),
                   planTimeRange: data.timeRange,
-                  repeat: data.repeat as TodoFormData['repeat'],
+                  repeat: data.repeat,
                 };
                 setTodoFormData(_formData);
               }}

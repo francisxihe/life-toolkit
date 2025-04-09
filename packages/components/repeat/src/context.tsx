@@ -11,18 +11,18 @@ import {
   RepeatConfig,
   TimeUnit,
   YearlyType,
-} from './types';
-import { createInjectState } from '@life-toolkit/web-utils/src/createInjectState';
-import { useState } from 'react';
-import { useLocaleContext } from './useLocale';
-import i18n from './locale';
+} from "./types";
+import { createInjectState } from "@life-toolkit/web-utils/src/createInjectState";
+import { useState } from "react";
+import { useLocaleContext } from "./useLocale";
 import {
   OrdinalDay,
   OrdinalDayType,
-} from './ordinal-selector/OrdinalDaySelector';
+} from "./ordinal-selector/OrdinalDaySelector";
 
 export type RepeatContextProps = {
-  onChange: (repeat: RepeatMode, config?: RepeatConfig) => void;
+  value: RepeatModeForm & RepeatEndModeForm;
+  onChange: (value: RepeatModeForm & RepeatEndModeForm) => void;
   children: React.ReactNode;
 };
 
@@ -39,7 +39,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
 }>((props) => {
   const { t } = useLocaleContext();
 
-  const { onChange } = props;
+  const { onChange, value } = props;
   const [repeatModeForm, setRepeatModeForm] = useState<RepeatModeForm>({
     repeatMode: RepeatMode.CUSTOM,
     config: {
@@ -57,7 +57,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
   const [repeatEndModeForm, setRepeatEndModeForm] = useState<RepeatEndModeForm>(
     {
       repeatEndMode: RepeatEndMode.FOREVER,
-    },
+    }
   );
 
   const handleChangeRepeatMode = (repeatMode: RepeatMode) => {
@@ -100,42 +100,54 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
           repeatMode: repeatMode,
         });
     }
+    onChange({
+      ...repeatModeForm,
+      ...repeatEndModeForm,
+    });
   };
 
   const handleChangeRepeatConfig = (config?: RepeatConfig) => {
-    console.log('=======config=====', config);
     switch (repeatModeForm.repeatMode) {
       case RepeatMode.WEEKLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.WEEKLY,
-          config: config as RepeatFormWeekly['config'],
+          config: config as RepeatFormWeekly["config"],
         });
         break;
       case RepeatMode.MONTHLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.MONTHLY,
-          config: config as RepeatFormMonthly['config'],
+          config: config as RepeatFormMonthly["config"],
         });
         break;
       case RepeatMode.YEARLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.YEARLY,
-          config: config as RepeatFormYearly['config'],
+          config: config as RepeatFormYearly["config"],
         });
         break;
       case RepeatMode.CUSTOM:
         setRepeatModeForm({
           repeatMode: RepeatMode.CUSTOM,
-          config: config as RepeatFormCustom['config'],
+          config: config as RepeatFormCustom["config"],
         });
         break;
       default:
         break;
     }
+    onChange({
+      ...repeatModeForm,
+      ...repeatEndModeForm,
+    });
   };
 
   const handleChangeRepeatEndMode = (repeatEndModeForm: RepeatEndModeForm) => {
     setRepeatEndModeForm(repeatEndModeForm);
+
+    onChange({
+      ...repeatModeForm,
+      ...repeatEndModeForm,
+    });
   };
 
   return {

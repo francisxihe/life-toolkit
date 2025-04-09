@@ -26,7 +26,7 @@ export type TodoModelVo = {
 
   planEndAt?: string;
 
-  repeat?: "none" | "daily" | "weekly" | "monthly";
+  repeat?: string;
 
   doneAt?: string;
 

@@ -1,6 +1,6 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto } from "../dto";
-import { TodoStatus, TodoRepeat } from "../entities";
+import { TodoStatus } from "../entities";
 import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
 import { BaseMapper } from "@/base/base.mapper";
@@ -40,7 +40,7 @@ class TodoMapperDto extends TodoMapperEntity {
       planDate: dayjs(dto.planDate).format("YYYY-MM-DD"),
       planStartAt: dto.planStartAt,
       planEndAt: dto.planEndAt,
-      repeat: dto.repeat || TodoRepeat.NONE,
+      repeat: dto.repeat,
       doneAt: dto.doneAt
         ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
@@ -88,7 +88,7 @@ class TodoMapperVo extends TodoMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
-    dto.repeat = vo.repeat as TodoRepeat;
+    dto.repeat = vo.repeat;
     dto.taskId = vo.taskId;
     return dto;
   }
@@ -101,7 +101,7 @@ class TodoMapperVo extends TodoMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
-    dto.repeat = vo.repeat as TodoRepeat;
+    dto.repeat = vo.repeat;
     dto.taskId = vo.taskId;
     return dto;
   }

@@ -3,10 +3,3 @@ export enum TodoStatus {
   DONE = "done",
   ABANDONED = "abandoned",
 }
-
-export enum TodoRepeat {
-  NONE = "none",
-  DAILY = "daily",
-  WEEKLY = "weekly",
-  MONTHLY = "monthly",
-}

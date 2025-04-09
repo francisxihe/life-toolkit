@@ -1,5 +1,4 @@
 import { Entity, Column, OneToMany, ManyToOne } from "typeorm";
-import { TodoRepeat } from "./enum";
 import {
   IsString,
   IsOptional,
@@ -82,13 +81,11 @@ export class Todo extends BaseEntity {
 
   /** 重复类型 */
   @Column({
-    type: "enum",
-    enum: TodoRepeat,
     nullable: true,
   })
-  @IsEnum(TodoRepeat)
+  @IsString()
   @IsOptional()
-  repeat?: TodoRepeat;
+  repeat?: string;
 
   /** 待办重复间隔 */
   @Column({ nullable: true })

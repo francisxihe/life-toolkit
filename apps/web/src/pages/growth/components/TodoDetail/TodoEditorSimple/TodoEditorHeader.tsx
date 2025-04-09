@@ -25,12 +25,7 @@ export default function TodoEditorHeader() {
               ...todoFormData,
               planDate: formData.date.format('YYYY-MM-DD'),
               planTimeRange: formData.timeRange,
-              repeat: formData.repeat as
-                | 'none'
-                | 'daily'
-                | 'weekly'
-                | 'monthly',
-              // | 'yearly',
+              repeat: formData.repeat,
             });
             await onSubmit();
           }}
@@ -41,7 +36,7 @@ export default function TodoEditorHeader() {
           iconName="priority-0"
           value={todoFormData.importance}
           onChange={(value) => {
-            setTodoFormData((prev) => ({ ...prev, importance: value }));
+            setTodoFormData({ ...todoFormData, importance: value });
           }}
         />
         <IconSelector
@@ -49,7 +44,7 @@ export default function TodoEditorHeader() {
           iconName="urgency"
           value={todoFormData.urgency}
           onChange={(value) => {
-            setTodoFormData((prev) => ({ ...prev, urgency: value }));
+            setTodoFormData({ ...todoFormData, urgency: value });
           }}
         />
       </FlexibleContainer.Shrink>

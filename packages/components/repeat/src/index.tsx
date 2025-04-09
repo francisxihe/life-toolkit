@@ -4,11 +4,21 @@ import { RepeatSelectorMain } from "./RepeatMain";
 
 export function RepeatSelector(props: {
   lang: "en-US" | "zh-CN";
-  onChange: RepeatContextProps["onChange"];
+  value: string;
+  onChange: (value: string) => void;
 }) {
+  const { lang } = props;
+
+  const value = props.value ? JSON.parse(props.value) : undefined;
+
   return (
-    <LocaleProvider lang={props.lang}>
-      <RepeatProvider onChange={props.onChange}>
+    <LocaleProvider lang={lang}>
+      <RepeatProvider
+        value={value}
+        onChange={(_value) => {
+          props.onChange(JSON.stringify(_value));
+        }}
+      >
         <RepeatSelectorMain />
       </RepeatProvider>
     </LocaleProvider>

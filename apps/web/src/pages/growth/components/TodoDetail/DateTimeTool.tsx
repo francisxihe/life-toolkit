@@ -1,13 +1,13 @@
 import { Popover, Calendar, Select, TimePicker } from '@arco-design/web-react';
 import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
-import { RECURRENCE_PATTERNS } from '../../service';
 import SiteIcon from '@/components/SiteIcon';
 import { useState } from 'react';
 import 'dayjs/locale/zh-cn';
 import { RepeatSelector } from '@life-toolkit/components-repeat/src';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
+import clsx from 'clsx';
 
 const { RangePicker } = TimePicker;
 
@@ -51,7 +51,7 @@ export default function DateTimeTool(props: {
     <Popover
       trigger="click"
       content={
-        <div className="py-3 w-72">
+        <div className={clsx('py-3 w-72', 'gap-4')}>
           <div className="w-full flex justify-center">
             <Calendar
               panel
@@ -121,7 +121,7 @@ export default function DateTimeTool(props: {
               )}
             />
           </div>
-          <div className="px-3 mb-2">
+          <div className="px-3">
             <RangePicker
               value={formData.timeRange}
               className="w-full rounded-md"
@@ -138,28 +138,11 @@ export default function DateTimeTool(props: {
             />
           </div>
           <div className="px-3">
-            <Select
-              value={formData.repeat}
-              placeholder="选择重复模式"
-              className="rounded-md"
-              allowClear
-              onChange={(value) => {
-                onChangeData({
-                  ...formData,
-                  repeat: value,
-                });
-              }}
-            >
-              {Object.entries(RECURRENCE_PATTERNS).map(([value, label]) => (
-                <Select.Option key={value} value={value}>
-                  {label}
-                </Select.Option>
-              ))}
-            </Select>
-
             <RepeatSelector
-              lang={lang}
+              lang={lang as 'en-US' | 'zh-CN'}
+              value={formData.repeat}
               onChange={(value) => {
+                console.log('value', value);
                 onChangeData({ ...formData, repeat: value });
               }}
             />

@@ -3,12 +3,7 @@
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { TodoFormData, TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import {
-  TodoStatus,
-  UpdateTodoVo,
-  TodoVo,
-  TodoItemVo,
-} from '@life-toolkit/vo/growth';
+import { TodoStatus, TodoVo, TodoItemVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
 
@@ -26,7 +21,7 @@ export type CurrentTodo = {
   planDate: string;
   planStartAt?: string;
   planEndAt?: string;
-  repeat?: 'none' | 'daily' | 'weekly' | 'monthly';
+  repeat?: string;
   importance?: number;
   urgency?: number;
   tags?: string[];

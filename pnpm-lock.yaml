@@ -262,7 +262,7 @@ importers:
         version: link:../../packages/components/repeat
       '@life-toolkit/tabs':
         specifier: workspace:*
-        version: link:../../packages/tabs
+        version: link:../../packages/components/tabs
       '@svgr/webpack':
         specifier: ^5.5.0
         version: 5.5.0
@@ -354,7 +354,7 @@ importers:
         specifier: '*'
         version: 18.3.1
 
-  packages/tabs:
+  packages/components/tabs:
     dependencies:
       dnd-core:
         specifier: ^16
