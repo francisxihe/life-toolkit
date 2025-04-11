@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne } from "typeorm";
+import { Entity, Column, OneToMany, ManyToOne, OneToOne } from "typeorm";
 import {
   IsString,
   IsOptional,
@@ -11,6 +11,7 @@ import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 import { TodoStatus } from "./enum";
 import { Task } from "../../task/entities";
+import { TodoRepeat } from "./todo-repeat.entity";
 
 @Entity("todo")
 export class Todo extends BaseEntity {
@@ -79,19 +80,6 @@ export class Todo extends BaseEntity {
   @IsISO8601()
   planDate: Date = new Date();
 
-  /** 重复类型 */
-  @Column({
-    nullable: true,
-  })
-  @IsString()
-  @IsOptional()
-  repeat?: string;
-
-  /** 待办重复间隔 */
-  @Column({ nullable: true })
-  @IsOptional()
-  repeatInterval?: string;
-
   /** 关联的任务 */
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
@@ -101,4 +89,8 @@ export class Todo extends BaseEntity {
   @IsString()
   @IsOptional()
   taskId?: string;
+
+  /** 重复配置 */
+  @ManyToOne(() => TodoRepeat, (repeat) => repeat.todo)
+  repeat?: TodoRepeat;
 }

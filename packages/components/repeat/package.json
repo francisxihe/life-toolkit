@@ -2,11 +2,25 @@
   "name": "@life-toolkit/components-repeat",
   "version": "0.0.1",
   "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "vo"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
   "dependencies": {
     "@life-toolkit/web-utils": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",
-    "@arco-design/web-react": "*"
+    "typescript": "*",
+    "typeorm": "*",
+    "class-validator": "*",
+    "@arco-design/web-react": "*",
+    "@nestjs/mapped-types": "*"
   }
 }

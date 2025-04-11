@@ -1,12 +1,17 @@
-import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay } from '../../types';
-import { Radio } from '@arco-design/web-react';
-import { OrdinalWeek } from '../ordinal-selector/OrdinalWeekDaysSelector';
-import RepeatConfigMonthly from './RepeatConfigMonthly';
-import OrdinalWeekDaysSelector from '../ordinal-selector/OrdinalWeekDaysSelector';
+import {
+  RepeatFormYearly,
+  YearlyType,
+  MonthlyType,
+  WeekDay,
+} from "../../types";
+import { Radio } from "@arco-design/web-react";
+import { OrdinalWeek } from "../../types";
+import RepeatConfigMonthly from "./RepeatConfigMonthly";
+import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
 
 export default function RepeatConfigYearly(props: {
-  config: RepeatFormYearly['config'];
-  handleConfigChange: (config: RepeatFormYearly['config']) => void;
+  config: RepeatFormYearly["config"];
+  handleConfigChange: (config: RepeatFormYearly["config"]) => void;
 }) {
   const { config: yearlyConfig, handleConfigChange } = props;
 

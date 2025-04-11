@@ -1,8 +1,4 @@
-import { OrdinalWeek } from "../web/ordinal-selector/OrdinalWeekDaysSelector";
-import {
-  OrdinalDayType,
-  OrdinalDay,
-} from "../web/ordinal-selector/OrdinalDaySelector";
+import { OrdinalWeek, OrdinalDayType, OrdinalDay } from "./ordinal";
 import { WeekDay, TimeUnit } from "./base";
 
 export enum RepeatMode {

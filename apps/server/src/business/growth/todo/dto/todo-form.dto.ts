@@ -1,6 +1,15 @@
 import { TodoDto } from "./todo-model.dto";
-import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+  OmitType,
+} from "@nestjs/mapped-types";
 import { Todo } from "../entities";
+import {
+  CreateRepeatDto,
+  UpdateRepeatDto,
+} from "@life-toolkit/components-repeat/server/dto";
 
 export class CreateTodoDto extends PickType(TodoDto, [
   "name",
@@ -11,14 +20,15 @@ export class CreateTodoDto extends PickType(TodoDto, [
   "planEndAt",
   "importance",
   "urgency",
-  "repeat",
-  "repeatInterval",
   "tags",
 ] as const) {
   taskId?: string;
+  repeat?: CreateRepeatDto;
 }
 
 export class UpdateTodoDto extends IntersectionType(
-  PartialType(CreateTodoDto),
+  PartialType(OmitType(CreateTodoDto, ["repeat"] as const)),
   PickType(Todo, ["id"] as const)
-) {}
+) {
+  repeat?: UpdateRepeatDto;
+}

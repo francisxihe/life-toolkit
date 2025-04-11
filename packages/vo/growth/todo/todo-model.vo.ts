@@ -1,5 +1,6 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { TaskVo } from "../task/task-model.vo";
+import { RepeatVo } from "@life-toolkit/components-repeat/vo";
 
 export enum TodoStatus {
   TODO = "todo",
@@ -26,7 +27,7 @@ export type TodoModelVo = {
 
   planEndAt?: string;
 
-  repeat?: string;
+  repeat?: RepeatVo;
 
   doneAt?: string;
 

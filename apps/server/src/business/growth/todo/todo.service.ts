@@ -10,7 +10,7 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Todo, TodoStatus } from "./entities";
+import { Todo, TodoStatus, TodoRepeat } from "./entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -19,6 +19,7 @@ import {
   TodoDto,
 } from "./dto";
 import dayjs from "dayjs";
+import { TodoRepeatService } from "./todo-repeat.service";
 
 function getWhere(filter: TodoPageFilterDto) {
   const where: FindOptionsWhere<Todo> = {};
@@ -84,7 +85,10 @@ function getWhere(filter: TodoPageFilterDto) {
 export class TodoService {
   constructor(
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>
+    private readonly todoRepository: Repository<Todo>,
+    @InjectRepository(TodoRepeat)
+    private readonly todoRepeatRepository: Repository<TodoRepeat>,
+    private readonly todoRepeatService: TodoRepeatService
   ) {}
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
@@ -96,7 +100,17 @@ export class TodoService {
         ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
         : undefined,
     });
+
     await this.todoRepository.save(todo);
+
+    // 如果有重复配置，创建重复配置
+    if (createTodoDto.repeat) {
+      const todoRepeat = this.todoRepeatRepository.create({
+        ...createTodoDto.repeat,
+      });
+      await this.todoRepeatRepository.save(todoRepeat);
+    }
+
     return {
       ...todo,
     };
@@ -106,7 +120,6 @@ export class TodoService {
     const todoList = await this.todoRepository.find({
       where: getWhere(filter),
     });
-
 
     return todoList.map((todo) => ({
       ...todo,
@@ -145,6 +158,11 @@ export class TodoService {
         ? dayjs(updateTodoDto.planDate).toDate()
         : undefined,
     });
+
+    // 如果有重复配置，更新重复配置
+    if (updateTodoDto.repeat) {
+      await this.todoRepeatService.update(todo.id, updateTodoDto.repeat);
+    }
 
     return this.findById(id);
   }

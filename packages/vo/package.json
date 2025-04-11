@@ -2,5 +2,8 @@
   "name": "@life-toolkit/vo",
   "version": "0.0.1",
   "main": "index.ts",
-  "types": "index.ts"
+  "types": "index.ts",
+  "peerDependencies": {
+    "@life-toolkit/components-repeat": "workspace:*"
+  }
 }

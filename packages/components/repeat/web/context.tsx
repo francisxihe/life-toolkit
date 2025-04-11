@@ -15,10 +15,7 @@ import {
 import { createInjectState } from "@life-toolkit/web-utils/src/createInjectState";
 import { useState } from "react";
 import { useLocaleContext } from "./useLocale";
-import {
-  OrdinalDay,
-  OrdinalDayType,
-} from "./ordinal-selector/OrdinalDaySelector";
+import { OrdinalDay, OrdinalDayType } from "../types";
 
 export type RepeatContextProps = {
   value: RepeatModeForm & RepeatEndModeForm;

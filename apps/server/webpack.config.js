@@ -13,7 +13,8 @@ module.exports = {
         use: "ts-loader",
         include: [
           path.resolve(__dirname, "src"),
-          path.resolve(__dirname, "../../packages/vo")
+          path.resolve(__dirname, "../../packages/vo"),
+          path.resolve(__dirname, "../../packages/components")
         ]
       },
     ],

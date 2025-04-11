@@ -16,10 +16,10 @@
     "@life-toolkit/vo": "workspace:*"
   },
   "peerDependencies": {
-    "@nestjs/core": "^10.0.0"
+    "@nestjs/core": "^10.0.0",
+    "typescript": "*"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@types/jest": "^29.0.0",
     "@types/supertest": "^2.0.12"
   }

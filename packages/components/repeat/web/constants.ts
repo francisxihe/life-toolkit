@@ -1,4 +1,4 @@
-import { WeekDay, Month } from './types';
+import { WeekDay, Month } from '../types';
 
 export const WeekDayMap = new Map<WeekDay, string>([
   [WeekDay.MONDAY, 'monday'],

@@ -67,7 +67,7 @@ export class TodoController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateTodoVo: Todo.CreateTodoVo
+    @Body() updateTodoVo: Todo.UpdateTodoVo
   ) {
     const updatedDto = TodoMapper.voToUpdateDto(updateTodoVo);
     const dto = await this.todoService.update(id, updatedDto);
