@@ -5,10 +5,10 @@ import RepeatConfigYearly from "./RepeatConfigYearly";
 import RepeatConfigWeekly from "./RepeatConfigWeekly";
 
 export default function RepeatConfigCustom(props: {
-  config: RepeatFormCustom["config"];
-  handleConfigChange: (config: RepeatFormCustom["config"]) => void;
+  repeatConfig: RepeatFormCustom["repeatConfig"];
+  handleConfigChange: (repeatConfig: RepeatFormCustom["repeatConfig"]) => void;
 }) {
-  const { config: customConfig, handleConfigChange } = props;
+  const { repeatConfig: customConfig, handleConfigChange } = props;
 
   return (
     <div className="flex flex-col gap-4">
@@ -39,12 +39,12 @@ export default function RepeatConfigCustom(props: {
 
       {customConfig.intervalUnit === "week" && (
         <RepeatConfigWeekly
-          config={customConfig[TimeUnit.WEEK]}
-          handleConfigChange={(config) => {
+          repeatConfig={customConfig[TimeUnit.WEEK]}
+          handleConfigChange={(repeatConfig) => {
             handleConfigChange({
               ...customConfig,
               [TimeUnit.WEEK]: {
-                weekdays: config.weekdays,
+                weekdays: repeatConfig.weekdays,
               },
             });
           }}
@@ -53,11 +53,11 @@ export default function RepeatConfigCustom(props: {
 
       {customConfig.intervalUnit === "month" && (
         <RepeatConfigMonthly
-          config={customConfig[TimeUnit.MONTH]}
-          handleConfigChange={(config) => {
+          repeatConfig={customConfig[TimeUnit.MONTH]}
+          handleConfigChange={(repeatConfig) => {
             handleConfigChange({
               ...customConfig,
-              [TimeUnit.MONTH]: config,
+              [TimeUnit.MONTH]: repeatConfig,
             });
           }}
         />
@@ -65,11 +65,11 @@ export default function RepeatConfigCustom(props: {
 
       {customConfig.intervalUnit === "year" && (
         <RepeatConfigYearly
-          config={customConfig[TimeUnit.YEAR]}
-          handleConfigChange={(config) =>
+          repeatConfig={customConfig[TimeUnit.YEAR]}
+          handleConfigChange={(repeatConfig) =>
             handleConfigChange({
               ...customConfig,
-              [TimeUnit.YEAR]: config,
+              [TimeUnit.YEAR]: repeatConfig,
             })
           }
         />

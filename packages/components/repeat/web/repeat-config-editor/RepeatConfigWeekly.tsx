@@ -4,10 +4,10 @@ import { useLocaleContext } from '../useLocale';
 import { RepeatFormWeekly } from '../../types';
 
 export default function RepeatConfigWeekly(props: {
-  config: RepeatFormWeekly['config'];
-  handleConfigChange: (config: RepeatFormWeekly['config']) => void;
+  repeatConfig: RepeatFormWeekly['repeatConfig'];
+  handleConfigChange: (repeatConfig: RepeatFormWeekly['repeatConfig']) => void;
 }) {
-  const { config, handleConfigChange } = props;
+  const { repeatConfig, handleConfigChange } = props;
   const { t } = useLocaleContext();
 
   return (
@@ -15,9 +15,9 @@ export default function RepeatConfigWeekly(props: {
       <Select
         placeholder="选择周几"
         mode="multiple"
-        value={config.weekdays}
+        value={repeatConfig.weekdays}
         className="rounded-md w-full"
-        onChange={(value) => handleConfigChange({ ...config, weekdays: value })}
+        onChange={(value) => handleConfigChange({ ...repeatConfig, weekdays: value })}
         options={Array.from(WeekDayMap.entries()).map(([key, value]) => ({
           value: key,
           label: t[value],

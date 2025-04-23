@@ -91,6 +91,12 @@ export class Todo extends BaseEntity {
   taskId?: string;
 
   /** 重复配置 */
-  @ManyToOne(() => TodoRepeat, (repeat) => repeat.todo)
+  @OneToOne(() => TodoRepeat, (repeat) => repeat.todo)
   repeat?: TodoRepeat;
+
+  /** 重复配置ID */
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  repeatId?: string;
 }

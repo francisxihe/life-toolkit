@@ -46,33 +46,33 @@ export function RepeatSelectorMain() {
 
       {repeatModeForm.repeatMode === RepeatMode.WEEKLY && (
         <RepeatConfigWeekly
-          config={repeatModeForm.config}
+          repeatConfig={repeatModeForm.repeatConfig}
           handleConfigChange={handleChangeRepeatConfig}
         />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.MONTHLY && (
         <RepeatConfigMonthly
-          config={repeatModeForm.config}
+          repeatConfig={repeatModeForm.repeatConfig}
           handleConfigChange={handleChangeRepeatConfig}
         />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.YEARLY && (
         <RepeatConfigYearly
-          config={repeatModeForm.config}
+          repeatConfig={repeatModeForm.repeatConfig}
           handleConfigChange={handleChangeRepeatConfig}
         />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.CUSTOM && (
         <RepeatConfigCustom
-          config={repeatModeForm.config}
+          repeatConfig={repeatModeForm.repeatConfig}
           handleConfigChange={handleChangeRepeatConfig}
         />
       )}
 
-      <RepeatEndModeForm />
+      {repeatModeForm.repeatMode === RepeatMode.NONE || <RepeatEndModeForm />}
     </div>
   );
 }

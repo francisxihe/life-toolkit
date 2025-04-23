@@ -8,6 +8,10 @@ import { RepeatSelector } from '@life-toolkit/components-repeat/web';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
+import {
+  RepeatModeForm,
+  RepeatEndModeForm,
+} from '@life-toolkit/components-repeat/types';
 
 const { RangePicker } = TimePicker;
 
@@ -36,12 +40,12 @@ export default function DateTimeTool(props: {
   formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: string | undefined;
+    repeat: (RepeatModeForm & RepeatEndModeForm) | undefined;
   };
   onChangeData: (formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: string | undefined;
+    repeat: (RepeatModeForm & RepeatEndModeForm) | undefined;
   }) => void;
 }) {
   const { lang } = useContext(GlobalContext);
@@ -51,7 +55,7 @@ export default function DateTimeTool(props: {
     <Popover
       trigger="click"
       content={
-        <div className={clsx('py-3 w-72', 'gap-4')}>
+        <div className={clsx('py-3 w-72', 'flex flex-col gap-4')}>
           <div className="w-full flex justify-center">
             <Calendar
               panel
@@ -142,7 +146,6 @@ export default function DateTimeTool(props: {
               lang={lang as 'en-US' | 'zh-CN'}
               value={formData.repeat}
               onChange={(value) => {
-                console.log('value', value);
                 onChangeData({ ...formData, repeat: value });
               }}
             />

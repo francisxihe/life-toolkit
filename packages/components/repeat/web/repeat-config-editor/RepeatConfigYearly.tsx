@@ -10,10 +10,10 @@ import RepeatConfigMonthly from "./RepeatConfigMonthly";
 import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
 
 export default function RepeatConfigYearly(props: {
-  config: RepeatFormYearly["config"];
-  handleConfigChange: (config: RepeatFormYearly["config"]) => void;
+  repeatConfig: RepeatFormYearly["repeatConfig"];
+  handleConfigChange: (repeatConfig: RepeatFormYearly["repeatConfig"]) => void;
 }) {
-  const { config: yearlyConfig, handleConfigChange } = props;
+  const { repeatConfig: yearlyConfig, handleConfigChange } = props;
 
   return (
     <div className="space-y-2">
@@ -49,11 +49,11 @@ export default function RepeatConfigYearly(props: {
 
       {yearlyConfig.yearlyType === YearlyType.MONTH && (
         <RepeatConfigMonthly
-          config={yearlyConfig[YearlyType.MONTH]}
-          handleConfigChange={(config) => {
+          repeatConfig={yearlyConfig[YearlyType.MONTH]}
+          handleConfigChange={(repeatConfig) => {
             handleConfigChange({
               yearlyType: YearlyType.MONTH,
-              [YearlyType.MONTH]: config,
+              [YearlyType.MONTH]: repeatConfig,
             });
           }}
         />

@@ -1,16 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import {
-  Repository,
-  FindOperator,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-  In,
-} from "typeorm";
-import { Todo, TodoStatus, TodoRepeat } from "./entities";
+import { Repository } from "typeorm";
+import { Todo } from "./entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -18,171 +9,85 @@ import {
   TodoListFilterDto,
   TodoDto,
 } from "./dto";
-import dayjs from "dayjs";
 import { TodoRepeatService } from "./todo-repeat.service";
-
-function getWhere(filter: TodoPageFilterDto) {
-  const where: FindOptionsWhere<Todo> = {};
-  if (filter.planDateStart && filter.planDateEnd) {
-    where.planDate = Between(
-      new Date(filter.planDateStart + "T00:00:00"),
-      new Date(filter.planDateEnd + "T23:59:59")
-    );
-  } else if (filter.planDateStart) {
-    where.planDate = MoreThan(new Date(filter.planDateStart + "T00:00:00"));
-  } else if (filter.planDateEnd) {
-    where.planDate = LessThan(new Date(filter.planDateEnd + "T23:59:59"));
-  }
-
-  if (filter.doneDateStart && filter.doneDateEnd) {
-    where.doneAt = Between(
-      new Date(filter.doneDateStart + "T00:00:00"),
-      new Date(filter.doneDateEnd + "T23:59:59")
-    );
-  } else if (filter.doneDateStart) {
-    where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
-  } else if (filter.doneDateEnd) {
-    where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
-  }
-
-  if (filter.abandonedDateStart && filter.abandonedDateEnd) {
-    where.abandonedAt = Between(
-      new Date(filter.abandonedDateStart + "T00:00:00"),
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
-  } else if (filter.abandonedDateStart) {
-    where.abandonedAt = MoreThan(
-      new Date(filter.abandonedDateStart + "T00:00:00")
-    );
-  } else if (filter.abandonedDateEnd) {
-    where.abandonedAt = LessThan(
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
-  }
-  if (filter.keyword) {
-    where.name = Like(`%${filter.keyword}%`);
-  }
-  if (filter.status) {
-    where.status = filter.status;
-  }
-  if (filter.importance) {
-    where.importance = filter.importance;
-  }
-  if (filter.urgency) {
-    where.urgency = filter.urgency;
-  }
-  if (filter.taskId) {
-    where.taskId = filter.taskId;
-  }
-  if (filter.taskIds) {
-    where.taskId = In(filter.taskIds);
-  }
-
-  return where;
-}
+import { TodoBaseService } from "./todo-base.service";
+import { TodoStatusService } from "./todo-status.service";
+import { OperationByIdListDto } from "@/common/operation";
 
 @Injectable()
 export class TodoService {
   constructor(
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
-    @InjectRepository(TodoRepeat)
-    private readonly todoRepeatRepository: Repository<TodoRepeat>,
-    private readonly todoRepeatService: TodoRepeatService
+    private readonly todoRepeatService: TodoRepeatService,
+    private readonly todoBaseService: TodoBaseService,
+    private readonly todoStatusService: TodoStatusService
   ) {}
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
-    const todo = this.todoRepository.create({
-      ...createTodoDto,
-      status: TodoStatus.TODO,
-      tags: createTodoDto.tags || [],
-      planDate: createTodoDto.planDate
-        ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
-        : undefined,
-    });
-
-    await this.todoRepository.save(todo);
+    const todo = await this.todoBaseService.create(createTodoDto);
 
     // 如果有重复配置，创建重复配置
     if (createTodoDto.repeat) {
-      const todoRepeat = this.todoRepeatRepository.create({
+      const todoRepeat = await this.todoRepeatService.create({
         ...createTodoDto.repeat,
       });
-      await this.todoRepeatRepository.save(todoRepeat);
+
+      await this.todoRepository.update(todo.id, {
+        repeatId: todoRepeat.id,
+      });
     }
 
-    return {
-      ...todo,
-    };
+    return await this.todoBaseService.findById(todo.id);
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const todoList = await this.todoRepository.find({
-      where: getWhere(filter),
-    });
-
-    return todoList.map((todo) => ({
-      ...todo,
-    }));
+    return await this.todoBaseService.findAll(filter);
   }
 
   async page(
     filter: TodoPageFilterDto
   ): Promise<{ list: TodoDto[]; total: number }> {
-    const pageNum = filter.pageNum || 1;
-    const pageSize = filter.pageSize || 10;
-
-    const [todoList, total] = await this.todoRepository.findAndCount({
-      where: getWhere(filter),
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-    });
-
-    return {
-      list: todoList.map((todo) => ({
-        ...todo,
-      })),
-      total,
-    };
+    return await this.todoBaseService.page(filter);
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOneBy({ id });
-    if (!todo) {
-      throw new Error("Todo not found");
-    }
-
-    await this.todoRepository.update(id, {
-      ...updateTodoDto,
-      planDate: updateTodoDto.planDate
-        ? dayjs(updateTodoDto.planDate).toDate()
-        : undefined,
-    });
+    const todo = await this.todoBaseService.update(id, updateTodoDto);
 
     // 如果有重复配置，更新重复配置
     if (updateTodoDto.repeat) {
       await this.todoRepeatService.update(todo.id, updateTodoDto.repeat);
     }
 
-    return this.findById(id);
+    return await this.todoBaseService.findById(id);
   }
 
   async delete(id: string): Promise<void> {
-    await this.todoRepository.delete(id);
+    await this.todoBaseService.delete(id);
   }
 
   async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
-    await this.todoRepository.delete(getWhere(filter));
+    await this.todoBaseService.deleteByFilter(filter);
   }
 
   async findById(id: string): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOneBy({ id });
-    if (!todo) {
-      throw new Error("Todo not found");
-    }
+    return await this.todoBaseService.findById(id, ["repeat"]);
+  }
 
-    return {
-      ...todo,
-    };
+  async batchDone(params: OperationByIdListDto): Promise<void> {
+    await this.todoStatusService.batchDone(params);
+  }
+
+  async abandon(id: string): Promise<void> {
+    const todo = await this.todoBaseService.findById(id);
+    if (todo.repeatId) {
+      const repeat = await this.todoRepeatService.findById(todo.repeatId);
+      await this.todoRepeatService.createNextTodo(todo);
+    }
+    await this.todoStatusService.abandon(id);
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.todoStatusService.restore(id);
   }
 }

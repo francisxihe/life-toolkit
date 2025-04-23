@@ -6,10 +6,10 @@ import dayjs from "dayjs";
 import { OrdinalWeek, OrdinalDay, OrdinalDayType } from "../../types";
 
 export default function RepeatConfigMonthly(props: {
-  config: RepeatFormMonthly["config"];
-  handleConfigChange: (config: RepeatFormMonthly["config"]) => void;
+  repeatConfig: RepeatFormMonthly["repeatConfig"];
+  handleConfigChange: (repeatConfig: RepeatFormMonthly["repeatConfig"]) => void;
 }) {
-  const { config: monthlyConfig, handleConfigChange } = props;
+  const { repeatConfig: monthlyConfig, handleConfigChange } = props;
 
   return (
     <div className="flex flex-col gap-4">

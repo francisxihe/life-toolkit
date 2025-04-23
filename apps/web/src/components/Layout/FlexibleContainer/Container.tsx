@@ -65,7 +65,8 @@ export function ContainerShrink(
           direction === 'horizontal'
             ? `${styles['container']} ${styles['container-horizontal']}`
             : '',
-          overflowY ? `overflow-y-${overflowY}` : '',
+          overflowY === 'hidden' ? 'overflow-y-hidden' : '',
+          overflowY === 'auto' ? 'overflow-y-auto' : '',
         ],
     className ?? '',
   );

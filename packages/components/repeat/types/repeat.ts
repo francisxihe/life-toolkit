@@ -26,7 +26,7 @@ export type RepeatFormNormal = {
 
 export type RepeatFormWeekly = {
   repeatMode: RepeatMode.WEEKLY;
-  config: {
+  repeatConfig: {
     weekdays: WeekDay[];
   };
 };
@@ -63,7 +63,7 @@ type RepeatConfigMonthly =
 
 export type RepeatFormMonthly = {
   repeatMode: RepeatMode.MONTHLY;
-  config: RepeatConfigMonthly;
+  repeatConfig: RepeatConfigMonthly;
 };
 
 export enum YearlyType {
@@ -73,7 +73,7 @@ export enum YearlyType {
 
 export type RepeatFormYearly = {
   repeatMode: RepeatMode.YEARLY;
-  config:
+  repeatConfig:
     | {
         yearlyType: YearlyType.MONTH;
         [YearlyType.MONTH]: RepeatConfigMonthly;
@@ -86,7 +86,7 @@ export type RepeatFormYearly = {
 
 export type RepeatFormCustom = {
   repeatMode: RepeatMode.CUSTOM;
-  config:
+  repeatConfig:
     | {
         interval: number;
         intervalUnit: TimeUnit.DAY;
@@ -94,25 +94,25 @@ export type RepeatFormCustom = {
     | {
         interval: number;
         intervalUnit: TimeUnit.WEEK;
-        [TimeUnit.WEEK]: RepeatFormWeekly["config"];
+        [TimeUnit.WEEK]: RepeatFormWeekly["repeatConfig"];
       }
     | {
         interval: number;
         intervalUnit: TimeUnit.MONTH;
-        [TimeUnit.MONTH]: RepeatFormMonthly["config"];
+        [TimeUnit.MONTH]: RepeatFormMonthly["repeatConfig"];
       }
     | {
         interval: number;
         intervalUnit: TimeUnit.YEAR;
-        [TimeUnit.YEAR]: RepeatFormYearly["config"];
+        [TimeUnit.YEAR]: RepeatFormYearly["repeatConfig"];
       };
 };
 
 export type RepeatConfig =
-  | RepeatFormWeekly["config"]
-  | RepeatFormMonthly["config"]
-  | RepeatFormYearly["config"]
-  | RepeatFormCustom["config"];
+  | RepeatFormWeekly["repeatConfig"]
+  | RepeatFormMonthly["repeatConfig"]
+  | RepeatFormYearly["repeatConfig"]
+  | RepeatFormCustom["repeatConfig"];
 
 export type RepeatModeForm =
   | RepeatFormNormal

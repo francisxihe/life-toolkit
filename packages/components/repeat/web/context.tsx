@@ -18,7 +18,7 @@ import { useLocaleContext } from "./useLocale";
 import { OrdinalDay, OrdinalDayType } from "../types";
 
 export type RepeatContextProps = {
-  value: RepeatModeForm & RepeatEndModeForm;
+  value?: RepeatModeForm & RepeatEndModeForm;
   onChange: (value: RepeatModeForm & RepeatEndModeForm) => void;
   children: React.ReactNode;
 };
@@ -29,7 +29,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
     t: Record<string, string>;
     repeatModeForm: RepeatModeForm;
     handleChangeRepeatMode: (repeatMode: RepeatMode) => void;
-    handleChangeRepeatConfig: (config?: RepeatConfig) => void;
+    handleChangeRepeatConfig: (repeatConfig?: RepeatConfig) => void;
     repeatEndModeForm: RepeatEndModeForm;
     handleChangeRepeatEndMode: (repeatEndModeForm: RepeatEndModeForm) => void;
   };
@@ -39,7 +39,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
   const { onChange, value } = props;
   const [repeatModeForm, setRepeatModeForm] = useState<RepeatModeForm>({
     repeatMode: RepeatMode.CUSTOM,
-    config: {
+    repeatConfig: {
       interval: 1,
       intervalUnit: TimeUnit.MONTH,
       [TimeUnit.MONTH]: {
@@ -62,13 +62,13 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       case RepeatMode.WEEKLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.WEEKLY,
-          config: { weekdays: [] },
+          repeatConfig: { weekdays: [] },
         });
         break;
       case RepeatMode.MONTHLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.MONTHLY,
-          config: {
+          repeatConfig: {
             monthlyType: MonthlyType.ORDINAL_DAY,
             [MonthlyType.ORDINAL_DAY]: {
               ordinalDay: OrdinalDay.FIRST,
@@ -80,7 +80,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       case RepeatMode.YEARLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.YEARLY,
-          config: {
+          repeatConfig: {
             yearlyType: YearlyType.MONTH,
             month: { monthlyType: MonthlyType.DAY, [MonthlyType.DAY]: 1 },
           },
@@ -89,7 +89,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       case RepeatMode.CUSTOM:
         setRepeatModeForm({
           repeatMode: RepeatMode.CUSTOM,
-          config: { interval: 1, intervalUnit: TimeUnit.DAY },
+          repeatConfig: { interval: 1, intervalUnit: TimeUnit.DAY },
         });
         break;
       default:
@@ -103,30 +103,30 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
     });
   };
 
-  const handleChangeRepeatConfig = (config?: RepeatConfig) => {
+  const handleChangeRepeatConfig = (repeatConfig?: RepeatConfig) => {
     switch (repeatModeForm.repeatMode) {
       case RepeatMode.WEEKLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.WEEKLY,
-          config: config as RepeatFormWeekly["config"],
+          repeatConfig: repeatConfig as RepeatFormWeekly["repeatConfig"],
         });
         break;
       case RepeatMode.MONTHLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.MONTHLY,
-          config: config as RepeatFormMonthly["config"],
+          repeatConfig: repeatConfig as RepeatFormMonthly["repeatConfig"],
         });
         break;
       case RepeatMode.YEARLY:
         setRepeatModeForm({
           repeatMode: RepeatMode.YEARLY,
-          config: config as RepeatFormYearly["config"],
+          repeatConfig: repeatConfig as RepeatFormYearly["repeatConfig"],
         });
         break;
       case RepeatMode.CUSTOM:
         setRepeatModeForm({
           repeatMode: RepeatMode.CUSTOM,
-          config: config as RepeatFormCustom["config"],
+          repeatConfig: repeatConfig as RepeatFormCustom["repeatConfig"],
         });
         break;
       default:

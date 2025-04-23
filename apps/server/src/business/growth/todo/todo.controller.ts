@@ -11,7 +11,6 @@ import {
 import { TodoService } from "./todo.service";
 import { TodoPageFilterDto, TodoListFilterDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
-import { TodoStatusService } from "./todo-status.service";
 import type {
   Todo,
   OperationByIdListVo,
@@ -22,15 +21,12 @@ import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
 export class TodoController {
-  constructor(
-    private readonly todoService: TodoService,
-    private readonly todoStatusService: TodoStatusService
-  ) {}
+  constructor(private readonly todoService: TodoService) {}
 
   @Put("batch-done")
   @Response()
   async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.todoStatusService.batchDone(
+    return await this.todoService.batchDone(
       OperationMapper.voToOperationByIdListDto(idList)
     );
   }
@@ -38,14 +34,14 @@ export class TodoController {
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.todoStatusService.abandon(id);
+    const result = await this.todoService.abandon(id);
     return { result };
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.todoStatusService.restore(id);
+    const result = await this.todoService.restore(id);
     return { result };
   }
 

@@ -10,7 +10,7 @@ import { RepeatMode, RepeatConfig, RepeatEndMode } from "../types";
 
 export class Repeat {
   /** 主键 */
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn("uuid")
   id!: string;
 
   /** 重复模式 */
@@ -35,12 +35,14 @@ export class Repeat {
   /** 重复次数 */
   @Column({
     type: "int",
+    nullable: true,
   })
   repeatTimes?: number;
 
   /** 重复结束日期 */
   @Column({
     type: "date",
+    nullable: true,
   })
   repeatEndDate?: string;
 }
