@@ -1,5 +1,0 @@
-repeat的todo理解为独立的todo，只是从交互层面上和普通todo在一起实际上的逻辑区别非常大（是否需要单独的表去管理？）
-
-
-
-删改repeat的todo只会影响未完成的todo，不会影响已经完成的repeat的todo

@@ -45,4 +45,11 @@ export class Repeat {
     nullable: true,
   })
   repeatEndDate?: string;
+
+  /** 已创建的重复次数 */
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  createdRepeatTimes?: number;
 }

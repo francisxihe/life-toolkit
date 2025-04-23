@@ -7,6 +7,9 @@ import isBetween from "dayjs/plugin/isBetween";
 import { RepeatService } from "@life-toolkit/components-repeat/server/service";
 import { TodoDto } from "./dto";
 import { TodoBaseService } from "./todo-base.service";
+import { RepeatEndMode } from "@life-toolkit/components-repeat";
+import { CreateTodoDto } from "./dto/todo-form.dto";
+
 // 添加dayjs插件
 dayjs.extend(isBetween);
 
@@ -23,17 +26,56 @@ export class TodoRepeatService extends RepeatService {
   }
 
   /**
-   * 创建单个待办事项
+   * 创建下一个重复的待办事项
    */
   async createNextTodo(todoWithRepeat: TodoDto) {
-    console.log("todoWithRepeat", todoWithRepeat);
+    if (!todoWithRepeat.repeatId) {
+      return;
+    }
+
+    // 获取重复配置
+    const repeat = (await this.findById(todoWithRepeat.repeatId)) as TodoRepeat;
+    if (!repeat) {
+      return;
+    }
+
+    // 检查重复结束条件
+    if (repeat.repeatEndMode === RepeatEndMode.FOR_TIMES) {
+      if (repeat.repeatTimes && repeat.repeatTimes <= 0) {
+        return; // 重复次数已用完
+      }
+
+      // 减少重复次数
+      await this.update(repeat.id, {
+        ...repeat,
+        repeatTimes: (repeat.repeatTimes || 1) - 1,
+      });
+    } else if (repeat.repeatEndMode === RepeatEndMode.TO_DATE) {
+      if (
+        repeat.repeatEndDate &&
+        dayjs().isAfter(dayjs(repeat.repeatEndDate))
+      ) {
+        return; // 已超过结束日期
+      }
+    }
+
+    // 计算下一个待办日期
+    const nextDate = this.calculateNextDate(
+      dayjs(todoWithRepeat.planDate),
+      repeat
+    );
+
+    if (!nextDate) {
+      return;
+    }
+
     // 检查是否已经存在该日期的待办
     const where: FindOptionsWhere<Todo> = {
-      id: todoWithRepeat.id,
-      // planDate: Between(
-      //   date.startOf("day").toDate(),
-      //   date.endOf("day").toDate()
-      // ),
+      repeatId: repeat.id,
+      planDate: Between(
+        nextDate.startOf("day").toDate(),
+        nextDate.endOf("day").toDate()
+      ),
     };
 
     const existingTodo = await this.todoRepository.findOne({
@@ -44,10 +86,26 @@ export class TodoRepeatService extends RepeatService {
       return;
     }
 
-    await this.todoBaseService.create({
-      ...todoWithRepeat,
-      // planDate: date.toDate(),
+    // 创建下一个待办
+    const createTodoDto: CreateTodoDto = {
+      name: todoWithRepeat.name,
+      description: todoWithRepeat.description,
+      tags: todoWithRepeat.tags,
+      importance: todoWithRepeat.importance,
+      urgency: todoWithRepeat.urgency,
+      planDate: nextDate.toDate(),
+      planStartAt: todoWithRepeat.planStartAt,
+      planEndAt: todoWithRepeat.planEndAt,
       status: TodoStatus.TODO,
+      taskId: todoWithRepeat.taskId,
+    };
+
+    // 直接通过Repository创建并设置repeatId
+    const newTodo = this.todoRepository.create({
+      ...createTodoDto,
+      repeatId: repeat.id,
     });
+
+    await this.todoRepository.save(newTodo);
   }
 }

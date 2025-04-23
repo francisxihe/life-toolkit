@@ -13,6 +13,13 @@ import { TodoStatus } from "./enum";
 import { Task } from "../../task/entities";
 import { TodoRepeat } from "./todo-repeat.entity";
 
+export enum TodoSource {
+  /** 手动创建 */
+  MANUAL = "manual",
+  /** 重复创建 */
+  REPEAT = "repeat",
+}
+
 @Entity("todo")
 export class Todo extends BaseEntity {
   /** 待办名称 */
@@ -99,4 +106,9 @@ export class Todo extends BaseEntity {
   @IsString()
   @IsOptional()
   repeatId?: string;
+
+  /** 来源 */
+  @Column({ nullable: true, type: "enum", enum: TodoSource })
+  @IsOptional()
+  source?: TodoSource;
 }
