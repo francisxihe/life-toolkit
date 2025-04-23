@@ -10,7 +10,8 @@
   ],
   "scripts": {
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "jest"
   },
   "dependencies": {
     "@life-toolkit/web-utils": "workspace:*"
@@ -22,5 +23,13 @@
     "class-validator": "*",
     "@arco-design/web-react": "*",
     "@nestjs/mapped-types": "*"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@types/jest": "^29.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "jest-environment-jsdom": "^29.0.0"
   }
 }
