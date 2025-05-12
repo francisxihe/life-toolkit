@@ -16,7 +16,14 @@ export default defineConfig({
         input: {
           index: path.resolve(currentDirPath, "src/main/index.ts"),
         },
-        external: ["electron", "electron-devtools-installer"],
+        external: [
+          "electron", 
+          "electron-devtools-installer",
+          /^@life-toolkit\/components-repeat/,
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/
+        ],
       },
       minify: process.env.NODE_ENV === "production",
       sourcemap: process.env.NODE_ENV !== "production",
@@ -30,7 +37,13 @@ export default defineConfig({
         input: {
           index: path.resolve(currentDirPath, "src/preload/index.ts"),
         },
-        external: ["electron"],
+        external: [
+          "electron",
+          /^@life-toolkit\/components-repeat/,
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/
+        ],
         output: {
           format: "cjs",
           entryFileNames: "[name].cjs"

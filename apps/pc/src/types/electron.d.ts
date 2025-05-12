@@ -17,3 +17,17 @@ interface Window {
     isElectron: boolean;
   };
 } 
+
+// 类型声明
+declare global {
+  interface Window {
+    electronAPI: {
+      getAppInfo: () => Promise<{ version: string; platform: string }>;
+      loadURL: (url: string) => Promise<{ success: boolean; error?: string }>;
+      isElectron: boolean;
+      readFile?: (filePath: string) => Promise<{ success: boolean; message: string }>;
+      on?: (channel: string, callback: (data: any) => void) => boolean;
+      removeListener?: (channel: string) => boolean;
+    };
+  }
+}
