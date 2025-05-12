@@ -4,10 +4,10 @@ import { Repository, FindOptionsWhere, Between } from "typeorm";
 import { Todo, TodoStatus, TodoRepeat } from "./entities";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import { RepeatService } from "@life-toolkit/components-repeat/server/service";
+import { RepeatService } from "@life-toolkit/components-repeat/server";
 import { TodoDto } from "./dto";
 import { TodoBaseService } from "./todo-base.service";
-import { RepeatEndMode } from "@life-toolkit/components-repeat";
+import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
 import { CreateTodoDto } from "./dto/todo-form.dto";
 
 // 添加dayjs插件

@@ -18,6 +18,7 @@
     "pre-commit": "turbo run pre-commit",
     "dev:server": "turbo run dev --filter=life-toolkit-server",
     "dev:web": "turbo run dev --filter=life-toolkit-web",
+    "dev:pc": "turbo run dev --filter=life-toolkit-pc",
     "deploy:server": "turbo run deploy --filter=life-toolkit-server",
     "deploy:web": "turbo run deploy --filter=life-toolkit-web",
     "sync:entity": "turbo run sync:entity --filter=@life-toolkit/supporter"

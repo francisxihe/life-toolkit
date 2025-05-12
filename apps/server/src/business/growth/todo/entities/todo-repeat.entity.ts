@@ -1,6 +1,6 @@
 import { Entity, OneToOne } from "typeorm";
 import { Todo } from "./todo.entity";
-import { Repeat } from "@life-toolkit/components-repeat/server/entity";
+import { Repeat } from "@life-toolkit/components-repeat/server";
 
 @Entity("todo_repeat")
 export class TodoRepeat extends Repeat {

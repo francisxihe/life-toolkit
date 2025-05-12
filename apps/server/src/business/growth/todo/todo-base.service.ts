@@ -98,17 +98,22 @@ export class TodoBaseService {
   }
 
   async findById(id: string, relations?: string[]): Promise<TodoDto> {
-    const todo = await this.todoRepository.findOne({
-      where: { id },
-      relations,
-    });
-    if (!todo) {
+    try {
+      const todo = await this.todoRepository.findOne({
+        where: { id },
+        relations,
+      });
+      if (!todo) {
+        throw new Error("Todo not found");
+      }
+
+      return {
+        ...todo,
+      };
+    } catch (error) {
+      console.error(error);
       throw new Error("Todo not found");
     }
-
-    return {
-      ...todo,
-    };
   }
 }
 

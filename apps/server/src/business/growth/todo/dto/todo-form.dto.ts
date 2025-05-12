@@ -9,7 +9,7 @@ import { Todo } from "../entities";
 import {
   CreateRepeatDto,
   UpdateRepeatDto,
-} from "@life-toolkit/components-repeat/server/dto";
+} from "@life-toolkit/components-repeat/server";
 
 export class CreateTodoDto extends PickType(TodoDto, [
   "name",

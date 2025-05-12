@@ -5,7 +5,7 @@ import { Todo } from "../entities/todo.entity";
 import dayjs from "dayjs";
 import { BaseMapper } from "@/base/base.mapper";
 import { TaskMapper } from "../../task/mappers";
-import { RepeatMapper } from "@life-toolkit/components-repeat/server/mapper";
+import { RepeatMapper } from "@life-toolkit/components-repeat/server";
 
 export class TodoMapperEntity {
   static entityToDto(entity: Todo): TodoDto {
@@ -89,6 +89,8 @@ class TodoMapperVo extends TodoMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
+    console.log("vo.repeat", vo.repeat);
+    console.log("vo.repeat", RepeatMapper);
     dto.repeat = vo.repeat ? RepeatMapper.voToCreateDto(vo.repeat) : undefined;
     dto.taskId = vo.taskId;
     return dto;

@@ -35,7 +35,12 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "inputs": ["apps/server/**/*.ts", "apps/web/**/*.ts"]
+      "inputs": ["apps/server/**/*.ts", "apps/web/**/*.ts", "apps/pc/**/*.ts"]
+    },
+    "dev:electron": {
+      "cache": false,
+      "persistent": true,
+      "inputs": ["apps/pc/**/*.ts"]
     },
     "deploy": {
       "cache": false,
