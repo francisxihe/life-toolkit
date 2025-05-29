@@ -1,0 +1,17 @@
+.clock {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.actions {
+  position: absolute;
+  bottom: 0;
+  right: 20px;
+}
+
+.action {
+  margin: 12px;
+} 

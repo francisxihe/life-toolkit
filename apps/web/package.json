@@ -18,6 +18,7 @@
     "deploy": "pnpm run build && ./deploy.sh"
   },
   "dependencies": {
+    "@ant-design/icons": "^6.0.0",
     "@antv/data-set": "^0.11.8",
     "@arco-design/color": "^0.4.0",
     "@arco-design/web-react": "^2.66.0",
@@ -27,6 +28,7 @@
     "@nanostores/react": "^0.8.4",
     "@turf/turf": "^6.5.0",
     "@types/lodash-es": "^4.17.12",
+    "antd": "^5.25.3",
     "bizcharts": "^4.1.11",
     "clsx": "^2.1.1",
     "copy-to-clipboard": "^3.3.1",
@@ -52,8 +54,8 @@
     "@arco-design/webpack-plugin": "^1.6.0",
     "@arco-plugins/vite-plugin-svgr": "^0.7.2",
     "@life-toolkit/api": "workspace:*",
-    "@life-toolkit/tabs": "workspace:*",
     "@life-toolkit/components-repeat": "workspace:*",
+    "@life-toolkit/tabs": "workspace:*",
     "@svgr/webpack": "^5.5.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

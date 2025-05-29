@@ -1,0 +1,184 @@
+.flip {
+  position: relative;
+  margin: 5px;
+  width: 120px;
+  height: 180px;
+  font-size: 160px;
+  font-weight: bold;
+  line-height: 174px;
+  border-radius: 12px;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 70%);
+}
+
+.flip .item {
+  list-style: none;
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  perspective: 400px;
+  transition: opacity 0.3s;
+}
+
+.flip .item.active {
+  z-index: 2;
+}
+
+.flip .item:first-child {
+  z-index: 2;
+}
+
+.flip .item .up,
+.flip .item .down {
+  z-index: 1;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  overflow: hidden;
+}
+
+.flip .item .up {
+  transform-origin: 50% 100%;
+  top: 0;
+}
+
+.flip .item .up::after {
+  content: "";
+  position: absolute;
+  top: 87px;
+  left: 0;
+  z-index: 5;
+  width: 100%;
+  height: 6px;
+  background-color: rgba(0, 0, 0, 40%);
+}
+
+.flip .item .down {
+  transform-origin: 50% 0%;
+  bottom: 0;
+  transition: opacity 0.3s;
+}
+
+.flip .item .inn {
+  position: absolute;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 200%;
+  color: #ccc;
+  text-shadow: 0 1px 2px #000;
+  text-align: center;
+  background-color: #333;
+  border-radius: 12px;
+}
+
+.flip .item .up .inn {
+  top: 0;
+}
+
+.flip .item .down .inn {
+  bottom: 0;
+}
+
+.play .item.before {
+  z-index: 3;
+}
+
+.play .item.active {
+  animation: asd 0.5s 0.5s linear both;
+  z-index: 2;
+}
+
+.play .item.before .up {
+  z-index: 2;
+  animation: turn-up 0.5s linear both;
+}
+
+.play .item.active .down {
+  z-index: 2;
+  animation: turn-down 0.5s 0.5s linear both;
+}
+
+@keyframes turn-down {
+  0% {
+    transform: rotateX(90deg);
+  }
+
+  100% {
+    transform: rotateX(0deg);
+  }
+}
+
+@keyframes turn-up {
+  0% {
+    transform: rotateX(0deg);
+  }
+
+  100% {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes asd {
+  0% {
+    z-index: 2;
+  }
+
+  5% {
+    z-index: 4;
+  }
+
+  100% {
+    z-index: 4;
+  }
+}
+
+.play .shadow {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.play .before .up .shadow {
+  background: linear-gradient(rgba(0, 0, 0, 10%) 0%, rgba(0, 0, 0, 100%) 100%);
+  animation: show 0.5s linear both;
+}
+
+.play .active .up .shadow {
+  background: linear-gradient(rgba(0, 0, 0, 10%) 0%, rgba(0, 0, 0, 100%) 100%);
+  animation: hide 0.5s 0.3s linear both;
+}
+
+.play .before .down .shadow {
+  background: linear-gradient(rgba(0, 0, 0, 100%) 0%, rgba(0, 0, 0, 10%) 100%);
+  animation: show 0.5s linear both;
+}
+
+.play .active .down .shadow {
+  background: linear-gradient(rgba(0, 0, 0, 100%) 0%, rgba(0, 0, 0, 10%) 100%);
+  animation: hide 0.5s 0.3s linear both;
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hide {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+} 

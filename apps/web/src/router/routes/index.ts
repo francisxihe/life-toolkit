@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
-import { taskRoutes, todoRoutes, goalRoutes } from '@/router/routes/growth.routes';
+import { taskRoutes, todoRoutes, goalRoutes, timerRoutes } from '@/router/routes/growth.routes';
 
 export type IRoute = AuthParams & {
   name: string;
@@ -25,6 +25,7 @@ export const routes: IRoute[] = [
   expensesRoutes,
   aiRoutes,
   erpRoutes,
+  timerRoutes,
   // {
   //   name: 'menu.dashboard',
   //   key: '/dashboard',

@@ -68,3 +68,9 @@ export const goalRoutes: IRoute = {
     },
   ],
 };
+
+export const timerRoutes: IRoute = {
+  name: 'menu.timer',
+  key: '/timer', 
+  breadcrumb: true,
+};
