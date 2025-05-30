@@ -1,31 +1,48 @@
 import React, { useState } from 'react';
-import { IconRefresh } from '@arco-design/web-react/icon';
-import { Countdown as ClockCountdown } from './components/clock';
+import {
+  IconRefresh,
+  IconMinusCircle,
+} from '@arco-design/web-react/icon';
+import { Countdown as ClockCountdown } from './normal';
 import { PlayController, Setting } from './components/actions';
-import './index.css';
+import { MiniTimer } from './mini';
+import styles from './style.module.less';
+import clsx from 'clsx';
+import { TimerProvider, useTimerContext } from './context';
 
-const Timer: React.FC = () => {
-  const [clockState, setClockState] = useState(false);
-  const [countdown, setCountdown] = useState(1500);
-  const [clockRefresh, setClockRefresh] = useState(false);
-  const [form, setForm] = useState({ countdown: 1500 });
+const TimerContent: React.FC = () => {
+  const {
+    countdown,
+    setCountdown,
+    clockState,
+    setClockState,
+    clockRefresh,
+    setClockRefresh,
+    form,
+    setForm,
+    isMiniMode,
+    toggleMiniMode,
+    handleRefresh,
+    onConfirmSetting,
+  } = useTimerContext();
 
-  const handleRefresh = () => {
-    setClockRefresh(true);
-    setClockState(false);
-    setCountdown(form.countdown);
-  };
-
-  const onConfirmSetting = (settingForm: any): void => {
-    setForm(settingForm);
-    setCountdown(settingForm.countdown);
-    setClockRefresh(true);
-    setClockState(false);
-  };
+  if (isMiniMode) {
+    return (
+      <MiniTimer
+        countdown={countdown}
+        state={clockState}
+        refresh={clockRefresh}
+        setRefresh={setClockRefresh}
+        onToggleMode={toggleMiniMode}
+        onPlayPause={() => setClockState(!clockState)}
+        onRefresh={handleRefresh}
+      />
+    );
+  }
 
   return (
     <>
-      <div className="clock">
+      <div className={styles['clock']}>
         <ClockCountdown
           refresh={clockRefresh}
           setRefresh={setClockRefresh}
@@ -33,24 +50,37 @@ const Timer: React.FC = () => {
           state={clockState}
         />
       </div>
-      <div className="actions">
+      <div className={styles['actions']}>
         <PlayController
-          className="action action-play"
+          className={clsx(styles['action'], 'action-play')}
           state={clockState}
           setState={setClockState}
         />
         <IconRefresh
-          className="action action-reload"
+          className={clsx(styles['action'], 'action-reload')}
           onClick={handleRefresh}
           style={{ color: '#fff', fontSize: '30px' }}
         />
         <Setting
-          className="action action-setting"
+          className={clsx(styles['action'], 'action-setting')}
           onConfirm={onConfirmSetting}
+        />
+        <IconMinusCircle
+          className={clsx(styles['action'], 'action-mini')}
+          onClick={toggleMiniMode}
+          style={{ color: '#fff', fontSize: '30px' }}
         />
       </div>
     </>
   );
 };
+
+function Timer() {
+  return (
+    <TimerProvider>
+      <TimerContent />
+    </TimerProvider>
+  );
+}
 
 export default Timer;

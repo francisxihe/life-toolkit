@@ -1,0 +1,77 @@
+.mini-timer {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 80%);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 10%);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 30%);
+  z-index: 1000;
+  min-width: 200px;
+}
+
+.mini-timer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.mini-time-display {
+  font-family: "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  font-size: 24px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 2px;
+}
+
+.mini-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.mini-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 18px;
+}
+
+.mini-btn:hover {
+  background: rgba(255, 255, 255, 10%);
+  transform: scale(1.05);
+}
+
+.mini-btn:active {
+  transform: scale(0.95);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .mini-timer {
+    top: 10px;
+    right: 10px;
+    padding: 12px;
+    min-width: 160px;
+  }
+  
+  .mini-time-display {
+    font-size: 20px;
+  }
+  
+  .mini-btn {
+    font-size: 16px;
+    padding: 4px;
+  }
+} 

@@ -1,16 +1,27 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import FlipItem from './Flip';
-import { getTimeArr } from './utils';
-import './Countdown.css';
+import { IconPlayCircle, IconPauseCircle, IconRefresh, IconPlusCircle } from '@arco-design/web-react/icon';
+import { getTimeArr } from '../utils';
+import styles from './MiniTimer.module.css';
 
-interface CountdownProps {
+interface MiniTimerProps {
   countdown: number;
   state: boolean;
   refresh: boolean;
   setRefresh: (refresh: boolean) => void;
+  onToggleMode: () => void;
+  onPlayPause: () => void;
+  onRefresh: () => void;
 }
 
-const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRefresh }) => {
+const MiniTimer: React.FC<MiniTimerProps> = ({
+  countdown,
+  state,
+  refresh,
+  setRefresh,
+  onToggleMode,
+  onPlayPause,
+  onRefresh
+}) => {
   const [nCountdown, setNCountdown] = useState<number>(countdown);
   const [timeArr, setTimeArr] = useState<number[]>(getTimeArr(countdown));
   const timeHandleRef = useRef<NodeJS.Timeout | null>(null);
@@ -53,7 +64,7 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
         setTimeArr(getTimeArr(finalCountdown));
         
         if (finalCountdown > 0) {
-          tick(); // 递归调用
+          tick();
         } else {
           timeHandleRef.current = null;
         }
@@ -95,18 +106,32 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
     };
   }, [stopTimer]);
 
+  const formatTime = (timeArray: number[]) => {
+    const minutes = timeArray[0] * 10 + timeArray[1];
+    const seconds = timeArray[2] * 10 + timeArray[3];
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+
   return (
-    <div className="clock-container">
-      <FlipItem total={9} current={timeArr[0]} />
-      <FlipItem total={9} current={timeArr[1]} />
-      <div className="colon"></div>
-      <FlipItem total={5} current={timeArr[2]} />
-      <FlipItem total={9} current={timeArr[3]} />
-      <div className="colon"></div>
-      <FlipItem total={5} current={timeArr[4]} />
-      <FlipItem total={9} current={timeArr[5]} />
+    <div className={styles["mini-timer"]}>
+      <div className={styles["mini-timer-content"]}>
+        <div className={styles["mini-time-display"]}>
+          {formatTime(timeArr)}
+        </div>
+        <div className={styles["mini-controls"]}>
+          <button className={styles["mini-btn"]} onClick={onPlayPause}>
+            {state ? <IconPauseCircle /> : <IconPlayCircle />}
+          </button>
+          <button className={styles["mini-btn"]} onClick={onRefresh}>
+            <IconRefresh />
+          </button>
+          <button className={styles["mini-btn"]} onClick={onToggleMode}>
+            <IconPlusCircle />
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Countdown; 
+export default MiniTimer; 
