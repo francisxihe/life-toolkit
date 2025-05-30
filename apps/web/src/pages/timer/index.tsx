@@ -8,7 +8,7 @@ const Timer: React.FC = () => {
   const [clockState, setClockState] = useState(false);
   const [countdown, setCountdown] = useState(1500);
   const [clockRefresh, setClockRefresh] = useState(false);
-  let form = { countdown: 1500 };
+  const [form, setForm] = useState({ countdown: 1500 });
 
   const handleRefresh = () => {
     setClockRefresh(true);
@@ -17,8 +17,10 @@ const Timer: React.FC = () => {
   };
 
   const onConfirmSetting = (settingForm: any): void => {
-    form = settingForm;
-    handleRefresh();
+    setForm(settingForm);
+    setCountdown(settingForm.countdown);
+    setClockRefresh(true);
+    setClockState(false);
   };
 
   return (

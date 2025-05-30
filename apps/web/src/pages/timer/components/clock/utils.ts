@@ -1,34 +1,27 @@
-import dayjs from "dayjs";
-
 /**
- * @description: 剩余时间
+ * @description: 剩余时间转换为显示数组
  */
 export function getTimeArr(time?: number): number[] {
   if (time !== undefined) {
-    const timeArrString = dayjs(time).format("HH,mm,ss");
-    const [h, m, s] = timeArrString.split(",").map((item) => {
-      return Number(item);
-    });
+    // time是秒数，需要转换为时分秒
+    const totalSeconds = Math.max(0, Math.floor(time));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
     return [
-      // ...toArr(Y),
-      // ...toArr(M),
-      // ...toArr(D),
-      ...toArr(h),
-      ...toArr(m),
-      ...toArr(s),
+      ...toArr(hours),
+      ...toArr(minutes),
+      ...toArr(seconds),
     ];
   }
+  
+  // 如果没有传入时间，返回当前时间的时分秒
   const now = new Date();
-  // const Y = now.getFullYear()
-  // const M = now.getMonth() + 1
-  // const D = now.getDate()
   const h = now.getHours();
   const m = now.getMinutes();
   const s = now.getSeconds();
   return [
-    // ...toArr(Y),
-    // ...toArr(M),
-    // ...toArr(D),
     ...toArr(h),
     ...toArr(m),
     ...toArr(s),

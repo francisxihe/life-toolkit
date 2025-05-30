@@ -20,6 +20,7 @@
   height: 100%;
   perspective: 400px;
   transition: opacity 0.3s;
+  transform: translateZ(0);
 }
 
 .flip .item.active {
@@ -38,6 +39,7 @@
   width: 100%;
   height: 50%;
   overflow: hidden;
+  transform: translateZ(0);
 }
 
 .flip .item .up {
@@ -73,6 +75,7 @@
   text-align: center;
   background-color: #333;
   border-radius: 12px;
+  transform: translateZ(0);
 }
 
 .flip .item .up .inn {
@@ -88,18 +91,18 @@
 }
 
 .play .item.active {
-  animation: asd 0.5s 0.5s linear both;
+  animation: asd 0.5s 0.5s ease-out both;
   z-index: 2;
 }
 
 .play .item.before .up {
   z-index: 2;
-  animation: turn-up 0.5s linear both;
+  animation: turn-up 0.5s ease-in both;
 }
 
 .play .item.active .down {
   z-index: 2;
-  animation: turn-down 0.5s 0.5s linear both;
+  animation: turn-down 0.5s 0.5s ease-out both;
 }
 
 @keyframes turn-down {
@@ -145,22 +148,22 @@
 
 .play .before .up .shadow {
   background: linear-gradient(rgba(0, 0, 0, 10%) 0%, rgba(0, 0, 0, 100%) 100%);
-  animation: show 0.5s linear both;
+  animation: show 0.5s ease-in both;
 }
 
 .play .active .up .shadow {
   background: linear-gradient(rgba(0, 0, 0, 10%) 0%, rgba(0, 0, 0, 100%) 100%);
-  animation: hide 0.5s 0.3s linear both;
+  animation: hide 0.5s 0.3s ease-out both;
 }
 
 .play .before .down .shadow {
   background: linear-gradient(rgba(0, 0, 0, 100%) 0%, rgba(0, 0, 0, 10%) 100%);
-  animation: show 0.5s linear both;
+  animation: show 0.5s ease-in both;
 }
 
 .play .active .down .shadow {
   background: linear-gradient(rgba(0, 0, 0, 100%) 0%, rgba(0, 0, 0, 10%) 100%);
-  animation: hide 0.5s 0.3s linear both;
+  animation: hide 0.5s 0.3s ease-out both;
 }
 
 @keyframes show {
