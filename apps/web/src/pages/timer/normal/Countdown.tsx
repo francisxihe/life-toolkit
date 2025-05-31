@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import FlipItem from './Flip';
 import { getTimeArr } from '../utils';
-import './Countdown.css';
+import styles from './style.module.less';
 
 interface CountdownProps {
   countdown: number;
@@ -96,13 +96,13 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
   }, [stopTimer]);
 
   return (
-    <div className="clock-container">
+    <div className={styles['clock-container']}>
       <FlipItem total={9} current={timeArr[0]} />
       <FlipItem total={9} current={timeArr[1]} />
-      <div className="colon"></div>
+      <div className={styles['colon']}></div>
       <FlipItem total={5} current={timeArr[2]} />
       <FlipItem total={9} current={timeArr[3]} />
-      <div className="colon"></div>
+      <div className={styles['colon']}></div>
       <FlipItem total={5} current={timeArr[4]} />
       <FlipItem total={9} current={timeArr[5]} />
     </div>
