@@ -1,5 +1,5 @@
 import { createInjectState } from '@/utils/createInjectState';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const [TimerProvider, _useTimerContext] = createInjectState<{
   ContextType: {
@@ -13,6 +13,8 @@ export const [TimerProvider, _useTimerContext] = createInjectState<{
     setForm: (form: { countdown: number }) => void;
     isMiniMode: boolean;
     toggleMiniMode: () => void;
+    isFullscreen: boolean;
+    toggleFullscreen: () => void;
     handleRefresh: () => void;
     onConfirmSetting: (settingForm: any) => void;
   };
@@ -22,6 +24,7 @@ export const [TimerProvider, _useTimerContext] = createInjectState<{
   const [clockRefresh, setClockRefresh] = useState(false);
   const [form, setForm] = useState({ countdown: 1500 });
   const [isMiniMode, setIsMiniMode] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleRefresh = () => {
     setClockRefresh(true);
@@ -40,6 +43,34 @@ export const [TimerProvider, _useTimerContext] = createInjectState<{
     setIsMiniMode(!isMiniMode);
   };
 
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        // 进入全屏
+        await document.documentElement.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        // 退出全屏
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (error) {
+      console.error('全屏切换失败:', error);
+    }
+  };
+
+  // 监听全屏状态变化
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   return {
     countdown,
     setCountdown,
@@ -51,6 +82,8 @@ export const [TimerProvider, _useTimerContext] = createInjectState<{
     setForm,
     isMiniMode,
     toggleMiniMode,
+    isFullscreen,
+    toggleFullscreen,
     handleRefresh,
     onConfirmSetting,
   };

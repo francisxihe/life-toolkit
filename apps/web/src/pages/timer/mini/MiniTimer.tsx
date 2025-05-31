@@ -1,28 +1,31 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { IconPlayCircle, IconPauseCircle, IconRefresh, IconPlusCircle } from '@arco-design/web-react/icon';
+import {
+  IconPlayCircle,
+  IconPauseCircle,
+  IconRefresh,
+  IconPlusCircle,
+  IconFullscreen,
+  IconFullscreenExit,
+} from '@arco-design/web-react/icon';
 import { getTimeArr } from '../utils';
 import styles from './MiniTimer.module.css';
+import { useTimerContext } from '../context';
 
-interface MiniTimerProps {
-  countdown: number;
-  state: boolean;
-  refresh: boolean;
-  setRefresh: (refresh: boolean) => void;
-  onToggleMode: () => void;
-  onPlayPause: () => void;
-  onRefresh: () => void;
-}
 
-const MiniTimer: React.FC<MiniTimerProps> = ({
-  countdown,
-  state,
-  refresh,
-  setRefresh,
-  onToggleMode,
-  onPlayPause,
-  onRefresh
-}) => {
-  const [nCountdown, setNCountdown] = useState<number>(countdown);
+const MiniTimer: React.FC = () => {
+  const {
+    countdown,
+    setCountdown,
+    clockState,
+    setClockState,
+    clockRefresh,
+    setClockRefresh,
+    toggleMiniMode,
+    isFullscreen,
+    toggleFullscreen,
+    handleRefresh,
+  } = useTimerContext();
+
   const [timeArr, setTimeArr] = useState<number[]>(getTimeArr(countdown));
   const timeHandleRef = useRef<NodeJS.Timeout | null>(null);
   const timeMarkRef = useRef<Date | null>(null);
@@ -30,8 +33,8 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
 
   // 同步ref值
   useEffect(() => {
-    nCountdownRef.current = nCountdown;
-  }, [nCountdown]);
+    nCountdownRef.current = countdown;
+  }, [countdown]);
 
   const stopTimer = useCallback(() => {
     if (timeHandleRef.current) {
@@ -45,10 +48,10 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
       if (timeHandleRef.current) {
         clearTimeout(timeHandleRef.current);
       }
-      
+
       const currentCountdown = nCountdownRef.current;
       if (currentCountdown <= 0) {
-        setNCountdown(0);
+        setCountdown(0);
         setTimeArr(getTimeArr(0));
         timeHandleRef.current = null;
         return;
@@ -56,13 +59,14 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
 
       timeMarkRef.current = new Date();
       timeHandleRef.current = setTimeout(() => {
-        const diffTime = new Date().getTime() - (timeMarkRef.current?.getTime() || 0);
+        const diffTime =
+          new Date().getTime() - (timeMarkRef.current?.getTime() || 0);
         const newCountdown = currentCountdown - Math.floor(diffTime / 1000);
         const finalCountdown = Math.max(0, newCountdown);
-        
-        setNCountdown(finalCountdown);
+
+        setCountdown(finalCountdown);
         setTimeArr(getTimeArr(finalCountdown));
-        
+
         if (finalCountdown > 0) {
           tick();
         } else {
@@ -75,30 +79,30 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
   }, []);
 
   const handleLoadClock = useCallback(() => {
-    setNCountdown(countdown);
+    setCountdown(countdown);
     setTimeArr(getTimeArr(countdown));
   }, [countdown]);
 
   useEffect(() => {
-    if (state === true) {
-      if (!timeHandleRef.current && nCountdown > 0) {
+    if (clockState === true) {
+      if (!timeHandleRef.current && countdown > 0) {
         startTimer();
       }
     } else {
       stopTimer();
     }
-  }, [state, startTimer, stopTimer]);
+  }, [clockState, startTimer, stopTimer]);
 
   useEffect(() => {
     handleLoadClock();
   }, [handleLoadClock]);
 
   useEffect(() => {
-    if (refresh) {
+    if (clockRefresh) {
       handleLoadClock();
-      setRefresh(false);
+      setClockRefresh(false);
     }
-  }, [refresh, handleLoadClock, setRefresh]);
+  }, [clockRefresh, handleLoadClock, setClockRefresh]);
 
   useEffect(() => {
     return () => {
@@ -113,19 +117,23 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
   };
 
   return (
-    <div className={styles["mini-timer"]}>
-      <div className={styles["mini-timer-content"]}>
-        <div className={styles["mini-time-display"]}>
-          {formatTime(timeArr)}
-        </div>
-        <div className={styles["mini-controls"]}>
-          <button className={styles["mini-btn"]} onClick={onPlayPause}>
-            {state ? <IconPauseCircle /> : <IconPlayCircle />}
+    <div className={styles['mini-timer']}>
+      <div className={styles['mini-timer-content']}>
+        <div className={styles['mini-time-display']}>{formatTime(timeArr)}</div>
+        <div className={styles['mini-controls']}>
+          <button
+            className={styles['mini-btn']}
+            onClick={() => setClockState(!clockState)}
+          >
+            {clockState ? <IconPauseCircle /> : <IconPlayCircle />}
           </button>
-          <button className={styles["mini-btn"]} onClick={onRefresh}>
+          <button className={styles['mini-btn']} onClick={handleRefresh}>
             <IconRefresh />
           </button>
-          <button className={styles["mini-btn"]} onClick={onToggleMode}>
+          <button className={styles['mini-btn']} onClick={toggleFullscreen}>
+            {isFullscreen ? <IconFullscreenExit /> : <IconFullscreen />}
+          </button>
+          <button className={styles['mini-btn']} onClick={toggleMiniMode}>
             <IconPlusCircle />
           </button>
         </div>
@@ -134,4 +142,4 @@ const MiniTimer: React.FC<MiniTimerProps> = ({
   );
 };
 
-export default MiniTimer; 
+export default MiniTimer;

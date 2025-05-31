@@ -5,7 +5,7 @@ import { PlayController, Setting } from '../actions';
 import { useTimerContext } from '../context';
 import styles from '../style.module.less';
 import clsx from 'clsx';
-import { IconRefresh, IconMinusCircle } from '@arco-design/web-react/icon';
+import { IconRefresh, IconMinusCircle, IconFullscreen, IconFullscreenExit } from '@arco-design/web-react/icon';
 
 export { Countdown, Flip, getTimeArr };
 
@@ -17,6 +17,8 @@ const NormalTimer: React.FC = () => {
       clockRefresh,
       setClockRefresh,
       toggleMiniMode,
+      isFullscreen,
+      toggleFullscreen,
       handleRefresh,
       onConfirmSetting,
     } = useTimerContext();
@@ -46,6 +48,19 @@ const NormalTimer: React.FC = () => {
             className={clsx(styles['action'], 'action-setting')}
             onConfirm={onConfirmSetting}
           />
+          {isFullscreen ? (
+            <IconFullscreenExit
+              className={clsx(styles['action'], 'action-fullscreen')}
+              onClick={toggleFullscreen}
+              style={{ color: '#fff', fontSize: '30px' }}
+            />
+          ) : (
+            <IconFullscreen
+              className={clsx(styles['action'], 'action-fullscreen')}
+              onClick={toggleFullscreen}
+              style={{ color: '#fff', fontSize: '30px' }}
+            />
+          )}
           <IconMinusCircle
             className={clsx(styles['action'], 'action-mini')}
             onClick={toggleMiniMode}
