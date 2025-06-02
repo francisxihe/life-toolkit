@@ -13,7 +13,7 @@ import {
   YearlyType,
 } from "../types";
 import { createInjectState } from "@life-toolkit/web-utils/src/createInjectState";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useLocaleContext } from "./useLocale";
 import { OrdinalDay, OrdinalDayType } from "../types";
 
@@ -37,36 +37,31 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
   const { t } = useLocaleContext();
 
   const { onChange, value } = props;
-  const [repeatModeForm, setRepeatModeForm] = useState<RepeatModeForm>({
-    repeatMode: RepeatMode.CUSTOM,
-    repeatConfig: {
-      interval: 1,
-      intervalUnit: TimeUnit.MONTH,
-      [TimeUnit.MONTH]: {
-        monthlyType: MonthlyType.ORDINAL_DAY,
-        [MonthlyType.ORDINAL_DAY]: {
-          ordinalDay: OrdinalDay.FIRST,
-          ordinalDayType: OrdinalDayType.DAY,
-        },
-      },
-    },
-  });
+
+  const [repeatModeForm, setRepeatModeForm] = useState<RepeatModeForm>(
+    (value as RepeatModeForm) || {
+      repeatMode: RepeatMode.NONE,
+    }
+  );
   const [repeatEndModeForm, setRepeatEndModeForm] = useState<RepeatEndModeForm>(
     {
       repeatEndMode: RepeatEndMode.FOREVER,
     }
   );
 
+  const repeatModeFormRef = useRef<RepeatModeForm>(repeatModeForm);
+  const repeatEndModeFormRef = useRef<RepeatEndModeForm>(repeatEndModeForm);
+
   const handleChangeRepeatMode = (repeatMode: RepeatMode) => {
     switch (repeatMode) {
       case RepeatMode.WEEKLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.WEEKLY,
           repeatConfig: { weekdays: [] },
-        });
+        };
         break;
       case RepeatMode.MONTHLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.MONTHLY,
           repeatConfig: {
             monthlyType: MonthlyType.ORDINAL_DAY,
@@ -75,75 +70,79 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
               ordinalDayType: OrdinalDayType.DAY,
             },
           },
-        });
+        };
         break;
       case RepeatMode.YEARLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.YEARLY,
           repeatConfig: {
             yearlyType: YearlyType.MONTH,
             month: { monthlyType: MonthlyType.DAY, [MonthlyType.DAY]: 1 },
           },
-        });
+        };
         break;
       case RepeatMode.CUSTOM:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.CUSTOM,
           repeatConfig: { interval: 1, intervalUnit: TimeUnit.DAY },
-        });
+        };
         break;
       default:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: repeatMode,
-        });
+        };
     }
+
+    setRepeatModeForm(repeatModeFormRef.current);
+
     onChange({
-      ...repeatModeForm,
-      ...repeatEndModeForm,
+      ...repeatModeFormRef.current,
+      ...repeatEndModeFormRef.current,
     });
   };
 
   const handleChangeRepeatConfig = (repeatConfig?: RepeatConfig) => {
     switch (repeatModeForm.repeatMode) {
       case RepeatMode.WEEKLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.WEEKLY,
           repeatConfig: repeatConfig as RepeatFormWeekly["repeatConfig"],
-        });
+        };
         break;
       case RepeatMode.MONTHLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.MONTHLY,
           repeatConfig: repeatConfig as RepeatFormMonthly["repeatConfig"],
-        });
+        };
         break;
       case RepeatMode.YEARLY:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.YEARLY,
           repeatConfig: repeatConfig as RepeatFormYearly["repeatConfig"],
-        });
+        };
         break;
       case RepeatMode.CUSTOM:
-        setRepeatModeForm({
+        repeatModeFormRef.current = {
           repeatMode: RepeatMode.CUSTOM,
           repeatConfig: repeatConfig as RepeatFormCustom["repeatConfig"],
-        });
+        };
         break;
       default:
         break;
     }
     onChange({
-      ...repeatModeForm,
-      ...repeatEndModeForm,
+      ...repeatModeFormRef.current,
+      ...repeatEndModeFormRef.current,
     });
   };
 
   const handleChangeRepeatEndMode = (repeatEndModeForm: RepeatEndModeForm) => {
-    setRepeatEndModeForm(repeatEndModeForm);
+    repeatEndModeFormRef.current = repeatEndModeForm;
+    setRepeatEndModeForm(repeatEndModeFormRef.current);
 
     onChange({
-      ...repeatModeForm,
-      ...repeatEndModeForm,
+      ...repeatModeFormRef.current,
+      ...repeatEndModeFormRef.current,
     });
   };
 

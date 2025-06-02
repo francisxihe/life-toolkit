@@ -15,29 +15,22 @@ export class Repeat {
 
   /** 重复模式 */
   @Column({
-    type: "enum", 
+    type: "enum",
     enum: RepeatMode,
   })
   repeatMode!: RepeatMode;
 
   /** 重复配置 */
-  @Column("json")
+  @Column({ type: "json", nullable: true })
   @IsObject()
-  repeatConfig!: RepeatConfig;
- 
+  repeatConfig?: RepeatConfig;
+
   /** 重复结束模式 */
   @Column({
     type: "enum",
     enum: RepeatEndMode,
   })
   repeatEndMode!: RepeatEndMode;
-
-  /** 重复次数 */
-  @Column({
-    type: "int",
-    nullable: true,
-  })
-  repeatTimes?: number;
 
   /** 重复结束日期 */
   @Column({
@@ -46,10 +39,17 @@ export class Repeat {
   })
   repeatEndDate?: string;
 
+  /** 重复次数 */
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  repeatTimes?: number;
+
   /** 已创建的重复次数 */
   @Column({
     type: "int",
     nullable: true,
   })
-  createdRepeatTimes?: number;
+  repeatedTimes?: number;
 }

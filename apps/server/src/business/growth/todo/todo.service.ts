@@ -71,7 +71,9 @@ export class TodoService {
   }
 
   async findById(id: string): Promise<TodoDto> {
-    return await this.todoBaseService.findById(id, ["repeat"]);
+    const todo = await this.todoBaseService.findById(id, ["repeat"]);
+  
+    return todo;
   }
 
   async batchDone(params: OperationByIdListDto): Promise<void> {
