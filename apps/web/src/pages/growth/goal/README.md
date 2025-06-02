@@ -82,18 +82,27 @@ goal/
 ## 使用方式
 
 ### 基本使用
-```tsx
+```javascript
+// 示例：在路由中使用目标管理模块
 import GoalPage from '@/pages/growth/goal';
 
-// 在路由中使用
-<Route path="/goal" element={<GoalPage />}>
-  <Route path="all" element={<GoalAllLayout />} />
-</Route>
+// 路由配置示例
+const routes = [
+  {
+    path: "/goal",
+    element: <GoalPage />,
+    children: [
+      { path: "all", element: <GoalAllLayout /> }
+    ]
+  }
+];
 ```
 
 ### 获取目标数据
-```tsx
+```javascript
+// 示例：使用目标上下文获取数据
 import { useGoalAllContext } from './goal-all/context';
+import { useEffect } from 'react';
 
 function MyComponent() {
   const { getGoalPage } = useGoalAllContext();
@@ -106,7 +115,8 @@ function MyComponent() {
 ```
 
 ### 使用优先级常量
-```tsx
+```javascript
+// 示例：使用优先级配置
 import { IMPORTANCE_MAP, URGENCY_MAP, getPriorityQuadrant } from './constants';
 
 // 获取重要性标签和颜色

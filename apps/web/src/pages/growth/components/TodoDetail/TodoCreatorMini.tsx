@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { useTodoDetailContext, TodoDetailProvider } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
 
-export type TodoCreatorSimpleProps = {
+export type TodoCreatorMiniProps = {
   hiddenDate?: boolean;
   showSubmitButton?: boolean;
   initialFormData?: Partial<TodoFormData>;
@@ -17,7 +17,7 @@ export type TodoCreatorSimpleProps = {
   afterSubmit?: () => Promise<void>;
 };
 
-export default function TodoCreatorSimple(props: TodoCreatorSimpleProps) {
+export default function TodoCreatorMini(props: TodoCreatorMiniProps) {
   return (
     <TodoDetailProvider
       mode="creator"

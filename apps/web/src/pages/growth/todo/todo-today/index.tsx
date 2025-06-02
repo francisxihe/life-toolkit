@@ -1,4 +1,4 @@
-import { TodoList, TodoCreatorSimple, TodoEditor } from '../../components';
+import { TodoList, TodoCreatorMini, TodoEditor } from '../../components';
 import { useEffect, useState } from 'react';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
@@ -69,7 +69,12 @@ export default function TodoToday() {
 
   return (
     <FlexibleContainer className="bg-bg-2 rounded-lg">
-      <Fixed className="px-5 py-2 flex justify-between items-center border-b">
+      <Fixed
+        className={clsx(
+          'px-5 py-2',
+          'flex justify-between items-center border-b',
+        )}
+      >
         <div className="text-text-1 text-title-2 font-medium py-1">
           今日待办
         </div>
@@ -78,7 +83,7 @@ export default function TodoToday() {
       <Shrink className="px-5 flex" direction="vertical">
         <Shrink className="py-2" direction="horizontal">
           <Fixed>
-            <TodoCreatorSimple
+            <TodoCreatorMini
               afterSubmit={async () => {
                 refreshData();
               }}

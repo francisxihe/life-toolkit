@@ -61,18 +61,22 @@ apps/web/src/pages/growth/task/
 
 ### 基本使用
 
-```tsx
+```javascript
+// 示例：在路由中使用任务管理模块
 import TaskPage from '@/pages/growth/task';
 
-// 在路由中使用
-<Route path="/task/*" element={<TaskPage />} />
+// 路由配置示例
+const routes = [
+  { path: "/task/*", element: <TaskPage /> }
+];
 ```
 
 ### 优先级系统
 
 模块使用四象限优先级管理系统：
 
-```typescript
+```javascript
+// 示例：优先级配置
 // 重要性级别
 const IMPORTANCE_MAP = {
   1: { color: 'danger', label: '非常重要' },
@@ -92,7 +96,8 @@ const URGENCY_MAP = {
 
 ### 上下文使用
 
-```tsx
+```javascript
+// 示例：使用任务上下文
 import { useTaskContext } from './context';
 
 function MyComponent() {
@@ -147,7 +152,8 @@ function MyComponent() {
 - `ABANDONED`: 已放弃
 
 ### 上下文结构
-```typescript
+```javascript
+// 示例：任务上下文接口
 interface TaskContext {
   ContextType: Record<string, unknown>;
 }

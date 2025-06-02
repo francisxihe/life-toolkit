@@ -82,22 +82,30 @@ todo/
 
 ### 基本使用
 
-```tsx
+```javascript
+// 示例：在路由中使用Todo模块
 import TodoPage from './todo';
 
-// 在路由中使用
-<Route path="/todo" element={<TodoPage />}>
-  <Route path="today" element={<TodoToday />} />
-  <Route path="week" element={<TodoWeek />} />
-  <Route path="dashboard" element={<TodoDashboard />} />
-  <Route path="calendar" element={<TodoCalendar />} />
-  <Route path="all" element={<TodoAll />} />
-</Route>
+// 路由配置示例
+const routes = [
+  {
+    path: "/todo",
+    element: <TodoPage />,
+    children: [
+      { path: "today", element: <TodoToday /> },
+      { path: "week", element: <TodoWeek /> },
+      { path: "dashboard", element: <TodoDashboard /> },
+      { path: "calendar", element: <TodoCalendar /> },
+      { path: "all", element: <TodoAll /> }
+    ]
+  }
+];
 ```
 
 ### 状态使用
 
-```tsx
+```javascript
+// 示例：使用Todo上下文
 import { useTodoContext } from './context';
 
 function MyComponent() {

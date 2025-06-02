@@ -1,11 +1,11 @@
 import { Popover } from '@arco-design/web-react';
 import { useState } from 'react';
 import TodoEditor, { TodoEditorProps } from './TodoEditor';
-import TodoCreatorSimple, { TodoCreatorSimpleProps } from './TodoCreatorSimple';
+import TodoCreatorMini, { TodoCreatorMiniProps } from './TodoCreatorMini';
 import TodoCreator, { TodoCreatorProps } from './TodoCreator';
 import { openDrawer, IDrawerOption } from '@/layout/Drawer';
 
-export { TodoEditor, TodoCreator, TodoCreatorSimple };
+export { TodoEditor, TodoCreator, TodoCreatorMini };
 
 export function useTodoDetail() {
   const openEditDrawer = (
@@ -47,7 +47,7 @@ export function useTodoDetail() {
     creatorProps,
   }: {
     children: React.ReactNode;
-    creatorProps: TodoCreatorSimpleProps;
+    creatorProps: TodoCreatorMiniProps;
   }) => {
     return (
       <Popover
@@ -62,7 +62,7 @@ export function useTodoDetail() {
         }}
         content={
           <div className="w-[400px] p-2">
-            <TodoCreatorSimple
+            <TodoCreatorMini
               {...creatorProps}
               onClose={async () => {
                 await creatorProps.onClose?.();

@@ -12,7 +12,7 @@ export type TodoEditorSimpleProps = {
   afterSubmit: () => Promise<void>;
 };
 
-export default function TodoEditorSimple(props: TodoEditorSimpleProps) {
+export default function TodoEditorMini(props: TodoEditorSimpleProps) {
   return (
     <TodoDetailProvider
       todo={props.todo}

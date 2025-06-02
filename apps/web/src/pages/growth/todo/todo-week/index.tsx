@@ -1,4 +1,4 @@
-import { TodoList, TodoCreatorSimple, TodoEditor } from '../../components';
+import { TodoList, TodoCreatorMini, TodoEditor } from '../../components';
 import { useEffect, useState } from 'react';
 import FlexibleContainer from '@/components/Layout/FlexibleContainer';
 import { Collapse, Divider } from '@arco-design/web-react';
@@ -77,7 +77,7 @@ export default function TodoWeek() {
       <Shrink className="px-5 w-full h-full flex">
         <Shrink className="py-2" direction="horizontal">
           <Fixed>
-            <TodoCreatorSimple
+            <TodoCreatorMini
               afterSubmit={async () => {
                 refreshData();
               }}
