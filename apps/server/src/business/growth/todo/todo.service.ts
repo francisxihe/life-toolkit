@@ -42,7 +42,9 @@ export class TodoService {
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    return await this.todoBaseService.findAll(filter);
+    const todoList = await this.todoBaseService.findAll(filter);
+    
+    return todoList;
   }
 
   async page(
@@ -72,7 +74,6 @@ export class TodoService {
 
   async findById(id: string): Promise<TodoDto> {
     const todo = await this.todoBaseService.findById(id, ["repeat"]);
-  
     return todo;
   }
 

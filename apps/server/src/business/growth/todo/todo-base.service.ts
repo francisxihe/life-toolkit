@@ -48,9 +48,7 @@ export class TodoBaseService {
       where: getWhere(filter),
     });
 
-    return todoList.map((todo) => ({
-      ...todo,
-    }));
+    return todoList as TodoDto[];
   }
 
   async page(
@@ -66,9 +64,7 @@ export class TodoBaseService {
     });
 
     return {
-      list: todoList.map((todo) => ({
-        ...todo,
-      })),
+      list: todoList as TodoDto[],
       total,
     };
   }
@@ -106,10 +102,7 @@ export class TodoBaseService {
       if (!todo) {
         throw new Error("Todo not found");
       }
-
-      return {
-        ...todo,
-      };
+      return todo;
     } catch (error) {
       console.error(error);
       throw new Error("Todo not found");

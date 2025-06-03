@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne, OneToOne } from "typeorm";
+import { Entity, Column, OneToMany, ManyToOne, OneToOne, JoinColumn } from "typeorm";
 import {
   IsString,
   IsOptional,
@@ -99,6 +99,7 @@ export class Todo extends BaseEntity {
 
   /** 重复配置 */
   @OneToOne(() => TodoRepeat, (repeat) => repeat.todo)
+  @JoinColumn({ name: "repeat_id" })
   repeat?: TodoRepeat;
 
   /** 重复配置ID */

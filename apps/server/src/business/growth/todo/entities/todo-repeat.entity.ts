@@ -5,6 +5,6 @@ import { Repeat } from "@life-toolkit/components-repeat/server";
 @Entity("todo_repeat")
 export class TodoRepeat extends Repeat {
   /** 关联的待办 */
-  @OneToOne(() => Todo, (todo) => todo.repeat)
-  todo: Todo;
+  @OneToOne(() => Todo, (todo) => todo.repeat, { nullable: true })
+  todo?: Todo;
 }

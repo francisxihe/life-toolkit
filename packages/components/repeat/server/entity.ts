@@ -1,8 +1,5 @@
 import {
-  Entity,
   Column,
-  OneToMany,
-  JoinColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { IsObject } from "class-validator";
