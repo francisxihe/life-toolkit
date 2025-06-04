@@ -35,7 +35,6 @@ export class TodoBaseService {
       planDate: createTodoDto.planDate
         ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
         : undefined,
-      repeat: undefined,
     });
 
     await this.todoRepository.save(todo);
@@ -95,9 +94,12 @@ export class TodoBaseService {
 
   async findById(id: string, relations?: string[]): Promise<TodoDto> {
     try {
+      const defaultRelations = ['repeat'];
+      const allRelations = relations ? [...defaultRelations, ...relations] : defaultRelations;
+      
       const todo = await this.todoRepository.findOne({
         where: { id },
-        relations,
+        relations: allRelations,
       });
       if (!todo) {
         throw new Error("Todo not found");

@@ -13,10 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
-    "paths": {
-      "@life-toolkit/test": ["./packages/test/src"]
-    }
+    "incremental": true
   },
   "exclude": ["node_modules"]
-} 
+}

@@ -1,16 +1,20 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Repository, In, DataSource } from "typeorm";
 import { TodoStatus, Todo, TodoRepeat } from "./entities";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,
 } from "@/common/operation";
+import { TodoRepeatService } from "./todo-repeat.service";
+
 @Injectable()
 export class TodoStatusService {
   constructor(
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>
+    private readonly todoRepository: Repository<Todo>,
+    private readonly todoRepeatService: TodoRepeatService,
+    private readonly dataSource: DataSource
   ) {}
 
   private async updateStatus(
@@ -18,29 +22,44 @@ export class TodoStatusService {
     status: TodoStatus,
     dateField: keyof Todo
   ): Promise<boolean> {
-    const todo = await this.todoRepository.findOneBy({ id });
-    if (!todo) {
-      throw new Error("Todo not found");
-    }
+    return await this.dataSource.transaction(async (manager) => {
+      const todo = await manager.findOneBy(Todo, { id });
+      if (!todo) {
+        throw new Error("Todo not found");
+      }
 
-    await this.todoRepository.update(id, {
-      status,
-      [dateField]: new Date(),
+      // 如果是重复待办，需要在事务中处理
+      if (todo.repeatId) {
+        const repeatId = todo.repeatId;
+        
+        // 先将当前待办转为普通待办，清除重复配置关联
+        await manager.update(Todo, id, {
+          status,
+          [dateField]: new Date(),
+          originalRepeatId: repeatId, // 保存原始重复配置ID
+          repeatId: undefined, // 移除重复配置关联
+        });
+        
+        // 然后创建下一个重复待办
+        await this.todoRepeatService.createNextTodo(todo);
+      } else {
+        await manager.update(Todo, id, {
+          status,
+          [dateField]: new Date(),
+        });
+      }
+
+      return true;
     });
-
-    return true;
   }
 
   async batchDone(
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
-    await this.todoRepository.update(
-      { id: In(params.idList) },
-      {
-        status: TodoStatus.DONE,
-        doneAt: new Date(),
-      }
-    );
+    // 批量完成需要逐个处理，因为可能涉及重复待办的处理
+    for (const id of params.idList) {
+      await this.updateStatus(id, TodoStatus.DONE, "doneAt");
+    }
 
     return {
       result: true,
@@ -49,6 +68,10 @@ export class TodoStatusService {
 
   async abandon(id: string): Promise<boolean> {
     return this.updateStatus(id, TodoStatus.ABANDONED, "abandonedAt");
+  }
+
+  async done(id: string): Promise<boolean> {
+    return this.updateStatus(id, TodoStatus.DONE, "doneAt");
   }
 
   async restore(id: string): Promise<boolean> {

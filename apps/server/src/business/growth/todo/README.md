@@ -303,4 +303,115 @@ interface TodoStats {
 2. 状态变更会影响统计数据的准确性
 3. 批量操作需要确认用户权限
 4. 重复任务的生成需要考虑系统性能
-5. 标签数量建议控制在合理范围内，避免过度分类 
+5. 标签数量建议控制在合理范围内，避免过度分类
+
+# Todo 重复待办功能实现
+
+## 功能概述
+
+当一个重复待办被完成或放弃时，系统会自动：
+1. 立即创建一个新的重复待办作为重复待办的主体
+2. 将原先的重复待办转换为普通待办（移除重复配置关联）
+3. 保留原先与重复配置的关联记录（通过 `originalRepeatId` 字段）
+
+## 核心实现
+
+### 1. 数据库字段
+
+在 `Todo` 实体中添加了 `originalRepeatId` 字段：
+
+```typescript
+/** 原始重复配置ID（用于保留关联记录） */
+@Column({ nullable: true })
+@IsString()
+@IsOptional()
+originalRepeatId?: string;
+```
+
+### 2. 关系模型调整
+
+采用 `OneToMany` / `ManyToOne` 关系来支持多个待办共享同一个重复配置：
+
+```typescript
+// Todo 实体中
+@ManyToOne(() => TodoRepeat, (repeat) => repeat.todos, { nullable: true })
+@JoinColumn({ name: "repeat_id" })
+repeat?: TodoRepeat;
+
+// TodoRepeat 实体中  
+@OneToMany(() => Todo, (todo) => todo.repeat, { nullable: true })
+todos?: Todo[];
+```
+
+这样的设计允许：
+- 一个重复配置可以关联多个待办（历史待办 + 当前活跃待办）
+- 保持ORM关系的便利性（自动加载、级联操作等）
+- 避免唯一约束冲突问题
+
+### 3. 状态更新逻辑
+
+在 `TodoStatusService.updateStatus()` 方法中采用"先断开再连接"的策略：
+
+```typescript
+// 如果是重复待办，先清除关联关系，然后创建下一个重复待办
+if (todo.repeatId) {
+  const repeatId = todo.repeatId;
+  
+  // 先将当前待办转为普通待办，清除重复配置关联
+  await manager.update(Todo, id, {
+    status,
+    [dateField]: new Date(),
+    originalRepeatId: repeatId, // 保存原始重复配置ID
+    repeatId: undefined, // 移除重复配置关联
+  });
+  
+  // 然后创建下一个重复待办
+  await this.todoRepeatService.createNextTodo(todo);
+}
+```
+
+这样确保了：
+1. **无约束冲突**：ManyToOne关系没有唯一约束限制
+2. **ORM便利性**：保持了TypeORM关系的所有优势
+3. **历史追溯**：通过 `originalRepeatId` 保留关联历史
+4. **数据一致性**：在事务中完成所有操作
+
+### 4. 重复待办创建
+
+在 `TodoRepeatService.createNextTodo()` 方法中：
+- 计算下一个重复日期
+- 检查重复结束条件
+- 创建新的重复待办，设置 `source` 为 `TodoSource.REPEAT`
+- 新待办自动与重复配置建立关联
+
+## API 端点
+
+- `PUT /todo/done/:id` - 完成待办
+- `PUT /todo/abandon/:id` - 放弃待办
+- `PUT /todo/batch-done` - 批量完成待办
+
+## 数据流程
+
+1. 用户完成/放弃一个重复待办
+2. 系统检查该待办是否有 `repeatId`
+3. 如果有，则：
+   - 先断开当前待办与重复配置的关联，将其转为普通待办
+   - 保存原始重复配置ID到 `originalRepeatId`
+   - 调用 `createNextTodo()` 创建下一个重复待办
+   - 新待办自动与重复配置建立关联
+4. 如果没有，则直接更新状态
+
+## 字段说明
+
+- `repeatId`: 当前活跃的重复配置ID
+- `originalRepeatId`: 原始重复配置ID（用于保留历史关联）
+- `source`: 待办来源（`manual` 手动创建，`repeat` 重复创建）
+
+## 核心优势
+
+这种 `OneToMany` / `ManyToOne` 的设计确保了：
+1. **无约束冲突**：避免了一对一关系的唯一约束问题
+2. **ORM便利性**：保持了TypeORM关系的所有优势
+3. **历史追溯**：通过 `originalRepeatId` 保留完整的关联历史
+4. **灵活扩展**：支持未来更复杂的重复待办场景
+5. **操作原子性**：整个过程在一个事务中完成，确保数据完整性

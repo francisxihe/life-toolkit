@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Todo } from "./entities";
+import { Todo, TodoStatus } from "./entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -81,12 +81,11 @@ export class TodoService {
     await this.todoStatusService.batchDone(params);
   }
 
+  async done(id: string): Promise<void> {
+    await this.todoStatusService.done(id);
+  }
+
   async abandon(id: string): Promise<void> {
-    const todo = await this.todoBaseService.findById(id);
-    if (todo.repeatId) {
-      const repeat = await this.todoRepeatService.findById(todo.repeatId);
-      await this.todoRepeatService.createNextTodo(todo);
-    }
     await this.todoStatusService.abandon(id);
   }
 

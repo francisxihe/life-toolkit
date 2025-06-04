@@ -38,6 +38,13 @@ export class TodoController {
     return { result };
   }
 
+  @Put("done/:id")
+  @Response()
+  async done(@Param("id") id: string) {
+    const result = await this.todoService.done(id);
+    return { result };
+  }
+
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {

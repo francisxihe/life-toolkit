@@ -1,5 +1,5 @@
 import defaultLocale from "./locale";
-import { createInjectState } from "@life-toolkit/web-utils/src/createInjectState";
+import { createInjectState } from "@life-toolkit/common-web-utils/src/createInjectState";
 
 export const [LocaleProvider, _useLocaleContext] = createInjectState<{
   PropsType: {

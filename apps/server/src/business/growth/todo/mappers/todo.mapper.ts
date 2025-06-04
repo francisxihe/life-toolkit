@@ -19,6 +19,9 @@ export class TodoMapperEntity {
     dto.urgency = entity.urgency;
     dto.planDate = entity.planDate;
     dto.repeat = entity.repeat;
+    dto.repeatId = entity.repeatId;
+    dto.originalRepeatId = entity.originalRepeatId;
+    dto.source = entity.source;
     dto.doneAt = entity.doneAt;
     dto.abandonedAt = entity.abandonedAt;
     dto.planStartAt = entity.planStartAt;

@@ -98,7 +98,7 @@ export class Todo extends BaseEntity {
   taskId?: string;
 
   /** 重复配置 */
-  @OneToOne(() => TodoRepeat, (repeat) => repeat.todo)
+  @ManyToOne(() => TodoRepeat, (repeat) => repeat.todos, { nullable: true })
   @JoinColumn({ name: "repeat_id" })
   repeat?: TodoRepeat;
 
@@ -107,6 +107,12 @@ export class Todo extends BaseEntity {
   @IsString()
   @IsOptional()
   repeatId?: string;
+
+  /** 原始重复配置ID（用于保留关联记录） */
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  originalRepeatId?: string;
 
   /** 来源 */
   @Column({ nullable: true, type: "enum", enum: TodoSource })
