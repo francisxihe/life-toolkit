@@ -1,0 +1,51 @@
+{
+  "name": "@life-toolkit/common-calendar",
+  "version": "0.0.2",
+  "description": "中国日历工具库 - 提供工作日、节假日、补班日等各种日期信息查询功能",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix"
+  },
+  "keywords": [
+    "calendar",
+    "chinese",
+    "holiday",
+    "workday",
+    "date",
+    "typescript"
+  ],
+  "author": "life-toolkit.com",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "tsup": "^7.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/life-toolkit/life-toolkit.git",
+    "directory": "packages/common/calendar"
+  },
+  "homepage": "https://github.com/life-toolkit/life-toolkit/tree/main/packages/common/calendar"
+}
