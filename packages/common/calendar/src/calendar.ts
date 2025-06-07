@@ -306,6 +306,22 @@ export class ChineseCalendar {
   }
 
   /**
+   * 获取下一个休息日
+   */
+  getNextRestDay(date: Date | string): string {
+    const currentDate =
+      typeof date === "string" ? parseDate(date) : new Date(date);
+    let nextDate = new Date(currentDate);
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    while (this.isWorkday(nextDate)) {
+      nextDate.setDate(nextDate.getDate() + 1);
+    }
+
+    return formatDate(nextDate);
+  }
+
+  /**
    * 计算两个日期之间的工作日天数
    */
   getWorkdaysBetween(startDate: Date | string, endDate: Date | string): number {

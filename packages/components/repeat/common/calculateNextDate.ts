@@ -9,6 +9,7 @@ import {
   YearlyType,
   TimeUnit,
 } from "../types";
+import { getNextWorkday, getNextRestDay } from "@life-toolkit/common-calendar";
 
 /**
  * 根据重复配置计算下一个日期
@@ -54,11 +55,14 @@ export function calculateNextDate(
       nextDate = getNextCustomDate(currentDate, repeat.repeatConfig);
       break;
 
-    // 其他情况（工作日/节假日等）可根据实际需求添加
     case RepeatMode.WORKDAYS:
-    case RepeatMode.HOLIDAY:
-      // 这些可能需要外部日历服务提供数据
-      nextDate = currentDate.add(1, "day");
+      // 获取下一个工作日
+      nextDate = getNextWorkdayDate(currentDate);
+      break;
+
+    case RepeatMode.REST_DAY:
+      // 获取下一个休息日
+      nextDate = getNextRestDate(currentDate);
       break;
 
     case RepeatMode.NONE:
@@ -352,4 +356,20 @@ function findOrdinalDay(
     default:
       return startOfMonth;
   }
+}
+
+/**
+ * 获取下一个工作日
+ */
+function getNextWorkdayDate(currentDate: Dayjs): Dayjs {
+  const nextWorkdayStr = getNextWorkday(currentDate.toDate());
+  return dayjs(nextWorkdayStr);
+}
+
+/**
+ * 获取下一个节假日
+ */
+function getNextRestDate(currentDate: Dayjs): Dayjs {
+  const nextRestStr = getNextRestDay(currentDate.toDate());
+  return dayjs(nextRestStr);
 }

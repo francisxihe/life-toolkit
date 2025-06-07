@@ -17,7 +17,7 @@ export const RepeatModeMap = new Map<RepeatMode, string>([
   [RepeatMode.WEEKEND, "repeat.mode.weekend"],
   [RepeatMode.MONTHLY, "repeat.mode.monthly"],
   [RepeatMode.WORKDAYS, "repeat.mode.workdays"],
-  [RepeatMode.HOLIDAY, "repeat.mode.holiday"],
+  [RepeatMode.REST_DAY, "repeat.mode.restDay"],
   [RepeatMode.YEARLY, "repeat.mode.yearly"],
   [RepeatMode.CUSTOM, "repeat.mode.custom"],
 ]);

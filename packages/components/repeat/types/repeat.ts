@@ -10,7 +10,7 @@ export enum RepeatMode {
   WEEKDAYS = "weekdays",
   WEEKEND = "weekend",
   WORKDAYS = "workdays",
-  HOLIDAY = "holiday",
+  REST_DAY = "restDay",
   CUSTOM = "custom",
 }
 
@@ -21,7 +21,7 @@ export type RepeatFormNormal = {
     | RepeatMode.WEEKDAYS
     | RepeatMode.WEEKEND
     | RepeatMode.WORKDAYS
-    | RepeatMode.HOLIDAY;
+    | RepeatMode.REST_DAY;
 };
 
 export type RepeatFormWeekly = {

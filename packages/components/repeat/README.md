@@ -13,7 +13,7 @@ yarn add @life-toolkit/components-repeat
 ```
 
 ## 基本用法
-```tsx
+```javascript
 import { RepeatSelector } from '@life-toolkit/components-repeat';
 import { useState } from 'react';
 
@@ -43,7 +43,7 @@ Repeat 组件支持以下重复模式：
 - **工作日 (WEEKDAYS)**: 事件在每周的工作日（周一至周五）重复
 - **周末 (WEEKEND)**: 事件在每周的周末（周六、周日）重复
 - **工作日 (WORKDAYS)**: 根据工作日历重复（一般为法定工作日）
-- **节假日 (HOLIDAY)**: 根据节假日日历重复
+- **休息日 (REST_DAY)**: 根据休息日日历重复
 - **自定义 (CUSTOM)**: 按自定义间隔重复
 
 ### 每周重复配置

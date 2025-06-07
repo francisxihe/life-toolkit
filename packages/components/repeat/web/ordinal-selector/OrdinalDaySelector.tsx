@@ -5,7 +5,7 @@ import { OrdinalDayType, OrdinalDay } from "../../types";
 export const OrdinalDayTypeMap = new Map<OrdinalDayType, string>([
   [OrdinalDayType.DAY, "day"],
   [OrdinalDayType.WORKDAY, "workday"],
-  [OrdinalDayType.HOLIDAY, "holiday"],
+  [OrdinalDayType.REST_DAY, "restDay"],
 ]);
 
 export const OrdinalMap = new Map<OrdinalDay, string>([

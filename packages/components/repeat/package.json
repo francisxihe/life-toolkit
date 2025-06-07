@@ -36,7 +36,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "@life-toolkit/common-web-utils": "workspace:*"
+    "@life-toolkit/common-web-utils": "workspace:*",
+    "@life-toolkit/common-calendar": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",

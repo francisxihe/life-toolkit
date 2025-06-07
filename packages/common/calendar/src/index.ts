@@ -25,6 +25,7 @@ export const getMakeupDaysInYear = (year: number) => calendar.getMakeupDaysInYea
 export const getYearStatistics = (year: number) => calendar.getYearStatistics(year);
 export const getMonthStatistics = (year: number, month: number) => calendar.getMonthStatistics(year, month);
 export const getNextWorkday = (date: Date | string) => calendar.getNextWorkday(date);
+export const getNextRestDay = (date: Date | string) => calendar.getNextRestDay(date);
 export const getPreviousWorkday = (date: Date | string) => calendar.getPreviousWorkday(date);
 export const getWorkdaysBetween = (startDate: Date | string, endDate: Date | string) => calendar.getWorkdaysBetween(startDate, endDate);
 export const getWorkdaysInRange = (startDate: Date | string, endDate: Date | string) => calendar.getWorkdaysInRange(startDate, endDate);
