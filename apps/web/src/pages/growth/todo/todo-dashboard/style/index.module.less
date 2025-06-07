@@ -1,24 +1,68 @@
-.banner {
-  background-color: var(--color-bg-2);
-  padding: 20px;
+.container {
+  padding: 24px;
+  background-color: var(--color-bg-1);
+  min-height: 100vh;
 }
 
-.wrapper {
-  display: flex;
+.header {
+  margin-bottom: 24px;
+}
+
+.statCard {
+  height: 120px;
+  
+  .arco-card-body {
+    padding: 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.statContent {
   width: 100%;
 }
 
-.left {
-  width: calc(100% - 296px);
-  margin-right: 16px;
+.statNumber {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 8px;
+  color: var(--color-text-1);
 }
 
-.right {
-  width: 280px;
+.statLabel {
+  font-size: 14px;
+  color: var(--color-text-3);
+  margin-bottom: 8px;
 }
 
-.panel {
-  background-color: var(--color-bg-2);
-  border-radius: 4px;
-  overflow: auto;
+.statExtra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dailyCard {
+  .arco-card-body {
+    padding: 20px;
+  }
+}
+
+.dailyStats {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.dailyNumber {
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--color-primary-6);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.dailyLabel {
+  font-size: 14px;
+  color: var(--color-text-3);
 }

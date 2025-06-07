@@ -9,6 +9,11 @@ import type {
 import { OperationByIdListVo } from '@life-toolkit/vo';
 
 export default class TodoService {
+  /**
+   * 获取单个任务
+   * @param todoId 任务ID
+   * @returns 任务详情
+   */
   static async getTodo(todoId: string) {
     try {
       return TodoController.getTodo(todoId);
@@ -17,6 +22,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 批量完成任务
+   * @param params 任务ID列表
+   * @returns 操作结果
+   */
   static async batchDoneTodo(params: OperationByIdListVo) {
     try {
       const res = await TodoController.batchDoneTodo(params);
@@ -27,6 +37,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 恢复任务
+   * @param id 任务ID
+   * @returns 操作结果
+   */
   static async restoreTodo(id: string) {
     try {
       const res = await TodoController.restoreTodo(id);
@@ -37,6 +52,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 放弃任务
+   * @param id 任务ID
+   * @returns 操作结果
+   */
   static async abandonTodo(id: string) {
     try {
       const res = await TodoController.abandonTodo(id);
@@ -47,6 +67,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 添加任务
+   * @param todo 任务详情
+   * @returns 操作结果
+   */
   static async addTodo(todo: CreateTodoVo) {
     try {
       const res = await TodoController.addTodo(todo);
@@ -57,6 +82,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 删除任务
+   * @param id 任务ID
+   * @returns 操作结果
+   */
   static async deleteTodo(id: string) {
     try {
       const res = await await TodoController.deleteTodo(id);
@@ -67,6 +97,13 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 更新任务
+   * @param id 任务ID
+   * @param todo 任务详情
+   * @param silent 是否静默
+   * @returns 操作结果
+   */
   static async updateTodo(id: string, todo: UpdateTodoVo, silent = true) {
     try {
       const res = await TodoController.updateTodo(id, todo);
@@ -79,6 +116,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 获取任务列表
+   * @param params 任务列表过滤条件
+   * @returns 任务列表
+   */
   static async getTodoList(params: TodoListFiltersVo = {}) {
     try {
       return TodoController.getTodoList(params);
@@ -87,6 +129,11 @@ export default class TodoService {
     }
   }
 
+  /**
+   * 获取任务分页列表
+   * @param params 任务分页过滤条件
+   * @returns 任务分页列表
+   */
   static async getTodoPage(params: TodoPageFiltersVo = {}) {
     try {
       return TodoController.getTodoPage(params);
