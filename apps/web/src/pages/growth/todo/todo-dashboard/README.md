@@ -43,10 +43,7 @@ todo-dashboard/
 ├── TodoChart.tsx          # 趋势图表组件
 ├── TodoPriorityMatrix.tsx # 优先级矩阵组件
 ├── RecentTodos.tsx        # 最近任务组件
-├── demo-data.ts           # 演示数据生成器
-└── style/                 # 样式文件
-    ├── index.module.less
-    └── priority-matrix.module.less
+└── style/                 # 样式文件（已迁移到 Tailwind CSS）
 ```
 
 ### 数据管理
@@ -55,8 +52,11 @@ todo-dashboard/
 - 集成 TodoService 获取真实数据
 
 ### 样式设计
-- 响应式布局设计
-- 使用 Arco Design 组件库
+- 使用 Tailwind CSS 实现现代化卡片块设计
+- 响应式网格布局，适配不同屏幕尺寸
+- 统一的视觉层次和设计语言
+- 丰富的交互效果（悬停阴影、过渡动画）
+- 结合 Arco Design 组件库
 - 支持深色/浅色主题切换
 
 ## 使用方式

@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, Typography, List, Tag, Space, Avatar } from '@arco-design/web-react';
+import { Typography, List, Tag, Avatar } from '@arco-design/web-react';
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
 import { TodoVo } from '@life-toolkit/vo/growth';
 import { IconCheckCircle, IconClockCircle, IconExclamation } from '@arco-design/web-react/icon';
@@ -54,34 +54,45 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
   };
 
   return (
-    <Space size={16} style={{ width: '100%' }}>
-      <Card title="最近完成" style={{ flex: 1 }}>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 最近完成 */}
+      <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1">
+        <div className="flex items-center mb-6">
+          <div className="w-10 h-10 bg-success-light-1 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-5 h-5 bg-success rounded"></div>
+          </div>
+          <div>
+            <Title heading={5} className="!mb-0">最近完成</Title>
+            <div className="text-sm text-text-3">最近7天完成的任务</div>
+          </div>
+        </div>
+        
         <List
           size="small"
           dataSource={recentCompleted}
           render={(todo) => (
-            <List.Item key={todo.id}>
+            <List.Item key={todo.id} className="!px-0">
               <List.Item.Meta
                 avatar={
-                  <Avatar size={24} style={{ backgroundColor: '#00b42a' }}>
+                  <Avatar size={24} style={{ backgroundColor: '#10b981' }}>
                     <IconCheckCircle />
                   </Avatar>
                 }
                 title={
-                  <Text ellipsis style={{ maxWidth: 200 }}>
+                  <Text ellipsis style={{ maxWidth: 200 }} className="text-text-1">
                     {todo.name}
                   </Text>
                 }
                 description={
-                  <Text type="secondary" style={{ fontSize: 12 }}>
+                  <Text type="secondary" style={{ fontSize: 12 }} className="text-text-3">
                     {format(new Date(todo.doneAt!), 'MM/dd HH:mm')} 完成
                   </Text>
                 }
               />
               {todo.tags && todo.tags.length > 0 && (
-                <div>
+                <div className="flex gap-1">
                   {todo.tags.slice(0, 2).map((tag) => (
-                    <Tag key={tag} size="small" style={{ marginLeft: 4 }}>
+                    <Tag key={tag} size="small">
                       {tag}
                     </Tag>
                   ))}
@@ -90,32 +101,43 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
             </List.Item>
           )}
           noDataElement={
-            <div style={{ textAlign: 'center', padding: 20 }}>
-              <Text type="secondary">暂无最近完成的任务</Text>
+            <div className="text-center py-8">
+              <Text type="secondary" className="text-text-3">暂无最近完成的任务</Text>
             </div>
           }
         />
-      </Card>
+      </div>
 
-      <Card title="即将到期" style={{ flex: 1 }}>
+      {/* 即将到期 */}
+      <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1">
+        <div className="flex items-center mb-6">
+          <div className="w-10 h-10 bg-warning-light-1 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-5 h-5 bg-warning rounded"></div>
+          </div>
+          <div>
+            <Title heading={5} className="!mb-0">即将到期</Title>
+            <div className="text-sm text-text-3">按计划日期排序的待办任务</div>
+          </div>
+        </div>
+        
         <List
           size="small"
           dataSource={upcomingTasks}
           render={(todo) => (
-            <List.Item key={todo.id}>
+            <List.Item key={todo.id} className="!px-0">
               <List.Item.Meta
                 avatar={
-                  <Avatar size={24} style={{ backgroundColor: '#165dff' }}>
+                  <Avatar size={24} style={{ backgroundColor: '#3b82f6' }}>
                     {getPriorityIcon(todo.importance, todo.urgency)}
                   </Avatar>
                 }
                 title={
-                  <Text ellipsis style={{ maxWidth: 200 }}>
+                  <Text ellipsis style={{ maxWidth: 200 }} className="text-text-1">
                     {todo.name}
                   </Text>
                 }
                 description={
-                  <Space size={8}>
+                  <div className="flex gap-2">
                     <Tag color={getDateColor(todo.planDate)} size="small">
                       {getDateLabel(todo.planDate)}
                     </Tag>
@@ -124,18 +146,18 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
                         高优先级
                       </Tag>
                     )}
-                  </Space>
+                  </div>
                 }
               />
             </List.Item>
           )}
           noDataElement={
-            <div style={{ textAlign: 'center', padding: 20 }}>
-              <Text type="secondary">暂无待处理任务</Text>
+            <div className="text-center py-8">
+              <Text type="secondary" className="text-text-3">暂无待处理任务</Text>
             </div>
           }
         />
-      </Card>
-    </Space>
+      </div>
+    </div>
   );
 } 

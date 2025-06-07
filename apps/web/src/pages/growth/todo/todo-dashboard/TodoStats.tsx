@@ -24,29 +24,29 @@ export function TodoStats() {
   return (
     <Row gutter={[16, 16]}>
       <Col span={6}>
-        <Card>
-          <Title heading={6}>Total Tasks</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }}>{stats.total}</Text>
+        <Card className="bg-bg-2 border-border-1">
+          <Title heading={6} className="text-text-1">Total Tasks</Title>
+          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-text-1">{stats.total}</Text>
         </Card>
       </Col>
       <Col span={6}>
-        <Card>
-          <Title heading={6}>Completed</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }}>
+        <Card className="bg-bg-2 border-border-1">
+          <Title heading={6} className="text-text-1">Completed</Title>
+          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-success">
             {stats.completed}
           </Text>
         </Card>
       </Col>
       <Col span={6}>
-        <Card>
-          <Title heading={6}>Pending</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }}>{stats.pending}</Text>
+        <Card className="bg-bg-2 border-border-1">
+          <Title heading={6} className="text-text-1">Pending</Title>
+          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-warning">{stats.pending}</Text>
         </Card>
       </Col>
       <Col span={6}>
-        <Card>
-          <Title heading={6}>High Priority</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }}>
+        <Card className="bg-bg-2 border-border-1">
+          <Title heading={6} className="text-text-1">High Priority</Title>
+          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-danger">
             {stats.highPriority}
           </Text>
         </Card>

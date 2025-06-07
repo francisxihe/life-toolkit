@@ -2,15 +2,13 @@
 
 import { useMemo } from 'react';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-import { Card, Grid, Typography, Space, Progress, Tag } from '@arco-design/web-react';
+import { Typography, Progress, Tag, Spin } from '@arco-design/web-react';
 import { TodoVo } from '@life-toolkit/vo/growth';
-import styles from './style/index.module.less';
 import { TodoProvider, useTodoContext } from './context';
 import { TodoChart } from './TodoChart';
 import { TodoPriorityMatrix } from './TodoPriorityMatrix';
 import { RecentTodos } from './RecentTodos';
 
-const { Row, Col } = Grid;
 const { Title, Text } = Typography;
 
 export default function TodoDashboardPage() {
@@ -108,115 +106,129 @@ function TodoDashboardContent() {
     return data;
   }, [todoList]);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <Title heading={3}>待办看板</Title>
-        <Text type="secondary">
+    <div className="p-6 bg-bg-1 min-h-screen">
+      {/* 页面标题 */}
+      <div className="mb-8">
+        <Title heading={3} className="!mb-2">待办看板</Title>
+        <Text type="secondary" className="text-base">
           总览您的任务完成情况和效率统计
         </Text>
       </div>
 
-      <Space size={24} direction="vertical" style={{ width: '100%' }}>
+      <div className="space-y-6">
         {/* 核心统计卡片 */}
-        <Row gutter={[16, 16]}>
-          <Col span={6}>
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statNumber}>{stats.total}</div>
-                <div className={styles.statLabel}>总任务数</div>
-                <div className={styles.statExtra}>
-                  <Tag color="blue" size="small">全部</Tag>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* 总任务数 */}
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-primary-light-1 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-primary rounded"></div>
               </div>
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statNumber} style={{ color: '#00b42a' }}>
-                  {stats.completed}
-                </div>
-                <div className={styles.statLabel}>已完成</div>
-                <div className={styles.statExtra}>
-                  <Progress 
-                    percent={stats.completionRate} 
-                    size="mini" 
-                    showText={false}
-                    color="#00b42a"
-                  />
-                  <Text type="secondary" style={{ fontSize: 12 }}>
-                    {stats.completionRate}%
-                  </Text>
-                </div>
+              <Tag color="blue" size="small">全部</Tag>
+            </div>
+            <div className="text-3xl font-bold text-text-1 mb-1">{stats.total}</div>
+            <div className="text-sm text-text-3">总任务数</div>
+          </div>
+
+          {/* 已完成 */}
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-success-light-1 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-success rounded"></div>
               </div>
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statNumber} style={{ color: '#ff7d00' }}>
-                  {stats.pending}
-                </div>
-                <div className={styles.statLabel}>待处理</div>
-                <div className={styles.statExtra}>
-                  {stats.overdue > 0 && (
-                    <Tag color="red" size="small">
-                      {stats.overdue} 逾期
-                    </Tag>
-                  )}
-                </div>
+              <div className="text-right">
+                <div className="text-xs text-text-3 mb-1">{stats.completionRate}%</div>
+                <Progress 
+                  percent={stats.completionRate} 
+                  showText={false}
+                  style={{ width: '64px' }}
+                />
               </div>
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card className={styles.statCard}>
-              <div className={styles.statContent}>
-                <div className={styles.statNumber} style={{ color: '#f53f3f' }}>
-                  {stats.highPriority}
-                </div>
-                <div className={styles.statLabel}>高优先级</div>
-                <div className={styles.statExtra}>
-                  <Tag color="red" size="small">紧急重要</Tag>
-                </div>
+            </div>
+            <div className="text-3xl font-bold text-success mb-1">{stats.completed}</div>
+            <div className="text-sm text-text-3">已完成</div>
+          </div>
+
+          {/* 待处理 */}
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-warning-light-1 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-warning rounded"></div>
               </div>
-            </Card>
-          </Col>
-        </Row>
+              {stats.overdue > 0 && (
+                <Tag color="red" size="small">
+                  {stats.overdue} 逾期
+                </Tag>
+              )}
+            </div>
+            <div className="text-3xl font-bold text-warning mb-1">{stats.pending}</div>
+            <div className="text-sm text-text-3">待处理</div>
+          </div>
+
+          {/* 高优先级 */}
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-danger-light-1 rounded-lg flex items-center justify-center">
+                <div className="w-6 h-6 bg-danger rounded"></div>
+              </div>
+              <Tag color="red" size="small">紧急重要</Tag>
+            </div>
+            <div className="text-3xl font-bold text-danger mb-1">{stats.highPriority}</div>
+            <div className="text-sm text-text-3">高优先级</div>
+          </div>
+        </div>
 
         {/* 今日和本周统计 */}
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Card title="今日完成" className={styles.dailyCard}>
-              <div className={styles.dailyStats}>
-                <div className={styles.dailyNumber}>{stats.todayCompleted}</div>
-                <div className={styles.dailyLabel}>个任务</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-primary-light-1 rounded-lg flex items-center justify-center mr-3">
+                <div className="w-5 h-5 bg-primary rounded"></div>
               </div>
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card title="本周完成" className={styles.dailyCard}>
-              <div className={styles.dailyStats}>
-                <div className={styles.dailyNumber}>{stats.weekCompleted}</div>
-                <div className={styles.dailyLabel}>个任务</div>
+              <div>
+                <div className="font-semibold text-text-1">今日完成</div>
+                <div className="text-sm text-text-3">Today's Achievement</div>
               </div>
-            </Card>
-          </Col>
-        </Row>
+            </div>
+            <div className="text-2xl font-bold text-primary">{stats.todayCompleted} <span className="text-base font-normal text-text-3">个任务</span></div>
+          </div>
+
+          <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1">
+            <div className="flex items-center mb-4">
+              <div className="w-10 h-10 bg-link-light-1 rounded-lg flex items-center justify-center mr-3">
+                <div className="w-5 h-5 bg-link rounded"></div>
+              </div>
+              <div>
+                <div className="font-semibold text-text-1">本周完成</div>
+                <div className="text-sm text-text-3">Weekly Achievement</div>
+              </div>
+            </div>
+            <div className="text-2xl font-bold text-link">{stats.weekCompleted} <span className="text-base font-normal text-text-3">个任务</span></div>
+          </div>
+        </div>
 
         {/* 图表和矩阵 */}
-        <Row gutter={[16, 16]}>
-          <Col span={16}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
             <TodoChart data={chartData} loading={loading} />
-          </Col>
-          <Col span={8}>
+          </div>
+          <div>
             <TodoPriorityMatrix todoList={todoList} />
-          </Col>
-        </Row>
+          </div>
+        </div>
 
         {/* 最近任务 */}
         <RecentTodos todoList={todoList} />
-      </Space>
+      </div>
     </div>
   );
 }
