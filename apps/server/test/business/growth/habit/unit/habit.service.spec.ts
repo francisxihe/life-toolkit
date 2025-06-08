@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HabitService } from './habit.service';
-import { Habit, HabitFrequency, HabitDifficulty } from './entities';
-import { Goal } from '../goal/entities';
-import { TodoRepeat } from '../todo/entities';
-import { HabitMapper } from './mapper';
-import { CreateHabitDto } from './dto';
+import { HabitService } from '../../../../../src/business/growth/habit/habit.service';
+import { Habit, HabitFrequency, HabitDifficulty } from '../../../../../src/business/growth/habit/entities';
+import { Goal } from '../../../../../src/business/growth/goal/entities';
+import { TodoRepeat } from '../../../../../src/business/growth/todo/entities';
+import { HabitMapper } from '../../../../../src/business/growth/habit/mapper';
+import { CreateHabitDto } from '../../../../../src/business/growth/habit/dto';
 
 describe('HabitService', () => {
   let service: HabitService;

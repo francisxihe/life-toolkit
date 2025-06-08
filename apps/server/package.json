@@ -10,7 +10,15 @@
     "debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "deploy": "pnpm run build && ./deploy.sh"
+    "deploy": "pnpm run build && ./deploy.sh",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:habit": "jest --testPathPattern=\"habit\"",
+    "test:habit:unit": "jest --testPathPattern=\"habit\" --testNamePattern=\"^((?!integration).)*$\"",
+    "test:habit:integration": "jest --testPathPattern=\"habit.integration\"",
+    "test:habit:coverage": "jest --testPathPattern=\"habit\" --coverage --coverageDirectory=coverage/habit"
   },
   "dependencies": {
     "@life-toolkit/components-repeat": "workspace:*",
@@ -42,11 +50,17 @@
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.2",
     "@types/module-alias": "^2.0.4",
+    "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "cross-env": "^7.0.3",
+    "jest": "^29.5.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "tsconfig-paths-webpack-plugin": "^4.2.0"
   }
 }
