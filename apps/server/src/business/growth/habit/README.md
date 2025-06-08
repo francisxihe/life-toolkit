@@ -1,215 +1,154 @@
-# Habit 模块
+# 习惯管理模块 (Habit Module)
 
 ## 概述
 
-Habit（习惯）模块是个人成长管理系统中专门用于习惯养成和跟踪的模块。帮助用户建立良好的习惯，通过持续的记录和统计来促进习惯的养成。
+习惯管理模块提供了完整的习惯养成功能，支持与目标系统和待办事项系统的深度集成。
 
-## 功能特性
+## 核心功能
 
-### 核心功能
-- ✅ 习惯创建、更新、删除
-- ✅ 习惯状态管理（活跃、暂停、已完成、已放弃）
-- ✅ 习惯执行记录（打卡功能）
-- ✅ 习惯统计分析
-- ✅ 批量完成操作
-- ✅ 习惯暂停和恢复
+### 1. 基础习惯管理
+- 创建、更新、删除习惯
+- 习惯状态管理（活跃、暂停、完成、放弃）
+- 习惯频率设置（每日、每周、每月、自定义）
+- 习惯难度分级
+- 连续天数统计
+- 提醒功能
 
-### 状态管理
-- `ACTIVE` - 活跃中
-- `PAUSED` - 已暂停
-- `COMPLETED` - 已完成
-- `ABANDONED` - 已放弃
+### 2. 与目标系统打通 🆕
+- **多对多关联**：一个习惯可以支撑多个目标，一个目标可以由多个习惯支撑
+- **目标驱动**：创建习惯时可以关联相关目标
+- **进度同步**：习惯的完成情况会影响目标的达成进度
 
-### 习惯类型
-- **日常习惯**：每日需要执行的习惯
-- **周期习惯**：按特定周期执行的习惯
-- **目标习惯**：有明确完成目标的习惯
+#### 使用场景示例
+```
+目标：早晨高效工作
+支撑习惯：
+- 早起拉伸 (每日)
+- 洗冷水澡 (每日)
+- 冥想10分钟 (每日)
+```
+
+### 3. 与待办事项系统打通 🆕
+- **自动生成待办**：创建习惯时自动生成对应的重复待办任务
+- **智能调度**：根据习惯频率自动创建下一个待办任务
+- **完成联动**：完成习惯日志时自动创建下一个待办任务
+
+#### 工作流程
+1. 创建习惯 → 自动创建重复待办配置
+2. 完成习惯日志 → 自动创建下一个待办任务
+3. 待办任务提醒 → 完成习惯 → 记录日志 → 循环
+
+## 数据模型
+
+### Habit 实体
+```typescript
+class Habit {
+  // 基础字段
+  name: string;              // 习惯名称
+  description?: string;      // 习惯描述
+  status: HabitStatus;       // 习惯状态
+  frequency: HabitFrequency; // 习惯频率
+  difficulty: HabitDifficulty; // 习惯难度
+  
+  // 统计字段
+  currentStreak: number;     // 当前连续天数
+  longestStreak: number;     // 最长连续天数
+  completedCount: number;    // 累计完成次数
+  
+  // 关联字段 🆕
+  goals: Goal[];             // 关联的目标
+  todoRepeats: TodoRepeat[]; // 关联的重复待办任务
+  autoCreateTodo: boolean;   // 是否自动创建待办任务
+}
+```
 
 ## API 接口
 
-### 习惯管理
-```http
-POST   /habit/create           # 创建习惯
-PUT    /habit/update/:id       # 更新习惯
-DELETE /habit/delete/:id       # 删除习惯
-GET    /habit/detail/:id       # 获取习惯详情
-```
+### 基础接口
+- `POST /habit/create` - 创建习惯
+- `PUT /habit/update/:id` - 更新习惯
+- `DELETE /habit/delete/:id` - 删除习惯
+- `GET /habit/detail/:id` - 获取习惯详情
+- `GET /habit/list` - 获取习惯列表
+- `GET /habit/page` - 分页获取习惯
 
-### 状态操作
-```http
-PUT /habit/batch-complete      # 批量完成习惯
-PUT /habit/abandon/:id         # 放弃习惯
-PUT /habit/restore/:id         # 恢复习惯
-PUT /habit/pause/:id           # 暂停习惯
-PUT /habit/resume/:id          # 恢复习惯
-```
+### 状态管理接口
+- `PUT /habit/abandon/:id` - 放弃习惯
+- `PUT /habit/restore/:id` - 恢复习惯
+- `PUT /habit/pause/:id` - 暂停习惯
+- `PUT /habit/resume/:id` - 恢复习惯
+- `PUT /habit/batch-complete` - 批量完成习惯
 
-### 查询接口
-```http
-GET /habit/page               # 分页查询习惯
-GET /habit/list               # 列表查询习惯
-```
-
-### 习惯记录
-```http
-POST   /habit-log/create       # 创建习惯记录
-PUT    /habit-log/update/:id   # 更新习惯记录
-DELETE /habit-log/delete/:id   # 删除习惯记录
-GET    /habit-log/page         # 分页查询习惯记录
-```
-
-## 数据结构
-
-### 创建习惯请求
-```typescript
-interface CreateHabitVo {
-  name: string;              // 习惯名称
-  description?: string;      // 习惯描述
-  type?: string;            // 习惯类型
-  frequency?: string;       // 执行频率
-  targetCount?: number;     // 目标次数
-  unit?: string;           // 计量单位
-  startDate?: Date;        // 开始日期
-  endDate?: Date;          // 结束日期
-  reminderTime?: string;   // 提醒时间
-}
-```
-
-### 习惯记录
-```typescript
-interface HabitLogVo {
-  habitId: string;         // 习惯ID
-  logDate: Date;          // 记录日期
-  completed: boolean;     // 是否完成
-  count?: number;         // 完成次数
-  note?: string;          // 备注
-}
-```
-
-### 查询过滤器
-```typescript
-interface HabitFilterDto {
-  status?: string;         // 习惯状态
-  type?: string;          // 习惯类型
-  startDate?: string;     // 开始日期
-  endDate?: string;       // 结束日期
-}
-```
-
-## 文件结构
-
-```
-habit/
-├── dto/                     # 数据传输对象
-├── entities/               # 数据库实体
-├── mapper/                 # 数据映射器
-├── habit.controller.ts     # 习惯控制器
-├── habit.service.ts        # 习惯业务逻辑
-├── habit-log.controller.ts # 习惯记录控制器
-├── habit-log.service.ts    # 习惯记录业务逻辑
-├── habit.module.ts         # 模块定义
-└── README.md              # 本文档
-```
+### 关联功能接口 🆕
+- `GET /habit/detail-with-relations/:id` - 获取习惯详情（包含关联信息）
+- `GET /habit/by-goal/:goalId` - 根据目标ID获取相关习惯
 
 ## 使用示例
 
-### 创建日常习惯
+### 1. 创建支撑目标的习惯
 ```typescript
-const dailyHabit = {
-  name: "晨跑",
-  description: "每天早上跑步30分钟",
-  type: "DAILY",
-  frequency: "DAILY",
-  targetCount: 1,
-  unit: "次",
-  reminderTime: "07:00"
+const createHabitDto = {
+  name: "早起拉伸",
+  description: "每天早上6点起床后进行10分钟拉伸运动",
+  frequency: HabitFrequency.DAILY,
+  difficulty: HabitDifficulty.MEDIUM,
+  importance: 4,
+  goalIds: ["goal-id-1", "goal-id-2"], // 关联目标
+  autoCreateTodo: true, // 自动创建待办任务
+  needReminder: true,
+  reminderTime: "06:00"
 };
 ```
 
-### 创建周期习惯
+### 2. 完成习惯并自动创建下一个待办
 ```typescript
-const weeklyHabit = {
-  name: "阅读",
-  description: "每周阅读3次，每次1小时",
-  type: "WEEKLY",
-  frequency: "WEEKLY",
-  targetCount: 3,
-  unit: "次"
-};
-```
-
-### 记录习惯完成
-```typescript
-const habitLog = {
+// 记录习惯完成日志
+const habitLogDto = {
   habitId: "habit-id",
-  logDate: "2024-01-01",
-  completed: true,
-  count: 1,
-  note: "今天跑了5公里"
+  logDate: new Date(),
+  completionScore: 100, // 完成度100%
+  mood: "good",
+  note: "今天状态很好"
 };
+
+// 系统会自动：
+// 1. 更新习惯连续天数
+// 2. 创建明天的待办任务
 ```
 
-## 统计功能
+## 技术实现
 
-### 习惯完成率统计
-- 日完成率
-- 周完成率
-- 月完成率
-- 总体完成率
+### 数据库关系
+- `habit_goal` - 习惯与目标的多对多关联表
+- `todo_repeat.habitId` - 重复待办任务与习惯的关联
 
-### 连续打卡统计
-- 当前连续天数
-- 最长连续天数
-- 总打卡天数
+### 服务层架构
+- `HabitService` - 习惯核心业务逻辑
+- `HabitLogService` - 习惯日志管理，负责自动创建待办任务
+- `TodoRepeatService` - 重复待办任务管理
 
-### 趋势分析
-- 完成趋势图表
-- 习惯执行热力图
-- 月度/年度统计报告
+### 自动化流程
+1. **创建时**：`HabitService.create()` → 创建重复待办配置
+2. **完成时**：`HabitLogService.create()` → 自动创建下一个待办任务
+3. **更新时**：支持动态调整目标关联和待办创建策略
 
-## 提醒功能
+## 配置选项
 
-### 提醒类型
-- **时间提醒**：在指定时间提醒
-- **位置提醒**：到达指定位置时提醒
-- **完成提醒**：未完成时的催促提醒
+### 习惯频率映射
+- `DAILY` → 每日重复待办
+- `WEEKLY` → 每周重复待办  
+- `MONTHLY` → 每月重复待办
+- `CUSTOM` → 自定义重复规则
 
-### 提醒设置
-```typescript
-interface ReminderSetting {
-  enabled: boolean;        // 是否启用提醒
-  time: string;           // 提醒时间
-  repeatDays: number[];   // 重复日期（周几）
-  message?: string;       // 自定义提醒消息
-}
-```
+### 自动化控制
+- `autoCreateTodo: false` - 禁用自动创建待办任务
+- `needReminder: true` - 启用提醒功能
 
-## 依赖关系
+## 扩展功能
 
-- **用户模块**：习惯属于特定用户
-- **通知模块**：发送习惯提醒通知
-- **统计模块**：生成习惯统计报告
-
-## 最佳实践
-
-1. **习惯设计原则**
-   - 从小习惯开始
-   - 设置合理的目标
-   - 保持一致性
-
-2. **记录建议**
-   - 及时记录完成情况
-   - 添加详细备注
-   - 定期回顾和调整
-
-3. **激励机制**
-   - 设置里程碑奖励
-   - 分享成就
-   - 建立习惯社群
-
-## 注意事项
-
-1. 习惯删除后相关记录也会被删除
-2. 暂停的习惯不会计入统计
-3. 批量操作需要确认用户权限
-4. 提醒功能需要用户授权通知权限 
+### 未来规划
+- [ ] 习惯模板系统
+- [ ] 习惯分组管理
+- [ ] 习惯完成度统计分析
+- [ ] 习惯与时间追踪的集成
+- [ ] 习惯社交分享功能 

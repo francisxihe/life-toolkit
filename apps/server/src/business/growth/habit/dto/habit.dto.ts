@@ -50,6 +50,15 @@ export class CreateHabitDto {
   @IsString()
   @IsOptional()
   reminderTime?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  goalIds?: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  autoCreateTodo?: boolean;
 }
 
 export class UpdateHabitDto extends CreateHabitDto {

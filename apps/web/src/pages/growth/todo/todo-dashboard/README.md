@@ -62,7 +62,7 @@ todo-dashboard/
 ## 使用方式
 
 ### 基本使用
-```tsx
+```javascript
 import TodoDashboardPage from './todo-dashboard';
 
 function App() {
@@ -71,7 +71,7 @@ function App() {
 ```
 
 ### 数据源配置
-```tsx
+```javascript
 // 在 context.tsx 中的数据加载逻辑
 async function loadTodoList(params?: TodoListFiltersVo) {
   try {

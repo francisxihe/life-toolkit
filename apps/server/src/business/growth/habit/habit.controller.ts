@@ -113,4 +113,20 @@ export class HabitController {
     const habit = await this.habitService.findOne(id);
     return this.habitMapper.toVo(habit);
   }
+
+  @Get("detail-with-relations/:id")
+  @Response()
+  async findByIdWithRelations(@Param("id") id: string) {
+    const habit = await this.habitService.findOneWithRelations(id);
+    return this.habitMapper.toVo(habit);
+  }
+
+  @Get("by-goal/:goalId")
+  @Response()
+  async findByGoalId(@Param("goalId") goalId: string) {
+    const habits = await this.habitService.findByGoalId(goalId);
+    return {
+      list: habits.map((habit) => this.habitMapper.toVo(habit)),
+    };
+  }
 }

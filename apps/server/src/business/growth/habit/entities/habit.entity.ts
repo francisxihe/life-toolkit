@@ -1,4 +1,4 @@
-import { Entity, Column } from "typeorm";
+import { Entity, Column, ManyToMany, JoinTable, OneToMany } from "typeorm";
 import {
   IsString,
   IsOptional,
@@ -13,6 +13,8 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
+import { Goal } from "../../goal/entities";
+import { TodoRepeat } from "../../todo/entities";
 
 export enum HabitStatus {
   ACTIVE = "active", // 活跃中
@@ -137,4 +139,22 @@ export class Habit extends BaseEntity {
   @IsNumber()
   @Type(() => Number)
   completedCount: number = 0;
+
+  /** 关联的目标 */
+  @ManyToMany(() => Goal, { cascade: true })
+  @JoinTable({
+    name: "habit_goal",
+    joinColumn: { name: "habit_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "goal_id", referencedColumnName: "id" },
+  })
+  goals: Goal[] = [];
+
+  /** 关联的重复待办任务 */
+  @OneToMany(() => TodoRepeat, (todoRepeat) => todoRepeat.habit, { cascade: true })
+  todoRepeats: TodoRepeat[] = [];
+
+  /** 是否自动创建待办任务 */
+  @Column({ default: true })
+  @IsBoolean()
+  autoCreateTodo: boolean = true;
 }
