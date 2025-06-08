@@ -116,7 +116,11 @@ describe('HabitController', () => {
       expect(mockHabitMapper.voToDtoFromVo).toHaveBeenCalledWith(createHabitVo);
       expect(mockHabitService.create).toHaveBeenCalledWith(mockDto);
       expect(mockHabitMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -164,7 +168,11 @@ describe('HabitController', () => {
       expect(mockHabitMapper.voToUpdateDtoFromVo).toHaveBeenCalledWith(updateHabitVo);
       expect(mockHabitService.update).toHaveBeenCalledWith(habitId, mockDto);
       expect(mockHabitMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -202,7 +210,11 @@ describe('HabitController', () => {
 
       expect(mockHabitService.findOne).toHaveBeenCalledWith(habitId);
       expect(mockHabitMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -406,7 +418,11 @@ describe('HabitController', () => {
       const result = await controller.abandon(habitId);
 
       expect(mockHabitService.abandon).toHaveBeenCalledWith(habitId);
-      expect(result).toEqual({ result: mockResult });
+      expect(result).toEqual({
+        code: 200,
+        data: { result: mockResult },
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -420,7 +436,11 @@ describe('HabitController', () => {
       const result = await controller.restore(habitId);
 
       expect(mockHabitService.restore).toHaveBeenCalledWith(habitId);
-      expect(result).toEqual({ result: mockResult });
+      expect(result).toEqual({
+        code: 200,
+        data: { result: mockResult },
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -434,7 +454,11 @@ describe('HabitController', () => {
       const result = await controller.pause(habitId);
 
       expect(mockHabitService.pause).toHaveBeenCalledWith(habitId);
-      expect(result).toEqual({ result: mockResult });
+      expect(result).toEqual({
+        code: 200,
+        data: { result: mockResult },
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -462,7 +486,11 @@ describe('HabitController', () => {
       const result = await controller.batchComplete(idList);
 
       expect(mockHabitService.batchComplete).toHaveBeenCalledWith(['habit-1', 'habit-2']);
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual({
+        code: 200,
+        data: mockResult,
+        message: 'SUCCESS'
+      });
     });
   });
 }); 

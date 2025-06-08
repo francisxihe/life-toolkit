@@ -137,9 +137,14 @@ describe('HabitService', () => {
       mockHabitRepository.create.mockReturnValue(mockHabit);
       mockHabitRepository.save.mockResolvedValue(mockHabit);
 
+      // 清除之前的调用记录
+      mockTodoRepeatRepository.create.mockClear();
+      mockTodoRepeatRepository.save.mockClear();
+
       const result = await service.create(createHabitDto);
 
       expect(mockTodoRepeatRepository.create).not.toHaveBeenCalled();
+      expect(mockTodoRepeatRepository.save).not.toHaveBeenCalled();
       expect(result).toEqual(mockHabit);
     });
   });

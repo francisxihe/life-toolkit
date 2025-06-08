@@ -92,7 +92,11 @@ describe('HabitLogController', () => {
       expect(mockHabitLogMapper.voToDtoFromVo).toHaveBeenCalledWith(createHabitLogVo);
       expect(mockHabitLogService.create).toHaveBeenCalledWith(mockDto);
       expect(mockHabitLogMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -135,7 +139,11 @@ describe('HabitLogController', () => {
       expect(mockHabitLogMapper.voToUpdateDtoFromVo).toHaveBeenCalledWith(updateHabitLogVo);
       expect(mockHabitLogService.update).toHaveBeenCalledWith(logId, mockDto);
       expect(mockHabitLogMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -171,7 +179,11 @@ describe('HabitLogController', () => {
 
       expect(mockHabitLogService.findOne).toHaveBeenCalledWith(logId);
       expect(mockHabitLogMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -216,7 +228,11 @@ describe('HabitLogController', () => {
       const result = await controller.list(habitId);
 
       expect(mockHabitLogService.findAll).toHaveBeenCalledWith(habitId);
-      expect(result).toEqual({ list: mockVos });
+      expect(result).toEqual({
+        code: 200,
+        data: { list: mockVos },
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -253,7 +269,11 @@ describe('HabitLogController', () => {
 
       expect(mockHabitLogService.findByDate).toHaveBeenCalledWith(habitId, date);
       expect(mockHabitLogMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual(mockVo);
+      expect(result).toEqual({
+        code: 200,
+        data: mockVo,
+        message: 'SUCCESS'
+      });
     });
 
     it('should return null when no log found for date', async () => {
@@ -267,7 +287,11 @@ describe('HabitLogController', () => {
       const result = await controller.findByDate(habitId, date);
 
       expect(mockHabitLogService.findByDate).toHaveBeenCalledWith(habitId, date);
-      expect(result).toBeNull();
+      expect(result).toEqual({
+        code: 200,
+        data: null,
+        message: 'SUCCESS'
+      });
     });
 
     it('should throw error for other exceptions', async () => {
@@ -277,7 +301,12 @@ describe('HabitLogController', () => {
 
       mockHabitLogService.findByDate.mockRejectedValue(error);
 
-      await expect(controller.findByDate(habitId, date)).rejects.toThrow('Database error');
+      const result = await controller.findByDate(habitId, date);
+      expect(result).toEqual({
+        code: 600,
+        data: null,
+        message: 'Database error'
+      });
     });
   });
 
@@ -333,7 +362,11 @@ describe('HabitLogController', () => {
       const result = await controller.findByDateRange(habitId, startDate, endDate);
 
       expect(mockHabitLogService.findByDateRange).toHaveBeenCalledWith(habitId, startDate, endDate);
-      expect(result).toEqual({ list: mockVos });
+      expect(result).toEqual({
+        code: 200,
+        data: { list: mockVos },
+        message: 'SUCCESS'
+      });
     });
   });
 
@@ -347,7 +380,11 @@ describe('HabitLogController', () => {
       const result = await controller.delete(logId);
 
       expect(mockHabitLogService.remove).toHaveBeenCalledWith(logId);
-      expect(result).toEqual(mockResult);
+      expect(result).toEqual({
+        code: 200,
+        data: mockResult,
+        message: 'SUCCESS'
+      });
     });
   });
 }); 
