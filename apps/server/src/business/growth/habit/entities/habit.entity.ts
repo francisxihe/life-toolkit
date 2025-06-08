@@ -74,7 +74,7 @@ export class Habit extends BaseEntity {
   })
   @IsArray()
   @IsString({ each: true })
-  tags: string[] = [];
+  tags: string[];
 
   /** 习惯频率 */
   @Column({
@@ -147,11 +147,11 @@ export class Habit extends BaseEntity {
     joinColumn: { name: "habit_id", referencedColumnName: "id" },
     inverseJoinColumn: { name: "goal_id", referencedColumnName: "id" },
   })
-  goals: Goal[] = [];
+  goals: Goal[];
 
   /** 关联的重复待办任务 */
   @OneToMany(() => TodoRepeat, (todoRepeat) => todoRepeat.habit, { cascade: true })
-  todoRepeats: TodoRepeat[] = [];
+  todoRepeats: TodoRepeat[];
 
   /** 是否自动创建待办任务 */
   @Column({ default: true })

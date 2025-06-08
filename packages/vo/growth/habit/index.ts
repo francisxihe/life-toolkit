@@ -86,7 +86,7 @@ export type HabitVo = {
   createdAt: Date;
   updatedAt: Date;
   // 关联数据
-  goals?: GoalVo[]; // 关联的目标
+  goals?: HabitGoalVo[]; // 关联的目标
   recentLogs?: HabitLogVo[]; // 最近的日志记录
   // 统计信息
   statistics?: HabitStatisticsVo;
@@ -269,7 +269,7 @@ export type HabitComparisonVo = {
 };
 
 // 目标VO（简化版，用于关联）
-export type GoalVo = {
+export type HabitGoalVo = {
   id: string;
   title: string;
   status: string;

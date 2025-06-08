@@ -18,6 +18,7 @@ export class HabitMapper {
       targetDate: dto.targetDate,
       needReminder: dto.needReminder,
       reminderTime: dto.reminderTime,
+      autoCreateTodo: dto.autoCreateTodo,
     };
   }
 
@@ -44,8 +45,8 @@ export class HabitMapper {
       name: entity.name,
       status: entity.status,
       description: entity.description,
-      importance: entity.importance,
-      tags: entity.tags,
+      importance: entity.importance ?? 3, // 使用默认值3
+      tags: entity.tags || [],
       frequency: entity.frequency,
       customFrequency: entity.customFrequency,
       difficulty: entity.difficulty,
@@ -56,6 +57,7 @@ export class HabitMapper {
       needReminder: entity.needReminder,
       reminderTime: entity.reminderTime,
       completedCount: entity.completedCount,
+      autoCreateTodo: entity.autoCreateTodo ?? true, // 添加缺失的字段
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     };
@@ -74,6 +76,8 @@ export class HabitMapper {
     dto.targetDate = vo.targetDate;
     dto.needReminder = vo.needReminder;
     dto.reminderTime = vo.reminderTime;
+    dto.autoCreateTodo = vo.autoCreateTodo;
+    dto.goalIds = vo.goalIds;
     return dto;
   }
 
@@ -114,6 +118,12 @@ export class HabitMapper {
     }
     if (vo.status !== undefined) {
       dto.status = vo.status as any;
+    }
+    if (vo.autoCreateTodo !== undefined) {
+      dto.autoCreateTodo = vo.autoCreateTodo;
+    }
+    if (vo.goalIds !== undefined) {
+      dto.goalIds = vo.goalIds;
     }
     return dto;
   }
