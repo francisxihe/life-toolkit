@@ -6,6 +6,7 @@ import {
   IsString,
   IsNumber,
   IsArray,
+  IsISO8601,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { GoalStatus, GoalType } from "./enum";
@@ -32,7 +33,7 @@ export class Goal extends BaseEntity {
   @Column({
     type: "enum",
     enum: GoalStatus,
-    nullable: true,
+    default: GoalStatus.TODO,
   })
   @IsEnum(GoalStatus)
   status: GoalStatus;
@@ -41,14 +42,16 @@ export class Goal extends BaseEntity {
   @Column("datetime", {
     nullable: true,
   })
-  @IsString()
+  @IsISO8601()
+  @IsOptional()
   startAt?: Date;
 
   /** 目标结束时间 */
   @Column("datetime", {
     nullable: true,
   })
-  @IsString()
+  @IsISO8601()
+  @IsOptional()
   endAt?: Date;
 
   /** 目标描述 */
@@ -75,12 +78,16 @@ export class Goal extends BaseEntity {
   @Column("datetime", {
     nullable: true,
   })
+  @IsISO8601()
+  @IsOptional()
   doneAt?: Date;
 
   /** 放弃目标时间 */
   @Column("datetime", {
     nullable: true,
   })
+  @IsISO8601()
+  @IsOptional()
   abandonedAt?: Date;
 
   /** 父目标 */
@@ -99,6 +106,7 @@ export class Goal extends BaseEntity {
   @Column({ nullable: true })
   @IsOptional()
   @IsNumber()
+  @Type(() => Number)
   priority?: number;
 
   /** 任务 */

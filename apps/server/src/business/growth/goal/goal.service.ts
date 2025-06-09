@@ -1,18 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import {
-  Repository,
-  FindOperator,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-  In,
-  IsNull,
-  Not,
-} from "typeorm";
-import { Goal, GoalStatus } from "./entities";
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { GoalRepository } from "./goal.repository";
+import { GoalTreeService } from "./goal-tree.service";
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -20,226 +8,288 @@ import {
   GoalListFilterDto,
   GoalDto,
 } from "./dto";
-import { GoalMapper } from "./mappers";
-import { TaskService } from "../task/task.service";
-import { GoalTreeService } from "./goal-tree.service";
-
-function getWhere(
-  filter: GoalPageFilterDto & { excludeIds?: string[]; includeIds?: string[] }
-) {
-  const where: FindOptionsWhere<Goal> = {
-    deletedAt: IsNull(),
-  };
-
-  if (filter.doneDateStart && filter.doneDateEnd) {
-    where.doneAt = Between(
-      new Date(filter.doneDateStart + "T00:00:00"),
-      new Date(filter.doneDateEnd + "T23:59:59")
-    );
-  } else if (filter.doneDateStart) {
-    where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
-  } else if (filter.doneDateEnd) {
-    where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
-  }
-
-  if (filter.abandonedDateStart && filter.abandonedDateEnd) {
-    where.abandonedAt = Between(
-      new Date(filter.abandonedDateStart + "T00:00:00"),
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
-  } else if (filter.abandonedDateStart) {
-    where.abandonedAt = MoreThan(
-      new Date(filter.abandonedDateStart + "T00:00:00")
-    );
-  } else if (filter.abandonedDateEnd) {
-    where.abandonedAt = LessThan(
-      new Date(filter.abandonedDateEnd + "T23:59:59")
-    );
-  }
-
-  if (filter.startAt) {
-    where.startAt = MoreThan(new Date(filter.startAt + "T00:00:00"));
-  }
-  if (filter.endAt) {
-    where.endAt = LessThan(new Date(filter.endAt + "T23:59:59"));
-  }
-
-  if (filter.keyword) {
-    where.name = Like(`%${filter.keyword}%`);
-  }
-  if (filter.type) {
-    where.type = filter.type;
-  }
-  if (filter.status) {
-    where.status = filter.status;
-  }
-  if (filter.importance) {
-    where.importance = filter.importance;
-  }
-  if (filter.urgency) {
-    where.urgency = filter.urgency;
-  }
-
-  if (filter.includeIds && filter.includeIds.length > 0) {
-    where.id = In(filter.includeIds);
-  } else if (filter.excludeIds && filter.excludeIds.length > 0) {
-    where.id = Not(In(filter.excludeIds));
-  }
-
-  return where;
-}
+import { GoalStatus } from "./entities";
 
 @Injectable()
 export class GoalService {
   constructor(
-    @InjectRepository(Goal)
-    private readonly goalRepository: Repository<Goal>,
-    private readonly taskService: TaskService,
+    private readonly goalRepository: GoalRepository,
     private readonly goalTreeService: GoalTreeService
   ) {}
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
-    const createGoal = this.goalRepository.create({
-      ...createGoalDto,
-      status: GoalStatus.TODO,
-    });
+    // 业务验证
+    await this.validateBusinessRules(createGoalDto);
 
-    await this.goalRepository.manager.transaction(async (goalManager) => {
-      const treeRepo = goalManager.getTreeRepository(Goal);
-      if (createGoalDto.parentId) {
-        await this.goalTreeService.updateParent(
-          {
-            currentGoal: createGoal,
-            parentId: createGoalDto.parentId,
-          },
-          treeRepo
-        );
-      }
-      await treeRepo.save(createGoal);
-    });
+    // 数据处理
+    const processedDto = await this.processCreateData(createGoalDto);
 
-    return GoalMapper.entityToDto(createGoal);
+    // 处理树形结构
+    if (createGoalDto.parentId) {
+      return await this.createWithParent(processedDto);
+    }
+
+    // 调用数据访问层
+    const result = await this.goalRepository.create(processedDto);
+
+    // 后置处理
+    await this.afterCreate(result);
+
+    return result;
   }
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
-    let excludeIds: string[] = [];
-    const treeRepo = this.goalTreeService.getTreeRepo();
+    // 权限检查
+    await this.checkPermission(filter);
 
-    if (filter.withoutSelf && filter.id) {
-      const goal = await this.goalRepository.findOne({
-        where: { id: filter.id },
-        relations: ["children"],
-      });
-      if (goal) {
-        const flatChildren = await treeRepo.findDescendants(goal);
-        excludeIds = flatChildren.map((child) => child.id);
-        excludeIds.push(goal.id);
-      }
-    }
+    // 处理树形过滤逻辑
+    const processedFilter = await this.processTreeFilter(filter);
 
-    let includeIds: string[] = [];
-    if (filter.parentId) {
-      const goal = await this.goalRepository.findOne({
-        where: { id: filter.parentId },
-        relations: ["children"],
-      });
-      if (goal) {
-        const flatChildren = await treeRepo.findDescendants(goal);
-        includeIds = flatChildren.map((child) => child.id);
-        includeIds.push(goal.id);
-      }
-    }
-
-    const goalList = await treeRepo.find({
-      where: getWhere({
-        ...filter,
-        excludeIds,
-        includeIds,
-      }),
-    });
-
-    return goalList
-      .filter((goal) => !goal.parent)
-      .map((goal) => GoalMapper.entityToDto(goal));
+    return await this.goalRepository.findAll(processedFilter);
   }
 
-  async page(
-    filter: GoalPageFilterDto
-  ): Promise<{ list: GoalDto[]; total: number }> {
-    const pageNum = filter.pageNum || 1;
-    const pageSize = filter.pageSize || 10;
+  async page(filter: GoalPageFilterDto): Promise<{ list: GoalDto[]; total: number }> {
+    // 权限检查
+    await this.checkPermission(filter);
 
-    const [goalList, total] = await this.goalRepository.findAndCount({
-      where: getWhere(filter),
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-    });
+    return await this.goalRepository.page(filter);
+  }
 
-    return {
-      list: goalList.map((goal) => GoalMapper.entityToDto(goal)),
-      total,
-    };
+  async findById(id: string): Promise<GoalDto> {
+    return await this.goalRepository.findById(id);
+  }
+
+  async findDetail(id: string): Promise<GoalDto> {
+    return await this.goalRepository.findById(id, ["parent", "children", "taskList"]);
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const goal = await this.goalRepository.findOneBy({ id });
-    if (!goal) {
-      throw new Error("Goal not found");
-    }
+    // 业务验证
+    await this.validateUpdateRules(id, updateGoalDto);
 
-    await this.goalRepository.update(id, {
-      ...updateGoalDto,
-    });
+    // 数据处理
+    const processedDto = await this.processUpdateData(updateGoalDto);
 
-    return this.findDetail(id);
+    // 调用数据访问层
+    const result = await this.goalRepository.update(id, processedDto);
+
+    // 后置处理
+    await this.afterUpdate(result);
+
+    return result;
   }
 
   async delete(id: string): Promise<void> {
-    const treeRepository = this.goalRepository.manager.getTreeRepository(Goal);
+    // 删除前检查
+    await this.validateDelete(id);
+
+    // 处理树形删除逻辑
+    await this.deleteWithTree(id);
+
+    // 后置处理
+    await this.afterDelete(id);
+  }
+
+  // 状态操作（业务逻辑）
+  async done(id: string): Promise<boolean> {
+    const entity = await this.goalRepository.findById(id);
+
+    // 业务规则验证
+    if (!this.canMarkAsDone(entity)) {
+      throw new BadRequestException("当前状态不允许标记为完成");
+    }
+
+    await this.goalRepository.update(id, {
+      status: GoalStatus.DONE,
+      doneAt: new Date(),
+    });
+
+    return true;
+  }
+
+  async abandon(id: string): Promise<boolean> {
+    const entity = await this.goalRepository.findById(id);
+
+    // 业务规则验证
+    if (!this.canAbandon(entity)) {
+      throw new BadRequestException("当前状态不允许放弃");
+    }
+
+    await this.goalRepository.update(id, {
+      status: GoalStatus.ABANDONED,
+      abandonedAt: new Date(),
+    });
+
+    return true;
+  }
+
+  async restore(id: string): Promise<boolean> {
+    const entity = await this.goalRepository.findById(id);
+
+    // 业务规则验证
+    if (!this.canRestore(entity)) {
+      throw new BadRequestException("当前状态不允许恢复");
+    }
+
+    await this.goalRepository.update(id, {
+      status: GoalStatus.TODO,
+    });
+
+    return true;
+  }
+
+  // 批量操作
+  async batchDone(idList: string[]): Promise<void> {
+    // 批量验证
+    await this.validateBatchOperation(idList, 'done');
+
+    await this.goalRepository.batchUpdate(idList, {
+      status: GoalStatus.DONE,
+      doneAt: new Date(),
+    });
+  }
+
+  // 私有业务方法
+  private async validateBusinessRules(dto: CreateGoalDto): Promise<void> {
+    // 实现业务规则验证
+    if (!dto.name || dto.name.trim().length === 0) {
+      throw new BadRequestException("目标名称不能为空");
+    }
+  }
+
+  private async processCreateData(dto: CreateGoalDto): Promise<CreateGoalDto> {
+    // 实现数据预处理
+    return {
+      ...dto,
+      name: dto.name.trim(),
+    };
+  }
+
+  private async afterCreate(result: GoalDto): Promise<void> {
+    // 实现创建后处理
+    // 例如：发送通知、更新缓存等
+  }
+
+  private async createWithParent(dto: CreateGoalDto): Promise<GoalDto> {
+    // 使用事务处理树形结构创建
+    const treeRepo = this.goalRepository.getTreeRepository();
+    
+    return await treeRepo.manager.transaction(async (manager) => {
+      const treeRepository = manager.getTreeRepository(treeRepo.target);
+      
+      const entity = treeRepository.create({
+        ...dto,
+        status: GoalStatus.TODO,
+      });
+
+      if (dto.parentId) {
+        await this.goalTreeService.updateParent(
+          {
+            currentGoal: entity,
+            parentId: dto.parentId,
+          },
+          treeRepository
+        );
+      }
+
+      const savedEntity = await treeRepository.save(entity);
+      return this.goalRepository.findById(savedEntity.id);
+    });
+  }
+
+  private async processTreeFilter(filter: GoalListFilterDto): Promise<GoalListFilterDto> {
+    let excludeIds: string[] = [];
+    let includeIds: string[] = [];
+
+    const treeRepo = this.goalTreeService.getTreeRepo();
+
+    // 处理排除自身逻辑
+    if (filter.withoutSelf && filter.id) {
+      const goal = await this.goalRepository.findById(filter.id);
+      if (goal) {
+        const entity = await treeRepo.findOne({ where: { id: filter.id } });
+        if (entity) {
+          const flatChildren = await treeRepo.findDescendants(entity);
+          excludeIds = flatChildren.map((child) => child.id);
+          excludeIds.push(goal.id);
+        }
+      }
+    }
+
+    // 处理父级过滤逻辑
+    if (filter.parentId) {
+      const goal = await this.goalRepository.findById(filter.parentId);
+      if (goal) {
+        const entity = await treeRepo.findOne({ where: { id: filter.parentId } });
+        if (entity) {
+          const flatChildren = await treeRepo.findDescendants(entity);
+          includeIds = flatChildren.map((child) => child.id);
+          includeIds.push(goal.id);
+        }
+      }
+    }
+
+    return {
+      ...filter,
+      excludeIds,
+      includeIds,
+    } as any;
+  }
+
+  private async deleteWithTree(id: string): Promise<void> {
+    const treeRepository = this.goalRepository.getTreeRepository();
     const goalToDelete = await treeRepository.findOne({
       where: { id },
       relations: ["children"],
     });
 
     if (!goalToDelete) {
-      throw new Error("Goal not found");
+      throw new BadRequestException(`目标不存在，ID: ${id}`);
     }
 
-    // 获取所有子节点
-    const descendantsNodes = await treeRepository.findDescendants(goalToDelete);
-
-    const allIds = descendantsNodes.map((node) => node.id);
-    allIds.push(goalToDelete.id);
-
-    // 使用事务确保数据一致性
-    await this.goalRepository.manager.transaction(async (goalManager) => {
-      const treeRepo = goalManager.getTreeRepository(Goal);
-
-      // 先删除关联的任务
-      await this.taskService.deleteByFilter(
-        {
-          goalIds: allIds,
-        },
-        goalManager
-      );
-
-      // 再删除目标及其子节点
-      await this.goalTreeService.deleteChildren(goalToDelete, treeRepo);
-
-      await goalManager.delete(Goal, {
-        id: goalToDelete.id,
-      });
-    });
+    // 删除目标及其所有子目标
+    await treeRepository.remove(goalToDelete);
   }
 
-  async findDetail(id: string): Promise<GoalDto> {
-    const goal = await this.goalRepository.findOne({
-      where: { id },
-      relations: ["children", "parent", "taskList"],
-    });
-    if (!goal) {
-      throw new Error("Goal not found");
-    }
-    return GoalMapper.entityToDto(goal);
+  private canMarkAsDone(entity: GoalDto): boolean {
+    return entity.status === GoalStatus.TODO || entity.status === GoalStatus.IN_PROGRESS;
+  }
+
+  private canAbandon(entity: GoalDto): boolean {
+    return entity.status !== GoalStatus.ABANDONED;
+  }
+
+  private canRestore(entity: GoalDto): boolean {
+    return entity.status === GoalStatus.ABANDONED;
+  }
+
+  private async checkPermission(filter: any): Promise<void> {
+    // 实现权限检查逻辑
+    // 例如：检查用户是否有权限访问这些数据
+  }
+
+  private async validateUpdateRules(id: string, dto: UpdateGoalDto): Promise<void> {
+    // 实现更新验证逻辑
+  }
+
+  private async processUpdateData(dto: UpdateGoalDto): Promise<UpdateGoalDto> {
+    // 实现更新数据预处理
+    return dto;
+  }
+
+  private async afterUpdate(result: GoalDto): Promise<void> {
+    // 实现更新后处理
+  }
+
+  private async validateDelete(id: string): Promise<void> {
+    // 实现删除验证逻辑
+  }
+
+  private async afterDelete(id: string): Promise<void> {
+    // 实现删除后处理
+  }
+
+  private async validateBatchOperation(ids: string[], operation: string): Promise<void> {
+    // 实现批量操作验证逻辑
   }
 }

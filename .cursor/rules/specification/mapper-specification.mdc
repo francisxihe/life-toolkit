@@ -5,17 +5,17 @@ alwaysApply: false
 ---
 需要生成或修改Mapper时
 
-# Mapper (对象映射器) 规范
+# Mapper 规范
 
-## 概述
+## 📋 概述
 
-Mapper 是用于不同数据层之间对象转换的工具类，主要负责 Entity、DTO、VO 之间的数据映射。本规范定义了 Mapper 的标准分层架构、命名约定和最佳实践。
+Mapper 是用于不同数据层之间对象转换的工具类，主要负责 Entity、DTO、VO 之间的数据映射。本规范定义了 Mapper 的标准架构、命名约定和最佳实践。
 
-## 目录结构规范
+## 🏗️ 目录结构规范
 
 ### 基础结构
 ```
-apps/server/src/business/{domain}/{module}/mapper/
+apps/server/src/business/{domain}/{module}/mappers/
 └── {module}.mapper.ts           # 主映射器文件
 ```
 
@@ -24,31 +24,22 @@ apps/server/src/business/{domain}/{module}/mapper/
 apps/server/src/business/growth/goal/mappers/
 └── goal.mapper.ts               # 目标映射器
 
-apps/server/src/business/growth/habit/mapper/
+apps/server/src/business/growth/habit/mappers/
 └── habit.mapper.ts              # 习惯映射器
 ```
 
-## 文件命名规范
+## 📝 文件命名规范
 
 ### 文件命名格式
 - **映射器文件**: `{module}.mapper.ts`
 - **类命名**: `{Module}Mapper`
 
-### 内部类命名格式
-- **实体映射层**: `{Module}MapperEntity`
-- **DTO映射层**: `{Module}MapperDto`
-- **VO映射层**: `{Module}MapperVo`
+## 🎯 简化的Mapper架构
 
-## 标准Mapper分层架构
-
-### 1. 分层设计原则
+### 1. 架构设计原则
 ```typescript
-// 三层继承架构
-{Module}MapperEntity (Entity ↔ DTO)
-    ↓ extends
-{Module}MapperDto (DTO ↔ VO)
-    ↓ extends  
-{Module}MapperVo (VO ↔ DTO)
+// 简化的两层架构
+{Module}MapperCore (核心转换逻辑)
     ↓ extends
 {Module}Mapper (最终导出类)
 ```
@@ -57,21 +48,35 @@ apps/server/src/business/growth/habit/mapper/
 ```typescript
 import type { {Module} as {Module}VO } from "@life-toolkit/vo";
 import { Create{Module}Dto, Update{Module}Dto, {Module}Dto, {Module}ModelDto } from "../dto";
-import { {Module}Status, {Module} } from "../entities";
+import { {Module} } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
 
-// 第一层：实体映射层
-class {Module}MapperEntity {
+// 核心映射器类
+class {Module}MapperCore {
+  // ==================== Entity ↔ DTO ====================
+  
   /**
    * 实体转模型DTO
    */
   static entityToModelDto(entity: {Module}): {Module}ModelDto {
     const dto = new {Module}ModelDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
+    
+    // 基础字段映射
     dto.field1 = entity.field1;
     dto.field2 = entity.field2;
-    // ... 其他业务字段
+    dto.status = entity.status;
+    dto.priority = entity.priority;
+    
+    // 日期字段映射 (保持Date类型)
+    dto.startDate = entity.startDate;
+    dto.endDate = entity.endDate;
+    dto.completedAt = entity.completedAt;
+    
+    // 数组字段映射
+    dto.tags = entity.tags || [];
+    
     return dto;
   }
 
@@ -80,29 +85,46 @@ class {Module}MapperEntity {
    */
   static entityToDto(entity: {Module}): {Module}Dto {
     const dto = new {Module}Dto();
-    Object.assign(dto, BaseMapper.entityToDto(entity));
     Object.assign(dto, this.entityToModelDto(entity));
+    
+    // 关联字段映射 (简化处理，避免循环引用)
     dto.relationField1 = entity.relationField1;
     dto.relationField2 = entity.relationField2;
+    
     return dto;
   }
-}
 
-// 第二层：DTO映射层
-class {Module}MapperDto extends {Module}MapperEntity {
+  // ==================== DTO ↔ VO ====================
+  
   /**
    * DTO转项目VO
    */
   static dtoToItemVo(dto: {Module}Dto): {Module}VO.{Module}ItemVo {
     const vo: {Module}VO.{Module}ItemVo = {
+      // 基础字段
       ...BaseMapper.dtoToVo(dto),
+      
+      // 业务字段
       field1: dto.field1 || "",
       field2: dto.field2 || DefaultValue,
-      dateField: dto.dateField
-        ? dayjs(dto.dateField).format("YYYY/MM/DD HH:mm:ss")
+      status: dto.status,
+      priority: dto.priority,
+      
+      // 日期字段转换 (Date → string)
+      startDate: dto.startDate
+        ? dayjs(dto.startDate).format("YYYY-MM-DD")
+        : "",
+      endDate: dto.endDate
+        ? dayjs(dto.endDate).format("YYYY-MM-DD")
         : undefined,
-      // ... 其他业务字段
+      completedAt: dto.completedAt
+        ? dayjs(dto.completedAt).format("YYYY-MM-DD HH:mm:ss")
+        : undefined,
+      
+      // 数组字段
+      tags: dto.tags || [],
     };
+    
     return vo;
   }
 
@@ -112,10 +134,12 @@ class {Module}MapperDto extends {Module}MapperEntity {
   static dtoToVo(dto: {Module}Dto): {Module}VO.{Module}Vo {
     const vo: {Module}VO.{Module}Vo = {
       ...this.dtoToItemVo(dto),
+      
+      // 关联数据字段 (简化处理)
       relationField1: dto.relationField1 || [],
       relationField2: dto.relationField2 || [],
-      // ... 关联数据字段
     };
+    
     return vo;
   }
 
@@ -140,6 +164,8 @@ class {Module}MapperDto extends {Module}MapperEntity {
       total,
       pageNum,
       pageSize,
+      hasNext: pageNum * pageSize < total,
+      hasPrev: pageNum > 1,
     };
   }
 
@@ -151,19 +177,30 @@ class {Module}MapperDto extends {Module}MapperEntity {
       list: this.dtoToVoList(dtoList),
     };
   }
-}
 
-// 第三层：VO映射层
-class {Module}MapperVo extends {Module}MapperDto {
+  // ==================== VO ↔ DTO ====================
+  
   /**
    * 创建VO转DTO
    */
   static voToCreateDto(vo: {Module}VO.Create{Module}Vo): Create{Module}Dto {
     const dto = new Create{Module}Dto();
+    
+    // 基础字段
     dto.field1 = vo.field1;
     dto.field2 = vo.field2;
-    dto.dateField = vo.dateField ? dayjs(vo.dateField).toDate() : undefined;
+    dto.priority = vo.priority;
+    
+    // 日期字段转换 (string → Date)
+    dto.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : new Date();
+    dto.endDate = vo.endDate ? dayjs(vo.endDate).toDate() : undefined;
+    
+    // 数组字段
+    dto.tags = vo.tags || [];
+    
+    // 关联字段
     dto.relationIds = vo.relationIds;
+    
     return dto;
   }
 
@@ -172,27 +209,39 @@ class {Module}MapperVo extends {Module}MapperDto {
    */
   static voToUpdateDto(vo: {Module}VO.Update{Module}Vo): Update{Module}Dto {
     const dto = new Update{Module}Dto();
+    
+    // 只更新提供的字段
     if (vo.field1 !== undefined) {
       dto.field1 = vo.field1;
     }
     if (vo.field2 !== undefined) {
       dto.field2 = vo.field2;
     }
-    if (vo.dateField !== undefined) {
-      dto.dateField = vo.dateField ? dayjs(vo.dateField).toDate() : undefined;
+    if (vo.priority !== undefined) {
+      dto.priority = vo.priority;
+    }
+    if (vo.startDate !== undefined) {
+      dto.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : undefined;
+    }
+    if (vo.endDate !== undefined) {
+      dto.endDate = vo.endDate ? dayjs(vo.endDate).toDate() : undefined;
+    }
+    if (vo.tags !== undefined) {
+      dto.tags = vo.tags;
     }
     if (vo.relationIds !== undefined) {
       dto.relationIds = vo.relationIds;
     }
+    
     return dto;
   }
 }
 
 // 最终导出类
-export class {Module}Mapper extends {Module}MapperVo {}
+export class {Module}Mapper extends {Module}MapperCore {}
 ```
 
-## 字段映射规范
+## 🔧 字段映射规范
 
 ### 1. 基础字段映射
 ```typescript
@@ -202,140 +251,198 @@ vo.name = dto.name || "";
 
 // 数字字段
 dto.importance = entity.importance;
-vo.importance = dto.importance ?? defaultValue;
+vo.importance = dto.importance ?? 0;
 
 // 布尔字段
 dto.isActive = entity.isActive;
 vo.isActive = dto.isActive || false;
 
 // 数组字段
-dto.tags = entity.tags;
+dto.tags = entity.tags || [];
 vo.tags = dto.tags || [];
+
+// 枚举字段
+dto.status = entity.status;
+vo.status = dto.status;
 ```
 
 ### 2. 日期字段映射
 ```typescript
 // Entity → DTO (保持Date类型)
 dto.createdAt = entity.createdAt;
+dto.startDate = entity.startDate;
 
 // DTO → VO (转换为字符串)
 vo.createdAt = dto.createdAt
-  ? dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss")
-  : undefined;
+  ? dayjs(dto.createdAt).format("YYYY-MM-DD HH:mm:ss")
+  : "";
+vo.startDate = dto.startDate
+  ? dayjs(dto.startDate).format("YYYY-MM-DD")
+  : "";
 
 // VO → DTO (转换为Date)
-dto.startDate = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+dto.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : new Date();
+dto.endDate = vo.endDate ? dayjs(vo.endDate).toDate() : undefined;
 ```
 
 ### 3. 枚举字段映射
 ```typescript
-// Entity → DTO
+// Entity → DTO (直接赋值)
 dto.status = entity.status;
 
-// DTO → VO
-vo.status = dto.status || DefaultStatus;
+// DTO → VO (直接赋值)
+vo.status = dto.status;
 
-// VO → DTO (需要类型转换)
+// VO → DTO (类型安全转换)
 dto.status = vo.status as EntityStatus;
 ```
 
 ### 4. 关联字段映射
 ```typescript
-// Entity → DTO (直接赋值)
+// Entity → DTO (直接赋值，避免深度递归)
 dto.parent = entity.parent;
 dto.children = entity.children;
 
-// DTO → VO (需要递归转换或置空)
-vo.parent = dto.parent ? this.dtoToVo(dto.parent) : undefined;
-vo.children = dto.children?.map(child => this.dtoToVo(child)) || [];
+// DTO → VO (简化处理，避免循环引用)
+vo.parent = dto.parent ? this.dtoToItemVo(dto.parent) : undefined;
+vo.children = []; // 简化处理，需要时单独加载
 
-// 简化处理（避免循环引用）
-vo.relationField = []; // TODO: 需要实现关联对象转换
+// 关联ID处理
+vo.parentId = dto.parent?.id;
+dto.parentId = vo.parentId;
 ```
 
-## 使用规范
+### 5. 可选字段处理
+```typescript
+// 安全的字段访问
+vo.description = dto.description ?? "";
+vo.endDate = dto.endDate 
+  ? dayjs(dto.endDate).format("YYYY-MM-DD")
+  : undefined;
+
+// 更新时的字段处理
+if (vo.description !== undefined) {
+  dto.description = vo.description;
+}
+```
+
+## 🎯 使用规范
 
 ### 1. 静态方法调用
 ```typescript
 // 在Service中使用
-const dto = ModuleMapper.entityToDto(entity);
-const vo = ModuleMapper.dtoToVo(dto);
+const dto = GoalMapper.entityToDto(entity);
+const vo = GoalMapper.dtoToVo(dto);
 
 // 在Controller中使用
-const createDto = ModuleMapper.voToCreateDto(createVo);
-const pageVo = ModuleMapper.dtoToPageVo(dtoList, total, pageNum, pageSize);
+const createDto = GoalMapper.voToCreateDto(createVo);
+const pageVo = GoalMapper.dtoToPageVo(dtoList, total, pageNum, pageSize);
 ```
 
-### 2. 依赖注入移除
+### 2. 导入规范
 ```typescript
-// ❌ 错误：不再使用依赖注入
-@Injectable()
-export class ModuleMapper { ... }
+// 在Service中导入
+import { GoalMapper } from "./mappers/goal.mapper";
 
-// ✅ 正确：使用静态类
-export class ModuleMapper extends ModuleMapperVo {}
+// 在Controller中导入
+import { GoalMapper } from "../mappers/goal.mapper";
 ```
 
-### 3. Module配置更新
+### 3. Module配置
 ```typescript
-// ❌ 错误：不再注册为Provider
+// 不需要在Module中注册Mapper
 @Module({
-  providers: [ModuleService, ModuleMapper],
+  providers: [GoalService], // 只注册Service
+  controllers: [GoalController],
 })
-
-// ✅ 正确：移除Mapper注册
-@Module({
-  providers: [ModuleService],
-})
+export class GoalModule {}
 ```
 
-## 最佳实践
+## 🔄 最佳实践
 
-### 1. 分层职责
-- **Entity层**: 负责Entity与DTO之间的转换
-- **DTO层**: 负责DTO与VO之间的转换，处理数据格式化
-- **VO层**: 负责VO与DTO之间的转换，处理表单数据
-
-### 2. 错误处理
+### 1. 错误处理
 ```typescript
 // 安全的字段访问
-vo.field = dto.field ?? defaultValue;
-vo.dateField = dto.dateField 
-  ? dayjs(dto.dateField).format("YYYY/MM/DD HH:mm:ss")
-  : undefined;
-```
-
-### 3. 性能优化
-```typescript
-// 批量转换优化
-static dtoToVoList(dtoList: ModuleDto[]): ModuleItemVo[] {
-  return dtoList.map(dto => this.dtoToItemVo(dto));
-}
-
-// 避免深度递归
-static dtoToVo(dto: ModuleDto): ModuleVo {
-  return {
-    ...this.dtoToItemVo(dto),
-    children: [], // 简化处理，避免性能问题
-  };
-}
-```
-
-### 4. 类型安全
-```typescript
-// 明确的类型定义
-static dtoToItemVo(dto: ModuleDto): ModuleVO.ModuleItemVo {
-  const vo: ModuleVO.ModuleItemVo = {
-    // 确保所有必需字段都有值
+static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
+  if (!dto) {
+    throw new Error("DTO不能为空");
+  }
+  
+  const vo: GoalVO.GoalVo = {
     ...BaseMapper.dtoToVo(dto),
-    name: dto.name || "",
-    status: dto.status || DefaultStatus,
+    title: dto.title || "",
+    status: dto.status || GoalStatus.ACTIVE,
+    startDate: dto.startDate 
+      ? dayjs(dto.startDate).format("YYYY-MM-DD")
+      : dayjs().format("YYYY-MM-DD"),
   };
+  
   return vo;
 }
 ```
 
-## 常见模式
+### 2. 性能优化
+```typescript
+// 批量转换优化
+static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalItemVo[] {
+  if (!dtoList || dtoList.length === 0) {
+    return [];
+  }
+  
+  return dtoList.map(dto => this.dtoToItemVo(dto));
+}
+
+// 避免深度递归
+static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
+  return {
+    ...this.dtoToItemVo(dto),
+    children: [], // 简化处理，避免性能问题
+    tasks: [],    // 需要时单独加载
+  };
+}
+```
+
+### 3. 类型安全
+```typescript
+// 明确的类型定义
+static dtoToItemVo(dto: GoalDto): GoalVO.GoalItemVo {
+  const vo: GoalVO.GoalItemVo = {
+    // 确保所有必需字段都有值
+    ...BaseMapper.dtoToVo(dto),
+    title: dto.title || "",
+    status: dto.status || GoalStatus.ACTIVE,
+    priority: dto.priority || 1,
+    importance: dto.importance ?? 3,
+    isPublic: dto.isPublic || false,
+    startDate: dto.startDate 
+      ? dayjs(dto.startDate).format("YYYY-MM-DD")
+      : dayjs().format("YYYY-MM-DD"),
+    tags: dto.tags || [],
+    userId: dto.userId,
+  };
+  
+  return vo;
+}
+```
+
+### 4. 日期处理标准化
+```typescript
+// 统一的日期格式化函数
+private static formatDate(date: Date | undefined, format: string = "YYYY-MM-DD"): string | undefined {
+  return date ? dayjs(date).format(format) : undefined;
+}
+
+private static parseDate(dateString: string | undefined): Date | undefined {
+  return dateString ? dayjs(dateString).toDate() : undefined;
+}
+
+// 使用示例
+vo.startDate = this.formatDate(dto.startDate);
+vo.completedAt = this.formatDate(dto.completedAt, "YYYY-MM-DD HH:mm:ss");
+dto.startDate = this.parseDate(vo.startDate);
+```
+
+## 🔄 常见模式
 
 ### 1. 基础CRUD映射
 ```typescript
@@ -354,55 +461,219 @@ Entity[] → Dto[] → ItemVo[]
 
 ### 2. 分页数据映射
 ```typescript
-// 分页查询结果映射
-{
-  list: Entity[],
+static dtoToPageVo(
+  dtoList: GoalDto[],
   total: number,
   pageNum: number,
   pageSize: number
-} → PageVo
+): GoalVO.GoalPageVo {
+  return {
+    list: this.dtoToVoList(dtoList),
+    total,
+    pageNum,
+    pageSize,
+    hasNext: pageNum * pageSize < total,
+    hasPrev: pageNum > 1,
+  };
+}
 ```
 
 ### 3. 关联数据处理
 ```typescript
 // 简单关联（ID引用）
-dto.parentId = entity.parent?.id;
-vo.parentId = dto.parentId;
+vo.parentId = dto.parent?.id;
+vo.userId = dto.user?.id;
 
-// 复杂关联（对象嵌套）
-vo.parent = dto.parent ? ParentMapper.dtoToVo(dto.parent) : undefined;
+// 复杂关联（对象嵌套，按需处理）
+vo.parent = dto.parent ? this.dtoToItemVo(dto.parent) : undefined;
+vo.children = []; // 简化处理，需要时单独加载
 ```
 
-## 禁止事项
+## 🚫 禁止事项
 
 1. **不要在Mapper中包含业务逻辑** - Mapper仅负责数据转换
 2. **不要使用依赖注入** - 使用静态方法模式
 3. **不要忽略空值检查** - 始终处理undefined/null情况
 4. **不要创建循环引用** - 合理处理关联对象转换
 5. **不要混合不同层级的转换** - 保持分层清晰
+6. **不要在转换中进行数据库操作** - 转换应该是纯函数
+7. **不要忽略类型安全** - 确保类型转换的正确性
 
-## 检查清单
+## ✅ 检查清单
 
 在创建或修改Mapper时，请确认以下事项：
 
+### 基础结构
 - [ ] 文件命名符合规范 (`{module}.mapper.ts`)
 - [ ] 类命名符合规范 (`{Module}Mapper`)
-- [ ] 使用了三层继承架构
+- [ ] 使用了简化的两层架构
 - [ ] 所有方法都是静态方法
+
+### 转换方法
+- [ ] 实现了 `entityToDto` 方法
+- [ ] 实现了 `entityToModelDto` 方法
+- [ ] 实现了 `dtoToVo` 方法
+- [ ] 实现了 `dtoToItemVo` 方法
+- [ ] 实现了 `voToCreateDto` 方法
+- [ ] 实现了 `voToUpdateDto` 方法
+
+### 字段处理
 - [ ] 正确处理了日期字段转换
 - [ ] 添加了必要的空值检查
 - [ ] 关联字段处理正确
+- [ ] 枚举字段转换安全
+- [ ] 数组字段处理完整
+
+### 性能考虑
+- [ ] 避免了深度递归
+- [ ] 批量转换优化合理
+- [ ] 关联数据简化处理
+- [ ] 没有不必要的计算
+
+### 代码质量
 - [ ] 移除了依赖注入相关代码
-- [ ] 更新了Module配置
 - [ ] 没有包含业务逻辑代码
+- [ ] 类型定义明确
+- [ ] 错误处理完善
 
-## 迁移指南
+## 📝 完整示例
 
-### 从实例方法迁移到静态方法
+```typescript
+// goal.mapper.ts
+import type { Goal as GoalVO } from "@life-toolkit/vo";
+import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "../dto";
+import { Goal, GoalStatus, GoalPriority } from "../entities";
+import { BaseMapper } from "@/base/base.mapper";
+import dayjs from "dayjs";
 
-1. **移除@Injectable装饰器**
-2. **将所有方法改为static**
-3. **更新方法调用方式**：`this.mapper.method()` → `Mapper.method()`
-4. **移除依赖注入**：从constructor和providers中移除
-5. **更新导入语句**：确保正确导入Mapper类
-6. **验证功能**：确保所有转换功能正常工作
+class GoalMapperCore {
+  // ==================== Entity ↔ DTO ====================
+  
+  static entityToModelDto(entity: Goal): GoalModelDto {
+    const dto = new GoalModelDto();
+    Object.assign(dto, BaseMapper.entityToDto(entity));
+    
+    dto.title = entity.title;
+    dto.description = entity.description;
+    dto.status = entity.status;
+    dto.priority = entity.priority;
+    dto.importance = entity.importance;
+    dto.isPublic = entity.isPublic;
+    dto.startDate = entity.startDate;
+    dto.targetDate = entity.targetDate;
+    dto.completedAt = entity.completedAt;
+    dto.tags = entity.tags || [];
+    dto.userId = entity.userId;
+    
+    return dto;
+  }
+
+  static entityToDto(entity: Goal): GoalDto {
+    const dto = new GoalDto();
+    Object.assign(dto, this.entityToModelDto(entity));
+    
+    dto.tasks = entity.tasks;
+    dto.user = entity.user;
+    
+    return dto;
+  }
+
+  // ==================== DTO ↔ VO ====================
+  
+  static dtoToItemVo(dto: GoalDto): GoalVO.GoalItemVo {
+    const vo: GoalVO.GoalItemVo = {
+      ...BaseMapper.dtoToVo(dto),
+      title: dto.title || "",
+      description: dto.description,
+      status: dto.status || GoalStatus.ACTIVE,
+      priority: dto.priority || GoalPriority.MEDIUM,
+      importance: dto.importance ?? 3,
+      isPublic: dto.isPublic || false,
+      startDate: dto.startDate
+        ? dayjs(dto.startDate).format("YYYY-MM-DD")
+        : dayjs().format("YYYY-MM-DD"),
+      targetDate: dto.targetDate
+        ? dayjs(dto.targetDate).format("YYYY-MM-DD")
+        : undefined,
+      completedAt: dto.completedAt
+        ? dayjs(dto.completedAt).format("YYYY-MM-DD HH:mm:ss")
+        : undefined,
+      tags: dto.tags || [],
+      userId: dto.userId,
+    };
+    
+    return vo;
+  }
+
+  static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
+    const vo: GoalVO.GoalVo = {
+      ...this.dtoToItemVo(dto),
+      tasks: [], // 简化处理
+      user: undefined, // 需要时单独加载
+    };
+    
+    return vo;
+  }
+
+  static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalItemVo[] {
+    return dtoList.map((dto) => this.dtoToItemVo(dto));
+  }
+
+  static dtoToPageVo(
+    dtoList: GoalDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): GoalVO.GoalPageVo {
+    return {
+      list: this.dtoToVoList(dtoList),
+      total,
+      pageNum,
+      pageSize,
+      hasNext: pageNum * pageSize < total,
+      hasPrev: pageNum > 1,
+    };
+  }
+
+  // ==================== VO ↔ DTO ====================
+  
+  static voToCreateDto(vo: GoalVO.CreateGoalVo): CreateGoalDto {
+    const dto = new CreateGoalDto();
+    
+    dto.title = vo.title;
+    dto.description = vo.description;
+    dto.priority = vo.priority || GoalPriority.MEDIUM;
+    dto.importance = vo.importance ?? 3;
+    dto.isPublic = vo.isPublic || false;
+    dto.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : new Date();
+    dto.targetDate = vo.targetDate ? dayjs(vo.targetDate).toDate() : undefined;
+    dto.tags = vo.tags || [];
+    dto.userId = vo.userId;
+    dto.taskIds = vo.taskIds;
+    
+    return dto;
+  }
+
+  static voToUpdateDto(vo: GoalVO.UpdateGoalVo): UpdateGoalDto {
+    const dto = new UpdateGoalDto();
+    
+    if (vo.title !== undefined) dto.title = vo.title;
+    if (vo.description !== undefined) dto.description = vo.description;
+    if (vo.priority !== undefined) dto.priority = vo.priority;
+    if (vo.importance !== undefined) dto.importance = vo.importance;
+    if (vo.isPublic !== undefined) dto.isPublic = vo.isPublic;
+    if (vo.startDate !== undefined) {
+      dto.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : undefined;
+    }
+    if (vo.targetDate !== undefined) {
+      dto.targetDate = vo.targetDate ? dayjs(vo.targetDate).toDate() : undefined;
+    }
+    if (vo.tags !== undefined) dto.tags = vo.tags;
+    if (vo.taskIds !== undefined) dto.taskIds = vo.taskIds;
+    
+    return dto;
+  }
+}
+
+export class GoalMapper extends GoalMapperCore {}
+```

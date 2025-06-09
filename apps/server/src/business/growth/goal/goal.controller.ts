@@ -1,116 +1,94 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Put,
-  Query,
-} from "@nestjs/common";
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from "@nestjs/common";
 import { GoalService } from "./goal.service";
-import { GoalPageFilterDto, GoalListFilterDto } from "./dto";
-import { Response } from "@/decorators/response.decorator";
-import { GoalStatusService } from "./goal-status.service";
-import type {
-  Goal,
-  GoalListFiltersVo,
-  OperationByIdListVo,
-} from "@life-toolkit/vo";
-import { GoalMapper } from "./mappers";
-import { OperationMapper } from "@/common/operation";
+import { GoalMapper } from "./mappers/goal.mapper";
+import type { Goal as GoalVO } from "@life-toolkit/vo";
+import { CreateGoalDto, UpdateGoalDto, GoalPageFilterDto, GoalListFilterDto } from "./dto";
 
 @Controller("goal")
 export class GoalController {
-  constructor(
-    private readonly goalService: GoalService,
-    private readonly goalStatusService: GoalStatusService
-  ) {}
+  constructor(private readonly goalService: GoalService) {}
 
-  @Put("batch-done")
-  @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.goalStatusService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
-    );
-  }
-
-  @Put("abandon/:id")
-  @Response()
-  async abandon(@Param("id") id: string) {
-    const result = await this.goalStatusService.abandon(id);
-    return { result };
-  }
-
-  @Put("restore/:id")
-  @Response()
-  async restore(@Param("id") id: string) {
-    const result = await this.goalStatusService.restore(id);
-    return { result };
-  }
-
+  /**
+   * 创建目标
+   */
   @Post("create")
-  @Response()
-  async create(@Body() createGoalVo: Goal.CreateGoalVo) {
-    const createdDto = GoalMapper.voToCreateDto(createGoalVo);
-    const dto = await this.goalService.create(createdDto);
-    return GoalMapper.dtoToVo(dto);
+  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalItemVo> {
+    const createDto = GoalMapper.voToCreateDto(createVo);
+    const dto = await this.goalService.create(createDto);
+    return GoalMapper.dtoToItemVo(dto);
   }
 
-  @Delete("delete/:id")
-  @Response()
-  async remove(@Param("id") id: string) {
-    return this.goalService.delete(id);
-  }
-
-  @Put("update/:id")
-  @Response()
-  async update(
-    @Param("id") id: string,
-    @Body() updateGoalVo: Goal.CreateGoalVo
-  ) {
-    const updatedDto = GoalMapper.voToUpdateDto(updateGoalVo);
-    const dto = await this.goalService.update(id, updatedDto);
-    return GoalMapper.dtoToVo(dto);
-  }
-
+  /**
+   * 分页查询目标列表
+   */
   @Get("page")
-  @Response()
-  async page(@Query() filter: GoalPageFilterDto) {
+  async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
     const { list, total } = await this.goalService.page(filter);
-    return GoalMapper.dtoToPageVo(
-      list,
-      total,
-      filter.pageNum || 1,
-      filter.pageSize || 10
-    );
+    return GoalMapper.dtoToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
 
+  /**
+   * 列表查询目标
+   */
   @Get("list")
-  @Response()
-  async list(@Query() filter: GoalListFiltersVo) {
-    const goalListFilterDto = new GoalListFilterDto();
-
-    goalListFilterDto.withoutSelf = filter.withoutSelf;
-    goalListFilterDto.id = filter.id;
-    goalListFilterDto.parentId = filter.parentId;
-    goalListFilterDto.importance = filter.importance;
-    goalListFilterDto.urgency = filter.urgency;
-    goalListFilterDto.status = filter.status;
-    goalListFilterDto.startAt = filter.startAt
-      ? new Date(filter.startAt)
-      : undefined;
-    goalListFilterDto.endAt = filter.endAt ? new Date(filter.endAt) : undefined;
-
-    const goalList = await this.goalService.findAll(goalListFilterDto);
-
+  async list(@Query() filter: GoalListFilterDto): Promise<GoalVO.GoalListVo> {
+    const goalList = await this.goalService.findAll(filter);
     return GoalMapper.dtoToListVo(goalList);
   }
 
+  /**
+   * 根据ID查询目标详情
+   */
   @Get("detail/:id")
-  @Response()
-  async findDetail(@Param("id") id: string) {
-    const goal = await this.goalService.findDetail(id);
-    return GoalMapper.dtoToVo(goal);
+  async findDetail(@Param("id") id: string): Promise<GoalVO.GoalVo> {
+    const dto = await this.goalService.findDetail(id);
+    return GoalMapper.dtoToVo(dto);
+  }
+
+  /**
+   * 更新目标
+   */
+  @Put("update/:id")
+  async update(
+    @Param("id") id: string,
+    @Body() updateVo: GoalVO.UpdateGoalVo
+  ): Promise<GoalVO.GoalItemVo> {
+    const updateDto = GoalMapper.voToUpdateDto(updateVo);
+    const dto = await this.goalService.update(id, updateDto);
+    return GoalMapper.dtoToItemVo(dto);
+  }
+
+  /**
+   * 删除目标
+   */
+  @Delete("delete/:id")
+  async delete(@Param("id") id: string): Promise<void> {
+    await this.goalService.delete(id);
+  }
+
+  /**
+   * 批量完成目标
+   */
+  @Put("batch-done")
+  async batchDone(@Body() params: { idList: string[] }): Promise<void> {
+    await this.goalService.batchDone(params.idList);
+  }
+
+  /**
+   * 放弃目标
+   */
+  @Put("abandon/:id")
+  async abandon(@Param("id") id: string): Promise<{ result: boolean }> {
+    const result = await this.goalService.abandon(id);
+    return { result };
+  }
+
+  /**
+   * 恢复目标
+   */
+  @Put("restore/:id")
+  async restore(@Param("id") id: string): Promise<{ result: boolean }> {
+    const result = await this.goalService.restore(id);
+    return { result };
   }
 }

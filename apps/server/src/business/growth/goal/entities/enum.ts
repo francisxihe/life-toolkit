@@ -5,6 +5,13 @@ export enum GoalStatus {
   ABANDONED = "abandoned",
 }
 
+export enum GoalPriority {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  URGENT = "urgent",
+}
+
 export enum GoalType {
   OBJECTIVE = "objective",
   KEY_RESULT = "key_result",

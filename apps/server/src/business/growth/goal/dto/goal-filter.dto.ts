@@ -1,11 +1,14 @@
-import { IsOptional, IsString, IsDateString } from "class-validator";
+import { IsOptional, IsString } from "class-validator";
 import { PageDto } from "@/base/page.dto";
 import { GoalDto } from "./goal-model.dto";
 import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
+// 列表过滤DTO - 选择可过滤的字段
 export class GoalListFilterDto extends PartialType(
-  PickType(GoalDto, ["importance", "urgency", "status", "type", "startAt", "endAt"] as const)
+  PickType(GoalDto, ["type", "importance", "urgency"] as const)
 ) {
+  status?: GoalDto["status"];
+
   /** 搜索关键词 */
   keyword?: string;
 
@@ -27,16 +30,23 @@ export class GoalListFilterDto extends PartialType(
   /** 放弃结束日期 */
   abandonedDateEnd?: string;
   
-  /** 不包含自身 */
+  /** 排除自身 */
   withoutSelf?: boolean;
 
-  /** 任务ID */
+  /** 目标ID */
   id?: string;
 
-  /** 父任务ID */
+  /** 父目标ID */
   parentId?: string;
+
+  /** 开始时间过滤 */
+  startAt?: Date;
+
+  /** 结束时间过滤 */
+  endAt?: Date;
 }
 
+// 分页过滤DTO - 继承列表过滤 + 分页
 export class GoalPageFilterDto extends IntersectionType(
   PageDto,
   GoalListFilterDto

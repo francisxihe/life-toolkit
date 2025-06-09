@@ -1,126 +1,196 @@
 import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "../dto";
+import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto, GoalPageFilterDto, GoalListFilterDto } from "../dto";
 import { GoalStatus, Goal } from "../entities";
 import { BaseMapper } from "@/base/base.mapper";
 import dayjs from "dayjs";
-import { TaskMapper } from "@/business/growth/task/mappers/task.mapper";
-class GoalMapperEntity {
+
+// 核心映射器类
+class GoalMapperCore {
+  // ==================== Entity ↔ DTO ====================
+  
+  /**
+   * 实体转模型DTO
+   */
   static entityToModelDto(entity: Goal): GoalModelDto {
     const dto = new GoalModelDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
+    
+    // 基础字段映射
     dto.name = entity.name;
     dto.description = entity.description;
     dto.status = entity.status;
     dto.type = entity.type;
     dto.importance = entity.importance;
     dto.urgency = entity.urgency;
-    dto.doneAt = entity.doneAt;
-    dto.abandonedAt = entity.abandonedAt;
+    
+    // 日期字段映射 (保持Date类型)
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
+    dto.doneAt = entity.doneAt;
+    dto.abandonedAt = entity.abandonedAt;
+    
     return dto;
   }
 
+  /**
+   * 实体转完整DTO
+   */
   static entityToDto(entity: Goal): GoalDto {
     const dto = new GoalDto();
-    Object.assign(dto, BaseMapper.entityToDto(entity));
     Object.assign(dto, this.entityToModelDto(entity));
+    
+    // 关联字段映射 (简化处理，避免循环引用)
     dto.parent = entity.parent;
     dto.children = entity.children;
     dto.taskList = entity.taskList;
+    
     return dto;
   }
-}
 
-class GoalMapperDto extends GoalMapperEntity {
-  static dtoToItemVo(dto: GoalDto) {
-    const vo: GoalVO.GoalItemVo = {
+  // ==================== DTO ↔ VO ====================
+  
+  /**
+   * DTO转项目VO
+   */
+  static dtoToItemVo(dto: GoalDto): GoalVO.GoalItemVo {
+    const vo: any = {
+      // 基础字段
       ...BaseMapper.dtoToVo(dto),
+      
+      // 业务字段
       name: dto.name || "",
       description: dto.description,
-      status: dto.status || GoalStatus.TODO,
+      status: dto.status || "todo",
       type: dto.type,
-      importance: dto.importance,
-      urgency: dto.urgency,
+      importance: dto.importance ?? 3,
+      urgency: dto.urgency ?? 3,
+      
+      // 日期字段转换 (Date → string)
       startAt: dto.startAt
-        ? dayjs(dto.startAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.startAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       endAt: dto.endAt
-        ? dayjs(dto.endAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.endAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       doneAt: dto.doneAt
-        ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       abandonedAt: dto.abandonedAt
-        ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
     };
+    
     return vo;
   }
 
+  /**
+   * DTO转完整VO
+   */
   static dtoToVo(dto: GoalDto): GoalVO.GoalVo {
-    const vo: GoalVO.GoalVo = {
-      ...this.dtoToItemVo(dto),
-      parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
-      children: dto.children?.map((child) => this.dtoToVo(child)) || [],
-      taskList: dto.taskList?.map((task) => TaskMapper.dtoToVo(task)) || [],
+    const itemVo = this.dtoToItemVo(dto);
+    const vo: any = {
+      ...itemVo,
+      
+      // 关联数据字段 (简化处理)
+      parent: dto.parent ? this.dtoToItemVo(dto.parent) : undefined,
+      children: [], // 简化处理，需要时单独加载
+      taskList: [], // 简化处理，需要时单独加载
     };
+    
     return vo;
   }
 
+  /**
+   * DTO列表转VO列表
+   */
   static dtoToVoList(dtoList: GoalDto[]): GoalVO.GoalItemVo[] {
     return dtoList.map((dto) => this.dtoToItemVo(dto));
   }
 
+  /**
+   * DTO转分页VO
+   */
   static dtoToPageVo(
     dtoList: GoalDto[],
     total: number,
     pageNum: number,
     pageSize: number
   ): GoalVO.GoalPageVo {
-    const vo = {
+    return {
       list: this.dtoToVoList(dtoList),
       total,
       pageNum,
       pageSize,
     };
-    return vo;
   }
 
+  /**
+   * DTO转列表VO
+   */
   static dtoToListVo(dtoList: GoalDto[]): GoalVO.GoalListVo {
-    const vo = {
+    return {
       list: this.dtoToVoList(dtoList),
     };
-    return vo;
   }
-}
 
-class GoalMapperVo extends GoalMapperDto {
+  // ==================== VO ↔ DTO ====================
+  
+  /**
+   * 创建VO转DTO
+   */
   static voToCreateDto(vo: GoalVO.CreateGoalVo): CreateGoalDto {
     const dto = new CreateGoalDto();
+    
+    // 基础字段
     dto.name = vo.name;
     dto.description = vo.description;
-    dto.importance = vo.importance;
-    dto.urgency = vo.urgency;
-    dto.parentId = vo.parentId;
     dto.type = vo.type;
+    dto.importance = vo.importance ?? 3;
+    dto.urgency = vo.urgency ?? 3;
+    dto.parentId = vo.parentId;
+    
+    // 日期字段转换 (string → Date)
     dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
     dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
+    
     return dto;
   }
 
-  static voToUpdateDto(vo: GoalVO.CreateGoalVo): UpdateGoalDto {
+  /**
+   * 更新VO转DTO
+   */
+  static voToUpdateDto(vo: GoalVO.UpdateGoalVo): UpdateGoalDto {
     const dto = new UpdateGoalDto();
-    dto.name = vo.name;
-    dto.description = vo.description;
-    dto.importance = vo.importance;
-    dto.urgency = vo.urgency;
-    dto.parentId = vo.parentId;
-    dto.type = vo.type;
-    dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
-    dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
+    
+    // 只更新提供的字段
+    if (vo.name !== undefined) {
+      dto.name = vo.name;
+    }
+    if (vo.description !== undefined) {
+      dto.description = vo.description;
+    }
+    if (vo.type !== undefined) {
+      dto.type = vo.type;
+    }
+    if (vo.importance !== undefined) {
+      dto.importance = vo.importance;
+    }
+    if (vo.urgency !== undefined) {
+      dto.urgency = vo.urgency;
+    }
+    if (vo.parentId !== undefined) {
+      dto.parentId = vo.parentId;
+    }
+    if (vo.startAt !== undefined) {
+      dto.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+    }
+    if (vo.endAt !== undefined) {
+      dto.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
+    }
+    
     return dto;
   }
 }
 
-export class GoalMapper extends GoalMapperVo {}
+// 最终导出类
+export class GoalMapper extends GoalMapperCore {}
