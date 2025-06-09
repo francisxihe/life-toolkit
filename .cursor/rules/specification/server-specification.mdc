@@ -1,0 +1,805 @@
+---
+description: 需要调整服务端代码时
+globs: 
+alwaysApply: false
+---
+## Life Toolkit Server 架构代码生成规则
+
+### 📋 核心字段类型定义
+
+```typescript
+// 支持的字段类型
+type FieldType =
+  | "string"
+  | "number"
+  | "boolean"
+  | "Date"
+  | "enum"
+  | "object"
+  | "array";
+
+// 字段信息结构
+interface FieldInfo {
+  entityName: string; // 实体名称（支持嵌套路径，如 user/profile）
+  fieldName: string; // 字段名称
+  fieldType: FieldType; // 字段类型
+  isNullable: boolean; // 是否可空
+  description: string; // 字段描述
+  enumValues?: string[]; // 枚举值（仅当类型为 enum 时）
+}
+```
+
+### 🏗️ 项目结构约定
+
+```
+apps/server/src/business/{domain}/{module}/
+├── entities/                          # 实体层
+│   ├── {entity}.entity.ts            # TypeORM 实体文件
+│   ├── enum.ts                       # 枚举定义
+│   └── index.ts                      # 导出文件
+├── dto/                              # 数据传输对象层
+│   ├── {entity}-model.dto.ts         # 基础模型 DTO
+│   ├── {entity}-form.dto.ts          # 表单操作 DTO
+│   ├── {entity}-filter.dto.ts        # 过滤查询 DTO
+│   └── index.ts                      # 导出文件
+├── mappers/                          # 对象映射层
+│   ├── {entity}.mapper.ts            # 对象映射文件
+│   └── index.ts                      # 导出文件
+├── {module}.controller.ts            # 控制器层
+├── {module}.service.ts               # 业务服务层
+├── {module}.repository.ts            # 数据访问层（可选）
+├── {module}-{feature}.service.ts     # 特性服务层（可选）
+└── {module}.module.ts                # 模块定义
+
+packages/vo/{domain}/
+└── {entity}-model.vo.ts              # 值对象接口文件
+```
+
+### 🔄 服务分层架构
+
+#### 分层职责定义
+
+```
+┌─────────────────────────────────────┐
+│           控制器层                   │
+│        {Module}Controller           │
+│  ┌─────────────────────────────────┐ │
+│  │ • 路由处理                      │ │
+│  │ • 参数验证                      │ │
+│  │ • VO ↔ DTO 转换                │ │
+│  │ • 响应格式化                    │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────┐
+│           业务服务层                 │
+│         {Module}Service             │
+│  ┌─────────────────────────────────┐ │
+│  │ • 业务逻辑编排                  │ │
+│  │ • 事务管理                      │ │
+│  │ • 跨模块调用                    │ │
+│  │ • 复杂业务规则                  │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────┐
+│           数据访问层                 │
+│       {Module}Repository            │
+│  ┌─────────────────────────────────┐ │
+│  │ • 基础 CRUD 操作                │ │
+│  │ • 数据库查询                    │ │
+│  │ • Entity ↔ DTO 转换            │ │
+│  │ • 数据持久化                    │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+                    ↓
+┌─────────────────────────────────────┐
+│           数据存储层                 │
+│         TypeORM Entity              │
+│  ┌─────────────────────────────────┐ │
+│  │ • 数据模型定义                  │ │
+│  │ • 关系映射                      │ │
+│  │ • 数据验证                      │ │
+│  │ • 数据库约束                    │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+```
+
+#### 数据访问层 ({module}.repository.ts)
+
+```typescript
+@Injectable()
+export class {Module}Repository {
+  constructor(
+    @InjectRepository({Entity})
+    private readonly {entity}Repository: Repository<{Entity}>,
+  ) {}
+
+  // 基础 CRUD 操作
+  async create(create{Entity}Dto: Create{Entity}Dto): Promise<{Entity}Dto> {
+    const entity = this.{entity}Repository.create(create{Entity}Dto);
+    const savedEntity = await this.{entity}Repository.save(entity);
+    return {Entity}Mapper.entityToDto(savedEntity);
+  }
+
+  async findById(id: string, relations?: string[]): Promise<{Entity}Dto> {
+    const entity = await this.{entity}Repository.findOne({
+      where: { id },
+      relations,
+    });
+    if (!entity) {
+      throw new NotFoundException(`{Entity}不存在，ID: ${id}`);
+    }
+    return {Entity}Mapper.entityToDto(entity);
+  }
+
+  async findAll(filter: {Entity}ListFilterDto): Promise<{Entity}Dto[]> {
+    const query = this.buildQuery(filter);
+    const entities = await query.getMany();
+    return entities.map(entity => {Entity}Mapper.entityToDto(entity));
+  }
+
+  async page(
+    filter: {Entity}PageFilterDto
+  ): Promise<{ list: {Entity}Dto[]; total: number }> {
+    const { pageNum = 1, pageSize = 10 } = filter;
+    const skip = (pageNum - 1) * pageSize;
+
+    const query = this.buildQuery(filter);
+    const [entities, total] = await query
+      .skip(skip)
+      .take(pageSize)
+      .getManyAndCount();
+
+    return {
+      list: entities.map(entity => {Entity}Mapper.entityToDto(entity)),
+      total,
+    };
+  }
+
+  async update(id: string, update{Entity}Dto: Update{Entity}Dto): Promise<{Entity}Dto> {
+    const entity = await this.{entity}Repository.findOne({ where: { id } });
+    if (!entity) {
+      throw new NotFoundException(`{Entity}不存在，ID: ${id}`);
+    }
+
+    Object.assign(entity, update{Entity}Dto);
+    const savedEntity = await this.{entity}Repository.save(entity);
+    return {Entity}Mapper.entityToDto(savedEntity);
+  }
+
+  async delete(id: string): Promise<void> {
+    const entity = await this.{entity}Repository.findOne({ where: { id } });
+    if (!entity) {
+      throw new NotFoundException(`{Entity}不存在，ID: ${id}`);
+    }
+    await this.{entity}Repository.remove(entity);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const result = await this.{entity}Repository.softDelete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`{Entity}不存在，ID: ${id}`);
+    }
+  }
+
+  async batchUpdate(ids: string[], updateData: Partial<{Entity}>): Promise<void> {
+    await this.{entity}Repository.update(
+      { id: In(ids) },
+      updateData
+    );
+  }
+
+  // 构建查询条件的私有方法
+  private buildQuery(filter: {Entity}ListFilterDto) {
+    let query = this.{entity}Repository.createQueryBuilder("{entity}");
+
+    // 状态过滤
+    if (filter.status && filter.status.length > 0) {
+      query = query.andWhere("{entity}.status IN (:...status)", { status: filter.status });
+    }
+
+    // 关键词搜索
+    if (filter.keyword) {
+      query = query.andWhere(
+        "({entity}.name LIKE :keyword OR {entity}.description LIKE :keyword)",
+        { keyword: `%${filter.keyword}%` }
+      );
+    }
+
+    // 日期范围过滤
+    if (filter.dateStart) {
+      query = query.andWhere("{entity}.createdAt >= :dateStart", { dateStart: filter.dateStart });
+    }
+    if (filter.dateEnd) {
+      query = query.andWhere("{entity}.createdAt <= :dateEnd", { dateEnd: filter.dateEnd });
+    }
+
+    return query.orderBy("{entity}.updatedAt", "DESC");
+  }
+}
+```
+
+#### 业务服务层 ({module}.service.ts)
+
+```typescript
+@Injectable()
+export class {Module}Service {
+  constructor(
+    private readonly {module}Repository: {Module}Repository,
+    // 其他业务服务依赖
+  ) {}
+
+  // 业务逻辑编排
+  async create(create{Entity}Dto: Create{Entity}Dto): Promise<{Entity}Dto> {
+    // 业务验证
+    await this.validateBusinessRules(create{Entity}Dto);
+
+    // 数据处理
+    const processedDto = await this.processCreateData(create{Entity}Dto);
+
+    // 调用数据访问层
+    const result = await this.{module}Repository.create(processedDto);
+
+    // 后置处理（如发送通知、更新缓存等）
+    await this.afterCreate(result);
+
+    return result;
+  }
+
+  async findAll(filter: {Entity}ListFilterDto): Promise<{Entity}Dto[]> {
+    // 权限检查
+    await this.checkPermission(filter);
+
+    return await this.{module}Repository.findAll(filter);
+  }
+
+  async page(filter: {Entity}PageFilterDto): Promise<{ list: {Entity}Dto[]; total: number }> {
+    // 权限检查
+    await this.checkPermission(filter);
+
+    return await this.{module}Repository.page(filter);
+  }
+
+  async findById(id: string): Promise<{Entity}Dto> {
+    return await this.{module}Repository.findById(id);
+  }
+
+  async update(id: string, update{Entity}Dto: Update{Entity}Dto): Promise<{Entity}Dto> {
+    // 业务验证
+    await this.validateUpdateRules(id, update{Entity}Dto);
+
+    // 数据处理
+    const processedDto = await this.processUpdateData(update{Entity}Dto);
+
+    // 调用数据访问层
+    const result = await this.{module}Repository.update(id, processedDto);
+
+    // 后置处理
+    await this.afterUpdate(result);
+
+    return result;
+  }
+
+  async delete(id: string): Promise<void> {
+    // 删除前检查
+    await this.validateDelete(id);
+
+    await this.{module}Repository.delete(id);
+
+    // 后置处理
+    await this.afterDelete(id);
+  }
+
+  // 状态操作（业务逻辑）
+  async done(id: string): Promise<boolean> {
+    const entity = await this.{module}Repository.findById(id);
+
+    // 业务规则验证
+    if (!this.canMarkAsDone(entity)) {
+      throw new BadRequestException("当前状态不允许标记为完成");
+    }
+
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.DONE,
+      doneAt: new Date(),
+    });
+
+    return true;
+  }
+
+  async abandon(id: string): Promise<boolean> {
+    const entity = await this.{module}Repository.findById(id);
+
+    // 业务规则验证
+    if (!this.canAbandon(entity)) {
+      throw new BadRequestException("当前状态不允许放弃");
+    }
+
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.ABANDONED,
+      abandonedAt: new Date(),
+    });
+
+    return true;
+  }
+
+  async restore(id: string): Promise<boolean> {
+    const entity = await this.{module}Repository.findById(id);
+
+    // 业务规则验证
+    if (!this.canRestore(entity)) {
+      throw new BadRequestException("当前状态不允许恢复");
+    }
+
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.ACTIVE,
+      restoredAt: new Date(),
+    });
+
+    return true;
+  }
+
+  // 批量操作
+  async batchDone(params: OperationByIdListDto): Promise<void> {
+    // 批量验证
+    await this.validateBatchOperation(params.idList, 'done');
+
+    await this.{module}Repository.batchUpdate(params.idList, {
+      status: {Entity}Status.DONE,
+      doneAt: new Date(),
+    });
+  }
+
+  // 私有业务方法
+  private async validateBusinessRules(dto: Create{Entity}Dto): Promise<void> {
+    // 实现业务规则验证
+  }
+
+  private async processCreateData(dto: Create{Entity}Dto): Promise<Create{Entity}Dto> {
+    // 实现数据预处理
+    return dto;
+  }
+
+  private async afterCreate(result: {Entity}Dto): Promise<void> {
+    // 实现创建后处理
+  }
+
+  private canMarkAsDone(entity: {Entity}Dto): boolean {
+    // 实现业务规则判断
+    return true;
+  }
+
+  private async checkPermission(filter: any): Promise<void> {
+    // 实现权限检查
+  }
+}
+```
+
+#### 特性服务层 ({module}-feature.service.ts)
+
+```typescript
+// 示例：todo-status.service.ts
+@Injectable()
+export class {Module}StatusService {
+  constructor(
+    private readonly {module}Repository: {Module}Repository,
+  ) {}
+
+  async batchDone(params: OperationByIdListDto): Promise<void> {
+    // 专门处理状态相关的业务逻辑
+    await this.{module}Repository.batchUpdate(params.idList, {
+      status: {Entity}Status.DONE,
+      doneAt: new Date(),
+    });
+  }
+
+  async done(id: string): Promise<void> {
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.DONE,
+      doneAt: new Date(),
+    });
+  }
+
+  async abandon(id: string): Promise<void> {
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.ABANDONED,
+      abandonedAt: new Date(),
+    });
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.{module}Repository.update(id, {
+      status: {Entity}Status.ACTIVE,
+    });
+  }
+}
+```
+
+### 🔧 Entity 文件更新规则
+
+#### TypeORM 装饰器映射
+
+```typescript
+const TYPE_DECORATORS: Record<FieldType, string> = {
+  string: "@Column('varchar')",
+  number: "@Column('int')",
+  boolean: "@Column('boolean')",
+  Date: '@Column("datetime")',
+  enum: '@Column({ type: "enum", enum: {EnumType} })',
+  object: '@Column("json")',
+  array: '@Column("simple-array")',
+};
+
+const VALIDATOR_DECORATORS: Record<FieldType, string> = {
+  string: "@IsString()",
+  number: "@IsNumber()",
+  boolean: "@IsBoolean()",
+  Date: "@IsISO8601()",
+  enum: "@IsEnum({EnumType})",
+  object: "@IsObject()",
+  array: "@IsArray()",
+};
+```
+
+#### Entity 字段生成模板
+
+```typescript
+// 字段定义模板
+/** {description} */
+{typeDecorator}
+{nullableDecorator}  // @IsOptional() 如果 isNullable 为 true
+{validatorDecorator}
+{fieldName}{nullableSymbol}: {fieldType};
+
+// 示例：
+/** 用户状态 */
+@Column({ type: "enum", enum: UserStatus })
+@IsEnum(UserStatus)
+status: UserStatus;
+```
+
+### 📝 DTO 文件更新规则
+
+#### DTO 类命名约定
+
+- `{Entity}Dto` - 基础数据传输对象（包含所有字段）
+- `{Entity}ModelDto` - 模型数据传输对象（排除关联字段）
+- `Create{Entity}Dto` - 创建操作 DTO
+- `Update{Entity}Dto` - 更新操作 DTO
+- `{Entity}ListFilterDto` - 列表过滤器 DTO
+- `{Entity}PageFilterDto` - 分页过滤器 DTO
+
+#### DTO 文件结构规范
+
+```typescript
+// {entity}-model.dto.ts
+import { BaseModelDto } from "@/base/base-model.dto";
+import { IntersectionType, OmitType } from "@nestjs/mapped-types";
+import { {Entity} } from "../entities";
+
+export class {Entity}Dto extends IntersectionType(
+  BaseModelDto,
+  OmitType({Entity}, ["relationField"] as const)
+) {
+  relationField?: RelatedDto;
+}
+
+export class {Entity}ModelDto extends OmitType({Entity}Dto, [
+  "relationField",
+] as const) {}
+```
+
+#### DTO 字段生成模板
+
+```typescript
+/** {description} */
+{fieldName}{nullableSymbol}: {fieldType};
+```
+
+### 🎯 VO 接口更新规则
+
+#### VO 接口命名约定
+
+- `{Entity}Vo` - 基础值对象接口
+- `{Entity}ModelVo` - 模型值对象接口
+- `Create{Entity}Vo` - 创建操作值对象
+- `Update{Entity}Vo` - 更新操作值对象
+
+#### VO 字段生成模板
+
+```typescript
+/** {description} */
+{fieldName}{nullableSymbol}: {fieldType};
+```
+
+### 🔄 Mapper 文件更新规则
+
+#### Mapper 类结构规范
+
+```typescript
+export class {Entity}Mapper {
+  // Entity 转 DTO
+  static entityToDto(entity: {Entity}): {Entity}Dto {
+    const dto = new {Entity}Dto();
+    // 字段映射
+    return dto;
+  }
+
+  // DTO 转 VO
+  static dtoToVo(dto: {Entity}Dto): {Entity}.{Entity}Vo {
+    return {
+      // 字段映射
+    };
+  }
+
+  // VO 转创建 DTO
+  static voToCreateDto(vo: {Entity}.Create{Entity}Vo): Create{Entity}Dto {
+    const dto = new Create{Entity}Dto();
+    // 字段映射
+    return dto;
+  }
+
+  // VO 转更新 DTO
+  static voToUpdateDto(vo: {Entity}.Update{Entity}Vo): Update{Entity}Dto {
+    const dto = new Update{Entity}Dto();
+    // 字段映射
+    return dto;
+  }
+
+  // DTO 列表转 VO 列表
+  static dtoToListVo(dtos: {Entity}Dto[]): {Entity}.{Entity}ListVo {
+    return {
+      list: dtos.map(dto => this.dtoToVo(dto)),
+    };
+  }
+
+  // DTO 分页转 VO 分页
+  static dtoToPageVo(
+    dtos: {Entity}Dto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): {Entity}.{Entity}PageVo {
+    return {
+      list: dtos.map(dto => this.dtoToVo(dto)),
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+}
+```
+
+#### Mapper 方法更新点
+
+1. **entityToDto 方法** - 实体转 DTO
+
+```typescript
+dto.{fieldName} = entity.{fieldName};
+```
+
+2. **dtoToVo 方法** - DTO 转值对象
+
+```typescript
+{fieldName}: dto.{fieldName},
+```
+
+### 🎮 Controller 文件规范
+
+#### Controller 类结构规范
+
+```typescript
+@Controller("{module}")
+export class {Module}Controller {
+  constructor(private readonly {module}Service: {Module}Service) {}
+
+  // 标准 CRUD 操作
+  @Post("create")
+  @Response()
+  async create(@Body() create{Entity}Vo: {Entity}.Create{Entity}Vo) {
+    const dto = {Entity}Mapper.voToCreateDto(create{Entity}Vo);
+    const result = await this.{module}Service.create(dto);
+    return {Entity}Mapper.dtoToVo(result);
+  }
+
+  @Put("update/:id")
+  @Response()
+  async update(
+    @Param("id") id: string,
+    @Body() update{Entity}Vo: {Entity}.Update{Entity}Vo
+  ) {
+    const dto = {Entity}Mapper.voToUpdateDto(update{Entity}Vo);
+    const result = await this.{module}Service.update(id, dto);
+    return {Entity}Mapper.dtoToVo(result);
+  }
+
+  @Delete("delete/:id")
+  @Response()
+  async delete(@Param("id") id: string) {
+    return await this.{module}Service.delete(id);
+  }
+
+  @Get("detail/:id")
+  @Response()
+  async findById(@Param("id") id: string) {
+    const result = await this.{module}Service.findById(id);
+    return {Entity}Mapper.dtoToVo(result);
+  }
+
+  @Get("list")
+  @Response()
+  async list(@Query() filter: {Entity}ListFilterDto) {
+    const results = await this.{module}Service.findAll(filter);
+    return {Entity}Mapper.dtoToListVo(results);
+  }
+
+  @Get("page")
+  @Response()
+  async page(@Query() filter: {Entity}PageFilterDto) {
+    const { list, total } = await this.{module}Service.page(filter);
+    return {Entity}Mapper.dtoToPageVo(
+      list,
+      total,
+      filter.pageNum || 1,
+      filter.pageSize || 10
+    );
+  }
+
+  // 状态操作
+  @Put("done/:id")
+  @Response()
+  async done(@Param("id") id: string) {
+    const result = await this.{module}Service.done(id);
+    return { result };
+  }
+
+  @Put("abandon/:id")
+  @Response()
+  async abandon(@Param("id") id: string) {
+    const result = await this.{module}Service.abandon(id);
+    return { result };
+  }
+
+  @Put("restore/:id")
+  @Response()
+  async restore(@Param("id") id: string) {
+    const result = await this.{module}Service.restore(id);
+    return { result };
+  }
+
+  // 批量操作
+  @Put("batch-done")
+  @Response()
+  async batchDone(@Body() idList: OperationByIdListVo) {
+    return await this.{module}Service.batchDone(
+      OperationMapper.voToOperationByIdListDto(idList)
+    );
+  }
+}
+```
+
+### ⚡ 字段类型处理规则
+
+#### 可空字段处理
+
+- 如果 `isNullable` 为 `true`：
+  - TypeScript 类型添加 `?` 符号
+  - Entity 添加 `@IsOptional()` 装饰器
+  - TypeORM Column 添加 `{ nullable: true }` 选项
+
+#### 枚举类型处理
+
+- 当字段类型为 `enum` 时：
+  - 需要提供 `enumValues` 数组
+  - 生成对应的枚举类型定义
+  - 在装饰器中引用枚举类型
+
+#### 数组类型处理
+
+- 使用 TypeORM 的 `simple-array` 类型
+- TypeScript 类型为 `{baseType}[]`
+
+### 📍 文件插入位置规则
+
+#### Entity 文件
+
+- 在类的最后一个 `}` 之前插入新字段
+
+#### DTO 文件
+
+- 在每个 DTO 类的最后一个 `}` 之前插入新字段
+
+#### VO 接口
+
+- 在每个接口的最后一个 `}` 之前插入新字段
+
+#### Mapper 文件
+
+- 在 `entityToDto` 方法的 `return dto;` 之前插入映射代码
+- 在 `dtoToVo` 方法的 `return vo;` 之前插入映射代码
+
+### 🛡️ 错误处理规则
+
+1. **字段验证**
+
+   - 字段名称不能为空
+   - 字段描述不能为空
+   - 枚举类型必须提供枚举值
+
+2. **文件检查**
+
+   - 确保目标文件存在
+   - 备份重要文件（建议）
+
+3. **类型安全**
+   - 使用 TypeScript 严格类型检查
+   - 确保生成的代码符合项目规范
+
+### 🎨 代码风格规则
+
+1. **注释格式**
+
+   - 使用 JSDoc 风格的字段描述注释
+   - 格式：`/** {description} */`
+
+2. **缩进和格式**
+
+   - 使用 2 空格缩进
+   - 保持与现有代码风格一致
+
+3. **命名规范**
+   - 字段名使用 camelCase
+   - 类型名使用 PascalCase
+   - 枚举值使用 UPPER_CASE 或 camelCase
+
+### 🔄 模块依赖规则
+
+1. **导入顺序**
+
+   - NestJS 装饰器
+   - TypeORM 相关
+   - 验证装饰器
+   - 本地实体和 DTO
+   - 外部依赖
+
+2. **模块注册**
+
+   - 在 `{module}.module.ts` 中注册所有服务
+   - 在 `TypeOrmModule.forFeature()` 中注册实体
+   - 正确配置依赖注入
+
+3. **服务分层原则**
+   - **数据访问层 (Repository)**：专注于数据库操作，提供基础 CRUD 功能
+   - **业务服务层 (Service)**：处理业务逻辑编排，事务管理，跨模块调用
+   - **特性服务层 (FeatureService)**：处理特定功能领域的业务逻辑
+   - **控制器层 (Controller)**：处理 HTTP 请求，参数验证，响应格式化
+
+### 📊 分层使用指南
+
+#### 何时使用 Repository 层
+
+- 需要复杂的数据库查询逻辑
+- 需要统一的数据访问接口
+- 需要数据访问层的单元测试
+- 需要支持多种数据源
+
+#### 何时使用 Service 层
+
+- 需要编排多个数据操作
+- 需要事务管理
+- 需要调用外部服务
+- 需要复杂的业务规则验证
+
+#### 何时使用 FeatureService 层
+
+- 功能相对独立且复杂
+- 需要专门的业务逻辑处理
+- 可以被多个 Service 复用
+- 有明确的功能边界
+
+#### 简化原则
+
+- 对于简单的 CRUD 操作，可以直接在 Service 中注入 Repository
+- 对于复杂的业务场景，建议使用完整的分层架构
+- 根据项目复杂度灵活选择分层深度

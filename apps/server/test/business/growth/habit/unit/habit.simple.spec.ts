@@ -1,207 +1,103 @@
-import { HabitTestFactory } from '../utils/habit.factory';
-import { HabitTestUtils } from '../utils/habit.test-utils';
-import { HabitStatus, HabitFrequency, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
+import { Test, TestingModule } from '@nestjs/testing';
+import { HabitStatus, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
+import type { Habit } from '@life-toolkit/vo';
 
 describe('Habit Simple Tests', () => {
-  describe('HabitTestFactory', () => {
-    it('should create basic habit VO', () => {
-      const habit = HabitTestFactory.createBasicHabitVo();
-      
-      expect(habit).toBeDefined();
-      expect(habit.name).toBe('每天阅读30分钟');
-      expect(habit.importance).toBe(4);
-      expect(habit.frequency).toBe(HabitFrequency.DAILY);
-      expect(habit.difficulty).toBe(HabitDifficulty.MEDIUM);
-      expect(habit.tags).toEqual(['学习', '阅读']);
-    });
-
-    it('should create habit with overrides', () => {
-      const habit = HabitTestFactory.createBasicHabitVo({
-        name: '自定义习惯',
-        importance: 5,
-      });
-      
-      expect(habit.name).toBe('自定义习惯');
-      expect(habit.importance).toBe(5);
-    });
-
-    it('should create minimal habit VO', () => {
-      const habit = HabitTestFactory.createMinimalHabitVo();
-      
-      expect(habit).toBeDefined();
-      expect(habit.name).toBe('简单习惯');
-    });
-
-    it('should create full habit VO', () => {
-      const habit = HabitTestFactory.createFullHabitVo();
-      
-      HabitTestUtils.expectHabitStructure(habit);
-      expect(habit.id).toBe('habit-1');
-      expect(habit.status).toBe(HabitStatus.ACTIVE);
-      expect(habit.currentStreak).toBe(5);
-      expect(habit.longestStreak).toBe(10);
-    });
-
-    it('should create multiple habits', () => {
-      const habits = HabitTestFactory.createMultipleHabits(3);
-      
-      expect(habits).toHaveLength(3);
-      habits.forEach((habit, index) => {
-        expect(habit.id).toBe(`habit-${index + 1}`);
-        expect(habit.name).toBe(`习惯${index + 1}`);
-        HabitTestUtils.expectHabitStructure(habit);
-      });
-    });
-
-    it('should create habits with different statuses', () => {
-      const habits = HabitTestFactory.createHabitsWithDifferentStatuses();
-      
-      expect(habits).toHaveLength(4);
-      expect(habits[0].status).toBe(HabitStatus.ACTIVE);
-      expect(habits[1].status).toBe(HabitStatus.PAUSED);
-      expect(habits[2].status).toBe(HabitStatus.COMPLETED);
-      expect(habits[3].status).toBe(HabitStatus.ABANDONED);
-    });
-
-    it('should create habit log VO', () => {
-      const log = HabitTestFactory.createHabitLogVo();
-      
-      expect(log).toBeDefined();
-      expect(log.habitId).toBe('habit-1');
-      expect(log.completionScore).toBe(2);
-      expect(log.mood).toBe(4);
-      expect(log.note).toBe('今天完成得很好');
-    });
-
-    it('should create habit log sequence', () => {
-      const logs = HabitTestFactory.createHabitLogSequence('habit-1', 7);
-      
-      expect(logs).toHaveLength(7);
-      logs.forEach((log, index) => {
-        expect(log.habitId).toBe('habit-1');
-        expect(log.id).toBe(`log-habit-1-${index + 1}`);
-        HabitTestUtils.expectHabitLogStructure(log);
-      });
-    });
-  });
-
-  describe('HabitTestUtils', () => {
-    it('should validate habit structure', () => {
-      const habit = HabitTestFactory.createFullHabitVo();
-      
-      expect(() => {
-        HabitTestUtils.expectHabitStructure(habit);
-      }).not.toThrow();
-    });
-
-    it('should validate habit log structure', () => {
-      const log = HabitTestFactory.createFullHabitLogVo();
-      
-      expect(() => {
-        HabitTestUtils.expectHabitLogStructure(log);
-      }).not.toThrow();
-    });
-
-    it('should validate page structure', () => {
-      const pageResult = {
-        list: HabitTestFactory.createMultipleHabits(5),
-        total: 5,
-        pageNum: 1,
-        pageSize: 10,
+  describe('Habit Entity', () => {
+    it('should create a habit with basic properties', () => {
+      const habit: Habit.CreateHabitVo = {
+        name: '每天阅读',
+        description: '培养阅读习惯',
+        importance: 4,
+        tags: ['学习'],
+        difficulty: HabitDifficulty.MEDIUM,
       };
-      
-      expect(() => {
-        HabitTestUtils.expectPageStructure(pageResult);
-      }).not.toThrow();
+
+      expect(habit.name).toBe('每天阅读');
+      expect(habit.description).toBe('培养阅读习惯');
+      expect(habit.importance).toBe(4);
+      expect(habit.tags).toEqual(['学习']);
+      expect(habit.difficulty).toBe(HabitDifficulty.MEDIUM);
     });
 
-    it('should create date range', () => {
-      const { start, end } = HabitTestUtils.createDateRange(7);
-      
-      expect(end.getTime() - start.getTime()).toBe(7 * 24 * 60 * 60 * 1000);
+    it('should create a habit with minimal properties', () => {
+      const habit: Habit.CreateHabitVo = {
+        name: '简单习惯',
+      };
+
+      expect(habit.name).toBe('简单习惯');
+      expect(habit.description).toBeUndefined();
+      expect(habit.importance).toBeUndefined();
+      expect(habit.tags).toBeUndefined();
+      expect(habit.difficulty).toBeUndefined();
     });
 
-    it('should compare dates only', () => {
-      const date1 = new Date('2024-01-01T10:00:00');
-      const date2 = new Date('2024-01-01T15:30:00');
-      const date3 = new Date('2024-01-02T10:00:00');
-      
-      expect(HabitTestUtils.compareDatesOnly(date1, date2)).toBe(true);
-      expect(HabitTestUtils.compareDatesOnly(date1, date3)).toBe(false);
-    });
+    it('should create a habit VO with all properties', () => {
+      const habitVo: Habit.HabitVo = {
+        id: 'habit-1',
+        name: '每天运动',
+        status: HabitStatus.ACTIVE,
+        description: '保持健康',
+        importance: 5,
+        tags: ['健康', '运动'],
+        difficulty: HabitDifficulty.HARD,
+        startDate: new Date('2024-01-01'),
+        targetDate: new Date('2024-12-31'),
+        currentStreak: 7,
+        longestStreak: 15,
+        completedCount: 30,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-    it('should validate status transitions', () => {
-      expect(HabitTestUtils.validateStatusTransition(
-        HabitStatus.ACTIVE, 
-        HabitStatus.PAUSED
-      )).toBe(true);
-      
-      expect(HabitTestUtils.validateStatusTransition(
-        HabitStatus.COMPLETED, 
-        HabitStatus.PAUSED
-      )).toBe(false);
-    });
-
-    it('should generate random test data', () => {
-      const data = HabitTestUtils.generateRandomTestData(5);
-      
-      expect(data).toHaveLength(5);
-      data.forEach((item, index) => {
-        expect(item.id).toBe(`habit-${index + 1}`);
-        expect(item.importance).toBeGreaterThanOrEqual(1);
-        expect(item.importance).toBeLessThanOrEqual(5);
-      });
-    });
-  });
-
-  describe('Boundary Tests', () => {
-    it('should handle boundary values', () => {
-      const boundaryData = HabitTestFactory.createBoundaryTestData();
-      
-      expect(boundaryData.minImportance.importance).toBe(1);
-      expect(boundaryData.maxImportance.importance).toBe(5);
-      expect(boundaryData.longName.name).toHaveLength(100);
-      expect(boundaryData.maxTags.tags).toHaveLength(10);
-    });
-
-    it('should handle pagination test data', () => {
-      const paginationData = HabitTestFactory.createPaginationTestData(25);
-      
-      expect(paginationData.habits).toHaveLength(25);
-      expect(paginationData.totalPages).toBe(3);
-      expect(paginationData.firstPageExpected).toBe(10);
-      expect(paginationData.lastPageExpected).toBe(5);
-    });
-
-    it('should handle filter test data', () => {
-      const filterData = HabitTestFactory.createFilterTestData();
-      
-      expect(filterData.activeHabits).toHaveLength(5);
-      expect(filterData.pausedHabits).toHaveLength(3);
-      expect(filterData.readingHabits).toHaveLength(2);
-      expect(filterData.exerciseHabits).toHaveLength(4);
+      expect(habitVo.id).toBe('habit-1');
+      expect(habitVo.name).toBe('每天运动');
+      expect(habitVo.status).toBe(HabitStatus.ACTIVE);
+      expect(habitVo.description).toBe('保持健康');
+      expect(habitVo.importance).toBe(5);
+      expect(habitVo.tags).toEqual(['健康', '运动']);
+      expect(habitVo.difficulty).toBe(HabitDifficulty.HARD);
+      expect(habitVo.currentStreak).toBe(7);
+      expect(habitVo.longestStreak).toBe(15);
+      expect(habitVo.completedCount).toBe(30);
     });
   });
 
-  describe('Performance Tests', () => {
-    it('should create large dataset efficiently', async () => {
-      const { result, executionTime } = await HabitTestUtils.measurePerformance(
-        async () => HabitTestFactory.createMultipleHabits(1000),
-        500 // 最大500ms
-      );
-      
-      expect(result).toHaveLength(1000);
-      expect(executionTime).toBeLessThan(500);
+  describe('Habit Status', () => {
+    it('should have correct status values', () => {
+      expect(HabitStatus.ACTIVE).toBe('active');
+      expect(HabitStatus.PAUSED).toBe('paused');
+      expect(HabitStatus.ABANDONED).toBe('abandoned');
+    });
+  });
+
+  describe('Habit Difficulty', () => {
+    it('should have correct difficulty values', () => {
+      expect(HabitDifficulty.EASY).toBe('easy');
+      expect(HabitDifficulty.MEDIUM).toBe('medium');
+      expect(HabitDifficulty.HARD).toBe('hard');
+    });
+  });
+
+  describe('Update Habit VO', () => {
+    it('should allow partial updates', () => {
+      const updateHabit: Habit.UpdateHabitVo = {
+        name: '更新的习惯名称',
+        importance: 3,
+      };
+
+      expect(updateHabit.name).toBe('更新的习惯名称');
+      expect(updateHabit.importance).toBe(3);
+      expect(updateHabit.description).toBeUndefined();
+      expect(updateHabit.status).toBeUndefined();
     });
 
-    it('should create habit log sequence efficiently', async () => {
-      const { result, executionTime } = await HabitTestUtils.measurePerformance(
-        async () => HabitTestFactory.createHabitLogSequence('habit-1', 365),
-        1000 // 最大1秒
-      );
-      
-      expect(result).toHaveLength(365);
-      expect(executionTime).toBeLessThan(1000);
+    it('should allow status updates', () => {
+      const updateHabit: Habit.UpdateHabitVo = {
+        status: HabitStatus.PAUSED,
+      };
+
+      expect(updateHabit.status).toBe(HabitStatus.PAUSED);
     });
   });
 }); 

@@ -1,7 +1,7 @@
 'use client';
 
 import { Outlet } from 'react-router-dom';
-import Tabs, { Tab } from '@life-toolkit/tabs/src/index';
+// import Tabs, { Tab } from '@life-toolkit/tabs/src/index';
 import { useState } from 'react';
 import clsx from 'clsx';
 import styles from './style.module.less';

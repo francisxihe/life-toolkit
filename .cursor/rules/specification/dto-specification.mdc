@@ -1,0 +1,314 @@
+---
+description: 需要增删改查DTO中代码时
+globs: 
+alwaysApply: false
+---
+需要生成或修改DTO时
+
+# DTO (Data Transfer Object) 规范
+
+## 概述
+
+DTO (Data Transfer Object) 是用于数据传输的对象，主要用于控制器层的数据验证、转换和传输。本规范定义了DTO模块的标准结构、命名约定和最佳实践。
+
+## 目录结构规范
+
+### 基础结构
+```
+apps/server/src/business/{domain}/{module}/dto/
+├── {module}-model.dto.ts      # 基础模型DTO
+├── {module}-form.dto.ts       # 表单操作DTO
+├── {module}-filter.dto.ts     # 过滤查询DTO
+└── index.ts                   # 导出文件
+```
+
+### 示例结构
+```
+apps/server/src/business/growth/goal/dto/
+├── goal-model.dto.ts          # 目标模型DTO
+├── goal-form.dto.ts           # 目标表单DTO
+├── goal-filter.dto.ts         # 目标过滤DTO
+└── index.ts                   # 导出文件
+```
+
+## 文件命名规范
+
+### 文件命名格式
+- **模型DTO**: `{module}-model.dto.ts`
+- **表单DTO**: `{module}-form.dto.ts`
+- **过滤DTO**: `{module}-filter.dto.ts`
+- **导出文件**: `index.ts`
+
+### 类命名格式
+- **基础模型**: `{Module}Dto`
+- **简化模型**: `{Module}ModelDto`
+- **创建表单**: `Create{Module}Dto`
+- **更新表单**: `Update{Module}Dto`
+- **列表过滤**: `{Module}ListFilterDto`
+- **分页过滤**: `{Module}PageFilterDto`
+
+## 标准DTO类型定义
+
+### 1. 模型DTO文件 ({module}-model.dto.ts)
+```typescript
+import { {Entity} } from "../entities";
+import { BaseModelDto } from "@/base/base-model.dto";
+import { OmitType, IntersectionType } from "@nestjs/mapped-types";
+
+// 基础DTO - 包含所有字段
+export class {Module}Dto extends IntersectionType(BaseModelDto, {Entity}) {}
+
+// 模型DTO - 排除关联字段
+export class {Module}ModelDto extends OmitType({Module}Dto, [
+  "relationField1",
+  "relationField2",
+] as const) {}
+```
+
+### 2. 表单DTO文件 ({module}-form.dto.ts)
+```typescript
+import { {Entity} } from "../entities";
+import { PartialType, IntersectionType, PickType } from "@nestjs/mapped-types";
+import { {Module}Dto } from "./{module}-model.dto";
+
+// 创建DTO - 选择需要的字段
+export class Create{Module}Dto extends PickType({Module}Dto, [
+  "field1",
+  "field2",
+  "field3",
+] as const) {
+  // 额外字段
+  relationIds?: string[];
+}
+
+// 更新DTO - 基于创建DTO的部分字段 + ID
+export class Update{Module}Dto extends IntersectionType(
+  PartialType(Create{Module}Dto),
+  PickType({Entity}, ["id"] as const)
+) {}
+```
+
+### 3. 过滤DTO文件 ({module}-filter.dto.ts)
+```typescript
+import { IsOptional, IsString } from "class-validator";
+import { PageDto } from "@/base/page.dto";
+import { {Module}Dto } from "./{module}-model.dto";
+import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
+
+// 列表过滤DTO - 选择可过滤的字段
+export class {Module}ListFilterDto extends PartialType(
+  PickType({Module}Dto, ["status", "type", "field1"] as const)
+) {
+  /** 搜索关键词 */
+  keyword?: string;
+
+  /** 日期范围过滤 */
+  dateStart?: string;
+  dateEnd?: string;
+
+  /** 关联过滤 */
+  relationId?: string;
+  
+  /** 排除自身 */
+  withoutSelf?: boolean;
+}
+
+// 分页过滤DTO - 继承列表过滤 + 分页
+export class {Module}PageFilterDto extends IntersectionType(
+  PageDto,
+  {Module}ListFilterDto
+) {}
+```
+
+### 4. 导出文件 (index.ts)
+```typescript
+export * from "./{module}-model.dto";
+export * from "./{module}-filter.dto";
+export * from "./{module}-form.dto";
+```
+
+## 字段验证规范
+
+### 1. 基础验证装饰器
+```typescript
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+  IsArray,
+  IsOptional,
+  IsISO8601,
+  IsInt,
+  Min,
+  Max,
+} from "class-validator";
+```
+
+### 2. 字段类型映射
+```typescript
+const VALIDATOR_DECORATORS = {
+  string: "@IsString()",
+  number: "@IsNumber()",
+  boolean: "@IsBoolean()",
+  Date: "@IsISO8601()",
+  enum: "@IsEnum({EnumType})",
+  array: "@IsArray()",
+};
+```
+
+### 3. 可选字段处理
+```typescript
+// 可选字段添加 @IsOptional()
+@IsString()
+@IsOptional()
+description?: string;
+
+// 数组字段验证
+@IsArray()
+@IsString({ each: true })
+@IsOptional()
+tags?: string[];
+
+// 枚举字段验证
+@IsEnum(Status, { each: true })
+@IsOptional()
+@IsArray()
+status?: Status[];
+```
+
+## NestJS Mapped Types 使用规范
+
+### 1. 工具类型导入
+```typescript
+import { 
+  PickType, 
+  OmitType, 
+  PartialType, 
+  IntersectionType 
+} from "@nestjs/mapped-types";
+```
+
+### 2. 类型组合策略
+- **PickType**: 选择特定字段
+- **OmitType**: 排除特定字段
+- **PartialType**: 所有字段变为可选
+- **IntersectionType**: 合并多个类型
+
+### 3. 继承链设计
+```typescript
+// 基础 → 模型 → 表单
+BaseModelDto → {Module}Dto → {Module}ModelDto
+                          → Create{Module}Dto → Update{Module}Dto
+
+// 基础 → 过滤
+PageDto → {Module}PageFilterDto
+{Module}Dto → {Module}ListFilterDto → {Module}PageFilterDto
+```
+
+## 最佳实践
+
+### 1. 职责分离
+- **Model DTO**: 数据结构定义
+- **Form DTO**: 表单操作验证
+- **Filter DTO**: 查询条件验证
+
+### 2. 类型安全
+- 优先使用 Mapped Types 而非手动定义
+- 保持与 Entity 的字段同步
+- 使用严格的 TypeScript 类型检查
+
+### 3. 可维护性
+- 单一职责：每个文件只负责一种类型的DTO
+- 清晰命名：类型名称要能清楚表达用途
+- 适当注释：复杂验证逻辑需要添加注释
+
+### 4. 性能优化
+- 合理使用继承减少重复代码
+- 避免过度嵌套的类型定义
+- 使用索引类型提高查询性能
+
+## 常见模式
+
+### 1. 基础CRUD模式
+```typescript
+// 创建：选择必要字段
+Create{Module}Dto extends PickType({Module}Dto, ["name", "description"])
+
+// 更新：创建的部分字段 + ID
+Update{Module}Dto extends IntersectionType(
+  PartialType(Create{Module}Dto),
+  PickType({Entity}, ["id"])
+)
+
+// 查询：可过滤字段 + 分页
+{Module}PageFilterDto extends IntersectionType(
+  PageDto,
+  PartialType(PickType({Module}Dto, ["status", "type"]))
+)
+```
+
+### 2. 关联数据处理
+```typescript
+// 创建时关联其他实体
+export class Create{Module}Dto extends PickType({Module}Dto, [...]) {
+  relationIds?: string[];  // 关联实体ID数组
+  parentId?: string;       // 父级实体ID
+}
+
+// 过滤时包含关联条件
+export class {Module}ListFilterDto extends ... {
+  relationId?: string;     // 按关联实体过滤
+  withoutSelf?: boolean;   // 排除自身
+}
+```
+
+### 3. 日期范围过滤
+```typescript
+export class {Module}ListFilterDto extends ... {
+  /** 创建日期范围 - 开始 */
+  createdAtStart?: string;
+  
+  /** 创建日期范围 - 结束 */
+  createdAtEnd?: string;
+  
+  /** 业务日期范围 - 开始 */
+  businessDateStart?: string;
+  
+  /** 业务日期范围 - 结束 */
+  businessDateEnd?: string;
+}
+```
+
+## 禁止事项
+
+1. **不要在单个文件中定义所有DTO** - 应按功能分离到不同文件
+2. **不要手动重复定义字段** - 应使用 Mapped Types
+3. **不要在DTO中包含业务逻辑** - DTO仅用于数据传输和验证
+4. **不要使用 `any` 类型** - 应明确定义具体类型
+5. **不要忽略字段验证** - 所有输入字段都应有适当的验证装饰器
+
+## 检查清单
+
+在创建或修改DTO时，请确认以下事项：
+
+- [ ] 文件命名符合规范 (`{module}-{type}.dto.ts`)
+- [ ] 类命名符合规范 (`{Module}{Type}Dto`)
+- [ ] 使用了合适的 Mapped Types
+- [ ] 添加了必要的验证装饰器
+- [ ] 正确处理了可选字段
+- [ ] 添加了必要的导出语句
+- [ ] 关联字段处理正确
+- [ ] 日期字段使用string类型
+- [ ] 枚举验证正确配置
+- [ ] 没有包含业务逻辑代码
+
+## 迁移指南
+
+### 从旧格式迁移到新格式
+
+1. **分离文件**：将单个DTO文件拆分为model、form、filter三个文件
+2. **重构继承**：使用Mapped Types替换手动字段定义
+3. **统一命名**：按照新的命名规范重命名类和文件
+4. **更新导入**：修改相关文件的导入语句
+5. **验证功能**：确保所有功能正常工作

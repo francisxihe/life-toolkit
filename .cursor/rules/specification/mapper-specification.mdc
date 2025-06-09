@@ -1,0 +1,408 @@
+---
+description: 需要增删改查Mapper中代码时
+globs: 
+alwaysApply: false
+---
+需要生成或修改Mapper时
+
+# Mapper (对象映射器) 规范
+
+## 概述
+
+Mapper 是用于不同数据层之间对象转换的工具类，主要负责 Entity、DTO、VO 之间的数据映射。本规范定义了 Mapper 的标准分层架构、命名约定和最佳实践。
+
+## 目录结构规范
+
+### 基础结构
+```
+apps/server/src/business/{domain}/{module}/mapper/
+└── {module}.mapper.ts           # 主映射器文件
+```
+
+### 示例结构
+```
+apps/server/src/business/growth/goal/mappers/
+└── goal.mapper.ts               # 目标映射器
+
+apps/server/src/business/growth/habit/mapper/
+└── habit.mapper.ts              # 习惯映射器
+```
+
+## 文件命名规范
+
+### 文件命名格式
+- **映射器文件**: `{module}.mapper.ts`
+- **类命名**: `{Module}Mapper`
+
+### 内部类命名格式
+- **实体映射层**: `{Module}MapperEntity`
+- **DTO映射层**: `{Module}MapperDto`
+- **VO映射层**: `{Module}MapperVo`
+
+## 标准Mapper分层架构
+
+### 1. 分层设计原则
+```typescript
+// 三层继承架构
+{Module}MapperEntity (Entity ↔ DTO)
+    ↓ extends
+{Module}MapperDto (DTO ↔ VO)
+    ↓ extends  
+{Module}MapperVo (VO ↔ DTO)
+    ↓ extends
+{Module}Mapper (最终导出类)
+```
+
+### 2. 完整Mapper模板
+```typescript
+import type { {Module} as {Module}VO } from "@life-toolkit/vo";
+import { Create{Module}Dto, Update{Module}Dto, {Module}Dto, {Module}ModelDto } from "../dto";
+import { {Module}Status, {Module} } from "../entities";
+import { BaseMapper } from "@/base/base.mapper";
+import dayjs from "dayjs";
+
+// 第一层：实体映射层
+class {Module}MapperEntity {
+  /**
+   * 实体转模型DTO
+   */
+  static entityToModelDto(entity: {Module}): {Module}ModelDto {
+    const dto = new {Module}ModelDto();
+    Object.assign(dto, BaseMapper.entityToDto(entity));
+    dto.field1 = entity.field1;
+    dto.field2 = entity.field2;
+    // ... 其他业务字段
+    return dto;
+  }
+
+  /**
+   * 实体转完整DTO
+   */
+  static entityToDto(entity: {Module}): {Module}Dto {
+    const dto = new {Module}Dto();
+    Object.assign(dto, BaseMapper.entityToDto(entity));
+    Object.assign(dto, this.entityToModelDto(entity));
+    dto.relationField1 = entity.relationField1;
+    dto.relationField2 = entity.relationField2;
+    return dto;
+  }
+}
+
+// 第二层：DTO映射层
+class {Module}MapperDto extends {Module}MapperEntity {
+  /**
+   * DTO转项目VO
+   */
+  static dtoToItemVo(dto: {Module}Dto): {Module}VO.{Module}ItemVo {
+    const vo: {Module}VO.{Module}ItemVo = {
+      ...BaseMapper.dtoToVo(dto),
+      field1: dto.field1 || "",
+      field2: dto.field2 || DefaultValue,
+      dateField: dto.dateField
+        ? dayjs(dto.dateField).format("YYYY/MM/DD HH:mm:ss")
+        : undefined,
+      // ... 其他业务字段
+    };
+    return vo;
+  }
+
+  /**
+   * DTO转完整VO
+   */
+  static dtoToVo(dto: {Module}Dto): {Module}VO.{Module}Vo {
+    const vo: {Module}VO.{Module}Vo = {
+      ...this.dtoToItemVo(dto),
+      relationField1: dto.relationField1 || [],
+      relationField2: dto.relationField2 || [],
+      // ... 关联数据字段
+    };
+    return vo;
+  }
+
+  /**
+   * DTO列表转VO列表
+   */
+  static dtoToVoList(dtoList: {Module}Dto[]): {Module}VO.{Module}ItemVo[] {
+    return dtoList.map((dto) => this.dtoToItemVo(dto));
+  }
+
+  /**
+   * DTO转分页VO
+   */
+  static dtoToPageVo(
+    dtoList: {Module}Dto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): {Module}VO.{Module}PageVo {
+    return {
+      list: this.dtoToVoList(dtoList),
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  /**
+   * DTO转列表VO
+   */
+  static dtoToListVo(dtoList: {Module}Dto[]): {Module}VO.{Module}ListVo {
+    return {
+      list: this.dtoToVoList(dtoList),
+    };
+  }
+}
+
+// 第三层：VO映射层
+class {Module}MapperVo extends {Module}MapperDto {
+  /**
+   * 创建VO转DTO
+   */
+  static voToCreateDto(vo: {Module}VO.Create{Module}Vo): Create{Module}Dto {
+    const dto = new Create{Module}Dto();
+    dto.field1 = vo.field1;
+    dto.field2 = vo.field2;
+    dto.dateField = vo.dateField ? dayjs(vo.dateField).toDate() : undefined;
+    dto.relationIds = vo.relationIds;
+    return dto;
+  }
+
+  /**
+   * 更新VO转DTO
+   */
+  static voToUpdateDto(vo: {Module}VO.Update{Module}Vo): Update{Module}Dto {
+    const dto = new Update{Module}Dto();
+    if (vo.field1 !== undefined) {
+      dto.field1 = vo.field1;
+    }
+    if (vo.field2 !== undefined) {
+      dto.field2 = vo.field2;
+    }
+    if (vo.dateField !== undefined) {
+      dto.dateField = vo.dateField ? dayjs(vo.dateField).toDate() : undefined;
+    }
+    if (vo.relationIds !== undefined) {
+      dto.relationIds = vo.relationIds;
+    }
+    return dto;
+  }
+}
+
+// 最终导出类
+export class {Module}Mapper extends {Module}MapperVo {}
+```
+
+## 字段映射规范
+
+### 1. 基础字段映射
+```typescript
+// 字符串字段
+dto.name = entity.name;
+vo.name = dto.name || "";
+
+// 数字字段
+dto.importance = entity.importance;
+vo.importance = dto.importance ?? defaultValue;
+
+// 布尔字段
+dto.isActive = entity.isActive;
+vo.isActive = dto.isActive || false;
+
+// 数组字段
+dto.tags = entity.tags;
+vo.tags = dto.tags || [];
+```
+
+### 2. 日期字段映射
+```typescript
+// Entity → DTO (保持Date类型)
+dto.createdAt = entity.createdAt;
+
+// DTO → VO (转换为字符串)
+vo.createdAt = dto.createdAt
+  ? dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss")
+  : undefined;
+
+// VO → DTO (转换为Date)
+dto.startDate = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+```
+
+### 3. 枚举字段映射
+```typescript
+// Entity → DTO
+dto.status = entity.status;
+
+// DTO → VO
+vo.status = dto.status || DefaultStatus;
+
+// VO → DTO (需要类型转换)
+dto.status = vo.status as EntityStatus;
+```
+
+### 4. 关联字段映射
+```typescript
+// Entity → DTO (直接赋值)
+dto.parent = entity.parent;
+dto.children = entity.children;
+
+// DTO → VO (需要递归转换或置空)
+vo.parent = dto.parent ? this.dtoToVo(dto.parent) : undefined;
+vo.children = dto.children?.map(child => this.dtoToVo(child)) || [];
+
+// 简化处理（避免循环引用）
+vo.relationField = []; // TODO: 需要实现关联对象转换
+```
+
+## 使用规范
+
+### 1. 静态方法调用
+```typescript
+// 在Service中使用
+const dto = ModuleMapper.entityToDto(entity);
+const vo = ModuleMapper.dtoToVo(dto);
+
+// 在Controller中使用
+const createDto = ModuleMapper.voToCreateDto(createVo);
+const pageVo = ModuleMapper.dtoToPageVo(dtoList, total, pageNum, pageSize);
+```
+
+### 2. 依赖注入移除
+```typescript
+// ❌ 错误：不再使用依赖注入
+@Injectable()
+export class ModuleMapper { ... }
+
+// ✅ 正确：使用静态类
+export class ModuleMapper extends ModuleMapperVo {}
+```
+
+### 3. Module配置更新
+```typescript
+// ❌ 错误：不再注册为Provider
+@Module({
+  providers: [ModuleService, ModuleMapper],
+})
+
+// ✅ 正确：移除Mapper注册
+@Module({
+  providers: [ModuleService],
+})
+```
+
+## 最佳实践
+
+### 1. 分层职责
+- **Entity层**: 负责Entity与DTO之间的转换
+- **DTO层**: 负责DTO与VO之间的转换，处理数据格式化
+- **VO层**: 负责VO与DTO之间的转换，处理表单数据
+
+### 2. 错误处理
+```typescript
+// 安全的字段访问
+vo.field = dto.field ?? defaultValue;
+vo.dateField = dto.dateField 
+  ? dayjs(dto.dateField).format("YYYY/MM/DD HH:mm:ss")
+  : undefined;
+```
+
+### 3. 性能优化
+```typescript
+// 批量转换优化
+static dtoToVoList(dtoList: ModuleDto[]): ModuleItemVo[] {
+  return dtoList.map(dto => this.dtoToItemVo(dto));
+}
+
+// 避免深度递归
+static dtoToVo(dto: ModuleDto): ModuleVo {
+  return {
+    ...this.dtoToItemVo(dto),
+    children: [], // 简化处理，避免性能问题
+  };
+}
+```
+
+### 4. 类型安全
+```typescript
+// 明确的类型定义
+static dtoToItemVo(dto: ModuleDto): ModuleVO.ModuleItemVo {
+  const vo: ModuleVO.ModuleItemVo = {
+    // 确保所有必需字段都有值
+    ...BaseMapper.dtoToVo(dto),
+    name: dto.name || "",
+    status: dto.status || DefaultStatus,
+  };
+  return vo;
+}
+```
+
+## 常见模式
+
+### 1. 基础CRUD映射
+```typescript
+// 创建：VO → DTO → Entity
+CreateVo → CreateDto → Entity
+
+// 查询：Entity → DTO → ItemVo
+Entity → Dto → ItemVo
+
+// 更新：UpdateVo → UpdateDto → Entity
+UpdateVo → UpdateDto → Entity
+
+// 列表：Entity[] → Dto[] → ItemVo[]
+Entity[] → Dto[] → ItemVo[]
+```
+
+### 2. 分页数据映射
+```typescript
+// 分页查询结果映射
+{
+  list: Entity[],
+  total: number,
+  pageNum: number,
+  pageSize: number
+} → PageVo
+```
+
+### 3. 关联数据处理
+```typescript
+// 简单关联（ID引用）
+dto.parentId = entity.parent?.id;
+vo.parentId = dto.parentId;
+
+// 复杂关联（对象嵌套）
+vo.parent = dto.parent ? ParentMapper.dtoToVo(dto.parent) : undefined;
+```
+
+## 禁止事项
+
+1. **不要在Mapper中包含业务逻辑** - Mapper仅负责数据转换
+2. **不要使用依赖注入** - 使用静态方法模式
+3. **不要忽略空值检查** - 始终处理undefined/null情况
+4. **不要创建循环引用** - 合理处理关联对象转换
+5. **不要混合不同层级的转换** - 保持分层清晰
+
+## 检查清单
+
+在创建或修改Mapper时，请确认以下事项：
+
+- [ ] 文件命名符合规范 (`{module}.mapper.ts`)
+- [ ] 类命名符合规范 (`{Module}Mapper`)
+- [ ] 使用了三层继承架构
+- [ ] 所有方法都是静态方法
+- [ ] 正确处理了日期字段转换
+- [ ] 添加了必要的空值检查
+- [ ] 关联字段处理正确
+- [ ] 移除了依赖注入相关代码
+- [ ] 更新了Module配置
+- [ ] 没有包含业务逻辑代码
+
+## 迁移指南
+
+### 从实例方法迁移到静态方法
+
+1. **移除@Injectable装饰器**
+2. **将所有方法改为static**
+3. **更新方法调用方式**：`this.mapper.method()` → `Mapper.method()`
+4. **移除依赖注入**：从constructor和providers中移除
+5. **更新导入语句**：确保正确导入Mapper类
+6. **验证功能**：确保所有转换功能正常工作

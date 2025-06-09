@@ -1,4 +1,4 @@
-import { HabitStatus, HabitFrequency, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
+import { HabitStatus, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
 import type { 
   Habit, 
   HabitLogVo, 
@@ -21,11 +21,7 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      frequency: HabitFrequency.DAILY,
       difficulty: HabitDifficulty.MEDIUM,
-      needReminder: true,
-      reminderTime: '20:00',
-      autoCreateTodo: true,
       ...overrides,
     };
   }
@@ -52,15 +48,11 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      frequency: HabitFrequency.DAILY,
       difficulty: HabitDifficulty.MEDIUM,
       startDate: now,
       currentStreak: 5,
       longestStreak: 10,
-      needReminder: true,
-      reminderTime: '20:00',
       completedCount: 25,
-      autoCreateTodo: true,
       createdAt: now,
       updatedAt: now,
       ...overrides,
@@ -138,18 +130,6 @@ export class HabitTestFactory {
   }
 
   /**
-   * 创建不同频率的习惯
-   */
-  static createHabitsWithDifferentFrequencies(): Habit.HabitVo[] {
-    return [
-      this.createFullHabitVo({ id: 'habit-daily', name: '每日习惯', frequency: HabitFrequency.DAILY }),
-      this.createFullHabitVo({ id: 'habit-weekly', name: '每周习惯', frequency: HabitFrequency.WEEKLY }),
-      this.createFullHabitVo({ id: 'habit-monthly', name: '每月习惯', frequency: HabitFrequency.MONTHLY }),
-      this.createFullHabitVo({ id: 'habit-custom', name: '自定义习惯', frequency: HabitFrequency.CUSTOM, customFrequency: '每2天' }),
-    ];
-  }
-
-  /**
    * 创建不同难度的习惯
    */
   static createHabitsWithDifferentDifficulties(): Habit.HabitVo[] {
@@ -203,7 +183,6 @@ export class HabitTestFactory {
     return {
       name: '', // 空名称
       importance: 10, // 超出范围
-      reminderTime: '25:00', // 无效时间
       tags: Array(20).fill('tag'), // 过多标签
     };
   }
@@ -218,8 +197,6 @@ export class HabitTestFactory {
       longName: this.createBasicHabitVo({ name: 'a'.repeat(100) }),
       longDescription: this.createBasicHabitVo({ description: 'a'.repeat(500) }),
       maxTags: this.createBasicHabitVo({ tags: Array(10).fill('tag') }),
-      earlyTime: this.createBasicHabitVo({ reminderTime: '00:00' }),
-      lateTime: this.createBasicHabitVo({ reminderTime: '23:59' }),
     };
   }
 

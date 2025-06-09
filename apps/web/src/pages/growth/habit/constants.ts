@@ -1,4 +1,4 @@
-import { HabitStatus, HabitFrequency, HabitDifficulty } from '@life-toolkit/vo/growth/habit';
+import { HabitStatus, HabitDifficulty } from '@life-toolkit/vo/growth/habit';
 
 export const HABIT_STATUS_OPTIONS = [
   {
@@ -22,26 +22,6 @@ export const HABIT_STATUS_OPTIONS = [
     color: 'red',
   },
 ];
-
-export const HABIT_FREQUENCY_OPTIONS = [
-  {
-    label: '每天',
-    value: HabitFrequency.DAILY,
-  },
-  {
-    label: '每周',
-    value: HabitFrequency.WEEKLY,
-  },
-  {
-    label: '每月',
-    value: HabitFrequency.MONTHLY,
-  },
-  {
-    label: '自定义',
-    value: HabitFrequency.CUSTOM,
-  },
-];
-
 export const HABIT_DIFFICULTY_OPTIONS = [
   {
     label: '容易',
@@ -104,4 +84,4 @@ export const MOOD_OPTIONS = [
     value: 5,
     icon: '😄',
   },
-]; 
+];

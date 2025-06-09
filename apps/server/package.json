@@ -33,7 +33,6 @@
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "dayjs": "^1.11.13",
     "ical-generator": "^8.0.1",
     "mysql2": "^3.6.1",
     "openai": "^4.77.0",

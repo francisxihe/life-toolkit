@@ -1,0 +1,694 @@
+---
+description: 需要增删改查Entity中代码时
+globs: 
+alwaysApply: false
+---
+# Entity 约束规范
+
+## 📋 概述
+
+本规范定义了 Life Toolkit 项目中 TypeORM Entity 的标准结构、装饰器使用、验证约束等规范，确保数据模型的一致性、类型安全和数据完整性。
+
+## 🏗️ 基础架构
+
+### 继承结构
+```typescript
+// 所有业务 Entity 必须继承 BaseEntity
+import { BaseEntity } from "@/base/base.entity";
+
+@Entity("table_name")
+export class BusinessEntity extends BaseEntity {
+  // 业务字段定义
+}
+```
+
+### BaseEntity 提供的基础字段
+```typescript
+export class BaseEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;                    // 主键 (UUID)
+
+  @CreateDateColumn()
+  createdAt: Date;              // 创建时间
+
+  @UpdateDateColumn()
+  updatedAt: Date;              // 更新时间
+
+  @DeleteDateColumn({ nullable: true })
+  deletedAt?: Date;             // 软删除时间
+}
+```
+
+## 🎯 Entity 定义规范
+
+### 1. 导入顺序
+```typescript
+// 1. TypeORM 装饰器
+import { Entity, Column, OneToMany, ManyToOne, JoinTable } from "typeorm";
+
+// 2. 验证装饰器
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsNumber,
+  IsBoolean,
+  IsInt,
+  Min,
+  Max,
+  IsISO8601,
+} from "class-validator";
+
+// 3. 转换装饰器
+import { Type } from "class-transformer";
+
+// 4. 基础类和枚举
+import { BaseEntity } from "@/base/base.entity";
+import { EnumType } from "./enum";
+
+// 5. 关联实体
+import { RelatedEntity } from "../related/entities";
+```
+
+### 2. Entity 装饰器
+```typescript
+// 标准格式：表名使用下划线命名
+@Entity("table_name")
+export class EntityName extends BaseEntity {
+  // 字段定义
+}
+
+// 树形结构实体
+@Entity("table_name")
+@Tree("closure-table")
+export class TreeEntity extends BaseEntity {
+  // 字段定义
+}
+```
+
+### 3. 枚举定义
+```typescript
+// 枚举必须定义在 Entity 文件中或单独的 enum 文件中
+export enum EntityStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  DELETED = "deleted",
+}
+
+export enum EntityType {
+  TYPE_A = "type_a",
+  TYPE_B = "type_b",
+}
+```
+
+## 📝 字段定义规范
+
+### 1. 基础字段模式
+```typescript
+/** 字段描述 */
+@Column(columnOptions)
+@ValidationDecorator()
+@TransformDecorator()
+fieldName: FieldType;
+```
+
+### 2. 字符串字段
+```typescript
+/** 必填字符串字段 */
+@Column()
+@IsString()
+name: string;
+
+/** 可选字符串字段 */
+@Column({ nullable: true })
+@IsString()
+@IsOptional()
+description?: string;
+
+/** 长文本字段 */
+@Column("text", { nullable: true })
+@IsString()
+@IsOptional()
+content?: string;
+```
+
+### 3. 数字字段
+```typescript
+/** 整数字段 */
+@Column({ default: 0 })
+@IsNumber()
+@Type(() => Number)
+count: number = 0;
+
+/** 带范围限制的整数 */
+@Column({ default: 3 })
+@IsNumber()
+@IsOptional()
+@Type(() => Number)
+@IsInt()
+@Min(1)
+@Max(5)
+importance?: number = 3;
+
+/** 小数字段 */
+@Column("decimal", { precision: 10, scale: 2 })
+@IsNumber()
+@Type(() => Number)
+amount: number;
+```
+
+### 4. 布尔字段
+```typescript
+/** 布尔字段 */
+@Column({ default: false })
+@IsBoolean()
+@Type(() => Boolean)
+isActive: boolean = false;
+```
+
+### 5. 枚举字段
+```typescript
+/** 必填枚举字段 */
+@Column({
+  type: "enum",
+  enum: EntityStatus,
+  default: EntityStatus.ACTIVE,
+})
+@IsEnum(EntityStatus)
+status: EntityStatus;
+
+/** 可选枚举字段 */
+@Column({
+  type: "enum",
+  enum: EntityType,
+  nullable: true,
+})
+@IsEnum(EntityType)
+@IsOptional()
+type?: EntityType;
+```
+
+### 6. 日期时间字段
+```typescript
+/** 日期字段 */
+@Column("date")
+@IsISO8601()
+startDate: Date = new Date();
+
+/** 可选日期字段 */
+@Column("date", { nullable: true })
+@IsISO8601()
+@IsOptional()
+endDate?: Date;
+
+/** 日期时间字段 */
+@Column("datetime", { nullable: true })
+@IsOptional()
+createdAt?: Date;
+
+/** 时间字段 */
+@Column("time", { nullable: true })
+@IsOptional()
+startTime?: string;
+```
+
+### 7. 数组字段
+```typescript
+/** 字符串数组 */
+@Column("simple-array", { nullable: true })
+@IsArray()
+@IsString({ each: true })
+tags: string[];
+
+/** JSON 数组 */
+@Column("json", { nullable: true })
+@IsArray()
+@IsOptional()
+metadata?: any[];
+```
+
+### 8. JSON 字段
+```typescript
+/** JSON 对象 */
+@Column("json", { nullable: true })
+@IsOptional()
+settings?: {
+  key: string;
+  value: any;
+};
+```
+
+## 🔗 关联关系规范
+
+### 1. 一对多关系 (OneToMany)
+```typescript
+/** 一对多关系 - 主表侧 */
+@OneToMany(() => ChildEntity, (child) => child.parent, { cascade: true })
+children: ChildEntity[];
+
+/** 多对一关系 - 从表侧 */
+@ManyToOne(() => ParentEntity, (parent) => parent.children)
+parent?: ParentEntity;
+
+/** 外键字段 */
+@Column({ nullable: true })
+@IsString()
+@IsOptional()
+parentId?: string;
+```
+
+### 2. 多对多关系 (ManyToMany)
+```typescript
+/** 多对多关系 - 主控方 */
+@ManyToMany(() => RelatedEntity, { cascade: true })
+@JoinTable({
+  name: "entity_related",
+  joinColumn: { name: "entity_id", referencedColumnName: "id" },
+  inverseJoinColumn: { name: "related_id", referencedColumnName: "id" },
+})
+relatedEntities: RelatedEntity[];
+
+/** 多对多关系 - 被控方 */
+@ManyToMany(() => MainEntity, (main) => main.relatedEntities)
+mainEntities: MainEntity[];
+```
+
+### 3. 树形结构关系
+```typescript
+/** 父节点 */
+@TreeParent({
+  onDelete: "CASCADE",
+})
+parent?: EntityName;
+
+/** 子节点 */
+@TreeChildren({
+  cascade: true,
+})
+children: EntityName[];
+```
+
+### 4. 一对一关系 (OneToOne)
+```typescript
+/** 一对一关系 - 主控方 */
+@OneToOne(() => RelatedEntity, { cascade: true })
+@JoinColumn({ name: "related_id" })
+related?: RelatedEntity;
+
+/** 一对一关系 - 被控方 */
+@OneToOne(() => MainEntity, (main) => main.related)
+main?: MainEntity;
+```
+
+## ✅ 验证装饰器规范
+
+### 1. 基础验证
+```typescript
+// 字符串验证
+@IsString()                    // 字符串类型
+@IsOptional()                  // 可选字段
+
+// 数字验证
+@IsNumber()                    // 数字类型
+@IsInt()                       // 整数
+@Min(1)                        // 最小值
+@Max(100)                      // 最大值
+
+// 布尔验证
+@IsBoolean()                   // 布尔类型
+
+// 枚举验证
+@IsEnum(EnumType)              // 枚举类型
+
+// 数组验证
+@IsArray()                     // 数组类型
+@IsString({ each: true })      // 数组元素验证
+
+// 日期验证
+@IsISO8601()                   // ISO 8601 日期格式
+```
+
+### 2. 类型转换
+```typescript
+@Type(() => Number)            // 转换为数字
+@Type(() => Boolean)           // 转换为布尔值
+@Type(() => Date)              // 转换为日期
+```
+
+### 3. 复合验证示例
+```typescript
+/** 评分字段 (1-5 的整数) */
+@Column({ default: 3 })
+@IsNumber()
+@IsOptional()
+@Type(() => Number)
+@IsInt()
+@Min(1)
+@Max(5)
+rating?: number = 3;
+
+/** 邮箱字段 */
+@Column({ unique: true })
+@IsEmail()
+@IsString()
+email: string;
+
+/** URL 字段 */
+@Column({ nullable: true })
+@IsUrl()
+@IsString()
+@IsOptional()
+website?: string;
+```
+
+## 🗄️ 数据库约束规范
+
+### 1. 列约束
+```typescript
+// 非空约束
+@Column()                      // 默认非空
+@Column({ nullable: false })   // 显式非空
+
+// 可空约束
+@Column({ nullable: true })    // 可空
+
+// 默认值
+@Column({ default: "default_value" })
+@Column({ default: 0 })
+@Column({ default: false })
+
+// 唯一约束
+@Column({ unique: true })
+
+// 长度约束
+@Column({ length: 255 })
+@Column("varchar", { length: 100 })
+```
+
+### 2. 索引约束
+```typescript
+// 单列索引
+@Index()
+@Column()
+indexedField: string;
+
+// 复合索引
+@Index(["field1", "field2"])
+@Entity("table_name")
+export class EntityName extends BaseEntity {
+  @Column()
+  field1: string;
+  
+  @Column()
+  field2: string;
+}
+
+// 唯一索引
+@Index({ unique: true })
+@Column()
+uniqueField: string;
+```
+
+### 3. 外键约束
+```typescript
+// 级联删除
+@ManyToOne(() => ParentEntity, { onDelete: "CASCADE" })
+parent: ParentEntity;
+
+// 设置为空
+@ManyToOne(() => ParentEntity, { onDelete: "SET NULL" })
+parent?: ParentEntity;
+
+// 限制删除
+@ManyToOne(() => ParentEntity, { onDelete: "RESTRICT" })
+parent: ParentEntity;
+```
+
+## 📊 数据类型映射
+
+### 1. TypeORM 数据类型
+```typescript
+// 字符串类型
+@Column()                      // varchar(255)
+@Column("text")                // text
+@Column("varchar", { length: 100 }) // varchar(100)
+
+// 数字类型
+@Column("int")                 // int
+@Column("bigint")              // bigint
+@Column("decimal", { precision: 10, scale: 2 }) // decimal(10,2)
+@Column("float")               // float
+@Column("double")              // double
+
+// 日期时间类型
+@Column("date")                // date
+@Column("time")                // time
+@Column("datetime")            // datetime
+@Column("timestamp")           // timestamp
+
+// 布尔类型
+@Column("boolean")             // boolean
+
+// JSON 类型
+@Column("json")                // json
+@Column("simple-array")        // 简单数组存储
+```
+
+### 2. 特殊字段类型
+```typescript
+// UUID 主键
+@PrimaryGeneratedColumn("uuid")
+id: string;
+
+// 自增主键
+@PrimaryGeneratedColumn()
+id: number;
+
+// 自动时间戳
+@CreateDateColumn()
+createdAt: Date;
+
+@UpdateDateColumn()
+updatedAt: Date;
+
+@DeleteDateColumn()
+deletedAt?: Date;
+```
+
+## 🔧 最佳实践
+
+### 1. 命名约定
+```typescript
+// Entity 类名：PascalCase
+export class UserProfile extends BaseEntity {}
+
+// 表名：snake_case
+@Entity("user_profile")
+
+// 字段名：camelCase
+userName: string;
+
+// 枚举值：UPPER_SNAKE_CASE
+export enum UserStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+```
+
+### 2. 注释规范
+```typescript
+export class User extends BaseEntity {
+  /** 用户名 - 必填，唯一 */
+  @Column({ unique: true })
+  @IsString()
+  username: string;
+
+  /** 用户状态 - 默认激活 */
+  @Column({
+    type: "enum",
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
+  @IsEnum(UserStatus)
+  status: UserStatus;
+}
+```
+
+### 3. 默认值处理
+```typescript
+// 在 Entity 中设置默认值
+@Column({ default: 0 })
+@IsNumber()
+@Type(() => Number)
+count: number = 0;
+
+// 在构造函数中设置默认值
+constructor() {
+  super();
+  this.tags = [];
+  this.status = EntityStatus.ACTIVE;
+}
+```
+
+### 4. 软删除支持
+```typescript
+// 继承 BaseEntity 自动获得软删除支持
+export class SoftDeleteEntity extends BaseEntity {
+  // deletedAt 字段由 BaseEntity 提供
+}
+
+// 在 Repository 中使用软删除
+const entity = await repository.softDelete(id);
+const entities = await repository.find(); // 自动排除已删除记录
+```
+
+## 🚨 常见错误避免
+
+### 1. 验证装饰器错误
+```typescript
+// ❌ 错误：缺少类型转换
+@Column()
+@IsNumber()
+count: number;
+
+// ✅ 正确：添加类型转换
+@Column()
+@IsNumber()
+@Type(() => Number)
+count: number;
+```
+
+### 2. 可选字段错误
+```typescript
+// ❌ 错误：可选字段缺少 @IsOptional()
+@Column({ nullable: true })
+@IsString()
+description?: string;
+
+// ✅ 正确：添加 @IsOptional()
+@Column({ nullable: true })
+@IsString()
+@IsOptional()
+description?: string;
+```
+
+### 3. 关联关系错误
+```typescript
+// ❌ 错误：缺少外键字段
+@ManyToOne(() => Parent)
+parent?: Parent;
+
+// ✅ 正确：添加外键字段
+@ManyToOne(() => Parent)
+parent?: Parent;
+
+@Column({ nullable: true })
+@IsString()
+@IsOptional()
+parentId?: string;
+```
+
+### 4. 枚举字段错误
+```typescript
+// ❌ 错误：枚举配置不完整
+@Column()
+@IsEnum(Status)
+status: Status;
+
+// ✅ 正确：完整的枚举配置
+@Column({
+  type: "enum",
+  enum: Status,
+  default: Status.ACTIVE,
+})
+@IsEnum(Status)
+status: Status;
+```
+
+## 📋 检查清单
+
+### Entity 创建检查清单
+- [ ] 继承 BaseEntity
+- [ ] 使用正确的 @Entity 装饰器和表名
+- [ ] 所有字段都有适当的 @Column 配置
+- [ ] 必填字段有验证装饰器
+- [ ] 可选字段有 @IsOptional() 装饰器
+- [ ] 数字字段有 @Type(() => Number) 转换
+- [ ] 枚举字段有完整的配置
+- [ ] 关联关系有正确的装饰器
+- [ ] 外键字段已定义
+- [ ] 字段有清晰的注释
+- [ ] 默认值设置合理
+
+### 验证装饰器检查清单
+- [ ] @IsString() 用于字符串字段
+- [ ] @IsNumber() 用于数字字段
+- [ ] @IsBoolean() 用于布尔字段
+- [ ] @IsEnum() 用于枚举字段
+- [ ] @IsArray() 用于数组字段
+- [ ] @IsOptional() 用于可选字段
+- [ ] @Type() 用于类型转换
+- [ ] @Min()/@Max() 用于数值范围限制
+- [ ] @IsISO8601() 用于日期字段
+
+### 数据库约束检查清单
+- [ ] 主键字段正确配置
+- [ ] 外键关系正确设置
+- [ ] 索引配置合理
+- [ ] 唯一约束正确应用
+- [ ] 级联操作配置适当
+- [ ] 软删除支持启用
+
+## 🔄 迁移指南
+
+### 从旧 Entity 迁移到新规范
+
+1. **检查继承关系**
+   ```typescript
+   // 确保继承 BaseEntity
+   export class OldEntity extends BaseEntity {}
+   ```
+
+2. **添加缺失的验证装饰器**
+   ```typescript
+   // 为所有字段添加适当的验证
+   @Column()
+   @IsString()
+   name: string;
+   ```
+
+3. **修复类型转换**
+   ```typescript
+   // 为数字字段添加类型转换
+   @Column()
+   @IsNumber()
+   @Type(() => Number)
+   count: number;
+   ```
+
+4. **完善枚举配置**
+   ```typescript
+   // 完整的枚举字段配置
+   @Column({
+     type: "enum",
+     enum: Status,
+     default: Status.ACTIVE,
+   })
+   @IsEnum(Status)
+   status: Status;
+   ```
+
+5. **添加外键字段**
+   ```typescript
+   // 为关联关系添加外键字段
+   @ManyToOne(() => Parent)
+   parent?: Parent;
+   
+   @Column({ nullable: true })
+   @IsString()
+   @IsOptional()
+   parentId?: string;
+   ```
+
+这个规范确保了 Entity 的一致性、类型安全和数据完整性，为整个项目提供了坚实的数据模型基础。

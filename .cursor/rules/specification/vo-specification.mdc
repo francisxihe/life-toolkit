@@ -1,0 +1,227 @@
+---
+description: 需要增删改查VO中代码时
+globs: 
+alwaysApply: false
+---
+# VO (Value Object) 规范
+
+## 概述
+
+VO (Value Object) 是用于数据传输和类型定义的对象，主要用于前后端数据交互、表单处理、过滤查询等场景。本规范定义了VO模块的标准结构、命名约定和最佳实践。
+
+## 目录结构规范
+
+### 基础结构
+```
+packages/vo/
+├── base/                    # 基础VO定义
+│   ├── model.vo.ts         # 基础模型VO
+│   ├── operation.vo.ts     # 操作相关VO
+│   ├── response.vo.ts      # 响应VO
+│   ├── page.vo.ts          # 分页VO
+│   ├── without-self.ts     # 工具类型
+│   └── index.ts            # 导出文件
+├── [domain]/               # 业务域目录
+│   ├── [module]/           # 具体模块目录
+│   │   ├── [module]-model.vo.ts    # 模型定义
+│   │   ├── [module]-filter.vo.ts   # 过滤查询VO
+│   │   ├── [module]-form.vo.ts     # 表单VO
+│   │   └── index.ts                # 模块导出
+│   └── index.ts            # 域导出
+└── index.ts                # 总导出
+```
+
+### 示例结构
+```
+packages/vo/growth/goal/
+├── goal-model.vo.ts        # 目标模型VO
+├── goal-filter.vo.ts       # 目标过滤VO
+├── goal-form.vo.ts         # 目标表单VO
+└── index.ts                # 导出文件
+```
+
+## 文件命名规范
+
+### 文件命名格式
+- **模型VO**: `[module]-model.vo.ts`
+- **过滤VO**: `[module]-filter.vo.ts`
+- **表单VO**: `[module]-form.vo.ts`
+- **导出文件**: `index.ts`
+
+### 类型命名格式
+- **枚举**: `[Module][Property]` (如: `GoalStatus`, `TodoType`)
+- **基础模型**: `[Module]ModelVo`
+- **项目模型**: `[Module]ItemVo` (继承BaseModelVo)
+- **完整模型**: `[Module]Vo` (包含关联数据)
+- **表单VO**: `Create[Module]Vo`, `Update[Module]Vo`
+- **过滤VO**: `[Module]ListFiltersVo`, `[Module]PageFiltersVo`
+- **结果VO**: `[Module]ListVo`, `[Module]PageVo`
+
+## 标准VO类型定义
+
+### 1. 基础模型VO (BaseModelVo)
+```typescript
+export type BaseModelVo = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
+```
+
+### 2. 模型VO结构
+```typescript
+// 1. 枚举定义
+export enum ModuleStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
+// 2. 基础模型VO
+export type ModuleModelVo = {
+  name: string;
+  status: ModuleStatus;
+  description?: string;
+  // 其他业务字段...
+};
+
+// 3. 项目VO (包含基础字段)
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
+
+// 4. 完整VO (包含关联数据)
+export type ModuleVo = ModuleItemVo & {
+  // 关联数据
+  children?: ModuleVo[];
+  parent?: ModuleVo;
+  relatedItems?: RelatedItemVo[];
+};
+```
+
+### 3. 表单VO结构
+```typescript
+// 创建表单VO
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "status" | "computedFields"
+> & {
+  parentId?: string;
+};
+
+// 更新表单VO
+export type UpdateModuleVo = Partial<CreateModuleVo>;
+```
+
+### 4. 过滤VO结构
+```typescript
+// 列表过滤VO
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "name"> & {
+    keyword?: string;
+    dateStart?: string;
+    dateEnd?: string;
+    parentId?: string;
+  } & self
+>;
+
+// 分页过滤VO
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
+  pageNum?: number;
+  pageSize?: number;
+};
+
+// 列表结果VO
+export type ModuleListVo = {
+  list: ModuleItemVo[];
+};
+
+// 分页结果VO
+export type ModulePageVo = {
+  list: ModuleItemVo[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+};
+```
+
+## 导出规范
+
+### 模块导出 (index.ts)
+```typescript
+// 1. 重新导出模型VO
+export * from "./module-model.vo";
+
+// 2. 重新导出过滤VO
+export * from "./module-filter.vo";
+
+// 3. 重新导出表单VO
+export * from "./module-form.vo";
+```
+
+### 域导出
+```typescript
+// 导出所有子模块
+export * from "./goal";
+export * from "./todo";
+export * from "./task";
+```
+
+## 数据类型规范
+
+### 1. 日期时间
+- 使用 `string` 类型，格式为 ISO 8601
+- 字段命名: `xxxAt` (如: `createdAt`, `updatedAt`, `startAt`, `endAt`)
+
+### 2. 状态枚举
+- 使用小写字符串值
+- 常见状态: `"active"`, `"inactive"`, `"pending"`, `"completed"`, `"cancelled"`
+
+### 3. 可选字段
+- 使用 `?:` 标记可选字段
+- 描述性字段通常为可选: `description?`, `note?`, `remark?`
+
+### 4. 数组字段
+- 使用复数命名: `tags`, `items`, `children`
+- 关联数据使用 `xxxList` 或直接复数形式
+
+## 最佳实践
+
+### 1. 类型安全
+- 优先使用联合类型而非字符串
+- 使用枚举定义固定值集合
+- 利用 TypeScript 工具类型 (`Pick`, `Omit`, `Partial`)
+
+### 2. 可维护性
+- 单一职责：每个VO文件只负责一个业务实体
+- 清晰命名：类型名称要能清楚表达用途
+- 适当注释：复杂业务逻辑需要添加注释
+
+### 3. 复用性
+- 继承BaseModelVo获得基础字段
+- 使用工具类型避免重复定义
+- 合理抽象公共类型
+
+### 4. 向后兼容
+- 新增字段使用可选类型
+- 避免删除已有字段
+- 使用版本化处理重大变更
+
+## 禁止事项
+
+1. **不要在单个文件中定义所有类型** - 应按功能分离到不同文件
+2. **不要使用 `any` 类型** - 应明确定义具体类型
+3. **不要在VO中包含业务逻辑** - VO仅用于数据结构定义
+4. **不要使用 `Date` 对象** - 统一使用字符串格式的日期时间
+5. **不要混合不同业务域的类型** - 保持模块边界清晰
+
+## 检查清单
+
+在创建或修改VO时，请确认以下事项：
+
+- [ ] 文件命名符合规范 (`[module]-[type].vo.ts`)
+- [ ] 类型命名符合规范 (`[Module][Type]Vo`)
+- [ ] 继承了BaseModelVo (如适用)
+- [ ] 使用了合适的工具类型
+- [ ] 添加了必要的导出语句
+- [ ] 日期字段使用string类型
+- [ ] 枚举值使用小写字符串
+- [ ] 可选字段正确标记
+- [ ] 没有包含业务逻辑代码

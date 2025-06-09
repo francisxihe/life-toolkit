@@ -18,15 +18,14 @@ import { OperationMapper } from "@/common/operation";
 @Controller("habit")
 export class HabitController {
   constructor(
-    private readonly habitService: HabitService,
-    private readonly habitMapper: HabitMapper
+    private readonly habitService: HabitService
   ) {}
 
-  @Put("batch-complete")
+  @Put("batch-done")
   @Response()
-  async batchComplete(@Body() idList: OperationByIdListVo) {
-    return await this.habitService.batchComplete(
-      OperationMapper.voToOperationByIdListDto(idList).idList
+  async batchDone(@Body() idList: OperationByIdListVo) {
+    return await this.habitService.batchDone(
+      OperationMapper.voToOperationByIdListDto(idList)
     );
   }
 
@@ -61,16 +60,16 @@ export class HabitController {
   @Post("create")
   @Response()
   async create(@Body() createHabitVO: Habit.CreateHabitVo) {
-    const habit = await this.habitService.create(
-      this.habitMapper.voToDtoFromVo(createHabitVO)
+    const dto = await this.habitService.create(
+      HabitMapper.voToCreateDto(createHabitVO)
     );
-    return this.habitMapper.toVo(habit);
+    return HabitMapper.dtoToVo(dto);
   }
 
   @Delete("delete/:id")
   @Response()
   async delete(@Param("id") id: string) {
-    return await this.habitService.remove(id);
+    return await this.habitService.delete(id);
   }
 
   @Put("update/:id")
@@ -79,54 +78,64 @@ export class HabitController {
     @Param("id") id: string,
     @Body() updateHabitVO: Habit.UpdateHabitVo
   ) {
-    const habit = await this.habitService.update(
+    const dto = await this.habitService.update(
       id,
-      this.habitMapper.voToUpdateDtoFromVo(updateHabitVO)
+      HabitMapper.voToUpdateDto(updateHabitVO)
     );
-    return this.habitMapper.toVo(habit);
+    return HabitMapper.dtoToVo(dto);
   }
 
   @Get("page")
   @Response()
   async page(@Query() filter: HabitPageFilterDto) {
-    const result = await this.habitService.findPage(filter);
-    return {
-      list: result.list.map((habit) => this.habitMapper.toVo(habit)),
-      total: result.total,
-      pageNum: result.pageNum,
-      pageSize: result.pageSize,
-    };
+    const { list, total } = await this.habitService.page(filter);
+    return HabitMapper.dtoToPageVo(
+      list,
+      total,
+      filter.pageNum || 1,
+      filter.pageSize || 10
+    );
   }
 
   @Get("list")
   @Response()
   async list(@Query() filter: HabitFilterDto) {
     const habits = await this.habitService.findAll(filter);
-    return {
-      list: habits.map((habit) => this.habitMapper.toVo(habit)),
-    };
+    return HabitMapper.dtoToListVo(habits);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
-    const habit = await this.habitService.findOne(id);
-    return this.habitMapper.toVo(habit);
+    const habit = await this.habitService.findById(id);
+    return HabitMapper.dtoToVo(habit);
   }
 
   @Get("detail-with-relations/:id")
   @Response()
   async findByIdWithRelations(@Param("id") id: string) {
-    const habit = await this.habitService.findOneWithRelations(id);
-    return this.habitMapper.toVo(habit);
+    const habit = await this.habitService.findByIdWithRelations(id);
+    return HabitMapper.dtoToVo(habit);
   }
 
   @Get("by-goal/:goalId")
   @Response()
   async findByGoalId(@Param("goalId") goalId: string) {
     const habits = await this.habitService.findByGoalId(goalId);
-    return {
-      list: habits.map((habit) => this.habitMapper.toVo(habit)),
-    };
+    return HabitMapper.dtoToListVo(habits);
+  }
+
+  @Get("todos/:id")
+  @Response()
+  async getHabitTodos(@Param("id") id: string) {
+    const result = await this.habitService.getHabitTodos(id);
+    return result;
+  }
+
+  @Get("analytics/:id")
+  @Response()
+  async getHabitAnalytics(@Param("id") id: string) {
+    const result = await this.habitService.getHabitAnalytics(id);
+    return result;
   }
 }

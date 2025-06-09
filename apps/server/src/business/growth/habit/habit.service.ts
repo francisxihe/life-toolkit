@@ -1,310 +1,248 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Like, In } from "typeorm";
-import { Habit, HabitStatus, HabitFrequency } from "./entities";
+import { Repository } from "typeorm";
 import {
   CreateHabitDto,
   UpdateHabitDto,
   HabitFilterDto,
   HabitPageFilterDto,
+  HabitDto,
 } from "./dto";
-import { HabitMapper } from "./mapper";
-import { Goal } from "../goal/entities";
-import { TodoRepeat } from "../todo/entities";
-import { RepeatMode, RepeatEndMode } from "@life-toolkit/components-repeat/types";
+import { Todo, TodoStatus } from "../todo/entities";
+import { HabitRepository } from "./habit.repository";
+import { HabitStatusService } from "./habit-status.service";
+import { OperationByIdListDto } from "@/common/operation";
 
 @Injectable()
 export class HabitService {
   constructor(
-    @InjectRepository(Habit)
-    private habitRepository: Repository<Habit>,
-    @InjectRepository(Goal)
-    private goalRepository: Repository<Goal>,
-    @InjectRepository(TodoRepeat)
-    private todoRepeatRepository: Repository<TodoRepeat>,
-    private habitMapper: HabitMapper
+    private readonly habitRepository: HabitRepository,
+    private readonly habitStatusService: HabitStatusService,
+    @InjectRepository(Todo)
+    private readonly todoRepository: Repository<Todo>,
   ) {}
 
-  async create(createHabitDto: CreateHabitDto): Promise<Habit> {
-    const habit = this.habitRepository.create(
-      this.habitMapper.toEntity(createHabitDto)
-    );
-
-    // 处理目标关联
-    if (createHabitDto.goalIds && createHabitDto.goalIds.length > 0) {
-      const goals = await this.goalRepository.findBy({
-        id: In(createHabitDto.goalIds),
-      });
-      habit.goals = goals;
-    }
-
-    const savedHabit = await this.habitRepository.save(habit);
-
-    // 如果需要自动创建待办任务
-    if (createHabitDto.autoCreateTodo !== false) {
-      await this.createTodoRepeat(savedHabit);
-    }
-
-    return savedHabit;
-  }
-
-  /**
-   * 为习惯创建重复待办任务
-   */
-  private async createTodoRepeat(habit: Habit): Promise<TodoRepeat | null> {
-    // 根据习惯频率创建重复配置
-    let repeatMode: RepeatMode;
-    let repeatConfig: any = {};
-
-    switch (habit.frequency) {
-      case HabitFrequency.DAILY:
-        repeatMode = RepeatMode.DAILY;
-        repeatConfig = { interval: 1 };
-        break;
-      case HabitFrequency.WEEKLY:
-        repeatMode = RepeatMode.WEEKLY;
-        repeatConfig = { interval: 1, weekDays: [new Date().getDay()] };
-        break;
-      case HabitFrequency.MONTHLY:
-        repeatMode = RepeatMode.MONTHLY;
-        repeatConfig = { interval: 1, monthlyType: "date", date: new Date().getDate() };
-        break;
-      default:
-        return null;
-    }
-
-    const todoRepeat = this.todoRepeatRepository.create({
-      repeatMode,
-      repeatConfig,
-      repeatEndMode: habit.targetDate ? RepeatEndMode.TO_DATE : RepeatEndMode.FOREVER,
-      repeatEndDate: habit.targetDate ? habit.targetDate.toISOString().split('T')[0] : undefined,
-      habitId: habit.id,
-    });
-
-    return await this.todoRepeatRepository.save(todoRepeat);
-  }
-
-  async findAll(filter: HabitFilterDto = {}): Promise<Habit[]> {
-    const whereConditions: any = {};
-
-    if (filter.status && filter.status.length > 0) {
-      whereConditions.status = In(filter.status);
-    }
-
-    if (filter.frequency && filter.frequency.length > 0) {
-      whereConditions.frequency = In(filter.frequency);
-    }
-
-    if (filter.difficulty && filter.difficulty.length > 0) {
-      whereConditions.difficulty = In(filter.difficulty);
-    }
-
-    let query = this.habitRepository.createQueryBuilder("habit");
-
-    // 添加where条件
-    for (const [key, value] of Object.entries(whereConditions)) {
-      query = query.andWhere(`habit.${key} = :${key}`, { [key]: value });
-    }
-
-    // 关键词搜索
-    if (filter.keyword) {
-      query = query.andWhere(
-        "(habit.name LIKE :keyword OR habit.description LIKE :keyword)",
-        { keyword: `%${filter.keyword}%` }
-      );
-    }
-
-    // 标签搜索
-    if (filter.tags && filter.tags.length > 0) {
-      filter.tags.forEach((tag, index) => {
-        query = query.andWhere(`habit.tags LIKE :tag${index}`, {
-          [`tag${index}`]: `%${tag}%`,
-        });
-      });
-    }
-
-    return await query.orderBy("habit.updatedAt", "DESC").getMany();
-  }
-
-  async findPage(filter: HabitPageFilterDto) {
-    const { pageNum = 1, pageSize = 10, ...rest } = filter;
-    const skip = (pageNum - 1) * pageSize;
-
-    const whereConditions: any = {};
-
-    if (filter.status && filter.status.length > 0) {
-      whereConditions.status = In(filter.status);
-    }
-
-    if (filter.frequency && filter.frequency.length > 0) {
-      whereConditions.frequency = In(filter.frequency);
-    }
-
-    if (filter.difficulty && filter.difficulty.length > 0) {
-      whereConditions.difficulty = In(filter.difficulty);
-    }
-
-    let query = this.habitRepository.createQueryBuilder("habit");
-
-    // 添加where条件
-    for (const [key, value] of Object.entries(whereConditions)) {
-      query = query.andWhere(`habit.${key} = :${key}`, { [key]: value });
-    }
-
-    // 关键词搜索
-    if (filter.keyword) {
-      query = query.andWhere(
-        "(habit.name LIKE :keyword OR habit.description LIKE :keyword)",
-        { keyword: `%${filter.keyword}%` }
-      );
-    }
-
-    // 标签搜索
-    if (filter.tags && filter.tags.length > 0) {
-      filter.tags.forEach((tag, index) => {
-        query = query.andWhere(`habit.tags LIKE :tag${index}`, {
-          [`tag${index}`]: `%${tag}%`,
-        });
-      });
-    }
-
-    const [list, total] = await query
-      .orderBy("habit.updatedAt", "DESC")
-      .skip(skip)
-      .take(pageSize)
-      .getManyAndCount();
-
-    return {
-      list,
-      total,
-      pageNum,
-      pageSize,
-    };
-  }
-
-  async findOne(id: string): Promise<Habit> {
-    const habit = await this.habitRepository.findOne({ where: { id } });
-    if (!habit) {
-      throw new NotFoundException(`习惯记录不存在，ID: ${id}`);
-    }
-    return habit;
-  }
-
-  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<Habit> {
-    const habit = await this.findOne(id);
+  // 业务逻辑编排
+  async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
+    // 业务验证
+    await this.validateBusinessRules(createHabitDto);
     
-    // 处理目标关联更新
-    if (updateHabitDto.goalIds !== undefined) {
-      if (updateHabitDto.goalIds.length > 0) {
-        const goals = await this.goalRepository.findBy({
-          id: In(updateHabitDto.goalIds),
-        });
-        habit.goals = goals;
-      } else {
-        habit.goals = [];
-      }
-    }
-
-    const updatedHabit = Object.assign(
-      habit,
-      this.habitMapper.toUpdateEntity(updateHabitDto)
-    );
-    return await this.habitRepository.save(updatedHabit);
+    // 数据处理
+    const processedDto = await this.processCreateData(createHabitDto);
+    
+    // 调用数据访问层
+    const result = await this.habitRepository.create(processedDto);
+    
+    // 后置处理（如发送通知、更新缓存等）
+    await this.afterCreate(result);
+    
+    return result;
   }
 
-  async remove(id: string): Promise<boolean> {
-    const habit = await this.findOne(id);
-    const result = await this.habitRepository.remove(habit);
-    return !!result;
+  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
+    // 权限检查
+    await this.checkPermission(filter);
+    
+    return await this.habitRepository.findAll(filter);
   }
 
-  async batchComplete(ids: string[]) {
-    const result = await this.habitRepository.update(
-      { id: In(ids) },
-      { status: HabitStatus.COMPLETED }
-    );
-    return {
-      result: true,
-    };
+  async page(filter: HabitPageFilterDto): Promise<{ list: HabitDto[]; total: number }> {
+    // 权限检查
+    await this.checkPermission(filter);
+    
+    return await this.habitRepository.page(filter);
   }
 
-  async restore(id: string): Promise<boolean> {
-    const habit = await this.findOne(id);
-    if (
-      habit.status !== HabitStatus.ABANDONED &&
-      habit.status !== HabitStatus.COMPLETED
-    ) {
-      return true; // 已经是活跃状态，无需恢复
-    }
+  async findById(id: string): Promise<HabitDto> {
+    return await this.habitRepository.findById(id);
+  }
 
-    habit.status = HabitStatus.ACTIVE;
-    await this.habitRepository.save(habit);
-    return true;
+  async findByIdWithRelations(id: string): Promise<HabitDto> {
+    return await this.habitRepository.findById(id, ["goals", "todos"]);
+  }
+
+  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
+    // 业务验证
+    await this.validateUpdateRules(id, updateHabitDto);
+    
+    // 数据处理
+    const processedDto = await this.processUpdateData(updateHabitDto);
+    
+    // 调用数据访问层
+    const result = await this.habitRepository.update(id, processedDto);
+    
+    // 后置处理
+    await this.afterUpdate(result);
+    
+    return result;
+  }
+
+  async delete(id: string): Promise<void> {
+    // 删除前检查
+    await this.validateDelete(id);
+    
+    await this.habitRepository.delete(id);
+    
+    // 后置处理
+    await this.afterDelete(id);
+  }
+
+  // 状态操作（委托给状态服务）
+  async done(id: string): Promise<boolean> {
+    return await this.habitStatusService.done(id);
   }
 
   async abandon(id: string): Promise<boolean> {
-    const habit = await this.findOne(id);
-    habit.status = HabitStatus.ABANDONED;
-    await this.habitRepository.save(habit);
-    return true;
+    return await this.habitStatusService.abandon(id);
+  }
+
+  async restore(id: string): Promise<boolean> {
+    return await this.habitStatusService.restore(id);
   }
 
   async pause(id: string): Promise<boolean> {
-    const habit = await this.findOne(id);
-    habit.status = HabitStatus.PAUSED;
-    await this.habitRepository.save(habit);
-    return true;
+    return await this.habitStatusService.pause(id);
   }
 
   async resume(id: string): Promise<boolean> {
-    const habit = await this.findOne(id);
-    habit.status = HabitStatus.ACTIVE;
-    await this.habitRepository.save(habit);
-    return true;
+    return await this.habitStatusService.resume(id);
   }
 
-  // 更新习惯的连续天数和完成次数
-  async updateStreak(id: string, increment: boolean): Promise<Habit> {
-    const habit = await this.findOne(id);
-
-    if (increment) {
-      habit.currentStreak += 1;
-      habit.completedCount += 1;
-
-      // 更新最长连续天数
-      if (habit.currentStreak > habit.longestStreak) {
-        habit.longestStreak = habit.currentStreak;
-      }
-    } else {
-      // 重置当前连续天数
-      habit.currentStreak = 0;
-    }
-
-    return await this.habitRepository.save(habit);
+  // 批量操作
+  async batchDone(params: OperationByIdListDto): Promise<void> {
+    await this.habitStatusService.batchDone(params);
   }
 
-  /**
-   * 获取习惯详情，包含关联的目标和待办重复任务
-   */
-  async findOneWithRelations(id: string): Promise<Habit> {
-    const habit = await this.habitRepository.findOne({
-      where: { id },
-      relations: ["goals", "todoRepeats"],
+  async findByGoalId(goalId: string): Promise<HabitDto[]> {
+    return await this.habitRepository.findByGoalId(goalId);
+  }
+
+  async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
+    return await this.habitRepository.updateStreak(id, increment);
+  }
+
+  async getHabitTodos(habitId: string): Promise<{
+    activeTodos: Todo[];
+    completedTodos: Todo[];
+    abandonedTodos: Todo[];
+    totalCount: number;
+  }> {
+    const activeTodos = await this.todoRepository.find({
+      where: {
+        habitId,
+        status: TodoStatus.TODO,
+      },
+      order: { createdAt: "DESC" },
     });
-    if (!habit) {
-      throw new NotFoundException(`习惯记录不存在，ID: ${id}`);
-    }
-    return habit;
+
+    const completedTodos = await this.todoRepository.find({
+      where: {
+        habitId,
+        status: TodoStatus.DONE,
+      },
+      order: { doneAt: "DESC" },
+    });
+
+    const abandonedTodos = await this.todoRepository.find({
+      where: {
+        habitId,
+        status: TodoStatus.ABANDONED,
+      },
+      order: { abandonedAt: "DESC" },
+    });
+
+    return {
+      activeTodos,
+      completedTodos,
+      abandonedTodos,
+      totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
+    };
   }
 
-  /**
-   * 根据目标ID获取相关习惯
-   */
-  async findByGoalId(goalId: string): Promise<Habit[]> {
-    return await this.habitRepository
-      .createQueryBuilder("habit")
-      .innerJoin("habit.goals", "goal")
-      .where("goal.id = :goalId", { goalId })
-      .getMany();
+  async getHabitAnalytics(habitId: string): Promise<{
+    totalTodos: number;
+    completedTodos: number;
+    abandonedTodos: number;
+    completionRate: number;
+    currentStreak: number;
+    longestStreak: number;
+    recentTodos: Todo[];
+  }> {
+    const habit = await this.habitRepository.findById(habitId);
+
+    const totalTodos = await this.todoRepository.count({
+      where: { habitId },
+    });
+
+    const completedTodos = await this.todoRepository.count({
+      where: { habitId, status: TodoStatus.DONE },
+    });
+
+    const abandonedTodos = await this.todoRepository.count({
+      where: { habitId, status: TodoStatus.ABANDONED },
+    });
+
+    const recentTodos = await this.todoRepository.find({
+      where: { habitId },
+      order: { createdAt: "DESC" },
+      take: 10,
+    });
+
+    const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+
+    return {
+      totalTodos,
+      completedTodos,
+      abandonedTodos,
+      completionRate,
+      currentStreak: habit.currentStreak,
+      longestStreak: habit.longestStreak,
+      recentTodos,
+    };
+  }
+
+  // 私有业务方法
+  private async validateBusinessRules(dto: CreateHabitDto): Promise<void> {
+    // 实现业务规则验证
+    // 例如：检查习惯名称是否重复、验证日期范围等
+  }
+
+  private async processCreateData(dto: CreateHabitDto): Promise<CreateHabitDto> {
+    // 实现数据预处理
+    // 例如：设置默认值、格式化数据等
+    return dto;
+  }
+
+  private async afterCreate(result: HabitDto): Promise<void> {
+    // 实现创建后处理
+    // 例如：发送通知、更新缓存、记录日志等
+  }
+
+  private async validateUpdateRules(id: string, dto: UpdateHabitDto): Promise<void> {
+    // 实现更新业务规则验证
+  }
+
+  private async processUpdateData(dto: UpdateHabitDto): Promise<UpdateHabitDto> {
+    // 实现更新数据预处理
+    return dto;
+  }
+
+  private async afterUpdate(result: HabitDto): Promise<void> {
+    // 实现更新后处理
+  }
+
+  private async validateDelete(id: string): Promise<void> {
+    // 实现删除前验证
+    // 例如：检查是否有关联数据、权限验证等
+  }
+
+  private async afterDelete(id: string): Promise<void> {
+    // 实现删除后处理
+    // 例如：清理关联数据、更新缓存等
+  }
+
+  private async checkPermission(filter: any): Promise<void> {
+    // 实现权限检查
+    // 例如：用户权限验证、数据访问权限等
   }
 }

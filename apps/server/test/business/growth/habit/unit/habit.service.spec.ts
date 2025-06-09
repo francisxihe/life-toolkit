@@ -2,9 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HabitService } from '../../../../../src/business/growth/habit/habit.service';
-import { Habit, HabitFrequency, HabitDifficulty } from '../../../../../src/business/growth/habit/entities';
+import { Habit, HabitDifficulty } from '../../../../../src/business/growth/habit/entities';
 import { Goal } from '../../../../../src/business/growth/goal/entities';
-import { TodoRepeat } from '../../../../../src/business/growth/todo/entities';
+import { TodoRepeat, Todo } from '../../../../../src/business/growth/todo/entities';
 import { HabitMapper } from '../../../../../src/business/growth/habit/mapper';
 import { CreateHabitDto } from '../../../../../src/business/growth/habit/dto';
 
@@ -13,6 +13,7 @@ describe('HabitService', () => {
   let habitRepository: Repository<Habit>;
   let goalRepository: Repository<Goal>;
   let todoRepeatRepository: Repository<TodoRepeat>;
+  let todoRepository: Repository<Todo>;
 
   const mockHabitRepository = {
     create: jest.fn(),
@@ -27,8 +28,11 @@ describe('HabitService', () => {
   };
 
   const mockTodoRepeatRepository = {
-    create: jest.fn(),
-    save: jest.fn(),
+    find: jest.fn(),
+  };
+
+  const mockTodoRepository = {
+    createQueryBuilder: jest.fn(),
   };
 
   const mockHabitMapper = {
@@ -53,6 +57,10 @@ describe('HabitService', () => {
           useValue: mockTodoRepeatRepository,
         },
         {
+          provide: getRepositoryToken(Todo),
+          useValue: mockTodoRepository,
+        },
+        {
           provide: HabitMapper,
           useValue: mockHabitMapper,
         },
@@ -63,6 +71,7 @@ describe('HabitService', () => {
     habitRepository = module.get<Repository<Habit>>(getRepositoryToken(Habit));
     goalRepository = module.get<Repository<Goal>>(getRepositoryToken(Goal));
     todoRepeatRepository = module.get<Repository<TodoRepeat>>(getRepositoryToken(TodoRepeat));
+    todoRepository = module.get<Repository<Todo>>(getRepositoryToken(Todo));
   });
 
   it('should be defined', () => {
@@ -74,11 +83,9 @@ describe('HabitService', () => {
       const createHabitDto: CreateHabitDto = {
         name: '早起拉伸',
         description: '每天早上6点起床后进行10分钟拉伸运动',
-        frequency: HabitFrequency.DAILY,
         difficulty: HabitDifficulty.MEDIUM,
         importance: 4,
         goalIds: ['goal-1', 'goal-2'],
-        autoCreateTodo: true,
       };
 
       const mockGoals = [
@@ -89,22 +96,14 @@ describe('HabitService', () => {
       const mockHabit = {
         id: 'habit-1',
         name: '早起拉伸',
-        frequency: HabitFrequency.DAILY,
+        difficulty: HabitDifficulty.MEDIUM,
         goals: mockGoals,
-      };
-
-      const mockTodoRepeat = {
-        id: 'repeat-1',
-        habitId: 'habit-1',
-        repeatMode: 'daily',
       };
 
       mockHabitMapper.toEntity.mockReturnValue(mockHabit);
       mockGoalRepository.findBy.mockResolvedValue(mockGoals);
       mockHabitRepository.create.mockReturnValue(mockHabit);
       mockHabitRepository.save.mockResolvedValue(mockHabit);
-      mockTodoRepeatRepository.create.mockReturnValue(mockTodoRepeat);
-      mockTodoRepeatRepository.save.mockResolvedValue(mockTodoRepeat);
 
       const result = await service.create(createHabitDto);
 
@@ -112,19 +111,12 @@ describe('HabitService', () => {
         id: expect.any(Object),
       });
       expect(mockHabitRepository.save).toHaveBeenCalled();
-      expect(mockTodoRepeatRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          repeatMode: 'daily',
-          habitId: 'habit-1',
-        })
-      );
       expect(result).toEqual(mockHabit);
     });
 
-    it('should create habit without auto todo creation', async () => {
+    it('should create habit without goal associations', async () => {
       const createHabitDto: CreateHabitDto = {
         name: '阅读',
-        autoCreateTodo: false,
       };
 
       const mockHabit = {
@@ -137,15 +129,98 @@ describe('HabitService', () => {
       mockHabitRepository.create.mockReturnValue(mockHabit);
       mockHabitRepository.save.mockResolvedValue(mockHabit);
 
-      // 清除之前的调用记录
-      mockTodoRepeatRepository.create.mockClear();
-      mockTodoRepeatRepository.save.mockClear();
-
       const result = await service.create(createHabitDto);
 
-      expect(mockTodoRepeatRepository.create).not.toHaveBeenCalled();
-      expect(mockTodoRepeatRepository.save).not.toHaveBeenCalled();
       expect(result).toEqual(mockHabit);
+    });
+  });
+
+  describe('getHabitTodos', () => {
+    it('should return habit todos grouped by status', async () => {
+      const habitId = 'habit-1';
+      const mockHabit = { id: habitId, name: '阅读习惯' };
+      const mockTodoRepeats = [
+        { id: 'repeat-1', habitId },
+        { id: 'repeat-2', habitId },
+      ];
+      const mockTodos = [
+        { id: 'todo-1', status: 'todo', repeatId: 'repeat-1' },
+        { id: 'todo-2', status: 'done', originalRepeatId: 'repeat-1' },
+        { id: 'todo-3', status: 'abandoned', originalRepeatId: 'repeat-2' },
+      ];
+
+      const mockQueryBuilder = {
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getMany: jest.fn().mockResolvedValue(mockTodos),
+      };
+
+      mockHabitRepository.findOne.mockResolvedValue(mockHabit);
+      mockTodoRepeatRepository.find.mockResolvedValue(mockTodoRepeats);
+      mockTodoRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
+
+      const result = await service.getHabitTodos(habitId);
+
+      expect(result).toEqual({
+        activeTodos: [{ id: 'todo-1', status: 'todo', repeatId: 'repeat-1' }],
+        completedTodos: [{ id: 'todo-2', status: 'done', originalRepeatId: 'repeat-1' }],
+        abandonedTodos: [{ id: 'todo-3', status: 'abandoned', originalRepeatId: 'repeat-2' }],
+        totalCount: 3,
+      });
+    });
+
+    it('should return empty result when no todo repeats exist', async () => {
+      const habitId = 'habit-1';
+      const mockHabit = { id: habitId, name: '阅读习惯' };
+
+      mockHabitRepository.findOne.mockResolvedValue(mockHabit);
+      mockTodoRepeatRepository.find.mockResolvedValue([]);
+
+      const result = await service.getHabitTodos(habitId);
+
+      expect(result).toEqual({
+        activeTodos: [],
+        completedTodos: [],
+        abandonedTodos: [],
+        totalCount: 0,
+      });
+    });
+  });
+
+  describe('getHabitAnalytics', () => {
+    it('should return habit analytics data', async () => {
+      const habitId = 'habit-1';
+      const mockHabit = {
+        id: habitId,
+        name: '阅读习惯',
+        currentStreak: 5,
+        longestStreak: 10,
+      };
+
+             const mockTodosResult = {
+         activeTodos: [{ id: 'todo-1', name: 'Todo 1', status: 'todo', tags: [], planDate: new Date() } as any],
+         completedTodos: [
+           { id: 'todo-2', name: 'Todo 2', status: 'done', tags: [], planDate: new Date() } as any,
+           { id: 'todo-3', name: 'Todo 3', status: 'done', tags: [], planDate: new Date() } as any
+         ],
+         abandonedTodos: [{ id: 'todo-4', name: 'Todo 4', status: 'abandoned', tags: [], planDate: new Date() } as any],
+         totalCount: 4,
+       };
+
+       mockHabitRepository.findOne.mockResolvedValue(mockHabit);
+       jest.spyOn(service, 'getHabitTodos').mockResolvedValue(mockTodosResult);
+
+      const result = await service.getHabitAnalytics(habitId);
+
+      expect(result).toEqual({
+        totalTodos: 4,
+        completedTodos: 2,
+        abandonedTodos: 1,
+        completionRate: 50,
+        currentStreak: 5,
+        longestStreak: 10,
+        recentTodos: expect.any(Array),
+      });
     });
   });
 
@@ -158,7 +233,7 @@ describe('HabitService', () => {
       ];
 
       const mockQueryBuilder = {
-        innerJoin: jest.fn().mockReturnThis(),
+        leftJoin: jest.fn().mockReturnThis(),
         where: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue(mockHabits),
       };
@@ -168,7 +243,7 @@ describe('HabitService', () => {
       const result = await service.findByGoalId(goalId);
 
       expect(mockHabitRepository.createQueryBuilder).toHaveBeenCalledWith('habit');
-      expect(mockQueryBuilder.innerJoin).toHaveBeenCalledWith('habit.goals', 'goal');
+      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('habit.goals', 'goal');
       expect(mockQueryBuilder.where).toHaveBeenCalledWith('goal.id = :goalId', { goalId });
       expect(result).toEqual(mockHabits);
     });

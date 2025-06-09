@@ -14,20 +14,13 @@ import {
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 import { Goal } from "../../goal/entities";
-import { TodoRepeat } from "../../todo/entities";
+import { Todo } from "../../todo/entities";
 
 export enum HabitStatus {
   ACTIVE = "active", // 活跃中
   PAUSED = "paused", // 暂停
   COMPLETED = "completed", // 已完成
   ABANDONED = "abandoned", // 已放弃
-}
-
-export enum HabitFrequency {
-  DAILY = "daily", // 每天
-  WEEKLY = "weekly", // 每周
-  MONTHLY = "monthly", // 每月
-  CUSTOM = "custom", // 自定义
 }
 
 export enum HabitDifficulty {
@@ -76,21 +69,6 @@ export class Habit extends BaseEntity {
   @IsString({ each: true })
   tags: string[];
 
-  /** 习惯频率 */
-  @Column({
-    type: "enum",
-    enum: HabitFrequency,
-    default: HabitFrequency.DAILY,
-  })
-  @IsEnum(HabitFrequency)
-  frequency: HabitFrequency = HabitFrequency.DAILY;
-
-  /** 习惯频率自定义值 (如"每2天") */
-  @Column({ nullable: true })
-  @IsString()
-  @IsOptional()
-  customFrequency?: string;
-
   /** 习惯难度 */
   @Column({
     type: "enum",
@@ -123,17 +101,6 @@ export class Habit extends BaseEntity {
   @Type(() => Number)
   longestStreak: number = 0;
 
-  /** 是否需要提醒 */
-  @Column({ default: false })
-  @IsBoolean()
-  needReminder: boolean = false;
-
-  /** 提醒时间 (HH:MM 格式) */
-  @Column({ nullable: true })
-  @IsString()
-  @IsOptional()
-  reminderTime?: string;
-
   /** 累计完成次数 */
   @Column({ default: 0 })
   @IsNumber()
@@ -149,12 +116,7 @@ export class Habit extends BaseEntity {
   })
   goals: Goal[];
 
-  /** 关联的重复待办任务 */
-  @OneToMany(() => TodoRepeat, (todoRepeat) => todoRepeat.habit, { cascade: true })
-  todoRepeats: TodoRepeat[];
-
-  /** 是否自动创建待办任务 */
-  @Column({ default: true })
-  @IsBoolean()
-  autoCreateTodo: boolean = true;
+  /** 关联的待办事项（习惯产生的具体待办任务） */
+  @OneToMany(() => Todo, (todo) => todo.habit, { cascade: true })
+  todos: Todo[];
 }

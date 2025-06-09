@@ -15,3 +15,7 @@ turbo run pre-commit --filter=life-toolkit-web
 turbo run pre-commit --filter=life-toolkit-web
 turbo run pre-commit --filter=life-toolkit-web
 turbo run pre-commit --filter=life-toolkit-web
+turbo run pre-commit --filter=life-toolkit-web
+turbo run pre-commit --filter=life-toolkit-web
+turbo run pre-commit --filter=life-toolkit-web
+turbo run pre-commit --filter=life-toolkit-web

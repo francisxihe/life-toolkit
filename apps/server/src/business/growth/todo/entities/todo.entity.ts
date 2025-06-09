@@ -18,6 +18,8 @@ export enum TodoSource {
   MANUAL = "manual",
   /** 重复创建 */
   REPEAT = "repeat",
+  /** 习惯创建 */
+  HABIT = "habit",
 }
 
 @Entity("todo")
@@ -113,6 +115,17 @@ export class Todo extends BaseEntity {
   @IsString()
   @IsOptional()
   originalRepeatId?: string;
+
+  /** 关联的习惯 */
+  @ManyToOne("Habit", "todos", { nullable: true })
+  @JoinColumn({ name: "habit_id" })
+  habit?: any;
+
+  /** 习惯ID */
+  @Column({ nullable: true })
+  @IsString()
+  @IsOptional()
+  habitId?: string;
 
   /** 来源 */
   @Column({ nullable: true, type: "enum", enum: TodoSource })

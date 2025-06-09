@@ -55,4 +55,25 @@ export default class HabitController {
   static async resumeHabit(id: string) {
     return put(`/habit/resume/${id}`);
   }
+
+  static async getHabitTodos(id: string) {
+    return get<{
+      activeTodos: any[];
+      completedTodos: any[];
+      abandonedTodos: any[];
+      totalCount: number;
+    }>(`/habit/todos/${id}`);
+  }
+
+  static async getHabitAnalytics(id: string) {
+    return get<{
+      totalTodos: number;
+      completedTodos: number;
+      abandonedTodos: number;
+      completionRate: number;
+      currentStreak: number;
+      longestStreak: number;
+      recentTodos: any[];
+    }>(`/habit/analytics/${id}`);
+  }
 } 
