@@ -1,0 +1,178 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+## Life Toolkit Server工厂模式代码生成规则
+
+### 📋 核心字段类型定义
+```typescript
+// 支持的字段类型
+type FieldType = "string" | "number" | "boolean" | "Date" | "enum" | "object" | "array"
+
+// 字段信息结构
+interface FieldInfo {
+  entityName: string;      // 实体名称（支持嵌套路径，如 user/profile）
+  fieldName: string;       // 字段名称
+  fieldType: FieldType;    // 字段类型
+  isNullable: boolean;     // 是否可空
+  description: string;     // 字段描述
+  enumValues?: string[];   // 枚举值（仅当类型为 enum 时）
+}
+```
+
+### 🏗️ 项目结构约定
+```
+apps/server/src/business/{module}/
+├── entities/{entity}.entity.ts     # TypeORM 实体文件
+├── dto/                           # 数据传输对象
+│   ├── {entity}.dto.ts           # 基础 DTO 类
+│   └── {entity}-filter.dto.ts    # 过滤器 DTO 类
+└── mapper/{entity}.mapper.ts      # 对象映射文件
+
+packages/vo/{module}/
+└── {entity}-model.vo.ts           # 值对象接口文件
+```
+
+### 🔧 Entity 文件更新规则
+
+#### TypeORM 装饰器映射
+```typescript
+const TYPE_DECORATORS: Record<FieldType, string> = {
+  string: "@Column('varchar')",
+  number: "@Column('int')",
+  boolean: "@Column('boolean')",
+  Date: '@Column("datetime")',
+  enum: '@Column({ type: "enum", enum: {EnumType} })',
+  object: '@Column("json")',
+  array: '@Column("simple-array")',
+}
+
+const VALIDATOR_DECORATORS: Record<FieldType, string> = {
+  string: "@IsString()",
+  number: "@IsNumber()",
+  boolean: "@IsBoolean()",
+  Date: "@IsDate()",
+  enum: "@IsEnum({EnumType})",
+  object: "@IsObject()",
+  array: "@IsArray()",
+}
+```
+
+#### Entity 字段生成模板
+```typescript
+// 字段定义模板
+/** {description} */
+{typeDecorator}
+{nullableDecorator}  // @IsOptional() 如果 isNullable 为 true
+{validatorDecorator}
+{fieldName}{nullableSymbol}: {fieldType};
+
+// 示例：
+/** 用户状态 */
+@Column({ type: "enum", enum: UserStatus })
+@IsEnum(UserStatus)
+status: UserStatus;
+```
+
+### 📝 DTO 文件更新规则
+
+#### DTO 类命名约定
+- `{Entity}Dto` - 基础数据传输对象
+- `Create{Entity}Dto` - 创建操作 DTO
+- `Update{Entity}Dto` - 更新操作 DTO
+- `{Entity}PageFilterDto` - 分页过滤器 DTO
+- `{Entity}ListFilterDto` - 列表过滤器 DTO
+
+#### DTO 字段生成模板
+```typescript
+/** {description} */
+{fieldName}{nullableSymbol}: {fieldType};
+```
+
+### 🎯 VO 接口更新规则
+
+#### VO 接口命名约定
+- `{Entity}Vo` - 基础值对象接口
+- `{Entity}ModelVo` - 模型值对象接口
+
+#### VO 字段生成模板
+```typescript
+/** {description} */
+{fieldName}{nullableSymbol}: {fieldType};
+```
+
+### 🔄 Mapper 文件更新规则
+
+#### Mapper 方法更新点
+1. **entityToModelDto 方法** - 实体转模型 DTO
+```typescript
+dto.{fieldName} = entity.{fieldName};
+```
+
+2. **dtoToItemVo 方法** - DTO 转值对象
+```typescript
+{fieldName}: dto.{fieldName},
+```
+
+### ⚡ 字段类型处理规则
+
+#### 可空字段处理
+- 如果 `isNullable` 为 `true`：
+  - TypeScript 类型添加 `?` 符号
+  - Entity 添加 `@IsOptional()` 装饰器
+  - TypeORM Column 添加 `{ nullable: true }` 选项
+
+#### 枚举类型处理
+- 当字段类型为 `enum` 时：
+  - 需要提供 `enumValues` 数组
+  - 生成对应的枚举类型定义
+  - 在装饰器中引用枚举类型
+
+#### 数组类型处理
+- 使用 TypeORM 的 `simple-array` 类型
+- TypeScript 类型为 `{baseType}[]`
+
+### 📍 文件插入位置规则
+
+#### Entity 文件
+- 在类的最后一个 `}` 之前插入新字段
+
+#### DTO 文件
+- 在每个 DTO 类的最后一个 `}` 之前插入新字段
+
+#### VO 接口
+- 在每个接口的最后一个 `}` 之前插入新字段
+
+#### Mapper 文件
+- 在 `entityToModelDto` 方法的 `return dto;` 之前插入映射代码
+- 在 `dtoToItemVo` 方法的 `return vo;` 之前插入映射代码
+
+### 🛡️ 错误处理规则
+
+1. **字段验证**
+   - 字段名称不能为空
+   - 字段描述不能为空
+   - 枚举类型必须提供枚举值
+2. **文件检查**
+   - 确保目标文件存在
+   - 备份重要文件（建议）
+
+3. **类型安全**
+   - 使用 TypeScript 严格类型检查
+   - 确保生成的代码符合项目规范
+
+### 🎨 代码风格规则
+
+1. **注释格式**
+   - 使用 JSDoc 风格的字段描述注释
+   - 格式：`/** {description} */`
+
+2. **缩进和格式**
+   - 使用 2 空格缩进
+   - 保持与现有代码风格一致
+
+3. **命名规范**
+   - 字段名使用 camelCase
+   - 类型名使用 PascalCase
+   - 枚举值使用 UPPER_CASE 或 camelCase
