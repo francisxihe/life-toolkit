@@ -48,7 +48,7 @@ export default defineConfig(({ mode }) => {
       devSourcemap: true,
     },
     server: {
-      port: Number(env.VITE_APP_PORT),
+      port: Number(env.VITE_APP_PORT) || 8080,
       proxy: {
         '/api': {
           target: 'http://localhost:3000',
