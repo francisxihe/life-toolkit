@@ -1,5 +1,5 @@
 import { Popover, Button } from '@arco-design/web-react';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import TaskForm from './TaskForm';
 import {
   TaskDetailProvider,

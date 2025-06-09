@@ -1,7 +1,7 @@
 'use client';
 
 import { GoalFilters } from './GoalFilters';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { GoalAllProvider } from './context';
 import GoalTable from './GoalTable';
 import { useGoalAllContext } from './context';

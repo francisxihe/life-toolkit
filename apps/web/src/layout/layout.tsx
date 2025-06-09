@@ -12,7 +12,7 @@ import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
 import { GlobalDrawer } from './Drawer';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 
 const { Fixed, Shrink } = FlexibleContainer;
 

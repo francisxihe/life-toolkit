@@ -92,4 +92,4 @@ export function ContainerShrink(
       {children}
     </div>
   );
-}
+} 

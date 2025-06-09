@@ -1,9 +1,9 @@
 'use client';
 
 import { Typography, Popover, Button } from '@arco-design/web-react';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import IconSelector from '../IconSelector';
-import SiteIcon from '@/components/SiteIcon';
+import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../service';
 import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
 import clsx from 'clsx';

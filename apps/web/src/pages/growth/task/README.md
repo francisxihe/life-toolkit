@@ -118,7 +118,7 @@ function MyComponent() {
 ## 📦 依赖关系
 
 ### 内部依赖
-- `@/components/Layout/FlexibleContainer`: 布局容器
+- `@life-toolkit/components-web-ui`: 布局容器
 - `@/components/Button/CreateButton`: 创建按钮
 - `@/components/SiteIcon`: 图标组件
 - `life-toolkit/vo/growth`: 任务相关类型定义

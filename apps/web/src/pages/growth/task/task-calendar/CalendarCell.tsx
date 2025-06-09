@@ -4,7 +4,7 @@ import { TaskVo, TaskStatus } from '@life-toolkit/vo/growth';
 import { useTaskDetail } from '../../components/TaskDetail';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';
-import SiteIcon from '@/components/SiteIcon';
+import { SiteIcon } from '@life-toolkit/components-web-ui';
 
 function TaskItem({ task }: { task: TaskVo }) {
   const { getTaskList } = useCalendarContext();

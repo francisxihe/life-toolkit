@@ -1,13 +1,13 @@
 import TaskList from '../../components/TaskList';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { Collapse, Divider, Button } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
 import { TaskStatus, TaskItemVo } from '@life-toolkit/vo/growth';
-import SiteIcon from '@/components/SiteIcon';
+import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useTaskDetail, TaskEditor } from '../../components';
 
 const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');

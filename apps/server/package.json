@@ -4,9 +4,9 @@
   "description": "Life Toolkit Server",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=production node dist/main.js",
     "build": "nest build",
     "dev": "cross-env NODE_ENV=development nest start --watch",
+    "dev:prod": "cross-env NODE_ENV=production nest start --watch",
     "debug": "cross-env NODE_ENV=development nest start --debug --watch",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",

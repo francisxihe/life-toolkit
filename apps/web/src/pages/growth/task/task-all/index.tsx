@@ -1,7 +1,7 @@
 'use client';
 
 import { TaskFilters } from './TaskFilters';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import { useTaskAllContext } from './context';

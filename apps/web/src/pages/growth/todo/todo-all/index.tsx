@@ -1,7 +1,7 @@
 'use client';
 
 import { TodoFilters } from './TodoFilters';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
 import { useTodoDetail } from '../../components';

@@ -1,7 +1,7 @@
 import { useTaskDetailContext } from './context';
 import TodoList from '../TodoList';
 import clsx from 'clsx';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useTodoDetail } from '../TodoDetail';
 

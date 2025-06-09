@@ -1,4 +1,4 @@
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { TodoVo } from '@life-toolkit/vo/growth';
 import { TodoDetailProvider, useTodoDetailContext } from '../context';
 import TodoEditorMain from './TodoEditorMain';

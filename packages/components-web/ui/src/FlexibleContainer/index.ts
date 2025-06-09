@@ -5,4 +5,4 @@ const FlexibleContainer = Object.assign(Container, {
   Shrink: ContainerShrink,
 });
 
-export default FlexibleContainer;
+export default FlexibleContainer; 

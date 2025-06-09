@@ -4,7 +4,6 @@
   "description": "Life ToolKit Web",
   "homepage": "https://francisxihe.github.io/life-toolkit",
   "scripts": {
-    "start": "vite",
     "dev": "vite --mode dev",
     "dev:prod": "vite --mode prod",
     "preview": "vite preview",
@@ -56,6 +55,7 @@
     "@life-toolkit/api": "workspace:*",
     "@life-toolkit/components-repeat": "workspace:*",
     "@life-toolkit/tabs": "workspace:*",
+    "@life-toolkit/components-web-ui": "workspace:*",
     "@svgr/webpack": "^5.5.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",

@@ -1,4 +1,4 @@
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import { GoalVo } from '@life-toolkit/vo/growth';
 import {
   GoalDetailProvider,

@@ -4,7 +4,7 @@ import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';
 import { useTodoDetail } from '../../components';
-import SiteIcon from '@/components/SiteIcon';
+import { SiteIcon } from '@life-toolkit/components-web-ui';
 
 function TodoItem({ todo }: { todo: TodoVo }) {
   const { getTodoList } = useCalendarContext();

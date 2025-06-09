@@ -1,4 +1,4 @@
-import SiteIcon from '@/components/SiteIcon';
+import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { Popover, Tooltip } from '@arco-design/web-react';
 
 export default function IconSelector(props: {

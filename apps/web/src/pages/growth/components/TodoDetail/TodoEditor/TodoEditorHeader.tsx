@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import FlexibleContainer from '@/components/Layout/FlexibleContainer';
+import { FlexibleContainer } from '@life-toolkit/components-web-ui';
 import DateTimeTool from '../DateTimeTool';
 import { useTodoDetailContext } from '../context';
 import IconSelector from '../../IconSelector';
