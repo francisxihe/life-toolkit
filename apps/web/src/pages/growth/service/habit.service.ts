@@ -1,5 +1,5 @@
 import { Message } from '@arco-design/web-react';
-import { HabitController, HabitLogController } from '@life-toolkit/api/controller/habit';
+import { HabitController } from '@life-toolkit/api/controller/habit';
 import type {
   CreateHabitVo,
   UpdateHabitVo,
@@ -8,7 +8,10 @@ import type {
 } from '@life-toolkit/vo/growth/habit';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 import { HabitFilter, HabitPageFilter } from './habit.types';
-import { mapHabitFilterToParams, mapHabitPageFilterToParams } from './habit.mapping';
+import {
+  mapHabitFilterToParams,
+  mapHabitPageFilterToParams,
+} from './habit.mapping';
 
 export default class HabitService {
   static async createHabit(params: CreateHabitVo) {
@@ -116,67 +119,4 @@ export default class HabitService {
       Message.error(error.message);
     }
   }
-
-  // 习惯日志相关方法
-  static async createHabitLog(params: CreateHabitLogVo) {
-    try {
-      const res = await HabitLogController.createHabitLog(params);
-      Message.success('记录习惯成功');
-      return res;
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async updateHabitLog(id: string, params: UpdateHabitLogVo) {
-    try {
-      const res = await HabitLogController.updateHabitLog(id, params);
-      Message.success('更新记录成功');
-      return res;
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async getHabitLogDetail(id: string) {
-    try {
-      return await HabitLogController.getHabitLogDetail(id);
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async getHabitLogList(habitId: string) {
-    try {
-      return await HabitLogController.getHabitLogList(habitId);
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async deleteHabitLog(id: string) {
-    try {
-      const res = await HabitLogController.deleteHabitLog(id);
-      Message.success('删除记录成功');
-      return res;
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async getHabitLogByDate(habitId: string, date: string) {
-    try {
-      return await HabitLogController.getHabitLogByDate(habitId, date);
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async getHabitLogsByDateRange(habitId: string, startDate: string, endDate: string) {
-    try {
-      return await HabitLogController.getHabitLogsByDateRange(habitId, startDate, endDate);
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-} 
+}

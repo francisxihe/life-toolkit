@@ -43,6 +43,7 @@ export default class GoalController {
   }
 
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
-    return await get<GoalPageVo>("/goal/page", params);
+    const res = await get<GoalPageVo>("/goal/page", params);
+    return res;
   }
 }

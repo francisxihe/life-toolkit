@@ -1,0 +1,727 @@
+---
+description: 生成开发文档时
+globs: 
+alwaysApply: false
+---
+# Life Toolkit AI友好型技术开发文档规范
+
+## 📋 适用场景
+当需要编写面向AI的技术开发文档时，遵循此规范确保文档结构化、可解析、可执行。AI友好型开发文档专注于提供明确的技术实现指导、可执行的代码生成指令和标准化的开发流程。
+
+## 🎯 开发文档核心职责
+- **技术架构**: 系统设计、模块划分、技术选型
+- **数据设计**: 实体模型、数据库设计、API契约
+- **代码生成**: AI执行指令、代码模板、生成规范
+- **开发流程**: 环境搭建、编码规范、部署流程
+
+## 🤖 AI友好型设计原则
+
+### 核心原则
+1. **结构化数据**: 使用标准化的技术规范格式
+2. **可执行指令**: 提供AI可直接执行的开发任务
+3. **代码模板**: 标准化的代码生成模板
+4. **技术约束**: 明确的技术栈和架构约束
+5. **自动化优先**: 支持自动化生成和验证
+
+### 文档质量标准
+- **准确性**: 文档必须反映代码/系统的实际状态
+- **可解析性**: 使用机器可读的格式和标准
+- **可执行性**: 提供可直接执行的指令和脚本
+- **可维护性**: 支持版本控制和自动化更新
+- **一致性**: 遵循统一的命名和格式规范
+
+## 🏗️ 核心文档结构
+
+### 一、文档元信息 (必填)
+```yaml
+# 使用YAML格式提供结构化元数据
+document_meta:
+  title: "技术开发文档"
+  version: "v1.0.0"
+  status: "draft|review|approved|deprecated"
+  created_date: "2024-01-01"
+  last_updated: "2024-01-01"
+  owner: "开发团队负责人"
+  reviewers: ["reviewer1", "reviewer2"]
+  target_audience: ["backend_developer", "frontend_developer", "devops"]
+  related_documents: ["PRD文档路径", "API文档路径"]
+  
+# 技术栈信息
+tech_stack:
+  backend:
+    framework: "NestJS"
+    language: "TypeScript"
+    database: "MySQL/SQLite"
+    orm: "TypeORM"
+    auth: "JWT + bcrypt"
+  frontend:
+    framework: "React 18"
+    language: "TypeScript"
+    build_tool: "Vite"
+    ui_library: ["Arco Design", "Ant Design"]
+    state_management: "Redux + Nanostores"
+  shared:
+    package_manager: "pnpm"
+    monorepo_tool: "Turbo"
+    code_quality: ["ESLint", "Prettier", "Husky"]
+```
+
+### 二、系统架构设计 (必填)
+```typescript
+// 使用TypeScript接口定义系统架构
+interface SystemArchitecture {
+  // 系统概览
+  overview: {
+    purpose: string;           // 系统目标
+    scope: string[];          // 功能范围
+    constraints: string[];    // 技术约束
+    principles: string[];     // 设计原则
+  };
+  
+  // 架构层次
+  layers: {
+    presentation: {           // 表现层
+      components: string[];
+      responsibilities: string[];
+      technologies: string[];
+    };
+    business: {              // 业务层
+      modules: string[];
+      services: string[];
+      patterns: string[];
+    };
+    data: {                  // 数据层
+      entities: string[];
+      repositories: string[];
+      storage: string[];
+    };
+  };
+  
+  // 模块依赖关系
+  dependencies: {
+    [moduleName: string]: {
+      depends_on: string[];
+      used_by: string[];
+      interfaces: string[];
+    };
+  };
+}
+```
+
+**架构图规范**:
+```mermaid
+# 使用Mermaid格式定义架构图
+graph TB
+    subgraph "前端应用层"
+        A[Web App - React]
+        B[PC App - Electron]
+    end
+    
+    subgraph "共享包层"
+        C[VO包]
+        D[API包]
+        E[组件包]
+        F[工具包]
+    end
+    
+    subgraph "后端服务层"
+        G[NestJS Server]
+        H[业务模块]
+        I[认证模块]
+        J[AI模块]
+    end
+    
+    subgraph "数据存储层"
+        K[MySQL/SQLite]
+    end
+    
+    A --> C
+    A --> D
+    B --> C
+    B --> D
+    G --> H
+    G --> I
+    G --> J
+    H --> K
+```
+
+### 三、模块设计规范 (必填)
+```typescript
+// 标准业务模块结构定义
+interface ModuleStructure {
+  module_name: string;
+  path: string;
+  
+  // 文件结构
+  files: {
+    entity: string;           // 实体文件路径
+    dto: string[];           // DTO文件路径
+    vo: string;              // VO文件路径
+    controller: string;      // 控制器文件路径
+    service: string;         // 服务文件路径
+    mapper: string;          // 映射器文件路径
+    module: string;          // 模块定义文件路径
+  };
+  
+  // 接口定义
+  interfaces: {
+    crud_operations: CrudOperation[];
+    custom_operations: CustomOperation[];
+    events: EventDefinition[];
+  };
+  
+  // 依赖关系
+  dependencies: {
+    internal: string[];      // 内部模块依赖
+    external: string[];      // 外部包依赖
+    database: string[];      // 数据库依赖
+  };
+}
+
+// CRUD操作标准定义
+interface CrudOperation {
+  operation: "create" | "read" | "update" | "delete" | "list";
+  endpoint: string;
+  method: "GET" | "POST" | "PUT" | "DELETE";
+  request_dto?: string;
+  response_vo: string;
+  permissions: string[];
+  validation_rules: ValidationRule[];
+}
+```
+
+### 四、数据库设计 (必填)
+```typescript
+// 数据库设计规范
+interface DatabaseDesign {
+  // 实体定义
+  entities: {
+    [entityName: string]: {
+      table_name: string;
+      fields: FieldDefinition[];
+      indexes: IndexDefinition[];
+      relationships: RelationshipDefinition[];
+      constraints: ConstraintDefinition[];
+    };
+  };
+  
+  // 数据字典
+  data_dictionary: {
+    [fieldName: string]: {
+      type: string;
+      length?: number;
+      nullable: boolean;
+      default_value?: any;
+      description: string;
+      example: any;
+      validation: ValidationRule[];
+    };
+  };
+}
+
+// 字段定义标准
+interface FieldDefinition {
+  name: string;
+  type: "varchar" | "int" | "bigint" | "decimal" | "datetime" | "boolean" | "text";
+  length?: number;
+  nullable: boolean;
+  default?: any;
+  comment: string;
+  decorators: string[];        // TypeORM装饰器
+}
+```
+
+### 五、数据模型设计 (必填 - 从PRD迁移)
+```typescript
+// 使用TypeScript接口定义数据结构
+interface DataModel {
+  // 核心实体定义
+  entities: {
+    [entityName: string]: {
+      fields: FieldDefinition[];
+      relationships: Relationship[];
+      constraints: Constraint[];
+      business_rules: BusinessRule[];
+    }
+  };
+  
+  // DTO定义
+  dtos: {
+    create: DTODefinition;
+    update: DTODefinition;
+    query: DTODefinition;
+  };
+  
+  // VO定义
+  vos: {
+    detail: VODefinition;
+    list: VODefinition;
+    summary: VODefinition;
+  };
+  
+  // 业务规则定义
+  businessRules: {
+    validation: ValidationRule[];
+    calculation: CalculationRule[];
+    workflow: WorkflowRule[];
+    state_transitions: StateTransition[];
+  };
+}
+
+// 验证规则定义
+interface ValidationRule {
+  field: string;
+  rules: {
+    required?: boolean;
+    minLength?: number;
+    maxLength?: number;
+    pattern?: string;
+    custom?: string;
+  };
+  error_message: string;
+}
+
+// 状态转换规则
+interface StateTransition {
+  from_state: string;
+  to_state: string;
+  conditions: string[];
+  actions: string[];
+}
+```
+
+### 六、API设计规范 (必填)
+```typescript
+// API设计标准
+interface ApiDesign {
+  // 基础信息
+  base_info: {
+    base_url: string;
+    version: string;
+    authentication: "JWT" | "Basic" | "OAuth2";
+    content_type: "application/json";
+  };
+  
+  // 端点定义
+  endpoints: {
+    [path: string]: {
+      method: HttpMethod;
+      summary: string;
+      description: string;
+      parameters: ParameterDefinition[];
+      request_body?: RequestBodyDefinition;
+      responses: ResponseDefinition[];
+      security: SecurityRequirement[];
+      tags: string[];
+    };
+  };
+  
+  // 数据模型
+  schemas: {
+    [schemaName: string]: {
+      type: "object" | "array" | "string" | "number" | "boolean";
+      properties?: { [key: string]: PropertyDefinition };
+      required?: string[];
+      example: any;
+    };
+  };
+}
+
+// HTTP方法枚举
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+// 响应定义
+interface ResponseDefinition {
+  status_code: number;
+  description: string;
+  schema: string;
+  headers?: { [key: string]: string };
+  example: any;
+}
+```
+
+### 七、前端组件设计 (必填)
+```typescript
+// 前端组件设计规范
+interface ComponentDesign {
+  // 页面组件
+  pages: {
+    [pageName: string]: {
+      path: string;
+      component_name: string;
+      props: PropDefinition[];
+      state: StateDefinition[];
+      hooks: HookDefinition[];
+      child_components: string[];
+      api_calls: string[];
+    };
+  };
+  
+  // 通用组件
+  components: {
+    [componentName: string]: {
+      type: "functional" | "class";
+      props: PropDefinition[];
+      events: EventDefinition[];
+      slots?: SlotDefinition[];
+      dependencies: string[];
+    };
+  };
+  
+  // 状态管理
+  state_management: {
+    stores: StoreDefinition[];
+    actions: ActionDefinition[];
+    selectors: SelectorDefinition[];
+  };
+}
+
+// 组件属性定义
+interface PropDefinition {
+  name: string;
+  type: string;
+  required: boolean;
+  default?: any;
+  description: string;
+  validation?: ValidationRule[];
+}
+```
+
+### 八、AI执行指令 (必填 - AI友好型核心)
+```yaml
+# AI代码生成指令
+ai_instructions:
+  # 生成任务模板
+  generation_tasks:
+    backend:
+      - task: "生成Entity实体类"
+        template: "entity_template"
+        output_path: "apps/server/src/business/{module}/entities/{entity}.entity.ts"
+        dependencies: ["TypeORM", "class-validator"]
+        
+      - task: "生成DTO传输对象"
+        template: "dto_template"
+        output_path: "apps/server/src/business/{module}/dto/"
+        dependencies: ["class-validator", "class-transformer"]
+        
+      - task: "生成Controller控制器"
+        template: "controller_template"
+        output_path: "apps/server/src/business/{module}/{entity}.controller.ts"
+        dependencies: ["@nestjs/common", "swagger"]
+        
+      - task: "生成Service服务类"
+        template: "service_template"
+        output_path: "apps/server/src/business/{module}/{entity}.service.ts"
+        dependencies: ["TypeORM", "Repository"]
+        
+    frontend:
+      - task: "生成页面组件"
+        template: "page_template"
+        output_path: "apps/web/src/pages/{module}/{entity}/"
+        dependencies: ["React", "Arco Design"]
+        
+      - task: "生成API接口"
+        template: "api_template"
+        output_path: "packages/api/src/controller/{module}/{entity}.api.ts"
+        dependencies: ["axios"]
+        
+    shared:
+      - task: "生成VO值对象"
+        template: "vo_template"
+        output_path: "packages/vo/src/{module}/{entity}.vo.ts"
+        dependencies: []
+
+  # 代码模板引用
+  templates:
+    entity_template: "code-specification/entity-specification"
+    dto_template: "code-specification/dto-specification"
+    controller_template: "code-specification/controller-specification"
+    service_template: "code-specification/service-specification"
+    vo_template: "code-specification/vo-specification"
+    page_template: "code-specification/frontend-specification"
+    api_template: "code-specification/api-specification"
+
+  # 执行上下文
+  execution_context:
+    project_structure: "Life Toolkit Monorepo"
+    architecture_pattern: "分层架构 + 模块化"
+    naming_convention: "camelCase + PascalCase"
+    code_standards: ["ESLint", "Prettier", "TypeScript strict"]
+    
+  # 验证规则
+  validation_rules:
+    - "遵循Life Toolkit项目架构规范"
+    - "使用统一的命名约定(camelCase + PascalCase)"
+    - "实现完整的CRUD操作"
+    - "添加适当的错误处理和参数验证"
+    - "包含用户权限验证"
+    - "使用TypeORM装饰器定义实体关系"
+    - "前端使用Arco Design组件库"
+    - "实现响应式布局设计"
+    
+  # 文件路径约定
+  file_paths:
+    backend:
+      entity: "apps/server/src/business/{module}/entities/{entity}.entity.ts"
+      dto: "apps/server/src/business/{module}/dto/"
+      controller: "apps/server/src/business/{module}/{entity}.controller.ts"
+      service: "apps/server/src/business/{module}/{entity}.service.ts"
+      mapper: "apps/server/src/business/{module}/mappers/{entity}.mapper.ts"
+      module: "apps/server/src/business/{module}/{entity}.module.ts"
+    frontend:
+      page: "apps/web/src/pages/{module}/{entity}/"
+      component: "apps/web/src/components/{module}/"
+    shared:
+      vo: "packages/vo/src/{module}/{entity}.vo.ts"
+      api: "packages/api/src/controller/{module}/{entity}.api.ts"
+```
+
+### 九、开发流程规范 (必填)
+```yaml
+# 开发流程定义
+development_workflow:
+  # 环境搭建
+  environment_setup:
+    prerequisites:
+      - "Node.js >= 18.0.0"
+      - "pnpm >= 8.0.0"
+      - "MySQL >= 8.0 (生产环境)"
+      - "Git >= 2.30.0"
+    
+    setup_steps:
+      - command: "git clone <repository_url>"
+        description: "克隆项目仓库"
+      - command: "pnpm install"
+        description: "安装依赖包"
+      - command: "cp .env.example .env"
+        description: "配置环境变量"
+      - command: "pnpm dev"
+        description: "启动开发服务器"
+    
+    verification:
+      - check: "http://localhost:3000 可访问"
+        description: "前端服务正常启动"
+      - check: "http://localhost:3001/api/health 返回200"
+        description: "后端服务正常启动"
+
+  # 代码规范
+  coding_standards:
+    naming_conventions:
+      files: "kebab-case (user-profile.component.ts)"
+      classes: "PascalCase (UserProfileComponent)"
+      methods: "camelCase (getUserProfile)"
+      constants: "UPPER_SNAKE_CASE (API_BASE_URL)"
+      
+    file_structure:
+      backend: "apps/server/src/business/{module}/"
+      frontend: "apps/web/src/pages/{module}/"
+      shared: "packages/{package_name}/src/"
+      
+    import_order:
+      - "Node.js内置模块"
+      - "第三方库"
+      - "项目内部模块"
+      - "相对路径导入"
+
+  # Git工作流
+  git_workflow:
+    branch_strategy: "Feature Branch + Main"
+    branch_naming: "feature/{module}-{description}"
+    commit_format: "Conventional Commits"
+    pr_template: |
+      ## 变更描述
+      - [ ] 新功能
+      - [ ] Bug修复
+      - [ ] 文档更新
+      - [ ] 重构
+      
+      ## 测试清单
+      - [ ] 单元测试通过
+      - [ ] 集成测试通过
+      - [ ] 手动测试完成
+```
+
+### 十、性能和质量要求 (必填)
+```yaml
+# 性能要求
+performance_requirements:
+  backend:
+    response_time: "< 500ms (95%)"
+    throughput: "> 1000 req/s"
+    memory_usage: "< 512MB"
+    cpu_usage: "< 80%"
+    
+  frontend:
+    page_load: "< 2s (首次)"
+    interaction: "< 100ms"
+    bundle_size: "< 1MB (gzipped)"
+    lighthouse_score: "> 90"
+    
+  database:
+    query_time: "< 100ms (95%)"
+    connection_pool: "10-50 connections"
+    index_coverage: "> 95%"
+
+# 质量要求
+quality_requirements:
+  code_coverage: "> 80%"
+  type_coverage: "> 95%"
+  linting_errors: "0"
+  security_vulnerabilities: "0 (high/critical)"
+  
+# 兼容性要求
+compatibility_requirements:
+  browsers:
+    - "Chrome >= 90"
+    - "Firefox >= 88"
+    - "Safari >= 14"
+    - "Edge >= 90"
+  devices:
+    - "Desktop: 1280x720+"
+    - "Tablet: 768x1024+"
+    - "Mobile: 375x667+"
+  node_versions:
+    - "Node.js >= 18.0.0"
+    - "npm >= 8.0.0"
+    - "pnpm >= 8.0.0"
+```
+
+## 🔧 AI友好型示例模板
+
+```markdown
+# 待办事项管理模块 - 技术开发文档
+
+## 数据模型设计
+```typescript
+// Entity实体定义
+interface TodoEntity {
+  id: number;                    // 主键, 自增
+  title: string;                 // 标题, 必填, 1-100字符
+  description?: string;          // 描述, 可选, 最多500字符
+  priority: 'low' | 'medium' | 'high';  // 优先级, 默认medium
+  status: 'pending' | 'completed' | 'cancelled';  // 状态, 默认pending
+  dueDate?: Date;               // 截止时间, 可选
+  createdAt: Date;              // 创建时间, 自动生成
+  updatedAt: Date;              // 更新时间, 自动更新
+  completedAt?: Date;           // 完成时间, 完成时自动设置
+  userId: number;               // 用户ID, 外键关联
+}
+
+// DTO传输对象定义
+interface CreateTodoDto {
+  title: string;                 // 必填, 1-100字符
+  description?: string;          // 可选, 最多500字符
+  priority?: 'low' | 'medium' | 'high';  // 可选, 默认medium
+  dueDate?: string;             // 可选, ISO日期格式
+}
+
+interface UpdateTodoDto {
+  title?: string;               // 可选, 1-100字符
+  description?: string;         // 可选, 最多500字符
+  priority?: 'low' | 'medium' | 'high';  // 可选
+  dueDate?: string;            // 可选, ISO日期格式
+  status?: 'pending' | 'completed' | 'cancelled';  // 可选
+}
+
+// VO值对象定义
+interface TodoVo {
+  id: number;
+  title: string;
+  description?: string;
+  priority: string;
+  status: string;
+  dueDate?: string;            // ISO日期格式
+  createdAt: string;           // ISO日期格式
+  updatedAt: string;           // ISO日期格式
+  completedAt?: string;        // ISO日期格式
+  isOverdue: boolean;          // 计算字段: 是否过期
+  remainingDays?: number;      // 计算字段: 剩余天数
+}
+```
+
+## 业务规则实现
+```typescript
+// 验证规则
+const ValidationRules = {
+  title: {
+    required: true,
+    minLength: 1,
+    maxLength: 100,
+    pattern: /^[^<>]*$/  // 不允许HTML标签
+  },
+  description: {
+    maxLength: 500
+  },
+  dueDate: {
+    format: 'ISO_DATE',
+    futureOnly: false  // 允许设置过去的日期
+  }
+};
+
+// 状态转换规则
+const StatusTransitions = {
+  pending: ['completed', 'cancelled'],
+  completed: ['pending'],  // 允许重新激活
+  cancelled: ['pending']   // 允许重新激活
+};
+
+// 计算规则
+const CalculationRules = {
+  isOverdue: (dueDate: Date, status: string) => 
+    status === 'pending' && dueDate < new Date(),
+  remainingDays: (dueDate: Date) => 
+    Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+};
+```
+
+## AI生成任务清单
+- [ ] 创建Entity实体类: `TodoEntity`
+- [ ] 创建DTO传输对象: `CreateTodoDto`, `UpdateTodoDto`
+- [ ] 创建VO值对象: `TodoVo`
+- [ ] 创建Controller控制器: `TodoController`
+- [ ] 创建Service服务类: `TodoService`
+- [ ] 创建Mapper映射器: `TodoMapper`
+- [ ] 创建前端页面组件: `TodoPage`
+- [ ] 创建API接口定义: `TodoApi`
+
+## AI执行上下文
+**当前模块**: growth/todo
+**相关实体**: [TodoEntity, UserEntity]
+**技术栈**: [NestJS, TypeORM, React, Arco Design]
+**代码规范**: [参考 entity-specification, dto-specification, controller-specification 等规则]
+```
+
+## 🎯 AI友好型与传统开发文档的区别
+
+### AI友好型开发文档特点
+- **结构化优先**: 使用机器可解析的格式定义技术规范
+- **可执行指令**: 提供AI可直接执行的代码生成任务
+- **模板驱动**: 标准化的代码模板和生成规范
+- **约束明确**: 每个技术组件都有明确的类型和实现约束
+- **自动化支持**: 支持自动化生成、验证和部署
+
+### 与PRD的协作边界
+- **PRD提供**: 业务需求、用户场景、功能定义、验收标准
+- **开发文档实现**: 技术架构、数据模型、API设计、代码生成
+- **协作流程**: PRD → 开发文档 → 代码实现 → 测试验证
+- **反馈机制**: 技术约束反馈给PRD，业务变更更新开发文档
+
+## 🔧 AI友好型质量检查
+
+### 技术规范检查
+- [ ] 是否使用了TypeScript接口定义所有数据结构
+- [ ] 数据模型是否完整定义了类型、约束和关系
+- [ ] API设计是否遵循RESTful规范
+- [ ] 代码生成指令是否明确和可执行
+
+### AI可执行性检查
+- [ ] 是否提供了完整的生成任务清单
+- [ ] 文件路径约定是否清晰和一致
+- [ ] 技术栈和依赖关系是否明确定义
+- [ ] 代码规范引用是否正确和完整
+
+### 完整性检查
+- [ ] 输入输出规范是否明确定义
+- [ ] 错误处理场景是否完整覆盖
+- [ ] 状态转换规则是否清晰定义
+- [ ] 权限控制规则是否技术实现明确
