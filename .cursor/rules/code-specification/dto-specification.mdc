@@ -1,5 +1,5 @@
 ---
-description: 需要增删改查DTO中代码时
+description: 编写server DTO代码时
 globs: 
 alwaysApply: false
 ---

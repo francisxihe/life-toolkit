@@ -1,5 +1,5 @@
 ---
-description: 生成开发文档时
+description: 编写开发文档时
 globs: 
 alwaysApply: false
 ---
@@ -10,7 +10,6 @@ alwaysApply: false
 
 ## 🎯 开发文档核心职责
 - **技术架构**: 系统设计、模块划分、技术选型
-- **数据设计**: 实体模型、数据库设计、API契约
 - **代码生成**: AI执行指令、代码模板、生成规范
 - **开发流程**: 环境搭建、编码规范、部署流程
 
@@ -27,7 +26,6 @@ alwaysApply: false
 - **准确性**: 文档必须反映代码/系统的实际状态
 - **可解析性**: 使用机器可读的格式和标准
 - **可执行性**: 提供可直接执行的指令和脚本
-- **可维护性**: 支持版本控制和自动化更新
 - **一致性**: 遵循统一的命名和格式规范
 
 ## 🏗️ 核心文档结构
@@ -38,13 +36,11 @@ alwaysApply: false
 document_meta:
   title: "技术开发文档"
   version: "v1.0.0"
-  status: "draft|review|approved|deprecated"
+  status: "draft|review|approved"
   created_date: "2024-01-01"
   last_updated: "2024-01-01"
-  owner: "开发团队负责人"
-  reviewers: ["reviewer1", "reviewer2"]
-  target_audience: ["backend_developer", "frontend_developer", "devops"]
-  related_documents: ["PRD文档路径", "API文档路径"]
+  owner: "开发者"
+  target_audience: ["backend_developer", "frontend_developer"]
   
 # 技术栈信息
 tech_stack:
@@ -63,7 +59,7 @@ tech_stack:
   shared:
     package_manager: "pnpm"
     monorepo_tool: "Turbo"
-    code_quality: ["ESLint", "Prettier", "Husky"]
+    code_quality: ["ESLint", "Prettier"]
 ```
 
 ### 二、系统架构设计 (必填)
@@ -167,7 +163,6 @@ interface ModuleStructure {
   interfaces: {
     crud_operations: CrudOperation[];
     custom_operations: CustomOperation[];
-    events: EventDefinition[];
   };
   
   // 依赖关系
@@ -201,20 +196,6 @@ interface DatabaseDesign {
       fields: FieldDefinition[];
       indexes: IndexDefinition[];
       relationships: RelationshipDefinition[];
-      constraints: ConstraintDefinition[];
-    };
-  };
-  
-  // 数据字典
-  data_dictionary: {
-    [fieldName: string]: {
-      type: string;
-      length?: number;
-      nullable: boolean;
-      default_value?: any;
-      description: string;
-      example: any;
-      validation: ValidationRule[];
     };
   };
 }
@@ -231,66 +212,7 @@ interface FieldDefinition {
 }
 ```
 
-### 五、数据模型设计 (必填 - 从PRD迁移)
-```typescript
-// 使用TypeScript接口定义数据结构
-interface DataModel {
-  // 核心实体定义
-  entities: {
-    [entityName: string]: {
-      fields: FieldDefinition[];
-      relationships: Relationship[];
-      constraints: Constraint[];
-      business_rules: BusinessRule[];
-    }
-  };
-  
-  // DTO定义
-  dtos: {
-    create: DTODefinition;
-    update: DTODefinition;
-    query: DTODefinition;
-  };
-  
-  // VO定义
-  vos: {
-    detail: VODefinition;
-    list: VODefinition;
-    summary: VODefinition;
-  };
-  
-  // 业务规则定义
-  businessRules: {
-    validation: ValidationRule[];
-    calculation: CalculationRule[];
-    workflow: WorkflowRule[];
-    state_transitions: StateTransition[];
-  };
-}
-
-// 验证规则定义
-interface ValidationRule {
-  field: string;
-  rules: {
-    required?: boolean;
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    custom?: string;
-  };
-  error_message: string;
-}
-
-// 状态转换规则
-interface StateTransition {
-  from_state: string;
-  to_state: string;
-  conditions: string[];
-  actions: string[];
-}
-```
-
-### 六、API设计规范 (必填)
+### 五、API设计规范 (必填)
 ```typescript
 // API设计标准
 interface ApiDesign {
@@ -340,7 +262,7 @@ interface ResponseDefinition {
 }
 ```
 
-### 七、前端组件设计 (必填)
+### 六、前端组件设计 (必填)
 ```typescript
 // 前端组件设计规范
 interface ComponentDesign {
@@ -363,7 +285,6 @@ interface ComponentDesign {
       type: "functional" | "class";
       props: PropDefinition[];
       events: EventDefinition[];
-      slots?: SlotDefinition[];
       dependencies: string[];
     };
   };
@@ -387,7 +308,7 @@ interface PropDefinition {
 }
 ```
 
-### 八、AI执行指令 (必填 - AI友好型核心)
+### 七、AI执行指令 (必填 - AI友好型核心)
 ```yaml
 # AI代码生成指令
 ai_instructions:
@@ -453,11 +374,11 @@ ai_instructions:
     - "遵循Life Toolkit项目架构规范"
     - "使用统一的命名约定(camelCase + PascalCase)"
     - "实现完整的CRUD操作"
-    - "添加适当的错误处理和参数验证"
+    - "添加基本的错误处理和参数验证"
     - "包含用户权限验证"
     - "使用TypeORM装饰器定义实体关系"
     - "前端使用Arco Design组件库"
-    - "实现响应式布局设计"
+    - "实现基本的响应式布局"
     
   # 文件路径约定
   file_paths:
@@ -476,7 +397,7 @@ ai_instructions:
       api: "packages/api/src/controller/{module}/{entity}.api.ts"
 ```
 
-### 九、开发流程规范 (必填)
+### 八、开发流程规范 (必填)
 ```yaml
 # 开发流程定义
 development_workflow:
@@ -485,7 +406,7 @@ development_workflow:
     prerequisites:
       - "Node.js >= 18.0.0"
       - "pnpm >= 8.0.0"
-      - "MySQL >= 8.0 (生产环境)"
+      - "MySQL >= 8.0 (生产环境) 或 SQLite (开发环境)"
       - "Git >= 2.30.0"
     
     setup_steps:
@@ -528,46 +449,27 @@ development_workflow:
     branch_strategy: "Feature Branch + Main"
     branch_naming: "feature/{module}-{description}"
     commit_format: "Conventional Commits"
-    pr_template: |
-      ## 变更描述
-      - [ ] 新功能
-      - [ ] Bug修复
-      - [ ] 文档更新
-      - [ ] 重构
-      
-      ## 测试清单
-      - [ ] 单元测试通过
-      - [ ] 集成测试通过
-      - [ ] 手动测试完成
 ```
 
-### 十、性能和质量要求 (必填)
+### 九、性能和质量要求
 ```yaml
 # 性能要求
 performance_requirements:
   backend:
-    response_time: "< 500ms (95%)"
-    throughput: "> 1000 req/s"
-    memory_usage: "< 512MB"
-    cpu_usage: "< 80%"
+    response_time: "< 2s (一般情况)"
+    memory_usage: "< 1GB"
     
   frontend:
-    page_load: "< 2s (首次)"
-    interaction: "< 100ms"
-    bundle_size: "< 1MB (gzipped)"
-    lighthouse_score: "> 90"
+    page_load: "< 5s (首次)"
+    interaction: "< 500ms"
     
   database:
-    query_time: "< 100ms (95%)"
-    connection_pool: "10-50 connections"
-    index_coverage: "> 95%"
+    query_time: "< 1s (一般情况)"
 
 # 质量要求
 quality_requirements:
-  code_coverage: "> 80%"
-  type_coverage: "> 95%"
   linting_errors: "0"
-  security_vulnerabilities: "0 (high/critical)"
+  basic_functionality: "正常工作"
   
 # 兼容性要求
 compatibility_requirements:
@@ -575,153 +477,8 @@ compatibility_requirements:
     - "Chrome >= 90"
     - "Firefox >= 88"
     - "Safari >= 14"
-    - "Edge >= 90"
-  devices:
-    - "Desktop: 1280x720+"
-    - "Tablet: 768x1024+"
-    - "Mobile: 375x667+"
   node_versions:
     - "Node.js >= 18.0.0"
-    - "npm >= 8.0.0"
     - "pnpm >= 8.0.0"
 ```
 
-## 🔧 AI友好型示例模板
-
-```markdown
-# 待办事项管理模块 - 技术开发文档
-
-## 数据模型设计
-```typescript
-// Entity实体定义
-interface TodoEntity {
-  id: number;                    // 主键, 自增
-  title: string;                 // 标题, 必填, 1-100字符
-  description?: string;          // 描述, 可选, 最多500字符
-  priority: 'low' | 'medium' | 'high';  // 优先级, 默认medium
-  status: 'pending' | 'completed' | 'cancelled';  // 状态, 默认pending
-  dueDate?: Date;               // 截止时间, 可选
-  createdAt: Date;              // 创建时间, 自动生成
-  updatedAt: Date;              // 更新时间, 自动更新
-  completedAt?: Date;           // 完成时间, 完成时自动设置
-  userId: number;               // 用户ID, 外键关联
-}
-
-// DTO传输对象定义
-interface CreateTodoDto {
-  title: string;                 // 必填, 1-100字符
-  description?: string;          // 可选, 最多500字符
-  priority?: 'low' | 'medium' | 'high';  // 可选, 默认medium
-  dueDate?: string;             // 可选, ISO日期格式
-}
-
-interface UpdateTodoDto {
-  title?: string;               // 可选, 1-100字符
-  description?: string;         // 可选, 最多500字符
-  priority?: 'low' | 'medium' | 'high';  // 可选
-  dueDate?: string;            // 可选, ISO日期格式
-  status?: 'pending' | 'completed' | 'cancelled';  // 可选
-}
-
-// VO值对象定义
-interface TodoVo {
-  id: number;
-  title: string;
-  description?: string;
-  priority: string;
-  status: string;
-  dueDate?: string;            // ISO日期格式
-  createdAt: string;           // ISO日期格式
-  updatedAt: string;           // ISO日期格式
-  completedAt?: string;        // ISO日期格式
-  isOverdue: boolean;          // 计算字段: 是否过期
-  remainingDays?: number;      // 计算字段: 剩余天数
-}
-```
-
-## 业务规则实现
-```typescript
-// 验证规则
-const ValidationRules = {
-  title: {
-    required: true,
-    minLength: 1,
-    maxLength: 100,
-    pattern: /^[^<>]*$/  // 不允许HTML标签
-  },
-  description: {
-    maxLength: 500
-  },
-  dueDate: {
-    format: 'ISO_DATE',
-    futureOnly: false  // 允许设置过去的日期
-  }
-};
-
-// 状态转换规则
-const StatusTransitions = {
-  pending: ['completed', 'cancelled'],
-  completed: ['pending'],  // 允许重新激活
-  cancelled: ['pending']   // 允许重新激活
-};
-
-// 计算规则
-const CalculationRules = {
-  isOverdue: (dueDate: Date, status: string) => 
-    status === 'pending' && dueDate < new Date(),
-  remainingDays: (dueDate: Date) => 
-    Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-};
-```
-
-## AI生成任务清单
-- [ ] 创建Entity实体类: `TodoEntity`
-- [ ] 创建DTO传输对象: `CreateTodoDto`, `UpdateTodoDto`
-- [ ] 创建VO值对象: `TodoVo`
-- [ ] 创建Controller控制器: `TodoController`
-- [ ] 创建Service服务类: `TodoService`
-- [ ] 创建Mapper映射器: `TodoMapper`
-- [ ] 创建前端页面组件: `TodoPage`
-- [ ] 创建API接口定义: `TodoApi`
-
-## AI执行上下文
-**当前模块**: growth/todo
-**相关实体**: [TodoEntity, UserEntity]
-**技术栈**: [NestJS, TypeORM, React, Arco Design]
-**代码规范**: [参考 entity-specification, dto-specification, controller-specification 等规则]
-```
-
-## 🎯 AI友好型与传统开发文档的区别
-
-### AI友好型开发文档特点
-- **结构化优先**: 使用机器可解析的格式定义技术规范
-- **可执行指令**: 提供AI可直接执行的代码生成任务
-- **模板驱动**: 标准化的代码模板和生成规范
-- **约束明确**: 每个技术组件都有明确的类型和实现约束
-- **自动化支持**: 支持自动化生成、验证和部署
-
-### 与PRD的协作边界
-- **PRD提供**: 业务需求、用户场景、功能定义、验收标准
-- **开发文档实现**: 技术架构、数据模型、API设计、代码生成
-- **协作流程**: PRD → 开发文档 → 代码实现 → 测试验证
-- **反馈机制**: 技术约束反馈给PRD，业务变更更新开发文档
-
-## 🔧 AI友好型质量检查
-
-### 技术规范检查
-- [ ] 是否使用了TypeScript接口定义所有数据结构
-- [ ] 数据模型是否完整定义了类型、约束和关系
-- [ ] API设计是否遵循RESTful规范
-- [ ] 代码生成指令是否明确和可执行
-
-### AI可执行性检查
-- [ ] 是否提供了完整的生成任务清单
-- [ ] 文件路径约定是否清晰和一致
-- [ ] 技术栈和依赖关系是否明确定义
-- [ ] 代码规范引用是否正确和完整
-
-### 完整性检查
-- [ ] 输入输出规范是否明确定义
-- [ ] 错误处理场景是否完整覆盖
-- [ ] 状态转换规则是否清晰定义
-- [ ] 权限控制规则是否技术实现明确

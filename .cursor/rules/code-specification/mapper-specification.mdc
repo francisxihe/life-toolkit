@@ -1,5 +1,5 @@
 ---
-description: 需要增删改查Mapper中代码时
+description: 编写server Mapper代码时
 globs: 
 alwaysApply: false
 ---

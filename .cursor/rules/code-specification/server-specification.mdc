@@ -1,5 +1,5 @@
 ---
-description: 需要调整服务端代码时
+description: 编写server代码时
 globs: 
 alwaysApply: false
 ---
