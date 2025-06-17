@@ -1,1 +1,2 @@
-export * from './habit'; 
+export * from './habit';
+export * from './goal'; 

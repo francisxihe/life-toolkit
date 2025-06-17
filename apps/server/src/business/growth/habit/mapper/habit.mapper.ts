@@ -113,6 +113,9 @@ export class HabitMapper {
 
   // DTO 列表转 VO 列表
   static dtoToListVo(dtos: HabitDto[]): HabitVO.HabitListVo {
+    if (!Array.isArray(dtos)) {
+      return { list: [] };
+    }
     return {
       list: dtos.map(dto => this.dtoToItemVo(dto)),
     };

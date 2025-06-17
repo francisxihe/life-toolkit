@@ -4,6 +4,7 @@ import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
 import { taskRoutes, todoRoutes, goalRoutes, timerRoutes } from '@/router/routes/growth.routes';
+import { habitRoutes } from '@/pages/growth/habit/routes';
 
 export type IRoute = AuthParams & {
   name: string;
@@ -26,6 +27,7 @@ export const routes: IRoute[] = [
   aiRoutes,
   erpRoutes,
   timerRoutes,
+  habitRoutes,
   // {
   //   name: 'menu.dashboard',
   //   key: '/dashboard',

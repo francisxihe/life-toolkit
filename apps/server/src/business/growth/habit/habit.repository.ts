@@ -201,12 +201,12 @@ export class HabitRepository {
     let query = this.habitRepository.createQueryBuilder("habit");
 
     // 状态过滤
-    if (filter.status && filter.status.length > 0) {
+    if (filter.status && Array.isArray(filter.status) && filter.status.length > 0) {
       query = query.andWhere("habit.status IN (:...status)", { status: filter.status });
     }
 
     // 难度过滤
-    if (filter.difficulty && filter.difficulty.length > 0) {
+    if (filter.difficulty && Array.isArray(filter.difficulty) && filter.difficulty.length > 0) {
       query = query.andWhere("habit.difficulty IN (:...difficulty)", { difficulty: filter.difficulty });
     }
 
@@ -219,12 +219,16 @@ export class HabitRepository {
     }
 
     // 标签搜索
-    if (filter.tags && filter.tags.length > 0) {
-      filter.tags.forEach((tag, index) => {
-        query = query.andWhere(`habit.tags LIKE :tag${index}`, {
-          [`tag${index}`]: `%${tag}%`,
+    if (filter.tags) {
+      // 确保 tags 是数组
+      const tagsArray = Array.isArray(filter.tags) ? filter.tags : [filter.tags];
+      if (tagsArray.length > 0) {
+        tagsArray.forEach((tag, index) => {
+          query = query.andWhere(`habit.tags LIKE :tag${index}`, {
+            [`tag${index}`]: `%${tag}%`,
+          });
         });
-      });
+      }
     }
 
     // 日期范围过滤
