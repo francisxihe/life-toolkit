@@ -73,6 +73,10 @@ const i18n = {
     'menu.expense.overview': 'Overview',
     'menu.goal': 'Goal',
     'menu.goal.all': 'All Goals',
+    'menu.habit': 'Habit',
+    'menu.habit.list': 'Habit List',
+    'menu.habit.detail': 'Habit Detail',
+    'menu.habit.statistics': 'Habit Statistics',
   },
   'zh-CN': {
     'menu.dashboard': '仪表盘',
@@ -147,6 +151,10 @@ const i18n = {
     'menu.expense.overview': '总览',
     'menu.goal': '目标',
     'menu.goal.all': '全部目标',
+    'menu.habit': '习惯',
+    'menu.habit.list': '习惯列表',
+    'menu.habit.detail': '习惯详情',
+    'menu.habit.statistics': '习惯统计',
   },
 };
 

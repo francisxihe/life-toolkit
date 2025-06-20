@@ -22,12 +22,12 @@ export type IRoute = AuthParams & {
 export const routes: IRoute[] = [
   todoRoutes,
   taskRoutes,
+  habitRoutes,
   goalRoutes,
   expensesRoutes,
   aiRoutes,
   erpRoutes,
   timerRoutes,
-  habitRoutes,
   // {
   //   name: 'menu.dashboard',
   //   key: '/dashboard',
