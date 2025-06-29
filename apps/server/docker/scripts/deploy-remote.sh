@@ -82,11 +82,16 @@ build_and_save_image() {
     echo "⚠️  注意：跨架构构建可能需要较长时间，请耐心等待..."
     
     # 使用 buildx 构建 AMD64 镜像
-    docker buildx build \
+    if docker buildx build \
         --platform linux/amd64 \
         -t ${IMAGE_NAME}:${PROD_IMAGE_TAG} \
         --load \
-        -f docker/config/Dockerfile .
+        -f docker/config/Dockerfile .; then
+        echo "✅ 镜像构建成功"
+    else
+        echo "❌ 镜像构建失败"
+        exit 1
+    fi
     
     # 验证镜像架构
     BUILT_ARCH=$(docker inspect "${IMAGE_NAME}:${PROD_IMAGE_TAG}" --format '{{.Architecture}}' 2>/dev/null || echo "unknown")
@@ -100,18 +105,29 @@ build_and_save_image() {
     
     echo "📦 保存镜像为 tar 文件..."
     # 创建保存目录
-    mkdir -p docker/images
+    mkdir -p docker/dist
     
     # 保存为 tar 文件
-    TEMP_TAR="docker/images/${LOCAL_IMAGE_FILE%.gz}"
-    docker save -o "$TEMP_TAR" ${IMAGE_NAME}:${PROD_IMAGE_TAG}
+    TEMP_TAR="docker/dist/${LOCAL_IMAGE_FILE%.gz}"
+    echo "  保存到: $TEMP_TAR"
+    
+    if docker save -o "$TEMP_TAR" ${IMAGE_NAME}:${PROD_IMAGE_TAG}; then
+        echo "✅ 镜像保存成功"
+        ls -lh "$TEMP_TAR"
+    else
+        echo "❌ 镜像保存失败"
+        exit 1
+    fi
     
     # 压缩文件
     echo "🗜️  压缩镜像文件..."
-    gzip "$TEMP_TAR"
-    
-    echo "✅ 镜像已保存并压缩: docker/images/${LOCAL_IMAGE_FILE}"
-    ls -lh "docker/images/${LOCAL_IMAGE_FILE}"
+    if gzip "$TEMP_TAR"; then
+        echo "✅ 文件压缩完成: docker/dist/${LOCAL_IMAGE_FILE}"
+        ls -lh "docker/dist/${LOCAL_IMAGE_FILE}"
+    else
+        echo "❌ 文件压缩失败"
+        exit 1
+    fi
 }
 
 # 上传文件到远程服务器
@@ -123,7 +139,7 @@ upload_files() {
     
     # 上传镜像文件
     echo "  📦 上传镜像文件..."
-    scp "docker/images/${LOCAL_IMAGE_FILE}" ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}/
+    scp "docker/dist/${LOCAL_IMAGE_FILE}" ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_PATH}/
     
     # 上传配置文件
     echo "  ⚙️  上传配置文件..."
@@ -152,16 +168,52 @@ deploy_on_remote() {
         docker rmi ${IMAGE_NAME}:${PROD_IMAGE_TAG} 2>/dev/null || true
         
         echo '📦 解压并加载新镜像...'
-        gunzip -f ${LOCAL_IMAGE_FILE}
-        docker load -i \${LOCAL_IMAGE_FILE%.gz}
+        echo '  压缩文件: ${LOCAL_IMAGE_FILE}'
+        if [ ! -f \"${LOCAL_IMAGE_FILE}\" ]; then
+            echo '❌ 镜像文件不存在: ${LOCAL_IMAGE_FILE}'
+            exit 1
+        fi
+        ls -la ${LOCAL_IMAGE_FILE}
+        
+        echo '  解压文件...'
+        if ! gunzip -f ${LOCAL_IMAGE_FILE}; then
+            echo '❌ 解压失败'
+            exit 1
+        fi
+        
+        TAR_FILE=\"\${LOCAL_IMAGE_FILE%.gz}\"
+        echo '  解压后文件: '\$TAR_FILE
+        if [ ! -f \"\$TAR_FILE\" ]; then
+            echo '❌ 解压后文件不存在: '\$TAR_FILE
+            exit 1
+        fi
+        ls -la \"\$TAR_FILE\"
+        
+        echo '  加载镜像...'
+        if ! docker load -i \"\$TAR_FILE\"; then
+            echo '❌ 镜像加载失败'
+            exit 1
+        fi
+        
+        echo '✅ 镜像加载成功'
+        docker images | grep ${IMAGE_NAME} || echo '⚠️  未找到加载的镜像'
         
         echo '🚀 启动新容器...'
-        docker run -d \\
+        if ! docker run -d \\
             --name life-toolkit-server-remote \\
             -p 3000:3000 \\
             --env-file .env.production.local \\
             --restart unless-stopped \\
-            ${IMAGE_NAME}:${PROD_IMAGE_TAG}
+            ${IMAGE_NAME}:${PROD_IMAGE_TAG}; then
+            echo '❌ 容器启动失败'
+            echo '📋 可用镜像:'
+            docker images
+            echo '📋 Docker 状态:'
+            docker ps -a
+            exit 1
+        fi
+        
+        echo '✅ 容器启动命令执行成功'
         
         echo '⏳ 等待容器启动...'
         sleep 5
@@ -179,14 +231,15 @@ deploy_on_remote() {
         
         echo '🧹 清理镜像文件...'
         rm -f ${LOCAL_IMAGE_FILE}
-        rm -f \${LOCAL_IMAGE_FILE%.gz}
+        TAR_FILE=\"\${LOCAL_IMAGE_FILE%.gz}\"
+        rm -f \"\$TAR_FILE\"
     "
 }
 
 # 清理本地文件
 cleanup_local() {
     echo "🧹 清理本地镜像文件..."
-    rm -f "docker/images/${LOCAL_IMAGE_FILE}"
+    rm -f "docker/dist/${LOCAL_IMAGE_FILE}"
     # 清理本地镜像
     docker rmi ${IMAGE_NAME}:${PROD_IMAGE_TAG} 2>/dev/null || true
     echo "✅ 本地清理完成"
