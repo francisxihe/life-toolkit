@@ -13,6 +13,7 @@ import { TodoRepeatService } from "./todo-repeat.service";
 import { TodoBaseService } from "./todo-base.service";
 import { TodoStatusService } from "./todo-status.service";
 import { OperationByIdListDto } from "@/common/operation";
+import { In } from "typeorm";
 
 @Injectable()
 export class TodoService {
@@ -49,8 +50,13 @@ export class TodoService {
 
   async page(
     filter: TodoPageFilterDto
-  ): Promise<{ list: TodoDto[]; total: number }> {
-    return await this.todoBaseService.page(filter);
+  ): Promise<{
+    list: TodoDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    return await this.todoBaseService.findPage(filter);
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
@@ -64,17 +70,19 @@ export class TodoService {
     return await this.todoBaseService.findById(id);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.todoBaseService.delete(id);
-  }
-
-  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
-    await this.todoBaseService.deleteByFilter(filter);
+  async delete(id: string): Promise<boolean> {
+    return await this.todoBaseService.delete(id);
   }
 
   async findById(id: string): Promise<TodoDto> {
-    const todo = await this.todoBaseService.findById(id, ["repeat"]);
+    const todo = await this.todoBaseService.findById(id);
     return todo;
+  }
+
+  async deleteByTaskIds(taskIds: string[]): Promise<void> {
+    if (taskIds.length === 0) return;
+    
+    await this.todoRepository.softDelete({ taskId: In(taskIds) });
   }
 
   async batchDone(params: OperationByIdListDto): Promise<void> {

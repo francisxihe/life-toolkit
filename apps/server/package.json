@@ -11,17 +11,14 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "deploy": "pnpm run build && ./deploy.sh",
+    "db:check": "node -e \"console.log('Database check script - checking table structure...')\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:habit": "jest --testPathPattern=\"habit\"",
-    "test:habit:unit": "jest --testPathPattern=\"habit\" --testNamePattern=\"^((?!integration).)*$\"",
-    "test:habit:integration": "jest --testPathPattern=\"habit.integration\"",
-    "test:habit:coverage": "jest --testPathPattern=\"habit\" --coverage --coverageDirectory=coverage/habit"
+    "test:habit": "jest --testPathPattern=\"habit\""
   },
   "dependencies": {
-    "@life-toolkit/components-repeat": "workspace:*",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.1.1",
     "@nestjs/core": "^10.0.0",

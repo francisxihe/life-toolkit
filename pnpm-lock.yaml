@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      canvas:
-        specifier: ^3.1.1
-        version: 3.1.1
     devDependencies:
       '@life-toolkit/vo':
         specifier: workspace:*
@@ -81,9 +77,6 @@ importers:
 
   apps/server:
     dependencies:
-      '@life-toolkit/components-repeat':
-        specifier: workspace:*
-        version: link:../../packages/components/repeat
       '@nestjs/common':
         specifier: ^10.0.0
         version: 10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1)
@@ -439,7 +432,7 @@ importers:
         version: 14.3.1(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       jest-environment-jsdom:
         specifier: ^29.0.0
-        version: 29.7.0(canvas@3.1.1)
+        version: 29.7.0
 
   packages/components/tabs:
     dependencies:
@@ -3815,10 +3808,6 @@ packages:
 
   caniuse-lite@1.0.30001696:
     resolution: {integrity: sha512-pDCPkvzfa39ehJtJ+OwGT/2yvT2SbjfHhiIW2LWOAcMQ7BzwxT/XuyUp4OTOd0XFWA6BKw0JalnBHgSi5DGJBQ==}
-
-  canvas@3.1.1:
-    resolution: {integrity: sha512-o8JptL14zrYFYSh5r7ClVzuwG77tvjRBgSJECyIF6AAHpL4MgORhlI+rru3/ZPKtdC7uopl+biESZWz1l/NpFA==}
-    engines: {node: ^18.12.0 || >= 20.9.0}
 
   center-align@0.1.3:
     resolution: {integrity: sha512-Baz3aNe2gd2LP2qk5U+sDk/m4oSuwSDcBfayTCTBoWpfIGO5XFxPmjILQII4NGiZjD6DoDI6kf7gKaxkf7s3VQ==}
@@ -13408,11 +13397,6 @@ snapshots:
 
   caniuse-lite@1.0.30001696: {}
 
-  canvas@3.1.1:
-    dependencies:
-      node-addon-api: 7.1.1
-      prebuild-install: 7.1.3
-
   center-align@0.1.3:
     dependencies:
       align-text: 0.1.4
@@ -15729,7 +15713,7 @@ snapshots:
       jest-util: 29.7.0
       pretty-format: 29.7.0
 
-  jest-environment-jsdom@29.7.0(canvas@3.1.1):
+  jest-environment-jsdom@29.7.0:
     dependencies:
       '@jest/environment': 29.7.0
       '@jest/fake-timers': 29.7.0
@@ -15738,9 +15722,7 @@ snapshots:
       '@types/node': 18.19.74
       jest-mock: 29.7.0
       jest-util: 29.7.0
-      jsdom: 20.0.3(canvas@3.1.1)
-    optionalDependencies:
-      canvas: 3.1.1
+      jsdom: 20.0.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -15977,7 +15959,7 @@ snapshots:
 
   jsbn@1.1.0: {}
 
-  jsdom@20.0.3(canvas@3.1.1):
+  jsdom@20.0.3:
     dependencies:
       abab: 2.0.6
       acorn: 8.14.0
@@ -16005,8 +15987,6 @@ snapshots:
       whatwg-url: 11.0.0
       ws: 8.18.1
       xml-name-validator: 4.0.0
-    optionalDependencies:
-      canvas: 3.1.1
     transitivePeerDependencies:
       - bufferutil
       - supports-color

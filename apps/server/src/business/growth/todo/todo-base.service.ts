@@ -50,12 +50,15 @@ export class TodoBaseService {
     return todoList as TodoDto[];
   }
 
-  async page(
-    filter: TodoPageFilterDto
-  ): Promise<{ list: TodoDto[]; total: number }> {
+  async findPage(filter: TodoPageFilterDto): Promise<{
+    list: TodoDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
-
+    
     const [todoList, total] = await this.todoRepository.findAndCount({
       where: getWhere(filter),
       skip: (pageNum - 1) * pageSize,
@@ -65,6 +68,8 @@ export class TodoBaseService {
     return {
       list: todoList as TodoDto[],
       total,
+      pageNum,
+      pageSize,
     };
   }
 
@@ -84,8 +89,9 @@ export class TodoBaseService {
     return this.findById(id);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.todoRepository.delete(id);
+  async delete(id: string): Promise<boolean> {
+    const result = await this.todoRepository.softDelete(id);
+    return (result.affected ?? 0) > 0;
   }
 
   async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
@@ -94,17 +100,26 @@ export class TodoBaseService {
 
   async findById(id: string, relations?: string[]): Promise<TodoDto> {
     try {
-      const defaultRelations = ['repeat'];
-      const allRelations = relations ? [...defaultRelations, ...relations] : defaultRelations;
-      
       const todo = await this.todoRepository.findOne({
         where: { id },
-        relations: allRelations,
+        relations: relations || [],
       });
       if (!todo) {
         throw new Error("Todo not found");
       }
-      return todo;
+      
+      // 手动加载repeat关系
+      if (todo.repeatId) {
+        const todoWithRepeat = await this.todoRepository.findOne({
+          where: { id },
+          relations: ['repeat'],
+        });
+        if (todoWithRepeat?.repeat) {
+          (todo as any).repeat = todoWithRepeat.repeat;
+        }
+      }
+      
+      return todo as TodoDto;
     } catch (error) {
       console.error(error);
       throw new Error("Todo not found");

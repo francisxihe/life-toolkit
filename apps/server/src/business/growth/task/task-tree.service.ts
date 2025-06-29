@@ -72,9 +72,7 @@ export class TaskTreeService {
       allIds.push(...getAllDescendantIds(descendantsTree));
     }
 
-    await this.todoService.deleteByFilter({
-      taskIds: allIds,
-    });
+    await this.todoService.deleteByTaskIds(allIds);
 
     await treeRepo.delete({
       id: In(allIds),

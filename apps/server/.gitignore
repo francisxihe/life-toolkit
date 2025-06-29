@@ -45,6 +45,7 @@ yarn-error.log*
 # stylelint
 .stylelintcache
 
-
+# docker images
+docker-images/
 
 .env

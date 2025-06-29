@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  life-toolkit-server-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: life-toolkit-server-prod
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.production.local
+    environment:
+      # 确保生产环境设置
+      - NODE_ENV=production
+    restart: unless-stopped
+    # 生产环境资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3" 

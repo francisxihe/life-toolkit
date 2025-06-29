@@ -11,10 +11,10 @@
     "eslint": "eslint src/ --ext .ts,.tsx,.js,.jsx --fix --cache",
     "stylelint": "stylelint 'src/**/*.less' 'src/**/*.css' --fix --cache",
     "pre-commit": "pretty-quick --staged && npm run eslint && npm run stylelint",
-    "predeploy": "npm run build",
+    "predeploy": "pnpm build",
     "lint": "npm run eslint && npm run stylelint",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf .vite",
-    "deploy": "pnpm run build && ./deploy.sh"
+    "deploy": "./deploy.sh"
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
