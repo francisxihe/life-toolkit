@@ -224,3 +224,121 @@ docker/
 2. 环境变量文件是否正确配置
 3. 网络连接是否正常（远程部署）
 4. 项目是否已正确构建 
+
+# Life Toolkit Server - 远程部署脚本
+
+本目录包含了用于将 Life Toolkit Server 部署到远程服务器的脚本。
+
+## 📋 脚本说明
+
+### 1. `build-remote.sh` - 镜像构建脚本
+**功能**: 构建 linux/amd64 架构的 Docker 镜像并保存为 tar.gz 文件
+
+**用途**:
+- 在本地构建跨架构镜像
+- 保存镜像为压缩文件，便于传输
+- 适合需要离线部署或批量部署的场景
+
+**输出**: `docker/dist/life-toolkit-server_remote_amd64_TIMESTAMP.tar.gz`
+
+### 2. `publish-remote.sh` - 远程发布脚本
+**功能**: 将已构建的镜像部署到远程服务器
+
+**用途**:
+- 上传镜像文件到远程服务器
+- 在远程服务器加载并启动容器
+- 支持选择已有的镜像文件进行部署
+
+**前提条件**: 需要先运行 `build-remote.sh` 构建镜像
+
+### 3. `deploy-remote.sh` - 一键部署脚本
+**功能**: 依次执行构建和发布两个步骤
+
+**用途**:
+- 完整的一键部署流程
+- 适合日常开发部署使用
+- 自动化程度最高
+
+## 🚀 使用方法
+
+### 方式一：一键部署（推荐）
+```bash
+# 在 apps/server 目录下执行
+./docker/scripts/deploy-remote.sh
+```
+
+### 方式二：分步执行
+```bash
+# 1. 构建镜像
+./docker/scripts/build-remote.sh
+
+# 2. 发布到远程服务器
+./docker/scripts/publish-remote.sh
+```
+
+## 📋 前提条件
+
+### 本地环境
+- Docker Desktop 已安装并启动
+- 支持 `docker buildx` 跨架构构建
+- 已完成应用构建 (`pnpm build:server`)
+
+### 远程服务器
+- SSH 密钥认证已配置
+- Docker 已安装并启动
+- 服务器可通过 SSH 访问
+
+### 配置文件
+- `.env.production.local` - 生产环境配置
+- `docker/config/Dockerfile` - Docker 构建文件
+
+## ⚙️ 配置说明
+
+脚本中的关键配置：
+
+```bash
+REMOTE_HOST="112.124.21.126"    # 远程服务器地址
+REMOTE_USER="root"              # SSH 用户名
+REMOTE_PATH="/root/project"     # 远程部署路径
+IMAGE_NAME="life-toolkit-server" # 镜像名称
+PROD_IMAGE_TAG="remote"         # 镜像标签
+```
+
+## 📊 脚本对比
+
+| 脚本 | 构建镜像 | 上传部署 | 适用场景 |
+|------|----------|----------|----------|
+| `build-remote.sh` | ✅ | ❌ | 仅需构建镜像 |
+| `publish-remote.sh` | ❌ | ✅ | 仅需部署已有镜像 |
+| `deploy-remote.sh` | ✅ | ✅ | 完整部署流程 |
+
+## 🔧 故障排除
+
+### 构建失败
+- 检查 Docker Desktop 是否启动
+- 确认 `docker buildx` 可用
+- 检查 `dist` 目录是否存在
+
+### 部署失败
+- 检查 SSH 连接是否正常
+- 确认远程服务器 Docker 状态
+- 检查 `.env.production.local` 文件
+
+### 权限问题
+```bash
+# 添加执行权限
+chmod +x docker/scripts/*.sh
+```
+
+## 📋 有用的命令
+
+```bash
+# 查看远程容器状态
+ssh root@112.124.21.126 'docker ps | grep life-toolkit'
+
+# 查看远程容器日志
+ssh root@112.124.21.126 'docker logs -f life-toolkit-server-remote'
+
+# 停止远程容器
+ssh root@112.124.21.126 'docker stop life-toolkit-server-remote'
+``` 

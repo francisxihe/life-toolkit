@@ -10,7 +10,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=life-toolkit-server & turbo run dev --filter=life-toolkit-web",
     "build": "turbo run build",
     "clean": "turbo run clean",
     "predeploy": "npm run build",
