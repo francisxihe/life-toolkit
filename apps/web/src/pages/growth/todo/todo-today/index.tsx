@@ -68,19 +68,8 @@ export default function TodoToday() {
   }
 
   return (
-    <FlexibleContainer className="bg-bg-2 rounded-lg">
-      <Fixed
-        className={clsx(
-          'px-5 py-2',
-          'flex justify-between items-center border-b',
-        )}
-      >
-        <div className="text-text-1 text-title-2 font-medium py-1">
-          今日待办
-        </div>
-      </Fixed>
-
-      <Shrink className="px-5 flex" direction="vertical">
+    <>
+      <Shrink className="flex" direction="vertical">
         <Shrink className="py-2" direction="horizontal">
           <Fixed>
             <TodoCreatorMini
@@ -183,6 +172,6 @@ export default function TodoToday() {
           </>
         )}
       </Shrink>
-    </FlexibleContainer>
+    </>
   );
 }

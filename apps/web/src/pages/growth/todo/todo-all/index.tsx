@@ -8,23 +8,19 @@ import { useTodoDetail } from '../../components';
 import { useTodoAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
 
+const { Fixed, Shrink } = FlexibleContainer;
+
 function TodoAll() {
   const { getTodoPage } = useTodoAllContext();
   const { CreatePopover: CreateTodoPopover } = useTodoDetail();
 
   return (
-    <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
-      <FlexibleContainer.Fixed className="px-5 py-2 flex justify-between items-center border-b">
-        <div className="text-text-1 text-title-2 font-medium py-1">
-          全部待办
-        </div>
-      </FlexibleContainer.Fixed>
-
-      <FlexibleContainer.Fixed className="px-5 flex border-b">
+    <>
+      <Fixed className="px-5 flex border-b">
         <TodoFilters />
-      </FlexibleContainer.Fixed>
+      </Fixed>
 
-      <FlexibleContainer.Fixed className="px-5 flex my-3">
+      <Fixed className="px-5 flex my-3">
         <CreateTodoPopover
           creatorProps={{
             showSubmitButton: true,
@@ -35,12 +31,12 @@ function TodoAll() {
         >
           <CreateButton>新建</CreateButton>
         </CreateTodoPopover>
-      </FlexibleContainer.Fixed>
+      </Fixed>
 
-      <FlexibleContainer.Shrink className="px-5 w-full h-full flex">
+      <Shrink className="px-5 w-full h-full flex">
         <TodoTable />
-      </FlexibleContainer.Shrink>
-    </FlexibleContainer>
+      </Shrink>
+    </>
   );
 }
 

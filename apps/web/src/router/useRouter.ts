@@ -26,7 +26,7 @@ export default function useRouter() {
 
   const { flattenRoutes, fullPathRoutes } = useMemo(
     () => getFlattenRoutes(routes),
-    [routes]
+    [routes],
   );
 
   // console.log('fullPathRoutes', fullPathRoutes);
@@ -38,8 +38,14 @@ export default function useRouter() {
     const preload = component.preload();
     NProgress.start();
     preload.then(() => {
-      console.log('currentRoute', currentRoute);
-      navigate(currentRoute.fullPath ? currentRoute.fullPath : `/${key}`);
+      let path = `/${key}`;
+      if (currentRoute.redirect) {
+        path = currentRoute.redirect;
+      } else if (currentRoute.fullPath) {
+        path = currentRoute.fullPath;
+      }
+
+      navigate(path);
       NProgress.done();
     });
   }
@@ -69,7 +75,7 @@ export function getFlattenRoutes(routes: IRoute[]) {
         }
         if (flattenRoute.fullPath && !flattenRoute.onlyMenu) {
           flattenRoute.component = lazyload(
-            getComponentModule(flattenRoute.fullPath)
+            getComponentModule(flattenRoute.fullPath),
           );
         }
       } catch (e) {

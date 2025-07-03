@@ -44,14 +44,14 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
 
   function renderRoutes(locale) {
     routeMap.current.clear();
-    return function travel(_routes: IRoute[], level, parentNode = []) {
+    const travel = (_routes: IRoute[], level, parentNode = []) => {
       return _routes.map((route) => {
         const { breadcrumb = true, ignore } = route;
         const iconDom = getIconFromKey(route.fullPath);
         const titleDom = (
-          <div className="flex items-center gap-2">
+          <span className="inline-flex items-center gap-2">
             {iconDom} {locale[route.name] || route.name}
-          </div>
+          </span>
         );
 
         routeMap.current.set(
@@ -74,7 +74,8 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
         if (ignore) {
           return null;
         }
-        if (visibleChildren.length) {
+
+        if (visibleChildren.length > 0) {
           menuMap.current.set(route.fullPath, { subMenu: true });
           return (
             route.fullPath && (
@@ -87,10 +88,13 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
             )
           );
         }
+
         menuMap.current.set(route.fullPath, { menuItem: true });
+
         return <MenuItem key={route.fullPath}>{titleDom}</MenuItem>;
       });
     };
+    return travel;
   }
 
   function updateMenuStatus() {

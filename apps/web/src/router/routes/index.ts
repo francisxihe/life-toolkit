@@ -3,13 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
-import { taskRoutes, todoRoutes, goalRoutes, timerRoutes } from '@/router/routes/growth.routes';
-import { habitRoutes } from '@/pages/growth/habit/routes';
+import { growthRoutes } from '@/router/routes/growth.routes';
 
 export type IRoute = AuthParams & {
   name: string;
   key: string;
   fullPath?: string;
+  redirect?: string;
   children?: IRoute[];
   // 当前页是否展示面包屑
   breadcrumb?: boolean;
@@ -20,14 +20,10 @@ export type IRoute = AuthParams & {
 };
 
 export const routes: IRoute[] = [
-  todoRoutes,
-  taskRoutes,
-  habitRoutes,
-  goalRoutes,
+  growthRoutes,
   expensesRoutes,
   aiRoutes,
   erpRoutes,
-  timerRoutes,
   // {
   //   name: 'menu.dashboard',
   //   key: '/dashboard',

@@ -6,6 +6,7 @@ import Tabs, { Tab } from '@life-toolkit/tabs/src/index';
 import { useState } from 'react';
 import clsx from 'clsx';
 import styles from './style.module.less';
+import TabsPage from '@/components/Layout/TabsPage';
 
 export default function TodoPage() {
   // const [activeKey, setActiveKey] = useState('tab-1');
@@ -21,39 +22,17 @@ export default function TodoPage() {
 
   return (
     <TodoProvider>
-      {/* <div>
-        <Tabs
-          activeKey={activeKey}
-          onTabClick={handleTabClick}
-          onTabDrop={handleTabDrop}
-          className={clsx(styles['tabs'])}
-        >
-          {[
-            {
-              id: 'tab-1',
-              label: '待办任务',
-            },
-            {
-              id: 'tab-2',
-              label: '已完成',
-            },
-          ].map((item) => (
-            <Tab
-              key={item.id}
-              id={item.id}
-              draggable={false}
-              className={clsx(
-                'px-2 py-1',
-                'bg-bg-2 rounded-md cursor-pointer',
-                'hover:bg-fill-1 hover:text-text-1',
-              )}
-            >
-              {item.label}
-            </Tab>
-          ))}
-        </Tabs>
-      </div> */}
-      <Outlet></Outlet>
+      <TabsPage
+        tabs={[
+          { name: '今日待办', path: '/growth/todo/todo-today' },
+          { name: '本周待办', path: '/growth/todo/todo-week' },
+          { name: '待办日历', path: '/growth/todo/todo-calendar' },
+          { name: '全部待办', path: '/growth/todo/todo-all' },
+          { name: '待办统计', path: '/growth/todo/todo-dashboard' },
+        ]}
+      >
+        <Outlet></Outlet>
+      </TabsPage>
     </TodoProvider>
   );
 }

@@ -2,14 +2,11 @@
 
 import { useMemo } from 'react';
 import { format, subDays, startOfDay, endOfDay } from 'date-fns';
-import { Typography, Progress, Tag, Spin } from '@arco-design/web-react';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { Progress, Tag, Spin } from '@arco-design/web-react';
 import { TodoProvider, useTodoContext } from './context';
 import { TodoChart } from './TodoChart';
 import { TodoPriorityMatrix } from './TodoPriorityMatrix';
 import { RecentTodos } from './RecentTodos';
-
-const { Title, Text } = Typography;
 
 export default function TodoDashboardPage() {
   return (
@@ -27,17 +24,22 @@ function TodoDashboardContent() {
     const total = todoList.length;
     const completed = todoList.filter((todo) => todo.status === 'done').length;
     const pending = todoList.filter((todo) => todo.status === 'todo').length;
-    const abandoned = todoList.filter((todo) => todo.status === 'abandoned').length;
-    
+    const abandoned = todoList.filter(
+      (todo) => todo.status === 'abandoned',
+    ).length;
+
     // 优先级统计
     const highPriority = todoList.filter(
-      (todo) => todo.importance === 1 && todo.urgency === 1 && todo.status === 'todo'
+      (todo) =>
+        todo.importance === 1 && todo.urgency === 1 && todo.status === 'todo',
     ).length;
     const mediumPriority = todoList.filter(
-      (todo) => ((todo.importance === 1 && todo.urgency === 2) || 
-                 (todo.importance === 2 && todo.urgency === 1)) && todo.status === 'todo'
+      (todo) =>
+        ((todo.importance === 1 && todo.urgency === 2) ||
+          (todo.importance === 2 && todo.urgency === 1)) &&
+        todo.status === 'todo',
     ).length;
-    
+
     // 今日完成
     const today = new Date();
     const todayCompleted = todoList.filter((todo) => {
@@ -45,7 +47,7 @@ function TodoDashboardContent() {
       const doneDate = new Date(todo.doneAt);
       return doneDate >= startOfDay(today) && doneDate <= endOfDay(today);
     }).length;
-    
+
     // 本周完成
     const weekStart = subDays(today, 7);
     const weekCompleted = todoList.filter((todo) => {
@@ -53,10 +55,11 @@ function TodoDashboardContent() {
       const doneDate = new Date(todo.doneAt);
       return doneDate >= weekStart;
     }).length;
-    
+
     // 完成率
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
+    const completionRate =
+      total > 0 ? Math.round((completed / total) * 100) : 0;
+
     // 逾期任务
     const overdue = todoList.filter((todo) => {
       if (todo.status !== 'todo') return false;
@@ -115,15 +118,7 @@ function TodoDashboardContent() {
   }
 
   return (
-    <div className="p-6 bg-bg-1 min-h-screen">
-      {/* 页面标题 */}
-      <div className="mb-8">
-        <Title heading={3} className="!mb-2">待办看板</Title>
-        <Text type="secondary" className="text-base">
-          总览您的任务完成情况和效率统计
-        </Text>
-      </div>
-
+    <div className="p-6 bg-bg-1 h-full">
       <div className="space-y-6">
         {/* 核心统计卡片 */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -133,9 +128,13 @@ function TodoDashboardContent() {
               <div className="w-12 h-12 bg-primary-light-1 rounded-lg flex items-center justify-center">
                 <div className="w-6 h-6 bg-primary rounded"></div>
               </div>
-              <Tag color="blue" size="small">全部</Tag>
+              <Tag color="blue" size="small">
+                全部
+              </Tag>
             </div>
-            <div className="text-3xl font-bold text-text-1 mb-1">{stats.total}</div>
+            <div className="text-3xl font-bold text-text-1 mb-1">
+              {stats.total}
+            </div>
             <div className="text-sm text-text-3">总任务数</div>
           </div>
 
@@ -146,15 +145,19 @@ function TodoDashboardContent() {
                 <div className="w-6 h-6 bg-success rounded"></div>
               </div>
               <div className="text-right">
-                <div className="text-xs text-text-3 mb-1">{stats.completionRate}%</div>
-                <Progress 
-                  percent={stats.completionRate} 
+                <div className="text-xs text-text-3 mb-1">
+                  {stats.completionRate}%
+                </div>
+                <Progress
+                  percent={stats.completionRate}
                   showText={false}
                   style={{ width: '64px' }}
                 />
               </div>
             </div>
-            <div className="text-3xl font-bold text-success mb-1">{stats.completed}</div>
+            <div className="text-3xl font-bold text-success mb-1">
+              {stats.completed}
+            </div>
             <div className="text-sm text-text-3">已完成</div>
           </div>
 
@@ -170,7 +173,9 @@ function TodoDashboardContent() {
                 </Tag>
               )}
             </div>
-            <div className="text-3xl font-bold text-warning mb-1">{stats.pending}</div>
+            <div className="text-3xl font-bold text-warning mb-1">
+              {stats.pending}
+            </div>
             <div className="text-sm text-text-3">待处理</div>
           </div>
 
@@ -180,9 +185,13 @@ function TodoDashboardContent() {
               <div className="w-12 h-12 bg-danger-light-1 rounded-lg flex items-center justify-center">
                 <div className="w-6 h-6 bg-danger rounded"></div>
               </div>
-              <Tag color="red" size="small">紧急重要</Tag>
+              <Tag color="red" size="small">
+                紧急重要
+              </Tag>
             </div>
-            <div className="text-3xl font-bold text-danger mb-1">{stats.highPriority}</div>
+            <div className="text-3xl font-bold text-danger mb-1">
+              {stats.highPriority}
+            </div>
             <div className="text-sm text-text-3">高优先级</div>
           </div>
         </div>
@@ -199,7 +208,10 @@ function TodoDashboardContent() {
                 <div className="text-sm text-text-3">Today's Achievement</div>
               </div>
             </div>
-            <div className="text-2xl font-bold text-primary">{stats.todayCompleted} <span className="text-base font-normal text-text-3">个任务</span></div>
+            <div className="text-2xl font-bold text-primary">
+              {stats.todayCompleted}{' '}
+              <span className="text-base font-normal text-text-3">个任务</span>
+            </div>
           </div>
 
           <div className="bg-bg-2 rounded-xl p-6 shadow-sm border border-border-1">
@@ -212,7 +224,10 @@ function TodoDashboardContent() {
                 <div className="text-sm text-text-3">Weekly Achievement</div>
               </div>
             </div>
-            <div className="text-2xl font-bold text-link">{stats.weekCompleted} <span className="text-base font-normal text-text-3">个任务</span></div>
+            <div className="text-2xl font-bold text-link">
+              {stats.weekCompleted}{' '}
+              <span className="text-base font-normal text-text-3">个任务</span>
+            </div>
           </div>
         </div>
 
