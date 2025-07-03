@@ -8,23 +8,19 @@ import { useTaskAllContext } from './context';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useTaskDetail } from '../../components';
 
+const { Fixed, Shrink } = FlexibleContainer;
+
 function TaskAll() {
   const { getTaskPage } = useTaskAllContext();
   const { openCreateDrawer: openCreateTaskDrawer } = useTaskDetail();
 
   return (
-    <FlexibleContainer className="bg-bg-2 rounded-lg w-full h-full">
-      <FlexibleContainer.Fixed className="px-5 py-2 flex justify-between items-center border-b">
-        <div className="text-text-1 text-title-2 font-medium py-1">
-          全部任务
-        </div>
-      </FlexibleContainer.Fixed>
-
-      <FlexibleContainer.Fixed className="px-5 flex border-b">
+    <FlexibleContainer>
+      <Fixed className="px-5 flex border-b">
         <TaskFilters />
-      </FlexibleContainer.Fixed>
+      </Fixed>
 
-      <FlexibleContainer.Fixed className="px-5 flex my-3">
+      <Fixed className="px-5 flex my-3">
         <CreateButton
           onClick={() => {
             openCreateTaskDrawer({
@@ -38,11 +34,11 @@ function TaskAll() {
         >
           新建
         </CreateButton>
-      </FlexibleContainer.Fixed>
+      </Fixed>
 
-      <FlexibleContainer.Shrink className="px-5 w-full h-full flex">
+      <Shrink className="px-5 w-full h-full flex">
         <TaskTable />
-      </FlexibleContainer.Shrink>
+      </Shrink>
     </FlexibleContainer>
   );
 }

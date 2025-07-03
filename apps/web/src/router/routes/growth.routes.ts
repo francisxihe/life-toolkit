@@ -43,21 +43,25 @@ export const taskRoutes: IRoute = {
   name: 'menu.task',
   key: '/growth/task',
   breadcrumb: true,
+  redirect: '/growth/task/task-week',
   children: [
     {
       name: 'menu.task.week',
       key: 'task-week',
       breadcrumb: true,
+      ignore: true,
     },
     {
       name: 'menu.task.calendar',
       key: 'task-calendar',
       breadcrumb: true,
+      ignore: true,
     },
     {
       name: 'menu.task.all',
       key: 'task-all',
       breadcrumb: true,
+      ignore: true,
     },
   ],
 };
@@ -66,11 +70,13 @@ export const goalRoutes: IRoute = {
   name: 'menu.goal',
   key: '/growth/goal',
   breadcrumb: true,
+  redirect: '/growth/goal/goal-all',
   children: [
     {
       name: 'menu.goal.all',
       key: 'goal-all',
       breadcrumb: true,
+      ignore: true,
     },
   ],
 };
