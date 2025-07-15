@@ -103,7 +103,6 @@ const createVo: GoalVO.CreateGoalVo = {
   description: "深入学习TypeScript高级特性",
   type: GoalType.OBJECTIVE,
   importance: 4,
-  urgency: 3,
   startAt: "2024-01-01 09:00:00",
   endAt: "2024-03-31 18:00:00",
   parentId: "parent-goal-id"

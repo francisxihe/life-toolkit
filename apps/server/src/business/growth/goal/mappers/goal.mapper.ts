@@ -21,7 +21,6 @@ class GoalMapperCore {
     dto.status = entity.status;
     dto.type = entity.type;
     dto.importance = entity.importance;
-    dto.urgency = entity.urgency;
     
     // 日期字段映射 (保持Date类型)
     dto.startAt = entity.startAt;
@@ -63,7 +62,6 @@ class GoalMapperCore {
       status: dto.status || "todo",
       type: dto.type,
       importance: dto.importance ?? 3,
-      urgency: dto.urgency ?? 3,
       
       // 日期字段转换 (Date → string)
       startAt: dto.startAt
@@ -91,10 +89,10 @@ class GoalMapperCore {
     const vo: any = {
       ...itemVo,
       
-      // 关联数据字段 (简化处理)
+      // 关联数据字段
       parent: dto.parent ? this.dtoToItemVo(dto.parent) : undefined,
-      children: [], // 简化处理，需要时单独加载
-      taskList: [], // 简化处理，需要时单独加载
+      children: dto.children ? dto.children.map(child => this.dtoToVo(child)) : [],
+      taskList: dto.taskList || [], // 简化处理，需要时单独加载
     };
     
     return vo;
@@ -146,7 +144,6 @@ class GoalMapperCore {
     dto.description = vo.description;
     dto.type = vo.type;
     dto.importance = vo.importance ?? 3;
-    dto.urgency = vo.urgency ?? 3;
     dto.parentId = vo.parentId;
     
     // 日期字段转换 (string → Date)
@@ -174,9 +171,6 @@ class GoalMapperCore {
     }
     if (vo.importance !== undefined) {
       dto.importance = vo.importance;
-    }
-    if (vo.urgency !== undefined) {
-      dto.urgency = vo.urgency;
     }
     if (vo.parentId !== undefined) {
       dto.parentId = vo.parentId;

@@ -67,13 +67,6 @@ export class Goal extends BaseEntity {
   @Type(() => Number)
   importance?: number;
 
-  /** 目标紧急程度 */
-  @Column({ nullable: true })
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  urgency?: number;
-
   /** 目标完成时间 */
   @Column("datetime", {
     nullable: true,

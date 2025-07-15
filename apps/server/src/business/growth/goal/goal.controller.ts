@@ -44,6 +44,17 @@ export class GoalController {
   }
 
   /**
+   * 获取目标树
+   */
+  @Get("tree")
+
+  @Response()
+  async getTree(@Query() filter: GoalListFilterDto): Promise<GoalVO.GoalVo[]> {
+    const goalTree = await this.goalService.getTree(filter);
+    return goalTree.map(goal => GoalMapper.dtoToVo(goal));
+  }
+
+  /**
    * 根据ID查询目标详情
    */
   @Get("detail/:id")

@@ -113,7 +113,8 @@ export class GoalRepository {
 
   // 构建查询条件的私有方法
   private buildQuery(filter: GoalListFilterDto) {
-    let query = this.goalRepository.createQueryBuilder("goal");
+    let query = this.goalRepository.createQueryBuilder("goal")
+      .leftJoinAndSelect("goal.parent", "parent");
 
     // 软删除过滤
     query = query.andWhere("goal.deletedAt IS NULL");
@@ -131,11 +132,6 @@ export class GoalRepository {
     // 重要程度过滤
     if (filter.importance) {
       query = query.andWhere("goal.importance = :importance", { importance: filter.importance });
-    }
-
-    // 紧急程度过滤
-    if (filter.urgency) {
-      query = query.andWhere("goal.urgency = :urgency", { urgency: filter.urgency });
     }
 
     // 关键词搜索

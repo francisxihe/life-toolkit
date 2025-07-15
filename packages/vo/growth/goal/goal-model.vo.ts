@@ -24,8 +24,6 @@ export type GoalModelVo = {
 
   importance?: number;
 
-  urgency?: number;
-
   startAt?: string;
 
   endAt?: string;

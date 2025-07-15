@@ -3,7 +3,7 @@ import { GoalVo, GoalItemVo } from "./goal-model.vo";
 import { self } from "../../base";
 
 export type GoalListFiltersVo = Partial<
-  Pick<GoalVo, "startAt" | "endAt" | "importance" | "urgency" | "status" | "type"> & {
+  Pick<GoalVo, "startAt" | "endAt" | "importance" | "status" | "type"> & {
     keyword?: string;
     doneDateStart?: GoalVo["doneAt"];
     doneDateEnd?: GoalVo["doneAt"];

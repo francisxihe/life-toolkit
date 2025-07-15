@@ -1,6 +1,6 @@
 import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
 import dayjs from 'dayjs';
-import { URGENCY_MAP, IMPORTANCE_MAP } from '../constants';
+import { IMPORTANCE_MAP } from '../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
@@ -70,13 +70,6 @@ export default function GoalTable() {
              - ${dayjs(record.endAt).format('YYYY-MM-DD')}`
             : '--'}
         </div>
-      ),
-    },
-    {
-      title: '紧急程度',
-      key: 'urgency',
-      render: (_, record) => (
-        <div>{URGENCY_MAP.get(record.urgency)?.label || '--'}</div>
       ),
     },
     {

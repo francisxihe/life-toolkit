@@ -52,7 +52,6 @@ export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   const [filters, setFilters, filtersRef] = useSyncState<GoalPageFiltersVo>({
     keyword: undefined,
     importance: undefined,
-    urgency: undefined,
     status: GoalStatus.TODO,
     type: undefined,
     startAt: undefined,
@@ -68,7 +67,6 @@ export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
     setFilters({
       keyword: undefined,
       importance: undefined,
-      urgency: undefined,
       status: undefined,
       type: undefined,
       startAt: undefined,

@@ -78,6 +78,12 @@ export const goalRoutes: IRoute = {
       breadcrumb: true,
       ignore: true,
     },
+    {
+      name: 'menu.goal.mindmap',
+      key: 'goal-mind-map',
+      breadcrumb: true,
+      ignore: true,
+    },
   ],
 };
 
@@ -87,9 +93,24 @@ export const timerRoutes: IRoute = {
   breadcrumb: true,
 };
 
+export const habitRoutes: IRoute = {
+  name: 'menu.habit',
+  key: '/growth/habit',
+  breadcrumb: true,
+  redirect: '/growth/habit/habit-list',
+  children: [
+    {
+      name: 'menu.habit.list',
+      key: 'habit-list',
+      breadcrumb: true,
+      ignore: true,
+    },
+  ],
+};
+
 export const growthRoutes: IRoute = {
   name: 'menu.growth',
   key: '/growth',
   breadcrumb: true,
-  children: [todoRoutes, taskRoutes, goalRoutes, timerRoutes],
+  children: [todoRoutes, goalRoutes, taskRoutes, habitRoutes, timerRoutes],
 };

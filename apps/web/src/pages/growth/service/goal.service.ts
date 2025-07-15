@@ -6,9 +6,11 @@ import type {
   GoalListFiltersVo,
   UpdateGoalVo,
   GoalItemVo,
+  GoalVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
 import { useState, useEffect } from 'react';
+
 export default class GoalService {
   static async getDetail(todoId: string) {
     try {
@@ -89,6 +91,15 @@ export default class GoalService {
   static async getGoalList(params: GoalListFiltersVo = {}) {
     try {
       return GoalController.getGoalList(params);
+    } catch (error) {
+      Message.error(error.message);
+      throw error;
+    }
+  }
+
+  static async getGoalTree(params: GoalListFiltersVo = {}) {
+    try {
+      return GoalController.getGoalTree(params);
     } catch (error) {
       Message.error(error.message);
       throw error;

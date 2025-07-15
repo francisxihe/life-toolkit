@@ -5,7 +5,7 @@ import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 // 列表过滤DTO - 选择可过滤的字段
 export class GoalListFilterDto extends PartialType(
-  PickType(GoalDto, ["type", "importance", "urgency"] as const)
+  PickType(GoalDto, ["type", "importance"] as const)
 ) {
   status?: GoalDto["status"];
 

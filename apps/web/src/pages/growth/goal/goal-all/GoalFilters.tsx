@@ -2,7 +2,7 @@
 
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
+import { IMPORTANCE_MAP } from '../constants';
 import {
   GoalPageFiltersVo,
   GoalStatus,
@@ -129,25 +129,6 @@ export function GoalFilters() {
                 </Select.Option>
               ),
             )}
-          </Select>
-        </Col>
-        <Col span={6}>
-          <Select
-            value={filters.urgency}
-            onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
-                ...prev,
-                urgency: value,
-              }));
-            }}
-            allowClear
-            placeholder="紧急程度"
-          >
-            {[...Array.from(URGENCY_MAP.entries())].map(([key, { label }]) => (
-              <Select.Option key={key} value={key}>
-                {label}
-              </Select.Option>
-            ))}
           </Select>
         </Col>
       </Row>

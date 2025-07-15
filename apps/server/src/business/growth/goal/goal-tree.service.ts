@@ -1,4 +1,4 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common";
+import { Inject, Injectable, forwardRef, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, TreeRepository, In } from "typeorm";
 import { Goal } from "./entities";
@@ -29,18 +29,20 @@ export class GoalTreeService {
     if (!treeRepo) {
       treeRepo = this.getTreeRepo();
     }
+    
     const parent = await treeRepo.findOne({
-      where: { id: parentId },
-      relations: ["children"],
+      where: { id: parentId }
     });
 
     if (!parent) {
-      throw new Error("Parent goal not found");
+      throw new NotFoundException(`父目标不存在，ID: ${parentId}`);
     }
 
-    parent.children.push(currentGoal);
-
-    await treeRepo.save(parent);
+    // 设置父子关系
+    currentGoal.parent = parent;
+    
+    // 保存子目标，TypeORM会自动维护closure table
+    await treeRepo.save(currentGoal);
   }
 
   /** 删除子数据 */
@@ -68,4 +70,4 @@ export class GoalTreeService {
       id: In(allIds),
     });
   }
-}
+} 

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
-import { growthRoutes } from '@/router/routes/growth.routes';
+import { growthRoutes } from '@/pages/growth/routes';
 
 export type IRoute = AuthParams & {
   name: string;

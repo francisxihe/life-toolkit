@@ -42,6 +42,10 @@ export default class GoalController {
     return await get<GoalListVo>("/goal/list", params);
   }
 
+  static async getGoalTree(params: GoalListFiltersVo = {}) {
+    return await get<GoalVo[]>("/goal/tree", params);
+  }
+
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
     const res = await get<GoalPageVo>("/goal/page", params);
     return res;
