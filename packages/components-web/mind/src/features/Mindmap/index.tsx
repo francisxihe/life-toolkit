@@ -18,9 +18,9 @@ import getMouseWheelEvent from '../../methods/getMouseWheelEvent';
 import RootNode from '../../components/RootNode';
 import DragCanvas from '../../components/DragCanvas';
 import LineCanvas from '../../components/LineCanvas';
-import useZoom from '../../customHooks/useZoom';
-import useMove from '../../customHooks/useMove';
-import { debounce } from '../../methods/assistFunctions';
+// import useZoom from '../../customHooks/useZoom';
+// import useMove from '../../customHooks/useMove';
+// import { debounce } from '../../methods/assistFunctions';
 
 interface MindmapProps {
   container_ref: RefObject<HTMLDivElement>;
@@ -29,41 +29,24 @@ interface MindmapProps {
 const node_refs = new Set<RefObject<HTMLDivElement>>();
 
 const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
-  const self = useRef<HTMLDivElement>(null);
   const {
-    mindmap: { state: root_node },
+    mindmap: { state: mindmap },
     nodeStatus: { state: nodeStatus },
+    global: { state: gState, dispatch: gDispatch },
     history: { dispatch: hDispatch },
-    global: { state: gState },
   } = useContext(context);
 
-  const historyHook = useHistory();
   const mindmapHook = useMindmap();
-  const zoomHook = useZoom();
-  const moveHook = useMove();
-  const { clearNodeStatus } = mindmapHook;
-  const [FLAG, setFLAG] = useState(0);
+  const historyHook = useHistory();
+  // const zoomHook = useZoom();
+  // const moveHook = useMove();
 
-  const mindmap_json = useMemo(() => JSON.stringify(root_node), [root_node]);
+  const [mindmapSnapshot, setMindmapSnapshot] = useState<string>(JSON.stringify(mindmap));
 
   const handleResize = useCallback(() => {
-    setFLAG(Date.now());
+    // Handle window resize
+    console.log('Window resized');
   }, []);
-
-  useEffect(() => {
-    const handleKeydown = getKeydownEvent(nodeStatus, mindmapHook, historyHook);
-    window.addEventListener('keydown', handleKeydown);
-    return () => {
-      window.removeEventListener('keydown', handleKeydown);
-    };
-  }, [nodeStatus, mindmapHook, historyHook]);
-
-  useEffect(() => {
-    window.addEventListener('click', clearNodeStatus);
-    return () => {
-      window.removeEventListener('click', clearNodeStatus);
-    };
-  }, [clearNodeStatus]);
 
   useEffect(() => {
     window.addEventListener('resize', handleResize);
@@ -73,46 +56,52 @@ const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
   }, [handleResize]);
 
   useEffect(() => {
-    const handleMouseWheel = getMouseWheelEvent(zoomHook, gState.zoom);
-    const handleMapMove = getMouseWheelEvent(moveHook, gState.zoom);
+    const handleMouseWheel = getMouseWheelEvent(gDispatch, container_ref.current!);
     const mainElement = document.querySelector(`#${refer.MINDMAP_MAIN}`) as HTMLElement;
     if (mainElement) {
       mainElement.addEventListener('wheel', handleMouseWheel);
-      mainElement.addEventListener('mousemove', debounce(handleMapMove, 4));
-      mainElement.addEventListener('mousedown', handleMapMove);
       return () => {
         mainElement.removeEventListener('wheel', handleMouseWheel);
-        mainElement.removeEventListener('mousemove', debounce(handleMapMove, 4));
-        mainElement.removeEventListener('mousedown', handleMapMove);
       };
     }
-  }, [FLAG, gState.zoom, zoomHook, moveHook]);
+  }, [gDispatch, container_ref]);
 
   useEffect(() => {
-    localStorage.setItem('mindmap', mindmap_json);
-    hDispatch(setHistory(mindmap_json, nodeStatus.cur_select || nodeStatus.cur_edit));
-  }, [mindmap_json, nodeStatus.cur_select, nodeStatus.cur_edit, hDispatch]);
+    const handleKeydown = getKeydownEvent(nodeStatus, mindmapHook, historyHook);
+    document.addEventListener('keydown', handleKeydown);
+    return () => {
+      document.removeEventListener('keydown', handleKeydown);
+    };
+  }, [nodeStatus, mindmapHook, historyHook]);
+
+  useEffect(() => {
+    const newSnapshot = JSON.stringify(mindmap);
+    if (newSnapshot !== mindmapSnapshot) {
+      hDispatch(setHistory(mindmap, nodeStatus.cur_select || ''));
+      setMindmapSnapshot(newSnapshot);
+    }
+  }, [mindmap, mindmapSnapshot, nodeStatus.cur_select, hDispatch]);
+
+  const style = useMemo(() => {
+    return css`
+      position: relative;
+      width: 100%;
+      height: 100%;
+      background-color: var(--theme-light);
+      transform: scale(${gState.zoom}) translate(${gState.x}px, ${gState.y}px);
+      transform-origin: 0 0;
+    `;
+  }, [gState.zoom, gState.x, gState.y]);
+
+  const self = useRef<HTMLDivElement>(null);
 
   return (
-    <div
-      className={wrapper}
-      ref={self}
-      style={{ zoom: gState.zoom, left: gState.x + 'vw', top: gState.y + 'vh' }}
-      id={refer.MINDMAP_ID}
-      draggable={false}
-    >
-      <RootNode key={root_node.id} layer={0} node={root_node} node_refs={node_refs} />
-      <DragCanvas parent_ref={self} container_ref={container_ref} mindmap={root_node} />
-      <LineCanvas parent_ref={self} mindmap={root_node} node_refs={node_refs} />
+    <div id={refer.MINDMAP_MAIN} className={style} ref={self}>
+      <RootNode layer={0} node={mindmap} node_refs={node_refs} />
+      <DragCanvas parent_ref={self} container_ref={container_ref} mindmap={mindmap} />
+      <LineCanvas parent_ref={self} mindmap={mindmap} node_refs={node_refs} />
     </div>
   );
 };
 
 export default Mindmap;
-
-// CSS
-const wrapper = css`
-  position: relative;
-  width: fit-content;
-  padding: 30vh 30vw;
-`;

@@ -12,8 +12,8 @@ interface ActionData {
 }
 
 export interface Action {
-  type: actionTypes.ActionType;
-  data: ActionData;
+  type: string;
+  data?: ActionData;
 }
 
 export const setSelect = (node_id: string | null, select_by_click: boolean = false): Action => ({

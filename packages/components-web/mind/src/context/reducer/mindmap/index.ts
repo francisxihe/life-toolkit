@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
-import defaultMindmap, { MindmapNode } from '../../../statics/defaultMindmap';
+import defaultMindmap from '../../../statics/defaultMindmap';
+import { MindmapNode } from '../../../types';
 import { findNode, deepCopy, setShowChildrenTrue } from '../../../methods/assistFunctions';
 import { Action } from './actionCreator';
 

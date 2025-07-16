@@ -1,21 +1,17 @@
 import * as actionTypes from './actionTypes';
-
-interface GlobalState {
-  zoom: number;
-  x: number;
-  y: number;
-  title?: string;
-  theme_index?: number;
-}
+import { GlobalState } from '../../../types';
 
 export interface Action {
-  type: actionTypes.ActionType;
-  data: Partial<GlobalState>;
+  type: string;
+  data: Partial<GlobalState> & {
+    x?: number;
+    y?: number;
+  };
 }
 
-export const setGlobal = (state: Partial<GlobalState>): Action => ({
+export const setGlobal = (data: Partial<GlobalState>): Action => ({
   type: actionTypes.SET_GLOBAL,
-  data: state,
+  data,
 });
 
 export const setTitle = (title: string): Action => ({
@@ -48,46 +44,32 @@ export const resetZoom = (): Action => ({
   data: { zoom: 1 },
 });
 
-export const zoomIn = (x, y): Action => ({
+export const zoomIn = (x: number, y: number): Action => ({
   type: actionTypes.ZOOM_IN,
-  data: {
-    x,
-    y,
-  },
+  data: { x, y },
 });
 
-export const zoomOut = (x, y): Action => ({
+export const zoomOut = (x: number, y: number): Action => ({
   type: actionTypes.ZOOM_OUT,
-  data: {
-    x,
-    y,
-  },
+  data: { x, y },
 });
 
-export const zoomReset = (zoomRate: number): Action => ({
+export const zoomReset = (): Action => ({
   type: actionTypes.ZOOM_RESET,
-  data: {
-    zoomRate,
-  },
+  data: { zoom: 1 },
+});
+
+export const moveXY = (x: number, y: number): Action => ({
+  type: actionTypes.MOVE_XY,
+  data: { x, y },
 });
 
 export const moveReset = (): Action => ({
   type: actionTypes.MOVE_RESET,
-  data: {},
+  data: { x: 0, y: 0 },
 });
 
-export const moveXY = (x, y): Action => ({
-  type: actionTypes.MOVE_XY,
-  data: {
-    x,
-    y,
-  },
-});
-
-export const moveXYWhenZoom = (x, y): Action => ({
-  type: actionTypes.MOVE_XY,
-  data: {
-    x,
-    y,
-  },
+export const moveXYWhenZoom = (x: number, y: number): Action => ({
+  type: actionTypes.MOVE_XY_WHEN_ZOOM,
+  data: { x, y },
 });

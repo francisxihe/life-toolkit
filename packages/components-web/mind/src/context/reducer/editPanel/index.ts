@@ -1,18 +1,17 @@
 import * as actionTypes from './actionTypes';
-// import defaultMindmap from '../../../statics/defaultMindmap';
-import { deepCopy } from '../../../methods/assistFunctions';
+import { EditPanel } from '../../../types';
+import { Action } from './actionCreator';
 
-export const defaultValue_editPanel = {
+export const defaultValue_editPanel: EditPanel = {
   isShow: false,
-  nodeId: '',
+  type: '',
+  data: null,
 };
 
-export default (panel, action) => {
+export default (panel: EditPanel, action: Action): EditPanel => {
   switch (action.type) {
     case actionTypes.TOGGLE_PANEL_SHOW:
-      const newPanel = deepCopy(panel);
-      newPanel.isShow = action.data.isShow;
-      return newPanel;
+      return { ...panel, ...action.data };
     default:
       return panel;
   }

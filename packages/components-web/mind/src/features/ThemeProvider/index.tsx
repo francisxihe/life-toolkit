@@ -1,8 +1,13 @@
+import React from 'react';
 import { css } from '@emotion/css';
 import useTheme from '../../customHooks/useTheme';
 import * as refer from '../../statics/refer';
 
-const ThemeProvider = ({ children }) => {
+interface ThemeProviderProps {
+  children: React.ReactNode;
+}
+
+const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const { theme } = useTheme();
 
   return (

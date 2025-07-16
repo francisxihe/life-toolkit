@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { context } from '../context';
 import * as mindmapAction from '../context/reducer/mindmap/actionCreator';
-import * as nodeStatusAction from '../context/reducer/nodeStatus/actionCreator.js';
+import * as nodeStatusAction from '../context/reducer/nodeStatus/actionCreator';
 import { clearHistory } from '../context/reducer/history/actionCreator';
 import md5 from 'md5';
 import { MindmapNode } from '../types';
@@ -18,6 +18,7 @@ interface MindmapHookReturn {
   deleteNode: (node_id: string, parent_id: string) => void;
   clearNodeStatus: () => void;
   setMindmap: (mindmap: MindmapNode, is_new_map?: boolean) => void;
+  expandAll: (node_id: string) => void;
 }
 
 const useMindmap = (): MindmapHookReturn => {
@@ -81,6 +82,9 @@ const useMindmap = (): MindmapHookReturn => {
       if (is_new_map) {
         hDispatch(clearHistory());
       }
+    },
+    expandAll: (node_id: string) => {
+      mDispatch(mindmapAction.expandAll(node_id));
     },
   };
 };

@@ -1,4 +1,4 @@
-import { MindmapNode } from './defaultMindmap';
+import { MindmapNode } from '../types';
 
 // Node Type
 export const LEFT_NODE = 'nodeLeft';

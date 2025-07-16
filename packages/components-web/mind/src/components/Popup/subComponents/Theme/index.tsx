@@ -4,11 +4,15 @@ import useTheme from '../../../../customHooks/useTheme';
 import { ButtonSet, Highlight } from '../../common/styledComponents';
 import ThemeListItem from './ThemeListItem';
 
-const Theme = ({ handleClosePopup }) => {
+interface ThemeProps {
+  handleClosePopup: () => void;
+}
+
+const Theme: React.FC<ThemeProps> = ({ handleClosePopup }) => {
   const { theme_index, theme_list, setTheme } = useTheme();
 
   useEffect(() => {
-    localStorage.setItem('theme_index', theme_index);
+    localStorage.setItem('theme_index', theme_index.toString());
   }, [theme_index]);
 
   return (

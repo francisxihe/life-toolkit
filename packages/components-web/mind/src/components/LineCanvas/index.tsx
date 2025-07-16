@@ -59,6 +59,8 @@ const LineCanvas: React.FC<LineCanvasProps> = ({ parent_ref, mindmap, node_refs 
     if (!ctx) return;
 
     drawLineCanvas(ctx, theme, mindmap, map);
+    // TODO: Implement line drawing functionality
+    console.log('Drawing lines for mindmap:', mindmap.id);
   }, [mindmap, theme, flag, gState.zoom, node_refs, parent_ref]);
 
   return <canvas ref={self} className={wrapper} />;

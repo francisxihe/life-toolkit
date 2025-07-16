@@ -1,6 +1,13 @@
 import * as actionTypes from './actionTypes';
 
-export const togglePanelShow = (isShow: boolean) => ({
+export interface Action {
+  type: string;
+  data?: {
+    isShow?: boolean;
+  };
+}
+
+export const togglePanelShow = (isShow: boolean): Action => ({
   type: actionTypes.TOGGLE_PANEL_SHOW,
   data: {
     isShow,

@@ -1,6 +1,14 @@
 import { css, cx } from '@emotion/css';
+import { Theme } from '../../../../types';
 
-const ThemeListItem = ({ theme, index, is_current, setTheme }) => {
+interface ThemeListItemProps {
+  theme: Theme;
+  index: number;
+  is_current: boolean;
+  setTheme: (index: number) => void;
+}
+
+const ThemeListItem: React.FC<ThemeListItemProps> = ({ theme, index, is_current, setTheme }) => {
   const handleSetTheme = () => {
     setTheme(index);
   };

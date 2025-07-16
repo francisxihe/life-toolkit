@@ -14,7 +14,7 @@ interface PopupProps {
 
 interface ContentProps {
   handleClosePopup: () => void;
-  handleDownload?: () => void;
+  handleDownload: () => void;
 }
 
 const getContentComponent = (type: string): ComponentType<ContentProps> | undefined => {
@@ -34,12 +34,16 @@ const getContentComponent = (type: string): ComponentType<ContentProps> | undefi
 
 const Popup = ({ type, handleClosePopup, handleDownload }: PopupProps) => {
   const Content = getContentComponent(type);
+  const defaultHandleDownload = () => {
+    console.log('Download function not provided');
+  };
+  
   return (
     <div className={wrapper} onClick={handlePropagation}>
       <div className={content_wrapper}>
         <i className={'zwicon-close-circle ' + close_button} onClick={handleClosePopup} />
         <Suspense fallback={<></>}>
-          {Content && <Content handleClosePopup={handleClosePopup} handleDownload={handleDownload} />}
+          {Content && <Content handleClosePopup={handleClosePopup} handleDownload={handleDownload || defaultHandleDownload} />}
         </Suspense>
       </div>
       <div className={overlay} onClick={handleClosePopup} />

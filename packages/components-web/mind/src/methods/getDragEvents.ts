@@ -2,7 +2,7 @@ import * as refer from '../statics/refer';
 import { findNode } from './assistFunctions';
 import { drawDragCanvas } from './drawCanvas';
 
-const getDomOffset = dom => {
+const getDomOffset = (dom: HTMLElement) => {
   const left = dom.offsetLeft,
     right = left + dom.offsetWidth,
     top = dom.offsetTop,
@@ -10,24 +10,24 @@ const getDomOffset = dom => {
   return { left, right, top, bottom };
 };
 
-export default (mindmap, drag_canvas, container, theme, mindmapHook, zoom, drag) => {
+export default (mindmap: any, drag_canvas: any, container: any, theme: any, mindmapHook: any, zoom: any, drag: any) => {
   const { moveNode } = mindmapHook;
 
-  let node_id,
-    parent_id,
-    target_id,
-    is_sibling,
-    children,
-    children_offset_left,
-    children_offset_right,
-    children_offset_vertical,
-    parent_offset,
-    parent_is_root,
-    container_left,
-    container_top,
-    container_width,
-    container_height,
-    in_drop_area;
+  let node_id: any,
+    parent_id: any,
+    target_id: any,
+    is_sibling: any,
+    children: any,
+    children_offset_left: any,
+    children_offset_right: any,
+    children_offset_vertical: any,
+    parent_offset: any,
+    parent_is_root: any,
+    container_left: any,
+    container_top: any,
+    container_width: any,
+    container_height: any,
+    in_drop_area: any;
 
   const resetVariables = () => {
     node_id = '';
@@ -51,7 +51,7 @@ export default (mindmap, drag_canvas, container, theme, mindmapHook, zoom, drag)
     in_drop_area = false;
   };
 
-  const handleContainerScroll = e => {
+  const handleContainerScroll = (_e: any) => {
     container_left = container.scrollLeft;
     container_top = container.scrollTop - 56; // 56 是 container（Main 组件）顶部 margin 值
   };

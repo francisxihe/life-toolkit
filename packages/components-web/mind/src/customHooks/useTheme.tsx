@@ -1,65 +1,46 @@
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { context } from '../context';
+import * as globalAction from '../context/reducer/global/actionCreator';
+import { Theme } from '../types';
 
-interface Theme {
-  line_color: string;
-  background_color: string;
-  text_color: string;
-  node_color: string;
-  node_border_color: string;
-}
-
-const theme_list: Theme[] = [
-  {
-    line_color: '#333333',
-    background_color: '#ffffff',
-    text_color: '#333333',
-    node_color: '#ffffff',
-    node_border_color: '#333333',
-  },
-  {
-    line_color: '#ffffff',
-    background_color: '#333333',
-    text_color: '#ffffff',
-    node_color: '#333333',
-    node_border_color: '#ffffff',
-  },
-];
-
-interface GlobalState {
-  zoom: number;
-  x: number;
-  y: number;
-  title: string;
+interface ThemeHookReturn {
+  theme: Theme;
+  themeIndex: number;
   theme_index: number;
-  theme_list: Array<{ main: string; light: string; dark: string; ex: string; assist: string }>;
+  theme_list: Theme[];
+  setTheme: (index: number) => void;
+  nextTheme: () => void;
+  prevTheme: () => void;
 }
 
-interface GlobalContext {
-  state: GlobalState;
-  dispatch: (action: { type: string; data: any }) => void;
-}
-
-const useTheme = () => {
+const useTheme = (): ThemeHookReturn => {
   const {
-    global: { state, dispatch },
+    global: { state: gState, dispatch: gDispatch },
   } = useContext(context);
 
-  const gState = state as GlobalState;
-
-  const theme = useMemo(() => {
-    return theme_list[gState.theme_index || 0];
-  }, [gState.theme_index]);
-
   const setTheme = (index: number) => {
-    dispatch({ type: 'SET_THEME', data: { theme_index: index } });
+    localStorage.setItem('theme_index', index.toString());
+    gDispatch(globalAction.setTheme(index));
+  };
+
+  const nextTheme = () => {
+    const nextIndex = (gState.theme_index + 1) % gState.theme_list.length;
+    setTheme(nextIndex);
+  };
+
+  const prevTheme = () => {
+    const prevIndex = gState.theme_index === 0 ? gState.theme_list.length - 1 : gState.theme_index - 1;
+    setTheme(prevIndex);
   };
 
   return {
-    theme,
-    theme_index: gState.theme_index || 0,
-    theme_list,
+    theme: gState.theme_list[gState.theme_index],
+    themeIndex: gState.theme_index,
+    theme_index: gState.theme_index,
+    theme_list: gState.theme_list,
     setTheme,
+    nextTheme,
+    prevTheme,
   };
 };
 

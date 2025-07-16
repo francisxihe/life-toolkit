@@ -7,7 +7,7 @@ import useZoom from '../../customHooks/useZoom';
 import useMove from '../../customHooks/useMove';
 import * as refer from '../../statics/refer';
 import * as popupType from '../../components/Popup/common/popupType';
-import { handlePropagation, downloadFile } from '../../methods/assistFunctions'; // 防止 Mindmap 中的选中状态由于冒泡被清除
+import { handlePropagation, download } from '../../methods/assistFunctions'; // 防止 Mindmap 中的选中状态由于冒泡被清除
 import ToolButton from '../../components/ToolButton';
 import MindmapTitle from '../../components/MindmapTitle';
 import Popup from '../../components/Popup';
@@ -24,8 +24,8 @@ const Nav = () => {
 
   const { expandAll } = useMindmap();
   const { zoomIn, zoomOut, zoomReset } = useZoom();
-  const { moveXY, moveReset } = useMove();
-  const { undoHistory, redoHistory } = useHistory();
+  const { moveReset } = useMove();
+  const { undo: undoHistory, redo: redoHistory } = useHistory();
 
   const handleClosePopup = () => {
     setPopup(popupType.NONE);
@@ -37,7 +37,7 @@ const Nav = () => {
 
   const handleDownload = () => {
     const url = `data:text/plain,${encodeURIComponent(JSON.stringify(mindmap))}`;
-    downloadFile(url, `${title}.rmf`);
+    download(url, `${title}.rmf`);
   };
 
   const handleOpenFile = () => {
@@ -48,8 +48,26 @@ const Nav = () => {
     setPopup(popupType.EXPORT);
   };
 
-  const handleTheme = () => {
-    setPopup(popupType.THEME);
+  const handleZoom = (type: 'in' | 'out' | 'reset') => {
+    switch (type) {
+      case 'in':
+        zoomIn();
+        break;
+      case 'out':
+        zoomOut();
+        break;
+      case 'reset':
+        zoomReset();
+        break;
+    }
+  };
+
+  const handleMove = (type: 'reset') => {
+    switch (type) {
+      case 'reset':
+        moveReset();
+        break;
+    }
   };
 
   const handleUndo = () => {
@@ -60,126 +78,115 @@ const Nav = () => {
     redoHistory();
   };
 
-  const handleExpand = () => {
+  const handleExpandAll = () => {
     expandAll(refer.ROOT_NODE_ID);
   };
 
-  const handleZoom = zoom => {
-    console.log('缩放', zoom ? zoom : '还原');
-    switch (zoom) {
-      case 'in':
-        zoomIn();
-        break;
-      case 'out':
-        zoomOut();
-        break;
-      default:
-        zoomReset();
-    }
+  const handleTheme = () => {
+    setPopup(popupType.THEME);
   };
 
-  const handleMove = move => {
-    console.log('移动', move ? move : '还原');
-    switch (move) {
-      case 'up':
-        moveXY(0, -5);
-        break;
-      case 'down':
-        moveXY(0, 5);
-        break;
-      case 'left':
-        moveXY(-5, 0);
-        break;
-      case 'right':
-        moveXY(5, 0);
-        break;
-      default:
-        moveReset();
-    }
+  const handleSettings = () => {
+    // setPopup(popupType.SETTINGS);
+    console.log('Settings clicked');
+  };
+
+  const handleHelp = () => {
+    // setPopup(popupType.HELP);
+    console.log('Help clicked');
+  };
+
+  const handleAbout = () => {
+    // setPopup(popupType.ABOUT);
+    console.log('About clicked');
   };
 
   return (
-    <nav className={wrapper}>
-      <section className={section} onClick={handlePropagation}>
-        <ToolButton icon={'add-item-alt'} onClick={handleNewFile}>
+    <div
+      className={css`
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: var(--theme-light);
+        border-bottom: 1px solid var(--theme-main);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        z-index: 1000;
+        gap: 10px;
+      `}
+      onClick={handlePropagation}
+    >
+      <MindmapTitle />
+      
+      <div className={css`display: flex; gap: 5px;`}>
+        <ToolButton icon={'file-plus'} onClick={handleNewFile}>
           新建
         </ToolButton>
         <ToolButton icon={'folder-open'} onClick={handleOpenFile}>
           打开
         </ToolButton>
-        <ToolButton icon={'file-download'} onClick={handleDownload}>
-          下载至本地
+        <ToolButton icon={'download'} onClick={handleDownload}>
+          下载
         </ToolButton>
-        <ToolButton icon={'duplicate'} onClick={handleExport}>
+        <ToolButton icon={'export'} onClick={handleExport}>
           导出
         </ToolButton>
-        <ToolButton icon={'palette'} onClick={handleTheme}>
-          主题
-        </ToolButton>
-        <ToolButton icon={'plus-circle'} onClick={() => handleZoom('in')}>
+      </div>
+
+      <div className={css`display: flex; gap: 5px;`}>
+        <ToolButton icon={'zoom-in'} onClick={() => handleZoom('in')}>
           放大
         </ToolButton>
-        <ToolButton icon={'minus-circle'} onClick={() => handleZoom('out')}>
+        <ToolButton icon={'zoom-out'} onClick={() => handleZoom('out')}>
           缩小
         </ToolButton>
-        <ToolButton icon={'rotate-left'} onClick={() => handleZoom()}>
-          还原
+        <ToolButton icon={'rotate-left'} onClick={() => handleZoom('reset')}>
+          重置缩放
         </ToolButton>
-      </section>
-      <section className={section}>
-        <MindmapTitle />
-      </section>
-      <section className={section} onClick={handlePropagation}>
-        <ToolButton icon={'rotate-left'} onClick={() => handleMove()}>
-          还原
+      </div>
+
+      <div className={css`display: flex; gap: 5px;`}>
+        <ToolButton icon={'rotate-left'} onClick={() => handleMove('reset')}>
+          重置位置
         </ToolButton>
-        <ToolButton icon={'arrow-left'} onClick={() => handleMove('left')}>
-          左
+      </div>
+
+      <div className={css`display: flex; gap: 5px;`}>
+        <ToolButton icon={'expand-all'} onClick={handleExpandAll}>
+          展开全部
         </ToolButton>
-        <ToolButton icon={'arrow-up'} onClick={() => handleMove('up')}>
-          上
-        </ToolButton>
-        <ToolButton icon={'arrow-down'} onClick={() => handleMove('down')}>
-          下
-        </ToolButton>
-        <ToolButton icon={'arrow-right'} onClick={() => handleMove('right')}>
-          右
-        </ToolButton>
-        <ToolButton icon={'undo'} disabled={history.undo.length === 0} onClick={handleUndo}>
+      </div>
+
+      <div className={css`display: flex; gap: 5px;`}>
+        <ToolButton icon={'undo'} disabled={history.past.length === 0} onClick={handleUndo}>
           撤销
         </ToolButton>
-        <ToolButton icon={'redo'} disabled={history.redo.length === 0} onClick={handleRedo}>
+        <ToolButton icon={'redo'} disabled={history.future.length === 0} onClick={handleRedo}>
           重做
         </ToolButton>
-        <ToolButton icon={'scale'} onClick={handleExpand}>
-          展开所有节点
+      </div>
+
+      <div className={css`display: flex; gap: 5px; margin-left: auto;`}>
+        <ToolButton icon={'theme'} onClick={handleTheme}>
+          主题
         </ToolButton>
-      </section>
-      {popup !== popupType.NONE && (
-        <Popup type={popup} handleClosePopup={handleClosePopup} handleDownload={handleDownload} />
-      )}
-    </nav>
+        <ToolButton icon={'settings'} onClick={handleSettings}>
+          设置
+        </ToolButton>
+        <ToolButton icon={'help'} onClick={handleHelp}>
+          帮助
+        </ToolButton>
+        <ToolButton icon={'info'} onClick={handleAbout}>
+          关于
+        </ToolButton>
+      </div>
+
+      <Popup type={popup} handleClosePopup={handleClosePopup} handleDownload={handleDownload} />
+    </div>
   );
 };
 
 export default Nav;
-
-// CSS
-const wrapper = css`
-  display: flex;
-  justify-content: space-between;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 56px;
-  padding: 0 50px;
-  font-size: 25px;
-  background-color: #ffffff;
-  box-shadow: 0 0px 2px #aaaaaa;
-  z-index: 10;
-`;
-
-const section = css`
-  display: flex;
-`;

@@ -1,18 +1,22 @@
 import * as actionTypes from './actionTypes';
+import { NodeStatus } from '../../../types';
+import { Action } from './actionCreator';
 
-export const defaultValue_nodeStatus = {
+export const defaultValue_nodeStatus: NodeStatus = {
   cur_select: '',
-  select_by_click: false,
   cur_edit: '',
+  select_by_click: false,
   cur_node_info: {},
 };
 
-export default (nodeStatus, action) => {
+export default (nodeStatus: NodeStatus, action: Action): NodeStatus => {
   switch (action.type) {
     case actionTypes.SET_SELECT:
-      if (nodeStatus.cur_select === action.data.cur_select) {
+      if (nodeStatus.cur_select === action.data?.cur_select) {
         // 避免 cur_select 未变更时 info 被清空
-        delete action.data.cur_node_info;
+        const newData = { ...action.data };
+        delete newData.cur_node_info;
+        return { ...nodeStatus, ...newData };
       }
       return { ...nodeStatus, ...action.data };
     case actionTypes.SET_EDIT:

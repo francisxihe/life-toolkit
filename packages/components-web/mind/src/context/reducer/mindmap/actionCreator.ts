@@ -1,5 +1,4 @@
 import * as actionTypes from './actionTypes';
-import { NEW_NODE_TEXT } from '../../../statics/refer';
 import { MindmapNode } from '../../../types';
 
 interface ActionData {

@@ -1,14 +1,6 @@
 import * as actionTypes from './actionTypes';
+import { GlobalState } from '../../../types';
 import { Action } from './actionCreator';
-
-interface GlobalState {
-  zoom: number;
-  x: number;
-  y: number;
-  title: string;
-  theme_index: number;
-  theme_list: Array<{ main: string; light: string; dark: string; ex: string; assist: string }>;
-}
 
 export type { GlobalState };
 
@@ -24,7 +16,6 @@ export const defaultValue_global: GlobalState = {
 };
 
 const ZOOM_STEP = 0.1;
-const MOVE_STEP = 0.1;
 
 const deepCopy = <T>(obj: T): T => {
   return JSON.parse(JSON.stringify(obj));
@@ -70,8 +61,8 @@ export default (state: GlobalState = defaultValue_global, action: Action): Globa
     }
     case actionTypes.MOVE_XY: {
       const newGlobal = deepCopy(state);
-      newGlobal.x += action.data.x / newGlobal.zoom;
-      newGlobal.y += action.data.y / newGlobal.zoom;
+      newGlobal.x += (action.data.x || 0) / newGlobal.zoom;
+      newGlobal.y += (action.data.y || 0) / newGlobal.zoom;
       return newGlobal;
     }
     case actionTypes.MOVE_RESET: {
@@ -83,7 +74,7 @@ export default (state: GlobalState = defaultValue_global, action: Action): Globa
     case actionTypes.MOVE_XY_WHEN_ZOOM: {
       const newGlobal = deepCopy(state);
       newGlobal.x = 0;
-      newGlobal.x = 0;
+      newGlobal.y = 0;
       return newGlobal;
     }
     default:
