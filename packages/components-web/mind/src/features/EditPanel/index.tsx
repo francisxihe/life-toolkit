@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import React, { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { css } from '@emotion/css';
 import useEditPanel from '../../customHooks/useEditPanel';
 import useMindmap from '../../customHooks/useMindmap';
@@ -13,12 +12,13 @@ const EditPanel = () => {
     editPanel: { state: epState },
     nodeStatus: { state: nState },
   } = useContext(context);
+
   const {
     cur_node_info: { info = '', text, id },
   } = nState;
 
   const mindmapHook = useMindmap();
-  const editPanleHook = useEditPanel();
+  const editPanelHook = useEditPanel();
 
   if (!epState.isShow) {
     return null;
@@ -30,7 +30,7 @@ const EditPanel = () => {
       <i
         className="zwicon-close"
         style={close}
-        onClick={() => editPanleHook.toggelPanelShow(false)}
+        onClick={() => editPanelHook.togglePanelShow(false)}
       ></i>
       <MdEditor
         className={mdEditor}
@@ -38,7 +38,7 @@ const EditPanel = () => {
         onBlur={value => id && mindmapHook.editNodeInfo(id, value)}
       />
       {/* <Button type="primary" onClick={()=>mindmapHook.editNodeInfo(id,inputVal)}>保存</Button>
-            <Button type="primary" onClick={()=>editPanleHook.toggelPanelShow(false)}>关闭</Button> */}
+            <Button type="primary" onClick={()=>editPanelHook.togglePanelShow(false)}>关闭</Button> */}
     </div>
   );
 };
@@ -65,7 +65,7 @@ const show = css`
 
 const close = {
   fontSize: 20,
-  position: 'absolute',
+  position: 'absolute' as const,
   cursor: 'pointer',
   right: '10px',
   top: '5px',

@@ -1,12 +1,11 @@
-/** @jsxImportSource @emotion/react */
-import React, { useEffect, useContext, useRef } from 'react';
+import { useEffect, useContext, useRef, KeyboardEvent } from 'react';
 import { css } from '@emotion/css';
 import { context } from '../../context';
 import { setTitle } from '../../context/reducer/global/actionCreator';
 import * as refer from '../../statics/refer';
 
 const MindmapTitle = () => {
-  const self = useRef();
+  const self = useRef<HTMLSpanElement>(null);
   const {
     global: {
       state: { title },
@@ -19,12 +18,17 @@ const MindmapTitle = () => {
     localStorage.setItem('title', title);
   }, [title]);
 
-  const handleKeydown = event => {
+  const handleKeydown = (event: KeyboardEvent<HTMLSpanElement>) => {
     switch (event.key.toUpperCase()) {
       case 'ESCAPE':
-        self.current.textContent = title;
+        if (self.current) {
+          self.current.textContent = title;
+        }
+        break;
       case 'ENTER':
-        self.current.blur();
+        if (self.current) {
+          self.current.blur();
+        }
         break;
       default:
         break;
@@ -32,14 +36,17 @@ const MindmapTitle = () => {
   };
 
   const handleBlur = () => {
-    let new_title = self.current.textContent.trim();
+    if (!self.current) return;
+    let new_title = self.current.textContent?.trim() || '';
     if (new_title === '') {
       new_title = title;
     }
     if (new_title.length > 30) {
       new_title = new_title.slice(0, 30);
     }
-    self.current.textContent = new_title; // contentEditable 组件内容不会被自动更新
+    if (self.current) {
+      self.current.textContent = new_title; // contentEditable 组件内容不会被自动更新
+    }
     dispatch(setTitle(new_title));
   };
 
@@ -48,7 +55,7 @@ const MindmapTitle = () => {
       ref={self}
       className={wrapper}
       contentEditable="true"
-      suppressContentEditableWarning="true"
+      suppressContentEditableWarning={true}
       spellCheck="false"
       onKeyDown={handleKeydown}
       onBlur={handleBlur}

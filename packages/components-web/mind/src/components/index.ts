@@ -1,5 +1,5 @@
 // 主要组件导出
-export { default as MindMap } from '../App';
+export { default as MindMap } from '../features/Main';
 export { default as RootNode } from './RootNode';
 export { default as SubNode } from './SubNode';
 export { default as Node } from './Node';

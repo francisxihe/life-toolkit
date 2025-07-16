@@ -7,14 +7,14 @@ const useEditPanel = () => {
     editPanel: { state: epState, dispatch: epDispatch },
   } = useContext(context);
   return {
-    toggelPanelShow: bool => {
+    togglePanelShow: (bool: boolean) => {
       if (epState.isShow === bool) {
         return;
       }
-      epDispatch(editPanelAction.toggelPanelShow(bool));
+      epDispatch(editPanelAction.togglePanelShow(bool));
     },
-    savePanel: bool => {
-      epDispatch(editPanelAction.toggelPanelShow(bool));
+    savePanel: (bool: boolean) => {
+      epDispatch(editPanelAction.togglePanelShow(bool));
     },
   };
 };

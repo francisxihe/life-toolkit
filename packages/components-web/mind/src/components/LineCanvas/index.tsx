@@ -1,23 +1,14 @@
-/** @jsxImportSource @emotion/react */
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { css } from '@emotion/css';
 import useTheme from '../../customHooks/useTheme';
 import { context } from '../../context';
 import { drawLineCanvas } from '../../methods/drawCanvas';
-import { MindmapNode } from '../../statics/defaultMindmap';
+import { MindmapNode } from '../../types';
 
 interface LineCanvasProps {
   parent_ref: React.RefObject<HTMLDivElement>;
   mindmap: MindmapNode;
   node_refs: Set<React.RefObject<HTMLDivElement>>;
-}
-
-interface NodePosition {
-  id: string;
-  left: number;
-  right: number;
-  centerY: number;
-  tag: string;
 }
 
 const LineCanvas: React.FC<LineCanvasProps> = ({ parent_ref, mindmap, node_refs }) => {

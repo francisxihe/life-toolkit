@@ -1,10 +1,12 @@
+import { MindmapNode } from './defaultMindmap';
+
 // Node Type
 export const LEFT_NODE = 'nodeLeft';
 export const RIGHT_NODE = 'nodeRight';
 export const DROP_AREA = 'dropArea';
 
 // DOM 操作相关
-export const ROOT_PARENT = { id: '', children: [] };
+export const ROOT_PARENT: MindmapNode = { id: '', text: '', showChildren: true, children: [] };
 export const ROOT_NODE_ID = 'rmind_root_node';
 export const MINDMAP_ID = 'rmind_mindmap_wrapper';
 export const MINDMAP_MAIN = 'rmind_main';

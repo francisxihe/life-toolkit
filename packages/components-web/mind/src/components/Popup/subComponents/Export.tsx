@@ -1,15 +1,18 @@
-/** @jsxImportSource @emotion/react */
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { css } from '@emotion/css';
 import { context } from '../../../context';
 import useMindmap from '../../../customHooks/useMindmap';
 import * as refer from '../../../statics/refer';
 import html2canvas from 'html2canvas';
-import { downloadFile } from '../../../methods/assistFunctions';
+import { download } from '../../../methods/assistFunctions';
 import mindmapExporter from '../../../methods/mindmapExporter';
 import { Highlight, ButtonSet } from '../common/styledComponents';
 
-const Export = ({ handleClosePopup }) => {
+interface ExportProps {
+  handleClosePopup: () => void;
+}
+
+const Export = ({ handleClosePopup }: ExportProps) => {
   const {
     mindmap: { state: mindmap },
     global: {
@@ -20,16 +23,19 @@ const Export = ({ handleClosePopup }) => {
 
   const handleExportPNG = () => {
     clearNodeStatus(); // 防止选中状态时的工具条等也被导出到图像
-    html2canvas(document.getElementById(refer.MINDMAP_ID)).then(canvas => {
+    const element = document.getElementById(refer.MINDMAP_ID);
+    if (!element) return;
+    html2canvas(element).then(canvas => {
       const url = canvas.toDataURL('image/png');
-      downloadFile(url, `${title}.png`);
+      download(url, `${title}.png`);
     });
   };
 
-  const handleExportText = format => {
+  const handleExportText = (format: string) => {
     const data = mindmapExporter(mindmap, format);
+    if (!data) return;
     const url = `data:text/plain,${encodeURIComponent(data)}`;
-    downloadFile(url, `${title}.${format.toLowerCase()}`);
+    download(url, `${title || 'mindmap'}.${format.toLowerCase()}`);
   };
 
   return (

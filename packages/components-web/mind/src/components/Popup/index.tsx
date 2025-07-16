@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy, ComponentType } from 'react';
 import { css } from '@emotion/css';
 import * as popupType from './common/popupType';
 import { handlePropagation } from '../../methods/assistFunctions';
@@ -7,7 +6,18 @@ import New from './subComponents/New';
 import Open from './subComponents/Open';
 import Theme from './subComponents/Theme';
 
-const getContentComponent = type => {
+interface PopupProps {
+  type: string;
+  handleClosePopup: () => void;
+  handleDownload?: () => void;
+}
+
+interface ContentProps {
+  handleClosePopup: () => void;
+  handleDownload?: () => void;
+}
+
+const getContentComponent = (type: string): ComponentType<ContentProps> | undefined => {
   switch (type) {
     case popupType.NEW:
       return New;
@@ -22,14 +32,14 @@ const getContentComponent = type => {
   }
 };
 
-const Popup = ({ type, handleClosePopup, handleDownload }) => {
+const Popup = ({ type, handleClosePopup, handleDownload }: PopupProps) => {
   const Content = getContentComponent(type);
   return (
     <div className={wrapper} onClick={handlePropagation}>
       <div className={content_wrapper}>
         <i className={'zwicon-close-circle ' + close_button} onClick={handleClosePopup} />
         <Suspense fallback={<></>}>
-          <Content handleClosePopup={handleClosePopup} handleDownload={handleDownload} />
+          {Content && <Content handleClosePopup={handleClosePopup} handleDownload={handleDownload} />}
         </Suspense>
       </div>
       <div className={overlay} onClick={handleClosePopup} />

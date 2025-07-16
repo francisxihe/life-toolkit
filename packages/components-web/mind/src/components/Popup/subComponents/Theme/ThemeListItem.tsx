@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-import React from 'react';
 import { css, cx } from '@emotion/css';
 
 const ThemeListItem = ({ theme, index, is_current, setTheme }) => {

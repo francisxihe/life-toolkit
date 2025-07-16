@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { css } from '@emotion/css';
 import useMindmap from '../../customHooks/useMindmap';
@@ -6,7 +5,7 @@ import useTheme from '../../customHooks/useTheme';
 import getDragEvents from '../../methods/getDragEvents';
 import { context } from '../../context';
 import * as refer from '../../statics/refer';
-import { MindmapNode } from '../../statics/defaultMindmap';
+import { MindmapNode } from '../../types';
 
 interface DragCanvasProps {
   parent_ref: React.RefObject<HTMLDivElement>;

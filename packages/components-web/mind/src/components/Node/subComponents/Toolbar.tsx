@@ -1,11 +1,10 @@
-/** @jsxImportSource @emotion/react */
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import { css } from '@emotion/css';
 import useMindmap from '../../../customHooks/useMindmap';
 import useEditPanel from '../../../customHooks/useEditPanel';
 import { handlePropagation } from '../../../methods/assistFunctions';
 import ToolButton from '../../ToolButton';
-import { MindmapNode } from '../../../statics/defaultMindmap';
+import { MindmapNode } from '../../../types';
 
 interface ToolbarProps {
   layer: number;
@@ -39,7 +38,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ layer, node, parent }) => {
 
   const handleAddInfo = () => {
     mindmapHook.selectNode(node.id);
-    editPanelHook.toggelPanelShow(true);
+    editPanelHook.togglePanelShow(true);
   };
 
   return (

@@ -10,7 +10,7 @@ export default () => {
     history: { state: history },
   } = useContext(context);
 
-  const applySnapshot = snapshot => {
+  const applySnapshot = (snapshot: any) => {
     if (snapshot) {
       const { mindmap, cur_node } = snapshot;
       mDispatch(setMindmap(JSON.parse(mindmap)));
@@ -20,10 +20,10 @@ export default () => {
 
   return {
     undoHistory: () => {
-      applySnapshot(history.undo[history.undo.length - 1]);
+      applySnapshot(history.undo[history.undo.length - 1] as any);
     },
     redoHistory: () => {
-      applySnapshot(history.redo[0]);
+      applySnapshot(history.redo[0] as any);
     },
   };
 };

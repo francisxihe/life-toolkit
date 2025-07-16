@@ -10,6 +10,8 @@ interface GlobalState {
   theme_list: Array<{ main: string; light: string; dark: string; ex: string; assist: string }>;
 }
 
+export type { GlobalState };
+
 export const defaultValue_global: GlobalState = {
   zoom: 1,
   x: 0,
@@ -24,7 +26,11 @@ export const defaultValue_global: GlobalState = {
 const ZOOM_STEP = 0.1;
 const MOVE_STEP = 0.1;
 
-const preventMinValue = (obj, key, min) => {
+const deepCopy = <T>(obj: T): T => {
+  return JSON.parse(JSON.stringify(obj));
+};
+
+const preventMinValue = (obj: any, key: string, min: number) => {
   if (obj[key] <= min) {
     obj[key] = min;
   }

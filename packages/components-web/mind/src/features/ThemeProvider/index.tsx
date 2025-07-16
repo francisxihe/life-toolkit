@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-import React, { useContext, useEffect } from 'react';
 import { css } from '@emotion/css';
 import useTheme from '../../customHooks/useTheme';
 import * as refer from '../../statics/refer';

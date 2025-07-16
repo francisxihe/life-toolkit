@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { css } from '@emotion/css';
 import useTheme from '../../../../customHooks/useTheme';
 import { ButtonSet, Highlight } from '../../common/styledComponents';

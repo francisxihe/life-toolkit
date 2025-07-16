@@ -1,4 +1,4 @@
-import { MindmapNode } from '../statics/defaultMindmap';
+import { MindmapNode } from '../types';
 import * as refer from '../statics/refer';
 
 interface NodeOffset {
@@ -21,7 +21,7 @@ const drawBezier = (
   ctx.stroke();
 };
 
-const drawLine = (ctx, node, map) => {
+const drawLine = (ctx: CanvasRenderingContext2D, node: MindmapNode, map: Map<string, [number, number, number, string]>) => {
   const { id: parent_id, children } = node;
   console.log('drawLine called with parent_id:', parent_id, 'children:', children);
   

@@ -4,7 +4,7 @@ import * as mindmapAction from '../context/reducer/mindmap/actionCreator';
 import * as nodeStatusAction from '../context/reducer/nodeStatus/actionCreator.js';
 import { clearHistory } from '../context/reducer/history/actionCreator';
 import md5 from 'md5';
-import { MindmapNode } from '../statics/defaultMindmap';
+import { MindmapNode } from '../types';
 
 interface MindmapHookReturn {
   toggleChildren: (node_id: string, bool: boolean) => void;

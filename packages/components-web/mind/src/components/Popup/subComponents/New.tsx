@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { context } from '../../../context';
 import { setTitle } from '../../../context/reducer/global/actionCreator';
 import useMindmap from '../../../customHooks/useMindmap';
@@ -6,7 +6,12 @@ import defaultMindmap from '../../../statics/defaultMindmap';
 import * as refer from '../../../statics/refer';
 import { ButtonSet, MainButton, Shortcut, Highlight, Annotation } from '../common/styledComponents';
 
-const New = ({ handleClosePopup, handleDownload }) => {
+interface NewProps {
+  handleClosePopup: () => void;
+  handleDownload: () => void;
+}
+
+const New = ({ handleClosePopup, handleDownload }: NewProps) => {
   const {
     global: { dispatch },
   } = useContext(context);

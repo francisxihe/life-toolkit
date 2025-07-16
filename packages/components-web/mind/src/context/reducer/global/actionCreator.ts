@@ -48,7 +48,7 @@ export const resetZoom = (): Action => ({
   data: { zoom: 1 },
 });
 
-export const zoomIn = (x, y) => ({
+export const zoomIn = (x, y): Action => ({
   type: actionTypes.ZOOM_IN,
   data: {
     x,
@@ -56,7 +56,7 @@ export const zoomIn = (x, y) => ({
   },
 });
 
-export const zoomOut = (x, y) => ({
+export const zoomOut = (x, y): Action => ({
   type: actionTypes.ZOOM_OUT,
   data: {
     x,
@@ -64,19 +64,19 @@ export const zoomOut = (x, y) => ({
   },
 });
 
-export const zoomReset = zoomRate => ({
+export const zoomReset = (zoomRate: number): Action => ({
   type: actionTypes.ZOOM_RESET,
   data: {
     zoomRate,
   },
 });
 
-export const moveReset = () => ({
+export const moveReset = (): Action => ({
   type: actionTypes.MOVE_RESET,
   data: {},
 });
 
-export const moveXY = (x, y) => ({
+export const moveXY = (x, y): Action => ({
   type: actionTypes.MOVE_XY,
   data: {
     x,
@@ -84,7 +84,7 @@ export const moveXY = (x, y) => ({
   },
 });
 
-export const moveXYWhenZoom = (x, y) => ({
+export const moveXYWhenZoom = (x, y): Action => ({
   type: actionTypes.MOVE_XY,
   data: {
     x,

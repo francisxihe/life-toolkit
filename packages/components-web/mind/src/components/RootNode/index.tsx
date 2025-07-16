@@ -1,19 +1,27 @@
-/** @jsxImportSource @emotion/react */
 import React, { useEffect, useRef } from 'react';
 import { css } from '@emotion/css';
 import { ROOT_PARENT } from '../../statics/refer';
 import Node from '../Node';
 import SubNode from '../SubNode';
+import { MindmapNode } from '../../types';
 
-const RootNode = ({ layer, node, node_refs }) => {
-  const root_node = useRef();
+interface RootNodeProps {
+  layer: number;
+  node: MindmapNode;
+  node_refs: Set<React.RefObject<HTMLDivElement>>;
+}
+
+const RootNode: React.FC<RootNodeProps> = ({ layer, node, node_refs }) => {
+  const root_node = useRef<HTMLDivElement>(null);
 
   const total = node.children.length,
     half = total > 3 ? Math.trunc(total / 2) : total;
 
   // 载入时使根节点居中。暂时没发现除了多包一层 div 之外更好的解决方法
   useEffect(() => {
-    root_node.current.scrollIntoView({ block: 'center', inline: 'center' });
+    if (root_node.current) {
+      root_node.current.scrollIntoView({ block: 'center', inline: 'center' });
+    }
   }, []);
 
   return (
@@ -22,7 +30,7 @@ const RootNode = ({ layer, node, node_refs }) => {
         {node.showChildren &&
           node.children
             .slice(half)
-            .map(sub_node => (
+            .map((sub_node: MindmapNode) => (
               <SubNode
                 key={sub_node.id}
                 layer={layer + 1}
@@ -34,13 +42,13 @@ const RootNode = ({ layer, node, node_refs }) => {
             ))}
       </div>
       <div ref={root_node}>
-        <Node layer={0} node={node} node_refs={node_refs} parent={ROOT_PARENT} />
+        <Node node={node} node_refs={node_refs} parent={ROOT_PARENT} />
       </div>
       <div>
         {node.showChildren &&
           node.children
             .slice(0, half)
-            .map(sub_node => (
+            .map((sub_node: MindmapNode) => (
               <SubNode
                 key={sub_node.id}
                 layer={layer + 1}

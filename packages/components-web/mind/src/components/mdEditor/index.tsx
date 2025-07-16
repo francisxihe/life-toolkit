@@ -41,9 +41,3 @@ const MdEditor: React.FC<MdEditorProps> = props => {
 };
 
 export default MdEditor;
-
-const textarea = {
-  width: '100%',
-  height: '100%',
-  resize: 'none',
-};

@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { css } from '@emotion/css';
 import { context } from '../../context';
 import useMindmap from '../../customHooks/useMindmap';
@@ -22,6 +21,7 @@ const Nav = () => {
       state: { title },
     },
   } = useContext(context);
+
   const { expandAll } = useMindmap();
   const { zoomIn, zoomOut, zoomReset } = useZoom();
   const { moveXY, moveReset } = useMove();

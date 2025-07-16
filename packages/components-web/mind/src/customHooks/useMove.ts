@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { context } from '../context';
 import { setPosition } from '../context/reducer/global/actionCreator';
-import { MoveHook } from '../methods/getMouseWheelEvent';
+import { moveXY, moveReset } from '../context/reducer/global/actionCreator';
 
-export default function useMove(): MoveHook {
+export default function useMove() {
   const {
     global: { state: gState, dispatch: gDispatch },
   } = useContext(context);
@@ -29,5 +29,11 @@ export default function useMove(): MoveHook {
     moveDown,
     moveLeft,
     moveRight,
+    moveReset: () => {
+      gDispatch(moveReset());
+    },
+    moveXY: (x: number, y: number) => {
+      gDispatch(moveXY(x, y));
+    },
   };
 }

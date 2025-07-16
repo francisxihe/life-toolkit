@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useEffect, useRef, KeyboardEvent } from 'react';
 import { css } from '@emotion/css';
 import useMindmap from '../../../customHooks/useMindmap';
@@ -19,6 +18,7 @@ const InputDiv: React.FC<InputDivProps> = ({ node_id, children }) => {
         if (self.current) {
           self.current.textContent = children;
         }
+        break;
       case 'ENTER':
         if (self.current) {
           self.current.blur();

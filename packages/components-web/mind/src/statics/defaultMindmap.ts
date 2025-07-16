@@ -1,22 +1,5 @@
 import { ROOT_NODE_ID } from './refer';
-
-export interface MindmapNode {
-  id: string;
-  text: string;
-  showChildren: boolean;
-  children: MindmapNode[];
-  style?: React.CSSProperties;
-  position?: {
-    x: number;
-    y: number;
-  };
-  info?: {
-    description?: string;
-    tags?: string[];
-    priority?: number;
-    [key: string]: any;
-  };
-}
+import { MindmapNode } from '../types';
 
 const defaultMindmap: MindmapNode = {
   id: ROOT_NODE_ID,

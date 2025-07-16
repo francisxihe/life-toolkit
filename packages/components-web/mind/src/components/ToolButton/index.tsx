@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { MouseEvent } from 'react';
 import { css, cx } from '@emotion/css';
 import '../../statics/zwicon.css';

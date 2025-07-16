@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { context } from '../context';
 import { setZoom } from '../context/reducer/global/actionCreator';
-import { ZoomHook } from '../methods/getMouseWheelEvent';
+import * as globalAction from '../context/reducer/global/actionCreator';
 
-export default function useZoom(): ZoomHook {
+export default function useZoom() {
   const {
     global: { state: gState, dispatch: gDispatch },
   } = useContext(context);
@@ -19,5 +19,8 @@ export default function useZoom(): ZoomHook {
   return {
     zoomIn,
     zoomOut,
+    zoomReset: () => {
+      gDispatch(globalAction.zoomReset());
+    },
   };
 }

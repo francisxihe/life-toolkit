@@ -1,9 +1,8 @@
-/** @jsxImportSource @emotion/react */
-import { css } from '@emotion/css';
 import React from 'react';
+import { css } from '@emotion/css';
 import * as refer from '../../../statics/refer';
 
-export const ButtonSet = props => (
+export const ButtonSet = (props: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     {...props}
     className={css`
@@ -26,7 +25,7 @@ export const ButtonSet = props => (
   />
 );
 
-export const MainButton = props => (
+export const MainButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
   <button
     {...props}
     className={css`
@@ -40,7 +39,7 @@ export const MainButton = props => (
   />
 );
 
-export const Highlight = props => (
+export const Highlight = (props: React.HTMLAttributes<HTMLParagraphElement>) => (
   <p
     {...props}
     className={css`
@@ -51,7 +50,7 @@ export const Highlight = props => (
   />
 );
 
-export const Annotation = props => (
+export const Annotation = (props: React.HTMLAttributes<HTMLParagraphElement>) => (
   <p
     {...props}
     className={css`
@@ -61,7 +60,7 @@ export const Annotation = props => (
   />
 );
 
-export const Shortcut = props => (
+export const Shortcut = (props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
   <a
     {...props}
     className={css`

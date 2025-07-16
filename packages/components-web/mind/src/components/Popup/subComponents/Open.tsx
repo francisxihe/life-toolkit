@@ -1,5 +1,4 @@
-/** @jsxImportSource @emotion/react */
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { css } from '@emotion/css';
 import { context } from '../../../context';
 import { setTitle } from '../../../context/reducer/global/actionCreator';
@@ -8,7 +7,12 @@ import { ROOT_NODE_ID } from '../../../statics/refer';
 import mindmapParser from '../../../methods/mindmapParser';
 import { ButtonSet, MainButton, Shortcut, Highlight, Annotation } from '../common/styledComponents';
 
-const Open = ({ handleClosePopup, handleDownload }) => {
+interface OpenProps {
+  handleClosePopup: () => void;
+  handleDownload: () => void;
+}
+
+const Open = ({ handleClosePopup, handleDownload }: OpenProps) => {
   const {
     global: { dispatch },
   } = useContext(context);
@@ -18,8 +22,10 @@ const Open = ({ handleClosePopup, handleDownload }) => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.rmf,.km,.txt,.md';
-    input.addEventListener('change', event => {
-      const file = event.target.files[0],
+    input.addEventListener('change', (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target.files || !target.files[0]) return;
+      const file = target.files[0],
         file_name = file.name;
       let dot_index = file_name.length - 1;
       while (dot_index > 0 && file_name[dot_index] !== '.') {
@@ -28,8 +34,9 @@ const Open = ({ handleClosePopup, handleDownload }) => {
       const format = file_name.slice(dot_index + 1).toUpperCase(),
         title = file_name.slice(0, dot_index);
       const file_reader = new FileReader();
-      file_reader.onload = event => {
-        const str = event.target.result;
+      file_reader.onload = (event: ProgressEvent<FileReader>) => {
+        if (!event.target) return;
+        const str = event.target.result as string;
         const mindmap = mindmapParser(str, format);
         if (mindmap && mindmap.id === ROOT_NODE_ID) {
           setMindmap(mindmap, true);

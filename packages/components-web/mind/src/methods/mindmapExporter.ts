@@ -1,4 +1,6 @@
-const exportNodeToText = (node, layer, format) => {
+import { MindmapNode } from '../types';
+
+const exportNodeToText = (node: MindmapNode, layer: number, format: string): string | undefined => {
   switch (format) {
     case 'MD':
       if (layer < 6) {
@@ -12,14 +14,17 @@ const exportNodeToText = (node, layer, format) => {
   }
 };
 
-const exportMindmapToText = (mindmap, format) => {
-  const lines = [];
-  const dfs = (node, layer, format) => {
+const exportMindmapToText = (mindmap: MindmapNode, format: string): string => {
+  const lines: string[] = [];
+  const dfs = (node: MindmapNode, layer: number, format: string) => {
     if (!node) {
       return;
     }
-    lines.push(exportNodeToText(node, layer, format));
-    node.children.forEach(child => {
+    const textResult = exportNodeToText(node, layer, format);
+    if (textResult) {
+      lines.push(textResult);
+    }
+    node.children.forEach((child: MindmapNode) => {
       dfs(child, layer + 1, format);
     });
   };
@@ -27,7 +32,11 @@ const exportMindmapToText = (mindmap, format) => {
   return lines.join('\n');
 };
 
-const copyNodeData = (format, target_node, source_node) => {
+const copyNodeData = (
+  format: string,
+  target_node: MindmapNode,
+  source_node: MindmapNode
+): MindmapNode | undefined => {
   switch (format) {
     case 'KM':
       target_node.data = {};
@@ -35,25 +44,27 @@ const copyNodeData = (format, target_node, source_node) => {
       target_node.data.created = Date.now();
       target_node.data.text = source_node.text;
       target_node.data.expandState = source_node.showChildren ? 'expand' : 'collapse';
-      target_node.children = source_node.children.map(child => copyNodeData(format, {}, child));
+      target_node.children = source_node.children
+        .map((child: MindmapNode) => copyNodeData(format, {} as MindmapNode, child))
+        .filter((child): child is MindmapNode => child !== undefined);
       return target_node;
     default:
       return;
   }
 };
 
-const exportMindmapToJSON = (mindmap, format) => {
+const exportMindmapToJSON = (mindmap: MindmapNode, format: string): string | undefined => {
   switch (format) {
     case 'KM':
-      const km_mindmap = { root: copyNodeData(format, {}, mindmap) };
+      const km_mindmap = { root: copyNodeData(format, {} as MindmapNode, mindmap) };
       return JSON.stringify(km_mindmap);
     default:
       return;
   }
 };
 
-export default (mindmap, format) => {
-  let export_data;
+export default (mindmap: MindmapNode, format: string): string | undefined => {
+  let export_data: string | undefined;
   switch (format) {
     case 'MD':
     case 'TXT':

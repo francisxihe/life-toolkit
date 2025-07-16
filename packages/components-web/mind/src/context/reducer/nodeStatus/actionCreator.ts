@@ -1,5 +1,5 @@
 import * as actionTypes from './actionTypes';
-import { MindmapNode } from '../../../statics/defaultMindmap';
+import { MindmapNode } from '../../../types';
 
 interface ActionData {
   cur_select?: string | null;

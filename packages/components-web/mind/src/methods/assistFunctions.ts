@@ -1,5 +1,5 @@
 import { MouseEvent } from 'react';
-import { MindmapNode } from '../statics/defaultMindmap';
+import { MindmapNode } from '../types';
 
 export const handlePropagation = (e: MouseEvent<HTMLElement>) => {
   e.stopPropagation();

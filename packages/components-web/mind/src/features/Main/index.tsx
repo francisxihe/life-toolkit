@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import React, { useRef } from 'react';
 import { css } from '@emotion/css';
 import Mindmap from '../Mindmap';
@@ -8,7 +7,7 @@ import * as refer from '../../statics/refer';
 interface MainProps {}
 
 const Main: React.FC<MainProps> = () => {
-  const self = useRef<HTMLElement>(null);
+  const self = useRef<HTMLDivElement>(null);
 
   return (
     <main ref={self} className={wrapper} id={refer.MINDMAP_MAIN}>
