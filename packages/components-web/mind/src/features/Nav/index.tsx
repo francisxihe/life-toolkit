@@ -49,7 +49,7 @@ const Nav = () => {
         zoomOut();
         break;
       case 'reset':
-        zoomReset();
+        resetZoom();
         break;
     }
   };

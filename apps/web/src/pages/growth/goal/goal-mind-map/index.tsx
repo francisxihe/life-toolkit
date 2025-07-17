@@ -50,6 +50,7 @@ function goalTreeToMindmap(goals: GoalVo[]): any {
       style: {
         color: '#000',
         backgroundColor: '#f0f2f5',
+        marginLeft: '40px',
       },
       info: {
         description: node.description,
