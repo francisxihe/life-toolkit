@@ -1,6 +1,5 @@
 import React, {
   useEffect,
-  useContext,
   useRef,
   useMemo,
   useState,
@@ -9,18 +8,17 @@ import React, {
 } from 'react';
 import { css } from '@emotion/css';
 import * as refer from '../../statics/refer';
-import { context } from '../../context';
-import { setHistory } from '../../context/reducer/history/actionCreator';
-import useMindmap from '../../customHooks/useMindmap';
-import useHistory from '../../customHooks/useHistory';
+import { 
+  useMindmapActions, 
+  useNodeActions, 
+  useHistoryActions,
+  useGlobalActions
+} from '../../context';
 import getKeydownEvent from '../../methods/getKeydownEvent';
 import getMouseWheelEvent from '../../methods/getMouseWheelEvent';
 import RootNode from '../../components/RootNode';
 import DragCanvas from '../../components/DragCanvas';
 import LineCanvas from '../../components/LineCanvas';
-// import useZoom from '../../customHooks/useZoom';
-// import useMove from '../../customHooks/useMove';
-// import { debounce } from '../../methods/assistFunctions';
 
 interface MindmapProps {
   container_ref: RefObject<HTMLDivElement>;
@@ -29,17 +27,14 @@ interface MindmapProps {
 const node_refs = new Set<RefObject<HTMLDivElement>>();
 
 const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
-  const {
-    mindmap: { state: mindmap },
-    nodeStatus: { state: nodeStatus },
-    global: { state: gState, dispatch: gDispatch },
-    history: { dispatch: hDispatch },
-  } = useContext(context);
-
-  const mindmapHook = useMindmap();
-  const historyHook = useHistory();
-  // const zoomHook = useZoom();
-  // const moveHook = useMove();
+  const { mindmap } = useMindmapActions();
+  const { nodeStatus } = useNodeActions();
+  const { globalState } = useGlobalActions();
+  const { addToHistory } = useHistoryActions();
+  
+  // 创建组合对象以兼容旧的 API
+  const mindmapHook = useMindmapActions();
+  const historyHook = useHistoryActions();
 
   const [mindmapSnapshot, setMindmapSnapshot] = useState<string>(JSON.stringify(mindmap));
 
@@ -55,8 +50,22 @@ const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
     };
   }, [handleResize]);
 
+  // 获取全局操作的方法
+  const { setZoom, moveBy } = useGlobalActions();
+  
   useEffect(() => {
-    const handleMouseWheel = getMouseWheelEvent(gDispatch, container_ref.current!);
+    // 创建一个适配器函数，将新的 API 适配到旧的 getMouseWheelEvent 函数
+    const dispatchAdapter = (action: any) => {
+      // 根据 action 类型调用相应的方法
+      if (action.type === 'ZOOM_IN' || action.type === 'ZOOM_OUT') {
+        const delta = action.type === 'ZOOM_IN' ? 0.1 : -0.1;
+        setZoom(globalState.zoom + delta);
+      } else if (action.type === 'MOVE_XY') {
+        moveBy(action.data.x || 0, action.data.y || 0);
+      }
+    };
+    
+    const handleMouseWheel = getMouseWheelEvent(dispatchAdapter, container_ref.current!);
     const mainElement = document.querySelector(`#${refer.MINDMAP_MAIN}`) as HTMLElement;
     if (mainElement) {
       mainElement.addEventListener('wheel', handleMouseWheel);
@@ -64,7 +73,7 @@ const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
         mainElement.removeEventListener('wheel', handleMouseWheel);
       };
     }
-  }, [gDispatch, container_ref]);
+  }, [container_ref, setZoom, moveBy, globalState.zoom]);
 
   useEffect(() => {
     const handleKeydown = getKeydownEvent(nodeStatus, mindmapHook, historyHook);
@@ -77,10 +86,10 @@ const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
   useEffect(() => {
     const newSnapshot = JSON.stringify(mindmap);
     if (newSnapshot !== mindmapSnapshot) {
-      hDispatch(setHistory(mindmap, nodeStatus.cur_select || ''));
+      addToHistory(mindmap, nodeStatus.cur_select || '');
       setMindmapSnapshot(newSnapshot);
     }
-  }, [mindmap, mindmapSnapshot, nodeStatus.cur_select, hDispatch]);
+  }, [mindmap, mindmapSnapshot, nodeStatus.cur_select, addToHistory]);
 
   const style = useMemo(() => {
     return css`
@@ -88,10 +97,10 @@ const Mindmap: React.FC<MindmapProps> = ({ container_ref }) => {
       width: 100%;
       height: 100%;
       background-color: var(--theme-light);
-      transform: scale(${gState.zoom}) translate(${gState.x}px, ${gState.y}px);
+      transform: scale(${globalState.zoom}) translate(${globalState.x}px, ${globalState.y}px);
       transform-origin: 0 0;
     `;
-  }, [gState.zoom, gState.x, gState.y]);
+  }, [globalState.zoom, globalState.x, globalState.y]);
 
   const self = useRef<HTMLDivElement>(null);
 

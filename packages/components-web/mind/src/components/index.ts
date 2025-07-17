@@ -12,6 +12,5 @@ export { default as Popup } from './Popup';
 // Context 导出
 export { default as MindMapProvider, context as MindMapContext } from '../context';
 
-// 自定义 Hooks 导出
-export { default as useMindmap } from '../customHooks/useMindmap';
-export { default as useTheme } from '../customHooks/useTheme';
+// 导出新的 hooks 系统
+export * from '../context/hooks';

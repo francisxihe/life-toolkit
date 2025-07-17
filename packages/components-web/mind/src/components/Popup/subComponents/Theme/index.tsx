@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { css } from '@emotion/css';
-import useTheme from '../../../../customHooks/useTheme';
+import { useGlobalActions } from '../../../../context';
 import { ButtonSet, Highlight } from '../../common/styledComponents';
 import ThemeListItem from './ThemeListItem';
 
@@ -9,7 +9,8 @@ interface ThemeProps {
 }
 
 const Theme: React.FC<ThemeProps> = ({ handleClosePopup }) => {
-  const { theme_index, theme_list, setTheme } = useTheme();
+  const { globalState, setTheme } = useGlobalActions();
+  const { theme_index, theme_list } = globalState;
 
   useEffect(() => {
     localStorage.setItem('theme_index', theme_index.toString());

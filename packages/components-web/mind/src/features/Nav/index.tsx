@@ -1,10 +1,10 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { css } from '@emotion/css';
-import { context } from '../../context';
-import useMindmap from '../../customHooks/useMindmap';
-import useHistory from '../../customHooks/useHistory';
-import useZoom from '../../customHooks/useZoom';
-import useMove from '../../customHooks/useMove';
+import { 
+  useMindmapActions, 
+  useHistoryActions, 
+  useGlobalActions 
+} from '../../context';
 import * as refer from '../../statics/refer';
 import * as popupType from '../../components/Popup/common/popupType';
 import { handlePropagation, download } from '../../methods/assistFunctions'; // 防止 Mindmap 中的选中状态由于冒泡被清除
@@ -14,18 +14,10 @@ import Popup from '../../components/Popup';
 
 const Nav = () => {
   const [popup, setPopup] = useState(popupType.NONE);
-  const {
-    mindmap: { state: mindmap },
-    history: { state: history },
-    global: {
-      state: { title },
-    },
-  } = useContext(context);
-
-  const { expandAll } = useMindmap();
-  const { zoomIn, zoomOut, zoomReset } = useZoom();
-  const { moveReset } = useMove();
-  const { undo: undoHistory, redo: redoHistory } = useHistory();
+  const { mindmap, expandAll } = useMindmapActions();
+  const { history, undo: undoHistory, canUndo, canRedo } = useHistoryActions();
+  const { globalState, zoomIn, zoomOut, resetZoom, resetPosition } = useGlobalActions();
+  const title = globalState.title;
 
   const handleClosePopup = () => {
     setPopup(popupType.NONE);
@@ -65,7 +57,7 @@ const Nav = () => {
   const handleMove = (type: 'reset') => {
     switch (type) {
       case 'reset':
-        moveReset();
+        resetPosition();
         break;
     }
   };
@@ -75,7 +67,8 @@ const Nav = () => {
   };
 
   const handleRedo = () => {
-    redoHistory();
+    // 目前新的 hooks 系统中没有实现 redo 功能
+    console.log('Redo functionality not implemented yet');
   };
 
   const handleExpandAll = () => {

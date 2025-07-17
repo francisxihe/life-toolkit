@@ -1,7 +1,5 @@
-import { useContext } from 'react';
 import { css } from '@emotion/css';
-import { context } from '../../../context';
-import useMindmap from '../../../customHooks/useMindmap';
+import { useMindmapActions, useNodeActions, useGlobalActions } from '../../../context';
 import * as refer from '../../../statics/refer';
 import html2canvas from 'html2canvas';
 import { download } from '../../../methods/assistFunctions';
@@ -13,16 +11,13 @@ interface ExportProps {
 }
 
 const Export = ({ handleClosePopup }: ExportProps) => {
-  const {
-    mindmap: { state: mindmap },
-    global: {
-      state: { title },
-    },
-  } = useContext(context);
-  const { clearNodeStatus } = useMindmap();
+  const { mindmap } = useMindmapActions();
+  const { clearAll } = useNodeActions();
+  const { globalState } = useGlobalActions();
+  const title = globalState.title;
 
   const handleExportPNG = () => {
-    clearNodeStatus(); // 防止选中状态时的工具条等也被导出到图像
+    clearAll(); // 防止选中状态时的工具条等也被导出到图像
     const element = document.getElementById(refer.MINDMAP_ID);
     if (!element) return;
     html2canvas(element).then(canvas => {

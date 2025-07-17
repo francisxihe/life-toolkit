@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, KeyboardEvent } from 'react';
 import { css } from '@emotion/css';
-import useMindmap from '../../../customHooks/useMindmap';
+import { useMindmapActions, useNodeActions } from '../../../context';
 import { handlePropagation } from '../../../methods/assistFunctions';
 
 interface InputDivProps {
@@ -10,7 +10,8 @@ interface InputDivProps {
 
 const InputDiv: React.FC<InputDivProps> = ({ node_id, children }) => {
   const self = useRef<HTMLDivElement>(null);
-  const { changeText, selectNode } = useMindmap();
+  const { changeText } = useMindmapActions();
+  const { selectNode } = useNodeActions();
 
   const handleKeydown = (event: KeyboardEvent<HTMLDivElement>) => {
     switch (event.key.toUpperCase()) {

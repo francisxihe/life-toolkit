@@ -1,72 +1,12 @@
-import React, { useReducer, Dispatch } from 'react';
-import mindmapReducer, { defaultValue_mindmap } from './reducer/mindmap/';
-import nodeStatusReducer, { defaultValue_nodeStatus } from './reducer/nodeStatus';
-import historyReducer, { defaultValue_history } from './reducer/history';
-import globalReducer, { defaultValue_global } from './reducer/global';
-import editPanelReducer, { defaultValue_editPanel } from './reducer/editPanel';
-import { MindmapNode, NodeStatus, History, EditPanel, GlobalState } from '../types';
-import { Action as MindmapAction } from './reducer/mindmap/actionCreator';
-import { Action as NodeStatusAction } from './reducer/nodeStatus/actionCreator';
-import { Action as HistoryAction } from './reducer/history/actionCreator';
-import { Action as GlobalAction } from './reducer/global/actionCreator';
-import { Action as EditPanelAction } from './reducer/editPanel/actionCreator';
+// 重新导出新的 Context 系统
+export { AppProvider as default } from './AppProvider';
 
-interface ContextState {
-  mindmap: {
-    state: MindmapNode;
-    dispatch: Dispatch<MindmapAction>;
-  };
-  nodeStatus: {
-    state: NodeStatus;
-    dispatch: Dispatch<NodeStatusAction>;
-  };
-  history: {
-    state: History;
-    dispatch: Dispatch<HistoryAction>;
-  };
-  global: {
-    state: GlobalState;
-    dispatch: Dispatch<GlobalAction>;
-  };
-  editPanel: {
-    state: EditPanel;
-    dispatch: Dispatch<EditPanelAction>;
-  };
-}
+// 导出所有 Context Providers
+export { MindmapProvider, useMindmapContext } from './MindmapContext';
+export { NodeStatusProvider, useNodeStatusContext } from './NodeStatusContext';
+export { HistoryProvider, useHistoryContext } from './HistoryContext';
+export { GlobalProvider, useGlobalContext } from './GlobalContext';
+export { EditPanelProvider, useEditPanelContext } from './EditPanelContext';
 
-export const context = React.createContext<ContextState>({} as ContextState);
-
-const WrappedProvider: React.FC<{ children: React.ReactNode }> = props => {
-  const [mState, mDispatch] = useReducer(mindmapReducer, defaultValue_mindmap);
-  const [nState, nDispatch] = useReducer(nodeStatusReducer, defaultValue_nodeStatus);
-  const [hState, hDispatch] = useReducer(historyReducer, defaultValue_history);
-  const [gState, gDispatch] = useReducer(globalReducer, defaultValue_global);
-  const [epState, epDispatch] = useReducer(editPanelReducer, defaultValue_editPanel);
-
-  const combined = {
-    mindmap: {
-      state: mState,
-      dispatch: mDispatch,
-    },
-    nodeStatus: {
-      state: nState,
-      dispatch: nDispatch,
-    },
-    history: {
-      state: hState,
-      dispatch: hDispatch,
-    },
-    global: {
-      state: gState,
-      dispatch: gDispatch,
-    },
-    editPanel: {
-      state: epState,
-      dispatch: epDispatch,
-    },
-  };
-
-  return <context.Provider value={combined}>{props.children}</context.Provider>;
-};
-
-export default WrappedProvider;
+// 导出高级 hooks
+export * from './hooks';

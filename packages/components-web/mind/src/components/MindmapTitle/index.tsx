@@ -1,17 +1,12 @@
-import { useEffect, useContext, useRef, KeyboardEvent } from 'react';
+import { useEffect, useRef, KeyboardEvent } from 'react';
 import { css } from '@emotion/css';
-import { context } from '../../context';
-import { setTitle } from '../../context/reducer/global/actionCreator';
+import { useGlobalActions } from '../../context';
 import * as refer from '../../statics/refer';
 
 const MindmapTitle = () => {
   const self = useRef<HTMLSpanElement>(null);
-  const {
-    global: {
-      state: { title },
-      dispatch,
-    },
-  } = useContext(context);
+  const { globalState, setTitle } = useGlobalActions();
+  const { title } = globalState;
 
   useEffect(() => {
     document.title = `RMind - ${title}`;
@@ -47,7 +42,7 @@ const MindmapTitle = () => {
     if (self.current) {
       self.current.textContent = new_title; // contentEditable 组件内容不会被自动更新
     }
-    dispatch(setTitle(new_title));
+    setTitle(new_title);
   };
 
   return (

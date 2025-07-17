@@ -1,8 +1,5 @@
-import { useContext } from 'react';
 import { css } from '@emotion/css';
-import { context } from '../../../context';
-import { setTitle } from '../../../context/reducer/global/actionCreator';
-import useMindmap from '../../../customHooks/useMindmap';
+import { useMindmapActions, useGlobalActions } from '../../../context';
 import { ROOT_NODE_ID } from '../../../statics/refer';
 import mindmapParser from '../../../methods/mindmapParser';
 import { ButtonSet, MainButton, Shortcut, Highlight, Annotation } from '../common/styledComponents';
@@ -13,10 +10,8 @@ interface OpenProps {
 }
 
 const Open = ({ handleClosePopup, handleDownload }: OpenProps) => {
-  const {
-    global: { dispatch },
-  } = useContext(context);
-  const { setMindmap } = useMindmap();
+  const { setTitle } = useGlobalActions();
+  const { setMindmap } = useMindmapActions();
 
   const handleOpenFile = () => {
     const input = document.createElement('input');
@@ -39,8 +34,8 @@ const Open = ({ handleClosePopup, handleDownload }: OpenProps) => {
         const str = event.target.result as string;
         const mindmap = mindmapParser(str, format);
         if (mindmap && mindmap.id === ROOT_NODE_ID) {
-          setMindmap(mindmap, true);
-          dispatch(setTitle(title));
+          setMindmap(mindmap);
+          setTitle(title);
           handleClosePopup();
         } else {
           alert('不是有效的思维导图文件');

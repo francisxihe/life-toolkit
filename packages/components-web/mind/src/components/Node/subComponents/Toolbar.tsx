@@ -1,7 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/css';
-import useMindmap from '../../../customHooks/useMindmap';
-import useEditPanel from '../../../customHooks/useEditPanel';
+import { useMindmapActions, useNodeActions, useEditPanelActions } from '../../../context';
 import { handlePropagation } from '../../../methods/assistFunctions';
 import ToolButton from '../../ToolButton';
 import { MindmapNode } from '../../../types';
@@ -13,32 +12,49 @@ interface ToolbarProps {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ layer, node, parent }) => {
-  const mindmapHook = useMindmap();
-  const editPanelHook = useEditPanel();
+  const { addChild, addSibling, deleteNode, toggleChildren } = useMindmapActions();
+  const { selectNode, editNode } = useNodeActions();
+  const { showPanel } = useEditPanelActions();
 
   const handleAddChild = () => {
-    mindmapHook.addChild(node.id);
+    // 创建新节点
+    const newNodeId = Date.now().toString() + Math.random().toString();
+    const newNode = {
+      id: newNodeId,
+      text: '',
+      showChildren: true,
+      children: []
+    };
+    addChild(node.id, newNode);
   };
 
   const handleAddSibling = () => {
-    mindmapHook.addSibling(node.id, parent.id);
+    // 创建新节点
+    const newNodeId = Date.now().toString() + Math.random().toString();
+    const newNode = {
+      id: newNodeId,
+      text: '',
+      showChildren: true,
+      children: []
+    };
+    addSibling(node.id, parent.id, newNode);
   };
 
   const handleDeleteNode = () => {
-    mindmapHook.deleteNode(node.id, parent.id);
+    deleteNode(node.id, parent.id);
   };
 
   const handleEditNode = () => {
-    mindmapHook.editNode(node.id);
+    editNode(node.id);
   };
 
   const handleToggleChildren = () => {
-    mindmapHook.toggleChildren(node.id, !node.showChildren);
+    toggleChildren(node.id, { showChildren: !node.showChildren });
   };
 
   const handleAddInfo = () => {
-    mindmapHook.selectNode(node.id);
-    editPanelHook.togglePanelShow(true);
+    selectNode(node.id);
+    showPanel('node-edit', { nodeId: node.id });
   };
 
   return (

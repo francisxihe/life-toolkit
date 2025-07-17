@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/css';
-import useTheme from '../../customHooks/useTheme';
+import { useGlobalActions } from '../../context';
 import * as refer from '../../statics/refer';
 
 interface ThemeProviderProps {
@@ -8,7 +8,8 @@ interface ThemeProviderProps {
 }
 
 const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const { theme } = useTheme();
+  const { getCurrentTheme } = useGlobalActions();
+  const theme = getCurrentTheme();
 
   return (
     <div

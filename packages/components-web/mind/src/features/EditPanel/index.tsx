@@ -1,30 +1,28 @@
-import { useContext } from 'react';
 import { css } from '@emotion/css';
-import useEditPanel from '../../customHooks/useEditPanel';
-import useMindmap from '../../customHooks/useMindmap';
-import { context } from '../../context';
+import { 
+  useMindmapActions, 
+  useNodeActions, 
+  useEditPanelActions 
+} from '../../context';
 import MdEditor from '../../components/mdEditor';
 
 const EditPanel = () => {
-  // const self = useRef();
+  // 使用新的 hooks API
+  const { editPanel } = useEditPanelActions();
+  const { nodeStatus } = useNodeActions();
+  const { changeText } = useMindmapActions();
 
-  const {
-    editPanel: { state: epState },
-    nodeStatus: { state: nState },
-  } = useContext(context);
-
-  const {
-    cur_node_info: { info, text, id },
-  } = nState;
+  // 从 nodeStatus 中获取当前节点信息
+  const { cur_node_info = {} } = nodeStatus;
+  const { info, text, id } = cur_node_info;
   
   const infoText = typeof info === 'string' ? info : (info?.description || '');
 
-  const mindmapHook = useMindmap();
-  const editPanelHook = useEditPanel();
-
-  if (!epState.isShow) {
+  if (!editPanel.isShow) {
     return null;
   }
+
+  const { hidePanel } = useEditPanelActions();
 
   return (
     <div className={show} onClick={e => e.stopPropagation()} onKeyDown={e => e.stopPropagation()}>
@@ -32,12 +30,12 @@ const EditPanel = () => {
       <i
         className="zwicon-close"
         style={close}
-        onClick={() => editPanelHook.togglePanelShow(false)}
+        onClick={() => hidePanel()}
       ></i>
       <MdEditor
         className={mdEditor}
         propText={infoText}
-        onBlur={value => id && mindmapHook.editNodeInfo(id, { description: value })}
+        onBlur={value => id && changeText(id, { info: { description: value } })}
       />
       {/* <Button type="primary" onClick={()=>mindmapHook.editNodeInfo(id,inputVal)}>保存</Button>
             <Button type="primary" onClick={()=>editPanelHook.togglePanelShow(false)}>关闭</Button> */}

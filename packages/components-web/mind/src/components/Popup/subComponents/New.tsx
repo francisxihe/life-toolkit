@@ -1,7 +1,4 @@
-import { useContext } from 'react';
-import { context } from '../../../context';
-import { setTitle } from '../../../context/reducer/global/actionCreator';
-import useMindmap from '../../../customHooks/useMindmap';
+import { useMindmapActions, useGlobalActions } from '../../../context';
 import defaultMindmap from '../../../statics/defaultMindmap';
 import * as refer from '../../../statics/refer';
 import { ButtonSet, MainButton, Shortcut, Highlight, Annotation } from '../common/styledComponents';
@@ -12,14 +9,12 @@ interface NewProps {
 }
 
 const New = ({ handleClosePopup, handleDownload }: NewProps) => {
-  const {
-    global: { dispatch },
-  } = useContext(context);
-  const { setMindmap } = useMindmap();
+  const { setTitle } = useGlobalActions();
+  const { setMindmap } = useMindmapActions();
 
   const handleNewFile = () => {
-    setMindmap(defaultMindmap, true);
-    dispatch(setTitle(refer.DEFAULT_TITLE));
+    setMindmap(defaultMindmap);
+    setTitle(refer.DEFAULT_TITLE);
     handleClosePopup();
   };
 

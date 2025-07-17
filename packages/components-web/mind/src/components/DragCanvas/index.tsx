@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { css } from '@emotion/css';
-import useMindmap from '../../customHooks/useMindmap';
-import useTheme from '../../customHooks/useTheme';
+import { useMindmapActions, useNodeActions, useGlobalActions } from '../../context';
 import getDragEvents from '../../methods/getDragEvents';
-import { context } from '../../context';
 import * as refer from '../../statics/refer';
 import { MindmapNode } from '../../types';
 
@@ -17,12 +15,11 @@ const DragCanvas: React.FC<DragCanvasProps> = ({ parent_ref, container_ref, mind
   const self = useRef<HTMLCanvasElement>(null);
   const [flag, setFlag] = useState<number>(0);
 
-  const { theme } = useTheme();
-  const mindmapHook = useMindmap();
-  const {
-    global: { state: gState },
-  } = useContext(context);
-  const { zoom, x, y } = gState;
+  const { getCurrentTheme, globalState } = useGlobalActions();
+  const theme = getCurrentTheme();
+  const mindmapActions = useMindmapActions();
+  const nodeActions = useNodeActions();
+  const { zoom, x, y } = globalState;
 
   const handleWindowResize = () => {
     setFlag(Date.now());
@@ -37,12 +34,17 @@ const DragCanvas: React.FC<DragCanvasProps> = ({ parent_ref, container_ref, mind
 
   useEffect(() => {
     if (!self.current || !container_ref.current) return;
+    // 合并 mindmapActions 和 nodeActions 作为 getDragEvents 的参数
+    const mindmapHookReplacement = {
+      ...mindmapActions,
+      ...nodeActions
+    };
     const handleDrag = getDragEvents(
       mindmap,
       self.current,
       container_ref.current,
       theme,
-      mindmapHook,
+      mindmapHookReplacement,
       zoom,
       { x, y }
     );
@@ -53,7 +55,7 @@ const DragCanvas: React.FC<DragCanvasProps> = ({ parent_ref, container_ref, mind
     return () => {
       handleDrag.forEach(event => mindmapElement.removeEventListener(event.type, event.listener));
     };
-  }, [mindmap, theme, zoom, x, y, container_ref, mindmapHook]);
+  }, [mindmap, theme, zoom, x, y, container_ref, mindmapActions, nodeActions]);
 
   useEffect(() => {
     const dom = self.current;
@@ -61,7 +63,7 @@ const DragCanvas: React.FC<DragCanvasProps> = ({ parent_ref, container_ref, mind
 
     dom.width = parent_ref.current.offsetWidth;
     dom.height = parent_ref.current.offsetHeight;
-  }, [mindmap, flag, gState.zoom, parent_ref]);
+  }, [mindmap, flag, globalState.zoom, parent_ref]);
 
   return <canvas ref={self} className={wrapper} />;
 };

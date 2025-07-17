@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 export { default as Provider } from './context';
 export { default as ThemeProvider } from './features/ThemeProvider';
 export { default as Main } from './features/Main';
-export { default as useMindmap } from './customHooks/useMindmap';
+// 导出新的 hooks 系统
+export * from './context/hooks';
 
 serviceWorker.unregister();

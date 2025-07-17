@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { css } from '@emotion/css';
-import useTheme from '../../customHooks/useTheme';
-import { context } from '../../context';
+import { useGlobalActions } from '../../context';
 import { drawLineCanvas } from '../../methods/drawCanvas';
 import { MindmapNode } from '../../types';
 
@@ -15,10 +14,8 @@ const LineCanvas: React.FC<LineCanvasProps> = ({ parent_ref, mindmap, node_refs 
   const self = useRef<HTMLCanvasElement>(null);
   const [flag, setFlag] = useState<number>(0);
 
-  const { theme } = useTheme();
-  const {
-    global: { state: gState },
-  } = useContext(context);
+  const { getCurrentTheme, globalState } = useGlobalActions();
+  const theme = getCurrentTheme();
 
   const handleWindowResize = () => {
     setFlag(Date.now());
@@ -61,7 +58,7 @@ const LineCanvas: React.FC<LineCanvasProps> = ({ parent_ref, mindmap, node_refs 
     drawLineCanvas(ctx, theme, mindmap, map);
     // TODO: Implement line drawing functionality
     console.log('Drawing lines for mindmap:', mindmap.id);
-  }, [mindmap, theme, flag, gState.zoom, node_refs, parent_ref]);
+  }, [mindmap, theme, flag, globalState.zoom, node_refs, parent_ref]);
 
   return <canvas ref={self} className={wrapper} />;
 };
