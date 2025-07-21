@@ -5,7 +5,7 @@ import {
 import { dayjs } from './utils';
 import { useCalendarContext } from './context';
 import { Radio, Button } from '@arco-design/web-react';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 const ButtonGroup = Button.Group;
 
 function CalendarHeader(props: { prefixCls: string }) {

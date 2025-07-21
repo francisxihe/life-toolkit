@@ -1,4 +1,4 @@
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { TodoVo } from '@life-toolkit/vo/growth';
 import { TodoDetailProvider } from '../context';
 import TodoEditorMain from './TodoEditorMain';

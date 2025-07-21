@@ -1,7 +1,7 @@
 'use client';
 
 import { Typography, Popover, Button } from '@arco-design/web-react';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import IconSelector from '../IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../service';

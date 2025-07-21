@@ -1,7 +1,7 @@
 import TaskList from '../../components/TaskList';
 import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { Collapse, Divider, Button } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';

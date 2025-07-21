@@ -8,6 +8,7 @@ import { GoalService } from '../../service';
 // import '@life-toolkit/components-web-mind/src/index.css';
 import { Provider, ThemeProvider } from '@life-toolkit/components-web-mind';
 import CustomMain from './CustomMain';
+import clsx from 'clsx';
 
 interface GoalMindMapProps {
   className?: string;
@@ -112,7 +113,7 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
 
   return (
     <Card
-      className={className}
+      className={clsx(className, 'w-full h-full')}
       title={<span>目标脑图</span>}
       extra={
         <Space>
@@ -126,9 +127,9 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
       }
       style={{ minHeight: 600 }}
     >
-      <Spin loading={loading}>
+      <Spin loading={loading} className={clsx('w-full h-full')}>
         {/* 脑图组件区域 */}
-        <div style={{ minHeight: 600 }}>
+        <div className="w-full h-full">
           <Provider>
             <ThemeProvider>
               <CustomMain mindmapData={mindmapData} />

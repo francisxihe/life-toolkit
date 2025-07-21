@@ -1,4 +1,4 @@
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { BudgetOverview } from '../overview/budget-overview';
 
 const { Fixed, Shrink } = FlexibleContainer;

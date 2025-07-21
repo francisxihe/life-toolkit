@@ -21,7 +21,7 @@ export default Main;
 
 // CSS
 const wrapper = css`
-  height: calc(100vh - 56px);
+  height: 100%;
   margin: 56px 0 0;
   overflow: hidden;
 `;

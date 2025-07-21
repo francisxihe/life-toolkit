@@ -1,4 +1,4 @@
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { Button } from '@arco-design/web-react';
 import { useCreateBudget } from './CreateBudget';
 import { useExpenses } from '../context';

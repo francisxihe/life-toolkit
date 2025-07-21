@@ -1,5 +1,5 @@
 import { Divider, Grid, Button } from '@arco-design/web-react';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { ReactNode } from 'react';
 
 const { Fixed, Shrink } = FlexibleContainer;

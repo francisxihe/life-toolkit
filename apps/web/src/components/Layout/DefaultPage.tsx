@@ -1,6 +1,6 @@
 'use client';
 
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import clsx from 'clsx';
 
 const { Fixed, Shrink } = FlexibleContainer;

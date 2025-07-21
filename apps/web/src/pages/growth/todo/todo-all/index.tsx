@@ -1,7 +1,7 @@
 'use client';
 
 import { TodoFilters } from './TodoFilters';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';
 import { useTodoDetail } from '../../components';

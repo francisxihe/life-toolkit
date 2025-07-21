@@ -1,6 +1,6 @@
 import { useGoalDetailContext } from './context';
 import clsx from 'clsx';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useTaskDetail } from '..';
 import TaskList from '../TaskList';

@@ -1,6 +1,6 @@
 import TransactionTable from './TransactionTable';
 import { TransactionFilters } from './TransactionFilters';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 import { useExpenses } from '../context';
 import { useCreateTransaction } from './CreateTransaction';
 import { CreateButton } from '@/components/Button/CreateButton';

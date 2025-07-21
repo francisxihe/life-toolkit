@@ -25,7 +25,7 @@ import { useHabitContext } from '../context';
 import DefaultPage from '@/components/Layout/DefaultPage';
 import HabitListFilter from './HabitListFilter';
 import { HabitListProvider } from './context';
-import { FlexibleContainer } from '@life-toolkit/components-web-ui';
+import { FlexibleContainer } from 'francis-component-react';
 
 const { Text } = Typography;
 const { Fixed, Shrink } = FlexibleContainer;
