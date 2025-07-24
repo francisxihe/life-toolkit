@@ -1,0 +1,662 @@
+# DTO 规范
+
+## 📋 概述
+
+DTO (Data Transfer Object) 是用于数据传输的对象，主要用于控制器层的数据验证、转换和传输。本规范定义了DTO模块的标准结构、命名约定和最佳实践。
+
+## 🏗️ 目录结构规范
+
+### 基础结构
+```
+apps/server/src/business/{domain}/{module}/dto/
+├── {module}-model.dto.ts      # 基础模型DTO
+├── {module}-form.dto.ts       # 表单操作DTO
+├── {module}-filter.dto.ts     # 过滤查询DTO
+└── index.ts                   # 导出文件
+```
+
+### 示例结构
+```
+apps/server/src/business/growth/goal/dto/
+├── goal-model.dto.ts          # 目标模型DTO
+├── goal-form.dto.ts           # 目标表单DTO
+├── goal-filter.dto.ts         # 目标过滤DTO
+└── index.ts                   # 导出文件
+```
+
+## 📝 文件命名规范
+
+### 文件命名格式
+- **模型DTO**: `{module}-model.dto.ts`
+- **表单DTO**: `{module}-form.dto.ts`
+- **过滤DTO**: `{module}-filter.dto.ts`
+- **导出文件**: `index.ts`
+
+### 类命名格式
+- **基础模型**: `{Module}Dto` (包含所有字段)
+- **简化模型**: `{Module}ModelDto` (排除关联字段)
+- **创建表单**: `Create{Module}Dto`
+- **更新表单**: `Update{Module}Dto`
+- **列表过滤**: `{Module}ListFilterDto`
+- **分页过滤**: `{Module}PageFilterDto`
+
+## 🎯 标准DTO类型定义
+
+### 1. 模型DTO文件 ({module}-model.dto.ts)
+
+#### 基础模板
+```typescript
+import { BaseModelDto } from "@/base/base-model.dto";
+import { OmitType, IntersectionType } from "@nestjs/mapped-types";
+import { {Entity} } from "../entities";
+
+// 基础DTO - 包含所有字段
+export class {Module}Dto extends IntersectionType(
+  BaseModelDto,
+  OmitType({Entity}, ["关联字段1", "关联字段2"] as const)
+) {
+  // 手动添加关联字段（可选）
+  relationField1?: RelatedDto;
+  relationField2?: RelatedDto[];
+}
+
+// 模型DTO - 排除关联字段，用于简单数据传输
+export class {Module}ModelDto extends OmitType({Module}Dto, [
+  "relationField1",
+  "relationField2",
+] as const) {}
+```
+
+#### 完整示例
+```typescript
+// goal-model.dto.ts
+import { BaseModelDto } from "@/base/base-model.dto";
+import { OmitType, IntersectionType } from "@nestjs/mapped-types";
+import { Goal } from "../entities";
+import { TaskDto } from "../../task/dto";
+import { UserDto } from "../../user/dto";
+
+// 基础DTO - 包含所有字段
+export class GoalDto extends IntersectionType(
+  BaseModelDto,
+  OmitType(Goal, ["tasks", "user"] as const)
+) {
+  // 关联字段
+  tasks?: TaskDto[];
+  user?: UserDto;
+}
+
+// 模型DTO - 排除关联字段
+export class GoalModelDto extends OmitType(GoalDto, [
+  "tasks",
+  "user",
+] as const) {}
+```
+
+### 2. 表单DTO文件 ({module}-form.dto.ts)
+
+#### 基础模板
+```typescript
+import { PartialType, IntersectionType, PickType } from "@nestjs/mapped-types";
+import { IsOptional, IsArray, IsString } from "class-validator";
+import { {Module}Dto } from "./{module}-model.dto";
+
+// 创建DTO - 选择需要的字段
+export class Create{Module}Dto extends PickType({Module}Dto, [
+  "field1",
+  "field2",
+  "field3",
+  // ... 其他需要的字段
+] as const) {
+  /** 关联实体ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+}
+
+// 更新DTO - 基于创建DTO的部分字段
+export class Update{Module}Dto extends PartialType(Create{Module}Dto) {}
+```
+
+#### 完整示例
+```typescript
+// goal-form.dto.ts
+import { PartialType, PickType } from "@nestjs/mapped-types";
+import { IsOptional, IsArray, IsString } from "class-validator";
+import { GoalDto } from "./goal-model.dto";
+
+// 创建DTO
+export class CreateGoalDto extends PickType(GoalDto, [
+  "title",
+  "description",
+  "priority",
+  "importance",
+  "startDate",
+  "targetDate",
+  "tags",
+  "userId",
+] as const) {
+  /** 关联任务ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  taskIds?: string[];
+}
+
+// 更新DTO
+export class UpdateGoalDto extends PartialType(CreateGoalDto) {}
+```
+
+### 3. 过滤DTO文件 ({module}-filter.dto.ts)
+
+#### 基础模板
+```typescript
+import { IsOptional, IsString, IsArray } from "class-validator";
+import { Type } from "class-transformer";
+import { PageDto } from "@/base/page.dto";
+import { {Module}Dto } from "./{module}-model.dto";
+import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
+
+// 列表过滤DTO - 选择可过滤的字段
+export class {Module}ListFilterDto extends PartialType(
+  PickType({Module}Dto, ["status", "type", "field1"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+
+  /** 关联过滤 */
+  @IsString()
+  @IsOptional()
+  relationId?: string;
+  
+  /** 排除自身 */
+  @IsOptional()
+  @Type(() => Boolean)
+  withoutSelf?: boolean;
+
+  /** 状态数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  statusList?: string[];
+}
+
+// 分页过滤DTO - 继承列表过滤 + 分页
+export class {Module}PageFilterDto extends IntersectionType(
+  PageDto,
+  {Module}ListFilterDto
+) {}
+```
+
+#### 完整示例
+```typescript
+// goal-filter.dto.ts
+import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { PageDto } from "@/base/page.dto";
+import { GoalDto } from "./goal-model.dto";
+import { GoalStatus, GoalPriority } from "../entities";
+import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
+
+// 列表过滤DTO
+export class GoalListFilterDto extends PartialType(
+  PickType(GoalDto, ["status", "priority", "userId"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+
+  /** 用户ID过滤 */
+  @IsString()
+  @IsOptional()
+  userId?: string;
+  
+  /** 排除自身 */
+  @IsOptional()
+  @Type(() => Boolean)
+  withoutSelf?: boolean;
+
+  /** 状态数组过滤 */
+  @IsArray()
+  @IsEnum(GoalStatus, { each: true })
+  @IsOptional()
+  statusList?: GoalStatus[];
+
+  /** 优先级数组过滤 */
+  @IsArray()
+  @IsEnum(GoalPriority, { each: true })
+  @IsOptional()
+  priorityList?: GoalPriority[];
+
+  /** 重要性范围过滤 */
+  @IsOptional()
+  @Type(() => Number)
+  importanceMin?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  importanceMax?: number;
+}
+
+// 分页过滤DTO
+export class GoalPageFilterDto extends IntersectionType(
+  PageDto,
+  GoalListFilterDto
+) {}
+```
+
+### 4. 导出文件 (index.ts)
+```typescript
+// 重新导出所有DTO
+export * from "./goal-model.dto";
+export * from "./goal-filter.dto";
+export * from "./goal-form.dto";
+```
+
+## 🔧 NestJS Mapped Types 使用规范
+
+### 1. 工具类型导入
+```typescript
+import { 
+  PickType,      // 选择特定字段
+  OmitType,      // 排除特定字段
+  PartialType,   // 所有字段变为可选
+  IntersectionType // 合并多个类型
+} from "@nestjs/mapped-types";
+```
+
+### 2. 类型组合策略
+
+#### 继承链设计
+```typescript
+// 基础继承链
+BaseModelDto → {Module}Dto → {Module}ModelDto
+                          → Create{Module}Dto → Update{Module}Dto
+
+// 过滤继承链
+PageDto → {Module}PageFilterDto
+{Module}Dto → {Module}ListFilterDto → {Module}PageFilterDto
+```
+
+#### 组合模式
+```typescript
+// 选择字段
+export class CreateDto extends PickType(BaseDto, ["field1", "field2"]) {}
+
+// 排除字段
+export class ModelDto extends OmitType(BaseDto, ["relationField"]) {}
+
+// 部分字段
+export class UpdateDto extends PartialType(CreateDto) {}
+
+// 合并类型
+export class PageFilterDto extends IntersectionType(PageDto, FilterDto) {}
+```
+
+### 3. 验证装饰器规范
+
+#### 基础验证装饰器
+```typescript
+import {
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+  IsArray,
+  IsOptional,
+  IsISO8601,
+  IsInt,
+  IsEmail,
+  IsUrl,
+  Min,
+  Max,
+  Length,
+} from "class-validator";
+
+import { Type } from "class-transformer";
+```
+
+#### 字段类型验证映射
+```typescript
+const VALIDATION_MAPPING = {
+  string: "@IsString()",
+  number: "@IsNumber() @Type(() => Number)",
+  boolean: "@IsBoolean() @Type(() => Boolean)",
+  date: "@IsISO8601() @Type(() => Date)",
+  enum: "@IsEnum(EnumType)",
+  array: "@IsArray() @IsString({ each: true })",
+  email: "@IsEmail() @IsString()",
+  url: "@IsUrl() @IsString()",
+  optional: "@IsOptional()",
+};
+```
+
+#### 验证示例
+```typescript
+export class CreateGoalDto {
+  /** 标题 - 必填字符串 */
+  @IsString()
+  @Length(1, 100)
+  title: string;
+
+  /** 描述 - 可选字符串 */
+  @IsString()
+  @IsOptional()
+  @Length(0, 1000)
+  description?: string;
+
+  /** 重要性 - 数字范围 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(5)
+  @IsOptional()
+  importance?: number;
+
+  /** 状态 - 枚举 */
+  @IsEnum(GoalStatus)
+  @IsOptional()
+  status?: GoalStatus;
+
+  /** 标签 - 字符串数组 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 开始日期 - 日期 */
+  @IsISO8601()
+  @Type(() => Date)
+  startDate: Date;
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 职责分离
+- **Model DTO**: 数据结构定义，用于内部传输
+- **Form DTO**: 表单操作验证，用于创建和更新
+- **Filter DTO**: 查询条件验证，用于列表和分页
+
+### 2. 类型安全
+```typescript
+// 优先使用 Mapped Types 而非手动定义
+export class UpdateDto extends PartialType(CreateDto) {} // ✅
+
+// 避免手动重复定义
+export class UpdateDto {  // ❌
+  title?: string;
+  description?: string;
+  // ... 重复字段
+}
+```
+
+### 3. 验证一致性
+```typescript
+// 保持与 Entity 的验证规则一致
+// Entity 中的验证
+@Column()
+@IsString()
+@Length(1, 100)
+title: string;
+
+// DTO 中的验证（继承自 Entity）
+export class CreateDto extends PickType(Entity, ["title"]) {}
+```
+
+### 4. 性能优化
+```typescript
+// 合理使用继承减少重复代码
+export class BaseFilterDto {
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+}
+
+// 继承基础过滤器
+export class GoalFilterDto extends IntersectionType(
+  BaseFilterDto,
+  PartialType(PickType(GoalDto, ["status", "priority"]))
+) {}
+```
+
+## 🔄 常见模式
+
+### 1. 基础CRUD模式
+```typescript
+// 创建：选择必要字段
+export class CreateModuleDto extends PickType(ModuleDto, [
+  "name", 
+  "description", 
+  "status"
+]) {
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+}
+
+// 更新：创建的部分字段
+export class UpdateModuleDto extends PartialType(CreateModuleDto) {}
+
+// 查询：可过滤字段 + 分页
+export class ModulePageFilterDto extends IntersectionType(
+  PageDto,
+  PartialType(PickType(ModuleDto, ["status", "type"]))
+) {
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+}
+```
+
+### 2. 关联数据处理
+```typescript
+// 创建时关联其他实体
+export class CreateModuleDto extends PickType(ModuleDto, [...]) {
+  /** 父级ID */
+  @IsString()
+  @IsOptional()
+  parentId?: string;
+
+  /** 关联实体ID数组 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+}
+```
+
+### 3. 复杂过滤模式
+```typescript
+export class ModuleAdvancedFilterDto extends ModuleListFilterDto {
+  /** 创建时间范围 */
+  @IsISO8601()
+  @IsOptional()
+  createdAtStart?: string;
+
+  @IsISO8601()
+  @IsOptional()
+  createdAtEnd?: string;
+
+  /** 数值范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  scoreMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  scoreMax?: number;
+
+  /** 多选过滤 */
+  @IsArray()
+  @IsEnum(ModuleStatus, { each: true })
+  @IsOptional()
+  statusList?: ModuleStatus[];
+}
+```
+
+## 🚫 禁止事项
+
+1. **不要在DTO中包含业务逻辑** - DTO仅用于数据传输和验证
+2. **不要使用 `any` 类型** - 应明确定义具体类型
+3. **不要忽略验证装饰器** - 所有字段都应有适当的验证
+4. **不要重复定义相同的字段** - 使用 Mapped Types 复用
+5. **不要在DTO中直接操作数据库** - 数据操作应在 Service 层
+
+## ✅ 检查清单
+
+在创建或修改DTO时，请确认以下事项：
+
+### 基础结构
+- [ ] 文件命名符合规范 (`{module}-{type}.dto.ts`)
+- [ ] 类命名符合规范 (`{Module}{Type}Dto`)
+- [ ] 使用了合适的 Mapped Types
+- [ ] 导入了必要的装饰器
+
+### 继承关系
+- [ ] 基础DTO继承正确
+- [ ] 使用了合适的工具类型 (PickType, OmitType等)
+- [ ] 避免了重复的字段定义
+- [ ] 继承链清晰合理
+
+### 验证规则
+- [ ] 所有字段都有适当的验证装饰器
+- [ ] 可选字段使用了 `@IsOptional()`
+- [ ] 数字字段使用了 `@Type(() => Number)`
+- [ ] 日期字段使用了 `@IsISO8601()`
+- [ ] 枚举字段使用了 `@IsEnum()`
+- [ ] 数组字段使用了 `@IsArray()`
+
+### 字段设计
+- [ ] 字段类型定义正确
+- [ ] 关联字段处理合理
+- [ ] 过滤条件完整
+- [ ] 默认值设置合理
+
+### 导出管理
+- [ ] 在 index.ts 中正确导出
+- [ ] 避免了循环依赖
+- [ ] 导出顺序合理
+
+## 📝 完整示例
+
+```typescript
+// goal-model.dto.ts
+import { BaseModelDto } from "@/base/base-model.dto";
+import { OmitType, IntersectionType } from "@nestjs/mapped-types";
+import { Goal } from "../entities";
+
+export class GoalDto extends IntersectionType(
+  BaseModelDto,
+  OmitType(Goal, ["tasks", "user"] as const)
+) {
+  tasks?: TaskDto[];
+  user?: UserDto;
+}
+
+export class GoalModelDto extends OmitType(GoalDto, [
+  "tasks",
+  "user",
+] as const) {}
+
+// goal-form.dto.ts
+import { PartialType, PickType } from "@nestjs/mapped-types";
+import { IsOptional, IsArray, IsString } from "class-validator";
+import { GoalDto } from "./goal-model.dto";
+
+export class CreateGoalDto extends PickType(GoalDto, [
+  "title",
+  "description",
+  "priority",
+  "importance",
+  "startDate",
+  "targetDate",
+  "tags",
+  "userId",
+] as const) {
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  taskIds?: string[];
+}
+
+export class UpdateGoalDto extends PartialType(CreateGoalDto) {}
+
+// goal-filter.dto.ts
+import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { PageDto } from "@/base/page.dto";
+import { GoalDto } from "./goal-model.dto";
+import { GoalStatus, GoalPriority } from "../entities";
+import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
+
+export class GoalListFilterDto extends PartialType(
+  PickType(GoalDto, ["status", "priority", "userId"] as const)
+) {
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+
+  @IsArray()
+  @IsEnum(GoalStatus, { each: true })
+  @IsOptional()
+  statusList?: GoalStatus[];
+}
+
+export class GoalPageFilterDto extends IntersectionType(
+  PageDto,
+  GoalListFilterDto
+) {}
+
+// index.ts
+export * from "./goal-model.dto";
+export * from "./goal-filter.dto";
+export * from "./goal-form.dto";
+```
+
+## 📚 版本历史
+
+- **v2.0** (当前版本): 统一继承关系，简化结构，完善验证规则和示例
+- **v1.0**: 初始版本

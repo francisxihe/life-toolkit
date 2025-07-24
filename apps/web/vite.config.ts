@@ -2,14 +2,14 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgrPlugin from '@arco-plugins/vite-plugin-svgr';
 import vitePluginForArco from '@arco-plugins/vite-react';
-import setting from './src/settings.json';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+export default async (mode: any) => {
+  const tailwindcss = await import('@tailwindcss/vite').then((m) => m.default);
   const env = loadEnv(mode, process.cwd());
 
-  return {
+  return defineConfig({
     base: '/',
     resolve: {
       alias: {
@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [
       react(),
+      tailwindcss(),
       svgrPlugin({
         svgrOptions: {},
       }),
@@ -82,5 +83,5 @@ export default defineConfig(({ mode }) => {
       include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend'],
       exclude: [],
     },
-  };
-});
+  });
+};
