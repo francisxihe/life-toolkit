@@ -1,4 +1,7 @@
-@import "tailwindcss";
+@import 'tailwindcss';
+
+@config '../../tailwind.config.ts';
+
 @layer base {
   *,
   *::before,
@@ -7,6 +10,7 @@
     border-style: solid;
     border-color: var(--color-border-1);
   }
+
   svg {
     display: inline;
   }

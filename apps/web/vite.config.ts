@@ -5,7 +5,7 @@ import vitePluginForArco from '@arco-plugins/vite-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 // https://vitejs.dev/config/
-export default async (mode: any) => {
+export default async ({ mode }: { mode: string }) => {
   const tailwindcss = await import('@tailwindcss/vite').then((m) => m.default);
   const env = loadEnv(mode, process.cwd());
 

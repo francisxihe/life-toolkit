@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { ConfigProvider } from '@arco-design/web-react';
 import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
+import './style/tailwind.css';
 import './style/global.less';
 import { BrowserRouter } from 'react-router-dom';
 import rootReducer from './store';
