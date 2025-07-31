@@ -14,7 +14,7 @@ import { useCallback, useEffect, useState } from 'react';
 const { Shrink, Fixed } = FlexibleContainer;
 
 export type GoalEditorProps = {
-  goal: GoalVo;
+  goalId: string;
   size?: GoalDetailContextProps['size'];
   onClose?: () => Promise<void>;
   afterSubmit?: GoalDetailContextProps['afterSubmit'];
@@ -24,28 +24,28 @@ export default function GoalEditor(props: GoalEditorProps) {
   return (
     <GoalDetailProvider
       size={props.size}
-      goal={props.goal}
+      goalId={props.goalId}
       onClose={props.onClose}
       afterSubmit={props.afterSubmit}
     >
-      <GoalEditorMain goal={props.goal} />
+      <GoalEditorMain goalId={props.goalId} />
     </GoalDetailProvider>
   );
 }
 
-function GoalEditorMain(props: { goal: GoalVo }) {
+function GoalEditorMain(props: { goalId: string }) {
   const [loading, setLoading] = useState(false);
-  const { goal } = props;
+  const { goalId } = props;
   const { refreshGoalDetail } = useGoalDetailContext();
 
   useEffect(() => {
     async function init() {
       setLoading(true);
-      await refreshGoalDetail(goal.id);
+      await refreshGoalDetail(goalId);
       setLoading(false);
     }
     init();
-  }, [refreshGoalDetail, goal]);
+  }, [refreshGoalDetail, goalId]);
 
   if (loading) {
     return <Spin dot />;

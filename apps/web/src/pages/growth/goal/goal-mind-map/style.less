@@ -1,38 +1,46 @@
 .goal-mind-map {
-  
-  .mind-map-container {
+  .x6-graph-container {
     width: 100%;
     height: 600px;
     border: 1px solid #e5e6eb;
     border-radius: 6px;
     background: #fff;
-    overflow: auto;
+    overflow: hidden;
     position: relative;
 
-    svg {
-      display: block;
+    .x6-graph {
       width: 100%;
       height: 100%;
+    }
 
-      rect {
-        transition: all 0.3s ease;
-        cursor: pointer;
+    .x6-node {
+      cursor: pointer;
+      transition: all 0.3s ease;
 
-        &:hover {
-          filter: brightness(1.1);
-          stroke-width: 3;
-        }
+      &:hover {
+        filter: brightness(1.05);
       }
 
-      text {
-        pointer-events: none;
-        user-select: none;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      &:hover .topic-image {
+        visibility: visible;
       }
 
-      path {
-        transition: stroke 0.3s ease;
+      &.selected {
+        filter: brightness(1.1);
       }
+    }
+
+    .x6-node-selected rect {
+      stroke-width: 2px;
+    }
+
+    .x6-edge {
+      pointer-events: none;
+    }
+
+    .topic-image {
+      visibility: hidden;
+      cursor: pointer;
     }
   }
 
@@ -55,7 +63,7 @@
     }
   }
 
-  .arco-card-body{
+  .arco-card-body {
     width: 100%;
     height: 100%;
   }
@@ -102,9 +110,9 @@
   .goal-mind-map {
     .mind-map-container {
       height: 400px;
-      
+
       svg {
-        viewBox: "0 0 800 400";
+        viewbox: '0 0 800 400';
       }
     }
   }
@@ -114,10 +122,10 @@
   .goal-mind-map {
     .mind-map-container {
       height: 300px;
-      
+
       svg {
-        viewBox: "0 0 600 300";
+        viewbox: '0 0 600 300';
       }
     }
   }
-} 
+}

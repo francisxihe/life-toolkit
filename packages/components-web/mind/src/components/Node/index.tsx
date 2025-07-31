@@ -52,6 +52,7 @@ const Node: React.FC<NodeProps> = ({ node, parent, on_left, node_refs }) => {
       onMouseEnter={handleMouseEnter}
       style={{
         ...style,
+        position: 'relative',
         backgroundColor: style.backgroundColor || '#ffffff',
         borderRadius: style.borderRadius || '5px',
         padding: style.padding || '5px 10px',

@@ -13,7 +13,7 @@ import { createInjectState } from '@/utils/createInjectState';
 
 export type GoalDetailContextProps = {
   children: React.ReactNode;
-  goal?: GoalVo | GoalItemVo;
+  goalId: string;
   initialFormData?: Partial<GoalFormData>;
   size?: 'small' | 'default';
   onClose?: () => Promise<void>;
@@ -63,7 +63,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
 
   const { goalList } = GoalService.useGoalList({
     withoutSelf: true,
-    id: props.goal?.id,
+    id: props.goalId,
   });
 
   async function handleCreate() {
