@@ -1,226 +1,317 @@
-/**
- * MindmapContext - 思维导图数据管理上下文
- * 
- * 该模块提供了思维导图数据的状态管理和操作方法，包括：
- * - 节点的添加、删除、修改
- * - 节点层级关系的调整
- * - 节点展开/折叠状态的控制
- */
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import defaultMindmap from '../statics/defaultMindmap';
-import { MindmapNode } from '../types';
-import { findNode, deepCopy, setShowChildrenTrue } from '../methods/assistFunctions';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+  useEffect,
+} from 'react';
+import { Graph } from '@antv/x6';
+import { MindMapData } from '../types';
 
 /**
- * 获取默认思维导图数据
- * 优先从 localStorage 获取，如果没有则使用默认数据
- */
-const getDefaultMindmap = (): MindmapNode => 
-  JSON.parse(localStorage.getItem('mindmap') || 'null') || defaultMindmap;
-
-/**
- * MindmapContext 类型定义
+ * MindMapContext 类型定义
  * 包含思维导图数据和操作方法
  */
-interface MindmapContextType {
-  mindmap: MindmapNode;                                                   // 思维导图数据
-  toggleChildren: (nodeId: string, node: Partial<MindmapNode>) => void;   // 切换子节点显示/隐藏
-  addChild: (nodeId: string, node: MindmapNode) => void;                  // 添加子节点
-  addSibling: (nodeId: string, parentId: string, node: MindmapNode) => void; // 添加兄弟节点
-  moveNode: (nodeId: string, parentId: string, targetId: string, isSibling: boolean) => void; // 移动节点
-  changeText: (nodeId: string, node: Partial<MindmapNode>) => void;       // 修改节点文本
-  deleteNode: (nodeId: string, parentId: string) => void;                 // 删除节点
-  expandAll: (nodeId: string) => void;                                    // 展开所有子节点
-  setMindmap: (mindmap: MindmapNode) => void;                             // 设置整个思维导图
+interface MindMapContextType {
+  // 状态
+  mindMapData: MindMapData | null;
+  graph: Graph | null;
+  selectedNodeId: string | null;
+  zoom: number;
+  position: { x: number; y: number };
+
+  // 设置方法
+  setMindMapData: (data: MindMapData | null) => void;
+  setGraph: (graph: Graph | null) => void;
+  setSelectedNodeId: (id: string | null) => void;
+  setZoom: (zoom: number) => void;
+  setPosition: (position: { x: number; y: number }) => void;
+
+  // 操作方法
+  addChild: (nodeId: string, label: string) => void;
+  addSibling: (nodeId: string, label: string) => void;
+  updateNode: (nodeId: string, label: string) => void;
+  deleteNode: (nodeId: string) => void;
+  centerContent: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
 }
 
 // 创建 Context
-const MindmapContext = createContext<MindmapContextType | null>(null);
+const MindMapContext = createContext<MindMapContextType | null>(null);
 
 /**
- * MindmapProvider 属性类型
+ * MindMapProvider 属性类型
  */
-interface MindmapProviderProps {
+interface MindMapProviderProps {
   children: ReactNode;
-  initialValue?: MindmapNode;  // 可选的初始思维导图数据
+  initialData?: MindMapData | null;
 }
 
 /**
- * MindmapProvider 组件
+ * 生成唯一ID
+ */
+const generateId = (): string => {
+  return `node-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+};
+
+/**
+ * 寻找节点的辅助函数
+ */
+const findNode = (data: MindMapData, nodeId: string): MindMapData | null => {
+  if (data.id === nodeId) {
+    return data;
+  }
+
+  if (data.children) {
+    for (const child of data.children) {
+      const found = findNode(child, nodeId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * 寻找父节点的辅助函数
+ */
+const findParentNode = (
+  data: MindMapData,
+  nodeId: string,
+): MindMapData | null => {
+  if (data.children) {
+    for (const child of data.children) {
+      if (child.id === nodeId) {
+        return data;
+      }
+      const found = findParentNode(child, nodeId);
+      if (found) {
+        return found;
+      }
+    }
+  }
+
+  return null;
+};
+
+/**
+ * MindMapProvider 组件
  * 提供思维导图数据和操作方法的上下文
  */
-export const MindmapProvider: React.FC<MindmapProviderProps> = ({ 
-  children, 
-  initialValue 
+export const MindMapProvider: React.FC<MindMapProviderProps> = ({
+  children,
+  initialData = null,
 }) => {
-  // 思维导图状态
-  const [mindmap, setMindmapState] = useState<MindmapNode>(
-    initialValue || getDefaultMindmap()
-  );
+  // 状态
+  const [mindMapData, setMindMapData] = useState<MindMapData | null>(null);
+  const [graph, setGraph] = useState<Graph | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [zoom, setZoom] = useState<number>(1);
+  const [position, setPosition] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
 
-  /**
-   * 切换节点的子节点显示/隐藏状态
-   * @param nodeId 节点ID
-   * @param node 要更新的节点属性
-   */
-  const toggleChildren = useCallback((nodeId: string, node: Partial<MindmapNode>) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const nodeFound = findNode(newMindmap, nodeId);
-      // 只有当节点有子节点且不是根节点时才更新
-      if (nodeFound.children.length > 0 && nodeFound !== newMindmap) {
-        Object.assign(nodeFound, node);
-      }
-      return newMindmap;
-    });
-  }, []);
+  // 初始化数据
+  useEffect(() => {
+    console.log('Setting initial data in provider:', initialData);
+    setMindMapData(initialData);
+  }, [initialData]);
 
   /**
    * 添加子节点
-   * @param nodeId 父节点ID
-   * @param node 要添加的子节点
    */
-  const addChild = useCallback((nodeId: string, node: MindmapNode) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const nodeFound = findNode(newMindmap, nodeId);
-      nodeFound.children.push(node);
-      return newMindmap;
-    });
-  }, []);
+  const addChild = useCallback(
+    (nodeId: string, label: string) => {
+      if (!mindMapData) return;
+
+      setMindMapData((prevData) => {
+        if (!prevData) return prevData;
+
+        const newData = JSON.parse(JSON.stringify(prevData));
+        const node = findNode(newData, nodeId);
+
+        if (node) {
+          const childType =
+            node.type === 'topic' ? 'topic-branch' : 'topic-child';
+          const newNode: MindMapData = {
+            id: generateId(),
+            label,
+            type: childType,
+            width: childType === 'topic-branch' ? 120 : 80,
+            height: childType === 'topic-branch' ? 40 : 30,
+            children: [],
+          };
+
+          if (!node.children) {
+            node.children = [];
+          }
+
+          node.children.push(newNode);
+        }
+
+        return newData;
+      });
+    },
+    [mindMapData],
+  );
 
   /**
    * 添加兄弟节点
-   * @param nodeId 参考节点ID
-   * @param parentId 父节点ID
-   * @param node 要添加的兄弟节点
    */
-  const addSibling = useCallback((nodeId: string, parentId: string, node: MindmapNode) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const parentNode = findNode(newMindmap, parentId);
-      // 在参考节点后插入新节点
-      const insertIndex = parentNode.children.findIndex(child => child.id === nodeId) + 1;
-      parentNode.children.splice(insertIndex, 0, node);
-      return newMindmap;
-    });
-  }, []);
+  const addSibling = useCallback(
+    (nodeId: string, label: string) => {
+      if (!mindMapData || nodeId === mindMapData.id) return; // 不能给根节点添加兄弟
+
+      setMindMapData((prevData) => {
+        if (!prevData) return prevData;
+
+        const newData = JSON.parse(JSON.stringify(prevData));
+        const parentNode = findParentNode(newData, nodeId);
+        const node = findNode(newData, nodeId);
+
+        if (parentNode && node) {
+          const newNode: MindMapData = {
+            id: generateId(),
+            label,
+            type: node.type,
+            width: node.width,
+            height: node.height,
+            children: [],
+          };
+
+          const index =
+            parentNode.children?.findIndex((child) => child.id === nodeId) || 0;
+          parentNode.children?.splice(index + 1, 0, newNode);
+        }
+
+        return newData;
+      });
+    },
+    [mindMapData],
+  );
 
   /**
-   * 移动节点
-   * @param nodeId 要移动的节点ID
-   * @param parentId 当前父节点ID
-   * @param targetId 目标节点ID
-   * @param isSibling 是否作为兄弟节点插入
+   * 更新节点
    */
-  const moveNode = useCallback((
-    nodeId: string, 
-    parentId: string, 
-    targetId: string, 
-    isSibling: boolean
-  ) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      // 从原位置移除节点
-      const parent = findNode(newMindmap, parentId);
-      const nodeIndex = parent.children.findIndex(node => node.id === nodeId);
-      const nodeCopy = parent.children[nodeIndex];
-      parent.children.splice(nodeIndex, 1);
-      
-      if (isSibling) {
-        // 作为兄弟节点插入
-        const targetIndex = parent.children.findIndex(node => node.id === targetId) + 1 || 
-                           parent.children.length + 1;
-        parent.children.splice(targetIndex - 1, 0, nodeCopy);
-      } else {
-        // 作为子节点插入
-        const targetNode = findNode(newMindmap, targetId);
-        targetNode.children.push(nodeCopy);
-      }
-      
-      return newMindmap;
-    });
-  }, []);
+  const updateNode = useCallback(
+    (nodeId: string, label: string) => {
+      if (!mindMapData) return;
 
-  /**
-   * 修改节点文本或其他属性
-   * @param nodeId 节点ID
-   * @param node 要更新的节点属性
-   */
-  const changeText = useCallback((nodeId: string, node: Partial<MindmapNode>) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const nodeFound = findNode(newMindmap, nodeId);
-      Object.assign(nodeFound, node);
-      return newMindmap;
-    });
-  }, []);
+      setMindMapData((prevData) => {
+        if (!prevData) return prevData;
+
+        const newData = JSON.parse(JSON.stringify(prevData));
+        const node = findNode(newData, nodeId);
+
+        if (node) {
+          node.label = label;
+        }
+
+        return newData;
+      });
+    },
+    [mindMapData],
+  );
 
   /**
    * 删除节点
-   * @param nodeId 要删除的节点ID
-   * @param parentId 父节点ID
    */
-  const deleteNode = useCallback((nodeId: string, parentId: string) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const parentNode = findNode(newMindmap, parentId);
-      const deleteIndex = parentNode.children.findIndex(node => node.id === nodeId);
-      parentNode.children.splice(deleteIndex, 1);
-      return newMindmap;
-    });
-  }, []);
+  const deleteNode = useCallback(
+    (nodeId: string) => {
+      if (!mindMapData || nodeId === mindMapData.id) return; // 不能删除根节点
+
+      setMindMapData((prevData) => {
+        if (!prevData) return prevData;
+
+        const newData = JSON.parse(JSON.stringify(prevData));
+        const parentNode = findParentNode(newData, nodeId);
+
+        if (parentNode && parentNode.children) {
+          const index = parentNode.children.findIndex(
+            (child) => child.id === nodeId,
+          );
+          if (index !== -1) {
+            parentNode.children.splice(index, 1);
+          }
+        }
+
+        return newData;
+      });
+    },
+    [mindMapData],
+  );
 
   /**
-   * 展开指定节点的所有子节点
-   * @param nodeId 节点ID
+   * 居中内容
    */
-  const expandAll = useCallback((nodeId: string) => {
-    setMindmapState(prevMindmap => {
-      const newMindmap = deepCopy(prevMindmap);
-      const nodeFound = findNode(newMindmap, nodeId);
-      setShowChildrenTrue(nodeFound);
-      return newMindmap;
-    });
-  }, []);
+  const centerContent = useCallback(() => {
+    if (graph) {
+      graph.centerContent();
+    }
+  }, [graph]);
 
   /**
-   * 设置整个思维导图
-   * @param newMindmap 新的思维导图数据
+   * 放大
    */
-  const setMindmap = useCallback((newMindmap: MindmapNode) => {
-    setMindmapState(newMindmap);
-  }, []);
+  const zoomIn = useCallback(() => {
+    const newZoom = Math.min(zoom + 0.1, 2);
+    setZoom(newZoom);
+
+    if (graph) {
+      graph.zoom(newZoom);
+    }
+  }, [zoom, graph]);
+
+  /**
+   * 缩小
+   */
+  const zoomOut = useCallback(() => {
+    const newZoom = Math.max(zoom - 0.1, 0.5);
+    setZoom(newZoom);
+
+    if (graph) {
+      graph.zoom(newZoom);
+    }
+  }, [zoom, graph]);
 
   // 组合所有方法和状态
-  const value: MindmapContextType = {
-    mindmap,
-    toggleChildren,
+  const value: MindMapContextType = {
+    mindMapData,
+    graph,
+    selectedNodeId,
+    zoom,
+    position,
+    setMindMapData,
+    setGraph,
+    setSelectedNodeId,
+    setZoom,
+    setPosition,
     addChild,
     addSibling,
-    moveNode,
-    changeText,
+    updateNode,
     deleteNode,
-    expandAll,
-    setMindmap
+    centerContent,
+    zoomIn,
+    zoomOut,
   };
 
   return (
-    <MindmapContext.Provider value={value}>
-      {children}
-    </MindmapContext.Provider>
+    <MindMapContext.Provider value={value}>{children}</MindMapContext.Provider>
   );
 };
 
 /**
  * 使用思维导图上下文的自定义Hook
- * @returns MindmapContextType 思维导图上下文
- * @throws 如果在 MindmapProvider 外部使用则抛出错误
  */
-export const useMindmapContext = (): MindmapContextType => {
-  const context = useContext(MindmapContext);
+export const useMindMap = (): MindMapContextType => {
+  const context = useContext(MindMapContext);
   if (!context) {
-    throw new Error('useMindmapContext must be used within a MindmapProvider');
+    throw new Error('useMindMap must be used within a MindMapProvider');
   }
   return context;
 };

@@ -49,8 +49,6 @@ import GoalMindMap from './goal-mind-map';
 
 ### 技术变更
 
-- 移除了 `@life-toolkit/components-web-mind` 依赖
-- 新增了 `@antv/x6` 相关依赖
 - 重新设计了节点布局算法
 - 优化了样式和交互体验
 
