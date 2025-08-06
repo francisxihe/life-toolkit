@@ -50,39 +50,26 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
   };
 
   return (
-    <Card
-      className={clsx(className, 'w-full h-full')}
-      title={<span>目标脑图</span>}
-      extra={
-        <Space>
-          <Button
-            icon={<IconRefresh />}
-            onClick={handleRefresh}
-            loading={loading}
-          />
-          <Button icon={<IconFullscreen />} onClick={handleFullscreen} />
-        </Space>
-      }
-      style={{ minHeight: 600 }}
-    >
-      <Spin loading={loading} className={clsx('w-full h-full')}>
-        {/* 脑图组件区域 */}
-        <div className="w-full h-full">
-          {goalTree.length > 0 ? (
-            <X6MindMap
-              goalTree={goalTree}
-              onNodeClick={(nodeId) => {
-                console.log('节点点击:', nodeId);
-              }}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-gray-500">
-              暂无目标数据
-            </div>
+    <Spin loading={loading} className={clsx('w-full h-full')}>
+      {/* 脑图组件区域 */}
+      {goalTree.length > 0 ? (
+        <X6MindMap
+          goalTree={goalTree}
+          onNodeClick={(nodeId) => {
+            console.log('节点点击:', nodeId);
+          }}
+        />
+      ) : (
+        <div
+          className={clsx(
+            'w-full h-full',
+            'flex items-center justify-center text-gray-500',
           )}
+        >
+          暂无目标数据
         </div>
-      </Spin>
-    </Card>
+      )}
+    </Spin>
   );
 };
 

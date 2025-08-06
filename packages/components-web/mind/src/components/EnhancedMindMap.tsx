@@ -1,13 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Graph } from '@antv/x6';
 import Hierarchy from '@antv/hierarchy';
-import { MindMapProvider, useMindMap } from '../context/MindMapContext';
-import {
-  MindMapData,
-  MindMapOptions,
-  DEFAULT_MIND_MAP_OPTIONS,
-  HierarchyResult,
-} from '../types';
+import { MiniMap } from '@antv/x6-plugin-minimap';
+import { MindMapProvider, useMindMap } from '../context';
+import { MindMapData, MindMapOptions, DEFAULT_MIND_MAP_OPTIONS, HierarchyResult } from '../types';
 import { registerMindMapComponents, registerFilters } from '../styles';
 import {
   setupInteractions,
@@ -17,6 +13,9 @@ import {
 import MindMapToolbar from '../components/MindMapToolbar';
 import NodeEditor from '../components/NodeEditor';
 import { ExportModal, ImportModal } from '../components/ExportImportModals';
+import { toggleNodeCollapse } from '../utils/nodeOperations';
+import MiniMapContainer from './MiniMap';
+import './style.css';
 
 // 注册所有思维导图相关组件
 registerMindMapComponents();
@@ -27,7 +26,13 @@ interface EnhancedMindMapProps {
   onChange?: (data: MindMapData | null) => void;
   onNodeClick?: (nodeId: string) => void;
   showToolbar?: boolean;
+  showInternalToolbar?: boolean;
   className?: string;
+  onGraphReady?: (graph: Graph) => void;
+  minimapVisible?: boolean;
+  onFullscreen?: () => void;
+  onExport?: () => void;
+  onToggleMinimap?: (visible: boolean) => void;
 }
 
 /**
@@ -39,7 +44,13 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   onChange,
   onNodeClick,
   showToolbar = true,
+  showInternalToolbar = false,
   className = '',
+  onGraphReady,
+  minimapVisible = false,
+  onFullscreen,
+  onExport,
+  onToggleMinimap,
 }) => {
   const {
     mindMapData,
@@ -55,6 +66,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     deleteNode,
     zoomIn,
     zoomOut,
+    graphRef,
   } = useMindMap();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -66,10 +78,10 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
 
   // 初始化图形
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !graphRef.current) return;
 
     const newGraph = new Graph({
-      container: containerRef.current,
+      container: graphRef.current,
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
       background: {
@@ -102,14 +114,21 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
       },
     });
 
+    newGraph.zoomTo(zoom);
+
     // 设置图形实例
     setGraph(newGraph);
+
+    // 如果提供了图形就绪回调，则调用它
+    if (onGraphReady) {
+      onGraphReady(newGraph);
+    }
 
     // 注册必要的滤镜
     registerFilters(newGraph);
 
     // 设置交互能力
-    setupInteractions(newGraph);
+    setupInteractions(newGraph, minimapVisible ? graphRef.current : undefined);
 
     // 注册节点点击事件
     newGraph.on('node:click', ({ node }) => {
@@ -125,13 +144,9 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     });
 
     // 监听容器大小变化
-    const resizeObserver = new ResizeObserver((entries) => {
+    const resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
-        if (
-          entry.target.children[0] === containerRef.current &&
-          newGraph &&
-          entry.contentRect
-        ) {
+        if (entry && entry.contentRect && graphRef.current && newGraph) {
           // 获取容器的当前尺寸
           const { width, height } = entry.contentRect;
 
@@ -161,8 +176,10 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     mergedOptions.enableShortcuts,
     mergedOptions.centerOnResize,
     onNodeClick,
+    onGraphReady,
     setGraph,
     setSelectedNodeId,
+    minimapVisible,
   ]);
 
   // 注册键盘快捷键
@@ -174,18 +191,15 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
         deleteNode,
         zoomIn,
         zoomOut,
+        toggleCollapse: (nodeId: string) => {
+          if (graph) {
+            toggleNodeCollapse(graph, nodeId);
+          }
+        },
       };
       registerKeyboardShortcuts(graph, handlers);
     }
-  }, [
-    graph,
-    mergedOptions.enableShortcuts,
-    addChild,
-    addSibling,
-    deleteNode,
-    zoomIn,
-    zoomOut,
-  ]);
+  }, [graph, mergedOptions.enableShortcuts, addChild, addSibling, deleteNode, zoomIn, zoomOut]);
 
   // 设置鼠标交互
   useEffect(() => {
@@ -195,7 +209,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   }, [graph]);
 
   // 渲染脑图
-  const renderMindMap = () => {
+  const renderMindMap = useCallback(() => {
     if (!graph || !mindMapData) {
       console.log('Cannot render: graph or mindMapData is null', {
         graph,
@@ -207,6 +221,16 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     console.log('Rendering mind map with data:', mindMapData);
 
     try {
+      // 保存当前的折叠状态
+      const collapsedStates = new Map<string, boolean>();
+      graph.getNodes().forEach(node => {
+        const nodeId = node.id.toString();
+        const isCollapsed = node.getAttrByPath('collapsed') || false;
+        if (isCollapsed) {
+          collapsedStates.set(nodeId, true);
+        }
+      });
+      
       const result: HierarchyResult = Hierarchy.mindmap(mindMapData, {
         direction: mergedOptions.direction === 'V' ? 'V' : 'H',
         getHeight(d: MindMapData) {
@@ -242,6 +266,12 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
             label: data.label,
             type: data.type,
           });
+          
+          // 恢复折叠状态
+          if (collapsedStates.has(data.id)) {
+            node.setAttrByPath('collapsed', true);
+          }
+          
           cells.push(node);
 
           if (children) {
@@ -273,7 +303,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
                       name: 'left',
                     },
                   },
-                }),
+                })
               );
               traverse(item);
             });
@@ -300,7 +330,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     } catch (error) {
       console.error('Error rendering mind map:', error);
     }
-  };
+  }, [graph, mindMapData, mergedOptions.direction, mergedOptions.hGap, mergedOptions.vGap, selectedNodeId]);
 
   // 当数据变化时重新渲染
   useEffect(() => {
@@ -314,7 +344,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     mergedOptions.direction,
     mergedOptions.hGap,
     mergedOptions.vGap,
-    selectedNodeId,
+    renderMindMap,
   ]);
 
   // 当数据变化时触发 onChange
@@ -339,27 +369,33 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
 
   return (
     <div
-      className={`enhanced-mind-map w-full h-full flex flex-col ${className}`}
-      style={{ minHeight: '400px', position: 'relative' }}
+      ref={containerRef}
+      className={`mind-map w-full h-full flex flex-col ${className}`}
+      style={{ position: 'relative' }}
     >
-      {showToolbar && (
+      {showInternalToolbar && (
         <MindMapToolbar
-          onExport={() => setExportModalVisible(true)}
-          onImport={() => setImportModalVisible(true)}
+          mode="compact"
+          onFullscreen={onFullscreen}
+          onExport={onExport}
+          onToggleMinimap={onToggleMinimap}
         />
       )}
-      <div className="flex-1 min-h-[400px] w-full h-full rounded-lg bg-white">
-        <div
-          ref={containerRef}
-          style={{
-            minWidth: '300px',
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
+      {showToolbar && (
+        <MindMapToolbar
+          mode="full"
+          onExport={() => setExportModalVisible(true)}
+          onImport={() => setImportModalVisible(true)}
+          onToggleMinimap={onToggleMinimap}
         />
-      </div>
+      )}
+      <div
+        ref={graphRef}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
 
       {/* 节点编辑器 */}
       <NodeEditor
@@ -369,10 +405,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
       />
 
       {/* 导出模态框 */}
-      <ExportModal
-        visible={exportModalVisible}
-        onClose={() => setExportModalVisible(false)}
-      />
+      <ExportModal visible={exportModalVisible} onClose={() => setExportModalVisible(false)} />
 
       {/* 导入模态框 */}
       <ImportModal
@@ -380,6 +413,8 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
         onClose={() => setImportModalVisible(false)}
         onImport={handleImport}
       />
+
+      {<MiniMapContainer visible={minimapVisible} />}
     </div>
   );
 };
@@ -388,7 +423,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
  * 增强型思维导图组件
  * 使用MindMapProvider提供上下文
  */
-const EnhancedMindMap: React.FC<EnhancedMindMapProps> = (props) => {
+const EnhancedMindMap: React.FC<EnhancedMindMapProps> = props => {
   return (
     <MindMapProvider initialData={props.data}>
       <InternalMindMap {...props} />

@@ -1,41 +1,104 @@
-import React from 'react';
-import { Button, Tooltip, Space } from '@arco-design/web-react';
-import { 
-  IconPlus, 
-  IconMinus, 
-  IconZoomIn, 
-  IconZoomOut, 
+import React, { useState } from 'react';
+import { Button, Tooltip, Space, Switch } from '@arco-design/web-react';
+import {
+  IconPlus,
+  IconZoomIn,
+  IconZoomOut,
   IconFullscreen,
   IconExport,
-  IconImport
+  IconImport,
+  IconUndo,
+  IconRedo,
+  IconDragDot,
+  IconCopy,
+  IconPaste,
+  IconDelete,
+  IconShrink,
 } from '@arco-design/web-react/icon';
-import { useMindMap } from '../context/MindMapContext';
+import { useMindMap } from '../context';
+import * as nodeOperations from '../utils/nodeOperations';
 
 interface MindMapToolbarProps {
   onFullscreen?: () => void;
   onExport?: () => void;
   onImport?: () => void;
+  onToggleMinimap?: (visible: boolean) => void;
+  mode?: 'full' | 'compact'; // 工具栏模式：完整模式或紧凑模式
+  className?: string;
 }
 
+// 工具按钮组件接口
+interface ToolButtonProps {
+  icon?: React.ReactNode;
+  content: string;
+  onClick: () => void;
+  disabled?: boolean;
+  status?: 'danger' | 'warning' | 'success' | 'default';
+  size?: 'mini' | 'small' | 'default' | 'large';
+  children?: React.ReactNode;
+}
+
+// 可复用的工具按钮组件
+const ToolButton: React.FC<ToolButtonProps> = ({
+  icon,
+  content,
+  onClick,
+  disabled = false,
+  status = 'default',
+  size = 'default',
+  children,
+}) => (
+  <Tooltip content={content}>
+    <Button
+      type="secondary"
+      icon={icon}
+      onClick={onClick}
+      disabled={disabled}
+      status={status}
+      size={size}
+    >
+      {children}
+    </Button>
+  </Tooltip>
+);
+
 /**
- * 思维导图工具栏组件
- * 提供添加、删除、缩放等操作按钮
+ * 统一的思维导图工具栏组件
+ * 支持完整模式和紧凑模式，提供所有思维导图操作功能
  */
 const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   onFullscreen,
   onExport,
-  onImport
+  onImport,
+  onToggleMinimap,
+  mode = 'full',
+  className,
 }) => {
-  const { 
-    graph, 
-    selectedNodeId, 
-    addChild, 
-    addSibling, 
+  const {
+    graph,
+    selectedNodeId,
+    addChild,
+    addSibling,
     deleteNode,
     zoomIn,
     zoomOut,
-    centerContent
+    centerContent,
   } = useMindMap();
+
+  const [minimapVisible, setMinimapVisible] = useState(false);
+
+  // 切换节点折叠/展开
+  const handleToggleCollapse = () => {
+    if (!selectedNodeId || !graph) return;
+
+    // 使用统一的节点操作工具
+    if (nodeOperations.hasChildNodes && nodeOperations.hasChildNodes(graph, selectedNodeId)) {
+      nodeOperations.toggleNodeCollapse(graph, selectedNodeId);
+    } else {
+      // 兼容旧版本
+      nodeOperations.toggleNodeCollapse(graph, selectedNodeId);
+    }
+  };
 
   // 添加子节点
   const handleAddChild = () => {
@@ -55,21 +118,6 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     deleteNode(selectedNodeId);
   };
 
-  // 放大
-  const handleZoomIn = () => {
-    zoomIn();
-  };
-
-  // 缩小
-  const handleZoomOut = () => {
-    zoomOut();
-  };
-
-  // 居中内容
-  const handleCenterContent = () => {
-    centerContent();
-  };
-
   // 全屏
   const handleFullscreen = () => {
     if (onFullscreen) {
@@ -82,94 +130,212 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     }
   };
 
-  return (
-    <div className="mind-map-toolbar p-2 bg-white border-b border-gray-200">
+  // 导出
+  const handleExport = () => {
+    if (onExport) {
+      onExport();
+    } else if (graph) {
+      console.log('导出PNG');
+    }
+  };
+
+  // 撤销
+  const handleUndo = () => {
+    if (graph && graph.canUndo()) {
+      graph.undo();
+    }
+  };
+
+  // 重做
+  const handleRedo = () => {
+    if (graph && graph.canRedo()) {
+      graph.redo();
+    }
+  };
+
+  // 复制
+  const handleCopy = () => {
+    if (graph && selectedNodeId) {
+      const cell = graph.getCellById(selectedNodeId);
+      if (cell) {
+        graph.copy([cell]);
+      }
+    }
+  };
+
+  // 粘贴
+  const handlePaste = () => {
+    if (graph && !graph.isClipboardEmpty()) {
+      const cells = graph.paste({ offset: 20 });
+      graph.cleanSelection();
+      graph.select(cells);
+    }
+  };
+
+  // 切换小地图显示
+  const handleToggleMinimap = (checked: boolean) => {
+    setMinimapVisible(checked);
+    if (onToggleMinimap) {
+      onToggleMinimap(checked);
+    }
+  };
+
+  // 共同的视图操作按钮组
+  const ViewControls = ({
+    size = 'default',
+  }: {
+    size?: 'mini' | 'small' | 'default' | 'large';
+  }) => (
+    <>
+      <ToolButton icon={<IconZoomOut />} content="缩小 (Ctrl -)" onClick={zoomOut} size={size} />
+      <ToolButton icon={<IconZoomIn />} content="放大 (Ctrl +)" onClick={zoomIn} size={size} />
+      <ToolButton
+        icon={mode === 'compact' ? undefined : <IconDragDot />}
+        content="居中内容"
+        onClick={centerContent}
+        size={size}
+      >
+        {mode === 'compact' ? '居中' : undefined}
+      </ToolButton>
+    </>
+  );
+
+  // 共同的功能操作按钮组
+  const CommonControls = ({
+    size = 'default',
+  }: {
+    size?: 'mini' | 'small' | 'default' | 'large';
+  }) => (
+    <>
+      <ToolButton
+        icon={<IconShrink />}
+        content="折叠/展开子节点 (Space)"
+        onClick={handleToggleCollapse}
+        disabled={!selectedNodeId}
+        size={size}
+      />
+      <ToolButton icon={<IconExport />} content="导出 PNG" onClick={handleExport} size={size} />
+      <ToolButton icon={<IconFullscreen />} content="全屏" onClick={handleFullscreen} size={size} />
+    </>
+  );
+
+  // 小地图控件
+  const MinimapControl = ({
+    size = 'default',
+  }: {
+    size?: 'mini' | 'small' | 'default' | 'large';
+  }) => {
+    if (mode === 'compact') {
+      return (
+        <ToolButton
+          content="小地图"
+          onClick={() => handleToggleMinimap(!minimapVisible)}
+          size={size}
+        >
+          小地图
+        </ToolButton>
+      );
+    }
+    return (
+      <Tooltip content="小地图">
+        <Switch
+          checked={minimapVisible}
+          onChange={handleToggleMinimap}
+          size={size === 'small' ? 'small' : 'default'}
+        />
+      </Tooltip>
+    );
+  };
+
+  // 紧凑模式渲染
+  if (mode === 'compact') {
+    return (
       <Space>
-        <Tooltip content="添加子节点 (Tab)">
-          <Button 
-            type="secondary"
-            icon={<IconPlus />}
-            onClick={handleAddChild}
-            disabled={!selectedNodeId}
-          />
-        </Tooltip>
-        
-        <Tooltip content="添加兄弟节点 (Enter)">
-          <Button 
-            type="secondary"
-            icon={<IconPlus />}
-            onClick={handleAddSibling}
-            disabled={!selectedNodeId}
-          />
-        </Tooltip>
-        
-        <Tooltip content="删除节点 (Delete)">
-          <Button 
-            type="secondary" 
-            status="danger"
-            icon={<IconMinus />}
-            onClick={handleDeleteNode}
-            disabled={!selectedNodeId}
-          />
-        </Tooltip>
-        
-        <div className="h-5 w-px bg-gray-300 mx-1"></div>
-        
-        <Tooltip content="放大 (Ctrl +)">
-          <Button 
-            type="secondary"
-            icon={<IconZoomIn />}
-            onClick={handleZoomIn}
-          />
-        </Tooltip>
-        
-        <Tooltip content="缩小 (Ctrl -)">
-          <Button 
-            type="secondary"
-            icon={<IconZoomOut />}
-            onClick={handleZoomOut}
-          />
-        </Tooltip>
-        
-        <Tooltip content="居中内容">
-          <Button 
-            type="secondary"
-            onClick={handleCenterContent}
-          >
-            居中
-          </Button>
-        </Tooltip>
-        
-        <div className="h-5 w-px bg-gray-300 mx-1"></div>
-        
-        <Tooltip content="全屏">
-          <Button 
-            type="secondary"
-            icon={<IconFullscreen />}
-            onClick={handleFullscreen}
-          />
-        </Tooltip>
-        
-        {onExport && (
-          <Tooltip content="导出">
-            <Button 
-              type="secondary"
-              icon={<IconExport />}
-              onClick={onExport}
-            />
-          </Tooltip>
-        )}
-        
-        {onImport && (
-          <Tooltip content="导入">
-            <Button 
-              type="secondary"
-              icon={<IconImport />}
-              onClick={onImport}
-            />
-          </Tooltip>
-        )}
+        <ViewControls size="small" />
+        <MinimapControl size="small" />
+        <CommonControls size="small" />
       </Space>
+    );
+  }
+
+  // 节点操作按钮组
+  const NodeControls = () => (
+    <>
+      <ToolButton
+        icon={<IconPlus />}
+        content="添加子节点 (Tab)"
+        onClick={handleAddChild}
+        disabled={!selectedNodeId}
+      />
+      <ToolButton
+        icon={<IconPlus />}
+        content="添加兄弟节点 (Enter)"
+        onClick={handleAddSibling}
+        disabled={!selectedNodeId}
+      />
+      <ToolButton
+        icon={<IconDelete />}
+        content="删除节点 (Delete)"
+        onClick={handleDeleteNode}
+        disabled={!selectedNodeId}
+        status="danger"
+      />
+      <ToolButton
+        icon={<IconShrink />}
+        content="折叠/展开子节点 (Space)"
+        onClick={handleToggleCollapse}
+        disabled={!selectedNodeId}
+      />
+    </>
+  );
+
+  // 编辑操作按钮组
+  const EditControls = () => (
+    <>
+      <ToolButton
+        icon={<IconUndo />}
+        content="撤销 (Ctrl+Z)"
+        onClick={handleUndo}
+        disabled={!graph || !graph.canUndo()}
+      />
+      <ToolButton
+        icon={<IconRedo />}
+        content="重做 (Ctrl+Y)"
+        onClick={handleRedo}
+        disabled={!graph || !graph.canRedo()}
+      />
+      <ToolButton
+        icon={<IconCopy />}
+        content="复制 (Ctrl+C)"
+        onClick={handleCopy}
+        disabled={!selectedNodeId}
+      />
+      <ToolButton
+        icon={<IconPaste />}
+        content="粘贴 (Ctrl+V)"
+        onClick={handlePaste}
+        disabled={!graph || graph.isClipboardEmpty()}
+      />
+    </>
+  );
+
+  // 完整模式渲染
+  return (
+    <div className={`mind-map-toolbar p-2 bg-white border-b border-gray-200 ${className || ''}`}>
+      {/* 操作节点 */}
+      <NodeControls />
+
+      {/* 编辑操作 */}
+      <EditControls />
+
+      {/* 视图操作 */}
+      <ViewControls />
+
+      {/* 其他功能 */}
+      <MinimapControl />
+      <ToolButton icon={<IconFullscreen />} content="全屏" onClick={handleFullscreen} />
+      <ToolButton icon={<IconExport />} content="导出" onClick={handleExport} />
+      {onImport && <ToolButton icon={<IconImport />} content="导入" onClick={onImport} />}
     </div>
   );
 };

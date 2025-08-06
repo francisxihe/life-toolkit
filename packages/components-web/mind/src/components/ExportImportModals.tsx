@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Modal, Radio, Upload, Message } from '@arco-design/web-react';
 import { IconUpload } from '@arco-design/web-react/icon';
-import { useMindMap } from '../context/MindMapContext';
+import { useMindMap } from '../context';
 import { exportToPNG, exportToSVG, exportToJSON, importJSONFromFile } from '../utils/export';
 
 interface ExportModalProps {

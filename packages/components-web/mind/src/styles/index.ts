@@ -7,16 +7,16 @@ import { Graph, Path } from '@antv/x6';
 export const registerMindMapComponents = () => {
   // 注册中心主题节点
   registerTopicNode();
-  
+
   // 注册分支主题节点
   registerBranchNode();
-  
+
   // 注册子主题节点
   registerChildNode();
-  
+
   // 注册脑图连接器
   registerMindMapConnector();
-  
+
   // 注册脑图边
   registerMindMapEdge();
 };
@@ -38,6 +38,22 @@ const registerTopicNode = () => {
           tagName: 'text',
           selector: 'label',
         },
+        {
+          tagName: 'circle',
+          selector: 'collapsedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'collapsedIndicatorText',
+        },
+        {
+          tagName: 'circle',
+          selector: 'expandedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'expandedIndicatorText',
+        },
       ],
       attrs: {
         body: {
@@ -58,9 +74,59 @@ const registerTopicNode = () => {
             ellipsis: true,
           },
         },
+        collapsedIndicator: {
+          r: 6,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#4E86E4',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        collapsedIndicatorText: {
+          text: '+',
+          fontSize: 10,
+          fontWeight: 'bold',
+          fill: '#4E86E4',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
+        expandedIndicator: {
+          r: 6,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#4E86E4',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        expandedIndicatorText: {
+          text: '−',
+          fontSize: 10,
+          fontWeight: 'bold',
+          fill: '#4E86E4',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
       },
     },
-    true,
+    true
   );
 };
 
@@ -80,6 +146,22 @@ const registerBranchNode = () => {
         {
           tagName: 'text',
           selector: 'label',
+        },
+        {
+          tagName: 'circle',
+          selector: 'collapsedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'collapsedIndicatorText',
+        },
+        {
+          tagName: 'circle',
+          selector: 'expandedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'expandedIndicatorText',
         },
       ],
       attrs: {
@@ -101,9 +183,59 @@ const registerBranchNode = () => {
             ellipsis: true,
           },
         },
+        collapsedIndicator: {
+          r: 5,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#69B1FF',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        collapsedIndicatorText: {
+          text: '+',
+          fontSize: 9,
+          fontWeight: 'bold',
+          fill: '#69B1FF',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
+        expandedIndicator: {
+          r: 5,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#69B1FF',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        expandedIndicatorText: {
+          text: '−',
+          fontSize: 9,
+          fontWeight: 'bold',
+          fill: '#69B1FF',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
       },
     },
-    true,
+    true
   );
 };
 
@@ -127,6 +259,22 @@ const registerChildNode = () => {
         {
           tagName: 'path',
           selector: 'line',
+        },
+        {
+          tagName: 'circle',
+          selector: 'collapsedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'collapsedIndicatorText',
+        },
+        {
+          tagName: 'circle',
+          selector: 'expandedIndicator',
+        },
+        {
+          tagName: 'text',
+          selector: 'expandedIndicatorText',
         },
       ],
       attrs: {
@@ -153,9 +301,59 @@ const registerChildNode = () => {
           strokeWidth: 1.5,
           d: 'M 0 15 L 60 15',
         },
+        collapsedIndicator: {
+          r: 4,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#A6C5F7',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        collapsedIndicatorText: {
+          text: '+',
+          fontSize: 8,
+          fontWeight: 'bold',
+          fill: '#A6C5F7',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
+        expandedIndicator: {
+          r: 4,
+          cx: '100%',
+          cy: '50%',
+          stroke: '#A6C5F7',
+          strokeWidth: 1.5,
+          fill: '#fff',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+        },
+        expandedIndicatorText: {
+          text: '−',
+          fontSize: 8,
+          fontWeight: 'bold',
+          fill: '#A6C5F7',
+          textAnchor: 'middle',
+          textVerticalAnchor: 'middle',
+          x: '100%',
+          y: '50%',
+          cursor: 'pointer',
+          visibility: 'hidden',
+          transform: 'translate(10, 0)',
+          pointerEvents: 'none',
+        },
       },
     },
-    true,
+    true
   );
 };
 
@@ -177,7 +375,7 @@ const registerMindMapConnector = () => {
       `;
       return options.raw ? Path.parse(pathData) : pathData;
     },
-    true,
+    true
   );
 };
 
@@ -203,7 +401,7 @@ const registerMindMapEdge = () => {
       },
       zIndex: 0,
     },
-    true,
+    true
   );
 };
 
