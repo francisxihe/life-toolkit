@@ -21,6 +21,7 @@
     "@antv/x6-react-shape": "^2.2.3",
     "@antv/xflow": "^2.1.13",
     "@arco-design/web-react": "^2.66.0",
+    "@life-toolkit/common-web-utils": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -28,6 +29,7 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "eslint-plugin-react": "^7.37.4",
+    "mitt": "^3.0.1",
     "eslint-plugin-react-hooks": "^4.6.2"
   },
   "peerDependencies": {

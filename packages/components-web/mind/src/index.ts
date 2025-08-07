@@ -9,3 +9,7 @@ export * as exportUtils from './utils/export';
 
 // 类型导出
 export type { MindMapData, MindMapOptions } from './types';
+
+// 事件发射器导出
+export { GraphEventEmitter, graphEventEmitter } from './graph';
+export type { GraphEventType, GraphEventData } from './graph';

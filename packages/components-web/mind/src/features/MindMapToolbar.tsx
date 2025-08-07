@@ -16,7 +16,7 @@ import {
   IconShrink,
 } from '@arco-design/web-react/icon';
 import { useMindMapContext } from '../context';
-import * as nodeOperations from '../graph/helpers/nodeOperations';
+import { graphEventEmitter } from '../graph/eventEmitter';
 
 interface MindMapToolbarProps {
   onFullscreen?: () => void;
@@ -74,30 +74,15 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   mode = 'full',
   className,
 }) => {
-  const {
-    graph,
-    selectedNodeId,
-    addChild,
-    addSibling,
-    deleteNode,
-    zoomIn,
-    zoomOut,
-    centerContent,
-  } = useMindMapContext();
+  // 业务数据和操作
+  const { selectedNodeId, addChild, addSibling, deleteNode } = useMindMapContext();
 
   const [minimapVisible, setMinimapVisible] = useState(false);
 
   // 切换节点折叠/展开
   const handleToggleCollapse = () => {
-    if (!selectedNodeId || !graph) return;
-
-    // 使用统一的节点操作工具
-    if (nodeOperations.hasChildNodes && nodeOperations.hasChildNodes(graph, selectedNodeId)) {
-      nodeOperations.toggleNodeCollapse(graph, selectedNodeId);
-    } else {
-      // 兼容旧版本
-      nodeOperations.toggleNodeCollapse(graph, selectedNodeId);
-    }
+    if (!selectedNodeId) return;
+    graphEventEmitter.toggleNodeCollapse(selectedNodeId);
   };
 
   // 添加子节点
@@ -132,44 +117,27 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
 
   // 导出
   const handleExport = () => {
-    if (onExport) {
-      onExport();
-    } else if (graph) {
-      console.log('导出PNG');
-    }
+    if (onExport) onExport();
   };
 
   // 撤销
   const handleUndo = () => {
-    if (graph && graph.canUndo()) {
-      graph.undo();
-    }
+    graphEventEmitter.undo();
   };
 
   // 重做
   const handleRedo = () => {
-    if (graph && graph.canRedo()) {
-      graph.redo();
-    }
+    graphEventEmitter.redo();
   };
 
   // 复制
   const handleCopy = () => {
-    if (graph && selectedNodeId) {
-      const cell = graph.getCellById(selectedNodeId);
-      if (cell) {
-        graph.copy([cell]);
-      }
-    }
+    graphEventEmitter.copy(selectedNodeId || undefined);
   };
 
   // 粘贴
   const handlePaste = () => {
-    if (graph && !graph.isClipboardEmpty()) {
-      const cells = graph.paste({ offset: 20 });
-      graph.cleanSelection();
-      graph.select(cells);
-    }
+    graphEventEmitter.paste();
   };
 
   // 切换小地图显示
@@ -187,12 +155,22 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     size?: 'mini' | 'small' | 'default' | 'large';
   }) => (
     <>
-      <ToolButton icon={<IconZoomOut />} content="缩小 (Ctrl -)" onClick={zoomOut} size={size} />
-      <ToolButton icon={<IconZoomIn />} content="放大 (Ctrl +)" onClick={zoomIn} size={size} />
+      <ToolButton
+        icon={<IconZoomOut />}
+        content="缩小 (Ctrl -)"
+        onClick={() => graphEventEmitter.zoomOut()}
+        size={size}
+      />
+      <ToolButton
+        icon={<IconZoomIn />}
+        content="放大 (Ctrl +)"
+        onClick={() => graphEventEmitter.zoomIn()}
+        size={size}
+      />
       <ToolButton
         icon={mode === 'compact' ? undefined : <IconDragDot />}
         content="居中内容"
-        onClick={centerContent}
+        onClick={() => graphEventEmitter.centerContent()}
         size={size}
       >
         {mode === 'compact' ? '居中' : undefined}
@@ -292,30 +270,15 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   // 编辑操作按钮组
   const EditControls = () => (
     <>
-      <ToolButton
-        icon={<IconUndo />}
-        content="撤销 (Ctrl+Z)"
-        onClick={handleUndo}
-        disabled={!graph || !graph.canUndo()}
-      />
-      <ToolButton
-        icon={<IconRedo />}
-        content="重做 (Ctrl+Y)"
-        onClick={handleRedo}
-        disabled={!graph || !graph.canRedo()}
-      />
+      <ToolButton icon={<IconUndo />} content="撤销 (Ctrl+Z)" onClick={handleUndo} />
+      <ToolButton icon={<IconRedo />} content="重做 (Ctrl+Y)" onClick={handleRedo} />
       <ToolButton
         icon={<IconCopy />}
         content="复制 (Ctrl+C)"
         onClick={handleCopy}
         disabled={!selectedNodeId}
       />
-      <ToolButton
-        icon={<IconPaste />}
-        content="粘贴 (Ctrl+V)"
-        onClick={handlePaste}
-        disabled={!graph || graph.isClipboardEmpty()}
-      />
+      <ToolButton icon={<IconPaste />} content="粘贴 (Ctrl+V)" onClick={handlePaste} />
     </>
   );
 

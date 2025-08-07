@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { Graph } from '@antv/x6';
 import Hierarchy from '@antv/hierarchy';
-import { MindMapProvider, useMindMapContext } from '../context';
+import { useMindMapContext } from '../context';
+import { MindMapGraphProvider, useMindMapGraphContext } from './context';
 import {
   MindMapData,
   MindMapOptions,
@@ -28,30 +29,34 @@ interface MindMapGraphProps {
  * 内部MindMap组件
  * 使用MindMapContext中的状态和方法
  */
-const MindMapGraph: React.FC<MindMapGraphProps> = ({
+const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   options = {},
   onChange,
   onNodeClick,
   onGraphReady,
 }) => {
+  // 从业务context获取数据相关状态
   const {
     mindMapData,
-    setMindMapData,
-    setGraph,
-    graph,
     selectedNodeId,
     setSelectedNodeId,
-    zoom,
-    position,
     addChild,
     addSibling,
     deleteNode,
+    containerRef,
+  } = useMindMapContext();
+
+  // 从画布context获取画布相关状态
+  const {
+    graph,
+    setGraph,
+    zoom,
+    position,
     zoomIn,
     zoomOut,
     graphRef,
-  } = useMindMapContext();
+  } = useMindMapGraphContext();
 
-  const containerRef = useRef<HTMLDivElement>(null);
   const [nodeEditorVisible, setNodeEditorVisible] = useState(false);
 
   const mergedOptions = { ...DEFAULT_MIND_MAP_OPTIONS, ...options };
@@ -325,9 +330,19 @@ const MindMapGraph: React.FC<MindMapGraphProps> = ({
 };
 
 /**
- * 增强型思维导图组件
- * 使用MindMapProvider提供上下文
+ * 思维导图画布组件
+ * 包装了MindMapGraphProvider和InternalMindMapGraph
  */
-export default (props: MindMapGraphProps) => {
-  return <MindMapGraph {...props} />;
+const MindMapGraph: React.FC<MindMapGraphProps> = (props) => {
+  return (
+    <MindMapGraphProvider>
+      <InternalMindMapGraph {...props} />
+    </MindMapGraphProvider>
+  );
 };
+
+export default MindMapGraph;
+
+// 导出事件发射器相关
+export { GraphEventEmitter, graphEventEmitter } from './eventEmitter';
+export type { GraphEventType, GraphEventData } from './eventEmitter';

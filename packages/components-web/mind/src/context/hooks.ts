@@ -3,13 +3,26 @@ import { Graph } from '@antv/x6';
 import { ENodeType, MindMapData } from '../types';
 import { generateId, findNode, findParentNode, cloneMindMapData } from './utils';
 
+interface UseNodeOperationsParams {
+  mindMapData: MindMapData | null;
+  setMindMapData: (
+    data: MindMapData | null | ((prevData: MindMapData | null) => MindMapData | null)
+  ) => void;
+  selectedNodeId: string | null;
+  setSelectedNodeId: (id: string | null) => void;
+  onChange?: (data: MindMapData | null) => void;
+}
+
 /**
  * 节点操作相关的hooks
  */
-export const useNodeOperations = (
-  mindMapData: MindMapData | null,
-  setMindMapData: (data: MindMapData | null | ((prevData: MindMapData | null) => MindMapData | null)) => void
-) => {
+export const useNodeOperations = ({
+  mindMapData,
+  setMindMapData,
+  selectedNodeId,
+  setSelectedNodeId,
+  onChange,
+}: UseNodeOperationsParams) => {
   /**
    * 添加子节点
    */
@@ -24,7 +37,8 @@ export const useNodeOperations = (
         const node = findNode(newData, nodeId);
 
         if (node) {
-          const childType = node.type === ENodeType.topic ? ENodeType.topicBranch : ENodeType.topicChild;
+          const childType =
+            node.type === ENodeType.topic ? ENodeType.topicBranch : ENodeType.topicChild;
           const newNode: MindMapData = {
             id: generateId(),
             label,
@@ -41,10 +55,11 @@ export const useNodeOperations = (
           node.children.push(newNode);
         }
 
+        onChange?.(newData);
         return newData;
       });
     },
-    [mindMapData, setMindMapData]
+    [mindMapData, setMindMapData, onChange]
   );
 
   /**
@@ -75,10 +90,11 @@ export const useNodeOperations = (
           parentNode.children?.splice(index + 1, 0, newNode);
         }
 
+        onChange?.(newData);
         return newData;
       });
     },
-    [mindMapData, setMindMapData]
+    [mindMapData, setMindMapData, onChange]
   );
 
   /**
@@ -98,10 +114,11 @@ export const useNodeOperations = (
           node.label = label;
         }
 
+        onChange?.(newData);
         return newData;
       });
     },
-    [mindMapData, setMindMapData]
+    [mindMapData, setMindMapData, onChange]
   );
 
   /**
@@ -124,10 +141,11 @@ export const useNodeOperations = (
           }
         }
 
+        onChange?.(newData);
         return newData;
       });
     },
-    [mindMapData, setMindMapData]
+    [mindMapData, setMindMapData, onChange]
   );
 
   return {
@@ -135,53 +153,5 @@ export const useNodeOperations = (
     addSibling,
     updateNode,
     deleteNode,
-  };
-};
-
-/**
- * 图形操作相关的hooks
- */
-export const useGraphOperations = (
-  graph: Graph | null,
-  zoom: number,
-  setZoom: (zoom: number) => void
-) => {
-  /**
-   * 居中内容
-   */
-  const centerContent = useCallback(() => {
-    if (graph) {
-      graph.centerContent();
-    }
-  }, [graph]);
-
-  /**
-   * 放大
-   */
-  const zoomIn = useCallback(() => {
-    const newZoom = Math.min(zoom + 0.1, 2);
-    setZoom(newZoom);
-
-    if (graph) {
-      graph.zoom(newZoom);
-    }
-  }, [zoom, graph, setZoom]);
-
-  /**
-   * 缩小
-   */
-  const zoomOut = useCallback(() => {
-    const newZoom = Math.max(zoom - 0.1, 0.5);
-    setZoom(newZoom);
-
-    if (graph) {
-      graph.zoom(newZoom);
-    }
-  }, [zoom, graph, setZoom]);
-
-  return {
-    centerContent,
-    zoomIn,
-    zoomOut,
   };
 };

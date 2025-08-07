@@ -1,23 +1,13 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Graph } from '@antv/x6';
-import Hierarchy from '@antv/hierarchy';
 import { MindMapProvider, useMindMapContext } from './context';
-import {
-  MindMapData,
-  MindMapOptions,
-  DEFAULT_MIND_MAP_OPTIONS,
-  HierarchyResult,
-  ENodeType,
-} from './types';
+import { MindMapData, MindMapOptions } from './types';
 import { registerMindMapComponents } from './graph/helpers';
-import { registerKeyboardShortcuts, setupMouseInteractions } from './graph/helpers/interactions';
 import MindMapToolbar from './features/MindMapToolbar';
 import NodeEditor from './features/NodeEditor';
 import { ExportModal, ImportModal } from './features/ExportImportModals';
-import { toggleNodeCollapse } from './graph/helpers/nodeOperations';
 import MiniMapContainer from './features/MiniMap';
 import './style.css';
-import { registerGraph } from './graph/graph';
 import MindMapGraph from './graph';
 
 // 注册所有思维导图相关组件
@@ -55,101 +45,11 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   onExport,
   onToggleMinimap,
 }) => {
-  const {
-    mindMapData,
-    setMindMapData,
-    setGraph,
-    graph,
-    selectedNodeId,
-    setSelectedNodeId,
-    zoom,
-    position,
-    addChild,
-    addSibling,
-    deleteNode,
-    zoomIn,
-    zoomOut,
-    graphRef,
-    containerRef,
-  } = useMindMapContext();
+  const { mindMapData, setMindMapData, selectedNodeId, containerRef } = useMindMapContext();
 
   const [nodeEditorVisible, setNodeEditorVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
-
-  const mergedOptions = { ...DEFAULT_MIND_MAP_OPTIONS, ...options };
-
-  // 初始化图形
-  useEffect(() => {
-    if (!containerRef.current || !graphRef.current) return;
-
-    const newGraph = registerGraph(
-      graphRef.current,
-      containerRef.current.clientWidth,
-      containerRef.current.clientHeight
-    );
-
-    // 设置图形实例
-    setGraph(newGraph);
-
-    newGraph.zoomTo(zoom);
-
-    // 如果提供了图形就绪回调，则调用它
-    if (onGraphReady) {
-      onGraphReady(newGraph);
-    }
-
-    // 注册节点点击事件
-    newGraph.on('node:click', ({ node }) => {
-      const nodeId = node.id.toString();
-      setSelectedNodeId(nodeId);
-
-      if (onNodeClick) {
-        onNodeClick(nodeId);
-      } else {
-        // 默认行为：打开节点编辑器
-        setNodeEditorVisible(true);
-      }
-    });
-
-    // 监听容器大小变化
-    const resizeObserver = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        if (entry && entry.contentRect && graphRef.current && newGraph) {
-          // 获取容器的当前尺寸
-          const { width, height } = entry.contentRect;
-
-          // 防止尺寸过小
-          if (width > 200 && height > 200) {
-            newGraph.resize(width, height);
-
-            if (mergedOptions.centerOnResize) {
-              newGraph.centerContent();
-            }
-          }
-        }
-      }
-    });
-
-    // 只监听容器自身
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current.parentElement!);
-    }
-
-    // 清理函数
-    return () => {
-      resizeObserver.disconnect();
-      newGraph.dispose();
-    };
-  }, [
-    mergedOptions.enableShortcuts,
-    mergedOptions.centerOnResize,
-    onNodeClick,
-    onGraphReady,
-    setGraph,
-    setSelectedNodeId,
-    minimapVisible,
-  ]);
 
   // 当数据变化时触发 onChange
   useEffect(() => {
@@ -157,14 +57,6 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
       onChange(mindMapData);
     }
   }, [mindMapData, onChange]);
-
-  // 当缩放和位置变化时应用
-  useEffect(() => {
-    if (graph) {
-      graph.zoom(zoom);
-      graph.translate(position.x, position.y);
-    }
-  }, [graph, zoom, position]);
 
   // 导入数据
   const handleImport = (data: MindMapData) => {
@@ -193,7 +85,12 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
           onToggleMinimap={onToggleMinimap}
         />
       )}
-      <MindMapGraph />
+      <MindMapGraph
+        options={options}
+        onChange={onChange}
+        onNodeClick={onNodeClick}
+        onGraphReady={onGraphReady}
+      />
 
       {/* 节点编辑器 */}
       <NodeEditor
