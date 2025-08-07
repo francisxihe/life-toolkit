@@ -15,8 +15,8 @@ import {
   IconDelete,
   IconShrink,
 } from '@arco-design/web-react/icon';
-import { useMindMap } from '../context';
-import * as nodeOperations from '../utils/nodeOperations';
+import { useMindMapContext } from '../context';
+import * as nodeOperations from '../graph/helpers/nodeOperations';
 
 interface MindMapToolbarProps {
   onFullscreen?: () => void;
@@ -83,7 +83,7 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     zoomIn,
     zoomOut,
     centerContent,
-  } = useMindMap();
+  } = useMindMapContext();
 
   const [minimapVisible, setMinimapVisible] = useState(false);
 

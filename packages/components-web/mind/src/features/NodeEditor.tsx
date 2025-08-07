@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Modal, Input, Button } from '@arco-design/web-react';
-import { useMindMap } from '../context';
+import { useMindMapContext } from '../context';
 
 interface NodeEditorProps {
   visible: boolean;
@@ -13,7 +13,7 @@ interface NodeEditorProps {
  * 用于编辑、添加或删除节点
  */
 const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => {
-  const { mindMapData, updateNode, addChild, addSibling, deleteNode } = useMindMap();
+  const { mindMapData, updateNode, addChild, addSibling, deleteNode } = useMindMapContext();
   const [nodeLabel, setNodeLabel] = useState('');
   const [isRootNode, setIsRootNode] = useState(false);
   const inputRef = useRef(null);

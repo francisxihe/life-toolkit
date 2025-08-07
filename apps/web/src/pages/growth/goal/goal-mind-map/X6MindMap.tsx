@@ -2,21 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { GoalVo } from '@life-toolkit/vo/growth';
 import { openDrawer } from '@/layout/Drawer';
 import GoalEditor from '../../components/GoalDetail/GoalEditor';
-import { 
-  EnhancedMindMap, 
-  createGoalConverter, 
-  nodeOperations,
+import {
+  MindMap,
+  createGoalConverter,
   exportUtils,
-  MindMapData 
+  MindMapData,
 } from '@life-toolkit/components-web-mind/src/index';
 import { Button, Space, Tooltip, Message, Switch } from '@arco-design/web-react';
-import { 
-  IconFullscreen, 
-  IconExport, 
-  IconZoomIn, 
-  IconZoomOut,
-  IconShrink,
-} from '@arco-design/web-react/icon';
 
 interface X6MindMapProps {
   goalTree: GoalVo[];
@@ -24,7 +16,11 @@ interface X6MindMapProps {
   showToolbar?: boolean;
 }
 
-const X6MindMap: React.FC<X6MindMapProps> = ({ goalTree, onNodeClick, showToolbar = true }) => {
+const X6MindMap: React.FC<X6MindMapProps> = ({
+  goalTree,
+  onNodeClick,
+  showToolbar = true,
+}) => {
   const [mindMapData, setMindMapData] = useState<MindMapData | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
@@ -99,46 +95,15 @@ const X6MindMap: React.FC<X6MindMapProps> = ({ goalTree, onNodeClick, showToolba
     setMinimapVisible(visible);
   };
 
-  // 缩放操作
-  const handleZoomIn = () => {
-    if (graphRef.current) {
-      graphRef.current.zoom(0.1);
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (graphRef.current) {
-      graphRef.current.zoom(-0.1);
-    }
-  };
-
-  // 切换节点折叠/展开
-  const toggleNodeCollapse = () => {
-    if (graphRef.current && mindMapData) {
-      const selectedCells = graphRef.current.getSelectedCells();
-      if (selectedCells.length === 1 && selectedCells[0].isNode()) {
-        const nodeId = selectedCells[0].id.toString();
-        nodeOperations.toggleNodeCollapse(graphRef.current, nodeId);
-      }
-    }
-  };
-
-  // 居中内容
-  const centerContent = () => {
-    if (graphRef.current) {
-      graphRef.current.centerContent();
-    }
-  };
-
   return (
-    <div 
+    <div
       ref={containerRef}
       className="w-full h-full relative"
       style={{ minHeight: '600px', minWidth: '300px', overflow: 'hidden' }}
     >
       {/* 思维导图内容 */}
       {mindMapData ? (
-        <EnhancedMindMap
+        <MindMap
           data={mindMapData}
           onNodeClick={handleNodeClick}
           options={{

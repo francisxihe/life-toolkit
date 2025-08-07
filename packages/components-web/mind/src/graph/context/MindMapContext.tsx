@@ -6,18 +6,18 @@ import React, {
   useRef,
 } from 'react';
 import { Graph } from '@antv/x6';
-import { MindMapData } from '../types';
-import { MindMapContextType, MindMapProviderProps } from './types';
+import { MindMapData } from '../../types';
+import { MindMapGraphContextType, MindMapGraphProviderProps } from './types';
 import { useNodeOperations, useGraphOperations } from './hooks';
 
 // 创建 Context
-const MindMapContext = createContext<MindMapContextType | null>(null);
+const MindMapGraphContext = createContext<MindMapGraphContextType | null>(null);
 
 /**
  * MindMapProvider 组件
  * 提供思维导图数据和操作方法的上下文
  */
-export const MindMapProvider: React.FC<MindMapProviderProps> = ({
+export const MindMapGraphProvider: React.FC<MindMapGraphProviderProps> = ({
   children,
   initialData = null,
 }) => {
@@ -30,9 +30,6 @@ export const MindMapProvider: React.FC<MindMapProviderProps> = ({
     x: 0,
     y: 0,
   });
-
-  const graphRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
 
   // 初始化数据
   useEffect(() => {
@@ -54,9 +51,7 @@ export const MindMapProvider: React.FC<MindMapProviderProps> = ({
   );
 
   // 组合所有方法和状态
-  const value: MindMapContextType = {
-    containerRef,
-    graphRef,
+  const value: MindMapGraphContextType = {
     mindMapData,
     graph,
     selectedNodeId,
@@ -76,16 +71,16 @@ export const MindMapProvider: React.FC<MindMapProviderProps> = ({
     zoomOut,
   };
 
-  return <MindMapContext.Provider value={value}>{children}</MindMapContext.Provider>;
+  return <MindMapGraphContext.Provider value={value}>{children}</MindMapGraphContext.Provider>;
 };
 
 /**
  * 使用思维导图上下文的自定义Hook
  */
-export const useMindMapContext = (): MindMapContextType => {
-  const context = useContext(MindMapContext);
+export const useMindMapGraphContext = (): MindMapGraphContextType => {
+  const context = useContext(MindMapGraphContext);
   if (!context) {
-    throw new Error('useMindMapContext must be used within a MindMapProvider');
+    throw new Error('useMindMapGraphContext must be used within a MindMapGraphProvider');
   }
   return context;
 };

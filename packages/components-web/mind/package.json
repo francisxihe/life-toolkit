@@ -18,7 +18,9 @@
     "@antv/x6-plugin-keyboard": "^2.2.3",
     "@antv/x6-plugin-selection": "^2.2.2",
     "@antv/x6-react-components": "^2.0.9",
+    "@antv/x6-react-shape": "^2.2.3",
     "@antv/xflow": "^2.1.13",
+    "@arco-design/web-react": "^2.66.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

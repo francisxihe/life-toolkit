@@ -17,7 +17,6 @@
     "deploy": "./deploy.sh"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.0.0",
     "@arco-design/color": "^0.4.0",
     "@arco-design/web-react": "^2.66.0",
     "@arco-plugins/vite-react": "^1.0.5",

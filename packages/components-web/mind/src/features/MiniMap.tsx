@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
-import { useMindMap } from '../context';
+import { useMindMapContext } from '../context';
 import { MiniMap } from '@antv/x6-plugin-minimap';
 
 export default function MiniMapContainer({ visible }: { visible: boolean }) {
-  const { graph } = useMindMap();
+  const { graph } = useMindMapContext();
   const [localMinimapVisible, setLocalMinimapVisible] = useState(visible);
   const minimapRef = useRef<HTMLDivElement>(null);
   const minimapInstanceRef = useRef<MiniMap | null>(null);

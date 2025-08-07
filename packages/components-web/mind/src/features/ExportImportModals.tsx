@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Modal, Radio, Upload, Message } from '@arco-design/web-react';
 import { IconUpload } from '@arco-design/web-react/icon';
-import { useMindMap } from '../context';
+import { useMindMapContext } from '../context';
 import { exportToPNG, exportToSVG, exportToJSON, importJSONFromFile } from '../utils/export';
 
 interface ExportModalProps {
@@ -13,7 +13,7 @@ interface ExportModalProps {
  * 导出选项组件
  */
 const ExportModal: React.FC<ExportModalProps> = ({ visible, onClose }) => {
-  const { graph, mindMapData } = useMindMap();
+  const { graph, mindMapData } = useMindMapContext();
   const [exportType, setExportType] = useState<'png' | 'svg' | 'json'>('png');
   const [transparent, setTransparent] = useState(false);
   const [fileName, setFileName] = useState('mindmap');

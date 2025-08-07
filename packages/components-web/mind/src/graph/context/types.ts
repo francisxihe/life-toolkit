@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
 import { Graph } from '@antv/x6';
-import { MindMapData } from '../types';
+import { MindMapData } from '../../types';
 
 /**
  * MindMapContext 类型定义
  * 包含思维导图数据和操作方法
  */
-export interface MindMapContextType {
+export interface MindMapGraphContextType {
   // 状态
   mindMapData: MindMapData | null;
   graph: Graph | null;
@@ -29,15 +29,12 @@ export interface MindMapContextType {
   centerContent: () => void;
   zoomIn: () => void;
   zoomOut: () => void;
-
-  graphRef: React.RefObject<HTMLDivElement>;
-  containerRef: React.RefObject<HTMLDivElement>;
 }
 
 /**
  * MindMapProvider 属性类型
  */
-export interface MindMapProviderProps {
+export interface MindMapGraphProviderProps {
   children: ReactNode;
   initialData?: MindMapData | null;
 }

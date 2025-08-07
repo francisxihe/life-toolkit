@@ -87,32 +87,6 @@ export const setupInteractions = (graph: Graph, container?: HTMLElement) => {
   // 导出功能插件
   graph.use(new Export());
 
-  // 如果提供了容器，创建小地图
-  if (container) {
-    const minimapContainer = document.createElement('div');
-    minimapContainer.className = 'x6-graph-minimap';
-    minimapContainer.style.position = 'absolute';
-    minimapContainer.style.right = '20px';
-    minimapContainer.style.bottom = '20px';
-    minimapContainer.style.width = '150px';
-    minimapContainer.style.height = '120px';
-    minimapContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-    minimapContainer.style.border = '1px solid #ddd';
-    minimapContainer.style.borderRadius = '4px';
-    minimapContainer.style.zIndex = '999';
-    minimapContainer.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.15)';
-    container.appendChild(minimapContainer);
-
-    graph.use(
-      new MiniMap({
-        container: minimapContainer,
-        width: 150,
-        height: 120,
-        padding: 10,
-      })
-    );
-  }
-
   // 设置画布交互
   graph.on('blank:click', () => {
     graph.cleanSelection();
@@ -130,46 +104,4 @@ export const setupInteractions = (graph: Graph, container?: HTMLElement) => {
       e.originalEvent.preventDefault();
     }
   });
-
-  // 允许手动根据鼠标移动画布
-  // 注意：这里的处理已由 Panning 插件接管，此代码仅作为备选方案
-//   graph.on('blank:mousedown', e => {
-//     if (!e.originalEvent) return;
-
-//     // 防止框选行为
-//     e.e.stopPropagation();
-
-//     // 如果 Panning 插件已启用，让它处理拖拽
-//     // if (graph.isPluginEnabled('panning')) return;
-
-//     // 保存初始坐标
-//     const x = e.originalEvent.clientX;
-//     const y = e.originalEvent.clientY;
-//     let lastX = x;
-//     let lastY = y;
-
-//     // 移动处理函数
-//     const moveHandler = (moveEvent: MouseEvent) => {
-//       // 计算增量位移
-//       const dx = moveEvent.clientX - lastX;
-//       const dy = moveEvent.clientY - lastY;
-
-//       // 更新上次坐标
-//       lastX = moveEvent.clientX;
-//       lastY = moveEvent.clientY;
-
-//       // 移动画布
-//       graph.translate(dx, dy);
-//     };
-
-//     // 释放处理函数
-//     const upHandler = () => {
-//       document.removeEventListener('mousemove', moveHandler);
-//       document.removeEventListener('mouseup', upHandler);
-//     };
-
-//     // 添加事件监听
-//     document.addEventListener('mousemove', moveHandler);
-//     document.addEventListener('mouseup', upHandler);
-//   });
 };

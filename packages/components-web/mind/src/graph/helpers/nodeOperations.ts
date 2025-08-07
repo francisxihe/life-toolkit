@@ -1,5 +1,5 @@
 import { Graph, Node, Edge } from '@antv/x6';
-import { MindMapData } from '../types';
+import { MindMapData } from '../../types';
 
 /**
  * 节点操作工具函数
@@ -252,7 +252,9 @@ export const toggleNodeCollapse = (graph: Graph, nodeId: string, collapsed?: boo
     const node = graph.getCellById(nodeId);
     if (node && node.isNode()) {
       node.setAttrByPath('collapsedIndicator/visibility', 'visible');
+      node.setAttrByPath('collapsedIndicatorText/visibility', 'visible');
       node.setAttrByPath('expandedIndicator/visibility', 'hidden');
+      node.setAttrByPath('expandedIndicatorText/visibility', 'hidden');
     }
   } else {
     // 展开：显示所有子节点及边
@@ -263,7 +265,9 @@ export const toggleNodeCollapse = (graph: Graph, nodeId: string, collapsed?: boo
     const node = graph.getCellById(nodeId);
     if (node && node.isNode()) {
       node.setAttrByPath('collapsedIndicator/visibility', 'hidden');
+      node.setAttrByPath('collapsedIndicatorText/visibility', 'hidden');
       node.setAttrByPath('expandedIndicator/visibility', 'visible');
+      node.setAttrByPath('expandedIndicatorText/visibility', 'visible');
     }
 
     // 检查是否还有已折叠的子节点
