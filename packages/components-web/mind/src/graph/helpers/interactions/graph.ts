@@ -14,14 +14,14 @@ import { Scroller } from '@antv/x6-plugin-scroller';
  * @param graph X6 Graph 实例
  * @param container DOM容器
  */
-export const setupInteractions = (graph: Graph, container?: HTMLElement) => {
+export const setupInteractions = (graph: Graph) => {
   // 选择插件
   graph.use(
     new Selection({
       multiple: true,
       rubberband: false, // 禁用框选功能，防止与画布移动冲突
       movable: true,
-      showNodeSelectionBox: true,
+      showNodeSelectionBox: false,
       showEdgeSelectionBox: false,
       strict: false, // 允许点击空白处取消选择
     })

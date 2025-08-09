@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ReactShape } from '@antv/x6-react-shape';
-import { isNodeCollapsed, toggleNodeCollapse } from '../graph/helpers/nodeOperations';
-import { ENodeType } from '../types';
+import { ENodeType } from '@life-toolkit/components-web-mind/src/types';
 import { IconPlusCircle, IconMinusCircle } from '@arco-design/web-react/icon';
+import GoalEditor from '../../../components/GoalDetail/GoalEditor';
+import { openDrawer } from '@/layout/Drawer';
+import styles from './style.module.less';
 
 interface CustomNodeProps {
   node?: ReactShape; // X6 React Shape 自动注入的 node 属性
@@ -17,17 +19,27 @@ interface NodeData {
   isCollapsed?: boolean;
 }
 
-const MindMapNode: React.FC<CustomNodeProps> = ({ node, ...otherProps }) => {
-  const [isHovered, setIsHovered] = useState(false);
+const MindMapNode: React.FC<CustomNodeProps> = ({
+  node,
+  isNodeCollapsed,
+  toggleNodeCollapse,
+  fetchGoalTree,
+}) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // 获取图形实例
   const graph = node?.model?.graph;
 
   if (!node) {
-    console.warn('MindMapNode: node not found in props', { node, otherProps });
+    console.warn('MindMapNode: node not found in props', { node });
     return (
-      <div style={{ padding: '8px', backgroundColor: '#f0f0f0', border: '1px solid #ccc' }}>
+      <div
+        style={{
+          padding: '8px',
+          backgroundColor: '#f0f0f0',
+          border: '1px solid #ccc',
+        }}
+      >
         Node not found
       </div>
     );
@@ -41,12 +53,12 @@ const MindMapNode: React.FC<CustomNodeProps> = ({ node, ...otherProps }) => {
     hasChildren = false,
   } = nodeData || { id: '', label: 'Unknown', type: 'topic' as const };
 
+  const updateCollapsedState = useCallback(() => {
+    setIsCollapsed(isNodeCollapsed(id));
+  }, [id, isNodeCollapsed]);
+
   // 监听节点折叠状态变化
   useEffect(() => {
-    const updateCollapsedState = () => {
-      setIsCollapsed(isNodeCollapsed(id));
-    };
-
     // 初始化状态
     updateCollapsedState();
 
@@ -57,7 +69,7 @@ const MindMapNode: React.FC<CustomNodeProps> = ({ node, ...otherProps }) => {
         graph.off('node:change:*', updateCollapsedState);
       };
     }
-  }, [id, graph]);
+  }, [graph, updateCollapsedState]);
 
   // 根据节点类型获取样式
   const getNodeStyle = () => {
@@ -101,48 +113,80 @@ const MindMapNode: React.FC<CustomNodeProps> = ({ node, ...otherProps }) => {
   };
 
   // 处理折叠/展开点击
-  const handleIndicatorClick = (e: React.MouseEvent) => {
+  const onClickCollapsedButton = (e: React.MouseEvent) => {
     e.stopPropagation();
     toggleNodeCollapse(graph, id);
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // openDrawer({
+    //   title: '编辑目标',
+    //   width: 800,
+    //   content: (props) => {
+    //     return (
+    //       <GoalEditor
+    //         goalId={id}
+    //         onClose={props.onClose}
+    //         afterSubmit={async () => {
+    //           fetchGoalTree();
+    //         }}
+    //       />
+    //     );
+    //   },
+    // });
+  };
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    openDrawer({
+      title: '编辑目标',
+      width: 800,
+      content: (props) => {
+        return (
+          <GoalEditor
+            goalId={id}
+            onClose={props.onClose}
+            afterSubmit={async () => {
+              fetchGoalTree();
+            }}
+          />
+        );
+      },
+    });
+  };
+
+  const nodeRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    console.log(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
+    setTimeout(() => {
+      if (nodeRef.current) {
+        node.setSize(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
+      }
+    }, 1000);
+  }, [nodeRef.current]);
+
   return (
     <div
-      style={{
-        position: 'relative',
-        minWidth: '100%',
-        height: '100%',
-        display: 'inline-flex',
-        alignItems: 'center',
-        ...getNodeStyle(),
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      ref={nodeRef}
+      className={styles['mind-map-node']}
+      style={getNodeStyle()}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
     >
-      <span>{label}</span>
+      <span className={styles['mind-map-node-label']}>{label}</span>
 
       {/* 折叠/展开指示器 */}
       {hasChildren && (
         <div
+          className={styles['mind-map-node-collapsed-button']}
           style={{
-            position: 'absolute',
-            right: '-8px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '15px',
-            height: '15px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontWeight: 'bold',
             color: type === ENodeType.topic ? '#4E86E4' : '#69B1FF',
-            userSelect: 'none',
-            backgroundColor: 'white',
-            borderRadius: '50%',
-            overflow: 'hidden',
           }}
-          onClick={handleIndicatorClick}
+          onClick={onClickCollapsedButton}
         >
           {isCollapsed ? (
             <IconPlusCircle
@@ -152,7 +196,9 @@ const MindMapNode: React.FC<CustomNodeProps> = ({ node, ...otherProps }) => {
               }}
             />
           ) : (
-            <IconMinusCircle style={{ fontSize: '18px', position: 'absolute' }} />
+            <IconMinusCircle
+              style={{ fontSize: '18px', position: 'absolute' }}
+            />
           )}
         </div>
       )}

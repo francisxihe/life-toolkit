@@ -1,2 +1,2 @@
-export { registerMindMapComponents } from './shapes';
+export { registerGraphNode } from './shapes';
 export { registerFilters } from './filters';

@@ -2,17 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Graph } from '@antv/x6';
 import { MindMapProvider, useMindMapContext } from './context';
 import { MindMapData, MindMapOptions } from './types';
-import { registerMindMapComponents } from './graph/helpers';
 import MindMapToolbar from './features/MindMapToolbar';
 import NodeEditor from './features/NodeEditor';
 import { ExportModal, ImportModal } from './features/ExportImportModals';
 import MiniMapContainer from './features/MiniMap';
 import './style.css';
 import MindMapGraph from './graph';
-
-// 注册所有思维导图相关组件
-registerMindMapComponents();
-
 interface EnhancedMindMapProps {
   data: MindMapData | null;
   options?: Partial<MindMapOptions>;
@@ -26,6 +21,7 @@ interface EnhancedMindMapProps {
   onFullscreen?: () => void;
   onExport?: () => void;
   onToggleMinimap?: (visible: boolean) => void;
+  MindMapNode?: React.ComponentType<any>;
 }
 
 /**
@@ -44,6 +40,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   onFullscreen,
   onExport,
   onToggleMinimap,
+  MindMapNode,
 }) => {
   const { mindMapData, setMindMapData, selectedNodeId, containerRef } = useMindMapContext();
 
@@ -90,6 +87,7 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
         onChange={onChange}
         onNodeClick={onNodeClick}
         onGraphReady={onGraphReady}
+        MindMapNode={MindMapNode}
       />
 
       {/* 节点编辑器 */}

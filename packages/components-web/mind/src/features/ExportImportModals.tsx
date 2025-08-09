@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Modal, Radio, Upload, Message } from '@arco-design/web-react';
 import { IconUpload } from '@arco-design/web-react/icon';
+import { Graph } from '@antv/x6';
 import { useMindMapContext } from '../context';
 import { exportToPNG, exportToSVG, exportToJSON, importJSONFromFile } from '../utils/export';
-
 import { graphEventEmitter } from '../graph/eventEmitter';
 interface ExportModalProps {
   visible: boolean;
@@ -15,10 +15,14 @@ interface ExportModalProps {
  */
 const ExportModal: React.FC<ExportModalProps> = ({ visible, onClose }) => {
   const { mindMapData } = useMindMapContext();
-  let graph = null;
-  graphEventEmitter.onEmitGraph(data => {
-    graph = data.graph;
-  });
+  const [graph, setGraph] = useState<Graph | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = graphEventEmitter.onEmitGraph(({ graph }) => {
+      setGraph(graph);
+    });
+    return unsubscribe;
+  }, []);
 
   const [exportType, setExportType] = useState<'png' | 'svg' | 'json'>('png');
   const [transparent, setTransparent] = useState(false);

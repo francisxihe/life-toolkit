@@ -1,15 +1,16 @@
 import { Graph, Path } from '@antv/x6';
-import MindMapNode from '../../features/MindMapNode';
 import { register } from '@antv/x6-react-shape';
 import { ENodeType } from '../../types';
+
+import { isNodeCollapsed, toggleNodeCollapse } from './nodeOperations';
 
 /**
  * 注册所有思维导图相关的节点和边样式
  * 这个函数用于集中管理所有 X6 图形的样式定义
  */
-export const registerMindMapComponents = () => {
+export const registerGraphNode = (MindMapNode: React.ComponentType<any>) => {
   // 注册自定义React节点
-  registerReactNodes();
+  registerReactNodes(MindMapNode);
 
   // 注册脑图连接器
   registerMindMapConnector();
@@ -21,23 +22,41 @@ export const registerMindMapComponents = () => {
 /**
  * 注册React节点
  */
-const registerReactNodes = () => {
+const registerReactNodes = (MindMapNode: React.ComponentType<any>) => {
   // 注册分支主题节点
   register({
     shape: ENodeType.topic,
-    component: MindMapNode,
+    component: props => (
+      <MindMapNode
+        {...props}
+        isNodeCollapsed={isNodeCollapsed}
+        toggleNodeCollapse={toggleNodeCollapse}
+      />
+    ),
   });
 
   // 注册分支主题节点
   register({
     shape: ENodeType.topicBranch,
-    component: MindMapNode,
+    component: props => (
+      <MindMapNode
+        {...props}
+        isNodeCollapsed={isNodeCollapsed}
+        toggleNodeCollapse={toggleNodeCollapse}
+      />
+    ),
   });
 
   // 注册分支主题节点
   register({
     shape: ENodeType.topicChild,
-    component: MindMapNode,
+    component: props => (
+      <MindMapNode
+        {...props}
+        isNodeCollapsed={isNodeCollapsed}
+        toggleNodeCollapse={toggleNodeCollapse}
+      />
+    ),
   });
 };
 
@@ -84,6 +103,7 @@ const registerMindMapEdge = () => {
         },
       },
       zIndex: 0,
+    
     },
     true
   );

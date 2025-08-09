@@ -1,12 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { MiniMap } from '@antv/x6-plugin-minimap';
 import { graphEventEmitter } from '../graph/eventEmitter';
+import { Graph } from '@antv/x6';
 
 export default function MiniMapContainer({ visible }: { visible: boolean }) {
-  let graph = null;
-  graphEventEmitter.onEmitGraph(data => {
-    graph = data.graph;
-  });
+  const [graph, setGraph] = useState<Graph | null>(null);
+  useEffect(() => {
+    const unsubscribe = graphEventEmitter.onEmitGraph(({ graph }) => {
+      setGraph(graph);
+    });
+    return unsubscribe;
+  }, []);
+  
   const [localMinimapVisible, setLocalMinimapVisible] = useState(visible);
   const minimapRef = useRef<HTMLDivElement>(null);
   const minimapInstanceRef = useRef<MiniMap | null>(null);
@@ -34,7 +39,7 @@ export default function MiniMapContainer({ visible }: { visible: boolean }) {
         minScale: 0.01,
         maxScale: 16,
       });
-      
+
       graph.use(minimap);
       minimapInstanceRef.current = minimap;
       isInitializedRef.current = true;
@@ -58,7 +63,7 @@ export default function MiniMapContainer({ visible }: { visible: boolean }) {
   }, [localMinimapVisible]);
 
   return (
-    <div 
+    <div
       ref={minimapRef}
       style={{
         position: 'absolute',

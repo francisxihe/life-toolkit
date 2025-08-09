@@ -2,7 +2,7 @@ import { Graph } from '@antv/x6';
 import { registerFilters } from './helpers';
 import { setupInteractions } from './helpers/interactions';
 
-export function registerGraph(graphRef: HTMLDivElement, width: number, height: number) {
+export function initGraph(graphRef: HTMLDivElement, width: number, height: number) {
   const newGraph = new Graph({
     container: graphRef,
     width,

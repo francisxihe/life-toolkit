@@ -10,19 +10,18 @@ import {
   HierarchyResult,
   ENodeType,
 } from '../types';
-import { registerMindMapComponents } from './helpers';
 import { registerKeyboardShortcuts, setupMouseInteractions } from './helpers/interactions';
 import { toggleNodeCollapse } from './helpers/nodeOperations';
-import { registerGraph } from './graph';
-
-// 注册所有思维导图相关组件
-registerMindMapComponents();
+import { initGraph } from './graph';
+import { registerGraphNode } from './helpers';
+import { graphEventEmitter } from './eventEmitter';
 
 interface MindMapGraphProps {
   options?: Partial<MindMapOptions>;
   onChange?: (data: MindMapData | null) => void;
   onNodeClick?: (nodeId: string) => void;
   onGraphReady?: (graph: Graph) => void;
+  MindMapNode?: React.ComponentType<any>;
 }
 
 /**
@@ -34,6 +33,7 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   onChange,
   onNodeClick,
   onGraphReady,
+  MindMapNode,
 }) => {
   // 从业务context获取数据相关状态
   const {
@@ -47,17 +47,7 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   } = useMindMapContext();
 
   // 从画布context获取画布相关状态
-  const {
-    graph,
-    setGraph,
-    zoom,
-    position,
-    zoomIn,
-    zoomOut,
-    graphRef,
-  } = useMindMapGraphContext();
-
-  const [nodeEditorVisible, setNodeEditorVisible] = useState(false);
+  const { graph, setGraph, zoom, position, zoomIn, zoomOut, graphRef } = useMindMapGraphContext();
 
   const mergedOptions = { ...DEFAULT_MIND_MAP_OPTIONS, ...options };
 
@@ -65,16 +55,18 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   useEffect(() => {
     if (!containerRef.current || !graphRef.current) return;
 
-    const newGraph = registerGraph(
+    const newGraph = initGraph(
       graphRef.current,
       containerRef.current.clientWidth,
       containerRef.current.clientHeight
     );
 
+    newGraph.zoomTo(zoom);
+
     // 设置图形实例
     setGraph(newGraph);
 
-    newGraph.zoomTo(zoom);
+    graphEventEmitter.emitGraph(newGraph);
 
     // 如果提供了图形就绪回调，则调用它
     if (onGraphReady) {
@@ -88,9 +80,6 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
 
       if (onNodeClick) {
         onNodeClick(nodeId);
-      } else {
-        // 默认行为：打开节点编辑器
-        setNodeEditorVisible(true);
       }
     });
 
@@ -132,6 +121,13 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     setSelectedNodeId,
   ]);
 
+  // 初始化图形
+  useEffect(() => {
+    console.log('MindMapNode', MindMapNode);
+
+    registerGraphNode(MindMapNode);
+  }, [MindMapNode]);
+
   // 注册键盘快捷键
   useEffect(() => {
     if (graph && mergedOptions.enableShortcuts) {
@@ -149,7 +145,16 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
       };
       registerKeyboardShortcuts(graph, handlers);
     }
-  }, [graph, mergedOptions.enableShortcuts, addChild, addSibling, deleteNode, zoomIn, zoomOut]);
+  }, [
+    graph,
+    mergedOptions.enableShortcuts,
+    MindMapNode,
+    addChild,
+    addSibling,
+    deleteNode,
+    zoomIn,
+    zoomOut,
+  ]);
 
   // 设置鼠标交互
   useEffect(() => {
@@ -263,15 +268,9 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
 
       traverse(result);
       console.log(`Created ${cells.length} cells`);
-      graph.resetCells(cells);
-
-      // 如果有选中的节点，高亮它
-      if (selectedNodeId) {
-        const selectedNode = graph.getCellById(selectedNodeId);
-        if (selectedNode && selectedNode.isNode()) {
-          graph.select(selectedNode);
-        }
-      }
+      setTimeout(() => {
+        graph.resetCells(cells);
+      }, 0);
 
       // 居中内容
       graph.centerContent();
@@ -279,14 +278,17 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     } catch (error) {
       console.error('Error rendering mind map:', error);
     }
-  }, [
-    graph,
-    mindMapData,
-    mergedOptions.direction,
-    mergedOptions.hGap,
-    mergedOptions.vGap,
-    selectedNodeId,
-  ]);
+  }, [graph, mindMapData, mergedOptions.direction, mergedOptions.hGap, mergedOptions.vGap]);
+
+  useEffect(() => {
+    // 如果有选中的节点，高亮它
+    // if (selectedNodeId) {
+    //   const selectedNode = graph.getCellById(selectedNodeId);
+    //   if (selectedNode && selectedNode.isNode()) {
+    //     graph.select(selectedNode);
+    //   }
+    // }
+  }, [selectedNodeId]);
 
   // 当数据变化时重新渲染
   useEffect(() => {
@@ -294,14 +296,7 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
       console.log('MindMap data or graph changed, rendering...');
       renderMindMap();
     }
-  }, [
-    graph,
-    mindMapData,
-    mergedOptions.direction,
-    mergedOptions.hGap,
-    mergedOptions.vGap,
-    renderMindMap,
-  ]);
+  }, [graph, mindMapData, renderMindMap]);
 
   // 当数据变化时触发 onChange
   useEffect(() => {
@@ -333,7 +328,7 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
  * 思维导图画布组件
  * 包装了MindMapGraphProvider和InternalMindMapGraph
  */
-const MindMapGraph: React.FC<MindMapGraphProps> = (props) => {
+const MindMapGraph: React.FC<MindMapGraphProps> = props => {
   return (
     <MindMapGraphProvider>
       <InternalMindMapGraph {...props} />
@@ -345,4 +340,3 @@ export default MindMapGraph;
 
 // 导出事件发射器相关
 export { GraphEventEmitter, graphEventEmitter } from './eventEmitter';
-export type { GraphEventType, GraphEventData } from './eventEmitter';

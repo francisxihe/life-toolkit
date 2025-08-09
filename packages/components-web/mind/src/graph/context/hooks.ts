@@ -1,6 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Graph } from '@antv/x6';
-import { GraphEventEmitter } from '../eventEmitter';
 import { toggleNodeCollapse } from '../helpers/nodeOperations';
 
 interface UseGraphOperationsParams {
@@ -9,7 +8,6 @@ interface UseGraphOperationsParams {
   setZoom: (zoom: number) => void;
   position: { x: number; y: number };
   setPosition: (position: { x: number; y: number }) => void;
-  eventEmitter: GraphEventEmitter;
 }
 
 /**
@@ -21,7 +19,6 @@ export const useGraphOperations = ({
   setZoom,
   position,
   setPosition,
-  eventEmitter,
 }: UseGraphOperationsParams) => {
   /**
    * 居中内容
@@ -141,89 +138,6 @@ export const useGraphOperations = ({
       graph.select(cells);
     }
   }, [graph]);
-
-  // 监听事件发射器
-  useEffect(() => {
-    if (!eventEmitter) return;
-
-    const handleZoomIn = () => zoomIn();
-    const handleZoomOut = () => zoomOut();
-    const handleCenterContent = () => centerContent();
-    const handleSetZoom = ({ zoom: newZoom }: { zoom: number }) => {
-      setZoom(newZoom);
-      if (graph) {
-        graph.zoom(newZoom);
-      }
-    };
-    const handleSetPosition = ({ x, y }: { x: number; y: number }) => {
-      setPosition({ x, y });
-      if (graph) {
-        graph.translate(x, y);
-      }
-    };
-    const handleFitToContent = () => fitToContent();
-    const handleResetView = () => resetView();
-    const handleToggleNodeCollapseEvent = ({
-      nodeId,
-      collapsed,
-    }: {
-      nodeId: string;
-      collapsed?: boolean;
-    }) => {
-      handleToggleNodeCollapse(nodeId, collapsed);
-    };
-    const handleUndoEvent = () => handleUndo();
-    const handleRedoEvent = () => handleRedo();
-    const handleCopyEvent = ({ nodeId }: { nodeId?: string }) => handleCopy(nodeId);
-    const handlePasteEvent = () => handlePaste();
-
-    // 注册事件监听器并获取清理函数
-    const unsubscribeZoomIn = eventEmitter.onZoomIn(handleZoomIn);
-    const unsubscribeZoomOut = eventEmitter.onZoomOut(handleZoomOut);
-    const unsubscribeCenterContent = eventEmitter.onCenterContent(handleCenterContent);
-    const unsubscribeSetZoom = eventEmitter.onSetZoom(handleSetZoom);
-    const unsubscribeSetPosition = eventEmitter.onSetPosition(handleSetPosition);
-    const unsubscribeFitToContent = eventEmitter.onFitToContent(handleFitToContent);
-    const unsubscribeResetView = eventEmitter.onResetView(handleResetView);
-    const unsubscribeToggleNodeCollapse = eventEmitter.onToggleNodeCollapse(
-      handleToggleNodeCollapseEvent
-    );
-    const unsubscribeUndo = eventEmitter.onUndo(handleUndoEvent);
-    const unsubscribeRedo = eventEmitter.onRedo(handleRedoEvent);
-    const unsubscribeCopy = eventEmitter.onCopy(handleCopyEvent);
-    const unsubscribePaste = eventEmitter.onPaste(handlePasteEvent);
-
-    // 清理函数
-    return () => {
-      unsubscribeZoomIn();
-      unsubscribeZoomOut();
-      unsubscribeCenterContent();
-      unsubscribeSetZoom();
-      unsubscribeSetPosition();
-      unsubscribeFitToContent();
-      unsubscribeResetView();
-      unsubscribeToggleNodeCollapse();
-      unsubscribeUndo();
-      unsubscribeRedo();
-      unsubscribeCopy();
-      unsubscribePaste();
-    };
-  }, [
-    eventEmitter,
-    zoomIn,
-    zoomOut,
-    centerContent,
-    setZoom,
-    setPosition,
-    fitToContent,
-    resetView,
-    handleToggleNodeCollapse,
-    handleUndo,
-    handleRedo,
-    handleCopy,
-    handlePaste,
-    graph,
-  ]);
 
   return {
     centerContent,

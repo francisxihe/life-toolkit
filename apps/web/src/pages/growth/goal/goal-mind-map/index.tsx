@@ -2,52 +2,20 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Card, Button, Message, Spin, Space } from '@arco-design/web-react';
-import { IconRefresh, IconFullscreen } from '@arco-design/web-react/icon';
-import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
-import { GoalService } from '../../service';
 import X6MindMap from './X6MindMap';
 import clsx from 'clsx';
+import { GoalMindMapContextProvider, useGoalMindMapContext } from './context';
 
 interface GoalMindMapProps {
   className?: string;
 }
 
 const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
-  const [loading, setLoading] = useState(false);
-  const [goalTree, setGoalTree] = useState<GoalVo[]>([]);
-
-  // 获取目标树数据
-  const fetchGoalTree = async () => {
-    setLoading(true);
-    try {
-      const data = await GoalService.getGoalTree({
-        status: GoalStatus.TODO,
-      });
-      setGoalTree(data);
-      Message.success('目标数据加载成功');
-    } catch (error) {
-      console.error('获取目标数据失败:', error);
-      Message.error('获取目标数据失败');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { loading, goalTree, fetchGoalTree } = useGoalMindMapContext();
 
   useEffect(() => {
     fetchGoalTree();
-    // eslint-disable-next-line
   }, []);
-
-  const handleRefresh = () => {
-    fetchGoalTree();
-  };
-
-  const handleFullscreen = () => {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    }
-  };
 
   return (
     <Spin loading={loading} className={clsx('w-full h-full')}>
@@ -73,4 +41,10 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
   );
 };
 
-export default GoalMindMap;
+export default (props: GoalMindMapProps) => {
+  return (
+    <GoalMindMapContextProvider {...props}>
+      <GoalMindMap {...props} />
+    </GoalMindMapContextProvider>
+  );
+};
