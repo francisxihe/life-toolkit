@@ -1,6 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Graph } from '@antv/x6';
 import { toggleNodeCollapse } from '../helpers/nodeOperations';
+import { graphEventEmitter } from '../eventEmitter';
 
 interface UseGraphOperationsParams {
   graph: Graph | null;
@@ -33,11 +34,11 @@ export const useGraphOperations = ({
    * 放大
    */
   const zoomIn = useCallback(() => {
-    const newZoom = Math.min(zoom + 0.1, 2);
+    const newZoom = Math.min(graph.zoom() + 0.1, 2);
     setZoom(newZoom);
 
     if (graph) {
-      graph.zoom(newZoom);
+      graph.zoomTo(newZoom);
     }
   }, [zoom, graph, setZoom]);
 
@@ -49,7 +50,7 @@ export const useGraphOperations = ({
     setZoom(newZoom);
 
     if (graph) {
-      graph.zoom(newZoom);
+      graph.zoomTo(newZoom);
     }
   }, [zoom, graph, setZoom]);
 
@@ -138,6 +139,60 @@ export const useGraphOperations = ({
       graph.select(cells);
     }
   }, [graph]);
+
+  // 设置事件监听器
+  useEffect(() => {
+    if (!graph) return;
+
+    const unsubscribers = [
+      graphEventEmitter.onZoomIn(() => {
+        zoomIn();
+      }),
+      graphEventEmitter.onZoomOut(() => {
+        zoomOut();
+      }),
+      graphEventEmitter.onCenterContent(() => {
+        centerContent();
+      }),
+      graphEventEmitter.onFitToContent(() => {
+        fitToContent();
+      }),
+      graphEventEmitter.onResetView(() => {
+        resetView();
+      }),
+      graphEventEmitter.onToggleNodeCollapse(({ nodeId, collapsed }) => {
+        handleToggleNodeCollapse(nodeId, collapsed);
+      }),
+      graphEventEmitter.onUndo(() => {
+        handleUndo();
+      }),
+      graphEventEmitter.onRedo(() => {
+        handleRedo();
+      }),
+      graphEventEmitter.onCopy(({ nodeId }) => {
+        handleCopy(nodeId);
+      }),
+      graphEventEmitter.onPaste(() => {
+        handlePaste();
+      }),
+    ];
+
+    return () => {
+      unsubscribers.forEach(unsubscribe => unsubscribe());
+    };
+  }, [
+    graph,
+    zoomIn,
+    zoomOut,
+    centerContent,
+    fitToContent,
+    resetView,
+    handleToggleNodeCollapse,
+    handleUndo,
+    handleRedo,
+    handleCopy,
+    handlePaste,
+  ]);
 
   return {
     centerContent,

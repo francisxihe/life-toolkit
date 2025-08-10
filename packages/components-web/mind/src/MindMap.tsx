@@ -14,7 +14,6 @@ interface EnhancedMindMapProps {
   onChange?: (data: MindMapData | null) => void;
   onNodeClick?: (nodeId: string) => void;
   showToolbar?: boolean;
-  showInternalToolbar?: boolean;
   className?: string;
   onGraphReady?: (graph: Graph) => void;
   minimapVisible?: boolean;
@@ -33,7 +32,6 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   onChange,
   onNodeClick,
   showToolbar = true,
-  showInternalToolbar = false,
   className = '',
   onGraphReady,
   minimapVisible = false,
@@ -66,14 +64,6 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
       className={`mind-map w-full h-full flex flex-col ${className}`}
       style={{ position: 'relative' }}
     >
-      {showInternalToolbar && (
-        <MindMapToolbar
-          mode="compact"
-          onFullscreen={onFullscreen}
-          onExport={onExport}
-          onToggleMinimap={onToggleMinimap}
-        />
-      )}
       {showToolbar && (
         <MindMapToolbar
           mode="full"

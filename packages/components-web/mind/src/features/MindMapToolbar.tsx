@@ -79,12 +79,6 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
 
   const [minimapVisible, setMinimapVisible] = useState(false);
 
-  // 切换节点折叠/展开
-  const handleToggleCollapse = () => {
-    if (!selectedNodeId) return;
-    graphEventEmitter.toggleNodeCollapse(selectedNodeId);
-  };
-
   // 添加子节点
   const handleAddChild = () => {
     if (!selectedNodeId) return;
@@ -185,13 +179,6 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     size?: 'mini' | 'small' | 'default' | 'large';
   }) => (
     <>
-      <ToolButton
-        icon={<IconShrink />}
-        content="折叠/展开子节点 (Space)"
-        onClick={handleToggleCollapse}
-        disabled={!selectedNodeId}
-        size={size}
-      />
       <ToolButton icon={<IconExport />} content="导出 PNG" onClick={handleExport} size={size} />
       <ToolButton icon={<IconFullscreen />} content="全屏" onClick={handleFullscreen} size={size} />
     </>
@@ -203,25 +190,10 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   }: {
     size?: 'mini' | 'small' | 'default' | 'large';
   }) => {
-    if (mode === 'compact') {
-      return (
-        <ToolButton
-          content="小地图"
-          onClick={() => handleToggleMinimap(!minimapVisible)}
-          size={size}
-        >
-          小地图
-        </ToolButton>
-      );
-    }
     return (
-      <Tooltip content="小地图">
-        <Switch
-          checked={minimapVisible}
-          onChange={handleToggleMinimap}
-          size={size === 'small' ? 'small' : 'default'}
-        />
-      </Tooltip>
+      <ToolButton content="小地图" onClick={() => handleToggleMinimap(!minimapVisible)} size={size}>
+        小地图
+      </ToolButton>
     );
   };
 
@@ -257,12 +229,6 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
         onClick={handleDeleteNode}
         disabled={!selectedNodeId}
         status="danger"
-      />
-      <ToolButton
-        icon={<IconShrink />}
-        content="折叠/展开子节点 (Space)"
-        onClick={handleToggleCollapse}
-        disabled={!selectedNodeId}
       />
     </>
   );

@@ -5,7 +5,6 @@ import { Selection } from '@antv/x6-plugin-selection';
 import { Clipboard } from '@antv/x6-plugin-clipboard';
 import { History } from '@antv/x6-plugin-history';
 import { Snapline } from '@antv/x6-plugin-snapline';
-import { MiniMap } from '@antv/x6-plugin-minimap';
 import { Export } from '@antv/x6-plugin-export';
 import { Scroller } from '@antv/x6-plugin-scroller';
 

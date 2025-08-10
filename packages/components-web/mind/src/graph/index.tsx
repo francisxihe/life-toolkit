@@ -123,8 +123,6 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
 
   // 初始化图形
   useEffect(() => {
-    console.log('MindMapNode', MindMapNode);
-
     registerGraphNode(MindMapNode);
   }, [MindMapNode]);
 
@@ -293,7 +291,6 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   // 当数据变化时重新渲染
   useEffect(() => {
     if (graph && mindMapData) {
-      console.log('MindMap data or graph changed, rendering...');
       renderMindMap();
     }
   }, [graph, mindMapData, renderMindMap]);
@@ -304,14 +301,6 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
       onChange(mindMapData);
     }
   }, [mindMapData, onChange]);
-
-  // 当缩放和位置变化时应用
-  useEffect(() => {
-    if (graph) {
-      graph.zoom(zoom);
-      graph.translate(position.x, position.y);
-    }
-  }, [graph, zoom, position]);
 
   return (
     <div

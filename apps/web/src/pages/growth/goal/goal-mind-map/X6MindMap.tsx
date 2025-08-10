@@ -100,7 +100,7 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
             hGap: 50,
             vGap: 25,
           }}
-          showInternalToolbar={showToolbar}
+          showToolbar={showToolbar}
           onGraphReady={handleGraphInstance}
           minimapVisible={minimapVisible}
           onFullscreen={handleFullscreen}

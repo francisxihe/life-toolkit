@@ -5,27 +5,26 @@ import { Graph } from '@antv/x6';
 
 export default function MiniMapContainer({ visible }: { visible: boolean }) {
   const [graph, setGraph] = useState<Graph | null>(null);
+  const minimapRef = useRef<HTMLDivElement>(null);
+  const minimapInstanceRef = useRef<MiniMap | null>(null);
+  const isInitializedRef = useRef(false);
+
+  // 监听graph变化
   useEffect(() => {
     const unsubscribe = graphEventEmitter.onEmitGraph(({ graph }) => {
       setGraph(graph);
     });
     return unsubscribe;
   }, []);
-  
-  const [localMinimapVisible, setLocalMinimapVisible] = useState(visible);
-  const minimapRef = useRef<HTMLDivElement>(null);
-  const minimapInstanceRef = useRef<MiniMap | null>(null);
-  const isInitializedRef = useRef(false);
 
-  // 同步外部传入的minimap可见性
+  // 初始化minimap
   useEffect(() => {
-    console.log('MiniMap visible changed:', visible);
-    setLocalMinimapVisible(visible);
-  }, [visible]);
+    if (!graph || !minimapRef.current || !visible) {
+      return;
+    }
 
-  // 初始化minimap插件（只初始化一次）
-  useEffect(() => {
-    if (!graph || !minimapRef.current || isInitializedRef.current) {
+    // 如果已经初始化过且是同一个graph实例，直接返回
+    if (isInitializedRef.current && minimapInstanceRef.current) {
       return;
     }
 
@@ -47,34 +46,36 @@ export default function MiniMapContainer({ visible }: { visible: boolean }) {
     } catch (error) {
       console.error('Error initializing minimap:', error);
     }
+  }, [graph, visible]);
 
-    // 清理函数
-    return () => {
-      // 注意：X6插件一旦添加就不容易移除，所以我们只在组件卸载时清理
-      isInitializedRef.current = false;
-    };
+  // 当graph变化时重置初始化状态，允许重新初始化
+  useEffect(() => {
+    isInitializedRef.current = false;
+    minimapInstanceRef.current = null;
   }, [graph]);
 
   // 控制minimap容器的显示隐藏
   useEffect(() => {
     if (minimapRef.current) {
-      minimapRef.current.style.display = localMinimapVisible ? 'block' : 'none';
+      minimapRef.current.style.display = visible ? 'block' : 'none';
     }
-  }, [localMinimapVisible]);
+  }, [visible]);
 
   return (
     <div
       ref={minimapRef}
       style={{
-        position: 'absolute',
-        top: '10px',
-        right: '10px',
+        position: 'fixed',
+        top: '80px',
+        right: '20px',
+        width: '150px',
+        height: '120px',
         border: '1px solid #d9d9d9',
         borderRadius: '4px',
         backgroundColor: '#fff',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         zIndex: 1000,
-        display: localMinimapVisible ? 'block' : 'none',
+        display: visible ? 'block' : 'none',
       }}
     />
   );
