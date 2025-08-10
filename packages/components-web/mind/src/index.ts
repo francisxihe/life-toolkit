@@ -1,19 +1,14 @@
-import { MindMapData, MindMapOptions } from './types';
-import EnhancedMindMap from './components/EnhancedMindMap';
-import { MindMapDataConverter, createGoalConverter } from './utils/dataConverters';
-import { registerMindMapComponents } from './styles';
+// 组件导出
+export { default as MindMap } from './MindMap';
+export { default as MiniMapContainer } from './features/MiniMap';
 
-// 初始化注册思维导图组件
-registerMindMapComponents();
+// 工具函数导出
+export { createGoalConverter } from './utils/dataConverters';
 
-export { 
-  EnhancedMindMap,
-  MindMapDataConverter,
-  createGoalConverter
-};
+export * as exportUtils from './utils/export';
 
-// 导出类型定义
-export type { 
-  MindMapData, 
-  MindMapOptions 
-};
+// 类型导出
+export type { MindMapData, MindMapOptions, ENodeType } from './types';
+
+// 事件发射器导出
+export { GraphEventEmitter, graphEventEmitter } from './graph';

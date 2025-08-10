@@ -1,0 +1,34 @@
+.mind-map-node {
+  position: relative;
+  min-width: 140px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    .mind-map-node-collapsed-button {
+      display: flex;
+    }
+  }
+}
+
+.mind-map-node-label {
+}
+
+.mind-map-node-collapsed-button {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 15px;
+  height: 15px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: bold;
+  user-select: none;
+  background-color: white;
+  border-radius: 50%;
+  overflow: hidden;
+  display: none;
+}

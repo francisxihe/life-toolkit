@@ -2,10 +2,9 @@
   "name": "@life-toolkit/components-web-mind",
   "version": "0.2.0",
   "private": true,
-  "files": [
-    "dist",
-    "src"
-  ],
+  "module": "src/index.js",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "scripts": {
     "lint": "eslint 'src/**/*.{js,jsx,ts,tsx}'",
     "lint:fix": "eslint 'src/**/*.{js,jsx,ts,tsx}' --fix",
@@ -19,16 +18,18 @@
     "@antv/x6-plugin-keyboard": "^2.2.3",
     "@antv/x6-plugin-selection": "^2.2.2",
     "@antv/x6-react-components": "^2.0.9",
+    "@antv/x6-react-shape": "^2.2.3",
     "@antv/xflow": "^2.1.13",
+    "@arco-design/web-react": "^2.66.0",
+    "@life-toolkit/common-web-utils": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
     "eslint-plugin-react": "^7.37.4",
+    "mitt": "^3.0.1",
     "eslint-plugin-react-hooks": "^4.6.2"
   },
   "peerDependencies": {
@@ -49,15 +50,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
   }
 }

@@ -3,6 +3,7 @@ import {
   MindMapNode,
   MindMapOptions,
   DEFAULT_MIND_MAP_OPTIONS,
+  ENodeType,
 } from '../types';
 
 /**
@@ -33,23 +34,23 @@ export class MindMapDataConverter<T extends MindMapNode = MindMapNode> {
       }
 
       if (nodes.length === 1) {
-        return this.convertSingleNode(nodes[0] as unknown as MindMapNode, 'topic');
+        return this.convertSingleNode(nodes[0] as unknown as MindMapNode, ENodeType.topic);
       }
 
       return {
         id: 'root',
-        type: 'topic',
+        type: ENodeType.topic,
         label: '根节点',
         width: this.options.rootWidth || DEFAULT_MIND_MAP_OPTIONS.rootWidth!,
         height: this.options.rootHeight || DEFAULT_MIND_MAP_OPTIONS.rootHeight!,
-        children: nodes.map((node) =>
-          this.convertSingleNode(node as unknown as MindMapNode, 'topic-branch'),
+        children: nodes.map(node =>
+          this.convertSingleNode(node as unknown as MindMapNode, ENodeType.topicBranch)
         ),
       };
     }
 
     // 单个节点直接转换
-    return this.convertSingleNode(nodes as unknown as MindMapNode, 'topic');
+    return this.convertSingleNode(nodes as unknown as MindMapNode, ENodeType.topic);
   }
 
   /**
@@ -59,30 +60,23 @@ export class MindMapDataConverter<T extends MindMapNode = MindMapNode> {
    * @param parent 父节点（如果有）
    * @returns 转换后的思维导图节点
    */
-  private convertSingleNode(
-    node: MindMapNode,
-    type: 'topic' | 'topic-branch' | 'topic-child',
-  ): MindMapData {
+  private convertSingleNode(node: MindMapNode, type: ENodeType): MindMapData {
     // 根据节点类型确定尺寸
     let width = 0;
     let height = 0;
 
     switch (type) {
-      case 'topic':
+      case ENodeType.topic:
         width = this.options.rootWidth || DEFAULT_MIND_MAP_OPTIONS.rootWidth!;
-        height =
-          this.options.rootHeight || DEFAULT_MIND_MAP_OPTIONS.rootHeight!;
+        height = this.options.rootHeight || DEFAULT_MIND_MAP_OPTIONS.rootHeight!;
         break;
-      case 'topic-branch':
-        width =
-          this.options.branchWidth || DEFAULT_MIND_MAP_OPTIONS.branchWidth!;
-        height =
-          this.options.branchHeight || DEFAULT_MIND_MAP_OPTIONS.branchHeight!;
+      case ENodeType.topicBranch:
+        width = this.options.branchWidth || DEFAULT_MIND_MAP_OPTIONS.branchWidth!;
+        height = this.options.branchHeight || DEFAULT_MIND_MAP_OPTIONS.branchHeight!;
         break;
-      case 'topic-child':
+      case ENodeType.topicChild:
         width = this.options.childWidth || DEFAULT_MIND_MAP_OPTIONS.childWidth!;
-        height =
-          this.options.childHeight || DEFAULT_MIND_MAP_OPTIONS.childHeight!;
+        height = this.options.childHeight || DEFAULT_MIND_MAP_OPTIONS.childHeight!;
         break;
     }
 
@@ -90,7 +84,7 @@ export class MindMapDataConverter<T extends MindMapNode = MindMapNode> {
     const mindMapNode: MindMapData = {
       id: node.id.toString(),
       type,
-      label: node.name || '未命名节点',
+      label: (node as any).name || '未命名节点',
       width,
       height,
     };
@@ -98,10 +92,7 @@ export class MindMapDataConverter<T extends MindMapNode = MindMapNode> {
     // 递归处理子节点
     if (node.children && node.children.length > 0) {
       mindMapNode.children = node.children.map((child: MindMapNode) =>
-        this.convertSingleNode(
-          child,
-          type === 'topic' ? 'topic-branch' : 'topic-child',
-        ),
+        this.convertSingleNode(child, type === ENodeType.topic ? ENodeType.topicBranch : ENodeType.topicChild)
       );
     }
 

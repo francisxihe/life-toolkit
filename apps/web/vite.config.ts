@@ -80,7 +80,13 @@ export default async ({ mode }: { mode: string }) => {
       },
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend'],
+      include: [
+        'react',
+        'react-dom',
+        'react-dnd',
+        'react-dnd-html5-backend',
+        'mitt',
+      ],
       exclude: [],
     },
   });

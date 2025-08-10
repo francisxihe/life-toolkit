@@ -1,9 +1,15 @@
+export enum ENodeType {
+  topic = 'topic',
+  topicBranch = 'topic-branch',
+  topicChild = 'topic-child',
+}
+
 /**
  * 思维导图节点类型
  */
 export interface MindMapData {
   id: string;
-  type: 'topic' | 'topic-branch' | 'topic-child';
+  type: ENodeType;
   label: string;
   width: number;
   height: number;
@@ -69,5 +75,5 @@ export const DEFAULT_MIND_MAP_OPTIONS: MindMapOptions = {
   editable: true,
   readOnly: false,
   centerOnResize: true,
-  enableShortcuts: true
+  enableShortcuts: true,
 };

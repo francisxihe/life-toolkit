@@ -258,6 +258,11 @@ export class GoalService {
     // 数据处理
     const processedDto = await this.processUpdateData(updateGoalDto);
 
+    // 如果更新了parentId，需要特殊处理树形结构
+    if (updateGoalDto.parentId !== undefined) {
+      return await this.updateWithParent(id, processedDto);
+    }
+
     // 调用数据访问层
     const result = await this.goalRepository.update(id, processedDto);
 
@@ -382,6 +387,44 @@ export class GoalService {
 
       const savedEntity = await treeRepository.save(entity);
       // 在事务内直接转换为DTO返回，避免事务外查询问题
+      return GoalMapper.entityToDto(savedEntity);
+    });
+  }
+
+  private async updateWithParent(id: string, dto: UpdateGoalDto): Promise<GoalDto> {
+    // 使用事务处理树形结构更新
+    const treeRepo = this.goalRepository.getTreeRepository();
+    
+    return await treeRepo.manager.transaction(async (manager) => {
+      const treeRepository = manager.getTreeRepository(treeRepo.target);
+      
+      // 先获取当前目标
+      const currentGoal = await treeRepository.findOne({ where: { id } });
+      if (!currentGoal) {
+        throw new BadRequestException(`目标不存在，ID: ${id}`);
+      }
+
+      // 更新基础字段
+      Object.assign(currentGoal, dto);
+
+      // 处理父级关系变更
+      if (dto.parentId) {
+        // 设置新的父级
+        await this.goalTreeService.updateParent(
+          {
+            currentGoal,
+            parentId: dto.parentId,
+          },
+          treeRepository
+        );
+      } else if (dto.parentId === null) {
+         // 移除父级关系，设为根节点
+         currentGoal.parent = undefined;
+         await treeRepository.save(currentGoal);
+       }
+
+      // 保存更新后的实体
+      const savedEntity = await treeRepository.save(currentGoal);
       return GoalMapper.entityToDto(savedEntity);
     });
   }
