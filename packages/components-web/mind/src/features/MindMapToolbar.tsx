@@ -22,8 +22,6 @@ interface MindMapToolbarProps {
   onFullscreen?: () => void;
   onExport?: () => void;
   onImport?: () => void;
-  onToggleMinimap?: (visible: boolean) => void;
-  mode?: 'full' | 'compact'; // 工具栏模式：完整模式或紧凑模式
   className?: string;
 }
 
@@ -70,14 +68,11 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   onFullscreen,
   onExport,
   onImport,
-  onToggleMinimap,
-  mode = 'full',
   className,
 }) => {
   // 业务数据和操作
-  const { selectedNodeId, addChild, addSibling, deleteNode } = useMindMapContext();
-
-  const [minimapVisible, setMinimapVisible] = useState(false);
+  const { selectedNodeId, addChild, addSibling, deleteNode, minimapVisible, setMinimapVisible } =
+    useMindMapContext();
 
   // 添加子节点
   const handleAddChild = () => {
@@ -137,9 +132,6 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   // 切换小地图显示
   const handleToggleMinimap = (checked: boolean) => {
     setMinimapVisible(checked);
-    if (onToggleMinimap) {
-      onToggleMinimap(checked);
-    }
   };
 
   // 共同的视图操作按钮组
@@ -162,25 +154,11 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
         size={size}
       />
       <ToolButton
-        icon={mode === 'compact' ? undefined : <IconDragDot />}
+        icon={<IconDragDot />}
         content="居中内容"
         onClick={() => graphEventEmitter.centerContent()}
         size={size}
-      >
-        {mode === 'compact' ? '居中' : undefined}
-      </ToolButton>
-    </>
-  );
-
-  // 共同的功能操作按钮组
-  const CommonControls = ({
-    size = 'default',
-  }: {
-    size?: 'mini' | 'small' | 'default' | 'large';
-  }) => (
-    <>
-      <ToolButton icon={<IconExport />} content="导出 PNG" onClick={handleExport} size={size} />
-      <ToolButton icon={<IconFullscreen />} content="全屏" onClick={handleFullscreen} size={size} />
+      ></ToolButton>
     </>
   );
 
@@ -191,22 +169,16 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
     size?: 'mini' | 'small' | 'default' | 'large';
   }) => {
     return (
-      <ToolButton content="小地图" onClick={() => handleToggleMinimap(!minimapVisible)} size={size}>
-        小地图
-      </ToolButton>
+      <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+        <span style={{ marginRight: '8px' }}>小地图</span>
+        <Switch
+          checked={minimapVisible}
+          onChange={handleToggleMinimap}
+          size={size === 'small' ? 'small' : 'default'}
+        />
+      </div>
     );
   };
-
-  // 紧凑模式渲染
-  if (mode === 'compact') {
-    return (
-      <Space>
-        <ViewControls size="small" />
-        <MinimapControl size="small" />
-        <CommonControls size="small" />
-      </Space>
-    );
-  }
 
   // 节点操作按钮组
   const NodeControls = () => (

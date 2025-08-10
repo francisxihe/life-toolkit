@@ -66,8 +66,6 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     // 设置图形实例
     setGraph(newGraph);
 
-    graphEventEmitter.emitGraph(newGraph);
-
     // 如果提供了图形就绪回调，则调用它
     if (onGraphReady) {
       onGraphReady(newGraph);
@@ -106,6 +104,10 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current.parentElement!);
     }
+
+    setTimeout(() => {
+      graphEventEmitter.emitGraph(newGraph);
+    }, 1000);
 
     // 清理函数
     return () => {

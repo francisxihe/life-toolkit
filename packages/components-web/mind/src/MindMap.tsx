@@ -16,10 +16,6 @@ interface EnhancedMindMapProps {
   showToolbar?: boolean;
   className?: string;
   onGraphReady?: (graph: Graph) => void;
-  minimapVisible?: boolean;
-  onFullscreen?: () => void;
-  onExport?: () => void;
-  onToggleMinimap?: (visible: boolean) => void;
   MindMapNode?: React.ComponentType<any>;
 }
 
@@ -34,13 +30,10 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   showToolbar = true,
   className = '',
   onGraphReady,
-  minimapVisible = false,
-  onFullscreen,
-  onExport,
-  onToggleMinimap,
   MindMapNode,
 }) => {
-  const { mindMapData, setMindMapData, selectedNodeId, containerRef } = useMindMapContext();
+  const { mindMapData, setMindMapData, selectedNodeId, containerRef, minimapVisible } =
+    useMindMapContext();
 
   const [nodeEditorVisible, setNodeEditorVisible] = useState(false);
   const [exportModalVisible, setExportModalVisible] = useState(false);
@@ -66,10 +59,8 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
     >
       {showToolbar && (
         <MindMapToolbar
-          mode="full"
           onExport={() => setExportModalVisible(true)}
           onImport={() => setImportModalVisible(true)}
-          onToggleMinimap={onToggleMinimap}
         />
       )}
       <MindMapGraph
@@ -87,6 +78,8 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
         onClose={() => setNodeEditorVisible(false)}
       />
 
+      <MiniMapContainer />
+
       {/* 导出模态框 */}
       <ExportModal visible={exportModalVisible} onClose={() => setExportModalVisible(false)} />
 
@@ -96,8 +89,6 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
         onClose={() => setImportModalVisible(false)}
         onImport={handleImport}
       />
-
-      {<MiniMapContainer visible={minimapVisible} />}
     </div>
   );
 };

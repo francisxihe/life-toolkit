@@ -32,7 +32,6 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<any>(null);
   const initializedRef = useRef<boolean>(false);
-  const [minimapVisible, setMinimapVisible] = useState(false);
 
   // 当goalTree变化时转换数据
   useEffect(() => {
@@ -78,11 +77,6 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
     }
   };
 
-  // 处理小地图切换
-  const handleToggleMinimap = (visible: boolean) => {
-    setMinimapVisible(visible);
-  };
-
   return (
     <div
       ref={containerRef}
@@ -102,10 +96,6 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
           }}
           showToolbar={showToolbar}
           onGraphReady={handleGraphInstance}
-          minimapVisible={minimapVisible}
-          onFullscreen={handleFullscreen}
-          onExport={handleExport}
-          onToggleMinimap={handleToggleMinimap}
           MindMapNode={(props: any) => {
             return <MindMapNode {...props} fetchGoalTree={fetchGoalTree} />;
           }}

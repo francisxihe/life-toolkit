@@ -161,12 +161,9 @@ const MindMapNode: React.FC<CustomNodeProps> = ({
   const nodeRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
-    setTimeout(() => {
-      if (nodeRef.current) {
-        node.setSize(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
-      }
-    }, 1000);
+    if (nodeRef.current) {
+      node.setSize(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
+    }
   }, [nodeRef.current]);
 
   return (

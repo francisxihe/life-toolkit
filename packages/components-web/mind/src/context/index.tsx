@@ -21,6 +21,9 @@ export const [MindMapProvider, useMindMapContext] = createInjectState<{
     setMindMapData: Dispatch<SetStateAction<MindMapData | null>>;
     setSelectedNodeId: Dispatch<SetStateAction<string | null>>;
 
+    minimapVisible: boolean;
+    setMinimapVisible: Dispatch<SetStateAction<boolean>>;
+
     // 节点操作方法
     addChild: (nodeId: string, label: string) => void;
     addSibling: (nodeId: string, label: string) => void;
@@ -31,6 +34,8 @@ export const [MindMapProvider, useMindMapContext] = createInjectState<{
   const containerRef = useRef<HTMLDivElement>(null);
   const [mindMapData, setMindMapData] = useState<MindMapData | null>(initialData || null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const [minimapVisible, setMinimapVisible] = useState(false);
 
   // 初始化数据
   useEffect(() => {
@@ -53,6 +58,8 @@ export const [MindMapProvider, useMindMapContext] = createInjectState<{
     selectedNodeId,
     setMindMapData,
     setSelectedNodeId,
+    minimapVisible,
+    setMinimapVisible,
     ...nodeOperations,
   };
 });

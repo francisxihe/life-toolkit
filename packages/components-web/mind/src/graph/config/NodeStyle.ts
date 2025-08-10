@@ -8,10 +8,10 @@ export const nodeStyle: Record<ENodeType, { width: number; height: number }> = {
   },
   [ENodeType.topicBranch]: {
     width: 200,
-    height: 35,
+    height: 40,
   },
   [ENodeType.topicChild]: {
     width: 200,
-    height: 30,
+    height: 40,
   },
 };
