@@ -138,34 +138,32 @@ export default function GoalTable() {
   };
 
   return (
-    <>
-      <Table
-        className="w-full"
-        columns={columns}
-        data={goalList}
-        pagination={false}
-        rowKey="id"
-        onExpand={onExpandTable}
-        expandedRowRender={(record) => {
-          if (subGoalLoadingStatus[record.id] === 'unLoading') return true;
-          if (subGoalLoadingStatus[record.id] === 'loading') {
-            return (
-              <Card
-                loading={subGoalLoadingStatus[record.id] === 'loading'}
-              ></Card>
-            );
-          }
-          if (subGoalLoadingStatus[record.id] === 'loaded') {
-            return expandedData[record.id]?.children?.length ? (
-              <Card>
-                {expandedData[record.id]?.children
-                  .map((item) => item.name)
-                  .join(',')}
-              </Card>
-            ) : null;
-          }
-        }}
-      />
-    </>
+    <Table
+      className="w-full"
+      columns={columns}
+      data={goalList}
+      pagination={false}
+      rowKey="id"
+      onExpand={onExpandTable}
+      expandedRowRender={(record) => {
+        if (subGoalLoadingStatus[record.id] === 'unLoading') return true;
+        if (subGoalLoadingStatus[record.id] === 'loading') {
+          return (
+            <Card
+              loading={subGoalLoadingStatus[record.id] === 'loading'}
+            ></Card>
+          );
+        }
+        if (subGoalLoadingStatus[record.id] === 'loaded') {
+          return expandedData[record.id]?.children?.length ? (
+            <Card>
+              {expandedData[record.id]?.children
+                .map((item) => item.name)
+                .join(',')}
+            </Card>
+          ) : null;
+        }
+      }}
+    />
   );
 }

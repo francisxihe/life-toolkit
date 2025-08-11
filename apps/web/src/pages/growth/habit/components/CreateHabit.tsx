@@ -19,21 +19,18 @@ import {
   GoalVo,
 } from '@life-toolkit/vo/growth';
 import { HABIT_DIFFICULTY_OPTIONS } from '../constants';
-import { TagSelector } from '../../../../components/TagSelector';
 
 const { TextArea } = Input;
 const { Option } = Select;
 const { Text } = Typography;
 
-interface CreateHabitModalProps {
-  visible: boolean;
+interface CreateHabitProps {
   goals: GoalVo[];
   onSuccess: () => void;
   onCancel: () => void;
 }
 
-export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
-  visible,
+export const CreateHabit: React.FC<CreateHabitProps> = ({
   goals,
   onSuccess,
   onCancel,
@@ -44,17 +41,15 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
 
   // 重置表单
   useEffect(() => {
-    if (visible) {
-      form.resetFields();
-      setSelectedGoals([]);
-    }
-  }, [visible, form]);
+    form.resetFields();
+    setSelectedGoals([]);
+  }, [form]);
 
   // 处理表单提交
   const handleSubmit = async () => {
     try {
       const values = await form.validate();
-      
+
       if (selectedGoals.length === 0) {
         Message.error('请至少选择一个关联目标');
         return;
@@ -68,8 +63,16 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
         importance: values.importance || 3,
         difficulty: values.difficulty || HabitDifficulty.MEDIUM,
         tags: values.tags || [],
-        startAt: values.startAt ? values.startAt.format('YYYY-MM-DD') : undefined,
-        targetAt: values.targetAt ? values.targetAt.format('YYYY-MM-DD') : undefined,
+        startAt: values.startAt
+          ? (typeof values.startAt.format === 'function' 
+              ? values.startAt.format('YYYY-MM-DD')
+              : values.startAt.toISOString().split('T')[0])
+          : undefined,
+        targetAt: values.targetAt
+          ? (typeof values.targetAt.format === 'function'
+              ? values.targetAt.format('YYYY-MM-DD')
+              : values.targetAt.toISOString().split('T')[0])
+          : undefined,
         goalIds: selectedGoals,
       };
 
@@ -90,32 +93,19 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
   };
 
   return (
-    <Modal
-      title="创建习惯"
-      visible={visible}
-      onCancel={onCancel}
-      footer={
-        <Space>
-          <Button onClick={onCancel}>取消</Button>
-          <Button type="primary" loading={loading} onClick={handleSubmit}>
-            创建
-          </Button>
-        </Space>
-      }
-      style={{ width: 600 }}
-    >
-      <Form
-        form={form}
-        layout="vertical"
-        autoComplete="off"
-      >
+    <div>
+      <Form form={form} layout="vertical" autoComplete="off">
         {/* 基础信息 */}
         <Form.Item
           label="习惯名称"
           field="name"
           rules={[
             { required: true, message: '请输入习惯名称' },
-            { minLength: 1, maxLength: 50, message: '习惯名称长度为1-50个字符' },
+            {
+              minLength: 1,
+              maxLength: 50,
+              message: '习惯名称长度为1-50个字符',
+            },
           ]}
         >
           <Input placeholder="请输入习惯名称，如：每日阅读30分钟" />
@@ -124,9 +114,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
         <Form.Item
           label="习惯描述"
           field="description"
-          rules={[
-            { maxLength: 200, message: '描述长度不能超过200个字符' },
-          ]}
+          rules={[{ maxLength: 200, message: '描述长度不能超过200个字符' }]}
         >
           <TextArea
             placeholder="请描述这个习惯的具体内容和要求"
@@ -136,13 +124,53 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
           />
         </Form.Item>
 
+        {/* 目标关联 - 强制选择 */}
+        <div>
+          <Text className="block mb-2 font-medium">
+            关联目标 <span className="text-red-500">*</span>
+          </Text>
+          <Text type="secondary" className="block mb-3 text-sm">
+            每个习惯必须关联至少一个目标，习惯的执行将推进目标的达成
+          </Text>
+
+          {goals.length === 0 ? (
+            <div className="text-center py-4 text-gray-500">
+              <Text>暂无可关联的目标，请先创建目标</Text>
+            </div>
+          ) : (
+            <Select
+              mode="multiple"
+              placeholder="请选择要支撑的目标"
+              value={selectedGoals}
+              onChange={handleGoalChange}
+              style={{ width: '100%' }}
+              maxTagCount={3}
+            >
+              {goals.map((goal) => (
+                <Option key={goal.id} value={goal.id}>
+                  <div>
+                    <div className="font-medium">{goal.name}</div>
+                    {goal.description && (
+                      <div className="text-sm text-gray-500 truncate">
+                        {goal.description}
+                      </div>
+                    )}
+                  </div>
+                </Option>
+              ))}
+            </Select>
+          )}
+
+          {selectedGoals.length === 0 && (
+            <Text type="error" className="text-sm mt-1">
+              请至少选择一个关联目标
+            </Text>
+          )}
+        </div>
+
         {/* 属性设置 */}
         <div className="grid grid-cols-2 gap-4">
-          <Form.Item
-            label="重要程度"
-            field="importance"
-            initialValue={3}
-          >
+          <Form.Item label="重要程度" field="importance" initialValue={3}>
             <InputNumber
               min={1}
               max={5}
@@ -157,7 +185,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             initialValue={HabitDifficulty.MEDIUM}
           >
             <Select placeholder="选择难度等级">
-              {HABIT_DIFFICULTY_OPTIONS.map(option => (
+              {HABIT_DIFFICULTY_OPTIONS.map((option) => (
                 <Option key={option.value} value={option.value}>
                   <Space>
                     <span style={{ color: option.color }}>●</span>
@@ -170,12 +198,9 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
         </div>
 
         {/* 标签 */}
-        <Form.Item
-          label="标签"
-          field="tags"
-        >
+        <Form.Item label="标签" field="tags">
           <Select
-            mode="tags"
+            mode="multiple"
             placeholder="添加标签，最多5个"
             maxTagCount={5}
             allowCreate
@@ -189,9 +214,7 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
           <Form.Item
             label="开始日期"
             field="startAt"
-            rules={[
-              { required: true, message: '请选择开始日期' },
-            ]}
+            rules={[{ required: true, message: '请选择开始日期' }]}
           >
             <DatePicker
               style={{ width: '100%' }}
@@ -199,68 +222,28 @@ export const CreateHabitModal: React.FC<CreateHabitModalProps> = ({
             />
           </Form.Item>
 
-          <Form.Item
-            label="目标日期"
-            field="targetAt"
-          >
+          <Form.Item label="目标日期" field="targetAt">
             <DatePicker
               style={{ width: '100%' }}
               disabledDate={(date) => {
                 const startDate = form.getFieldValue('startAt');
-                return startDate ? date.isBefore(startDate, 'day') : date.isBefore(new Date(), 'day');
+                return startDate
+                  ? date.isBefore(startDate, 'day')
+                  : date.isBefore(new Date(), 'day');
               }}
             />
           </Form.Item>
         </div>
 
         <Divider />
-
-        {/* 目标关联 - 强制选择 */}
-        <div>
-          <Text className="block mb-2 font-medium">
-            关联目标 <span className="text-red-500">*</span>
-          </Text>
-          <Text type="secondary" className="block mb-3 text-sm">
-            每个习惯必须关联至少一个目标，习惯的执行将推进目标的达成
-          </Text>
-          
-          {goals.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">
-              <Text>暂无可关联的目标，请先创建目标</Text>
-            </div>
-          ) : (
-            <Select
-              mode="multiple"
-              placeholder="请选择要支撑的目标"
-              value={selectedGoals}
-              onChange={handleGoalChange}
-              style={{ width: '100%' }}
-              maxTagCount={3}
-            >
-              {goals.map(goal => (
-                <Option key={goal.id} value={goal.id}>
-                  <div>
-                    <div className="font-medium">{goal.name}</div>
-                    {goal.description && (
-                      <div className="text-sm text-gray-500 truncate">
-                        {goal.description}
-                      </div>
-                    )}
-                  </div>
-                </Option>
-              ))}
-            </Select>
-          )}
-          
-          {selectedGoals.length === 0 && (
-            <Text type="error" className="text-sm mt-1">
-              请至少选择一个关联目标
-            </Text>
-          )}
-        </div>
       </Form>
-    </Modal>
+
+      <Space>
+        <Button onClick={onCancel}>取消</Button>
+        <Button type="primary" loading={loading} onClick={handleSubmit}>
+          创建
+        </Button>
+      </Space>
+    </div>
   );
 };
-
-export default CreateHabitModal; 

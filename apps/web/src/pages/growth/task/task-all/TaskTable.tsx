@@ -137,34 +137,32 @@ export default function TaskTable() {
   };
 
   return (
-    <>
-      <Table
-        className="w-full"
-        columns={columns}
-        data={taskList}
-        pagination={false}
-        rowKey="id"
-        onExpand={onExpandTable}
-        expandedRowRender={(record) => {
-          if (subTaskLoadingStatus[record.id] === 'unLoading') return true;
-          if (subTaskLoadingStatus[record.id] === 'loading') {
-            return (
-              <Card
-                loading={subTaskLoadingStatus[record.id] === 'loading'}
-              ></Card>
-            );
-          }
-          if (subTaskLoadingStatus[record.id] === 'loaded') {
-            return expandedData[record.id]?.children?.length ? (
-              <Card>
-                {expandedData[record.id]?.children
-                  .map((item) => item.name)
-                  .join(',')}
-              </Card>
-            ) : null;
-          }
-        }}
-      />
-    </>
+    <Table
+      className="w-full"
+      columns={columns}
+      data={taskList}
+      pagination={false}
+      rowKey="id"
+      onExpand={onExpandTable}
+      expandedRowRender={(record) => {
+        if (subTaskLoadingStatus[record.id] === 'unLoading') return true;
+        if (subTaskLoadingStatus[record.id] === 'loading') {
+          return (
+            <Card
+              loading={subTaskLoadingStatus[record.id] === 'loading'}
+            ></Card>
+          );
+        }
+        if (subTaskLoadingStatus[record.id] === 'loaded') {
+          return expandedData[record.id]?.children?.length ? (
+            <Card>
+              {expandedData[record.id]?.children
+                .map((item) => item.name)
+                .join(',')}
+            </Card>
+          ) : null;
+        }
+      }}
+    />
   );
 }

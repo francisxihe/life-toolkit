@@ -54,65 +54,92 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   // 初始化图形
   useEffect(() => {
     if (!containerRef.current || !graphRef.current) return;
+    
+    let newGraph: Graph | null = null;
+    let resizeObserver: ResizeObserver | null = null;
+    let timeoutId: NodeJS.Timeout | null = null;
+    
+    // 使用setTimeout延迟初始化，避免同步卸载问题
+    const timerId = setTimeout(() => {
+      if (!containerRef.current || !graphRef.current) return;
+      
+      newGraph = initGraph(
+        graphRef.current,
+        containerRef.current.clientWidth,
+        containerRef.current.clientHeight
+      );
 
-    const newGraph = initGraph(
-      graphRef.current,
-      containerRef.current.clientWidth,
-      containerRef.current.clientHeight
-    );
+      newGraph.zoomTo(zoom);
 
-    newGraph.zoomTo(zoom);
+      // 设置图形实例
+      setGraph(newGraph);
 
-    // 设置图形实例
-    setGraph(newGraph);
-
-    // 如果提供了图形就绪回调，则调用它
-    if (onGraphReady) {
-      onGraphReady(newGraph);
-    }
-
-    // 注册节点点击事件
-    newGraph.on('node:click', ({ node }) => {
-      const nodeId = node.id.toString();
-      setSelectedNodeId(nodeId);
-
-      if (onNodeClick) {
-        onNodeClick(nodeId);
+      // 如果提供了图形就纪回调，则调用它
+      if (onGraphReady) {
+        onGraphReady(newGraph);
       }
-    });
 
-    // 监听容器大小变化
-    const resizeObserver = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        if (entry && entry.contentRect && graphRef.current && newGraph) {
-          // 获取容器的当前尺寸
-          const { width, height } = entry.contentRect;
+      // 注册节点点击事件
+      newGraph.on('node:click', ({ node }) => {
+        const nodeId = node.id.toString();
+        setSelectedNodeId(nodeId);
 
-          // 防止尺寸过小
-          if (width > 200 && height > 200) {
-            newGraph.resize(width, height);
+        if (onNodeClick) {
+          onNodeClick(nodeId);
+        }
+      });
 
-            if (mergedOptions.centerOnResize) {
-              newGraph.centerContent();
+      // 监听容器大小变化
+      resizeObserver = new ResizeObserver(entries => {
+        for (const entry of entries) {
+          if (entry && entry.contentRect && graphRef.current && newGraph) {
+            // 获取容器的当前尺寸
+            const { width, height } = entry.contentRect;
+
+            // 防止尺寸过小
+            if (width > 200 && height > 200) {
+              newGraph.resize(width, height);
+
+              if (mergedOptions.centerOnResize) {
+                newGraph.centerContent();
+              }
             }
           }
         }
+      });
+
+      // 只监听容器自身
+      if (containerRef.current) {
+        resizeObserver.observe(containerRef.current.parentElement!);
       }
-    });
 
-    // 只监听容器自身
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current.parentElement!);
-    }
-
-    setTimeout(() => {
-      graphEventEmitter.emitGraph(newGraph);
-    }, 1000);
+      // 延迟发送graph实例，确保组件已完全渲染
+      timeoutId = setTimeout(() => {
+        if (newGraph) {
+          graphEventEmitter.emitGraph(newGraph);
+        }
+      }, 300);
+    }, 0);
 
     // 清理函数
     return () => {
-      resizeObserver.disconnect();
-      newGraph.dispose();
+      clearTimeout(timerId);
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      
+      if (newGraph) {
+        // 确保在新的渲染周期处理卸载
+        requestAnimationFrame(() => {
+          try {
+            newGraph.dispose();
+          } catch (err) {
+            console.error('Error disposing graph:', err);
+          }
+        });
+      }
     };
   }, [
     mergedOptions.enableShortcuts,
@@ -121,6 +148,7 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     onGraphReady,
     setGraph,
     setSelectedNodeId,
+    zoom,
   ]);
 
   // 初始化图形
