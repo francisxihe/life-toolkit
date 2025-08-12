@@ -6,7 +6,7 @@ import {
   setRequestToken,
 } from "./AxiosHelpers";
 
-const apiBaseURL = import.meta.env.VITE_APP_API_BASE_URL;
+const apiBaseURL = (import.meta as any).env?.VITE_APP_API_BASE_URL || 'http://localhost:3000';
 
 export const httpInstance = axios.create({
   baseURL: apiBaseURL,

@@ -1,4 +1,5 @@
 // 主进程入口文件
+import 'reflect-metadata'
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
@@ -7,6 +8,10 @@ import fs from "fs";
 import electron from "electron";
 
 const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
+
+// 导入数据库初始化功能
+import { initDB, setupDatabaseCleanup } from '../database/init'
+import { registerIpcHandlers } from './ipc-handlers';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === "development";
@@ -115,7 +120,21 @@ function createWindow() {
 }
 
 // 当Electron完成初始化时创建窗口
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+  // 初始化数据库
+  try {
+    await initDB();
+    console.log('数据库初始化完成');
+  } catch (error) {
+    console.error('数据库初始化失败:', error);
+  }
+
+  // 设置数据库清理
+  setupDatabaseCleanup()
+
+  // 注册 IPC 处理器
+  registerIpcHandlers();
+
   createWindow();
 
   app.on("activate", () => {

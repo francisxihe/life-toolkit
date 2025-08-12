@@ -22,6 +22,7 @@
     "@arco-design/web-react": "^2.66.0",
     "@arco-plugins/vite-react": "^1.0.5",
     "@arco-themes/react-francis": "^0.0.1",
+    "@life-toolkit/share-types": "workspace:*",
     "@loadable/component": "^5.13.2",
     "@nanostores/react": "^0.8.4",
     "@tailwindcss/vite": "^4.1.11",

@@ -16,6 +16,7 @@ import useStorage from './utils/useStorage';
 import './mock';
 import Router from './router';
 import { generatePermission } from './router/routes';
+import '@life-toolkit/share-types';
 
 const store = createStore(rootReducer);
 
