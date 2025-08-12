@@ -20,7 +20,8 @@
     "./web": "./web/index.tsx",
     "./types": "./dist/types/index.js",
     "./types/repeat-end": "./dist/types/repeat-end.js",
-    "./common": "./dist/common/index.js"
+    "./common": "./dist/common/index.js",
+    "./vo": "./vo/index.ts"
   },
   "files": [
     "dist",

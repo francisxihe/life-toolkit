@@ -1,7 +1,7 @@
 {
-  "name": "@life-toolkit/common-calendar",
+  "name": "@life-toolkit/helpers",
   "version": "0.0.2",
-  "description": "中国日历工具库 - 提供工作日、节假日、补班日等各种日期信息查询功能",
+  "description": "助手函数库",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
@@ -30,12 +30,16 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
     "tsup": "^7.0.0"
+  },
+  "peerDependencies": {
+    "react": "*"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/life-toolkit/life-toolkit.git",
-    "directory": "packages/common/calendar"
-  },
-  "homepage": "https://github.com/life-toolkit/life-toolkit/tree/main/packages/common/calendar"
+    "directory": "packages/helpers"
+  }
 }
