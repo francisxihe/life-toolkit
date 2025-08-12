@@ -70,9 +70,9 @@ export default class HabitService {
     }
   }
 
-  static async batchCompleteHabit(params: OperationByIdListVo) {
+  static async batchDoneHabit(params: OperationByIdListVo) {
     try {
-      const res = await HabitController.batchCompleteHabit(params);
+      const res = await HabitController.batchDoneHabit(params);
       Message.success('操作成功');
       return res;
     } catch (error) {

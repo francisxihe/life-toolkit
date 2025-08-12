@@ -115,7 +115,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const handleHabitComplete = useCallback(
     async (habitId: string) => {
       try {
-        await HabitController.batchCompleteHabit({ idList: [habitId] });
+        await HabitController.batchDoneHabit({ idList: [habitId] });
         Message.success('习惯已完成');
         fetchHabits();
         refreshHabits();

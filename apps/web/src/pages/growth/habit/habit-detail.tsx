@@ -71,7 +71,7 @@ export const HabitDetailPage: React.FC = () => {
       
       switch (action) {
         case 'complete':
-          await HabitController.batchCompleteHabit({ idList: [habit.id] });
+          await HabitController.batchDoneHabit({ idList: [habit.id] });
           Message.success('习惯已完成');
           break;
         case 'pause':

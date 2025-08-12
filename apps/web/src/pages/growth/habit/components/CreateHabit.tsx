@@ -19,6 +19,7 @@ import {
   GoalVo,
 } from '@life-toolkit/vo/growth';
 import { HABIT_DIFFICULTY_OPTIONS } from '../constants';
+import dayjs from 'dayjs';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -56,6 +57,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
       }
 
       setLoading(true);
+      console.log('values', values);
 
       const habitData: CreateHabitVo = {
         name: values.name,
@@ -63,16 +65,8 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         importance: values.importance || 3,
         difficulty: values.difficulty || HabitDifficulty.MEDIUM,
         tags: values.tags || [],
-        startAt: values.startAt
-          ? (typeof values.startAt.format === 'function' 
-              ? values.startAt.format('YYYY-MM-DD')
-              : values.startAt.toISOString().split('T')[0])
-          : undefined,
-        targetAt: values.targetAt
-          ? (typeof values.targetAt.format === 'function'
-              ? values.targetAt.format('YYYY-MM-DD')
-              : values.targetAt.toISOString().split('T')[0])
-          : undefined,
+        startAt: dayjs(values.startAt).format('YYYY-MM-DD'),
+        targetAt: dayjs(values.targetAt).format('YYYY-MM-DD'),
         goalIds: selectedGoals,
       };
 
