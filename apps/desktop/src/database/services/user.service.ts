@@ -32,6 +32,30 @@ export class UserService extends BaseService<User> {
     });
     return count > 0;
   }
+
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: User[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data,
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  async list(): Promise<User[]> {
+    return await this.findAll();
+  }
 }
 
 export const userService = new UserService();

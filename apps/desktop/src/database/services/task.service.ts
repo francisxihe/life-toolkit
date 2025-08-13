@@ -120,6 +120,31 @@ export class TaskService {
   async count(): Promise<number> {
     return await this.repository.count();
   }
+
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: Task[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: { createdAt: 'DESC' },
+      relations: ['goal', 'todoList'],
+    });
+
+    return {
+      data,
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  async list(): Promise<Task[]> {
+    return await this.findAll();
+  }
 }
 
 export const taskService = new TaskService();

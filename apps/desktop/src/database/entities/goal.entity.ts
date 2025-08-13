@@ -11,12 +11,8 @@ export enum GoalStatus {
 }
 
 export enum GoalType {
-  PERSONAL = "personal",
-  WORK = "work",
-  HEALTH = "health",
-  LEARNING = "learning",
-  FINANCIAL = "financial",
-  OTHER = "other",
+  OBJECTIVE = "objective",
+  KEY_RESULT = "key_result",
 }
 
 @Entity("goal")
@@ -34,7 +30,7 @@ export class Goal extends BaseEntity {
   @Column({
     type: 'simple-enum',
     enum: GoalType,
-    default: GoalType.PERSONAL
+    default: GoalType.OBJECTIVE
   })
   type: GoalType;
 

@@ -100,6 +100,30 @@ export class GoalService {
   async count(): Promise<number> {
     return await this.repository.count();
   }
+
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: Goal[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: { createdAt: 'DESC' },
+    });
+
+    return {
+      data,
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  async batchDone(ids: string[]): Promise<void> {
+    await this.repository.update(ids, { status: GoalStatus.DONE });
+  }
 }
 
 export const goalService = new GoalService();

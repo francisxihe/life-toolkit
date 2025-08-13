@@ -140,6 +140,54 @@ export class TodoService extends BaseService<Todo> {
 
     return { total, todo, inProgress, done, abandoned };
   }
+
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: Todo[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: { createdAt: 'DESC' },
+      relations: ['task', 'habit'],
+    });
+
+    return {
+      data,
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  async list(): Promise<Todo[]> {
+    return await this.findAll();
+  }
+
+  async batchDone(ids: string[]): Promise<void> {
+    await this.repository.update(ids, { 
+      status: TodoStatus.DONE,
+      doneAt: new Date()
+    });
+  }
+
+  async abandon(id: string): Promise<void> {
+    await this.updateStatus(id, TodoStatus.ABANDONED);
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.repository.update(id, { 
+      status: TodoStatus.TODO,
+      doneAt: null,
+      abandonedAt: null
+    });
+  }
+
+  async done(id: string): Promise<void> {
+    await this.updateStatus(id, TodoStatus.DONE);
+  }
 }
 
 export const todoService = new TodoService();

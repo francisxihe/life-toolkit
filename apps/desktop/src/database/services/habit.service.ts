@@ -174,6 +174,31 @@ export class HabitService extends BaseService<Habit> {
       averageStreak: Math.round(averageStreak * 100) / 100,
     };
   }
+
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: Habit[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const [data, total] = await this.repository.findAndCount({
+      skip: (pageNum - 1) * pageSize,
+      take: pageSize,
+      order: { createdAt: 'DESC' },
+      relations: ['goals', 'todos'],
+    });
+
+    return {
+      data,
+      total,
+      pageNum,
+      pageSize,
+    };
+  }
+
+  async list(): Promise<Habit[]> {
+    return await this.findAll();
+  }
 }
 
 export const habitService = new HabitService();
