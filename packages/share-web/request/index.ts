@@ -1,21 +1,25 @@
 import { ElectronAPI } from "@life-toolkit/share-types";
 import { getElectronAPI, isElectronEnvironment } from "./electron";
-export * from "./server";
-
-export { getElectronAPI };
+import { get, post, put, remove } from "./server";
 
 /**
  * 适配器装饰器 - 简化控制器方法的适配逻辑
  */
 export function request<T>({
-  httpOperation,
-  electronOperation,
+  method,
 }: {
-  httpOperation: () => Promise<T>;
-  electronOperation: (electronAPI: ElectronAPI) => Promise<T>;
-}): Promise<T> {
+  method: "put" | "post" | "get" | "remove";
+}): (path: string, params?: any) => Promise<T> {
   if (isElectronEnvironment()) {
-    return electronOperation(window.electronAPI);
+    const electronAPI = getElectronAPI();
+    if (electronAPI) {
+      return electronAPI[method];
+    }
   }
-  return httpOperation();
+  return {
+    get,
+    post,
+    put,
+    remove,
+  }[method];
 }

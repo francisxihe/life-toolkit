@@ -58,21 +58,21 @@ export default defineConfig({
       sourcemap: process.env.NODE_ENV !== "production",
     },
   },
-  renderer: {
-    // 渲染进程配置
-    root: path.resolve(currentDirPath, "src/renderer"),
-    build: {
-      outDir: "dist/renderer",
-      rollupOptions: {
-        external: [
-          /^@life-toolkit\/components-repeat/,
-          /^react-dnd/,
-          /^dnd-core/,
-          /^immutability-helper/,
-        ],
-      },
-      minify: process.env.NODE_ENV === "production",
-      sourcemap: process.env.NODE_ENV !== "production",
-    },
-  },
+  // renderer: {
+  //   // 渲染进程配置
+  //   root: path.resolve(currentDirPath, "src/renderer"),
+  //   build: {
+  //     outDir: "dist/renderer",
+  //     rollupOptions: {
+  //       external: [
+  //         /^@life-toolkit\/components-repeat/,
+  //         /^react-dnd/,
+  //         /^dnd-core/,
+  //         /^immutability-helper/,
+  //       ],
+  //     },
+  //     minify: process.env.NODE_ENV === "production",
+  //     sourcemap: process.env.NODE_ENV !== "production",
+  //   },
+  // },
 });

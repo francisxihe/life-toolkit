@@ -8,9 +8,10 @@ import {
   HabitFilterDto,
   HabitPageFilterDto,
   HabitDto,
-} from "./dto";
+} from "@life-toolkit/business-server";
 import { Goal } from "../goal/entities";
-import { HabitMapper } from "./mapper";
+import { Todo, TodoStatus } from "../todo/entities";
+import { HabitMapper } from "@life-toolkit/business-server";
 
 @Injectable()
 export class HabitRepository {
@@ -19,6 +20,8 @@ export class HabitRepository {
     private readonly habitRepository: Repository<Habit>,
     @InjectRepository(Goal)
     private readonly goalRepository: Repository<Goal>,
+    @InjectRepository(Todo)
+    private readonly todoRepository: Repository<Todo>,
   ) {}
 
   // 基础 CRUD 操作
@@ -196,9 +199,80 @@ export class HabitRepository {
     return HabitMapper.entityToDto(savedHabit);
   }
 
+  /**
+   * 获取习惯关联的待办事项（按状态分组）
+   */
+  async getHabitTodos(habitId: string): Promise<{
+    activeTodos: Todo[];
+    completedTodos: Todo[];
+    abandonedTodos: Todo[];
+    totalCount: number;
+  }> {
+    const activeTodos = await this.todoRepository.find({
+      where: { habitId, status: TodoStatus.TODO },
+      order: { createdAt: "DESC" },
+    });
+
+    const completedTodos = await this.todoRepository.find({
+      where: { habitId, status: TodoStatus.DONE },
+      order: { doneAt: "DESC" },
+    });
+
+    const abandonedTodos = await this.todoRepository.find({
+      where: { habitId, status: TodoStatus.ABANDONED },
+      order: { abandonedAt: "DESC" },
+    });
+
+    return {
+      activeTodos,
+      completedTodos,
+      abandonedTodos,
+      totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
+    };
+  }
+
+  /**
+   * 获取习惯分析所需的基础数据（纯数据库查询）
+   */
+  async getHabitAnalyticsData(habitId: string): Promise<{
+    totalTodos: number;
+    completedTodos: number;
+    abandonedTodos: number;
+    recentTodos: Todo[];
+  }> {
+    const totalTodos = await this.todoRepository.count({ where: { habitId } });
+
+    const completedTodos = await this.todoRepository.count({
+      where: { habitId, status: TodoStatus.DONE },
+    });
+
+    const abandonedTodos = await this.todoRepository.count({
+      where: { habitId, status: TodoStatus.ABANDONED },
+    });
+
+    const recentTodos = await this.todoRepository.find({
+      where: { habitId },
+      order: { createdAt: "DESC" },
+      take: 10,
+    });
+
+    return { totalTodos, completedTodos, abandonedTodos, recentTodos };
+  }
+
   // 构建查询条件的私有方法
   private buildQuery(filter: HabitFilterDto) {
-    let query = this.habitRepository.createQueryBuilder("habit");
+    let query = this.habitRepository
+      .createQueryBuilder("habit");
+
+    // 软删除过滤（与 Goal 仓储保持一致）
+    query = query.andWhere("habit.deletedAt IS NULL");
+
+    // 目标过滤（当提供 goalId 时关联查询）
+    if ((filter as any).goalId) {
+      query = query
+        .leftJoin("habit.goals", "goal")
+        .andWhere("goal.id = :goalId", { goalId: (filter as any).goalId });
+    }
 
     // 状态过滤
     if (filter.status && Array.isArray(filter.status) && filter.status.length > 0) {

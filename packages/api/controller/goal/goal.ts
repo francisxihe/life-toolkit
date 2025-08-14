@@ -1,11 +1,4 @@
-import {
-  post,
-  put,
-  get,
-  remove,
-  getElectronAPI,
-  request,
-} from "@life-toolkit/share-request";
+import { request } from "@life-toolkit/share-request";
 import {
   GoalVo,
   CreateGoalVo,
@@ -18,96 +11,42 @@ import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class GoalController {
   static async getDetail(goalId: string) {
-    return request<GoalVo>({
-      httpOperation: () => get<GoalVo>(`/goal/detail/${goalId}`),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.findDetail(goalId);
-      },
-    });
+    return request<GoalVo>({ method: "get" })(`/goal/findById/${goalId}`);
   }
 
   static async batchDoneGoal(params: OperationByIdListVo) {
-    return request<GoalVo[]>({
-      httpOperation: () => put<GoalVo[]>(`/goal/batch-done`, params),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.batchDone(params).then(() => []);
-      },
-    });
+    return request<GoalVo[]>({ method: "put" })("/goal/batchDone", params);
   }
 
   static async restoreGoal(id: string) {
-    return request<GoalVo>({
-      httpOperation: () => put<GoalVo>(`/goal/restore/${id}`),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.restore(id).then(() => ({} as GoalVo));
-      },
-    });
+    return request<GoalVo>({ method: "put" })("/goal/restore", id);
   }
 
   static async abandonGoal(id: string) {
-    return request({
-      httpOperation: () => put(`/goal/abandon/${id}`),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.abandon(id);
-      },
-    });
+    return request({ method: "put" })("/goal/abandon", id);
   }
 
   static async addGoal(goal: CreateGoalVo) {
-    return request<GoalVo>({
-      httpOperation: () => post<GoalVo>("/goal/create", goal),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.create(goal);
-      },
-    });
+    return request<GoalVo>({ method: "post" })("/goal/create", goal);
   }
 
   static async deleteGoal(id: string) {
-    return request<GoalVo>({
-      httpOperation: () => remove<GoalVo>(`/goal/delete/${id}`),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.delete(id).then(() => ({} as GoalVo));
-      },
-    });
+    return request<GoalVo>({ method: "remove" })("/goal/delete", id);
   }
 
   static async updateGoal(id: string, goal: Partial<CreateGoalVo>) {
-    return request({
-      httpOperation: () => put<GoalVo>(`/goal/update/${id}`, goal),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.update(id, goal);
-      },
-    });
+    return request({ method: "put" })("/goal/update", { id, ...goal });
   }
 
   static async getGoalList(params: GoalListFiltersVo = {}) {
-    return request<GoalListVo>({
-      httpOperation: () => get<GoalListVo>("/goal/list", params),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.list(params).then((list: GoalVo[]) => ({ list }));
-      },
-    });
+    return request<GoalListVo>({ method: "get" })("/goal/list", params);
   }
 
   static async getGoalTree(params: GoalListFiltersVo = {}) {
-    return request<GoalVo[]>({
-      httpOperation: () => get<GoalVo[]>("/goal/tree", params),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.getTree(params);
-      },
-    });
+    return request<GoalVo[]>({ method: "get" })("/goal/tree", params);
   }
 
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
-    return request<GoalPageVo>({
-      httpOperation: () => get<GoalPageVo>("/goal/page", params),
-      electronOperation: (electronAPI) => {
-        return electronAPI.database.goal.page(params).then(result => ({
-          ...result,
-          pageNum: params.pageNum || 1,
-          pageSize: params.pageSize || 10
-        }));
-      },
-    });
+    return request<GoalPageVo>({ method: "get" })("/goal/page", params);
   }
 }

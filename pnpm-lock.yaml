@@ -123,12 +123,12 @@ importers:
       electron-vite:
         specifier: ^3.1.0
         version: 3.1.0(vite@5.4.15(@types/node@18.19.74)(less@4.2.2)(lightningcss@1.30.1)(terser@5.37.0))
-      typescript:
-        specifier: ^5.0.0
-        version: 5.7.3
 
   apps/server:
     dependencies:
+      '@life-toolkit/business-server':
+        specifier: workspace:*
+        version: link:../../packages/business/server
       '@nestjs/common':
         specifier: ^10.0.0
         version: 10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1)
@@ -422,6 +422,25 @@ importers:
       axios:
         specifier: ^0.24.0
         version: 0.24.0
+
+  packages/business/server:
+    dependencies:
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      typeorm:
+        specifier: ^0.3.20
+        version: 0.3.20(mysql2@3.12.0)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))
+    devDependencies:
+      '@life-toolkit/components-repeat':
+        specifier: workspace:*
+        version: link:../../components/repeat
+      ts-mixer:
+        specifier: ^6.0.3
+        version: 6.0.4
+      tsup:
+        specifier: ^7.0.0
+        version: 7.3.0(postcss@8.5.3)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)
 
   packages/common-web/utils:
     dependencies:
@@ -8738,6 +8757,9 @@ packages:
     peerDependencies:
       typescript: '*'
       webpack: ^5.0.0
+
+  ts-mixer@6.0.4:
+    resolution: {integrity: sha512-ufKpbmrugz5Aou4wcr5Wc1UUFWOLhq+Fm6qa6P0w0K5Qw2yhaUoiWszhCVuNQyNwrlGiscHOmqYoAox1PtvgjA==}
 
   ts-node@10.9.2:
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
@@ -19863,6 +19885,8 @@ snapshots:
       source-map: 0.7.4
       typescript: 5.7.2
       webpack: 5.97.1
+
+  ts-mixer@6.0.4: {}
 
   ts-node@10.9.2(@types/node@18.19.74)(typescript@5.7.3):
     dependencies:

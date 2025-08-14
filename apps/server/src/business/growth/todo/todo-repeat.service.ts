@@ -5,10 +5,9 @@ import { Todo, TodoStatus, TodoRepeat, TodoSource } from "./entities";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { RepeatService } from "@life-toolkit/components-repeat/server";
-import { TodoDto } from "./dto";
 import { TodoBaseService } from "./todo-base.service";
 import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
-import { CreateTodoDto } from "./dto/todo-form.dto";
+import { CreateTodoDto, TodoDto } from "@life-toolkit/business-server";
 
 // 添加dayjs插件
 dayjs.extend(isBetween);

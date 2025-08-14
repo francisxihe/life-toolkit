@@ -1,14 +1,12 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
 import {
   CreateHabitDto,
   UpdateHabitDto,
   HabitFilterDto,
   HabitPageFilterDto,
   HabitDto,
-} from "./dto";
-import { Todo, TodoStatus } from "../todo/entities";
+} from "@life-toolkit/business-server";
+import { Todo } from "../todo/entities";
 import { HabitRepository } from "./habit.repository";
 import { HabitStatusService } from "./habit-status.service";
 import { OperationByIdListDto } from "@/common/operation";
@@ -18,8 +16,6 @@ export class HabitService {
   constructor(
     private readonly habitRepository: HabitRepository,
     private readonly habitStatusService: HabitStatusService,
-    @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>,
   ) {}
 
   // 业务逻辑编排
@@ -127,36 +123,7 @@ export class HabitService {
     abandonedTodos: Todo[];
     totalCount: number;
   }> {
-    const activeTodos = await this.todoRepository.find({
-      where: {
-        habitId,
-        status: TodoStatus.TODO,
-      },
-      order: { createdAt: "DESC" },
-    });
-
-    const completedTodos = await this.todoRepository.find({
-      where: {
-        habitId,
-        status: TodoStatus.DONE,
-      },
-      order: { doneAt: "DESC" },
-    });
-
-    const abandonedTodos = await this.todoRepository.find({
-      where: {
-        habitId,
-        status: TodoStatus.ABANDONED,
-      },
-      order: { abandonedAt: "DESC" },
-    });
-
-    return {
-      activeTodos,
-      completedTodos,
-      abandonedTodos,
-      totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
-    };
+    return await this.habitRepository.getHabitTodos(habitId);
   }
 
   async getHabitAnalytics(habitId: string): Promise<{
@@ -169,24 +136,8 @@ export class HabitService {
     recentTodos: Todo[];
   }> {
     const habit = await this.habitRepository.findById(habitId);
-
-    const totalTodos = await this.todoRepository.count({
-      where: { habitId },
-    });
-
-    const completedTodos = await this.todoRepository.count({
-      where: { habitId, status: TodoStatus.DONE },
-    });
-
-    const abandonedTodos = await this.todoRepository.count({
-      where: { habitId, status: TodoStatus.ABANDONED },
-    });
-
-    const recentTodos = await this.todoRepository.find({
-      where: { habitId },
-      order: { createdAt: "DESC" },
-      take: 10,
-    });
+    const { totalTodos, completedTodos, abandonedTodos, recentTodos } =
+      await this.habitRepository.getHabitAnalyticsData(habitId);
 
     const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
 
@@ -199,7 +150,7 @@ export class HabitService {
       longestStreak: habit.longestStreak,
       recentTodos,
     };
-  }
+  } 
 
   // 私有业务方法
   private async validateBusinessRules(dto: CreateHabitDto): Promise<void> {

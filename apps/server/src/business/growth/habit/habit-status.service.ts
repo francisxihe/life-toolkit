@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { HabitRepository } from "./habit.repository";
 import { HabitStatus } from "./entities";
-import { HabitDto } from "./dto";
+import { HabitDto } from "@life-toolkit/business-server";
 import { OperationByIdListDto } from "@/common/operation";
 
 @Injectable()
