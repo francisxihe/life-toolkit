@@ -1,7 +1,7 @@
 import { BaseModelDto } from "../../../base/base-model.dto";
 import { IntersectionType, OmitType } from "../../../common/mapped-types";
 import { Todo } from "../todo.entity";
-import { TaskDto } from "../../task/dto/task-model.dto";
+import { TaskDto } from "../../task";
 import { TodoRepeat } from "../todo-repeat.entity";
 
 export class TodoDto extends IntersectionType(

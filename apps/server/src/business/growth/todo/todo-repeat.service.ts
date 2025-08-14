@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, FindOptionsWhere, Between } from "typeorm";
+import { Repository } from "typeorm";
 import { Todo, TodoStatus, TodoRepeat, TodoSource } from "./entities";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { RepeatService } from "@life-toolkit/components-repeat/server";
-import { TodoBaseService } from "./todo-base.service";
 import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
 import { CreateTodoDto, TodoDto } from "@life-toolkit/business-server";
+import { TodoRepository } from "./todo.repository";
 
 // 添加dayjs插件
 dayjs.extend(isBetween);
@@ -17,9 +17,7 @@ export class TodoRepeatService extends RepeatService {
   constructor(
     @InjectRepository(TodoRepeat)
     private readonly todoRepeatRepository: Repository<TodoRepeat>,
-    @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>,
-    private readonly todoBaseService: TodoBaseService
+    private readonly todoRepo: TodoRepository
   ) {
     super(todoRepeatRepository);
   }
@@ -69,17 +67,10 @@ export class TodoRepeatService extends RepeatService {
     }
 
     // 检查是否已经存在该日期的待办
-    const where: FindOptionsWhere<Todo> = {
-      repeatId: repeat.id,
-      planDate: Between(
-        nextDate.startOf("day").toDate(),
-        nextDate.endOf("day").toDate()
-      ),
-    };
-
-    const existingTodo = await this.todoRepository.findOne({
-      where,
-    });
+    const existingTodo = await this.todoRepo.findOneByRepeatAndDate(
+      repeat.id,
+      nextDate.toDate()
+    );
 
     if (existingTodo) {
       return;
@@ -99,14 +90,11 @@ export class TodoRepeatService extends RepeatService {
       taskId: todoWithRepeat.taskId,
     };
 
-    // 直接通过Repository创建并设置repeatId
-    const newTodo = this.todoRepository.create({
-      ...createTodoDto,
+    // 通过仓储创建并设置 repeatId、source
+    const savedTodo = await this.todoRepo.createWithExtras(createTodoDto, {
       repeatId: repeat.id,
       source: TodoSource.REPEAT,
     });
-
-    const savedTodo = await this.todoRepository.save(newTodo);
     
     // 更新重复配置，将其与新创建的待办关联
     await this.update(repeat.id, {

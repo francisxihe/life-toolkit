@@ -12,9 +12,10 @@ import {
 import { Goal } from "../goal/entities";
 import { Todo, TodoStatus } from "../todo/entities";
 import { HabitMapper } from "@life-toolkit/business-server";
+import { HabitRepository as BusinessHabitRepository } from "@life-toolkit/business-server";
 
 @Injectable()
-export class HabitRepository {
+export class HabitRepository implements BusinessHabitRepository {
   constructor(
     @InjectRepository(Habit)
     private readonly habitRepository: Repository<Habit>,
@@ -155,14 +156,14 @@ export class HabitRepository {
     }
   }
 
-  async batchUpdate(ids: string[], updateData: Partial<Habit>): Promise<void> {
+  async batchUpdate(ids: string[], updateData: Partial<any>): Promise<void> {
     await this.habitRepository.update(
       { id: In(ids) },
       updateData
     );
   }
 
-  async updateStatus(id: string, status: HabitStatus, additionalData?: Partial<Habit>): Promise<void> {
+  async updateStatus(id: string, status: HabitStatus, additionalData?: Record<string, any>): Promise<void> {
     const updateData = { status, ...additionalData };
     await this.habitRepository.update({ id }, updateData);
   }
