@@ -20,45 +20,26 @@ export default class GoalService {
     this.goalService = new _GoalService(repo, this.treeRepo);
   }
 
-  async create(goalData: {
-    name: string;
-    type: GoalType;
-    status?: GoalStatus;
-    description?: string;
-    startDate?: Date;
-    endDate?: Date;
-    priority?: number;
-    parentId?: string;
-  }): Promise<GoalDto> {
-    const dto: CreateGoalDto = {
-      name: goalData.name,
-      type: goalData.type as any,
-      status: (goalData.status as any) ?? GoalStatus.TODO,
-      description: goalData.description,
-      importance: (goalData as any).importance,
-      startAt: goalData.startDate,
-      endAt: goalData.endDate,
-      parentId: goalData.parentId,
-    } as any;
-    return await this.goalService.create(dto);
+  async create(goalData: CreateGoalDto): Promise<GoalDto> {
+    return this.goalService.create(goalData);
   }
 
   async findById(id: string): Promise<GoalDto> {
     // 返回包含关系的详情，兼容原有调用
-    return await this.goalService.findDetail(id);
+    return this.goalService.findDetail(id);
   }
 
-  async findAll(): Promise<GoalDto[]> {
-    return await this.goalService.findAll({} as GoalListFilterDto);
+  async findAll(filter?: GoalListFilterDto): Promise<GoalDto[]> {
+    return this.goalService.findAll(filter);
   }
 
   async findRoots(): Promise<GoalDto[]> {
     // 返回根节点树
-    return await this.goalService.getTree({} as GoalListFilterDto);
+    return this.goalService.getTree({} as GoalListFilterDto);
   }
 
   async findTree(): Promise<GoalDto[]> {
-    return await this.goalService.getTree({} as GoalListFilterDto);
+    return this.goalService.getTree({} as GoalListFilterDto);
   }
 
   async findChildren(parentId: string): Promise<GoalDto[]> {
@@ -73,7 +54,7 @@ export default class GoalService {
     const ancestors = await this.treeRepo.findAncestors(node as any);
     if (ancestors.length > 1) {
       const parentId = (ancestors as any)[ancestors.length - 2].id as string;
-      return await this.goalService.findById(parentId);
+      return this.goalService.findById(parentId);
     }
     return null;
   }
@@ -90,7 +71,7 @@ export default class GoalService {
       parentId: data.parentId,
       doneAt: data.completedAt,
     } as any;
-    return await this.goalService.update(id, dto);
+    return this.goalService.update(id, dto);
   }
 
   async delete(id: string): Promise<void> {
@@ -98,15 +79,15 @@ export default class GoalService {
   }
 
   async findByType(type: GoalType): Promise<GoalDto[]> {
-    return await this.goalService.findAll({ type } as any);
+    return this.goalService.findAll({ type } as any);
   }
 
   async findByStatus(status: GoalStatus): Promise<GoalDto[]> {
-    return await this.goalService.findAll({ status } as any);
+    return this.goalService.findAll({ status } as any);
   }
 
   async findByDateRange(startDate: Date, endDate: Date): Promise<GoalDto[]> {
-    return await this.goalService.findAll({
+    return this.goalService.findAll({
       startAt: startDate,
       endAt: endDate,
     } as any);

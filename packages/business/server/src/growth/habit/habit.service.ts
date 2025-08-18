@@ -16,22 +16,17 @@ export class HabitService {
 
   // 业务逻辑编排
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    await this.validateBusinessRules(createHabitDto);
-    const processedDto = await this.processCreateData(createHabitDto);
-    const result = await this.habitRepository.create(processedDto);
-    await this.afterCreate(result);
+    const result = await this.habitRepository.create(createHabitDto);
     return result;
   }
 
   async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
-    await this.checkPermission(filter);
     return await this.habitRepository.findAll(filter);
   }
 
   async page(
     filter: HabitPageFilterDto
   ): Promise<{ list: HabitDto[]; total: number }> {
-    await this.checkPermission(filter);
     return await this.habitRepository.page(filter);
   }
 
@@ -44,17 +39,12 @@ export class HabitService {
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    await this.validateUpdateRules(id, updateHabitDto);
-    const processedDto = await this.processUpdateData(updateHabitDto);
-    const result = await this.habitRepository.update(id, processedDto);
-    await this.afterUpdate(result);
+    const result = await this.habitRepository.update(id, updateHabitDto);
     return result;
   }
 
   async delete(id: string): Promise<void> {
-    await this.validateDelete(id);
     await this.habitRepository.delete(id);
-    await this.afterDelete(id);
   }
 
   async findByGoalId(goalId: string): Promise<HabitDto[]> {
@@ -98,48 +88,6 @@ export class HabitService {
       longestStreak: (habit as any).longestStreak,
       recentTodos,
     };
-  }
-
-  // 私有业务方法（预留扩展）
-  protected async validateBusinessRules(dto: CreateHabitDto): Promise<void> {
-    // hook: 例如检查名称重复、日期范围等
-  }
-
-  protected async processCreateData(dto: CreateHabitDto): Promise<CreateHabitDto> {
-    return dto;
-  }
-
-  protected async afterCreate(result: HabitDto): Promise<void> {
-    // hook
-  }
-
-  protected async validateUpdateRules(
-    id: string,
-    dto: UpdateHabitDto
-  ): Promise<void> {
-    // hook
-  }
-
-  protected async processUpdateData(
-    dto: UpdateHabitDto
-  ): Promise<UpdateHabitDto> {
-    return dto;
-  }
-
-  protected async afterUpdate(result: HabitDto): Promise<void> {
-    // hook
-  }
-
-  protected async validateDelete(id: string): Promise<void> {
-    // hook
-  }
-
-  protected async afterDelete(id: string): Promise<void> {
-    // hook
-  }
-
-  protected async checkPermission(filter: any): Promise<void> {
-    // hook
   }
 }
 
