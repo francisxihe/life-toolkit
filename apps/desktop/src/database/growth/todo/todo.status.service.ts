@@ -1,9 +1,9 @@
 import { Repository, In } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import { Todo, TodoStatus } from "./todo.entity";
-import { TodoStatusService } from "@life-toolkit/business-server";
+import { TodoStatusService as BusinessTodoStatusService } from "@life-toolkit/business-server";
 
-export class DesktopTodoStatusService implements TodoStatusService {
+export default class TodoStatusService implements BusinessTodoStatusService {
   private repo: Repository<Todo>;
   constructor() {
     this.repo = AppDataSource.getRepository(Todo);

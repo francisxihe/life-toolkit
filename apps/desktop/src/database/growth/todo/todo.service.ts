@@ -8,20 +8,25 @@ import {
   TodoListFilterDto,
   TodoPageFilterDto,
   TodoDto,
+  TodoMapper,
 } from "@life-toolkit/business-server";
-import { TodoRepository as DesktopTodoRepository } from "./todo.repository";
-import { DesktopTodoStatusService } from "./todo.status.service";
-import { DesktopTodoRepeatService } from "./todo.repeat.service";
+import { TodoRepository } from "./todo.repository";
+import TodoStatusService from "./todo.status.service";
+import TodoRepeatService from "./todo.repeat.service";
 
 export class TodoService {
   private service: BusinessTodoService;
   private repo: Repository<DesktopTodo>;
 
   constructor() {
-    const repeatService = new DesktopTodoRepeatService();
-    const todoRepository = new DesktopTodoRepository();
-    const statusService = new DesktopTodoStatusService();
-    this.service = new BusinessTodoService(repeatService as any, todoRepository as any, statusService as any);
+    const repeatService = new TodoRepeatService();
+    const todoRepository = new TodoRepository();
+    const statusService = new TodoStatusService();
+    this.service = new BusinessTodoService(
+      repeatService as any,
+      todoRepository as any,
+      statusService as any
+    );
     this.repo = AppDataSource.getRepository(DesktopTodo);
   }
 
@@ -69,7 +74,10 @@ export class TodoService {
     return await this.service.findAll({ status } as any);
   }
 
-  private async findByDateRange(startDate: Date, endDate: Date): Promise<TodoDto[]> {
+  private async findByDateRange(
+    startDate: Date,
+    endDate: Date
+  ): Promise<TodoDto[]> {
     const list = await this.repo
       .createQueryBuilder("todo")
       .leftJoinAndSelect("todo.task", "task")
@@ -83,8 +91,19 @@ export class TodoService {
 
   async findTodayTodos(): Promise<TodoDto[]> {
     const today = new Date();
-    const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59);
+    const startOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    const endOfDay = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      23,
+      59,
+      59
+    );
     return await this.findByDateRange(startOfDay, endOfDay);
   }
 
@@ -96,7 +115,9 @@ export class TodoService {
       .leftJoinAndSelect("todo.habit", "habit")
       .where("todo.planDate < :now", { now })
       .andWhere("todo.status != :doneStatus", { doneStatus: TodoStatus.DONE })
-      .andWhere("todo.status != :abandonedStatus", { abandonedStatus: TodoStatus.ABANDONED })
+      .andWhere("todo.status != :abandonedStatus", {
+        abandonedStatus: TodoStatus.ABANDONED,
+      })
       .orderBy("todo.planDate", "ASC")
       .getMany();
     return list as any;
@@ -117,7 +138,9 @@ export class TodoService {
       .leftJoinAndSelect("todo.habit", "habit")
       .where("todo.importance >= :importance", { importance: 8 })
       .andWhere("todo.status != :doneStatus", { doneStatus: TodoStatus.DONE })
-      .andWhere("todo.status != :abandonedStatus", { abandonedStatus: TodoStatus.ABANDONED })
+      .andWhere("todo.status != :abandonedStatus", {
+        abandonedStatus: TodoStatus.ABANDONED,
+      })
       .orderBy("todo.importance", "DESC")
       .addOrderBy("todo.planDate", "ASC")
       .getMany();
@@ -141,20 +164,23 @@ export class TodoService {
     return { total, todo, inProgress, done, abandoned };
   }
 
-  async update(id: string, data: {
-    name?: string;
-    status?: TodoStatus;
-    description?: string;
-    importance?: number;
-    urgency?: number;
-    tags?: string[];
-    planDate?: Date;
-    planStartAt?: string;
-    planEndAt?: string;
-    taskId?: string;
-    habitId?: string;
-    repeat?: any;
-  }): Promise<TodoDto> {
+  async update(
+    id: string,
+    data: {
+      name?: string;
+      status?: TodoStatus;
+      description?: string;
+      importance?: number;
+      urgency?: number;
+      tags?: string[];
+      planDate?: Date;
+      planStartAt?: string;
+      planEndAt?: string;
+      taskId?: string;
+      habitId?: string;
+      repeat?: any;
+    }
+  ): Promise<TodoDto> {
     const dto: UpdateTodoDto = {
       name: data.name,
       description: data.description,
@@ -176,13 +202,19 @@ export class TodoService {
     return await this.service.delete(id);
   }
 
-  async page(pageNum: number, pageSize: number): Promise<{
+  async page(
+    pageNum: number,
+    pageSize: number
+  ): Promise<{
     data: TodoDto[];
     total: number;
     pageNum: number;
     pageSize: number;
   }> {
-    const res = await this.service.page({ pageNum, pageSize } as unknown as TodoPageFilterDto);
+    const res = await this.service.page({
+      pageNum,
+      pageSize,
+    } as unknown as TodoPageFilterDto);
     return { data: res.list ?? [], total: res.total, pageNum, pageSize } as any;
   }
 
@@ -196,18 +228,22 @@ export class TodoService {
     taskId?: string;
     habitId?: string;
     source?: TodoSource;
-  }): Promise<TodoDto[]> {
+  }) {
     if (!filter) return await this.findAll();
     const f: any = {} as TodoListFilterDto;
     if (filter.status !== undefined) f.status = filter.status as any;
-    if (filter.importance !== undefined) f.importance = filter.importance as any;
+    if (filter.importance !== undefined)
+      f.importance = filter.importance as any;
     if (filter.urgency !== undefined) f.urgency = filter.urgency as any;
     if (filter.keyword) f.keyword = filter.keyword;
-    if (filter.planDateStart) f.planDateStart = (filter.planDateStart as any) as string;
-    if (filter.planDateEnd) f.planDateEnd = (filter.planDateEnd as any) as string;
+    if (filter.planDateStart)
+      f.planDateStart = filter.planDateStart as any as string;
+    if (filter.planDateEnd) f.planDateEnd = filter.planDateEnd as any as string;
     if (filter.taskId) f.taskId = filter.taskId;
     // habitId / source 非业务筛选字段，忽略或未来扩展
-    return await this.service.findAll(f);
+    const todoList = await this.service.findAll(f);
+
+    return TodoMapper.dtoToListVo(todoList);
   }
 
   async batchDone(ids: string[]): Promise<void> {

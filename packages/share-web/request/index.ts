@@ -1,4 +1,3 @@
-import { ElectronAPI } from "@life-toolkit/share-types";
 import { getElectronAPI, isElectronEnvironment } from "./electron";
 import { get, post, put, remove } from "./server";
 
@@ -13,7 +12,13 @@ export function request<T>({
   if (isElectronEnvironment()) {
     const electronAPI = getElectronAPI();
     if (electronAPI) {
-      return electronAPI[method];
+      // 重写
+      return async function (path: string, params?: any): Promise<T> {
+        console.log("Electron API调用:", method, path, params);
+        const res = await electronAPI[method](path, params);
+        console.log("Electron API调用:", res);
+        return res as Promise<T>;
+      };
     }
   }
   return {

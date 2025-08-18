@@ -10,7 +10,7 @@ import {
   Message,
   Empty,
 } from '@arco-design/web-react';
-import { HabitController } from '@life-toolkit/api/controller/habit';
+import { HabitController } from '../../../../../../packages/business/api/controller/habit';
 import { HabitVo, HabitStatus } from '@life-toolkit/vo/growth/habit';
 import { HABIT_STATUS_OPTIONS } from './constants';
 
