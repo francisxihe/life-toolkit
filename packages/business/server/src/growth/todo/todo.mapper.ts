@@ -1,5 +1,5 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { CreateTodoDto, UpdateTodoDto, TodoDto } from "./dto";
+import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoModelDto } from "./dto";
 import { TodoStatus } from "./todo.enum";
 import { Todo } from "./todo.entity";
 import dayjs from "dayjs";
@@ -8,8 +8,11 @@ import { TaskMapper } from "../task/task.mapper";
 import { RepeatMapper } from "@life-toolkit/components-repeat/server";
 
 export class TodoMapperEntity {
-  static entityToDto(entity: Todo): TodoDto {
-    const dto = new TodoDto();
+  /**
+   * 实体转模型DTO（仅基础字段，不含关联，Date 保持为 Date）
+   */
+  static entityToModelDto(entity: Todo): TodoModelDto {
+    const dto = new TodoModelDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
     dto.name = entity.name;
     dto.description = entity.description;
@@ -18,7 +21,6 @@ export class TodoMapperEntity {
     dto.importance = entity.importance;
     dto.urgency = entity.urgency;
     dto.planDate = entity.planDate;
-    dto.repeat = entity.repeat;
     dto.repeatId = entity.repeatId;
     dto.originalRepeatId = entity.originalRepeatId;
     dto.source = entity.source;
@@ -26,7 +28,15 @@ export class TodoMapperEntity {
     dto.abandonedAt = entity.abandonedAt;
     dto.planStartAt = entity.planStartAt;
     dto.planEndAt = entity.planEndAt;
-    dto.task = entity.task ? TaskMapper.entityToDto(entity.task) : undefined;
+    return dto;
+  }
+
+  static entityToDto(entity: Todo): TodoDto {
+    const dto = new TodoDto();
+    Object.assign(dto, this.entityToModelDto(entity));
+    // 关联属性（浅拷贝，避免递归）
+    dto.repeat = entity.repeat as any;
+    dto.task = entity.task as any;
     return dto;
   }
 }
@@ -42,14 +52,18 @@ class TodoMapperDto extends TodoMapperEntity {
       importance: dto.importance,
       urgency: dto.urgency,
       planDate: dayjs(dto.planDate).format("YYYY-MM-DD"),
-      planStartAt: dto.planStartAt,
-      planEndAt: dto.planEndAt,
+      planStartAt: dto.planStartAt
+        ? dayjs(dto.planStartAt).format("YYYY-MM-DD HH:mm:ss")
+        : undefined,
+      planEndAt: dto.planEndAt
+        ? dayjs(dto.planEndAt).format("YYYY-MM-DD HH:mm:ss")
+        : undefined,
       repeat: dto.repeat,
       doneAt: dto.doneAt
-        ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       abandonedAt: dto.abandonedAt
-        ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       task: dto.task ? TaskMapper.dtoToVo(dto.task) : undefined,
     };
@@ -92,8 +106,6 @@ class TodoMapperVo extends TodoMapperDto {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
-    console.log("vo.repeat", vo.repeat);
-    console.log("vo.repeat", RepeatMapper);
     dto.repeat = vo.repeat ? RepeatMapper.voToCreateDto(vo.repeat) : undefined;
     dto.taskId = vo.taskId;
     return dto;

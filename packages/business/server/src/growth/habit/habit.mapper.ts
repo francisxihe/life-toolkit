@@ -113,24 +113,24 @@ export class HabitMapper {
   }
 
   // DTO 列表转 VO 列表
-  static dtoToListVo(dtos: HabitDto[]): HabitVO.HabitListVo {
-    if (!Array.isArray(dtos)) {
+  static dtoToListVo(dtoList: HabitDto[]): HabitVO.HabitListVo {
+    if (!Array.isArray(dtoList)) {
       return { list: [] };
     }
     return {
-      list: dtos.map(dto => this.dtoToItemVo(dto)),
+      list: dtoList.map((dto) => this.dtoToItemVo(dto)),
     };
   }
 
   // DTO 分页转 VO 分页
   static dtoToPageVo(
-    dtos: HabitDto[],
+    dtoList: HabitDto[],
     total: number,
     pageNum: number,
     pageSize: number
   ): HabitVO.HabitPageVo {
     return {
-      list: dtos.map(dto => this.dtoToItemVo(dto)),
+      list: dtoList.map((dto) => this.dtoToItemVo(dto)),
       total,
       pageNum,
       pageSize,

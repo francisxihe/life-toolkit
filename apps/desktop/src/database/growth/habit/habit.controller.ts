@@ -1,31 +1,54 @@
 import { ipcMain } from 'electron';
 import { habitService } from './habit.service';
 import { HabitStatus } from './habit.entity';
+import type { Habit as HabitVO } from '@life-toolkit/vo';
+import { HabitMapper } from '@life-toolkit/business-server';
 
 /**
  * 注册习惯相关的 IPC 处理器
  */
 export function registerHabitIpcHandlers(): void {
   // 习惯相关
-  ipcMain.handle('/habit/create', async (_, habitData) => {
-    return await habitService.createHabit(habitData);
-  });
+  ipcMain.handle(
+    '/habit/create',
+    async (
+      _,
+      createVo: HabitVO.CreateHabitVo
+    ): Promise<HabitVO.HabitVo> => {
+      const createDto = HabitMapper.voToCreateDto(createVo);
+      const dto = await habitService.create(createDto as any);
+      return HabitMapper.dtoToVo(dto);
+    }
+  );
 
-  ipcMain.handle('/habit/findAll', async () => {
-    return await habitService.findAll();
-  });
+  ipcMain.handle(
+    '/habit/findAll',
+    async (): Promise<HabitVO.HabitItemVo[]> => {
+      const list = await habitService.findAll();
+      return list.map((dto) => HabitMapper.dtoToItemVo(dto));
+    }
+  );
 
-  ipcMain.handle('/habit/findById', async (_, id) => {
-    return await habitService.findById(id);
-  });
+  ipcMain.handle(
+    '/habit/findById',
+    async (_, id: string): Promise<HabitVO.HabitVo> => {
+      const dto = await habitService.findById(id);
+      return HabitMapper.dtoToVo(dto);
+    }
+  );
 
   ipcMain.handle('/habit/findActiveHabits', async () => {
-    return await habitService.findActiveHabits();
+    const list = await habitService.findActiveHabits();
+    return list.map((dto) => HabitMapper.dtoToItemVo(dto));
   });
 
-  ipcMain.handle('/habit/findByStatus', async (_, status) => {
-    return await habitService.findByStatus(status);
-  });
+  ipcMain.handle(
+    '/habit/findByStatus',
+    async (_, status: any): Promise<HabitVO.HabitItemVo[]> => {
+      const list = await habitService.findByStatus(status);
+      return list.map((dto) => HabitMapper.dtoToItemVo(dto));
+    }
+  );
 
   ipcMain.handle('/habit/updateStreak', async (_, id, completed) => {
     return await habitService.updateStreak(id, completed);
@@ -51,22 +74,36 @@ export function registerHabitIpcHandlers(): void {
     return await habitService.completeHabit(id);
   });
 
-  ipcMain.handle('/habit/update', async (_, id: string, data) => {
-    return await habitService.update(id, data);
-  });
+  ipcMain.handle(
+    '/habit/update',
+    async (
+      _,
+      id: string,
+      updateVo: HabitVO.UpdateHabitVo
+    ): Promise<HabitVO.HabitVo> => {
+      const updateDto = HabitMapper.voToUpdateDto(updateVo);
+      const dto = await habitService.update(id, updateDto as any);
+      return HabitMapper.dtoToVo(dto);
+    }
+  );
 
   ipcMain.handle('/habit/delete', async (_, id: string) => {
     return await habitService.delete(id);
   });
 
-  ipcMain.handle('/habit/page', async (_, filter: any) => {
-    const pageNum = Number(filter.pageNum) || 1;
-    const pageSize = Number(filter.pageSize) || 10;
-    return await habitService.page(pageNum, pageSize);
-  });
+  ipcMain.handle(
+    '/habit/page',
+    async (_, filter: any): Promise<HabitVO.HabitPageVo> => {
+      const pageNum = Number(filter.pageNum) || 1;
+      const pageSize = Number(filter.pageSize) || 10;
+      const res = await habitService.page(pageNum, pageSize);
+      return HabitMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
+    }
+  );
 
   ipcMain.handle('/habit/list', async () => {
-    return await habitService.list();
+    const list = await habitService.list();
+    return HabitMapper.dtoToListVo(list);
   });
 
   ipcMain.handle('/habit/findByIdWithRelations', async (_, id: string) => {
@@ -74,7 +111,8 @@ export function registerHabitIpcHandlers(): void {
   });
 
   ipcMain.handle('/habit/findByGoalId', async (_, goalId: string) => {
-    return await habitService.findByGoalId(goalId);
+    const list = await habitService.findByGoalId(goalId);
+    return list.map((dto) => HabitMapper.dtoToItemVo(dto));
   });
 
   ipcMain.handle('/habit/getHabitTodos', async (_, id: string) => {
@@ -90,11 +128,13 @@ export function registerHabitIpcHandlers(): void {
   });
 
   ipcMain.handle('/habit/abandon', async (_, id: string) => {
-    return await habitService.update(id, { status: HabitStatus.PAUSED });
+    const dto = await habitService.update(id, { status: HabitStatus.PAUSED });
+    return HabitMapper.dtoToVo(dto as any);
   });
 
   ipcMain.handle('/habit/restore', async (_, id: string) => {
-    return await habitService.update(id, { status: HabitStatus.ACTIVE });
+    const dto = await habitService.update(id, { status: HabitStatus.ACTIVE });
+    return HabitMapper.dtoToVo(dto as any);
   });
 
   ipcMain.handle('/habit/pause', async (_, id: string) => {

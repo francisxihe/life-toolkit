@@ -3,6 +3,7 @@ import {
   CreateTaskDto,
   UpdateTaskDto,
   TaskDto,
+  TaskModelDto,
   TaskWithTrackTimeDto,
 } from "./dto";
 import { Task } from "./task.entity";
@@ -14,8 +15,11 @@ import { GoalMapper } from "../goal";
 import { TodoMapper } from "../todo";
 
 class TaskMapperEntity {
-  static entityToDto(entity: Task): TaskDto {
-    const dto = new TaskDto();
+  /**
+   * 实体转模型DTO（仅基础字段，不含关联，Date 保持为 Date）
+   */
+  static entityToModelDto(entity: Task): TaskModelDto {
+    const dto = new TaskModelDto();
     Object.assign(dto, BaseMapper.entityToDto(entity));
     dto.name = entity.name;
     dto.description = entity.description;
@@ -27,24 +31,29 @@ class TaskMapperEntity {
     dto.startAt = entity.startAt;
     dto.endAt = entity.endAt;
     dto.estimateTime = entity.estimateTime;
-    // 关联属性
-    dto.parent = entity.parent
-      ? TaskMapperEntity.entityToDto(entity.parent)
-      : undefined;
-    dto.children =
-      entity.children?.map((child) => TaskMapperEntity.entityToDto(child)) ||
-      [];
-    dto.goal = entity.goal ? GoalMapper.entityToDto(entity.goal) : undefined;
-    dto.trackTimeList = [];
-    dto.todoList =
-      entity.todoList?.map((todo) => TodoMapper.entityToDto(todo)) || [];
     dto.tags = entity.tags;
+    return dto;
+  }
+
+  static entityToDto(entity: Task): TaskDto {
+    const dto = new TaskDto();
+    Object.assign(dto, this.entityToModelDto(entity));
+
+    // 关联属性（浅拷贝，避免递归与循环引用）
+    dto.parent = entity.parent as any;
+    dto.children = (entity.children as any) || [];
+    dto.goal = entity.goal as any;
+    dto.trackTimeList = [];
+    dto.todoList = (entity.todoList as any) || [];
     return dto;
   }
 }
 
 class TaskMapperDto extends TaskMapperEntity {
-  static dtoToVo(dto: TaskDto): TaskVO.TaskVo {
+  /**
+   * DTO 转为 Item VO（不含关联），并统一日期格式
+   */
+  static dtoToItemVo(dto: TaskDto): any {
     return {
       ...BaseMapper.dtoToVo(dto),
       name: dto.name || "",
@@ -54,19 +63,26 @@ class TaskMapperDto extends TaskMapperEntity {
       importance: dto.importance,
       urgency: dto.urgency,
       startAt: dto.startAt
-        ? dayjs(dto.startAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.startAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       endAt: dto.endAt
-        ? dayjs(dto.endAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.endAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       doneAt: dto.doneAt
-        ? dayjs(dto.doneAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       abandonedAt: dto.abandonedAt
-        ? dayjs(dto.abandonedAt).format("YYYY/MM/DD HH:mm:ss")
+        ? dayjs(dto.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
       estimateTime: dto.estimateTime,
-      parent: dto.parent ? this.dtoToVo(dto.parent) : undefined,
+    };
+  }
+
+  static dtoToVo(dto: TaskDto): TaskVO.TaskVo {
+    const itemVo = this.dtoToItemVo(dto);
+    return {
+      ...itemVo,
+      parent: dto.parent ? this.dtoToItemVo(dto.parent) : undefined,
       children: dto.children?.map((child) => this.dtoToVo(child)) || [],
       goal: dto.goal ? GoalMapper.dtoToVo(dto.goal) : undefined,
       trackTimeList: dto.trackTimeList?.map((trackTime) =>
