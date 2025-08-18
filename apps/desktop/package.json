@@ -16,6 +16,8 @@
   "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist && rm -rf .vite"
  },
  "dependencies": {
+  "@life-toolkit/business-server": "workspace:*",
+  "@life-toolkit/components-repeat": "workspace:*",
   "@life-toolkit/share-types": "workspace:*",
   "@life-toolkit/vo": "workspace:*",
   "class-transformer": "^0.5.1",

@@ -54,7 +54,7 @@ export function registerTaskIpcHandlers(): void {
   });
 
   ipcMain.handle('/task/taskWithTrackTime', async (_, id: string) => {
-    return await taskService.findById(id);
+    return await taskService.taskWithTrackTime(id);
   });
 
   ipcMain.handle('/task/batchDone', async (_, params: { idList: string[] }) => {

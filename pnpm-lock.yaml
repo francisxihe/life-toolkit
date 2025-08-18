@@ -62,6 +62,12 @@ importers:
 
   apps/desktop:
     dependencies:
+      '@life-toolkit/business-server':
+        specifier: workspace:*
+        version: link:../../packages/business/server
+      '@life-toolkit/components-repeat':
+        specifier: workspace:*
+        version: link:../../packages/components/repeat
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types

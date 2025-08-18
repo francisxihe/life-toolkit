@@ -1,5 +1,5 @@
 import { registerUserIpcHandlers } from '../database/users/user.controller';
-import { registerGoalIpcHandlers } from '../database/growth/goal/goal.controller';
+import { registerGoalIpcHandlers } from '../database/growth/goal';
 import { registerTaskIpcHandlers } from '../database/growth/task/task.controller';
 import { registerTodoIpcHandlers } from '../database/growth/todo/todo.controller';
 import { registerHabitIpcHandlers } from '../database/growth/habit/habit.controller';

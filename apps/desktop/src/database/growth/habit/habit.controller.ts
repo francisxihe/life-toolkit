@@ -70,19 +70,19 @@ export function registerHabitIpcHandlers(): void {
   });
 
   ipcMain.handle('/habit/findByIdWithRelations', async (_, id: string) => {
-    return await habitService.findById(id);
+    return await habitService.findByIdWithRelations(id);
   });
 
   ipcMain.handle('/habit/findByGoalId', async (_, goalId: string) => {
-    return await habitService.findAll();
+    return await habitService.findByGoalId(goalId);
   });
 
   ipcMain.handle('/habit/getHabitTodos', async (_, id: string) => {
-    return await habitService.findById(id);
+    return await habitService.getHabitTodos(id);
   });
 
   ipcMain.handle('/habit/getHabitAnalytics', async (_, id: string) => {
-    return await habitService.getHabitStatistics(id);
+    return await habitService.getHabitAnalytics(id);
   });
 
   ipcMain.handle('/habit/batchDone', async (_, params: { idList: string[] }) => {

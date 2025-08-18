@@ -1,13 +1,23 @@
-import { Repository } from "typeorm";
-import { BaseService } from "../../base.service";
-import { Habit, HabitStatus, HabitDifficulty } from "./habit.entity";
-import { AppDataSource } from "../../database.config";
+import { HabitStatus, HabitDifficulty } from "./habit.entity";
+import { HabitRepository } from "./habit.repository";
+import {
+  HabitService as BusinessHabitService,
+  CreateHabitDto,
+  UpdateHabitDto,
+  HabitListFilterDto,
+  HabitPageFilterDto,
+  HabitDto,
+} from "@life-toolkit/business-server";
 
-export class HabitService extends BaseService<Habit> {
+export class HabitService {
+  private service: BusinessHabitService;
+
   constructor() {
-    super(AppDataSource.getRepository(Habit));
+    const repo = new HabitRepository();
+    this.service = new BusinessHabitService(repo);
   }
 
+  // 兼容旧命名：createHabit -> create
   async createHabit(habitData: {
     name: string;
     status?: HabitStatus;
@@ -20,67 +30,97 @@ export class HabitService extends BaseService<Habit> {
     currentStreak?: number;
     longestStreak?: number;
     completedCount?: number;
-  }): Promise<Habit> {
-    return await this.create({
-      ...habitData,
-      status: habitData.status || HabitStatus.ACTIVE,
-      difficulty: habitData.difficulty || HabitDifficulty.MEDIUM,
-      currentStreak: habitData.currentStreak || 0,
-      longestStreak: habitData.longestStreak || 0,
-      completedCount: habitData.completedCount || 0,
-    });
+    goalIds?: string[];
+  }): Promise<HabitDto> {
+    return this.create(habitData as any);
   }
 
-  async findByStatus(status: HabitStatus): Promise<Habit[]> {
-    return await this.repository.find({
-      where: { status },
-      relations: ['goals', 'todos'],
-    });
+  async create(habitData: {
+    name: string;
+    status?: HabitStatus;
+    description?: string;
+    difficulty?: HabitDifficulty;
+    startDate?: Date;
+    targetDate?: Date;
+    importance?: number;
+    tags?: string[];
+    currentStreak?: number;
+    longestStreak?: number;
+    completedCount?: number;
+    goalIds?: string[];
+  }): Promise<HabitDto> {
+    const dto: CreateHabitDto = {
+      name: habitData.name,
+      description: habitData.description,
+      importance: habitData.importance,
+      tags: habitData.tags,
+      difficulty: habitData.difficulty as any,
+      startDate: habitData.startDate,
+      targetDate: habitData.targetDate,
+      goalIds: habitData.goalIds,
+    } as any;
+    return await this.service.create(dto);
   }
 
-  async findByDifficulty(difficulty: HabitDifficulty): Promise<Habit[]> {
-    return await this.repository.find({
-      where: { difficulty },
-      relations: ['goals', 'todos'],
-    });
+  async findById(id: string): Promise<HabitDto> {
+    return await this.service.findById(id);
   }
 
-  async findActiveHabits(): Promise<Habit[]> {
-    return await this.findByStatus(HabitStatus.ACTIVE);
+  async findByIdWithRelations(id: string): Promise<HabitDto> {
+    return await this.service.findByIdWithRelations(id);
   }
 
-  async findByDateRange(startDate: Date, endDate: Date): Promise<Habit[]> {
-    return await this.repository
-      .createQueryBuilder('habit')
-      .leftJoinAndSelect('habit.goals', 'goals')
-      .leftJoinAndSelect('habit.todos', 'todos')
-      .where('habit.startDate >= :startDate', { startDate })
-      .andWhere('(habit.targetDate IS NULL OR habit.targetDate <= :endDate)', { endDate })
-      .orderBy('habit.startDate', 'ASC')
-      .getMany();
+  async findAll(): Promise<HabitDto[]> {
+    return await this.service.findAll({} as HabitListFilterDto);
+  }
+
+  async findActiveHabits(): Promise<HabitDto[]> {
+    return await this.service.findAll({ status: HabitStatus.ACTIVE } as any);
+  }
+
+  async findByStatus(status: HabitStatus): Promise<HabitDto[]> {
+    return await this.service.findAll({ status } as any);
+  }
+
+  async findByGoalId(goalId: string): Promise<HabitDto[]> {
+    return await this.service.findByGoalId(goalId);
+  }
+
+  async update(id: string, data: any): Promise<HabitDto> {
+    const dto: UpdateHabitDto = {
+      name: data.name,
+      description: data.description,
+      importance: data.importance,
+      tags: data.tags,
+      difficulty: data.difficulty as any,
+      startDate: data.startDate,
+      targetDate: data.targetDate,
+      status: data.status as any,
+      currentStreak: data.currentStreak,
+      longestStreak: data.longestStreak,
+      completedCount: data.completedCount,
+      goalIds: data.goalIds,
+    } as any;
+    return await this.service.update(id, dto);
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.service.delete(id);
   }
 
   async updateStreak(id: string, completed: boolean): Promise<void> {
-    const habit = await this.findById(id);
-    if (!habit) return;
-
-    const updateData: Partial<Habit> = {};
-
-    if (completed) {
-      updateData.currentStreak = (habit.currentStreak || 0) + 1;
-      updateData.completedCount = (habit.completedCount || 0) + 1;
-      
-      // 更新最长连续天数
-      if (updateData.currentStreak > (habit.longestStreak || 0)) {
-        updateData.longestStreak = updateData.currentStreak;
-      }
-    } else {
-      updateData.currentStreak = 0;
-    }
-
-    await this.update(id, updateData);
+    await this.service.updateStreak(id, completed);
   }
 
+  async getHabitTodos(id: string) {
+    return await this.service.getHabitTodos(id);
+  }
+
+  async getHabitAnalytics(id: string) {
+    return await this.service.getHabitAnalytics(id);
+  }
+
+  // 兼容旧统计：复用业务聚合并计算 daysActive
   async getHabitStatistics(id: string): Promise<{
     currentStreak: number;
     longestStreak: number;
@@ -88,48 +128,77 @@ export class HabitService extends BaseService<Habit> {
     completionRate: number;
     daysActive: number;
   } | null> {
-    const habit = await this.findById(id);
-    if (!habit) return null;
-
-    const daysActive = habit.startDate 
-      ? Math.ceil((new Date().getTime() - habit.startDate.getTime()) / (1000 * 60 * 60 * 24))
+    const habit = await this.service.findById(id);
+    if (!habit) return null as any;
+    const analytics = await this.service.getHabitAnalytics(id);
+    const startDate = (habit as any).startDate as Date | undefined;
+    const daysActive = startDate
+      ? Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))
       : 0;
-    
-    const completionRate = daysActive > 0 
-      ? ((habit.completedCount || 0) / daysActive) * 100
-      : 0;
-
     return {
-      currentStreak: habit.currentStreak || 0,
-      longestStreak: habit.longestStreak || 0,
-      completedCount: habit.completedCount || 0,
-      completionRate: Math.round(completionRate * 100) / 100,
+      currentStreak: (habit as any).currentStreak || 0,
+      longestStreak: (habit as any).longestStreak || 0,
+      completedCount: analytics.completedTodos || 0,
+      completionRate: Math.round((analytics.completionRate || 0) * 100) / 100,
       daysActive,
     };
   }
 
-  async findHabitsNeedingAttention(): Promise<Habit[]> {
-    // 查找当前连续天数为0且状态为活跃的习惯
-    return await this.repository
-      .createQueryBuilder('habit')
-      .leftJoinAndSelect('habit.goals', 'goals')
-      .leftJoinAndSelect('habit.todos', 'todos')
-      .where('habit.status = :status', { status: HabitStatus.ACTIVE })
-      .andWhere('habit.currentStreak = 0')
-      .orderBy('habit.updatedAt', 'ASC')
-      .getMany();
+  async getOverallStatistics(): Promise<{
+    totalHabits: number;
+    activeHabits: number;
+    pausedHabits: number;
+    completedHabits: number;
+    averageStreak: number;
+  }> {
+    const list = await this.service.findAll({} as HabitListFilterDto);
+    const totalHabits = list.length;
+    const activeHabits = list.filter((h: any) => h.status === HabitStatus.ACTIVE).length;
+    const pausedHabits = list.filter((h: any) => h.status === HabitStatus.PAUSED).length;
+    const completedHabits = list.filter((h: any) => h.status === HabitStatus.COMPLETED).length;
+    const totalStreak = list.reduce((sum: number, h: any) => sum + (h.currentStreak || 0), 0);
+    const averageStreak = totalHabits > 0 ? Math.round((totalStreak / totalHabits) * 100) / 100 : 0;
+    return { totalHabits, activeHabits, pausedHabits, completedHabits, averageStreak };
   }
 
-  async findTopPerformingHabits(limit: number = 10): Promise<Habit[]> {
-    return await this.repository
-      .createQueryBuilder('habit')
-      .leftJoinAndSelect('habit.goals', 'goals')
-      .leftJoinAndSelect('habit.todos', 'todos')
-      .where('habit.status = :status', { status: HabitStatus.ACTIVE })
-      .orderBy('habit.longestStreak', 'DESC')
-      .addOrderBy('habit.currentStreak', 'DESC')
-      .limit(limit)
-      .getMany();
+  async page(pageNum: number, pageSize: number): Promise<{
+    data: HabitDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const res = await this.service.page({ pageNum, pageSize } as unknown as HabitPageFilterDto);
+    return {
+      data: res.list ?? [],
+      total: res.total,
+      pageNum,
+      pageSize,
+    } as any;
+  }
+
+  async list(filter?: {
+    status?: HabitStatus;
+    difficulty?: HabitDifficulty;
+    importance?: number;
+    keyword?: string;
+    startDateStart?: string;
+    startDateEnd?: string;
+    targetDateStart?: string;
+    targetDateEnd?: string;
+    goalId?: string;
+  }): Promise<HabitDto[]> {
+    const f: any = {} as HabitListFilterDto;
+    if (!filter) return await this.service.findAll(f);
+    if (filter.status !== undefined) f.status = filter.status as any;
+    if (filter.difficulty !== undefined) f.difficulty = filter.difficulty as any;
+    if (filter.importance !== undefined) (f as any).importance = filter.importance;
+    if (filter.keyword) (f as any).keyword = filter.keyword;
+    if (filter.startDateStart) (f as any).startDateStart = filter.startDateStart;
+    if (filter.startDateEnd) (f as any).startDateEnd = filter.startDateEnd;
+    if (filter.targetDateStart) (f as any).targetDateStart = filter.targetDateStart;
+    if (filter.targetDateEnd) (f as any).targetDateEnd = filter.targetDateEnd;
+    if (filter.goalId) (f as any).goalId = filter.goalId;
+    return await this.service.findAll(f);
   }
 
   async pauseHabit(id: string): Promise<void> {
@@ -141,103 +210,7 @@ export class HabitService extends BaseService<Habit> {
   }
 
   async completeHabit(id: string): Promise<void> {
-    await this.update(id, { 
-      status: HabitStatus.COMPLETED,
-      targetDate: new Date()
-    });
-  }
-
-  async getOverallStatistics(): Promise<{
-    totalHabits: number;
-    activeHabits: number;
-    pausedHabits: number;
-    completedHabits: number;
-    averageStreak: number;
-  }> {
-    const [total, active, paused, completed] = await Promise.all([
-      this.count(),
-      this.repository.count({ where: { status: HabitStatus.ACTIVE } }),
-      this.repository.count({ where: { status: HabitStatus.PAUSED } }),
-      this.repository.count({ where: { status: HabitStatus.COMPLETED } }),
-    ]);
-
-    // 计算平均连续天数
-    const habits = await this.repository.find();
-    const totalStreak = habits.reduce((sum, habit) => sum + (habit.currentStreak || 0), 0);
-    const averageStreak = habits.length > 0 ? totalStreak / habits.length : 0;
-
-    return {
-      totalHabits: total,
-      activeHabits: active,
-      pausedHabits: paused,
-      completedHabits: completed,
-      averageStreak: Math.round(averageStreak * 100) / 100,
-    };
-  }
-
-  async page(pageNum: number, pageSize: number): Promise<{
-    data: Habit[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
-    const [data, total] = await this.repository.findAndCount({
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-      order: { createdAt: 'DESC' },
-      relations: ['goals', 'todos'],
-    });
-
-    return {
-      data,
-      total,
-      pageNum,
-      pageSize,
-    };
-  }
-
-  async list(filter?: {
-    status?: HabitStatus;
-    difficulty?: HabitDifficulty;
-    importance?: number;
-    keyword?: string;
-    startDate?: Date;
-    targetDate?: Date;
-  }): Promise<Habit[]> {
-    if (!filter) {
-      return await this.findAll();
-    }
-
-    const queryBuilder = this.repository
-      .createQueryBuilder('habit')
-      .leftJoinAndSelect('habit.goals', 'goals')
-      .leftJoinAndSelect('habit.todos', 'todos');
-
-    if (filter.status !== undefined) {
-      queryBuilder.andWhere('habit.status = :status', { status: filter.status });
-    }
-
-    if (filter.difficulty !== undefined) {
-      queryBuilder.andWhere('habit.difficulty = :difficulty', { difficulty: filter.difficulty });
-    }
-
-    if (filter.importance !== undefined) {
-      queryBuilder.andWhere('habit.importance = :importance', { importance: filter.importance });
-    }
-
-    if (filter.keyword) {
-      queryBuilder.andWhere('habit.name LIKE :keyword', { keyword: `%${filter.keyword}%` });
-    }
-
-    if (filter.startDate) {
-      queryBuilder.andWhere('habit.startDate >= :startDate', { startDate: filter.startDate });
-    }
-
-    if (filter.targetDate) {
-      queryBuilder.andWhere('habit.targetDate <= :targetDate', { targetDate: filter.targetDate });
-    }
-
-    return await queryBuilder.orderBy('habit.createdAt', 'DESC').getMany();
+    await this.update(id, { status: HabitStatus.COMPLETED, targetDate: new Date() });
   }
 }
 

@@ -1,13 +1,23 @@
-import { TreeRepository } from "typeorm";
-import { Goal, GoalType, GoalStatus } from "./goal.entity";
-import { AppDataSource } from "../../database.config";
-import { v4 as uuidv4 } from "uuid";
+import { GoalType, GoalStatus } from "./goal.entity";
+import { GoalRepository } from "./goal.repository";
+import { GoalTreeRepository } from "./goal-tree.repository";
+import {
+  GoalService as _GoalService,
+  CreateGoalDto,
+  UpdateGoalDto,
+  GoalListFilterDto,
+  GoalPageFilterDto,
+  GoalDto,
+} from "@life-toolkit/business-server";
 
-export class GoalService {
-  private repository: TreeRepository<Goal>;
+export default class GoalService {
+  private goalService: _GoalService;
+  private treeRepo: GoalTreeRepository;
 
   constructor() {
-    this.repository = AppDataSource.getTreeRepository(Goal);
+    const repo = new GoalRepository();
+    this.treeRepo = new GoalTreeRepository();
+    this.goalService = new _GoalService(repo, this.treeRepo);
   }
 
   async create(goalData: {
@@ -19,110 +29,117 @@ export class GoalService {
     endDate?: Date;
     priority?: number;
     parentId?: string;
-  }): Promise<Goal> {
-    const goal = this.repository.create({
-      ...goalData,
-      id: uuidv4(),
-      status: goalData.status || GoalStatus.TODO,
-    });
+  }): Promise<GoalDto> {
+    const dto: CreateGoalDto = {
+      name: goalData.name,
+      type: goalData.type as any,
+      status: (goalData.status as any) ?? GoalStatus.TODO,
+      description: goalData.description,
+      importance: (goalData as any).importance,
+      startAt: goalData.startDate,
+      endAt: goalData.endDate,
+      parentId: goalData.parentId,
+    } as any;
+    return await this.goalService.create(dto);
+  }
 
-    if (goalData.parentId) {
-      const parent = await this.findById(goalData.parentId);
-      if (parent) {
-        goal.parent = parent;
-      }
+  async findById(id: string): Promise<GoalDto> {
+    // 返回包含关系的详情，兼容原有调用
+    return await this.goalService.findDetail(id);
+  }
+
+  async findAll(): Promise<GoalDto[]> {
+    return await this.goalService.findAll({} as GoalListFilterDto);
+  }
+
+  async findRoots(): Promise<GoalDto[]> {
+    // 返回根节点树
+    return await this.goalService.getTree({} as GoalListFilterDto);
+  }
+
+  async findTree(): Promise<GoalDto[]> {
+    return await this.goalService.getTree({} as GoalListFilterDto);
+  }
+
+  async findChildren(parentId: string): Promise<GoalDto[]> {
+    const detail = await this.goalService.findDetail(parentId);
+    return (detail?.children ?? []) as any;
+  }
+
+  async findParent(childId: string): Promise<GoalDto | null> {
+    // 简化：通过树仓储查询祖先
+    const node = await this.treeRepo.findOne({ id: childId } as any);
+    if (!node) return null;
+    const ancestors = await this.treeRepo.findAncestors(node as any);
+    if (ancestors.length > 1) {
+      const parentId = (ancestors as any)[ancestors.length - 2].id as string;
+      return await this.goalService.findById(parentId);
     }
-
-    return await this.repository.save(goal);
+    return null;
   }
 
-  async findById(id: string): Promise<Goal | null> {
-    return await this.repository.findOne({
-      where: { id },
-    });
-  }
-
-  async findAll(): Promise<Goal[]> {
-    return await this.repository.find();
-  }
-
-  async findRoots(): Promise<Goal[]> {
-    return await this.repository.findRoots();
-  }
-
-  async findTree(): Promise<Goal[]> {
-    return await this.repository.findTrees();
-  }
-
-  async findChildren(parentId: string): Promise<Goal[]> {
-    const parent = await this.findById(parentId);
-    if (!parent) return [];
-    
-    return await this.repository.findDescendants(parent);
-  }
-
-  async findParent(childId: string): Promise<Goal | null> {
-    const child = await this.findById(childId);
-    if (!child) return null;
-    
-    const ancestors = await this.repository.findAncestors(child);
-    return ancestors.length > 1 ? ancestors[ancestors.length - 2] : null;
-  }
-
-  async update(id: string, data: Partial<Goal>): Promise<void> {
-    await this.repository.update(id, data as any);
+  async update(id: string, data: any): Promise<GoalDto> {
+    const dto: UpdateGoalDto = {
+      name: data.name,
+      description: data.description,
+      type: data.type as any,
+      importance: data.importance,
+      status: data.status as any,
+      startAt: data.startDate,
+      endAt: data.endDate,
+      parentId: data.parentId,
+      doneAt: data.completedAt,
+    } as any;
+    return await this.goalService.update(id, dto);
   }
 
   async delete(id: string): Promise<void> {
-    await this.repository.softDelete(id);
+    await this.goalService.delete(id);
   }
 
-  async findByType(type: GoalType): Promise<Goal[]> {
-    return await this.repository.find({
-      where: { type },
-    });
+  async findByType(type: GoalType): Promise<GoalDto[]> {
+    return await this.goalService.findAll({ type } as any);
   }
 
-  async findByStatus(status: GoalStatus): Promise<Goal[]> {
-    return await this.repository.find({
-      where: { status },
-    });
+  async findByStatus(status: GoalStatus): Promise<GoalDto[]> {
+    return await this.goalService.findAll({ status } as any);
   }
 
-  async findByDateRange(startDate: Date, endDate: Date): Promise<Goal[]> {
-    return await this.repository
-      .createQueryBuilder('goal')
-      .where('goal.startDate >= :startDate', { startDate })
-      .andWhere('goal.endDate <= :endDate', { endDate })
-      .getMany();
+  async findByDateRange(startDate: Date, endDate: Date): Promise<GoalDto[]> {
+    return await this.goalService.findAll({
+      startAt: startDate,
+      endAt: endDate,
+    } as any);
   }
 
   async count(): Promise<number> {
-    return await this.repository.count();
+    const list = await this.goalService.findAll({} as GoalListFilterDto);
+    return list.length;
   }
 
-  async page(pageNum: number, pageSize: number): Promise<{
-    data: Goal[];
+  async page(
+    pageNum: number,
+    pageSize: number
+  ): Promise<{
+    data: GoalDto[];
     total: number;
     pageNum: number;
     pageSize: number;
   }> {
-    const [data, total] = await this.repository.findAndCount({
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-      order: { createdAt: 'DESC' },
-    });
-
-    return {
-      data,
-      total,
+    const res = await this.goalService.page({
       pageNum,
       pageSize,
-    };
+    } as unknown as GoalPageFilterDto);
+    return {
+      data: res.list ?? [],
+      total: res.total,
+      pageNum,
+      pageSize,
+    } as any;
   }
 
   async batchDone(ids: string[]): Promise<void> {
-    await this.repository.update(ids, { status: GoalStatus.DONE });
+    await this.goalService.batchDone(ids);
   }
 
   async list(filter?: {
@@ -133,42 +150,16 @@ export class GoalService {
     startDate?: Date;
     endDate?: Date;
     parentId?: string;
-  }): Promise<Goal[]> {
-    if (!filter) {
-      return await this.findAll();
-    }
-
-    const queryBuilder = this.repository.createQueryBuilder('goal');
-
-    if (filter.type !== undefined) {
-      queryBuilder.andWhere('goal.type = :type', { type: filter.type });
-    }
-
-    if (filter.status !== undefined) {
-      queryBuilder.andWhere('goal.status = :status', { status: filter.status });
-    }
-
-    if (filter.priority !== undefined) {
-      queryBuilder.andWhere('goal.priority = :priority', { priority: filter.priority });
-    }
-
-    if (filter.keyword) {
-      queryBuilder.andWhere('goal.name LIKE :keyword', { keyword: `%${filter.keyword}%` });
-    }
-
-    if (filter.startDate) {
-      queryBuilder.andWhere('goal.startDate >= :startDate', { startDate: filter.startDate });
-    }
-
-    if (filter.endDate) {
-      queryBuilder.andWhere('goal.endDate <= :endDate', { endDate: filter.endDate });
-    }
-
-    if (filter.parentId) {
-      queryBuilder.andWhere('goal.parentId = :parentId', { parentId: filter.parentId });
-    }
-
-    return await queryBuilder.orderBy('goal.createdAt', 'DESC').getMany();
+  }): Promise<GoalDto[]> {
+    const f: any = {} as GoalListFilterDto;
+    if (filter?.type !== undefined) f.type = filter.type as any;
+    if (filter?.status !== undefined) f.status = filter.status as any;
+    if (filter?.keyword) (f as any).keyword = filter.keyword;
+    if (filter?.startDate) f.startAt = filter.startDate;
+    if (filter?.endDate) f.endAt = filter.endDate;
+    if (filter?.parentId) f.parentId = filter.parentId;
+    const list = await this.goalService.findAll(f);
+    return list;
   }
 }
 
