@@ -1,4 +1,4 @@
-import { FindOptionsWhere, TreeRepository } from "typeorm";
+import { FindOptionsWhere } from "typeorm";
 import { Goal } from "./goal.entity";
 import { GoalStatus } from "./goal.enum";
 import {
@@ -39,9 +39,6 @@ export interface GoalRepository {
 }
 
 export interface GoalTreeRepository {
-  // 获取树形仓库
-  getTreeRepository(): TreeRepository<Goal>;
-
   // 基础查询
   findOne(
     where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]
@@ -61,12 +58,12 @@ export interface GoalTreeRepository {
   updateParent(
     currentGoal: Goal,
     parentId: string,
-    treeRepo?: TreeRepository<Goal>
+    treeRepo?: unknown
   ): Promise<void>;
 
   deleteDescendants(
     target: Goal | Goal[],
-    treeRepo?: TreeRepository<Goal>
+    treeRepo?: unknown
   ): Promise<void>;
 
   buildTree(node: Goal): Promise<Goal>;
