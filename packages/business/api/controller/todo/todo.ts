@@ -11,7 +11,7 @@ import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class TodoController {
   static async getTodo(todoId: string) {
-    return request<TodoVo>({ method: "get" })(`/todo/findById`, todoId);
+    return request<TodoVo>({ method: "get" })(`/todo/findById/${todoId}`);
   }
 
   static async batchDoneTodo(params: OperationByIdListVo) {
@@ -19,11 +19,11 @@ export default class TodoController {
   }
 
   static async restoreTodo(id: string) {
-    return request({ method: "put" })(`/todo/restore`, id);
+    return request({ method: "put" })(`/todo/restore/${id}`);
   }
 
   static async abandonTodo(id: string) {
-    return request({ method: "put" })(`/todo/abandon`, id);
+    return request({ method: "put" })(`/todo/abandon/${id}`);
   }
 
   static async addTodo(todo: CreateTodoVo) {
@@ -31,11 +31,11 @@ export default class TodoController {
   }
 
   static async deleteTodo(id: string) {
-    return request({ method: "remove" })("/todo/delete", id);
+    return request({ method: "remove" })(`/todo/delete/${id}`);
   }
 
   static async updateTodo(id: string, todo: Partial<TodoVo>) {
-    return request<TodoVo>({ method: "put" })("/todo/update", { id, ...todo });
+    return request<TodoVo>({ method: "put" })(`/todo/update/${id}`, todo);
   }
 
   static async getTodoList(params: TodoListFiltersVo = {}) {

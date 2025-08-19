@@ -19,11 +19,11 @@ export default class GoalController {
   }
 
   static async restoreGoal(id: string) {
-    return request<GoalVo>({ method: "put" })("/goal/restore", id);
+    return request<GoalVo>({ method: "put" })(`/goal/restore/${id}`);
   }
 
   static async abandonGoal(id: string) {
-    return request({ method: "put" })("/goal/abandon", id);
+    return request({ method: "put" })(`/goal/abandon/${id}`);
   }
 
   static async addGoal(goal: CreateGoalVo) {
@@ -31,11 +31,11 @@ export default class GoalController {
   }
 
   static async deleteGoal(id: string) {
-    return request<GoalVo>({ method: "remove" })("/goal/delete", id);
+    return request<GoalVo>({ method: "remove" })(`/goal/delete/${id}`);
   }
 
   static async updateGoal(id: string, goal: Partial<CreateGoalVo>) {
-    return request({ method: "put" })("/goal/update", { id, ...goal });
+    return request({ method: "put" })(`/goal/update/${id}`, goal);
   }
 
   static async getGoalList(params: GoalListFiltersVo = {}) {

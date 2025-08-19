@@ -3,149 +3,153 @@ import { goalService } from "./goal.service";
 import { GoalStatus } from "./goal.entity";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import { GoalMapper } from "@life-toolkit/business-server";
+import type { RouteDef, RestHandlerCtx } from "../../../main/rest-router";
 
-/**
- * 注册目标相关的 IPC 处理器
- */
-export function registerGoalIpcHandlers(): void {
-  // 目标相关
-  ipcMain.handle(
-    "/goal/create",
-    async (_, createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalItemVo> => {
-      const createDto = GoalMapper.voToCreateDto(createVo);
-      const dto = await goalService.create(createDto as any);
+// REST 路由表
+export const goalRestRoutes: RouteDef[] = [
+  {
+    method: "POST",
+    path: "/goal/create",
+    handler: async ({ payload }: RestHandlerCtx) => {
+      const dto = await goalService.create(
+        GoalMapper.voToCreateDto(payload) as any
+      );
       return GoalMapper.dtoToItemVo(dto);
-    }
-  );
+    },
+  },
+  {
+    method: "GET",
+    path: "/goal/findAll",
+    handler: async () => GoalMapper.dtoToVoList(await goalService.findAll()),
+  },
+  {
+    method: "GET",
+    path: "/goal/findById/:id",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVo(await goalService.findById(params.id)),
+  },
 
-  ipcMain.handle(
-    "/goal/findAll",
-    async (): Promise<GoalVO.GoalItemVo[]> => {
-      const list = await goalService.findAll();
-      return GoalMapper.dtoToVoList(list);
-    }
-  );
+  {
+    method: "GET",
+    path: "/goal/tree",
+    handler: async () =>
+      (await goalService.findTree()).map((dto: any) => GoalMapper.dtoToVo(dto)),
+  },
+  {
+    method: "GET",
+    path: "/goal/findRoots",
+    handler: async () =>
+      (await goalService.findRoots()).map((dto: any) =>
+        GoalMapper.dtoToVo(dto)
+      ),
+  },
 
-  ipcMain.handle(
-    "/goal/findById",
-    async (_, id: string): Promise<GoalVO.GoalVo> => {
-      const dto = await goalService.findById(id);
-      return GoalMapper.dtoToVo(dto);
-    }
-  );
+  {
+    method: "GET",
+    path: "/goal/findChildren",
+    handler: async ({ payload }) =>
+      (await goalService.findChildren(payload?.parentId)).map((dto: any) =>
+        GoalMapper.dtoToVo(dto)
+      ),
+  },
+  {
+    method: "GET",
+    path: "/goal/findChildren/:parentId",
+    handler: async ({ params }) =>
+      (await goalService.findChildren(params.parentId)).map((dto: any) =>
+        GoalMapper.dtoToVo(dto)
+      ),
+  },
 
-  ipcMain.handle(
-    "/goal/tree",
-    async (): Promise<GoalVO.GoalVo[]> => {
-      const list = await goalService.findTree();
-      return (list || []).map((dto: any) => GoalMapper.dtoToVo(dto));
-    }
-  );
+  {
+    method: "GET",
+    path: "/goal/findByType/:type",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVoList(await goalService.findByType(params.type as any)),
+  },
 
-  ipcMain.handle(
-    "/goal/findRoots",
-    async (): Promise<GoalVO.GoalVo[]> => {
-      const list = await goalService.findRoots();
-      return (list || []).map((dto: any) => GoalMapper.dtoToVo(dto));
-    }
-  );
+  {
+    method: "GET",
+    path: "/goal/findByStatus/:status",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVoList(
+        await goalService.findByStatus(params.status as any)
+      ),
+  },
 
-  ipcMain.handle(
-    "/goal/findChildren",
-    async (
-      _,
-      parentId: string
-    ): Promise<(GoalVO.GoalVo | GoalVO.GoalItemVo)[]> => {
-      const list = await goalService.findChildren(parentId);
-      return (list || []).map((dto: any) => GoalMapper.dtoToVo(dto));
-    }
-  );
+  {
+    method: "PUT",
+    path: "/goal/update/:id",
+    handler: async ({ params, payload }) =>
+      GoalMapper.dtoToVo(
+        await goalService.update(
+          params.id,
+          GoalMapper.voToUpdateDto(payload) as any
+        )
+      ),
+  },
 
-  ipcMain.handle(
-    "/goal/findByType",
-    async (_, type: any): Promise<GoalVO.GoalItemVo[]> => {
-      const list = await goalService.findByType(type);
-      return GoalMapper.dtoToVoList(list);
-    }
-  );
+  {
+    method: "DELETE",
+    path: "/goal/delete/:id",
+    handler: async ({ params }) => await goalService.delete(params.id),
+  },
 
-  ipcMain.handle(
-    "/goal/findByStatus",
-    async (_, status: any): Promise<GoalVO.GoalItemVo[]> => {
-      const list = await goalService.findByStatus(status);
-      return GoalMapper.dtoToVoList(list);
-    }
-  );
-
-  ipcMain.handle(
-    "/goal/update",
-    async (
-      _,
-      id: string,
-      updateVo: GoalVO.UpdateGoalVo
-    ): Promise<GoalVO.GoalVo> => {
-      const updateDto = GoalMapper.voToUpdateDto(updateVo);
-      const dto = await goalService.update(id, updateDto as any);
-      return GoalMapper.dtoToVo(dto);
-    }
-  );
-
-  ipcMain.handle("/goal/delete", async (_, id: string) => {
-    return await goalService.delete(id);
-  });
-
-  ipcMain.handle(
-    "/goal/page",
-    async (_, filter: any): Promise<GoalVO.GoalPageVo> => {
-      const pageNum = Number(filter.pageNum) || 1;
-      const pageSize = Number(filter.pageSize) || 10;
+  {
+    method: "GET",
+    path: "/goal/page",
+    handler: async ({ payload }) => {
+      const pageNum = Number(payload?.pageNum) || 1;
+      const pageSize = Number(payload?.pageSize) || 10;
       const res = await goalService.page(pageNum, pageSize);
       return GoalMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
-    }
-  );
+    },
+  },
 
-  ipcMain.handle("/goal/batchDone", async (_, params: { idList: string[] }) => {
-    return await goalService.batchDone(params.idList);
-  });
+  {
+    method: "POST",
+    path: "/goal/batchDone",
+    handler: async ({ payload }) =>
+      await goalService.batchDone(payload?.idList ?? []),
+  },
 
-  ipcMain.handle(
-    "/goal/list",
-    async (_, filter: any): Promise<GoalVO.GoalListVo> => {
-      const list = await goalService.list(filter);
-      return GoalMapper.dtoToListVo(list);
-    }
-  );
+  {
+    method: "GET",
+    path: "/goal/list",
+    handler: async ({ payload }) =>
+      GoalMapper.dtoToListVo(await goalService.list(payload)),
+  },
+  {
+    method: "GET",
+    path: "/goal/getTree",
+    handler: async () =>
+      (await goalService.findTree()).map((dto: any) => GoalMapper.dtoToVo(dto)),
+  },
+  {
+    method: "GET",
+    path: "/goal/findDetail/:id",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVo(await goalService.findById(params.id)),
+  },
 
-  ipcMain.handle(
-    "/goal/getTree",
-    async (): Promise<GoalVO.GoalVo[]> => {
-      const list = await goalService.findTree();
-      return (list || []).map((dto: any) => GoalMapper.dtoToVo(dto));
-    }
-  );
-
-  ipcMain.handle(
-    "/goal/findDetail",
-    async (_, id: string): Promise<GoalVO.GoalVo> => {
-      const dto = await goalService.findById(id);
-      return GoalMapper.dtoToVo(dto);
-    }
-  );
-
-  ipcMain.handle(
-    "/goal/abandon",
-    async (_, id: string): Promise<GoalVO.GoalVo> => {
-      const dto = await goalService.update(id, { status: GoalStatus.ABANDONED });
-      return GoalMapper.dtoToVo(dto as any);
-    }
-  );
-
-  ipcMain.handle(
-    "/goal/restore",
-    async (_, id: string): Promise<GoalVO.GoalVo> => {
-      const dto = await goalService.update(id, { status: GoalStatus.TODO });
-      return GoalMapper.dtoToVo(dto as any);
-    }
-  );
-}
-
+  {
+    method: "POST",
+    path: "/goal/abandon/:id",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVo(
+        (await goalService.update(params.id, {
+          status: GoalStatus.ABANDONED,
+        })) as any
+      ),
+  },
+  {
+    method: "POST",
+    path: "/goal/restore/:id",
+    handler: async ({ params }) =>
+      GoalMapper.dtoToVo(
+        (await goalService.update(params.id, {
+          status: GoalStatus.TODO,
+        })) as any
+      ),
+  },
+];

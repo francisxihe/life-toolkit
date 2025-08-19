@@ -16,11 +16,11 @@ export default class HabitController {
   }
 
   static async updateHabit(id: string, habit: Partial<CreateHabitVo>) {
-    return request<HabitVo>({ method: "put" })("/habit/update", { id, ...habit });
+    return request<HabitVo>({ method: "put" })(`/habit/update/${id}`, habit);
   }
 
   static async getHabitDetail(habitId: string) {
-    return request<HabitVo>({ method: "get" })("/habit/findById", habitId);
+    return request<HabitVo>({ method: "get" })(`/habit/findById/${habitId}`);
   }
 
   static async getHabitList(params: HabitListFiltersVo = {}) {
@@ -32,7 +32,7 @@ export default class HabitController {
   }
 
   static async deleteHabit(id: string) {
-    return request({ method: "remove" })("/habit/delete", id);
+    return request({ method: "remove" })(`/habit/delete/${id}`);
   }
 
   static async batchCompleteHabit(params: OperationByIdListVo) {
@@ -40,19 +40,19 @@ export default class HabitController {
   }
 
   static async abandonHabit(id: string) {
-    return request({ method: "put" })("/habit/abandon", id);
+    return request({ method: "put" })(`/habit/abandon/${id}`);
   }
 
   static async restoreHabit(id: string) {
-    return request({ method: "put" })("/habit/restore", id);
+    return request({ method: "put" })(`/habit/restore/${id}`);
   }
 
   static async pauseHabit(id: string) {
-    return request({ method: "put" })("/habit/pause", id);
+    return request({ method: "put" })(`/habit/pause/${id}`);
   }
 
   static async resumeHabit(id: string) {
-    return request({ method: "put" })("/habit/resume", id);
+    return request({ method: "put" })(`/habit/resume/${id}`);
   }
 
   static async getHabitTodos(id: string) {
@@ -61,7 +61,7 @@ export default class HabitController {
       completedTodos: any[];
       abandonedTodos: any[];
       totalCount: number;
-    }>({ method: "get" })("/habit/getHabitTodos", id);
+    }>({ method: "get" })(`/habit/getHabitTodos/${id}`);
   }
 
   static async getHabitAnalytics(id: string) {
@@ -73,6 +73,6 @@ export default class HabitController {
       currentStreak: number;
       longestStreak: number;
       recentTodos: any[];
-    }>({ method: "get" })("/habit/getHabitAnalytics", id);
+    }>({ method: "get" })(`/habit/getHabitAnalytics/${id}`);
   }
 }

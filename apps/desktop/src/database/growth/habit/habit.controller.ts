@@ -1,147 +1,188 @@
-import { ipcMain } from 'electron';
-import { habitService } from './habit.service';
-import { HabitStatus } from './habit.entity';
-import type { Habit as HabitVO } from '@life-toolkit/vo';
-import { HabitMapper } from '@life-toolkit/business-server';
+import { ipcMain } from "electron";
+import { habitService } from "./habit.service";
+import { HabitStatus } from "./habit.entity";
+import type { Habit as HabitVO } from "@life-toolkit/vo";
+import { HabitMapper } from "@life-toolkit/business-server";
+import type { RouteDef, RestHandlerCtx } from "../../../main/rest-router";
 
-/**
- * 注册习惯相关的 IPC 处理器
- */
-export function registerHabitIpcHandlers(): void {
-  // 习惯相关
-  ipcMain.handle(
-    '/habit/create',
-    async (
-      _,
-      createVo: HabitVO.CreateHabitVo
-    ): Promise<HabitVO.HabitVo> => {
-      const createDto = HabitMapper.voToCreateDto(createVo);
-      const dto = await habitService.create(createDto as any);
-      return HabitMapper.dtoToVo(dto);
-    }
-  );
+// REST 路由表
+export const habitRestRoutes: RouteDef[] = [
+  {
+    method: "POST",
+    path: "/habit/create",
+    handler: async ({ payload }: RestHandlerCtx) =>
+      HabitMapper.dtoToVo(
+        await habitService.create(HabitMapper.voToCreateDto(payload) as any)
+      ),
+  },
+  {
+    method: "GET",
+    path: "/habit/findAll",
+    handler: async () =>
+      (await habitService.findAll()).map((dto) => HabitMapper.dtoToItemVo(dto)),
+  },
+  {
+    method: "GET",
+    path: "/habit/findById/:id",
+    handler: async ({ params }) =>
+      HabitMapper.dtoToVo(await habitService.findById(params.id)),
+  },
 
-  ipcMain.handle(
-    '/habit/findAll',
-    async (): Promise<HabitVO.HabitItemVo[]> => {
-      const list = await habitService.findAll();
-      return list.map((dto) => HabitMapper.dtoToItemVo(dto));
-    }
-  );
+  {
+    method: "GET",
+    path: "/habit/findActiveHabits",
+    handler: async () =>
+      (await habitService.findActiveHabits()).map((dto) =>
+        HabitMapper.dtoToItemVo(dto)
+      ),
+  },
+  {
+    method: "GET",
+    path: "/habit/findByStatus/:status",
+    handler: async ({ params }) =>
+      (await habitService.findByStatus(params.status as any)).map((dto) =>
+        HabitMapper.dtoToItemVo(dto)
+      ),
+  },
 
-  ipcMain.handle(
-    '/habit/findById',
-    async (_, id: string): Promise<HabitVO.HabitVo> => {
-      const dto = await habitService.findById(id);
-      return HabitMapper.dtoToVo(dto);
-    }
-  );
+  {
+    method: "POST",
+    path: "/habit/updateStreak/:id",
+    handler: async ({ params, payload }) =>
+      await habitService.updateStreak(params.id, payload?.completed),
+  },
 
-  ipcMain.handle('/habit/findActiveHabits', async () => {
-    const list = await habitService.findActiveHabits();
-    return list.map((dto) => HabitMapper.dtoToItemVo(dto));
-  });
+  {
+    method: "GET",
+    path: "/habit/getStatistics/:id",
+    handler: async ({ params }) =>
+      await habitService.getHabitStatistics(params.id),
+  },
+  {
+    method: "GET",
+    path: "/habit/getOverallStatistics",
+    handler: async () => await habitService.getOverallStatistics(),
+  },
 
-  ipcMain.handle(
-    '/habit/findByStatus',
-    async (_, status: any): Promise<HabitVO.HabitItemVo[]> => {
-      const list = await habitService.findByStatus(status);
-      return list.map((dto) => HabitMapper.dtoToItemVo(dto));
-    }
-  );
+  {
+    method: "POST",
+    path: "/habit/pauseHabit",
+    handler: async ({ payload }) => await habitService.pauseHabit(payload?.id),
+  },
+  {
+    method: "POST",
+    path: "/habit/resumeHabit",
+    handler: async ({ payload }) => await habitService.resumeHabit(payload?.id),
+  },
+  {
+    method: "POST",
+    path: "/habit/completeHabit",
+    handler: async ({ payload }) =>
+      await habitService.completeHabit(payload?.id),
+  },
 
-  ipcMain.handle('/habit/updateStreak', async (_, id, completed) => {
-    return await habitService.updateStreak(id, completed);
-  });
+  {
+    method: "PUT",
+    path: "/habit/update/:id",
+    handler: async ({ params, payload }) =>
+      HabitMapper.dtoToVo(
+        await habitService.update(
+          params.id,
+          HabitMapper.voToUpdateDto(payload) as any
+        )
+      ),
+  },
 
-  ipcMain.handle('/habit/getStatistics', async (_, id) => {
-    return await habitService.getHabitStatistics(id);
-  });
+  {
+    method: "DELETE",
+    path: "/habit/delete/:id",
+    handler: async ({ params }) => await habitService.delete(params.id),
+  },
 
-  ipcMain.handle('/habit/getOverallStatistics', async () => {
-    return await habitService.getOverallStatistics();
-  });
-
-  ipcMain.handle('/habit/pauseHabit', async (_, id) => {
-    return await habitService.pauseHabit(id);
-  });
-
-  ipcMain.handle('/habit/resumeHabit', async (_, id) => {
-    return await habitService.resumeHabit(id);
-  });
-
-  ipcMain.handle('/habit/completeHabit', async (_, id) => {
-    return await habitService.completeHabit(id);
-  });
-
-  ipcMain.handle(
-    '/habit/update',
-    async (
-      _,
-      id: string,
-      updateVo: HabitVO.UpdateHabitVo
-    ): Promise<HabitVO.HabitVo> => {
-      const updateDto = HabitMapper.voToUpdateDto(updateVo);
-      const dto = await habitService.update(id, updateDto as any);
-      return HabitMapper.dtoToVo(dto);
-    }
-  );
-
-  ipcMain.handle('/habit/delete', async (_, id: string) => {
-    return await habitService.delete(id);
-  });
-
-  ipcMain.handle(
-    '/habit/page',
-    async (_, filter: any): Promise<HabitVO.HabitPageVo> => {
-      const pageNum = Number(filter.pageNum) || 1;
-      const pageSize = Number(filter.pageSize) || 10;
+  {
+    method: "GET",
+    path: "/habit/page",
+    handler: async ({ payload }) => {
+      const pageNum = Number(payload?.pageNum) || 1;
+      const pageSize = Number(payload?.pageSize) || 10;
       const res = await habitService.page(pageNum, pageSize);
       return HabitMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
-    }
-  );
+    },
+  },
+  {
+    method: "GET",
+    path: "/habit/list",
+    handler: async () => HabitMapper.dtoToListVo(await habitService.list()),
+  },
 
-  ipcMain.handle('/habit/list', async () => {
-    const list = await habitService.list();
-    return HabitMapper.dtoToListVo(list);
-  });
+  {
+    method: "GET",
+    path: "/habit/findByIdWithRelations/:id",
+    handler: async ({ params }) =>
+      await habitService.findByIdWithRelations(params.id),
+  },
 
-  ipcMain.handle('/habit/findByIdWithRelations', async (_, id: string) => {
-    return await habitService.findByIdWithRelations(id);
-  });
+  {
+    method: "GET",
+    path: "/habit/findByGoalId/:goalId",
+    handler: async ({ params }) =>
+      (await habitService.findByGoalId(params.goalId)).map((dto) =>
+        HabitMapper.dtoToItemVo(dto)
+      ),
+  },
 
-  ipcMain.handle('/habit/findByGoalId', async (_, goalId: string) => {
-    const list = await habitService.findByGoalId(goalId);
-    return list.map((dto) => HabitMapper.dtoToItemVo(dto));
-  });
+  {
+    method: "GET",
+    path: "/habit/getHabitTodos/:id",
+    handler: async ({ params }) => await habitService.getHabitTodos(params.id),
+  },
+  {
+    method: "GET",
+    path: "/habit/getHabitAnalytics/:id",
+    handler: async ({ params }) =>
+      await habitService.getHabitAnalytics(params.id),
+  },
 
-  ipcMain.handle('/habit/getHabitTodos', async (_, id: string) => {
-    return await habitService.getHabitTodos(id);
-  });
+  {
+    method: "POST",
+    path: "/habit/batchDone",
+    handler: async ({ payload }) =>
+      await Promise.all(
+        (payload?.idList ?? []).map((id: string) =>
+          habitService.update(id, { status: HabitStatus.COMPLETED })
+        )
+      ),
+  },
 
-  ipcMain.handle('/habit/getHabitAnalytics', async (_, id: string) => {
-    return await habitService.getHabitAnalytics(id);
-  });
+  {
+    method: "POST",
+    path: "/habit/abandon/:id",
+    handler: async ({ params }) =>
+      HabitMapper.dtoToVo(
+        (await habitService.update(params.id, {
+          status: HabitStatus.PAUSED,
+        })) as any
+      ),
+  },
+  {
+    method: "POST",
+    path: "/habit/restore/:id",
+    handler: async ({ params }) =>
+      HabitMapper.dtoToVo(
+        (await habitService.update(params.id, {
+          status: HabitStatus.ACTIVE,
+        })) as any
+      ),
+  },
 
-  ipcMain.handle('/habit/batchDone', async (_, params: { idList: string[] }) => {
-    return await Promise.all(params.idList.map(id => habitService.update(id, { status: HabitStatus.COMPLETED })));
-  });
-
-  ipcMain.handle('/habit/abandon', async (_, id: string) => {
-    const dto = await habitService.update(id, { status: HabitStatus.PAUSED });
-    return HabitMapper.dtoToVo(dto as any);
-  });
-
-  ipcMain.handle('/habit/restore', async (_, id: string) => {
-    const dto = await habitService.update(id, { status: HabitStatus.ACTIVE });
-    return HabitMapper.dtoToVo(dto as any);
-  });
-
-  ipcMain.handle('/habit/pause', async (_, id: string) => {
-    return await habitService.pauseHabit(id);
-  });
-
-  ipcMain.handle('/habit/resume', async (_, id: string) => {
-    return await habitService.resumeHabit(id);
-  });
-}
+  {
+    method: "POST",
+    path: "/habit/pause",
+    handler: async ({ payload }) => await habitService.pauseHabit(payload?.id),
+  },
+  {
+    method: "POST",
+    path: "/habit/resume",
+    handler: async ({ payload }) => await habitService.resumeHabit(payload?.id),
+  },
+];

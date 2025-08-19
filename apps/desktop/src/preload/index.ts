@@ -29,10 +29,22 @@ const exposeAPI = () => {
       loadURL: (url: string) => ipcRenderer.invoke("load-url", url),
       isElectron: true,
 
-      get: (path: string, params: any) => ipcRenderer.invoke(path, params),
-      post: (path: string, params: any) => ipcRenderer.invoke(path, params),
-      put: (path: string, params: any) => ipcRenderer.invoke(path, params),
-      remove: (path: string, params: any) => ipcRenderer.invoke(path, params),
+      get: (path: string, params: any) =>
+        ipcRenderer.invoke("REST", { method: "GET", path, payload: params }),
+      post: (path: string, params: any) =>
+        ipcRenderer.invoke("REST", {
+          method: "POST",
+          path,
+          payload: params,
+        }),
+      put: (path: string, params: any) =>
+        ipcRenderer.invoke("REST", { method: "PUT", path, payload: params }),
+      remove: (path: string, params: any) =>
+        ipcRenderer.invoke("REST", {
+          method: "DELETE",
+          path,
+          payload: params,
+        }),
 
       // 文件操作相关 API
       readFile: (filePath: string) => ipcRenderer.invoke("read-file", filePath),

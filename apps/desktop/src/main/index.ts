@@ -56,6 +56,66 @@ function getPreloadPath() {
   );
 }
 
+// 在开发环境下，监听主进程与数据库相关代码变更并重启应用
+function setupDevHotReload() {
+  if (!isDev) return;
+
+  // 解析 dist/main 目录（监听构建产物，确保在重编译完成后再重启）
+  function resolveDistMainPath(): string | null {
+    const candidates = [
+      path.resolve(currentDirPath, "../../dist/main"),
+      path.resolve(currentDirPath, "../main"),
+      path.resolve(process.cwd(), "dist/main"),
+    ];
+    for (const p of candidates) {
+      try {
+        if (fs.existsSync(p)) return p;
+      } catch {}
+    }
+    return null;
+  }
+
+  // 当构建产物变化时再重启，避免源文件变更导致的提前重启而加载到旧代码
+  let timer: NodeJS.Timeout | null = null;
+  const debounceMs = 600;
+  const scheduleRelaunch = () => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      console.log("[DEV] 检测到主进程构建产物变更，正在重启应用...");
+      app.relaunch();
+      app.exit(0);
+    }, debounceMs);
+  };
+
+  const startWatchingDistMain = (dir: string) => {
+    try {
+      fs.watch(dir, { recursive: true }, (_event, filename) => {
+        if (!filename) return;
+        if (/\.(js|cjs|mjs|map)$/.test(String(filename))) {
+          scheduleRelaunch();
+        }
+      });
+      console.log("[DEV] 已启用构建产物监听:", dir);
+    } catch (e) {
+      console.warn("[DEV] 监听构建产物失败:", dir, e);
+    }
+  };
+
+  const distMain = resolveDistMainPath();
+  if (distMain) {
+    startWatchingDistMain(distMain);
+  } else {
+    console.warn("[DEV] 未找到 dist/main 目录，等待构建产物生成后再附加监听...");
+    const interval = setInterval(() => {
+      const p = resolveDistMainPath();
+      if (p) {
+        clearInterval(interval);
+        startWatchingDistMain(p);
+      }
+    }, 1000);
+  }
+}
+
 // 保持对window对象的全局引用
 let mainWindow = null;
 
@@ -134,6 +194,9 @@ app.whenReady().then(async () => {
 
   // 注册 IPC 处理器
   registerIpcHandlers();
+
+  // 开发环境启用主进程热更新监听
+  setupDevHotReload();
 
   createWindow();
 

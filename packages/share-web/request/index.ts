@@ -8,16 +8,24 @@ export function request<T>({
   method,
 }: {
   method: "put" | "post" | "get" | "remove";
-}): (path: string, params?: any) => Promise<T> {
+}): (path: string, params?: Record<string, any>) => Promise<T> {
   if (isElectronEnvironment()) {
     const electronAPI = getElectronAPI();
     if (electronAPI) {
       // 重写
-      return async function (path: string, params?: any): Promise<T> {
+      return async function (
+        path: string,
+        params?: Record<string, any>
+      ): Promise<T> {
         console.log("Electron API调用:", method, path, params);
-        const res = await electronAPI[method](path, params);
-        console.log("Electron API调用:", res);
-        return res as Promise<T>;
+        try {
+          const res = await electronAPI[method](path, params);
+          console.log("Electron API返回:", res);
+          return res as Promise<T>;
+        } catch (error) {
+          console.error("Electron API调用失败:", error);
+          throw error;
+        }
       };
     }
   }

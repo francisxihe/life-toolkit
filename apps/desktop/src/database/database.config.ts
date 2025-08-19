@@ -5,7 +5,7 @@ import path from "path";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { User } from "./users/user.entity";
 import { Goal } from "./growth/goal/goal.entity";
-import { Task } from "./growth/task/task.entity"; 
+import { Task } from "./growth/task/task.entity";
 import { Todo } from "./growth/todo/todo.entity";
 import { Habit } from "./growth/habit/habit.entity";
 
@@ -30,7 +30,7 @@ export const AppDataSource = new DataSource({
   type: "sqlite",
   database: databasePath,
   synchronize: true, // 开发环境自动同步表结构
-  logging: process.env.NODE_ENV === "development",
+  logging: process.env.NODE_ENV === "development" ? ["error"] : undefined,
   entities: [User, Goal, Task, Todo, Habit],
   migrations: [],
   subscribers: [],
