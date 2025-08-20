@@ -7,7 +7,11 @@ import { BaseMapper } from "../../base/base.mapper";
 import { TaskMapper } from "../task/task.mapper";
 import { RepeatMapper } from "@life-toolkit/components-repeat/server";
 
-export class TodoMapperEntity {
+export class TodoMapper {
+  static importEntity<T>(entity: T): Todo {
+    return entity as Todo;
+  }
+
   /**
    * 实体转模型DTO（仅基础字段，不含关联，Date 保持为 Date）
    */
@@ -39,9 +43,9 @@ export class TodoMapperEntity {
     dto.task = entity.task as any;
     return dto;
   }
-}
 
-class TodoMapperDto extends TodoMapperEntity {
+  // =======
+
   static dtoToVo(dto: TodoDto): TodoVO.TodoVo {
     const vo: TodoVO.TodoVo = {
       ...BaseMapper.dtoToVo(dto),
@@ -95,9 +99,9 @@ class TodoMapperDto extends TodoMapperEntity {
     };
     return vo;
   }
-}
 
-class TodoMapperVo extends TodoMapperDto {
+  // =======
+
   static voToCreateDto(vo: TodoVO.CreateTodoVo): CreateTodoDto {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
@@ -124,5 +128,3 @@ class TodoMapperVo extends TodoMapperDto {
     return dto;
   }
 }
-
-export class TodoMapper extends TodoMapperVo {}

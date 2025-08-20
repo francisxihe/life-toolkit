@@ -101,22 +101,22 @@ export class TodoController {
     return await todoService.list(filter);
   }
 
-  @Post("/batchDone")
+  @Put("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
     return await todoService.batchDone(body?.idList ?? []);
   }
 
-  @Post("/abandon/:id")
+  @Put("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await todoService.abandon(id);
+    return await todoService.abandon(id); 
   }
 
-  @Post("/restore/:id")
+  @Put("/restore/:id")
   async restore(@Param("id") id: string) {
     return await todoService.restore(id);
   }
 
-  @Post("/done/:id")
+  @Put("/done/:id")
   async done(@Param("id") id: string) {
     return await todoService.done(id);
   }

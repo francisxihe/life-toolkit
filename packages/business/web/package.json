@@ -12,8 +12,7 @@
     }
   },
   "files": [
-    "src",
-    "public"
+    "src"
   ],
   "private": true,
   "scripts": {

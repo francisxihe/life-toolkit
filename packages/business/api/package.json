@@ -5,7 +5,6 @@
   "types": "index.ts",
   "dependencies": {
     "axios": "^0.24.0",
-    "@life-toolkit/vo": "workspace:*",
     "@life-toolkit/share-types": "workspace:*",
     "@life-toolkit/share-request": "workspace:*"
   },

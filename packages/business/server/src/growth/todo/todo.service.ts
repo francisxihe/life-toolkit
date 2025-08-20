@@ -1,4 +1,4 @@
-import { TodoRepository, TodoRepeatService, TodoStatusService } from "./todo.repository";
+import { TodoRepository, TodoRepeatService } from "./todo.repository";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -6,20 +6,18 @@ import {
   TodoListFilterDto,
   TodoDto,
 } from "./dto";
+import { TodoStatus } from "./todo.enum";
 
 export class TodoService {
   protected todoRepeatService: TodoRepeatService;
   protected todoRepository: TodoRepository;
-  protected todoStatusService: TodoStatusService;
 
   constructor(
     todoRepeatService: TodoRepeatService,
-    todoRepository: TodoRepository,
-    todoStatusService: TodoStatusService
+    todoRepository: TodoRepository
   ) {
     this.todoRepeatService = todoRepeatService;
     this.todoRepository = todoRepository;
-    this.todoStatusService = todoStatusService;
   }
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
@@ -29,7 +27,10 @@ export class TodoService {
       const todoRepeat = await this.todoRepeatService.create({
         ...(createTodoDto as any).repeat,
       });
-      await this.todoRepository.updateRepeatId((todo as any).id, (todoRepeat as any).id);
+      await this.todoRepository.updateRepeatId(
+        (todo as any).id,
+        (todoRepeat as any).id
+      );
     }
     return await this.todoRepository.findById((todo as any).id);
   }
@@ -38,9 +39,7 @@ export class TodoService {
     return await this.todoRepository.findAll(filter);
   }
 
-  async page(
-    filter: TodoPageFilterDto
-  ): Promise<{
+  async page(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -53,7 +52,10 @@ export class TodoService {
     const todo = await this.todoRepository.update(id, updateTodoDto);
 
     if ((updateTodoDto as any).repeat) {
-      await this.todoRepeatService.update((todo as any).id, (updateTodoDto as any).repeat);
+      await this.todoRepeatService.update(
+        (todo as any).id,
+        (updateTodoDto as any).repeat
+      );
     }
 
     return await this.todoRepository.findById(id);
@@ -72,19 +74,33 @@ export class TodoService {
     await this.todoRepository.softDeleteByTaskIds(taskIds);
   }
 
-  async batchDone(params: { idList: string[] }): Promise<void> {
-    await this.todoStatusService.batchDone(params);
+  async batchDone(params: { idList: string[] }): Promise<any> {
+    if (!params?.idList?.length) return;
+    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.status = TodoStatus.DONE;
+    updateTodoDto.doneAt = new Date();
+    await this.todoRepository.batchUpdate(params.idList, updateTodoDto);
   }
 
-  async done(id: string): Promise<void> {
-    await this.todoStatusService.done(id);
+  async done(id: string): Promise<any> {
+    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.status = TodoStatus.DONE;
+    updateTodoDto.doneAt = new Date();
+    await this.todoRepository.update(id, updateTodoDto);
   }
 
-  async abandon(id: string): Promise<void> {
-    await this.todoStatusService.abandon(id);
+  async abandon(id: string): Promise<any> {
+    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.status = TodoStatus.ABANDONED;
+    updateTodoDto.abandonedAt = new Date();
+    await this.todoRepository.update(id, updateTodoDto);
   }
 
-  async restore(id: string): Promise<void> {
-    await this.todoStatusService.restore(id);
+  async restore(id: string): Promise<any> {
+    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.status = TodoStatus.TODO;
+    updateTodoDto.doneAt = null as any;
+    updateTodoDto.abandonedAt = null as any;
+    await this.todoRepository.update(id, updateTodoDto);
   }
 }

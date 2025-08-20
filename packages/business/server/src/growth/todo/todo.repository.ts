@@ -10,7 +10,10 @@ import {
 export interface TodoRepository {
   create(createTodoDto: CreateTodoDto): Promise<TodoDto>;
   findOneByRepeatAndDate(repeatId: string, date: Date): Promise<TodoDto | null>;
-  createWithExtras(createTodoDto: CreateTodoDto, extras: Partial<Todo>): Promise<TodoDto>;
+  createWithExtras(
+    createTodoDto: CreateTodoDto,
+    extras: Partial<Todo>
+  ): Promise<TodoDto>;
   findAll(filter: TodoListFilterDto): Promise<TodoDto[]>;
   findPage(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
@@ -19,6 +22,10 @@ export interface TodoRepository {
     pageSize: number;
   }>;
   update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto>;
+  batchUpdate(
+    idList: string[],
+    updateTodoDto: UpdateTodoDto
+  ): Promise<TodoDto[]>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoPageFilterDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<TodoDto>;
@@ -29,11 +36,4 @@ export interface TodoRepository {
 export interface TodoRepeatService {
   create(dto: any): Promise<any>;
   update(id: string, dto: any): Promise<any>;
-}
-
-export interface TodoStatusService {
-  batchDone(params: { idList: string[] }): Promise<any>;
-  done(id: string): Promise<any>;
-  abandon(id: string): Promise<any>;
-  restore(id: string): Promise<any>;
 }

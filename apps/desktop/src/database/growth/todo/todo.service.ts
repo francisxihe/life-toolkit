@@ -11,7 +11,6 @@ import {
   TodoMapper,
 } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
-import TodoStatusService from "./todo.status.service";
 import TodoRepeatService from "./todo.repeat.service";
 
 export class TodoService {
@@ -21,11 +20,9 @@ export class TodoService {
   constructor() {
     const repeatService = new TodoRepeatService();
     const todoRepository = new TodoRepository();
-    const statusService = new TodoStatusService();
     this.service = new BusinessTodoService(
       repeatService as any,
-      todoRepository as any,
-      statusService as any
+      todoRepository as any
     );
     this.repo = AppDataSource.getRepository(DesktopTodo);
   }
@@ -222,8 +219,8 @@ export class TodoService {
     return TodoMapper.dtoToListVo(await this.service.findAll(filter));
   }
 
-  async batchDone(ids: string[]): Promise<void> {
-    await this.service.batchDone({ idList: ids });
+  async batchDone(idList: string[]): Promise<void> {
+    await this.service.batchDone({ idList: idList });  
   }
 
   async abandon(id: string): Promise<void> {

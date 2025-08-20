@@ -38,7 +38,7 @@ export class Todo extends BaseEntity {
   planEndAt?: string;
 
   /** 计划待办日期 */
-  planDate: Date = new Date();
+  planDate!: Date;
 
   /** 关联的任务 */
   task?: Task;

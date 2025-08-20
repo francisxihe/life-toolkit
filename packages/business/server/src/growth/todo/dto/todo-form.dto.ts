@@ -28,7 +28,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
 
 export class UpdateTodoDto extends IntersectionType(
   PartialType(OmitType(CreateTodoDto, ["repeat"] as const)),
-  PickType(Todo, ["id"] as const)
+  PickType(Todo, ["id"] as const),
+  PickType(TodoDto, ["doneAt", "abandonedAt"] as const)
 ) {
   repeat?: UpdateRepeatDto;
 }
