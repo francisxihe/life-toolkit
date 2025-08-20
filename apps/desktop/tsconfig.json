@@ -22,7 +22,9 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@life-toolkit/business-server": ["../../packages/business/server/src/index.ts"],
+      "@life-toolkit/business-web": ["../../packages/business/web/src/main.tsx"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts"],

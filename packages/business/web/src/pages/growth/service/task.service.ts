@@ -1,5 +1,5 @@
 import { Message } from '@arco-design/web-react';
-import TaskController from '../../../../../../packages/business/api/controller/task/task';
+import { TaskController } from '@life-toolkit/api';
 import type {
   CreateTaskVo,
   TaskPageFiltersVo,

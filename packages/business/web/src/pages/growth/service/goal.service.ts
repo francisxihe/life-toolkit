@@ -1,5 +1,5 @@
 import { Message } from '@arco-design/web-react';
-import GoalController from '../../../../../../packages/business/api/controller/goal/goal';
+import { GoalController } from '@life-toolkit/api';
 import type {
   CreateGoalVo,
   GoalPageFiltersVo,

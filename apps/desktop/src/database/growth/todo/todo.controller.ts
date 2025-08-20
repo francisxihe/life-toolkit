@@ -32,13 +32,6 @@ export class TodoController {
     return TodoMapper.dtoToVo(await todoService.findById(id));
   }
 
-  @Get("/findByStatus")
-  async findByStatusQuery(@Query() q?: { status?: TodoStatus | string }) {
-    return TodoMapper.dtoToVoList(
-      await todoService.findByStatus(q?.status as TodoStatus)
-    );
-  }
-
   @Get("/findByStatus/:status")
   async findByStatus(@Param("status") status: string) {
     return TodoMapper.dtoToVoList(
@@ -59,16 +52,6 @@ export class TodoController {
   @Get("/findHighImportanceTodos")
   async findHighImportanceTodos() {
     return TodoMapper.dtoToVoList(await todoService.findHighImportanceTodos());
-  }
-
-  @Put("/updateStatus")
-  async updateStatusBody(
-    @Body() payload: { id?: string; status?: TodoStatus }
-  ) {
-    return await todoService.updateStatus(
-      payload?.id,
-      payload?.status as TodoStatus
-    );
   }
 
   @Put("/updateStatus/:id")
@@ -112,8 +95,9 @@ export class TodoController {
   }
 
   @Get("/list")
-  async list(@Query() query: TodoListVo) {
-    const filter = new TodoListFilterDto(query);
+  async list(@Query() query: TodoVO.TodoListFiltersVo) {
+    const filter = new TodoListFilterDto();
+    filter.importVo(query);
     return await todoService.list(filter);
   }
 

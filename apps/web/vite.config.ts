@@ -1,8 +1,9 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import svgrPlugin from '@arco-plugins/vite-plugin-svgr';
-import vitePluginForArco from '@arco-plugins/vite-react';
+import { vitePluginForArco } from '@arco-plugins/vite-react';
 import { createHtmlPlugin } from 'vite-plugin-html';
+import path from 'path';
 
 // https://vitejs.dev/config/
 export default async ({ mode }: { mode: string }) => {
@@ -12,9 +13,16 @@ export default async ({ mode }: { mode: string }) => {
   return defineConfig({
     base: '/',
     resolve: {
-      alias: {
-        '@': '/src',
-      },
+      alias: [
+        {
+          find: /^@\/(.*)$/,
+          replacement: path.resolve(__dirname, '../../packages/business/web/src/$1'),
+        },
+        {
+          find: '@',
+          replacement: path.resolve(__dirname, 'src'),
+        },
+      ],
     },
     plugins: [
       react(),

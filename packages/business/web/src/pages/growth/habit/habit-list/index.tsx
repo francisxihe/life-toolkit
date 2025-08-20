@@ -12,8 +12,7 @@ import {
   Progress,
   Table,
 } from '@arco-design/web-react';
-import { HabitController } from '../../../../../../../packages/business/api/controller/habit';
-import { GoalController } from '../../../../../../../packages/business/api/controller/goal';
+import { HabitController, GoalController } from '@life-toolkit/api';
 import {
   HabitItemVo,
   HabitPageFiltersVo,

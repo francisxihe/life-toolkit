@@ -24,7 +24,7 @@ import {
   IconPlayArrow,
   IconClose,
 } from '@arco-design/web-react/icon';
-import { HabitController } from '../../../../../../packages/business/api/controller/habit';
+import { HabitController } from '@life-toolkit/api';
 import { HabitVo, HabitStatus } from '@life-toolkit/vo/growth/habit';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from './constants';
 import { useHabitContext } from './context';

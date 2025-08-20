@@ -1,5 +1,5 @@
 import { Message } from '@arco-design/web-react';
-import { HabitController } from '../../../../../../packages/business/api/controller/habit';
+import { HabitController } from '@life-toolkit/api';
 import type {
   CreateHabitVo,
   UpdateHabitVo,

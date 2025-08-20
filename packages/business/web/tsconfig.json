@@ -17,8 +17,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@life-toolkit/business-web": ["../../packages/business/web/src/main.tsx"]
+      "@/*": ["src/*"]
     },
     "experimentalDecorators": true,
     "useDefineForClassFields": true

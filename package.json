@@ -17,7 +17,7 @@
     "pre-commit": "turbo run pre-commit",
     "dev:server": "turbo run dev --filter=life-toolkit-server",
     "dev:web": "turbo run dev --filter=life-toolkit-web",
-    "dev:desktop": "turbo run dev --filter=life-toolkit-desktop & turbo run dev --filter=life-toolkit-web",
+    "dev:desktop": "turbo run dev --filter=life-toolkit-desktop",
     "deploy:server": "turbo run deploy --filter=life-toolkit-server",
     "deploy:web": "turbo run deploy --filter=life-toolkit-web"
   },

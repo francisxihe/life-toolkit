@@ -1,5 +1,5 @@
 // 主进程入口文件
-import 'reflect-metadata'
+import "reflect-metadata";
 import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs";
@@ -10,8 +10,8 @@ import electron from "electron";
 const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 
 // 导入数据库初始化功能
-import { initDB, setupDatabaseCleanup } from '../database/init'
-import { initIpcRouter } from './ipc-handlers';
+import { initDB, setupDatabaseCleanup } from "../database/init";
+import { initIpcRouter } from "./ipc-handlers";
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === "development";
@@ -62,8 +62,12 @@ function getPreloadPath() {
 // 保持对window对象的全局引用
 let mainWindow = null;
 
-// 默认加载的URL
-const DEFAULT_URL = "http://localhost:8080/growth/todo/todo-today";
+// 默认加载的URL - 使用渲染进程的开发服务器
+const DEFAULT_URL = isDev && process.env.ELECTRON_RENDERER_URL
+  ? process.env.ELECTRON_RENDERER_URL
+  : isDev
+  ? 'http://localhost:5174/'
+  : `file://${path.join(__dirname, '../renderer/index.html')}`;
 
 function createWindow() {
   // 创建浏览器窗口
@@ -84,19 +88,17 @@ function createWindow() {
   mainWindow.loadURL(DEFAULT_URL);
 
   // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
-  // mainWindow.webContents.once("did-finish-load", () => {
-  //   if (isDev) {
-  //     // 开发环境下延迟显示，避免热更新时抢夺焦点
-  //     setTimeout(() => {
-  //       if (mainWindow && !mainWindow.isDestroyed()) {
-  //         mainWindow.showInactive(); // 显示但不获得焦点
-  //       }
-  //     }, 100);
-  //   } else {
-  //     // 生产环境正常显示
-  //     mainWindow.show();
-  //   }
-  // });
+  mainWindow.webContents.once("did-finish-load", () => {
+    if (isDev) {
+      // 开发环境下延迟显示，避免热更新时抢夺焦点
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.showInactive(); // 显示但不获得焦点
+      }
+    } else {
+      // 生产环境正常显示
+      mainWindow.show();
+    }
+  });
 
   // 在开发环境中插入脚本解决跨域问题
   if (isDev) {
@@ -143,13 +145,13 @@ app.whenReady().then(async () => {
   // 初始化数据库
   try {
     await initDB();
-    console.log('数据库初始化完成');
+    console.log("数据库初始化完成");
   } catch (error) {
-    console.error('数据库初始化失败:', error);
+    console.error("数据库初始化失败:", error);
   }
 
   // 设置数据库清理
-  setupDatabaseCleanup()
+  setupDatabaseCleanup();
 
   // 注册 IPC 处理器
   initIpcRouter();

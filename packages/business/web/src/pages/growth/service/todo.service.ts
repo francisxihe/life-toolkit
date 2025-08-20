@@ -1,5 +1,5 @@
 import { Message } from '@arco-design/web-react';
-import TodoController from '../../../../../../packages/business/api/controller/todo/todo';
+import { TodoController } from '@life-toolkit/api';
 import type {
   CreateTodoVo,
   TodoPageFiltersVo,
