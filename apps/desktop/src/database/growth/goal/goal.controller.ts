@@ -1,155 +1,129 @@
-import { ipcMain } from "electron";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from "@life-toolkit/electron-ipc-router";
 import { goalService } from "./goal.service";
-import { GoalStatus } from "./goal.entity";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import { GoalMapper } from "@life-toolkit/business-server";
-import type { RouteDef, RestHandlerCtx } from "../../../main/rest-router";
+import { GoalStatus, GoalType } from "./goal.entity";
 
-// REST 路由表
-export const goalRestRoutes: RouteDef[] = [
-  {
-    method: "POST",
-    path: "/goal/create",
-    handler: async ({ payload }: RestHandlerCtx) => {
-      const dto = await goalService.create(
-        GoalMapper.voToCreateDto(payload) as any
-      );
-      return GoalMapper.dtoToItemVo(dto);
-    },
-  },
-  {
-    method: "GET",
-    path: "/goal/findAll",
-    handler: async () => GoalMapper.dtoToVoList(await goalService.findAll()),
-  },
-  {
-    method: "GET",
-    path: "/goal/findById/:id",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVo(await goalService.findById(params.id)),
-  },
+@Controller("/goal")
+export class GoalController {
+  @Post("/create")
+  async create(@Body() payload: GoalVO.CreateGoalVo) {
+    const dto = await goalService.create(GoalMapper.voToCreateDto(payload));
+    return GoalMapper.dtoToItemVo(dto);
+  }
 
-  {
-    method: "GET",
-    path: "/goal/tree",
-    handler: async () =>
-      (await goalService.findTree()).map((dto: any) => GoalMapper.dtoToVo(dto)),
-  },
-  {
-    method: "GET",
-    path: "/goal/findRoots",
-    handler: async () =>
-      (await goalService.findRoots()).map((dto: any) =>
-        GoalMapper.dtoToVo(dto)
-      ),
-  },
+  @Get("/findAll")
+  async findAll() {
+    return GoalMapper.dtoToVoList(await goalService.findAll());
+  }
 
-  {
-    method: "GET",
-    path: "/goal/findChildren",
-    handler: async ({ payload }) =>
-      (await goalService.findChildren(payload?.parentId)).map((dto: any) =>
-        GoalMapper.dtoToVo(dto)
-      ),
-  },
-  {
-    method: "GET",
-    path: "/goal/findChildren/:parentId",
-    handler: async ({ params }) =>
-      (await goalService.findChildren(params.parentId)).map((dto: any) =>
-        GoalMapper.dtoToVo(dto)
-      ),
-  },
+  @Get("/findById/:id")
+  async findById(@Param("id") id: string) {
+    return GoalMapper.dtoToVo(await goalService.findById(id));
+  }
 
-  {
-    method: "GET",
-    path: "/goal/findByType/:type",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVoList(await goalService.findByType(params.type as any)),
-  },
+  @Put("/update/:id")
+  async update(@Param("id") id: string, @Body() payload: GoalVO.UpdateGoalVo) {
+    const dto = await goalService.update(id, GoalMapper.voToUpdateDto(payload));
+    return GoalMapper.dtoToVo(dto);
+  }
 
-  {
-    method: "GET",
-    path: "/goal/findByStatus/:status",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVoList(
-        await goalService.findByStatus(params.status as any)
-      ),
-  },
+  @Delete("/delete/:id")
+  async remove(@Param("id") id: string) {
+    return await goalService.delete(id);
+  }
 
-  {
-    method: "PUT",
-    path: "/goal/update/:id",
-    handler: async ({ params, payload }) =>
-      GoalMapper.dtoToVo(
-        await goalService.update(
-          params.id,
-          GoalMapper.voToUpdateDto(payload) as any
-        )
-      ),
-  },
+  @Get("/page")
+  async page(
+    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
+  ) {
+    const pageNum = Number(q?.pageNum) || 1;
+    const pageSize = Number(q?.pageSize) || 10;
+    const res = await goalService.page(pageNum, pageSize);
+    return GoalMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
+  }
 
-  {
-    method: "DELETE",
-    path: "/goal/delete/:id",
-    handler: async ({ params }) => await goalService.delete(params.id),
-  },
+  @Get("/list")
+  async list(@Query() filter?: any) {
+    return GoalMapper.dtoToListVo(await goalService.list(filter));
+  }
 
-  {
-    method: "GET",
-    path: "/goal/page",
-    handler: async ({ payload }) => {
-      const pageNum = Number(payload?.pageNum) || 1;
-      const pageSize = Number(payload?.pageSize) || 10;
-      const res = await goalService.page(pageNum, pageSize);
-      return GoalMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
-    },
-  },
+  // --- 以下为对齐原 REST 路由补充 ---
 
-  {
-    method: "POST",
-    path: "/goal/batchDone",
-    handler: async ({ payload }) =>
-      await goalService.batchDone(payload?.idList ?? []),
-  },
+  @Get("/tree")
+  async tree() {
+    return (await goalService.findTree()).map((dto) => GoalMapper.dtoToVo(dto));
+  }
 
-  {
-    method: "GET",
-    path: "/goal/list",
-    handler: async ({ payload }) =>
-      GoalMapper.dtoToListVo(await goalService.list(payload)),
-  },
-  {
-    method: "GET",
-    path: "/goal/getTree",
-    handler: async () =>
-      (await goalService.findTree()).map((dto: any) => GoalMapper.dtoToVo(dto)),
-  },
-  {
-    method: "GET",
-    path: "/goal/findDetail/:id",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVo(await goalService.findById(params.id)),
-  },
+  @Get("/findRoots")
+  async findRoots() {
+    return (await goalService.findRoots()).map((dto) => GoalMapper.dtoToVo(dto));
+  }
 
-  {
-    method: "POST",
-    path: "/goal/abandon/:id",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVo(
-        (await goalService.update(params.id, {
-          status: GoalStatus.ABANDONED,
-        })) as any
-      ),
-  },
-  {
-    method: "POST",
-    path: "/goal/restore/:id",
-    handler: async ({ params }) =>
-      GoalMapper.dtoToVo(
-        (await goalService.update(params.id, {
-          status: GoalStatus.TODO,
-        })) as any
-      ),
-  },
-];
+  // GET /goal/findChildren （payload 透传 parentId）
+  @Get("/findChildren")
+  async findChildrenByQuery(@Query() q?: { parentId?: string }) {
+    const list = await goalService.findChildren(String(q?.parentId || ""));
+    return list.map((dto) => GoalMapper.dtoToVo(dto));
+  }
+
+  // GET /goal/findChildren/:parentId
+  @Get("/findChildren/:parentId")
+  async findChildrenByParam(@Param("parentId") parentId: string) {
+    const list = await goalService.findChildren(parentId);
+    return list.map((dto) => GoalMapper.dtoToVo(dto));
+  }
+
+  @Get("/findByType/:type")
+  async findByType(@Param("type") type: string) {
+    return GoalMapper.dtoToVoList(
+      await goalService.findByType(type as GoalType)
+    );
+  }
+
+  @Get("/findByStatus/:status")
+  async findByStatus(@Param("status") status: string) {
+    return GoalMapper.dtoToVoList(
+      await goalService.findByStatus(status as GoalStatus)
+    );
+  }
+
+  // 与 getTree 对齐（等价于 tree）
+  @Get("/getTree")
+  async getTree() {
+    return (await goalService.findTree()).map((dto) => GoalMapper.dtoToVo(dto));
+  }
+
+  @Get("/findDetail/:id")
+  async findDetail(@Param("id") id: string) {
+    return GoalMapper.dtoToVo(await goalService.findById(id));
+  }
+
+  @Post("/batchDone")
+  async batchDone(@Body() body?: { idList?: string[] }) {
+    await goalService.batchDone(body?.idList ?? []);
+  }
+
+  @Post("/abandon/:id")
+  async abandon(@Param("id") id: string) {
+    return GoalMapper.dtoToVo(
+      await goalService.update(id, { status: GoalStatus.ABANDONED } as any)
+    );
+  }
+
+  @Post("/restore/:id")
+  async restore(@Param("id") id: string) {
+    return GoalMapper.dtoToVo(
+      await goalService.update(id, { status: GoalStatus.TODO } as any)
+    );
+  }
+}

@@ -32,6 +32,17 @@ export default defineConfig({
       },
       minify: process.env.NODE_ENV === "production",
       sourcemap: process.env.NODE_ENV !== "production",
+      // 监听整个 src 目录的变化
+      watch: process.env.NODE_ENV === "development" ? {
+        include: [
+          path.resolve(currentDirPath, "src/main/**/*"),
+          path.resolve(currentDirPath, "src/database/**/*"),
+        ],
+      } : undefined,
+    },
+    // 开发环境配置
+    define: {
+      __DEV__: process.env.NODE_ENV === "development",
     },
   },
   preload: {

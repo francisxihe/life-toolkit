@@ -68,6 +68,9 @@ importers:
       '@life-toolkit/components-repeat':
         specifier: workspace:*
         version: link:../../packages/components/repeat
+      '@life-toolkit/electron-ipc-router':
+        specifier: workspace:*
+        version: link:../../packages/common/electron-ipc-router
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
@@ -80,9 +83,6 @@ importers:
       class-validator:
         specifier: ^0.14.0
         version: 0.14.1
-      find-my-way:
-        specifier: ^5.1.0
-        version: 5.6.0
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -469,6 +469,22 @@ importers:
         specifier: ^7.0.0
         version: 7.3.0(postcss@8.5.3)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)
 
+  packages/common/electron-ipc-router:
+    dependencies:
+      electron:
+        specifier: '*'
+        version: 36.2.0
+      find-my-way:
+        specifier: ^7.7.0
+        version: 7.7.0
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.14
+    devDependencies:
+      tsup:
+        specifier: ^7.0.0
+        version: 7.3.0(postcss@8.5.3)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))(typescript@5.7.3)
+
   packages/components-web/mind:
     dependencies:
       '@antv/data-set':
@@ -542,7 +558,7 @@ importers:
       '@arco-design/web-react':
         specifier: '*'
         version: 2.65.0(@types/react@18.3.18)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@life-toolkit/common-calendar':
+      '@life-toolkit/calendar':
         specifier: workspace:*
         version: link:../../common/calendar
       '@life-toolkit/common-web-utils':
@@ -5341,6 +5357,9 @@ packages:
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
+  fast-querystring@1.1.2:
+    resolution: {integrity: sha512-g6KuKWmFXc0fID8WWH0jit4g0AGBoJhCkJMb1RmbsSEUNvQ+ZC8D6CUZ+GtF8nMzSPXnhiePyyqqipzNNEnHjg==}
+
   fast-safe-stringify@2.1.1:
     resolution: {integrity: sha512-W+KJc2dmILlPplD/H4K9l9LcAHAfPtP6BY84uVLXQ6Evcz9Lcg33Y2z1IVblT6xdY54PXYVHEv+0Wpq8Io6zkA==}
 
@@ -5399,9 +5418,9 @@ packages:
     resolution: {integrity: sha512-6BN9trH7bp3qvnrRyzsBz+g3lZxTNZTbVO2EV1CS0WIcDbawYVdYvGflME/9QP0h0pYlCDBCTjYa9nZzMDpyxQ==}
     engines: {node: '>= 0.8'}
 
-  find-my-way@5.6.0:
-    resolution: {integrity: sha512-pFTzbl2u+iSrvVOGtfKenvDmNIhNtEcwbzvRMfx3TGO69fbO5udgTKtAZAaUfIUrHQWLkkWvhNafNz179kaCIw==}
-    engines: {node: '>=12'}
+  find-my-way@7.7.0:
+    resolution: {integrity: sha512-+SrHpvQ52Q6W9f3wJoJBbAQULJuNEEQwBvlvYwACDhBTLOTMiQ0HYWh4+vC3OivGP2ENcTI1oKlFA2OepJNjhQ==}
+    engines: {node: '>=14'}
 
   find-up@4.1.0:
     resolution: {integrity: sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==}
@@ -15872,6 +15891,10 @@ snapshots:
 
   fast-levenshtein@2.0.6: {}
 
+  fast-querystring@1.1.2:
+    dependencies:
+      fast-decode-uri-component: 1.0.1
+
   fast-safe-stringify@2.1.1: {}
 
   fast-shallow-equal@1.0.0: {}
@@ -15932,10 +15955,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  find-my-way@5.6.0:
+  find-my-way@7.7.0:
     dependencies:
-      fast-decode-uri-component: 1.0.1
       fast-deep-equal: 3.1.3
+      fast-querystring: 1.1.2
       safe-regex2: 2.0.0
 
   find-up@4.1.0:

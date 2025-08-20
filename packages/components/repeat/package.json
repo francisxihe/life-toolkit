@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@life-toolkit/common-web-utils": "workspace:*",
-    "@life-toolkit/common-calendar": "workspace:*"
+    "@life-toolkit/calendar": "workspace:*"
   },
   "peerDependencies": {
     "react": "*",

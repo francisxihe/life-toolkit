@@ -218,32 +218,8 @@ export class TodoService {
     return { data: res.list ?? [], total: res.total, pageNum, pageSize } as any;
   }
 
-  async list(filter?: {
-    status?: TodoStatus;
-    importance?: number;
-    urgency?: number;
-    keyword?: string;
-    planDateStart?: Date;
-    planDateEnd?: Date;
-    taskId?: string;
-    habitId?: string;
-    source?: TodoSource;
-  }) {
-    if (!filter) return await this.findAll();
-    const f: any = {} as TodoListFilterDto;
-    if (filter.status !== undefined) f.status = filter.status as any;
-    if (filter.importance !== undefined)
-      f.importance = filter.importance as any;
-    if (filter.urgency !== undefined) f.urgency = filter.urgency as any;
-    if (filter.keyword) f.keyword = filter.keyword;
-    if (filter.planDateStart)
-      f.planDateStart = filter.planDateStart as any as string;
-    if (filter.planDateEnd) f.planDateEnd = filter.planDateEnd as any as string;
-    if (filter.taskId) f.taskId = filter.taskId;
-    // habitId / source 非业务筛选字段，忽略或未来扩展
-    const todoList = await this.service.findAll(f);
-
-    return TodoMapper.dtoToListVo(todoList);
+  async list(filter: TodoListFilterDto) {
+    return TodoMapper.dtoToListVo(await this.service.findAll(filter));
   }
 
   async batchDone(ids: string[]): Promise<void> {

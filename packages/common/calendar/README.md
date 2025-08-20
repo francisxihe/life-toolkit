@@ -16,7 +16,7 @@
 ## 安装
 
 ```bash
-pnpm install @life-toolkit/common-calendar
+pnpm install @life-toolkit/calendar
 ```
 
 ## 基础用法
@@ -25,20 +25,20 @@ pnpm install @life-toolkit/common-calendar
 
 ```typescript
 // 方式1: 使用便捷函数
-import { isWorkday, isHoliday, getDateInfo } from '@life-toolkit/common-calendar';
+import { isWorkday, isHoliday, getDateInfo } from '@life-toolkit/calendar';
 
 // 方式2: 使用类实例
-import { ChineseCalendar } from '@life-toolkit/common-calendar';
+import { ChineseCalendar } from '@life-toolkit/calendar';
 const calendar = new ChineseCalendar();
 
 // 方式3: 使用默认实例
-import { calendar } from '@life-toolkit/common-calendar';
+import { calendar } from '@life-toolkit/calendar';
 ```
 
 ### 基本日期判断
 
 ```typescript
-import { isWorkday, isHoliday, isMakeupDay, getDateInfo } from '@life-toolkit/common-calendar';
+import { isWorkday, isHoliday, isMakeupDay, getDateInfo } from '@life-toolkit/calendar';
 
 // 判断是否为工作日
 console.log(isWorkday('2024-01-01')); // false (元旦)
@@ -72,7 +72,7 @@ import {
   getNonWorkdaysInYear,
   getWorkdaysInMonth,
   getNonWorkdaysInMonth 
-} from '@life-toolkit/common-calendar';
+} from '@life-toolkit/calendar';
 
 // 获取2024年所有工作日
 const workdays2024 = getWorkdaysInYear(2024);
@@ -94,7 +94,7 @@ console.log('2024年1月非工作日:', nonWorkdaysJan2024);
 ### 节假日和补班日信息
 
 ```typescript
-import { getHolidaysInYear, getMakeupDaysInYear } from '@life-toolkit/common-calendar';
+import { getHolidaysInYear, getMakeupDaysInYear } from '@life-toolkit/calendar';
 
 // 获取2024年所有节假日
 const holidays2024 = getHolidaysInYear(2024);
@@ -118,7 +118,7 @@ import {
   getPreviousWorkday, 
   getWorkdaysBetween,
   getWorkdaysInRange 
-} from '@life-toolkit/common-calendar';
+} from '@life-toolkit/calendar';
 
 // 获取下一个工作日
 const nextWorkday = getNextWorkday('2024-01-01'); // 元旦后的第一个工作日
@@ -140,7 +140,7 @@ console.log('1月份所有工作日:', workdaysInRange);
 ### 统计信息
 
 ```typescript
-import { getYearStatistics, getMonthStatistics } from '@life-toolkit/common-calendar';
+import { getYearStatistics, getMonthStatistics } from '@life-toolkit/calendar';
 
 // 获取年度统计
 const yearStats = getYearStatistics(2024);
@@ -175,7 +175,7 @@ console.log('2024年1月统计:', monthStats);
 ### 使用类实例
 
 ```typescript
-import { ChineseCalendar, DateType } from '@life-toolkit/common-calendar';
+import { ChineseCalendar, DateType } from '@life-toolkit/calendar';
 
 const calendar = new ChineseCalendar();
 
@@ -193,7 +193,7 @@ if (dateInfo.type === DateType.MAKEUP_DAY) {
 ### 错误处理
 
 ```typescript
-import { getWorkdaysBetween } from '@life-toolkit/common-calendar';
+import { getWorkdaysBetween } from '@life-toolkit/calendar';
 
 try {
   // 开始日期晚于结束日期会抛出错误

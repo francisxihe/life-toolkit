@@ -1,6 +1,5 @@
 import { ipcMain } from 'electron';
 import { userService } from './user.service';
-import type { RouteDef } from '../../main/rest-router';
 
 /**
  * 注册用户相关的 IPC 处理器

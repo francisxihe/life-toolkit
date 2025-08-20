@@ -11,7 +11,7 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../database/init'
-import { registerIpcHandlers } from './ipc-handlers';
+import { initIpcRouter } from './ipc-handlers';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === "development";
@@ -23,6 +23,7 @@ const currentDirPath = path.dirname(currentFilePath);
 // 输出路径信息，便于调试
 console.log("当前文件路径:", currentFilePath);
 console.log("当前目录路径:", currentDirPath);
+console.log("[热加载测试] 主进程已启动");
 
 // 获取最终的预加载脚本路径
 function getPreloadPath() {
@@ -56,65 +57,7 @@ function getPreloadPath() {
   );
 }
 
-// 在开发环境下，监听主进程与数据库相关代码变更并重启应用
-function setupDevHotReload() {
-  if (!isDev) return;
-
-  // 解析 dist/main 目录（监听构建产物，确保在重编译完成后再重启）
-  function resolveDistMainPath(): string | null {
-    const candidates = [
-      path.resolve(currentDirPath, "../../dist/main"),
-      path.resolve(currentDirPath, "../main"),
-      path.resolve(process.cwd(), "dist/main"),
-    ];
-    for (const p of candidates) {
-      try {
-        if (fs.existsSync(p)) return p;
-      } catch {}
-    }
-    return null;
-  }
-
-  // 当构建产物变化时再重启，避免源文件变更导致的提前重启而加载到旧代码
-  let timer: NodeJS.Timeout | null = null;
-  const debounceMs = 600;
-  const scheduleRelaunch = () => {
-    if (timer) clearTimeout(timer);
-    timer = setTimeout(() => {
-      console.log("[DEV] 检测到主进程构建产物变更，正在重启应用...");
-      app.relaunch();
-      app.exit(0);
-    }, debounceMs);
-  };
-
-  const startWatchingDistMain = (dir: string) => {
-    try {
-      fs.watch(dir, { recursive: true }, (_event, filename) => {
-        if (!filename) return;
-        if (/\.(js|cjs|mjs|map)$/.test(String(filename))) {
-          scheduleRelaunch();
-        }
-      });
-      console.log("[DEV] 已启用构建产物监听:", dir);
-    } catch (e) {
-      console.warn("[DEV] 监听构建产物失败:", dir, e);
-    }
-  };
-
-  const distMain = resolveDistMainPath();
-  if (distMain) {
-    startWatchingDistMain(distMain);
-  } else {
-    console.warn("[DEV] 未找到 dist/main 目录，等待构建产物生成后再附加监听...");
-    const interval = setInterval(() => {
-      const p = resolveDistMainPath();
-      if (p) {
-        clearInterval(interval);
-        startWatchingDistMain(p);
-      }
-    }, 1000);
-  }
-}
+// electron-vite 已经提供了内置的热加载机制，无需手动实现
 
 // 保持对window对象的全局引用
 let mainWindow = null;
@@ -127,6 +70,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    show: !isDev, // 开发环境下不自动显示窗口
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -138,6 +82,21 @@ function createWindow() {
 
   // 加载默认URL
   mainWindow.loadURL(DEFAULT_URL);
+
+  // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
+  // mainWindow.webContents.once("did-finish-load", () => {
+  //   if (isDev) {
+  //     // 开发环境下延迟显示，避免热更新时抢夺焦点
+  //     setTimeout(() => {
+  //       if (mainWindow && !mainWindow.isDestroyed()) {
+  //         mainWindow.showInactive(); // 显示但不获得焦点
+  //       }
+  //     }, 100);
+  //   } else {
+  //     // 生产环境正常显示
+  //     mainWindow.show();
+  //   }
+  // });
 
   // 在开发环境中插入脚本解决跨域问题
   if (isDev) {
@@ -193,10 +152,7 @@ app.whenReady().then(async () => {
   setupDatabaseCleanup()
 
   // 注册 IPC 处理器
-  registerIpcHandlers();
-
-  // 开发环境启用主进程热更新监听
-  setupDevHotReload();
+  initIpcRouter();
 
   createWindow();
 
