@@ -19,9 +19,9 @@ export class GoalTreeRepository {
       status: entity.status as any,
       type: entity.type as any,
       importance: entity.importance,
-      startAt: entity.startDate,
-      endAt: entity.targetDate,
-      doneAt: entity.completedAt,
+      startAt: entity.startAt,
+      endAt: entity.endAt,
+      doneAt: entity.doneAt,
       abandonedAt: undefined,
       parent: entity.parent as any,
       children: (entity.children || []) as any,
@@ -145,8 +145,8 @@ export class GoalTreeRepository {
         type: dto.type as any,
         status: (dto as any).status,
         importance: dto.importance as any,
-        startDate: dto.startAt,
-        targetDate: dto.endAt,
+        startAt: dto.startAt,
+        endAt: dto.endAt,
       });
 
       if (dto.parentId) {
@@ -171,8 +171,8 @@ export class GoalTreeRepository {
       if (dto.type !== undefined) current.type = dto.type as any;
       if (dto.importance !== undefined) current.importance = dto.importance as any;
       if (dto.status !== undefined) current.status = dto.status as any;
-      if (dto.startAt !== undefined) current.startDate = dto.startAt;
-      if (dto.endAt !== undefined) current.targetDate = dto.endAt;
+      if (dto.startAt !== undefined) current.startAt = dto.startAt;
+      if (dto.endAt !== undefined) current.endAt = dto.endAt;
 
       if ((dto as any).parentId) {
         await this.updateParent(current as any, (dto as any).parentId, treeRepository);

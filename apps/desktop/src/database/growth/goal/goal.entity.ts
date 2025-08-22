@@ -30,9 +30,9 @@ export class Goal extends BaseEntity {
   @Column({
     type: 'simple-enum',
     enum: GoalType,
-    default: GoalType.OBJECTIVE
+    nullable: true
   })
-  type: GoalType;
+  type?: GoalType;
 
   /** 目标事项状态 */
   @Column({
@@ -43,12 +43,12 @@ export class Goal extends BaseEntity {
   status: GoalStatus;
 
   /** 目标重要程度 */
-  @Column('int', { default: 1 })
-  importance: number;
+  @Column('int', { nullable: true })
+  importance?: number;
 
   /** 紧急程度 */
-  @Column('int', { default: 1 })
-  urgency: number;
+  @Column('int', { nullable: true })
+  urgency?: number;
 
   /** 标签 */
   @Column('simple-array', { nullable: true })
@@ -56,15 +56,19 @@ export class Goal extends BaseEntity {
 
   /** 目标开始时间 */
   @Column('datetime', { nullable: true })
-  startDate?: Date;
+  startAt?: Date;
 
   /** 目标结束时间 */
   @Column('datetime', { nullable: true })
-  targetDate?: Date;
+  endAt?: Date;
 
   /** 目标完成时间 */
   @Column('datetime', { nullable: true })
-  completedAt?: Date;
+  doneAt?: Date;
+
+  /** 放弃目标时间 */
+  @Column('datetime', { nullable: true })
+  abandonedAt?: Date;
 
   /** 父目标 */
   @TreeParent({

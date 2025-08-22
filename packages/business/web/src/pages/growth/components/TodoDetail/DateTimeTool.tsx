@@ -3,19 +3,15 @@ import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useState } from 'react';
-import 'dayjs/locale/zh-cn';
 import { RepeatSelector } from '@life-toolkit/components-repeat/web';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
-import {
-  RepeatModeForm,
-  RepeatEndModeForm,
-} from '@life-toolkit/components-repeat/types';
+import { webMapping } from '@life-toolkit/components-repeat/web';
+import type { RepeatVo } from '@life-toolkit/components-repeat/vo';
 
 const { RangePicker } = TimePicker;
 
-dayjs.locale('zh-cn');
 const today = dayjs().format('YYYY-MM-DD');
 
 const getFormattedDate = (date) => {
@@ -40,12 +36,12 @@ export default function DateTimeTool(props: {
   formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: (RepeatModeForm & RepeatEndModeForm) | undefined;
+    repeat: RepeatVo | undefined;
   };
   onChangeData: (formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: (RepeatModeForm & RepeatEndModeForm) | undefined;
+    repeat: RepeatVo | undefined;
   }) => void;
 }) {
   const { lang } = useContext(GlobalContext);
@@ -144,9 +140,12 @@ export default function DateTimeTool(props: {
           <div className="px-3">
             <RepeatSelector
               lang={lang as 'en-US' | 'zh-CN'}
-              value={formData.repeat}
+              value={formData.repeat && webMapping.voToForm(formData.repeat)}
               onChange={(value) => {
-                onChangeData({ ...formData, repeat: value });
+                onChangeData({
+                  ...formData,
+                  repeat: webMapping.formToVo(value) as RepeatVo | undefined,
+                });
               }}
             />
           </div>

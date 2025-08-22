@@ -66,7 +66,9 @@ export class GoalController {
 
   @Get("/findRoots")
   async findRoots() {
-    return (await goalService.findRoots()).map((dto) => GoalMapper.dtoToVo(dto));
+    return (await goalService.findRoots()).map((dto) =>
+      GoalMapper.dtoToVo(dto)
+    );
   }
 
   // GET /goal/findChildren （payload 透传 parentId）

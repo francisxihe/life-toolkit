@@ -21,7 +21,7 @@ export type CurrentTodo = {
   planDate: string;
   planStartAt?: string;
   planEndAt?: string;
-  repeat?: string;
+  repeat?: TodoVo['repeat'];
   importance?: number;
   urgency?: number;
   tags?: string[];

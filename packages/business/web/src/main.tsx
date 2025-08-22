@@ -15,7 +15,11 @@ import useStorage from './utils/useStorage';
 import './mock';
 import Router from './router';
 import { generatePermission } from './router/routes';
+import 'dayjs/locale/zh-cn';
 import '@life-toolkit/share-types';
+import dayjs from 'dayjs';
+
+dayjs.locale('zh-cn');
 
 const store = createStore(rootReducer);
 
@@ -89,10 +93,12 @@ export default function LifeToolkitApp() {
   };
 
   return (
-    <BrowserRouter future={{ 
-      v7_startTransition: true,
-      v7_relativeSplatPath: true 
-    }}>
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
       <ConfigProvider
         locale={getArcoLocale()}
         componentConfig={{

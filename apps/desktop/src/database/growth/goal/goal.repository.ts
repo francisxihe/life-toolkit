@@ -1,6 +1,10 @@
 import { Repository, In, DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Goal as DesktopGoal, GoalStatus as DesktopGoalStatus, GoalType as DesktopGoalType } from "./goal.entity";
+import {
+  Goal as DesktopGoal,
+  GoalStatus as DesktopGoalStatus,
+  GoalType as DesktopGoalType,
+} from "./goal.entity";
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -34,10 +38,10 @@ export class GoalRepository {
       status: entity.status as unknown as GoalStatus,
       type: entity.type as unknown as GoalType,
       importance: entity.importance,
-      startAt: entity.startDate,
-      endAt: entity.targetDate,
-      doneAt: entity.completedAt,
-      abandonedAt: undefined,
+      startAt: entity.startAt,
+      endAt: entity.endAt,
+      doneAt: entity.doneAt,
+      abandonedAt: entity.abandonedAt,
       parent: entity.parent as any,
       children: (entity.children || []) as any,
       priority: entity.priority,
@@ -66,7 +70,9 @@ export class GoalRepository {
     }
 
     if (filter.status) {
-      qb = qb.andWhere("goal.status = :status", { status: filter.status as any });
+      qb = qb.andWhere("goal.status = :status", {
+        status: filter.status as any,
+      });
     }
 
     if (filter.type) {
@@ -74,24 +80,28 @@ export class GoalRepository {
     }
 
     if (filter.importance) {
-      qb = qb.andWhere("goal.importance = :importance", { importance: filter.importance });
+      qb = qb.andWhere("goal.importance = :importance", {
+        importance: filter.importance,
+      });
     }
 
     const keyword = (filter as any).keyword as string | undefined;
     if (keyword) {
-      qb = qb.andWhere("(goal.name LIKE :kw OR goal.description LIKE :kw)", { kw: `%${keyword}%` });
+      qb = qb.andWhere("(goal.name LIKE :kw OR goal.description LIKE :kw)", {
+        kw: `%${keyword}%`,
+      });
     }
 
     // 计划时间范围（desktop 字段：startDate/targetDate）
     const planDateStart = (filter as any).planDateStart as string | undefined;
     const planDateEnd = (filter as any).planDateEnd as string | undefined;
     if (planDateStart) {
-      qb = qb.andWhere("goal.startDate >= :planDateStart", {
+      qb = qb.andWhere("goal.startAt >= :planDateStart", {
         planDateStart: new Date(`${planDateStart}T00:00:00`),
       });
     }
     if (planDateEnd) {
-      qb = qb.andWhere("goal.targetDate <= :planDateEnd", {
+      qb = qb.andWhere("goal.endAt <= :planDateEnd", {
         planDateEnd: new Date(`${planDateEnd}T23:59:59`),
       });
     }
@@ -105,9 +115,13 @@ export class GoalRepository {
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     } else if (doneDateStart) {
-      qb = qb.andWhere("goal.completedAt >= :ds", { ds: new Date(`${doneDateStart}T00:00:00`) });
+      qb = qb.andWhere("goal.completedAt >= :ds", {
+        ds: new Date(`${doneDateStart}T00:00:00`),
+      });
     } else if (doneDateEnd) {
-      qb = qb.andWhere("goal.completedAt <= :de", { de: new Date(`${doneDateEnd}T23:59:59`) });
+      qb = qb.andWhere("goal.completedAt <= :de", {
+        de: new Date(`${doneDateEnd}T23:59:59`),
+      });
     }
 
     return qb.orderBy("goal.updatedAt", "DESC");
@@ -117,11 +131,15 @@ export class GoalRepository {
     const entity = this.repo.create({
       name: createGoalDto.name,
       description: createGoalDto.description,
-      type: (createGoalDto.type as unknown as DesktopGoalType) ?? DesktopGoalType.OBJECTIVE,
-      status: (createGoalDto.status as unknown as DesktopGoalStatus) ?? DesktopGoalStatus.TODO,
+      type:
+        (createGoalDto.type as unknown as DesktopGoalType) ??
+        DesktopGoalType.OBJECTIVE,
+      status:
+        (createGoalDto.status as unknown as DesktopGoalStatus) ??
+        DesktopGoalStatus.TODO,
       importance: createGoalDto.importance ?? 1,
-      startDate: createGoalDto.startAt,
-      targetDate: createGoalDto.endAt,
+      startAt: createGoalDto.startAt,
+      endAt: createGoalDto.endAt,
     } as DeepPartial<DesktopGoal>);
 
     const saved = await this.repo.save(entity);
@@ -132,7 +150,6 @@ export class GoalRepository {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     return this.toDto(entity);
-    
   }
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
@@ -141,26 +158,26 @@ export class GoalRepository {
     return list.map((e) => this.toDto(e));
   }
 
-  async page(filter: GoalPageFilterDto): Promise<{ list: GoalDto[]; total: number }> {
+  async page(
+    filter: GoalPageFilterDto
+  ): Promise<{ list: GoalDto[]; total: number }> {
     const { pageNum = 1, pageSize = 10 } = filter as any;
     const qb = this.buildQuery(filter);
-    const [entities, total] = await qb.skip((pageNum - 1) * pageSize).take(pageSize).getManyAndCount();
+    const [entities, total] = await qb
+      .skip((pageNum - 1) * pageSize)
+      .take(pageSize)
+      .getManyAndCount();
     return { list: entities.map((e) => this.toDto(e)), total };
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const entity = await this.repo.findOne({ where: { id } });
+    let entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 
-    // 字段映射
-    if (updateGoalDto.name !== undefined) entity.name = updateGoalDto.name;
-    if (updateGoalDto.description !== undefined) entity.description = updateGoalDto.description;
-    if (updateGoalDto.type !== undefined) entity.type = updateGoalDto.type as unknown as DesktopGoalType;
-    if (updateGoalDto.importance !== undefined) entity.importance = updateGoalDto.importance as any;
-    if (updateGoalDto.status !== undefined) entity.status = updateGoalDto.status as unknown as DesktopGoalStatus;
-    if (updateGoalDto.startAt !== undefined) entity.startDate = updateGoalDto.startAt;
-    if (updateGoalDto.endAt !== undefined) entity.targetDate = updateGoalDto.endAt;
-    if ((updateGoalDto as any).doneAt !== undefined) entity.completedAt = (updateGoalDto as any).doneAt;
+    entity = {
+      ...entity,
+      ...updateGoalDto,
+    };
 
     const saved = await this.repo.save(entity);
     return this.toDto(saved);
@@ -176,24 +193,44 @@ export class GoalRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(ids: string[], updateData: Partial<BusinessGoal>): Promise<void> {
-    await this.repo.update({ id: In(ids) }, (updateData as unknown) as Partial<DesktopGoal>);
+  async batchUpdate(
+    ids: string[],
+    updateData: Partial<BusinessGoal>
+  ): Promise<void> {
+    await this.repo.update(
+      { id: In(ids) },
+      updateData as unknown as Partial<DesktopGoal>
+    );
   }
 
   async findDetail(id: string): Promise<GoalDto> {
-    const entity = await this.repo.findOne({ where: { id }, relations: ["parent", "children", "taskList"] });
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: ["parent", "children", "taskList"],
+    });
+    console.log("=====================", entity);
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     return this.toDto(entity);
   }
 
-  async updateStatus(id: string, status: GoalStatus, extra: Partial<BusinessGoal> = {}): Promise<void> {
+  async updateStatus(
+    id: string,
+    status: GoalStatus,
+    extra: Partial<BusinessGoal> = {}
+  ): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    Object.assign(entity, { status: status as any, ...((extra as unknown) as Partial<DesktopGoal>) });
+    Object.assign(entity, {
+      status: status as any,
+      ...(extra as unknown as Partial<DesktopGoal>),
+    });
     await this.repo.save(entity);
   }
 
   async batchDone(ids: string[]): Promise<void> {
-    await this.repo.update({ id: In(ids) }, { status: DesktopGoalStatus.DONE, completedAt: new Date() } as any);
+    await this.repo.update({ id: In(ids) }, {
+      status: DesktopGoalStatus.DONE,
+      completedAt: new Date(),
+    } as any);
   }
 }

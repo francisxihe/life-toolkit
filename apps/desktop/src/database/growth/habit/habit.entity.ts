@@ -52,11 +52,11 @@ export class Habit extends BaseEntity {
   difficulty: HabitDifficulty = HabitDifficulty.MEDIUM;
 
   /** 习惯开始日期 */
-  @Column('datetime')
+  @Column('date')
   startDate: Date = new Date();
 
   /** 习惯目标日期（可选，如果设置了，则表示到此日期为止完成习惯） */
-  @Column('datetime', { nullable: true })
+  @Column('date', { nullable: true })
   targetDate?: Date;
 
   /** 当前连续天数 */

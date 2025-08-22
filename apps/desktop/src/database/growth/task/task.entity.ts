@@ -19,13 +19,6 @@ export enum TaskStatus {
   ABANDONED = "abandoned",
 }
 
-export enum TaskPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
-}
-
 @Entity("task")
 @Tree("closure-table")
 export class Task extends BaseEntity {
@@ -41,29 +34,45 @@ export class Task extends BaseEntity {
   @Column({
     type: 'simple-enum',
     enum: TaskStatus,
-    default: TaskStatus.TODO
+    nullable: true
   })
   status: TaskStatus;
 
+  /** 任务预估时间 */
+  @Column('varchar', { nullable: true })
+  estimateTime?: string;
+
+  /** 任务跟踪时间ID列表 */
+  @Column('simple-array', { nullable: true })
+  trackTimeIds: string[];
+
+  /** 任务重要程度 */
+  @Column('int', { nullable: true })
+  importance?: number;
+
+  /** 任务紧急程度 */
+  @Column('int', { nullable: true })
+  urgency?: number;
+
   /** 任务标签 */
   @Column('simple-array', { nullable: true })
-  tags?: string[];
+  tags: string[];
 
   /** 任务完成时间 */
   @Column('datetime', { nullable: true })
-  completedAt?: Date;
+  doneAt?: Date;
 
-  /** 任务优先级 */
-  @Column({
-    type: 'simple-enum',
-    enum: TaskPriority,
-    default: TaskPriority.MEDIUM
-  })
-  priority: TaskPriority;
-
-  /** 任务截止时间 */
+  /** 放弃任务时间 */
   @Column('datetime', { nullable: true })
-  dueDate?: Date;
+  abandonedAt?: Date;
+
+  /** 计划任务开始时间 */
+  @Column('datetime', { nullable: true })
+  startAt?: Date;
+
+  /** 计划任务结束时间 */
+  @Column('datetime', { nullable: true })
+  endAt?: Date;
 
   /** 父任务 */
   @TreeParent({

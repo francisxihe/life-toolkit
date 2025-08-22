@@ -16,7 +16,7 @@ export default function TodoEditorMain() {
         size="small"
         className="!text-text-1 !bg-transparent !border-none mb-1"
         onChange={(value) => {
-          setTodoFormData((prev) => ({ ...prev, name: value }));
+          setTodoFormData({ name: value });
         }}
         onBlur={() => {
           onSubmit();
@@ -30,10 +30,7 @@ export default function TodoEditorMain() {
           '!text-text-3 !text-body-1 !bg-transparent !border-none mb-1',
         )}
         onChange={(value) => {
-          setTodoFormData((prev) => ({
-            ...prev,
-            description: value,
-          }));
+          setTodoFormData({ description: value });
         }}
       />
     </>
