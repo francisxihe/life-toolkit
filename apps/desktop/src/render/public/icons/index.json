@@ -1,0 +1,3021 @@
+{
+  "totalIcons": 902,
+  "files": [
+    {
+      "name": "description",
+      "file": "description.svg",
+      "icons": 1,
+      "iconIds": [
+        "description"
+      ]
+    },
+    {
+      "name": "urgency",
+      "file": "urgency.svg",
+      "icons": 1,
+      "iconIds": [
+        "urgency"
+      ]
+    },
+    {
+      "name": "ac",
+      "file": "ac.svg",
+      "icons": 27,
+      "iconIds": [
+        "ac-add-file",
+        "ac-assign",
+        "ac-attachment",
+        "ac-cancel",
+        "ac-change-kind",
+        "ac-changed-subtask",
+        "ac-completed-subtask",
+        "ac-create",
+        "ac-created-subtask",
+        "ac-del-file",
+        "ac-delete-file",
+        "ac-delete",
+        "ac-deleted-subtask",
+        "ac-done",
+        "ac-edit",
+        "ac-edited-subtask",
+        "ac-in",
+        "ac-out",
+        "ac-reopen",
+        "ac-share-delete",
+        "ac-share-join",
+        "ac-switched-subtask",
+        "ac-switched-text",
+        "ac-undone-subtask",
+        "ac-undone",
+        "ac-archive",
+        "ac-unarchive"
+      ]
+    },
+    {
+      "name": "mini",
+      "file": "mini.svg",
+      "icons": 1,
+      "iconIds": [
+        "mini-delete"
+      ]
+    },
+    {
+      "name": "activities",
+      "file": "activities.svg",
+      "icons": 1,
+      "iconIds": [
+        "activities"
+      ]
+    },
+    {
+      "name": "add",
+      "file": "add.svg",
+      "icons": 7,
+      "iconIds": [
+        "add-btn",
+        "add-color",
+        "add-column-left",
+        "add-column-right",
+        "add-kanban-task",
+        "add-linear-rounded",
+        "add"
+      ]
+    },
+    {
+      "name": "add_from_template",
+      "file": "add_from_template.svg",
+      "icons": 1,
+      "iconIds": [
+        "add_from_template"
+      ]
+    },
+    {
+      "name": "add_section_bottom",
+      "file": "add_section_bottom.svg",
+      "icons": 1,
+      "iconIds": [
+        "add_section_bottom"
+      ]
+    },
+    {
+      "name": "add_section_top",
+      "file": "add_section_top.svg",
+      "icons": 1,
+      "iconIds": [
+        "add_section_top"
+      ]
+    },
+    {
+      "name": "agenda",
+      "file": "agenda.svg",
+      "icons": 13,
+      "iconIds": [
+        "agenda-caldav",
+        "agenda-checkbox",
+        "agenda-complete",
+        "agenda-exchange",
+        "agenda-google",
+        "agenda-habit-complete",
+        "agenda-habit-wontdo",
+        "agenda-icloud",
+        "agenda-outlook",
+        "agenda-pomo",
+        "agenda-stopwatch",
+        "agenda-subscribe",
+        "agenda-wontdo"
+      ]
+    },
+    {
+      "name": "alipay",
+      "file": "alipay.svg",
+      "icons": 1,
+      "iconIds": [
+        "alipay"
+      ]
+    },
+    {
+      "name": "all",
+      "file": "all.svg",
+      "icons": 1,
+      "iconIds": [
+        "all-list"
+      ]
+    },
+    {
+      "name": "android",
+      "file": "android.svg",
+      "icons": 1,
+      "iconIds": [
+        "android"
+      ]
+    },
+    {
+      "name": "animals",
+      "file": "animals.svg",
+      "icons": 1,
+      "iconIds": [
+        "animals-nature"
+      ]
+    },
+    {
+      "name": "apply",
+      "file": "apply.svg",
+      "icons": 1,
+      "iconIds": [
+        "apply-success"
+      ]
+    },
+    {
+      "name": "archive",
+      "file": "archive.svg",
+      "icons": 1,
+      "iconIds": [
+        "archive"
+      ]
+    },
+    {
+      "name": "arrow",
+      "file": "arrow.svg",
+      "icons": 2,
+      "iconIds": [
+        "arrow-back",
+        "arrow-down"
+      ]
+    },
+    {
+      "name": "arrow_bold_left",
+      "file": "arrow_bold_left.svg",
+      "icons": 1,
+      "iconIds": [
+        "arrow_bold_left"
+      ]
+    },
+    {
+      "name": "arrow_bold_right",
+      "file": "arrow_bold_right.svg",
+      "icons": 1,
+      "iconIds": [
+        "arrow_bold_right"
+      ]
+    },
+    {
+      "name": "assigned",
+      "file": "assigned.svg",
+      "icons": 1,
+      "iconIds": [
+        "assigned-to-me-list"
+      ]
+    },
+    {
+      "name": "assignment",
+      "file": "assignment.svg",
+      "icons": 4,
+      "iconIds": [
+        "assignment-detail",
+        "assignment-nobody",
+        "assignment-none",
+        "assignment"
+      ]
+    },
+    {
+      "name": "attachment",
+      "file": "attachment.svg",
+      "icons": 1,
+      "iconIds": [
+        "attachment"
+      ]
+    },
+    {
+      "name": "attendee",
+      "file": "attendee.svg",
+      "icons": 1,
+      "iconIds": [
+        "attendee"
+      ]
+    },
+    {
+      "name": "audio",
+      "file": "audio.svg",
+      "icons": 1,
+      "iconIds": [
+        "audio"
+      ]
+    },
+    {
+      "name": "back",
+      "file": "back.svg",
+      "icons": 1,
+      "iconIds": [
+        "back-settings"
+      ]
+    },
+    {
+      "name": "backup_ical",
+      "file": "backup_ical.svg",
+      "icons": 1,
+      "iconIds": [
+        "backup_ical"
+      ]
+    },
+    {
+      "name": "bold_add",
+      "file": "bold_add.svg",
+      "icons": 1,
+      "iconIds": [
+        "bold_add"
+      ]
+    },
+    {
+      "name": "bold_close",
+      "file": "bold_close.svg",
+      "icons": 1,
+      "iconIds": [
+        "bold_close"
+      ]
+    },
+    {
+      "name": "cal",
+      "file": "cal.svg",
+      "icons": 1,
+      "iconIds": [
+        "cal-add-button"
+      ]
+    },
+    {
+      "name": "calendar",
+      "file": "calendar.svg",
+      "icons": 33,
+      "iconIds": [
+        "calendar-add",
+        "calendar-caldav",
+        "calendar-checkbox",
+        "calendar-complete",
+        "calendar-config",
+        "calendar-exchange",
+        "calendar-filter",
+        "calendar-google",
+        "calendar-habit-complete",
+        "calendar-habit-wontdo",
+        "calendar-habit",
+        "calendar-holiday-dark",
+        "calendar-holiday",
+        "calendar-icloud",
+        "calendar-list-select",
+        "calendar-list",
+        "calendar-note",
+        "calendar-outlook",
+        "calendar-pomo",
+        "calendar-real-subtask",
+        "calendar-repeat",
+        "calendar-schedule-task",
+        "calendar-schedule",
+        "calendar-sidebar",
+        "calendar-stopwatch",
+        "calendar-sub",
+        "calendar-subscribe-calendar",
+        "calendar-subscribe",
+        "calendar-subtask",
+        "calendar-timetable",
+        "calendar-wontdo",
+        "calendar-workday-dark",
+        "calendar-workday"
+      ]
+    },
+    {
+      "name": "chatmind",
+      "file": "chatmind.svg",
+      "icons": 1,
+      "iconIds": [
+        "chatmind"
+      ]
+    },
+    {
+      "name": "check_needless",
+      "file": "check_needless.svg",
+      "icons": 1,
+      "iconIds": [
+        "check_needless"
+      ]
+    },
+    {
+      "name": "checkbox",
+      "file": "checkbox.svg",
+      "icons": 8,
+      "iconIds": [
+        "checkbox-caldav",
+        "checkbox-detail",
+        "checkbox-exchange",
+        "checkbox-google",
+        "checkbox-icloud",
+        "checkbox-outlook",
+        "checkbox-timetable",
+        "checkbox"
+      ]
+    },
+    {
+      "name": "chevron",
+      "file": "chevron.svg",
+      "icons": 7,
+      "iconIds": [
+        "chevron-folder",
+        "chevron-bold-down",
+        "chevron-dropdown-open",
+        "chevron-folder-close",
+        "chevron-folder-open",
+        "chevron-left",
+        "chevron-right"
+      ]
+    },
+    {
+      "name": "circle",
+      "file": "circle.svg",
+      "icons": 1,
+      "iconIds": [
+        "circle-vip"
+      ]
+    },
+    {
+      "name": "classroom",
+      "file": "classroom.svg",
+      "icons": 1,
+      "iconIds": [
+        "classroom"
+      ]
+    },
+    {
+      "name": "clear",
+      "file": "clear.svg",
+      "icons": 2,
+      "iconIds": [
+        "clear-input",
+        "clear-trash"
+      ]
+    },
+    {
+      "name": "close",
+      "file": "close.svg",
+      "icons": 2,
+      "iconIds": [
+        "close-modal",
+        "close"
+      ]
+    },
+    {
+      "name": "close_new_column_button",
+      "file": "close_new_column_button.svg",
+      "icons": 1,
+      "iconIds": [
+        "close_new_column_button"
+      ]
+    },
+    {
+      "name": "closed",
+      "file": "closed.svg",
+      "icons": 1,
+      "iconIds": [
+        "closed-list"
+      ]
+    },
+    {
+      "name": "color",
+      "file": "color.svg",
+      "icons": 1,
+      "iconIds": [
+        "color"
+      ]
+    },
+    {
+      "name": "combine",
+      "file": "combine.svg",
+      "icons": 1,
+      "iconIds": [
+        "combine-task"
+      ]
+    },
+    {
+      "name": "comment",
+      "file": "comment.svg",
+      "icons": 2,
+      "iconIds": [
+        "comment-delete",
+        "comment"
+      ]
+    },
+    {
+      "name": "completed",
+      "file": "completed.svg",
+      "icons": 2,
+      "iconIds": [
+        "completed-list",
+        "completed"
+      ]
+    },
+    {
+      "name": "connect",
+      "file": "connect.svg",
+      "icons": 5,
+      "iconIds": [
+        "connect-arrow",
+        "connect-change",
+        "connect-google",
+        "connect-logo",
+        "connect"
+      ]
+    },
+    {
+      "name": "contextmenu",
+      "file": "contextmenu.svg",
+      "icons": 1,
+      "iconIds": [
+        "contextmenu-custom"
+      ]
+    },
+    {
+      "name": "convert",
+      "file": "convert.svg",
+      "icons": 1,
+      "iconIds": [
+        "convert-task"
+      ]
+    },
+    {
+      "name": "convert_note",
+      "file": "convert_note.svg",
+      "icons": 1,
+      "iconIds": [
+        "convert_note"
+      ]
+    },
+    {
+      "name": "copy",
+      "file": "copy.svg",
+      "icons": 2,
+      "iconIds": [
+        "copy-task-link",
+        "copy"
+      ]
+    },
+    {
+      "name": "copy_to_text",
+      "file": "copy_to_text.svg",
+      "icons": 1,
+      "iconIds": [
+        "copy_to_text"
+      ]
+    },
+    {
+      "name": "crown",
+      "file": "crown.svg",
+      "icons": 1,
+      "iconIds": [
+        "crown"
+      ]
+    },
+    {
+      "name": "csl",
+      "file": "csl.svg",
+      "icons": 1,
+      "iconIds": [
+        "csl"
+      ]
+    },
+    {
+      "name": "csv",
+      "file": "csv.svg",
+      "icons": 1,
+      "iconIds": [
+        "csv"
+      ]
+    },
+    {
+      "name": "current",
+      "file": "current.svg",
+      "icons": 2,
+      "iconIds": [
+        "current-streak",
+        "current-timezone"
+      ]
+    },
+    {
+      "name": "custom",
+      "file": "custom.svg",
+      "icons": 1,
+      "iconIds": [
+        "custom-smart-list"
+      ]
+    },
+    {
+      "name": "cute",
+      "file": "cute.svg",
+      "icons": 1,
+      "iconIds": [
+        "cute-play"
+      ]
+    },
+    {
+      "name": "cycleDone",
+      "file": "cycleDone.svg",
+      "icons": 1,
+      "iconIds": [
+        "cycleDone"
+      ]
+    },
+    {
+      "name": "cycleUnDone",
+      "file": "cycleUnDone.svg",
+      "icons": 1,
+      "iconIds": [
+        "cycleUnDone"
+      ]
+    },
+    {
+      "name": "dark",
+      "file": "dark.svg",
+      "icons": 6,
+      "iconIds": [
+        "dark-empty-default-1",
+        "dark-empty-default-2",
+        "dark-empty-search-1",
+        "dark-empty-search-2",
+        "dark-empty-subscribe-1",
+        "dark-empty-subscribe-2"
+      ]
+    },
+    {
+      "name": "date",
+      "file": "date.svg",
+      "icons": 2,
+      "iconIds": [
+        "date-filter",
+        "date-unselected"
+      ]
+    },
+    {
+      "name": "default",
+      "file": "default.svg",
+      "icons": 1,
+      "iconIds": [
+        "default-checkbox"
+      ]
+    },
+    {
+      "name": "delete",
+      "file": "delete.svg",
+      "icons": 5,
+      "iconIds": [
+        "delete-backup",
+        "delete-circle",
+        "delete-forever",
+        "delete-subtask",
+        "delete"
+      ]
+    },
+    {
+      "name": "descendant",
+      "file": "descendant.svg",
+      "icons": 2,
+      "iconIds": [
+        "descendant-task-small",
+        "descendant-task"
+      ]
+    },
+    {
+      "name": "detail",
+      "file": "detail.svg",
+      "icons": 4,
+      "iconIds": [
+        "detail-assignment-detail",
+        "detail-date-unselected",
+        "detail-priority-0",
+        "detail-priority"
+      ]
+    },
+    {
+      "name": "device_android",
+      "file": "device_android.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_android"
+      ]
+    },
+    {
+      "name": "device_apple_watch",
+      "file": "device_apple_watch.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_apple_watch"
+      ]
+    },
+    {
+      "name": "device_ipad",
+      "file": "device_ipad.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_ipad"
+      ]
+    },
+    {
+      "name": "device_iphone",
+      "file": "device_iphone.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_iphone"
+      ]
+    },
+    {
+      "name": "device_linux",
+      "file": "device_linux.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_linux"
+      ]
+    },
+    {
+      "name": "device_mac",
+      "file": "device_mac.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_mac"
+      ]
+    },
+    {
+      "name": "device_unknown",
+      "file": "device_unknown.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_unknown"
+      ]
+    },
+    {
+      "name": "device_windows",
+      "file": "device_windows.svg",
+      "icons": 1,
+      "iconIds": [
+        "device_windows"
+      ]
+    },
+    {
+      "name": "disabled",
+      "file": "disabled.svg",
+      "icons": 1,
+      "iconIds": [
+        "disabled-connect"
+      ]
+    },
+    {
+      "name": "doc",
+      "file": "doc.svg",
+      "icons": 1,
+      "iconIds": [
+        "doc"
+      ]
+    },
+    {
+      "name": "down",
+      "file": "down.svg",
+      "icons": 1,
+      "iconIds": [
+        "down-arrow"
+      ]
+    },
+    {
+      "name": "download",
+      "file": "download.svg",
+      "icons": 1,
+      "iconIds": [
+        "download"
+      ]
+    },
+    {
+      "name": "drag",
+      "file": "drag.svg",
+      "icons": 1,
+      "iconIds": [
+        "drag"
+      ]
+    },
+    {
+      "name": "drop",
+      "file": "drop.svg",
+      "icons": 1,
+      "iconIds": [
+        "drop-menu-trigger"
+      ]
+    },
+    {
+      "name": "duedate",
+      "file": "duedate.svg",
+      "icons": 1,
+      "iconIds": [
+        "duedate"
+      ]
+    },
+    {
+      "name": "edit",
+      "file": "edit.svg",
+      "icons": 4,
+      "iconIds": [
+        "edit-avatar",
+        "edit-subscribe-cal",
+        "edit-timeline",
+        "edit"
+      ]
+    },
+    {
+      "name": "edit_comment_project",
+      "file": "edit_comment_project.svg",
+      "icons": 1,
+      "iconIds": [
+        "edit_comment_project"
+      ]
+    },
+    {
+      "name": "edit_read_project",
+      "file": "edit_read_project.svg",
+      "icons": 1,
+      "iconIds": [
+        "edit_read_project"
+      ]
+    },
+    {
+      "name": "edit_share_project",
+      "file": "edit_share_project.svg",
+      "icons": 1,
+      "iconIds": [
+        "edit_share_project"
+      ]
+    },
+    {
+      "name": "edit_write_project",
+      "file": "edit_write_project.svg",
+      "icons": 1,
+      "iconIds": [
+        "edit_write_project"
+      ]
+    },
+    {
+      "name": "email",
+      "file": "email.svg",
+      "icons": 1,
+      "iconIds": [
+        "email"
+      ]
+    },
+    {
+      "name": "emoji",
+      "file": "emoji.svg",
+      "icons": 1,
+      "iconIds": [
+        "emoji"
+      ]
+    },
+    {
+      "name": "empty",
+      "file": "empty.svg",
+      "icons": 120,
+      "iconIds": [
+        "empty-abandon-2",
+        "empty-abandon-3",
+        "empty-abandon-6",
+        "empty-abandon-7",
+        "empty-assign-me-3",
+        "empty-assign-me-4",
+        "empty-assign-me-6",
+        "empty-assign-me-7",
+        "empty-calendar-list-2",
+        "empty-calendar-list-3",
+        "empty-calendar-list-6",
+        "empty-calendar-list-7",
+        "empty-calendar",
+        "empty-comment",
+        "empty-common-bg",
+        "empty-completed-2",
+        "empty-completed-3",
+        "empty-completed-6",
+        "empty-completed-7",
+        "empty-csl-2",
+        "empty-csl-3",
+        "empty-csl-6",
+        "empty-csl-7",
+        "empty-default-1",
+        "empty-default-2",
+        "empty-focus-menu-2",
+        "empty-focus-menu-3",
+        "empty-focus-menu-7",
+        "empty-habit-2",
+        "empty-habit-3",
+        "empty-habit-6",
+        "empty-habit-7",
+        "empty-habit-archived-3",
+        "empty-habit-archived-4",
+        "empty-habit-detail-1",
+        "empty-habit-detail-2",
+        "empty-habit-detail-3",
+        "empty-habit-detail-pointer",
+        "empty-habit-detail",
+        "empty-inbox-2",
+        "empty-inbox-3",
+        "empty-inbox-5",
+        "empty-inbox-6",
+        "empty-inbox-7",
+        "empty-n7-2",
+        "empty-n7-3",
+        "empty-n7-6",
+        "empty-n7-7",
+        "empty-n7-bg",
+        "empty-note-2",
+        "empty-note-3",
+        "empty-note-6",
+        "empty-note-7",
+        "empty-notification-2",
+        "empty-notification-3",
+        "empty-notification-5",
+        "empty-notification-6",
+        "empty-notification-7",
+        "empty-notification-bg",
+        "empty-notification-front",
+        "empty-notification",
+        "empty-project-activity",
+        "empty-search-2",
+        "empty-search-3",
+        "empty-search-6",
+        "empty-search-7",
+        "empty-search-list-2",
+        "empty-search-list-3",
+        "empty-search-list-6",
+        "empty-search-list-7",
+        "empty-subscribe-1",
+        "empty-subscribe-2",
+        "empty-tag-2",
+        "empty-tag-3",
+        "empty-tag-6",
+        "empty-tag-7",
+        "empty-tag",
+        "empty-task-detail-1",
+        "empty-task-detail-2",
+        "empty-task-detail-3",
+        "empty-task-list-2",
+        "empty-task-list-3",
+        "empty-task-list-5",
+        "empty-task-list-6",
+        "empty-task-list-7",
+        "empty-task-list-completed-2",
+        "empty-task-list-completed-3",
+        "empty-task-list-completed-6",
+        "empty-task-list-completed-7",
+        "empty-template-3",
+        "empty-template-4",
+        "empty-template-6",
+        "empty-today-afternoon-2",
+        "empty-today-afternoon-3",
+        "empty-today-afternoon-6",
+        "empty-today-afternoon-7",
+        "empty-today-morning-2",
+        "empty-today-morning-3",
+        "empty-today-morning-6",
+        "empty-today-morning-7",
+        "empty-today-night-2",
+        "empty-today-night-3",
+        "empty-today-night-7",
+        "empty-today-weekend-2",
+        "empty-today-weekend-3",
+        "empty-today-weekend-6",
+        "empty-today-weekend-7",
+        "empty-tomorrow-weekday-2",
+        "empty-tomorrow-weekday-3",
+        "empty-tomorrow-weekday-5",
+        "empty-tomorrow-weekday-6",
+        "empty-tomorrow-weekday-7",
+        "empty-tomorrow-weekend-2",
+        "empty-tomorrow-weekend-3",
+        "empty-tomorrow-weekend-6",
+        "empty-tomorrow-weekend-7",
+        "empty-trash-2",
+        "empty-trash-3",
+        "empty-trash-6",
+        "empty-trash-7"
+      ]
+    },
+    {
+      "name": "event",
+      "file": "event.svg",
+      "icons": 2,
+      "iconIds": [
+        "event-calendar",
+        "event-repeat"
+      ]
+    },
+    {
+      "name": "expand",
+      "file": "expand.svg",
+      "icons": 1,
+      "iconIds": [
+        "expand-allday"
+      ]
+    },
+    {
+      "name": "facebook",
+      "file": "facebook.svg",
+      "icons": 1,
+      "iconIds": [
+        "facebook"
+      ]
+    },
+    {
+      "name": "feedback",
+      "file": "feedback.svg",
+      "icons": 1,
+      "iconIds": [
+        "feedback"
+      ]
+    },
+    {
+      "name": "filter",
+      "file": "filter.svg",
+      "icons": 3,
+      "iconIds": [
+        "filter-close",
+        "filter-open",
+        "filter"
+      ]
+    },
+    {
+      "name": "flags",
+      "file": "flags.svg",
+      "icons": 1,
+      "iconIds": [
+        "flags"
+      ]
+    },
+    {
+      "name": "fn",
+      "file": "fn.svg",
+      "icons": 4,
+      "iconIds": [
+        "fn-habit",
+        "fn-matrix",
+        "fn-min-cal",
+        "fn-pomo"
+      ]
+    },
+    {
+      "name": "focus",
+      "file": "focus.svg",
+      "icons": 7,
+      "iconIds": [
+        "focus-exit",
+        "focus-link",
+        "focus-pause",
+        "focus-ready",
+        "focus-settings",
+        "focus-time-add",
+        "focus-time-sub"
+      ]
+    },
+    {
+      "name": "folder",
+      "file": "folder.svg",
+      "icons": 2,
+      "iconIds": [
+        "folder-open",
+        "folder"
+      ]
+    },
+    {
+      "name": "food",
+      "file": "food.svg",
+      "icons": 1,
+      "iconIds": [
+        "food-drink"
+      ]
+    },
+    {
+      "name": "forum",
+      "file": "forum.svg",
+      "icons": 1,
+      "iconIds": [
+        "forum"
+      ]
+    },
+    {
+      "name": "future",
+      "file": "future.svg",
+      "icons": 1,
+      "iconIds": [
+        "future-from-today"
+      ]
+    },
+    {
+      "name": "group",
+      "file": "group.svg",
+      "icons": 7,
+      "iconIds": [
+        "group-by-assignee",
+        "group-by-custom",
+        "group-by-dueDate",
+        "group-by-list",
+        "group-by-none",
+        "group-by-priority",
+        "group-by-tag"
+      ]
+    },
+    {
+      "name": "habit",
+      "file": "habit.svg",
+      "icons": 20,
+      "iconIds": [
+        "habit-calendar-uncomplete",
+        "habit-card",
+        "habit-detail-archive",
+        "habit-detail-recovery",
+        "habit-done",
+        "habit-emoji-cry-black",
+        "habit-emoji-cry",
+        "habit-emoji-general-black",
+        "habit-emoji-general",
+        "habit-emoji-sad-black",
+        "habit-emoji-sad",
+        "habit-emoji-smile-black",
+        "habit-emoji-smile",
+        "habit-emoji-smiley-black",
+        "habit-emoji-smiley",
+        "habit-list",
+        "habit-sidebar",
+        "habit-style",
+        "habit-uncomplete",
+        "habit-undone"
+      ]
+    },
+    {
+      "name": "habitStatistics",
+      "file": "habitStatistics.svg",
+      "icons": 1,
+      "iconIds": [
+        "habitStatistics"
+      ]
+    },
+    {
+      "name": "habit_current_streak",
+      "file": "habit_current_streak.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_current_streak"
+      ]
+    },
+    {
+      "name": "habit_list_complete",
+      "file": "habit_list_complete.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_list_complete"
+      ]
+    },
+    {
+      "name": "habit_list_uncomplete",
+      "file": "habit_list_uncomplete.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_list_uncomplete"
+      ]
+    },
+    {
+      "name": "habit_month_amount",
+      "file": "habit_month_amount.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_month_amount"
+      ]
+    },
+    {
+      "name": "habit_month_checkins",
+      "file": "habit_month_checkins.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_month_checkins"
+      ]
+    },
+    {
+      "name": "habit_month_complete_rate",
+      "file": "habit_month_complete_rate.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_month_complete_rate"
+      ]
+    },
+    {
+      "name": "habit_record_uncomplete",
+      "file": "habit_record_uncomplete.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_record_uncomplete"
+      ]
+    },
+    {
+      "name": "habit_total_amount",
+      "file": "habit_total_amount.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_total_amount"
+      ]
+    },
+    {
+      "name": "habit_total_checkins",
+      "file": "habit_total_checkins.svg",
+      "icons": 1,
+      "iconIds": [
+        "habit_total_checkins"
+      ]
+    },
+    {
+      "name": "help",
+      "file": "help.svg",
+      "icons": 3,
+      "iconIds": [
+        "help-center",
+        "help-new",
+        "help"
+      ]
+    },
+    {
+      "name": "hide",
+      "file": "hide.svg",
+      "icons": 3,
+      "iconIds": [
+        "hide-completed",
+        "hide-details",
+        "hide-subtasks"
+      ]
+    },
+    {
+      "name": "home",
+      "file": "home.svg",
+      "icons": 1,
+      "iconIds": [
+        "home-sidebar"
+      ]
+    },
+    {
+      "name": "hover",
+      "file": "hover.svg",
+      "icons": 4,
+      "iconIds": [
+        "hover-checkbox",
+        "hover-real-subtask",
+        "hover-schedule",
+        "hover-subtask"
+      ]
+    },
+    {
+      "name": "hover_emoji",
+      "file": "hover_emoji.svg",
+      "icons": 1,
+      "iconIds": [
+        "hover_emoji"
+      ]
+    },
+    {
+      "name": "how",
+      "file": "how.svg",
+      "icons": 1,
+      "iconIds": [
+        "how-to-modify-template"
+      ]
+    },
+    {
+      "name": "ic_blank_archived_habit_back",
+      "file": "ic_blank_archived_habit_back.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_archived_habit_back"
+      ]
+    },
+    {
+      "name": "ic_blank_archived_habit_back_dark",
+      "file": "ic_blank_archived_habit_back_dark.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_archived_habit_back_dark"
+      ]
+    },
+    {
+      "name": "ic_blank_archived_habit_front",
+      "file": "ic_blank_archived_habit_front.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_archived_habit_front"
+      ]
+    },
+    {
+      "name": "ic_blank_archived_habit_front_dark",
+      "file": "ic_blank_archived_habit_front_dark.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_archived_habit_front_dark"
+      ]
+    },
+    {
+      "name": "ic_blank_habit_back",
+      "file": "ic_blank_habit_back.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_habit_back"
+      ]
+    },
+    {
+      "name": "ic_blank_habit_back_dark",
+      "file": "ic_blank_habit_back_dark.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_habit_back_dark"
+      ]
+    },
+    {
+      "name": "ic_blank_habit_front",
+      "file": "ic_blank_habit_front.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_habit_front"
+      ]
+    },
+    {
+      "name": "ic_blank_habit_front_dark",
+      "file": "ic_blank_habit_front_dark.svg",
+      "icons": 1,
+      "iconIds": [
+        "ic_blank_habit_front_dark"
+      ]
+    },
+    {
+      "name": "image",
+      "file": "image.svg",
+      "icons": 2,
+      "iconIds": [
+        "image-failed",
+        "image-loading"
+      ]
+    },
+    {
+      "name": "inbox",
+      "file": "inbox.svg",
+      "icons": 1,
+      "iconIds": [
+        "inbox-list"
+      ]
+    },
+    {
+      "name": "insert",
+      "file": "insert.svg",
+      "icons": 1,
+      "iconIds": [
+        "insert-summary"
+      ]
+    },
+    {
+      "name": "invalid",
+      "file": "invalid.svg",
+      "icons": 1,
+      "iconIds": [
+        "invalid"
+      ]
+    },
+    {
+      "name": "invalid2",
+      "file": "invalid2.svg",
+      "icons": 1,
+      "iconIds": [
+        "invalid2"
+      ]
+    },
+    {
+      "name": "invite",
+      "file": "invite.svg",
+      "icons": 2,
+      "iconIds": [
+        "invite-member",
+        "invite"
+      ]
+    },
+    {
+      "name": "ios",
+      "file": "ios.svg",
+      "icons": 1,
+      "iconIds": [
+        "ios"
+      ]
+    },
+    {
+      "name": "item",
+      "file": "item.svg",
+      "icons": 14,
+      "iconIds": [
+        "item-attachment",
+        "item-delete",
+        "item-habit-completed-thin",
+        "item-habit-thin",
+        "item-habit-wont-do-thin",
+        "item-habit",
+        "item-location",
+        "item-note",
+        "item-reminder-outline",
+        "item-reminder",
+        "item-repeat-thin",
+        "item-repeat",
+        "item-text",
+        "item-wont-do"
+      ]
+    },
+    {
+      "name": "kalendae",
+      "file": "kalendae.svg",
+      "icons": 2,
+      "iconIds": [
+        "kalendae-chevron-left",
+        "kalendae-chevron-right"
+      ]
+    },
+    {
+      "name": "kanban",
+      "file": "kanban.svg",
+      "icons": 1,
+      "iconIds": [
+        "kanban-mode"
+      ]
+    },
+    {
+      "name": "keyboard",
+      "file": "keyboard.svg",
+      "icons": 1,
+      "iconIds": [
+        "keyboard"
+      ]
+    },
+    {
+      "name": "last",
+      "file": "last.svg",
+      "icons": 2,
+      "iconIds": [
+        "last-month",
+        "last-week"
+      ]
+    },
+    {
+      "name": "left",
+      "file": "left.svg",
+      "icons": 1,
+      "iconIds": [
+        "left-menu"
+      ]
+    },
+    {
+      "name": "lessons",
+      "file": "lessons.svg",
+      "icons": 1,
+      "iconIds": [
+        "lessons"
+      ]
+    },
+    {
+      "name": "list",
+      "file": "list.svg",
+      "icons": 4,
+      "iconIds": [
+        "list-activities",
+        "list-add",
+        "list-mode",
+        "list-sidebar"
+      ]
+    },
+    {
+      "name": "location",
+      "file": "location.svg",
+      "icons": 1,
+      "iconIds": [
+        "location-at"
+      ]
+    },
+    {
+      "name": "lock",
+      "file": "lock.svg",
+      "icons": 1,
+      "iconIds": [
+        "lock"
+      ]
+    },
+    {
+      "name": "logo",
+      "file": "logo.svg",
+      "icons": 1,
+      "iconIds": [
+        "logo"
+      ]
+    },
+    {
+      "name": "manage",
+      "file": "manage.svg",
+      "icons": 1,
+      "iconIds": [
+        "manage-team"
+      ]
+    },
+    {
+      "name": "matrix",
+      "file": "matrix.svg",
+      "icons": 1,
+      "iconIds": [
+        "matrix-sidebar"
+      ]
+    },
+    {
+      "name": "md",
+      "file": "md.svg",
+      "icons": 60,
+      "iconIds": [
+        "md-h1",
+        "md-h2",
+        "md-h3",
+        "md-h4",
+        "md-h5",
+        "md-h6",
+        "md-item-checked",
+        "md-item-unchecked",
+        "md-link",
+        "md-list-1",
+        "md-list-2",
+        "md-list-3",
+        "md-ol-continue",
+        "md-ol-edit",
+        "md-ol-start",
+        "md-task-link",
+        "md-tl-attachment",
+        "md-tl-bold",
+        "md-tl-code-inline",
+        "md-tl-date",
+        "md-tl-fullscreen-exit",
+        "md-tl-fullscreen",
+        "md-tl-h1",
+        "md-tl-h2",
+        "md-tl-h3",
+        "md-tl-h4",
+        "md-tl-h5",
+        "md-tl-h6",
+        "md-tl-heading",
+        "md-tl-italic",
+        "md-tl-link",
+        "md-tl-list-1",
+        "md-tl-list-2",
+        "md-tl-list-3",
+        "md-tl-mark",
+        "md-tl-more",
+        "md-tl-quote",
+        "md-tl-separator-line",
+        "md-tl-strikethrough",
+        "md-tl-text",
+        "md-tl-underline",
+        "md-tr-add",
+        "md-tr-attachment",
+        "md-tr-code",
+        "md-tr-h1",
+        "md-tr-h2",
+        "md-tr-h3",
+        "md-tr-h4",
+        "md-tr-h5",
+        "md-tr-h6",
+        "md-tr-link-task",
+        "md-tr-list-1",
+        "md-tr-list-2",
+        "md-tr-list-3",
+        "md-tr-quote",
+        "md-tr-separator-line",
+        "md-tr-subtask",
+        "md-tr-tag",
+        "md-tr-template",
+        "md-tr-text"
+      ]
+    },
+    {
+      "name": "menu",
+      "file": "menu.svg",
+      "icons": 2,
+      "iconIds": [
+        "menu-start-pomo",
+        "menu-tag"
+      ]
+    },
+    {
+      "name": "mobile",
+      "file": "mobile.svg",
+      "icons": 5,
+      "iconIds": [
+        "mobile-android-back",
+        "mobile-edit",
+        "mobile-ios-back",
+        "mobile-more",
+        "mobile-statistics"
+      ]
+    },
+    {
+      "name": "modify",
+      "file": "modify.svg",
+      "icons": 1,
+      "iconIds": [
+        "modify-completed-time"
+      ]
+    },
+    {
+      "name": "more",
+      "file": "more.svg",
+      "icons": 9,
+      "iconIds": [
+        "more-calendar",
+        "more-children",
+        "more-for-detail",
+        "more-for-folder",
+        "more-for-task",
+        "more-for-team",
+        "more-sidebar",
+        "more-titlebar",
+        "more"
+      ]
+    },
+    {
+      "name": "move",
+      "file": "move.svg",
+      "icons": 1,
+      "iconIds": [
+        "move-list"
+      ]
+    },
+    {
+      "name": "multi",
+      "file": "multi.svg",
+      "icons": 2,
+      "iconIds": [
+        "multi-checkbox",
+        "multi-completed"
+      ]
+    },
+    {
+      "name": "navigate",
+      "file": "navigate.svg",
+      "icons": 1,
+      "iconIds": [
+        "navigate"
+      ]
+    },
+    {
+      "name": "ndays",
+      "file": "ndays.svg",
+      "icons": 1,
+      "iconIds": [
+        "ndays-later"
+      ]
+    },
+    {
+      "name": "net",
+      "file": "net.svg",
+      "icons": 1,
+      "iconIds": [
+        "net-error"
+      ]
+    },
+    {
+      "name": "new",
+      "file": "new.svg",
+      "icons": 2,
+      "iconIds": [
+        "new-add",
+        "new-close"
+      ]
+    },
+    {
+      "name": "new_feature",
+      "file": "new_feature.svg",
+      "icons": 1,
+      "iconIds": [
+        "new_feature"
+      ]
+    },
+    {
+      "name": "next",
+      "file": "next.svg",
+      "icons": 3,
+      "iconIds": [
+        "next-month",
+        "next-ndays",
+        "next-week"
+      ]
+    },
+    {
+      "name": "no",
+      "file": "no.svg",
+      "icons": 4,
+      "iconIds": [
+        "no-date",
+        "no-pomo-record-dark",
+        "no-pomo-record",
+        "no-tag"
+      ]
+    },
+    {
+      "name": "no_color",
+      "file": "no_color.svg",
+      "icons": 1,
+      "iconIds": [
+        "no_color"
+      ]
+    },
+    {
+      "name": "normal",
+      "file": "normal.svg",
+      "icons": 2,
+      "iconIds": [
+        "normal-list",
+        "normal-mode"
+      ]
+    },
+    {
+      "name": "note",
+      "file": "note.svg",
+      "icons": 3,
+      "iconIds": [
+        "note-info",
+        "note-list",
+        "note"
+      ]
+    },
+    {
+      "name": "notification",
+      "file": "notification.svg",
+      "icons": 2,
+      "iconIds": [
+        "notification-sidebar",
+        "notification"
+      ]
+    },
+    {
+      "name": "objects",
+      "file": "objects.svg",
+      "icons": 1,
+      "iconIds": [
+        "objects"
+      ]
+    },
+    {
+      "name": "open",
+      "file": "open.svg",
+      "icons": 1,
+      "iconIds": [
+        "open-views"
+      ]
+    },
+    {
+      "name": "organizer",
+      "file": "organizer.svg",
+      "icons": 1,
+      "iconIds": [
+        "organizer"
+      ]
+    },
+    {
+      "name": "other",
+      "file": "other.svg",
+      "icons": 1,
+      "iconIds": [
+        "other"
+      ]
+    },
+    {
+      "name": "outlined",
+      "file": "outlined.svg",
+      "icons": 5,
+      "iconIds": [
+        "outlined-calendar",
+        "outlined-habit",
+        "outlined-matrix",
+        "outlined-search",
+        "outlined-task"
+      ]
+    },
+    {
+      "name": "overdue",
+      "file": "overdue.svg",
+      "icons": 1,
+      "iconIds": [
+        "overdue"
+      ]
+    },
+    {
+      "name": "package",
+      "file": "package.svg",
+      "icons": 1,
+      "iconIds": [
+        "package"
+      ]
+    },
+    {
+      "name": "panel",
+      "file": "panel.svg",
+      "icons": 1,
+      "iconIds": [
+        "panel-close"
+      ]
+    },
+    {
+      "name": "parent",
+      "file": "parent.svg",
+      "icons": 1,
+      "iconIds": [
+        "parent-tag"
+      ]
+    },
+    {
+      "name": "partial",
+      "file": "partial.svg",
+      "icons": 1,
+      "iconIds": [
+        "partial-selected"
+      ]
+    },
+    {
+      "name": "past",
+      "file": "past.svg",
+      "icons": 1,
+      "iconIds": [
+        "past-from-today"
+      ]
+    },
+    {
+      "name": "pay",
+      "file": "pay.svg",
+      "icons": 4,
+      "iconIds": [
+        "pay-alipay",
+        "pay-paypal",
+        "pay-stripe",
+        "pay-wechat"
+      ]
+    },
+    {
+      "name": "pdf",
+      "file": "pdf.svg",
+      "icons": 1,
+      "iconIds": [
+        "pdf"
+      ]
+    },
+    {
+      "name": "people",
+      "file": "people.svg",
+      "icons": 1,
+      "iconIds": [
+        "people-body"
+      ]
+    },
+    {
+      "name": "person",
+      "file": "person.svg",
+      "icons": 1,
+      "iconIds": [
+        "person"
+      ]
+    },
+    {
+      "name": "phone",
+      "file": "phone.svg",
+      "icons": 1,
+      "iconIds": [
+        "phone-call"
+      ]
+    },
+    {
+      "name": "photo",
+      "file": "photo.svg",
+      "icons": 1,
+      "iconIds": [
+        "photo"
+      ]
+    },
+    {
+      "name": "pin",
+      "file": "pin.svg",
+      "icons": 2,
+      "iconIds": [
+        "pin-task-section",
+        "pin-task"
+      ]
+    },
+    {
+      "name": "platform",
+      "file": "platform.svg",
+      "icons": 1,
+      "iconIds": [
+        "platform-more"
+      ]
+    },
+    {
+      "name": "play",
+      "file": "play.svg",
+      "icons": 1,
+      "iconIds": [
+        "play"
+      ]
+    },
+    {
+      "name": "pointer",
+      "file": "pointer.svg",
+      "icons": 2,
+      "iconIds": [
+        "pointer-left",
+        "pointer-up"
+      ]
+    },
+    {
+      "name": "pomo",
+      "file": "pomo.svg",
+      "icons": 5,
+      "iconIds": [
+        "pomo-get",
+        "pomo-settings",
+        "pomo-start",
+        "pomo-stop",
+        "pomo"
+      ]
+    },
+    {
+      "name": "pomoStatistics",
+      "file": "pomoStatistics.svg",
+      "icons": 1,
+      "iconIds": [
+        "pomoStatistics"
+      ]
+    },
+    {
+      "name": "ppt",
+      "file": "ppt.svg",
+      "icons": 1,
+      "iconIds": [
+        "ppt"
+      ]
+    },
+    {
+      "name": "premium",
+      "file": "premium.svg",
+      "icons": 2,
+      "iconIds": [
+        "premium-more-edit",
+        "premium"
+      ]
+    },
+    {
+      "name": "preset",
+      "file": "preset.svg",
+      "icons": 1,
+      "iconIds": [
+        "preset-triangle-down"
+      ]
+    },
+    {
+      "name": "print",
+      "file": "print.svg",
+      "icons": 1,
+      "iconIds": [
+        "print-in-list"
+      ]
+    },
+    {
+      "name": "priority",
+      "file": "priority.svg",
+      "icons": 2,
+      "iconIds": [
+        "priority-0",
+        "priority-1"
+      ]
+    },
+    {
+      "name": "profile",
+      "file": "profile.svg",
+      "icons": 5,
+      "iconIds": [
+        "profile-account",
+        "profile-backup",
+        "profile-mail",
+        "profile-password",
+        "profile-phone"
+      ]
+    },
+    {
+      "name": "profile_qq",
+      "file": "profile_qq.svg",
+      "icons": 1,
+      "iconIds": [
+        "profile_qq"
+      ]
+    },
+    {
+      "name": "profile_wechat",
+      "file": "profile_wechat.svg",
+      "icons": 1,
+      "iconIds": [
+        "profile_wechat"
+      ]
+    },
+    {
+      "name": "profile_weibo",
+      "file": "profile_weibo.svg",
+      "icons": 1,
+      "iconIds": [
+        "profile_weibo"
+      ]
+    },
+    {
+      "name": "project",
+      "file": "project.svg",
+      "icons": 1,
+      "iconIds": [
+        "project-template"
+      ]
+    },
+    {
+      "name": "project_permission_comment",
+      "file": "project_permission_comment.svg",
+      "icons": 1,
+      "iconIds": [
+        "project_permission_comment"
+      ]
+    },
+    {
+      "name": "project_permission_read",
+      "file": "project_permission_read.svg",
+      "icons": 1,
+      "iconIds": [
+        "project_permission_read"
+      ]
+    },
+    {
+      "name": "project_permission_write",
+      "file": "project_permission_write.svg",
+      "icons": 1,
+      "iconIds": [
+        "project_permission_write"
+      ]
+    },
+    {
+      "name": "qq",
+      "file": "qq.svg",
+      "icons": 1,
+      "iconIds": [
+        "qq"
+      ]
+    },
+    {
+      "name": "quadrant1",
+      "file": "quadrant1.svg",
+      "icons": 1,
+      "iconIds": [
+        "quadrant1-icon"
+      ]
+    },
+    {
+      "name": "quadrant2",
+      "file": "quadrant2.svg",
+      "icons": 1,
+      "iconIds": [
+        "quadrant2-icon"
+      ]
+    },
+    {
+      "name": "quadrant3",
+      "file": "quadrant3.svg",
+      "icons": 1,
+      "iconIds": [
+        "quadrant3-icon"
+      ]
+    },
+    {
+      "name": "quadrant4",
+      "file": "quadrant4.svg",
+      "icons": 1,
+      "iconIds": [
+        "quadrant4-icon"
+      ]
+    },
+    {
+      "name": "question",
+      "file": "question.svg",
+      "icons": 2,
+      "iconIds": [
+        "question-sidebar",
+        "question"
+      ]
+    },
+    {
+      "name": "quick",
+      "file": "quick.svg",
+      "icons": 7,
+      "iconIds": [
+        "quick-clear",
+        "quick-custom",
+        "quick-nextmonth",
+        "quick-nextperiod",
+        "quick-nextweek",
+        "quick-today",
+        "quick-tomorrow"
+      ]
+    },
+    {
+      "name": "quickaddStyle",
+      "file": "quickaddStyle.svg",
+      "icons": 1,
+      "iconIds": [
+        "quickaddStyle"
+      ]
+    },
+    {
+      "name": "range",
+      "file": "range.svg",
+      "icons": 3,
+      "iconIds": [
+        "range-drag-handle",
+        "range-next",
+        "range-prev"
+      ]
+    },
+    {
+      "name": "real",
+      "file": "real.svg",
+      "icons": 1,
+      "iconIds": [
+        "real-subtask"
+      ]
+    },
+    {
+      "name": "recent",
+      "file": "recent.svg",
+      "icons": 1,
+      "iconIds": [
+        "recent"
+      ]
+    },
+    {
+      "name": "reddit",
+      "file": "reddit.svg",
+      "icons": 1,
+      "iconIds": [
+        "reddit"
+      ]
+    },
+    {
+      "name": "reduce",
+      "file": "reduce.svg",
+      "icons": 1,
+      "iconIds": [
+        "reduce-btn"
+      ]
+    },
+    {
+      "name": "refresh",
+      "file": "refresh.svg",
+      "icons": 1,
+      "iconIds": [
+        "refresh"
+      ]
+    },
+    {
+      "name": "release",
+      "file": "release.svg",
+      "icons": 1,
+      "iconIds": [
+        "release-note"
+      ]
+    },
+    {
+      "name": "reminder",
+      "file": "reminder.svg",
+      "icons": 5,
+      "iconIds": [
+        "reminder-done",
+        "reminder-snooze",
+        "reminder-start-pomo",
+        "reminder-view",
+        "reminder"
+      ]
+    },
+    {
+      "name": "rename",
+      "file": "rename.svg",
+      "icons": 1,
+      "iconIds": [
+        "rename"
+      ]
+    },
+    {
+      "name": "reopen",
+      "file": "reopen.svg",
+      "icons": 1,
+      "iconIds": [
+        "reopen"
+      ]
+    },
+    {
+      "name": "repeat",
+      "file": "repeat.svg",
+      "icons": 1,
+      "iconIds": [
+        "repeat"
+      ]
+    },
+    {
+      "name": "restore",
+      "file": "restore.svg",
+      "icons": 1,
+      "iconIds": [
+        "restore"
+      ]
+    },
+    {
+      "name": "right",
+      "file": "right.svg",
+      "icons": 2,
+      "iconIds": [
+        "right-panel-all-selected",
+        "right-triangle-down"
+      ]
+    },
+    {
+      "name": "rss",
+      "file": "rss.svg",
+      "icons": 2,
+      "iconIds": [
+        "rss-subscribe",
+        "rss"
+      ]
+    },
+    {
+      "name": "s",
+      "file": "s.svg",
+      "icons": 4,
+      "iconIds": [
+        "s-backup",
+        "s-email",
+        "s-tag",
+        "s-wechat"
+      ]
+    },
+    {
+      "name": "safety",
+      "file": "safety.svg",
+      "icons": 9,
+      "iconIds": [
+        "safety-app",
+        "safety-backup",
+        "safety-binded",
+        "safety-mail",
+        "safety-phone",
+        "safety-verify-mail",
+        "safety-verify-phone",
+        "safety-verify-wechat",
+        "safety-wechat"
+      ]
+    },
+    {
+      "name": "save",
+      "file": "save.svg",
+      "icons": 1,
+      "iconIds": [
+        "save"
+      ]
+    },
+    {
+      "name": "scan_complete",
+      "file": "scan_complete.svg",
+      "icons": 1,
+      "iconIds": [
+        "scan_complete"
+      ]
+    },
+    {
+      "name": "schedule",
+      "file": "schedule.svg",
+      "icons": 8,
+      "iconIds": [
+        "schedule-hide-hierarchy",
+        "schedule-hide-note",
+        "schedule-nodate",
+        "schedule-overdue",
+        "schedule-show-hierarchy",
+        "schedule-show-note",
+        "schedule-tasks",
+        "schedule"
+      ]
+    },
+    {
+      "name": "schedule_filter",
+      "file": "schedule_filter.svg",
+      "icons": 1,
+      "iconIds": [
+        "schedule_filter"
+      ]
+    },
+    {
+      "name": "search",
+      "file": "search.svg",
+      "icons": 10,
+      "iconIds": [
+        "search-empty-bar",
+        "search-empty-block",
+        "search-empty-new-dark",
+        "search-empty-new-dynamic",
+        "search-empty-new",
+        "search-empty-pointer",
+        "search-empty",
+        "search-sidebar",
+        "search-thin",
+        "search"
+      ]
+    },
+    {
+      "name": "section",
+      "file": "section.svg",
+      "icons": 1,
+      "iconIds": [
+        "section-list"
+      ]
+    },
+    {
+      "name": "select",
+      "file": "select.svg",
+      "icons": 1,
+      "iconIds": [
+        "select-inner"
+      ]
+    },
+    {
+      "name": "selected",
+      "file": "selected.svg",
+      "icons": 1,
+      "iconIds": [
+        "selected"
+      ]
+    },
+    {
+      "name": "send",
+      "file": "send.svg",
+      "icons": 1,
+      "iconIds": [
+        "send"
+      ]
+    },
+    {
+      "name": "setting",
+      "file": "setting.svg",
+      "icons": 16,
+      "iconIds": [
+        "setting-about",
+        "setting-appearance",
+        "setting-collaborate",
+        "setting-date",
+        "setting-feature",
+        "setting-integrations",
+        "setting-more",
+        "setting-notification",
+        "setting-premium",
+        "setting-profile",
+        "setting-shortcuts",
+        "setting-sidebar",
+        "setting-smart",
+        "setting-team-orders",
+        "setting-team",
+        "setting"
+      ]
+    },
+    {
+      "name": "share",
+      "file": "share.svg",
+      "icons": 11,
+      "iconIds": [
+        "share-content",
+        "share-list",
+        "share-note-list",
+        "share-project-dark-default",
+        "share-project-default",
+        "share-project-delete",
+        "share-project-exit",
+        "share-project-link",
+        "share-project-lock",
+        "share-project-recent-empty",
+        "share"
+      ]
+    },
+    {
+      "name": "shared",
+      "file": "shared.svg",
+      "icons": 1,
+      "iconIds": [
+        "shared-list-all-members"
+      ]
+    },
+    {
+      "name": "show",
+      "file": "show.svg",
+      "icons": 5,
+      "iconIds": [
+        "show-completed",
+        "show-countdown",
+        "show-details",
+        "show-subtasks",
+        "show-tasktime"
+      ]
+    },
+    {
+      "name": "sidebar",
+      "file": "sidebar.svg",
+      "icons": 32,
+      "iconIds": [
+        "sidebar-all-list",
+        "sidebar-assigned-to-me-list",
+        "sidebar-calendar-calDav",
+        "sidebar-calendar-exchange",
+        "sidebar-calendar-google",
+        "sidebar-calendar-icloud",
+        "sidebar-calendar-outlook",
+        "sidebar-calendar-url",
+        "sidebar-collapse",
+        "sidebar-completed-list",
+        "sidebar-custom-smart-list",
+        "sidebar-delete-list",
+        "sidebar-expand",
+        "sidebar-focus-sidebar",
+        "sidebar-folder-open",
+        "sidebar-folder",
+        "sidebar-habit-sidebar",
+        "sidebar-inbox-list",
+        "sidebar-list-add",
+        "sidebar-normal-list",
+        "sidebar-note-list",
+        "sidebar-share-list",
+        "sidebar-share-note-list",
+        "sidebar-summary-list",
+        "sidebar-sync-error",
+        "sidebar-sync-offline",
+        "sidebar-sync",
+        "sidebar-tag",
+        "sidebar-today-list",
+        "sidebar-tomorrow-list",
+        "sidebar-trigger",
+        "sidebar-wont-do-list"
+      ]
+    },
+    {
+      "name": "sign",
+      "file": "sign.svg",
+      "icons": 1,
+      "iconIds": [
+        "sign-out"
+      ]
+    },
+    {
+      "name": "single",
+      "file": "single.svg",
+      "icons": 1,
+      "iconIds": [
+        "single-select"
+      ]
+    },
+    {
+      "name": "small",
+      "file": "small.svg",
+      "icons": 1,
+      "iconIds": [
+        "small-triangle-down"
+      ]
+    },
+    {
+      "name": "sort",
+      "file": "sort.svg",
+      "icons": 13,
+      "iconIds": [
+        "sort-by-assignee",
+        "sort-by-complete",
+        "sort-by-completion",
+        "sort-by-create-time",
+        "sort-by-custom",
+        "sort-by-default",
+        "sort-by-duedate",
+        "sort-by-list",
+        "sort-by-modified-time",
+        "sort-by-priority",
+        "sort-by-tag",
+        "sort-by-title",
+        "sort"
+      ]
+    },
+    {
+      "name": "start",
+      "file": "start.svg",
+      "icons": 1,
+      "iconIds": [
+        "start-pomo"
+      ]
+    },
+    {
+      "name": "statistics",
+      "file": "statistics.svg",
+      "icons": 1,
+      "iconIds": [
+        "statistics"
+      ]
+    },
+    {
+      "name": "statistics_pro",
+      "file": "statistics_pro.svg",
+      "icons": 1,
+      "iconIds": [
+        "statistics_pro"
+      ]
+    },
+    {
+      "name": "statistics_pro_warning",
+      "file": "statistics_pro_warning.svg",
+      "icons": 1,
+      "iconIds": [
+        "statistics_pro_warning"
+      ]
+    },
+    {
+      "name": "statistics_yuan",
+      "file": "statistics_yuan.svg",
+      "icons": 1,
+      "iconIds": [
+        "statistics_yuan"
+      ]
+    },
+    {
+      "name": "statistics_yuan_dark",
+      "file": "statistics_yuan_dark.svg",
+      "icons": 1,
+      "iconIds": [
+        "statistics_yuan_dark"
+      ]
+    },
+    {
+      "name": "stopwatch",
+      "file": "stopwatch.svg",
+      "icons": 2,
+      "iconIds": [
+        "stopwatch-outline",
+        "stopwatch"
+      ]
+    },
+    {
+      "name": "subcalendar",
+      "file": "subcalendar.svg",
+      "icons": 2,
+      "iconIds": [
+        "subcalendar-list-url-only",
+        "subcalendar"
+      ]
+    },
+    {
+      "name": "subscribe",
+      "file": "subscribe.svg",
+      "icons": 1,
+      "iconIds": [
+        "subscribe"
+      ]
+    },
+    {
+      "name": "subtask",
+      "file": "subtask.svg",
+      "icons": 4,
+      "iconIds": [
+        "subtask-add",
+        "subtask-bold",
+        "subtask-mode",
+        "subtask"
+      ]
+    },
+    {
+      "name": "summary",
+      "file": "summary.svg",
+      "icons": 10,
+      "iconIds": [
+        "summary-clear",
+        "summary-detail-control",
+        "summary-email",
+        "summary-list",
+        "summary-markdown",
+        "summary-pdf",
+        "summary-plainText",
+        "summary-png",
+        "summary-richText",
+        "summary-template"
+      ]
+    },
+    {
+      "name": "switch",
+      "file": "switch.svg",
+      "icons": 3,
+      "iconIds": [
+        "switch-mode",
+        "switch-range",
+        "switch"
+      ]
+    },
+    {
+      "name": "symbols",
+      "file": "symbols.svg",
+      "icons": 1,
+      "iconIds": [
+        "symbols"
+      ]
+    },
+    {
+      "name": "sync",
+      "file": "sync.svg",
+      "icons": 1,
+      "iconIds": [
+        "sync-sidebar"
+      ]
+    },
+    {
+      "name": "tag",
+      "file": "tag.svg",
+      "icons": 4,
+      "iconIds": [
+        "tag-close",
+        "tag-create",
+        "tag-item",
+        "tag"
+      ]
+    },
+    {
+      "name": "tags",
+      "file": "tags.svg",
+      "icons": 1,
+      "iconIds": [
+        "tags"
+      ]
+    },
+    {
+      "name": "task",
+      "file": "task.svg",
+      "icons": 1,
+      "iconIds": [
+        "task-menu-assign"
+      ]
+    },
+    {
+      "name": "taskStatistics",
+      "file": "taskStatistics.svg",
+      "icons": 1,
+      "iconIds": [
+        "taskStatistics"
+      ]
+    },
+    {
+      "name": "td",
+      "file": "td.svg",
+      "icons": 2,
+      "iconIds": [
+        "td-footer-comment",
+        "td-footer-markdown"
+      ]
+    },
+    {
+      "name": "teacher",
+      "file": "teacher.svg",
+      "icons": 1,
+      "iconIds": [
+        "teacher"
+      ]
+    },
+    {
+      "name": "team",
+      "file": "team.svg",
+      "icons": 8,
+      "iconIds": [
+        "team-create",
+        "team-disband",
+        "team-exit",
+        "team-no-order-dark",
+        "team-no-order",
+        "team-setting",
+        "team-sort",
+        "team-transfer"
+      ]
+    },
+    {
+      "name": "text",
+      "file": "text.svg",
+      "icons": 2,
+      "iconIds": [
+        "text-mode",
+        "text"
+      ]
+    },
+    {
+      "name": "theme",
+      "file": "theme.svg",
+      "icons": 1,
+      "iconIds": [
+        "theme-selected"
+      ]
+    },
+    {
+      "name": "thin",
+      "file": "thin.svg",
+      "icons": 3,
+      "iconIds": [
+        "thin-notification-sidebar",
+        "thin-search-sidebar",
+        "thin-triangle-down"
+      ]
+    },
+    {
+      "name": "this",
+      "file": "this.svg",
+      "icons": 2,
+      "iconIds": [
+        "this-month",
+        "this-week"
+      ]
+    },
+    {
+      "name": "timecard_remind",
+      "file": "timecard_remind.svg",
+      "icons": 1,
+      "iconIds": [
+        "timecard_remind"
+      ]
+    },
+    {
+      "name": "timecard_repeat",
+      "file": "timecard_repeat.svg",
+      "icons": 1,
+      "iconIds": [
+        "timecard_repeat"
+      ]
+    },
+    {
+      "name": "timecard_repeat_until",
+      "file": "timecard_repeat_until.svg",
+      "icons": 1,
+      "iconIds": [
+        "timecard_repeat_until"
+      ]
+    },
+    {
+      "name": "timecard_time",
+      "file": "timecard_time.svg",
+      "icons": 1,
+      "iconIds": [
+        "timecard_time"
+      ]
+    },
+    {
+      "name": "timeline",
+      "file": "timeline.svg",
+      "icons": 3,
+      "iconIds": [
+        "timeline-item-wont-do",
+        "timeline-mode",
+        "timeline"
+      ]
+    },
+    {
+      "name": "timeline_no_data",
+      "file": "timeline_no_data.svg",
+      "icons": 1,
+      "iconIds": [
+        "timeline_no_data"
+      ]
+    },
+    {
+      "name": "timezone",
+      "file": "timezone.svg",
+      "icons": 1,
+      "iconIds": [
+        "timezone"
+      ]
+    },
+    {
+      "name": "tips",
+      "file": "tips.svg",
+      "icons": 1,
+      "iconIds": [
+        "tips"
+      ]
+    },
+    {
+      "name": "title",
+      "file": "title.svg",
+      "icons": 2,
+      "iconIds": [
+        "title-stopwatch",
+        "title-tomato"
+      ]
+    },
+    {
+      "name": "today",
+      "file": "today.svg",
+      "icons": 39,
+      "iconIds": [
+        "today-icon-1",
+        "today-icon-10",
+        "today-icon-11",
+        "today-icon-12",
+        "today-icon-13",
+        "today-icon-14",
+        "today-icon-15",
+        "today-icon-16",
+        "today-icon-17",
+        "today-icon-18",
+        "today-icon-19",
+        "today-icon-2",
+        "today-icon-20",
+        "today-icon-21",
+        "today-icon-22",
+        "today-icon-23",
+        "today-icon-24",
+        "today-icon-25",
+        "today-icon-26",
+        "today-icon-27",
+        "today-icon-28",
+        "today-icon-29",
+        "today-icon-3",
+        "today-icon-30",
+        "today-icon-31",
+        "today-icon-4",
+        "today-icon-5",
+        "today-icon-6",
+        "today-icon-7",
+        "today-icon-8",
+        "today-icon-9",
+        "today-icon-fr",
+        "today-icon-mo",
+        "today-icon-sa",
+        "today-icon-su",
+        "today-icon-th",
+        "today-icon-tu",
+        "today-icon-we",
+        "today-list"
+      ]
+    },
+    {
+      "name": "tomato",
+      "file": "tomato.svg",
+      "icons": 2,
+      "iconIds": [
+        "tomato-outline",
+        "tomato"
+      ]
+    },
+    {
+      "name": "tomorrow",
+      "file": "tomorrow.svg",
+      "icons": 1,
+      "iconIds": [
+        "tomorrow-list"
+      ]
+    },
+    {
+      "name": "total",
+      "file": "total.svg",
+      "icons": 1,
+      "iconIds": [
+        "total-habit-day"
+      ]
+    },
+    {
+      "name": "travel",
+      "file": "travel.svg",
+      "icons": 1,
+      "iconIds": [
+        "travel-places"
+      ]
+    },
+    {
+      "name": "trend",
+      "file": "trend.svg",
+      "icons": 3,
+      "iconIds": [
+        "trend-down",
+        "trend-up",
+        "trend"
+      ]
+    },
+    {
+      "name": "twitter",
+      "file": "twitter.svg",
+      "icons": 1,
+      "iconIds": [
+        "twitter"
+      ]
+    },
+    {
+      "name": "unarchive",
+      "file": "unarchive.svg",
+      "icons": 1,
+      "iconIds": [
+        "unarchive"
+      ]
+    },
+    {
+      "name": "undo",
+      "file": "undo.svg",
+      "icons": 1,
+      "iconIds": [
+        "undo"
+      ]
+    },
+    {
+      "name": "unpin",
+      "file": "unpin.svg",
+      "icons": 1,
+      "iconIds": [
+        "unpin-task"
+      ]
+    },
+    {
+      "name": "until",
+      "file": "until.svg",
+      "icons": 1,
+      "iconIds": [
+        "until"
+      ]
+    },
+    {
+      "name": "upgrade",
+      "file": "upgrade.svg",
+      "icons": 1,
+      "iconIds": [
+        "upgrade-button-bg"
+      ]
+    },
+    {
+      "name": "user",
+      "file": "user.svg",
+      "icons": 1,
+      "iconIds": [
+        "user-icon"
+      ]
+    },
+    {
+      "name": "verify",
+      "file": "verify.svg",
+      "icons": 1,
+      "iconIds": [
+        "verify"
+      ]
+    },
+    {
+      "name": "version",
+      "file": "version.svg",
+      "icons": 1,
+      "iconIds": [
+        "version-history"
+      ]
+    },
+    {
+      "name": "video",
+      "file": "video.svg",
+      "icons": 2,
+      "iconIds": [
+        "video-call",
+        "video"
+      ]
+    },
+    {
+      "name": "vip",
+      "file": "vip.svg",
+      "icons": 2,
+      "iconIds": [
+        "vip-circle",
+        "vip"
+      ]
+    },
+    {
+      "name": "visitor",
+      "file": "visitor.svg",
+      "icons": 1,
+      "iconIds": [
+        "visitor"
+      ]
+    },
+    {
+      "name": "warning",
+      "file": "warning.svg",
+      "icons": 2,
+      "iconIds": [
+        "warning-new",
+        "warning"
+      ]
+    },
+    {
+      "name": "wechat",
+      "file": "wechat.svg",
+      "icons": 1,
+      "iconIds": [
+        "wechat-pay"
+      ]
+    },
+    {
+      "name": "weeks",
+      "file": "weeks.svg",
+      "icons": 1,
+      "iconIds": [
+        "weeks"
+      ]
+    },
+    {
+      "name": "weibo",
+      "file": "weibo.svg",
+      "icons": 1,
+      "iconIds": [
+        "weibo"
+      ]
+    },
+    {
+      "name": "with",
+      "file": "with.svg",
+      "icons": 1,
+      "iconIds": [
+        "with-tags"
+      ]
+    },
+    {
+      "name": "wont",
+      "file": "wont.svg",
+      "icons": 3,
+      "iconIds": [
+        "wont-do-filled",
+        "wont-do-list",
+        "wont-do"
+      ]
+    },
+    {
+      "name": "workflow",
+      "file": "workflow.svg",
+      "icons": 1,
+      "iconIds": [
+        "workflow-mode"
+      ]
+    },
+    {
+      "name": "xls",
+      "file": "xls.svg",
+      "icons": 1,
+      "iconIds": [
+        "xls"
+      ]
+    },
+    {
+      "name": "zip",
+      "file": "zip.svg",
+      "icons": 1,
+      "iconIds": [
+        "zip"
+      ]
+    }
+  ]
+}

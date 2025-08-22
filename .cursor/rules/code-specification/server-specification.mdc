@@ -380,17 +380,8 @@ export class {Module}Service {
    * 创建{实体}
    */
   async create(create{Module}Dto: Create{Module}Dto): Promise<{Module}Dto> {
-    // 业务验证
-    await this.validateBusinessRules(create{Module}Dto);
-
-    // 数据处理
-    const processedDto = await this.processCreateData(create{Module}Dto);
-
     // 调用数据访问层
-    const result = await this.{module}Repository.create(processedDto);
-
-    // 后置处理
-    await this.afterCreate(result);
+    const result = await this.{module}Repository.create(create{Module}Dto);
 
     return result;
   }
@@ -399,9 +390,6 @@ export class {Module}Service {
    * 查询{实体}列表
    */
   async findAll(filter: {Module}ListFilterDto): Promise<{Module}Dto[]> {
-    // 权限检查
-    await this.checkPermission(filter);
-
     return await this.{module}Repository.findAll(filter);
   }
 
@@ -409,9 +397,6 @@ export class {Module}Service {
    * 分页查询{实体}
    */
   async page(filter: {Module}PageFilterDto): Promise<{ list: {Module}Dto[]; total: number }> {
-    // 权限检查
-    await this.checkPermission(filter);
-
     return await this.{module}Repository.page(filter);
   }
 
@@ -426,17 +411,8 @@ export class {Module}Service {
    * 更新{实体}
    */
   async update(id: string, update{Module}Dto: Update{Module}Dto): Promise<{Module}Dto> {
-    // 业务验证
-    await this.validateUpdateRules(id, update{Module}Dto);
-
-    // 数据处理
-    const processedDto = await this.processUpdateData(update{Module}Dto);
-
     // 调用数据访问层
-    const result = await this.{module}Repository.update(id, processedDto);
-
-    // 后置处理
-    await this.afterUpdate(result);
+    const result = await this.{module}Repository.update(id, update{Module}Dto);
 
     return result;
   }
@@ -445,13 +421,7 @@ export class {Module}Service {
    * 删除{实体}
    */
   async delete(id: string): Promise<void> {
-    // 删除前检查
-    await this.validateDelete(id);
-
     await this.{module}Repository.delete(id);
-
-    // 后置处理
-    await this.afterDelete(id);
   }
 
   /**
@@ -515,9 +485,6 @@ export class {Module}Service {
    * 批量操作 - 完成
    */
   async batchDone(params: {Module}VO.OperationByIdListVo): Promise<void> {
-    // 批量验证
-    await this.validateBatchOperation(params.idList, 'done');
-
     await this.{module}Repository.batchUpdate(params.idList, {
       status: {Module}Status.COMPLETED,
       completedAt: new Date(),
@@ -526,74 +493,6 @@ export class {Module}Service {
 
   // ==================== 私有业务方法 ====================
 
-  /**
-   * 业务规则验证
-   */
-  private async validateBusinessRules(dto: Create{Module}Dto): Promise<void> {
-    // 实现业务规则验证
-    // 例如：检查名称唯一性、验证关联数据等
-  }
-
-  /**
-   * 数据预处理
-   */
-  private async processCreateData(dto: Create{Module}Dto): Promise<Create{Module}Dto> {
-    // 实现数据预处理
-    // 例如：设置默认值、计算字段等
-    return dto;
-  }
-
-  /**
-   * 创建后处理
-   */
-  private async afterCreate(result: {Module}Dto): Promise<void> {
-    // 实现创建后处理
-    // 例如：发送通知、更新缓存、记录日志等
-  }
-
-  /**
-   * 更新规则验证
-   */
-  private async validateUpdateRules(id: string, dto: Update{Module}Dto): Promise<void> {
-    // 实现更新规则验证
-  }
-
-  /**
-   * 更新数据预处理
-   */
-  private async processUpdateData(dto: Update{Module}Dto): Promise<Update{Module}Dto> {
-    // 实现更新数据预处理
-    return dto;
-  }
-
-  /**
-   * 更新后处理
-   */
-  private async afterUpdate(result: {Module}Dto): Promise<void> {
-    // 实现更新后处理
-  }
-
-  /**
-   * 删除验证
-   */
-  private async validateDelete(id: string): Promise<void> {
-    // 实现删除验证
-    // 例如：检查是否有关联数据、权限验证等
-  }
-
-  /**
-   * 删除后处理
-   */
-  private async afterDelete(id: string): Promise<void> {
-    // 实现删除后处理
-  }
-
-  /**
-   * 权限检查
-   */
-  private async checkPermission(filter: any): Promise<void> {
-    // 实现权限检查
-  }
 
   /**
    * 业务规则判断 - 是否可以标记为完成
@@ -614,13 +513,6 @@ export class {Module}Service {
    */
   private canRestore(entity: {Module}Dto): boolean {
     return entity.status === {Module}Status.CANCELLED;
-  }
-
-  /**
-   * 批量操作验证
-   */
-  private async validateBatchOperation(idList: string[], operation: string): Promise<void> {
-    // 实现批量操作验证
   }
 }
 ```

@@ -1,16 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
 import { TaskStatus, Task } from "./entities";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,
 } from "@/common/operation";
+import { TaskRepository } from "./task.repository";
 @Injectable()
 export class TaskStatusService {
   constructor(
-    @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>
+    private readonly taskRepository: TaskRepository
   ) {}
 
   private async updateStatus(
@@ -18,29 +16,13 @@ export class TaskStatusService {
     status: TaskStatus,
     dateField: keyof Task
   ): Promise<boolean> {
-    const task = await this.taskRepository.findOneBy({ id });
-    if (!task) {
-      throw new Error("Task not found");
-    }
-
-    await this.taskRepository.update(id, {
-      status,
-      [dateField]: new Date(),
-    });
-
-    return true;
+    return this.taskRepository.updateStatus(id, status, dateField);
   }
 
   async batchDone(
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
-    await this.taskRepository.update(
-      { id: In(params.idList) },
-      {
-        status: TaskStatus.DONE,
-        doneAt: new Date(),
-      }
-    );
+    await this.taskRepository.batchDone(params.idList);
 
     return {
       result: true,

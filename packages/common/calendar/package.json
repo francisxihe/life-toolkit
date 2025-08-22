@@ -1,5 +1,5 @@
 {
-  "name": "@life-toolkit/common-calendar",
+  "name": "@life-toolkit/calendar",
   "version": "0.0.2",
   "description": "中国日历工具库 - 提供工作日、节假日、补班日等各种日期信息查询功能",
   "main": "dist/index.js",
@@ -25,15 +25,12 @@
     "date",
     "typescript"
   ],
-  "author": "life-toolkit.com",
+  "author": "francisxihe",
   "license": "MIT",
   "private": true,
   "dependencies": {},
   "devDependencies": {
     "tsup": "^7.0.0"
-  },
-  "peerDependencies": {
-    "react": "*"
   },
   "repository": {
     "type": "git",

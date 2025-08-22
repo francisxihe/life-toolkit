@@ -111,7 +111,7 @@ interface TodoModuleArchitecture {
   dependencies: {
     "todo-controller": {
       depends_on: ["todo-service", "auth-guard", "validation-pipe"];
-      used_by: ["web-app", "pc-app"];
+      used_by: ["web-app", "desktop-app"];
       interfaces: ["REST API"];
     };
     "todo-service": {

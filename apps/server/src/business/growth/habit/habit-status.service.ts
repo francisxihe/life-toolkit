@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { HabitRepository } from "./habit.repository";
 import { HabitStatus } from "./entities";
-import { HabitDto } from "./dto";
+import { HabitDto } from "@life-toolkit/business-server";
 import { OperationByIdListDto } from "@/common/operation";
 
 @Injectable()
@@ -11,9 +11,6 @@ export class HabitStatusService {
   ) {}
 
   async batchDone(params: OperationByIdListDto): Promise<void> {
-    // 批量验证
-    await this.validateBatchOperation(params.idList, 'done');
-    
     await this.habitRepository.batchUpdate(params.idList, {
       status: HabitStatus.COMPLETED,
       completedCount: () => "completed_count + 1",
@@ -86,25 +83,6 @@ export class HabitStatusService {
     
     return true;
   }
-
-  // 私有业务方法
-  private async validateBatchOperation(ids: string[], operation: string): Promise<void> {
-    // 批量验证业务规则
-    for (const id of ids) {
-      const habit = await this.habitRepository.findById(id);
-      
-      switch (operation) {
-        case 'done':
-          if (!this.canMarkAsDone(habit)) {
-            throw new BadRequestException(`习惯 ${habit.name} 当前状态不允许标记为完成`);
-          }
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
   private canMarkAsDone(habit: HabitDto): boolean {
     return habit.status === HabitStatus.ACTIVE || habit.status === HabitStatus.PAUSED;
   }

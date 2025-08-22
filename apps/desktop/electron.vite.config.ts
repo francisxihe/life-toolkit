@@ -1,0 +1,146 @@
+import { defineConfig } from "electron-vite";
+import path from "path";
+import { fileURLToPath } from "url";
+import react from "@vitejs/plugin-react";
+import svgrPlugin from "@arco-plugins/vite-plugin-svgr";
+import tailwindcss from "@tailwindcss/vite";
+import { vitePluginForArco } from '@arco-plugins/vite-react';
+
+// 获取当前文件的目录路径
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirPath = path.dirname(currentFilePath);
+
+export default defineConfig({
+  main: {
+    // 主进程配置
+    build: {
+      outDir: "dist/main",
+      rollupOptions: {
+        input: {
+          index: path.resolve(currentDirPath, "src/main/index.ts"),
+        },
+        external: [
+          "electron",
+          "electron-devtools-installer",
+          "sqlite3",
+          "typeorm",
+          "reflect-metadata",
+          "class-validator",
+          "class-transformer",
+          "uuid",
+          /^@life-toolkit\/components-repeat/,
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/,
+        ],
+      },
+      minify: process.env.NODE_ENV === "production",
+      sourcemap: process.env.NODE_ENV !== "production",
+      // 监听整个 src 目录的变化
+      watch:
+        process.env.NODE_ENV === "development"
+          ? {
+              include: [
+                path.resolve(currentDirPath, "src/main/**/*"),
+                path.resolve(currentDirPath, "src/database/**/*"),
+              ],
+            }
+          : undefined,
+    },
+    // 开发环境配置
+    define: {
+      __DEV__: process.env.NODE_ENV === "development",
+    },
+  },
+  preload: {
+    // 预加载脚本配置
+    build: {
+      outDir: "dist/preload",
+      rollupOptions: {
+        input: {
+          index: path.resolve(currentDirPath, "src/preload/index.ts"),
+        },
+        external: [
+          "electron",
+          "sqlite3",
+          "typeorm",
+          "reflect-metadata",
+          "class-validator",
+          "class-transformer",
+          "uuid",
+          /^@life-toolkit\/components-repeat/,
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/,
+        ],
+        output: {
+          format: "cjs",
+          entryFileNames: "[name].cjs",
+        },
+      },
+      minify: process.env.NODE_ENV === "production",
+      sourcemap: process.env.NODE_ENV !== "production",
+    },
+  },
+  renderer: {
+    // 渲染进程配置
+    root: path.resolve(currentDirPath, "src/render"),
+    plugins: [
+      react(),
+      tailwindcss(),
+      svgrPlugin({
+        svgrOptions: {},
+      }),
+      vitePluginForArco({
+        theme: '@arco-themes/react-francis',
+        modifyVars: {
+          // 'arcoblue-6': setting.themeColor,
+        },
+      }),
+    ],
+    css: {
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
+        },
+      },
+      devSourcemap: true,
+    },
+    resolve: {
+      alias: [
+        {
+          find: /^@\/(.*)$/,
+          replacement: path.resolve(currentDirPath, "../../packages/business/web/src/$1"),
+        },
+        {
+          find: '@',
+          replacement: path.resolve(currentDirPath, "src/render"),
+        },
+      ],
+    },
+    build: {
+      outDir: "dist/renderer",
+      rollupOptions: {
+        input: path.resolve(currentDirPath, "src/render/index.html"),
+        external: [
+          /^@life-toolkit\/components-repeat/,
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/,
+        ],
+      },
+      minify: process.env.NODE_ENV === "production",
+      sourcemap: process.env.NODE_ENV !== "production",
+    },
+    optimizeDeps: {
+      include: [
+        'react',
+        'react-dom',
+        'react-dnd',
+        'react-dnd-html5-backend',
+        'mitt',
+      ],
+      exclude: [],
+    },
+  },
+});
