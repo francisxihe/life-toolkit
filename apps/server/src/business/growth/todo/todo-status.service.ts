@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In, DataSource } from "typeorm";
-import { TodoStatus, Todo, TodoRepeat } from "./entities";
+import { DataSource } from "typeorm";
+import { TodoStatus, Todo } from "./entities";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,
@@ -11,8 +10,6 @@ import { TodoRepeatService } from "./todo-repeat.service";
 @Injectable()
 export class TodoStatusService {
   constructor(
-    @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>,
     private readonly todoRepeatService: TodoRepeatService,
     private readonly dataSource: DataSource
   ) {}

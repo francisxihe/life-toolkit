@@ -3,6 +3,9 @@ import { LocaleProvider } from "./useLocale";
 import { RepeatSelectorMain } from "./RepeatMain";
 import { RepeatModeForm, RepeatEndModeForm } from "../types";
 
+export * from "./mapping";
+export { default as webMapping } from "./mapping";
+
 export function RepeatSelector(props: {
   lang: "en-US" | "zh-CN";
   value: RepeatModeForm & RepeatEndModeForm;
@@ -17,6 +20,7 @@ export function RepeatSelector(props: {
       <RepeatProvider
         value={value}
         onChange={(_value) => {
+          console.log("RepeatSelector onChange", _value);
           props.onChange(_value);
         }}
       >

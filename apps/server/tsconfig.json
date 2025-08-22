@@ -20,7 +20,8 @@
     "noFallthroughCasesInSwitch": true,
     "paths": {
       "@/*": ["src/*"],
-      "@life-toolkit/vo": ["../../libs/vo/src/index.ts"]
+      "@life-toolkit/vo": ["../../packages/business/vo/src/index.ts"],
+      "@life-toolkit/business-server": ["../../packages/business/server/src/index.ts"]
     }
   },
   "include": ["src/**/*"],

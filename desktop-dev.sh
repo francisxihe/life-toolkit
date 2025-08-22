@@ -13,7 +13,7 @@ start_web() {
 
 start_pc() {
   echo "启动移动端..."
-  turbo run dev --filter=life-toolkit-pc
+  turbo run dev --filter=life-toolkit-desktop
 }
 
 # 询问用户要启动哪个应用

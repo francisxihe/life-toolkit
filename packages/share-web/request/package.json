@@ -1,0 +1,11 @@
+{
+  "name": "@life-toolkit/share-request",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "types": "index.ts",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "@life-toolkit/share-types": "workspace:*"
+  },
+  "devDependencies": {}
+}
