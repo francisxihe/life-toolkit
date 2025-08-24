@@ -9,7 +9,7 @@ import {
   YearlyType,
   TimeUnit,
 } from "../types";
-import { getNextWorkday, getNextRestDay } from "@life-toolkit/common-calendar";
+import { getNextWorkday, getNextRestDay } from "@life-toolkit/calendar";
 
 /**
  * 根据重复配置计算下一个日期

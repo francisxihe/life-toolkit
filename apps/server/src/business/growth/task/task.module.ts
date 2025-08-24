@@ -6,15 +6,16 @@ import { TaskController } from "./task.controller";
 import { TaskService } from "./task.service";
 import { TaskStatusService } from "./task-status.service";
 import { TodoModule } from "../todo/todo.module";
-import { TaskTreeService } from "./task-tree.service";
-import { GoalModule } from "../goal/goal.module";
+import { TaskRepository } from "./task.repository";
+import { TaskTreeRepository } from "./task-tree.repository";
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([Task, TrackTime]),
     TodoModule,
   ],
   controllers: [TaskController],
-  providers: [TaskService, TaskStatusService, TaskTreeService],
-  exports: [TaskService, TaskStatusService, TaskTreeService],
+  providers: [TaskRepository, TaskTreeRepository, TaskService, TaskStatusService],
+  exports: [TaskRepository, TaskTreeRepository, TaskService, TaskStatusService],
 })
 export class TaskModule {}

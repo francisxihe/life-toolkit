@@ -20,7 +20,8 @@
     "./web": "./web/index.tsx",
     "./types": "./dist/types/index.js",
     "./types/repeat-end": "./dist/types/repeat-end.js",
-    "./common": "./dist/common/index.js"
+    "./common": "./dist/common/index.js",
+    "./vo": "./vo/index.ts"
   },
   "files": [
     "dist",
@@ -36,19 +37,22 @@
     "test": "jest"
   },
   "dependencies": {
+    "@life-toolkit/calendar": "workspace:*",
     "@life-toolkit/common-web-utils": "workspace:*",
-    "@life-toolkit/common-calendar": "workspace:*"
+    "dayjs": "^1.11.10",
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "react": "*",
-    "typeorm": "*",
-    "class-validator": "*",
     "@arco-design/web-react": "*",
-    "@nestjs/mapped-types": "*"
+    "@nestjs/mapped-types": "*",
+    "class-validator": "*",
+    "react": "*",
+    "typeorm": "*"
   },
   "devDependencies": {
-    "@testing-library/react": "^14.0.0",
     "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@types/lodash": "^4.17.20",
     "jest-environment-jsdom": "^29.0.0"
   }
 }
