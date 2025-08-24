@@ -1,5 +1,5 @@
 import { TreeRepository } from "typeorm";
-import { Task, TaskStatus } from "./task.entity";
+import { Task } from "./task.entity";
 import { AppDataSource } from "../../database.config";
 import {
   TaskService as BusinessTaskService,
@@ -13,6 +13,7 @@ import {
 import { TaskRepository as DesktopTaskRepository } from "./task.repository";
 import { TaskTreeRepository as DesktopTaskTreeRepository } from "./task-tree.repository";
 import { DesktopTodoCleanupService } from "./todo-cleanup.service";
+import { TaskStatus } from "@life-toolkit/enum";
 
 export class TaskService {
   private service: BusinessTaskService;

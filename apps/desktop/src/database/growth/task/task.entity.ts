@@ -11,13 +11,7 @@ import {
 import { BaseEntity } from "../../base.entity";
 import { Goal } from "../goal/goal.entity";
 import { Todo } from "../todo/todo.entity";
-
-export enum TaskStatus {
-  TODO = "todo",
-  IN_PROGRESS = "in_progress",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
+import { TaskStatus } from "@life-toolkit/enum";
 
 @Entity("task")
 @Tree("closure-table")

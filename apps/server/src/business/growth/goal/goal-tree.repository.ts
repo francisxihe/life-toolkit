@@ -7,13 +7,14 @@ import {
   FindOptionsWhere,
   Like,
 } from "typeorm";
-import { Goal, GoalStatus } from "./entities";
 import {
   GoalMapper,
   CreateGoalDto,
   UpdateGoalDto,
   GoalDto,
 } from "@life-toolkit/business-server";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
+import { Goal } from "./goal.entity";
 
 @Injectable()
 export class GoalTreeRepository {

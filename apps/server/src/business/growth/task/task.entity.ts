@@ -16,9 +16,9 @@ import {
   IsArray,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { TaskStatus } from "./enum";
-import { Goal } from "../../goal/entities/goal.entity";
-import { Todo } from "../../todo/entities/todo.entity";
+import { TaskStatus } from "@life-toolkit/enum";
+import { Goal } from "../goal/goal.entity";
+import { Todo } from "../todo/todo.entity";
 
 @Entity("task")
 @Tree("closure-table")

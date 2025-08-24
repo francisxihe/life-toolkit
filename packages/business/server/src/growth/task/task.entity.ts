@@ -1,5 +1,5 @@
 import { BaseEntity } from "../../base/base.entity";
-import { TaskStatus } from "./task.enum";
+import { TaskStatus } from "@life-toolkit/enum";
 import { Goal } from "../goal/goal.entity";
 import { Todo } from "../todo/todo.entity";
 

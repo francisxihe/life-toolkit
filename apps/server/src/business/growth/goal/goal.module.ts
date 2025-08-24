@@ -1,13 +1,13 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Goal } from "./entities";
+import { Goal } from "./goal.entity";
 import { GoalService } from "./goal.service";
 import { GoalController } from "./goal.controller";
 import { GoalRepository } from "./goal.repository";
 import { GoalTreeRepository } from "./goal-tree.repository";
-import { Task } from "../task/entities";
+import { Task } from "../task";
 import { TrackTime } from "../track-time/entity";
-import { Habit } from "../habit/entities";
+import { Habit } from "../habit";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Goal, Task, TrackTime, Habit])],

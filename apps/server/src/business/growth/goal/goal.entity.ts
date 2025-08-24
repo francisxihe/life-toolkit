@@ -1,4 +1,11 @@
-import { Entity, Column, TreeChildren, TreeParent, Tree, OneToMany } from "typeorm";
+import {
+  Entity,
+  Column,
+  TreeChildren,
+  TreeParent,
+  Tree,
+  OneToMany,
+} from "typeorm";
 import { BaseEntity } from "@/base/base.entity";
 import {
   IsEnum,
@@ -9,8 +16,9 @@ import {
   IsISO8601,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { GoalStatus, GoalType } from "./enum";
-import { Task } from "../../task/entities";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
+import { Task } from "../task";
+
 @Entity("goal")
 @Tree("closure-table")
 export class Goal extends BaseEntity {

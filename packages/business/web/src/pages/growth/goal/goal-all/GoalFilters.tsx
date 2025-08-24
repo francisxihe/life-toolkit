@@ -3,13 +3,10 @@
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP } from '../constants';
-import {
-  GoalPageFiltersVo,
-  GoalStatus,
-  GoalType,
-} from '@life-toolkit/vo/growth';
+import { GoalPageFiltersVo } from '@life-toolkit/vo/growth';
 import { useGoalAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;

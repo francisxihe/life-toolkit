@@ -9,7 +9,7 @@ import {
   Query,
 } from "@life-toolkit/electron-ipc-router";
 import { taskService } from "./task.service";
-import { TaskStatus } from "./task.entity";
+import { TaskStatus } from "@life-toolkit/enum";
 import type { Task as TaskVO } from "@life-toolkit/vo";
 import { TaskMapper } from "@life-toolkit/business-server";
 

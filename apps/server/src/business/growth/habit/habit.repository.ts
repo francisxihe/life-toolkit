@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
-import { Habit, HabitStatus } from "./entities";
+import { Habit } from "./entities";
 import {
   CreateHabitDto,
   UpdateHabitDto,
@@ -9,10 +9,11 @@ import {
   HabitPageFilterDto,
   HabitDto,
 } from "@life-toolkit/business-server";
-import { Goal } from "../goal/entities";
+import { Goal } from "../goal/goal.entity";
 import { Todo, TodoStatus } from "../todo/entities";
 import { HabitMapper } from "@life-toolkit/business-server";
 import { HabitRepository as BusinessHabitRepository } from "@life-toolkit/business-server";
+import { HabitStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class HabitRepository implements BusinessHabitRepository {
@@ -22,7 +23,7 @@ export class HabitRepository implements BusinessHabitRepository {
     @InjectRepository(Goal)
     private readonly goalRepository: Repository<Goal>,
     @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>,
+    private readonly todoRepository: Repository<Todo>
   ) {}
 
   // 基础 CRUD 操作
@@ -50,7 +51,7 @@ export class HabitRepository implements BusinessHabitRepository {
   }
 
   async findById(id: string, relations?: string[]): Promise<HabitDto> {
-    const habit = await this.habitRepository.findOne({ 
+    const habit = await this.habitRepository.findOne({
       where: { id },
       relations,
     });
@@ -63,7 +64,7 @@ export class HabitRepository implements BusinessHabitRepository {
   async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
     const query = this.buildQuery(filter);
     const habits = await query.getMany();
-    return habits.map(habit => HabitMapper.entityToDto(habit));
+    return habits.map((habit) => HabitMapper.entityToDto(habit));
   }
 
   async page(
@@ -71,7 +72,7 @@ export class HabitRepository implements BusinessHabitRepository {
   ): Promise<{ list: HabitDto[]; total: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
-    
+
     const query = this.buildQuery(filter);
     const [habits, total] = await query
       .skip(skip)
@@ -79,7 +80,7 @@ export class HabitRepository implements BusinessHabitRepository {
       .getManyAndCount();
 
     return {
-      list: habits.map(habit => HabitMapper.entityToDto(habit)),
+      list: habits.map((habit) => HabitMapper.entityToDto(habit)),
       total,
     };
   }
@@ -89,7 +90,7 @@ export class HabitRepository implements BusinessHabitRepository {
     if (!habit) {
       throw new NotFoundException(`习惯记录不存在，ID: ${id}`);
     }
-    
+
     // 处理目标关联更新
     if (updateHabitDto.goalIds !== undefined) {
       if (updateHabitDto.goalIds.length > 0) {
@@ -136,7 +137,7 @@ export class HabitRepository implements BusinessHabitRepository {
     if (updateHabitDto.completedCount !== undefined) {
       habit.completedCount = updateHabitDto.completedCount;
     }
-    
+
     const savedHabit = await this.habitRepository.save(habit);
     return HabitMapper.entityToDto(savedHabit);
   }
@@ -157,13 +158,14 @@ export class HabitRepository implements BusinessHabitRepository {
   }
 
   async batchUpdate(ids: string[], updateData: Partial<any>): Promise<void> {
-    await this.habitRepository.update(
-      { id: In(ids) },
-      updateData
-    );
+    await this.habitRepository.update({ id: In(ids) }, updateData);
   }
 
-  async updateStatus(id: string, status: HabitStatus, additionalData?: Record<string, any>): Promise<void> {
+  async updateStatus(
+    id: string,
+    status: HabitStatus,
+    additionalData?: Record<string, any>
+  ): Promise<void> {
     const updateData = { status, ...additionalData };
     await this.habitRepository.update({ id }, updateData);
   }
@@ -175,7 +177,7 @@ export class HabitRepository implements BusinessHabitRepository {
       .where("goal.id = :goalId", { goalId })
       .getMany();
 
-    return habits.map(habit => HabitMapper.entityToDto(habit));
+    return habits.map((habit) => HabitMapper.entityToDto(habit));
   }
 
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
@@ -228,7 +230,8 @@ export class HabitRepository implements BusinessHabitRepository {
       activeTodos,
       completedTodos,
       abandonedTodos,
-      totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
+      totalCount:
+        activeTodos.length + completedTodos.length + abandonedTodos.length,
     };
   }
 
@@ -262,8 +265,7 @@ export class HabitRepository implements BusinessHabitRepository {
 
   // 构建查询条件的私有方法
   private buildQuery(filter: HabitFilterDto) {
-    let query = this.habitRepository
-      .createQueryBuilder("habit");
+    let query = this.habitRepository.createQueryBuilder("habit");
 
     // 软删除过滤（与 Goal 仓储保持一致）
     query = query.andWhere("habit.deletedAt IS NULL");
@@ -276,13 +278,25 @@ export class HabitRepository implements BusinessHabitRepository {
     }
 
     // 状态过滤
-    if (filter.status && Array.isArray(filter.status) && filter.status.length > 0) {
-      query = query.andWhere("habit.status IN (:...status)", { status: filter.status });
+    if (
+      filter.status &&
+      Array.isArray(filter.status) &&
+      filter.status.length > 0
+    ) {
+      query = query.andWhere("habit.status IN (:...status)", {
+        status: filter.status,
+      });
     }
 
     // 难度过滤
-    if (filter.difficulty && Array.isArray(filter.difficulty) && filter.difficulty.length > 0) {
-      query = query.andWhere("habit.difficulty IN (:...difficulty)", { difficulty: filter.difficulty });
+    if (
+      filter.difficulty &&
+      Array.isArray(filter.difficulty) &&
+      filter.difficulty.length > 0
+    ) {
+      query = query.andWhere("habit.difficulty IN (:...difficulty)", {
+        difficulty: filter.difficulty,
+      });
     }
 
     // 关键词搜索
@@ -296,7 +310,9 @@ export class HabitRepository implements BusinessHabitRepository {
     // 标签搜索
     if (filter.tags) {
       // 确保 tags 是数组
-      const tagsArray = Array.isArray(filter.tags) ? filter.tags : [filter.tags];
+      const tagsArray = Array.isArray(filter.tags)
+        ? filter.tags
+        : [filter.tags];
       if (tagsArray.length > 0) {
         tagsArray.forEach((tag, index) => {
           query = query.andWhere(`habit.tags LIKE :tag${index}`, {
@@ -308,18 +324,26 @@ export class HabitRepository implements BusinessHabitRepository {
 
     // 日期范围过滤
     if (filter.startDateStart) {
-      query = query.andWhere("habit.startDate >= :startDateStart", { startDateStart: filter.startDateStart });
+      query = query.andWhere("habit.startDate >= :startDateStart", {
+        startDateStart: filter.startDateStart,
+      });
     }
     if (filter.startDateEnd) {
-      query = query.andWhere("habit.startDate <= :startDateEnd", { startDateEnd: filter.startDateEnd });
+      query = query.andWhere("habit.startDate <= :startDateEnd", {
+        startDateEnd: filter.startDateEnd,
+      });
     }
     if (filter.targetDateStart) {
-      query = query.andWhere("habit.targetDate >= :targetDateStart", { targetDateStart: filter.targetDateStart });
+      query = query.andWhere("habit.targetDate >= :targetDateStart", {
+        targetDateStart: filter.targetDateStart,
+      });
     }
     if (filter.targetDateEnd) {
-      query = query.andWhere("habit.targetDate <= :targetDateEnd", { targetDateEnd: filter.targetDateEnd });
+      query = query.andWhere("habit.targetDate <= :targetDateEnd", {
+        targetDateEnd: filter.targetDateEnd,
+      });
     }
 
     return query.orderBy("habit.updatedAt", "DESC");
   }
-} 
+}

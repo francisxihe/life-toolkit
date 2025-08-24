@@ -5,11 +5,11 @@ import {
   GoalVo,
   UpdateGoalVo,
   GoalItemVo,
-  GoalStatus,
   CreateGoalVo,
 } from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 export type GoalDetailContextProps = {
   children: React.ReactNode;

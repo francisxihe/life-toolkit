@@ -1,6 +1,6 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Todo as DesktopTodo, TodoStatus, TodoSource } from "./todo.entity";
+import { Todo as DesktopTodo } from "./todo.entity";
 import {
   TodoService as BusinessTodoService,
   CreateTodoDto,
@@ -12,6 +12,7 @@ import {
 } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
 import TodoRepeatService from "./todo.repeat.service";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 export class TodoService {
   private service: BusinessTodoService;
@@ -220,7 +221,7 @@ export class TodoService {
   }
 
   async batchDone(idList: string[]): Promise<void> {
-    await this.service.batchDone({ idList: idList });  
+    await this.service.batchDone({ idList: idList });
   }
 
   async abandon(id: string): Promise<void> {

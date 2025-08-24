@@ -2,12 +2,7 @@ import { BaseModelVo } from "../../base/model.vo";
 import { TrackTimeVo } from "../track-time/track-time.vo";
 import { GoalVo } from "../goal/goal-model.vo";
 import { TodoVo } from "../todo/todo-model.vo";
-export enum TaskStatus {
-  TODO = "todo",
-  IN_PROGRESS = "in_progress",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
+import { TaskStatus } from "@life-toolkit/enum";
 
 export type TaskModelVo = {
   name: string;

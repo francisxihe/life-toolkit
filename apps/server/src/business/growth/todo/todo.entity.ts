@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, ManyToOne, OneToOne, JoinColumn } from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import {
   IsString,
   IsOptional,
@@ -9,18 +9,9 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
-import { TodoStatus } from "./enum";
-import { Task } from "../../task/entities";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
+import { Task } from "../task";
 import { TodoRepeat } from "./todo-repeat.entity";
-
-export enum TodoSource {
-  /** 手动创建 */
-  MANUAL = "manual",
-  /** 重复创建 */
-  REPEAT = "repeat",
-  /** 习惯创建 */
-  HABIT = "habit",
-}
 
 @Entity("todo")
 export class Todo extends BaseEntity {

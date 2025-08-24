@@ -1,5 +1,5 @@
 import { BaseEntity } from "../../base/base.entity";
-import { GoalStatus, GoalType } from "./goal.enum";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import { Task } from "../task";
 
 export class Goal extends BaseEntity {

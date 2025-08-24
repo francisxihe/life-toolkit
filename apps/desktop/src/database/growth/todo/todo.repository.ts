@@ -1,10 +1,6 @@
 import { Repository, In, Like, DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import {
-  Todo,
-  TodoStatus as DesktopTodoStatus,
-  TodoSource as DesktopTodoSource,
-} from "./todo.entity";
+import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -13,6 +9,7 @@ import {
   TodoDto,
   TodoMapper,
 } from "@life-toolkit/business-server";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 export class TodoRepository /* implements import("@life-toolkit/business-server").TodoRepository */ {
   private repo: Repository<Todo> = AppDataSource.getRepository(Todo);
@@ -55,9 +52,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     const entity = this.repo.create({
       name: createDto.name,
       description: (createDto as any).description,
-      status:
-        ((createDto as any).status as DesktopTodoStatus) ??
-        DesktopTodoStatus.TODO,
+      status: ((createDto as any).status as TodoStatus) ?? TodoStatus.TODO,
       importance: (createDto as any).importance,
       urgency: (createDto as any).urgency,
       tags: (createDto as any).tags,
@@ -65,9 +60,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       planStartAt: (createDto as any).planStartAt,
       planEndAt: (createDto as any).planEndAt,
       taskId: (createDto as any).taskId,
-      source:
-        ((createDto as any).source as DesktopTodoSource) ??
-        DesktopTodoSource.MANUAL,
+      source: ((createDto as any).source as TodoSource) ?? TodoSource.MANUAL,
     } as DeepPartial<Todo>);
     const saved = await this.repo.save(entity);
     return this.toDto(saved);
@@ -80,9 +73,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     const entity = this.repo.create({
       name: createDto.name,
       description: (createDto as any).description,
-      status:
-        ((createDto as any).status as DesktopTodoStatus) ??
-        DesktopTodoStatus.TODO,
+      status: ((createDto as any).status as TodoStatus) ?? TodoStatus.TODO,
       importance: (createDto as any).importance,
       urgency: (createDto as any).urgency,
       tags: (createDto as any).tags,
@@ -90,9 +81,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       planStartAt: (createDto as any).planStartAt,
       planEndAt: (createDto as any).planEndAt,
       taskId: (createDto as any).taskId,
-      source:
-        ((createDto as any).source as DesktopTodoSource) ??
-        DesktopTodoSource.MANUAL,
+      source: ((createDto as any).source as TodoSource) ?? TodoSource.MANUAL,
       ...extras,
     } as DeepPartial<Todo>);
     const saved = await this.repo.save(entity);

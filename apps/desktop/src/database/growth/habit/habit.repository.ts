@@ -2,10 +2,7 @@ import { In, Repository } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import { Habit as DesktopHabit } from "./habit.entity";
 import { Goal as DesktopGoal } from "../goal/goal.entity";
-import {
-  Todo as DesktopTodo,
-  TodoStatus as DesktopTodoStatus,
-} from "../todo/todo.entity";
+import { Todo as DesktopTodo } from "../todo/todo.entity";
 import {
   HabitRepository as BusinessHabitRepository,
   CreateHabitDto,
@@ -14,7 +11,7 @@ import {
   HabitPageFilterDto,
   HabitDto,
 } from "@life-toolkit/business-server";
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitStatus, HabitDifficulty, TodoStatus } from "@life-toolkit/enum";
 
 export class HabitRepository implements BusinessHabitRepository {
   private repo: Repository<DesktopHabit>;
@@ -35,8 +32,8 @@ export class HabitRepository implements BusinessHabitRepository {
       deletedAt: entity.deletedAt,
       name: entity.name,
       description: entity.description,
-      status: entity.status as unknown as HabitStatus,
-      difficulty: entity.difficulty as unknown as HabitDifficulty,
+      status: entity.status as HabitStatus,
+      difficulty: entity.difficulty as HabitDifficulty,
       importance: entity.importance,
       tags: entity.tags,
       startDate: entity.startDate,
@@ -46,7 +43,7 @@ export class HabitRepository implements BusinessHabitRepository {
       completedCount: entity.completedCount,
       goals: (entity.goals || []) as any,
       todos: (entity.todos || []) as any,
-    } as unknown as HabitDto;
+    };
   }
 
   private buildQuery(filter: HabitListFilterDto) {
@@ -62,13 +59,13 @@ export class HabitRepository implements BusinessHabitRepository {
 
     if (filter.status) {
       qb = qb.andWhere("habit.status = :status", {
-        status: filter.status as any,
+        status: filter.status as HabitStatus,
       });
     }
 
     if (filter.difficulty) {
       qb = qb.andWhere("habit.difficulty = :difficulty", {
-        difficulty: filter.difficulty as any,
+        difficulty: filter.difficulty as HabitDifficulty,
       });
     }
 
@@ -283,18 +280,15 @@ export class HabitRepository implements BusinessHabitRepository {
   }> {
     const activeTodos = await this.todoRepo.findBy({
       habitId,
-      status: In([
-        DesktopTodoStatus.TODO,
-        DesktopTodoStatus.IN_PROGRESS,
-      ]) as any,
+      status: In([TodoStatus.TODO]) as any,
     });
     const completedTodos = await this.todoRepo.findBy({
       habitId,
-      status: DesktopTodoStatus.DONE as any,
+      status: TodoStatus.DONE as any,
     });
     const abandonedTodos = await this.todoRepo.findBy({
       habitId,
-      status: DesktopTodoStatus.ABANDONED as any,
+      status: TodoStatus.ABANDONED as any,
     });
     const totalCount =
       activeTodos.length + completedTodos.length + abandonedTodos.length;
@@ -309,10 +303,10 @@ export class HabitRepository implements BusinessHabitRepository {
   }> {
     const [completedTodos, abandonedTodos, recentTodos] = await Promise.all([
       this.todoRepo.count({
-        where: { habitId, status: DesktopTodoStatus.DONE as any },
+        where: { habitId, status: TodoStatus.DONE as any },
       }),
       this.todoRepo.count({
-        where: { habitId, status: DesktopTodoStatus.ABANDONED as any },
+        where: { habitId, status: TodoStatus.ABANDONED as any },
       }),
       this.todoRepo.find({
         where: { habitId },

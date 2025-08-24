@@ -1,12 +1,13 @@
-import { Repository } from 'typeorm';
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Habit, HabitStatus } from '../../../../../src/business/growth/habit/entities';
-import { Goal } from '../../../../../src/business/growth/goal/entities';
-import { TodoRepeat } from '../../../../../src/business/growth/todo/entities';
-import { HabitService } from '../../../../../src/business/growth/habit/habit.service';
-import { HabitMapper } from '../../../../../src/business/growth/habit/mapper';
-import { HabitTestFactory } from './habit.factory';
+import { Repository } from "typeorm";
+import { Test, TestingModule } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { Habit } from "../../../../../src/business/growth/habit/entities";
+import { Goal } from "../../../../../src/business/growth/goal/entities";
+import { TodoRepeat } from "../../../../../src/business/growth/todo/entities";
+import { HabitService } from "../../../../../src/business/growth/habit/habit.service";
+import { HabitMapper } from "../../../../../src/business/growth/habit/mapper";
+import { HabitTestFactory } from "./habit.factory";
+import { HabitStatus } from "@life-toolkit/enum";
 
 /**
  * 习惯测试工具类
@@ -15,7 +16,9 @@ export class HabitTestUtils {
   /**
    * 创建测试模块
    */
-  static async createTestingModule(customProviders?: any[]): Promise<TestingModule> {
+  static async createTestingModule(
+    customProviders?: any[]
+  ): Promise<TestingModule> {
     const defaultProviders = [
       HabitService,
       {
@@ -89,7 +92,9 @@ export class HabitTestUtils {
       leftJoin: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       getMany: jest.fn().mockResolvedValue(mockData || []),
-      getManyAndCount: jest.fn().mockResolvedValue([mockData || [], mockData?.length || 0]),
+      getManyAndCount: jest
+        .fn()
+        .mockResolvedValue([mockData || [], mockData?.length || 0]),
       getOne: jest.fn().mockResolvedValue(mockData?.[0] || null),
       getCount: jest.fn().mockResolvedValue(mockData?.length || 0),
     };
@@ -129,7 +134,9 @@ export class HabitTestUtils {
       (repository.delete as jest.Mock).mockResolvedValue(mockData.delete);
     }
     if (mockData.queryBuilder !== undefined) {
-      (repository.createQueryBuilder as jest.Mock).mockReturnValue(mockData.queryBuilder);
+      (repository.createQueryBuilder as jest.Mock).mockReturnValue(
+        mockData.queryBuilder
+      );
     }
   }
 
@@ -150,16 +157,22 @@ export class HabitTestUtils {
       (mapper.toEntity as jest.Mock).mockReturnValue(mockData.toEntity);
     }
     if (mockData.toUpdateEntity !== undefined) {
-      (mapper.toUpdateEntity as jest.Mock).mockReturnValue(mockData.toUpdateEntity);
+      (mapper.toUpdateEntity as jest.Mock).mockReturnValue(
+        mockData.toUpdateEntity
+      );
     }
     if (mockData.toVo !== undefined) {
       (mapper.toVo as jest.Mock).mockReturnValue(mockData.toVo);
     }
     if (mockData.voToDtoFromVo !== undefined) {
-      (mapper.voToDtoFromVo as jest.Mock).mockReturnValue(mockData.voToDtoFromVo);
+      (mapper.voToDtoFromVo as jest.Mock).mockReturnValue(
+        mockData.voToDtoFromVo
+      );
     }
     if (mockData.voToUpdateDtoFromVo !== undefined) {
-      (mapper.voToUpdateDtoFromVo as jest.Mock).mockReturnValue(mockData.voToUpdateDtoFromVo);
+      (mapper.voToUpdateDtoFromVo as jest.Mock).mockReturnValue(
+        mockData.voToUpdateDtoFromVo
+      );
     }
   }
 
@@ -215,22 +228,24 @@ export class HabitTestUtils {
   /**
    * 创建失败的测试场景
    */
-  static createFailureScenario(errorType: 'not_found' | 'validation' | 'database') {
+  static createFailureScenario(
+    errorType: "not_found" | "validation" | "database"
+  ) {
     switch (errorType) {
-      case 'not_found':
+      case "not_found":
         return {
           mockData: { findOne: null },
-          expectedError: 'NotFoundException',
+          expectedError: "NotFoundException",
         };
-      case 'validation':
+      case "validation":
         return {
           input: HabitTestFactory.createInvalidHabitVo(),
-          expectedError: 'BadRequestException',
+          expectedError: "BadRequestException",
         };
-      case 'database':
+      case "database":
         return {
-          mockData: { save: Promise.reject(new Error('Database error')) },
-          expectedError: 'Database error',
+          mockData: { save: Promise.reject(new Error("Database error")) },
+          expectedError: "Database error",
         };
       default:
         throw new Error(`Unknown error type: ${errorType}`);
@@ -241,44 +256,44 @@ export class HabitTestUtils {
    * 验证习惯对象的基本结构
    */
   static expectHabitStructure(habit: any) {
-    expect(habit).toHaveProperty('id');
-    expect(habit).toHaveProperty('name');
-    expect(habit).toHaveProperty('status');
-    expect(habit).toHaveProperty('importance');
-    expect(habit).toHaveProperty('tags');
-    expect(habit).toHaveProperty('frequency');
-    expect(habit).toHaveProperty('difficulty');
-    expect(habit).toHaveProperty('currentStreak');
-    expect(habit).toHaveProperty('longestStreak');
-    expect(habit).toHaveProperty('completedCount');
-    expect(habit).toHaveProperty('createdAt');
-    expect(habit).toHaveProperty('updatedAt');
+    expect(habit).toHaveProperty("id");
+    expect(habit).toHaveProperty("name");
+    expect(habit).toHaveProperty("status");
+    expect(habit).toHaveProperty("importance");
+    expect(habit).toHaveProperty("tags");
+    expect(habit).toHaveProperty("frequency");
+    expect(habit).toHaveProperty("difficulty");
+    expect(habit).toHaveProperty("currentStreak");
+    expect(habit).toHaveProperty("longestStreak");
+    expect(habit).toHaveProperty("completedCount");
+    expect(habit).toHaveProperty("createdAt");
+    expect(habit).toHaveProperty("updatedAt");
   }
 
   /**
    * 验证习惯日志对象的基本结构
    */
   static expectHabitLogStructure(log: any) {
-    expect(log).toHaveProperty('id');
-    expect(log).toHaveProperty('habitId');
-    expect(log).toHaveProperty('logDate');
-    expect(log).toHaveProperty('completionScore');
-    expect(log).toHaveProperty('createdAt');
-    expect(log).toHaveProperty('updatedAt');
+    expect(log).toHaveProperty("id");
+    expect(log).toHaveProperty("habitId");
+    expect(log).toHaveProperty("logDate");
+    expect(log).toHaveProperty("completionScore");
+    expect(log).toHaveProperty("createdAt");
+    expect(log).toHaveProperty("updatedAt");
   }
 
   /**
    * 验证分页结果结构
    */
   static expectPageStructure(pageResult: any) {
-    expect(pageResult).toHaveProperty('list');
-    expect(pageResult).toHaveProperty('total');
-    expect(pageResult).toHaveProperty('pageNum');
-    expect(pageResult).toHaveProperty('pageSize');
+    expect(pageResult).toHaveProperty("list");
+    expect(pageResult).toHaveProperty("total");
+    expect(pageResult).toHaveProperty("pageNum");
+    expect(pageResult).toHaveProperty("pageSize");
     expect(Array.isArray(pageResult.list)).toBe(true);
-    expect(typeof pageResult.total).toBe('number');
-    expect(typeof pageResult.pageNum).toBe('number');
-    expect(typeof pageResult.pageSize).toBe('number');
+    expect(typeof pageResult.total).toBe("number");
+    expect(typeof pageResult.pageNum).toBe("number");
+    expect(typeof pageResult.pageSize).toBe("number");
   }
 
   /**
@@ -321,8 +336,8 @@ export class HabitTestUtils {
    */
   static createTestDatabaseConfig() {
     return {
-      type: 'sqlite' as const,
-      database: ':memory:',
+      type: "sqlite" as const,
+      database: ":memory:",
       entities: [Habit, Goal, TodoRepeat],
       synchronize: true,
       logging: false,
@@ -334,7 +349,7 @@ export class HabitTestUtils {
    * 等待异步操作完成
    */
   static async waitForAsync(ms: number = 100): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
@@ -347,9 +362,9 @@ export class HabitTestUtils {
     const startTime = Date.now();
     const result = await operation();
     const executionTime = Date.now() - startTime;
-    
+
     expect(executionTime).toBeLessThan(maxExecutionTime);
-    
+
     return { result, executionTime };
   }
 
@@ -361,7 +376,11 @@ export class HabitTestUtils {
     toStatus: HabitStatus
   ): boolean {
     const validTransitions: Record<HabitStatus, HabitStatus[]> = {
-      [HabitStatus.ACTIVE]: [HabitStatus.PAUSED, HabitStatus.COMPLETED, HabitStatus.ABANDONED],
+      [HabitStatus.ACTIVE]: [
+        HabitStatus.PAUSED,
+        HabitStatus.COMPLETED,
+        HabitStatus.ABANDONED,
+      ],
       [HabitStatus.PAUSED]: [HabitStatus.ACTIVE, HabitStatus.ABANDONED],
       [HabitStatus.COMPLETED]: [HabitStatus.ACTIVE],
       [HabitStatus.ABANDONED]: [HabitStatus.ACTIVE],
@@ -383,4 +402,4 @@ export class HabitTestUtils {
       completedCount: Math.floor(Math.random() * 1000),
     }));
   }
-} 
+}

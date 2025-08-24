@@ -7,7 +7,7 @@ import {
   TaskWithTrackTimeDto,
 } from "./dto";
 import { Task } from "./task.entity";
-import { TaskStatus } from "./task.enum";
+import { TaskStatus } from "@life-toolkit/enum";
 import { BaseMapper } from "../../base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../track-time";

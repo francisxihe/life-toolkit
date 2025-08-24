@@ -10,15 +10,10 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import {
-  GoalVo,
-  GoalItemVo,
-  GoalPageFiltersVo,
-  GoalStatus,
-  GoalType,
-} from '@life-toolkit/vo/growth';
+import { GoalVo, GoalItemVo, GoalPageFiltersVo } from '@life-toolkit/vo/growth';
 import { GoalService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 function useSyncState<T>(
   initialValue: T,

@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In, FindOptionsWhere } from "typeorm";
-import { Goal, GoalStatus } from "./entities";
+import { Goal } from "./goal.entity";
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -10,6 +14,7 @@ import {
   GoalDto,
 } from "@life-toolkit/business-server";
 import { GoalMapper } from "@life-toolkit/business-server";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class GoalRepository {
@@ -105,7 +110,11 @@ export class GoalRepository {
     return GoalMapper.entityToDto(entity);
   }
 
-  async updateStatus(id: string, status: GoalStatus, extra: Partial<Goal> = {}): Promise<void> {
+  async updateStatus(
+    id: string,
+    status: GoalStatus,
+    extra: Partial<Goal> = {}
+  ): Promise<void> {
     const entity = await this.goalRepository.findOne({ where: { id } });
     if (!entity) throw new NotFoundException(`目标不存在，ID: ${id}`);
     Object.assign(entity, { status, ...extra });
@@ -113,10 +122,13 @@ export class GoalRepository {
   }
 
   async batchDone(ids: string[]): Promise<void> {
-    await this.goalRepository.update({ id: In(ids) }, {
-      status: GoalStatus.DONE,
-      doneAt: new Date(),
-    });
+    await this.goalRepository.update(
+      { id: In(ids) },
+      {
+        status: GoalStatus.DONE,
+        doneAt: new Date(),
+      }
+    );
   }
 
   // 构建查询条件的私有方法
@@ -130,15 +142,21 @@ export class GoalRepository {
 
     // includeIds / excludeIds（由 service 预处理）
     if ((filter as any).includeIds && (filter as any).includeIds.length > 0) {
-      query = query.andWhere("goal.id IN (:...includeIds)", { includeIds: (filter as any).includeIds });
+      query = query.andWhere("goal.id IN (:...includeIds)", {
+        includeIds: (filter as any).includeIds,
+      });
     }
     if ((filter as any).excludeIds && (filter as any).excludeIds.length > 0) {
-      query = query.andWhere("goal.id NOT IN (:...excludeIds)", { excludeIds: (filter as any).excludeIds });
+      query = query.andWhere("goal.id NOT IN (:...excludeIds)", {
+        excludeIds: (filter as any).excludeIds,
+      });
     }
 
     // 父级过滤
     if (filter.parentId) {
-      query = query.andWhere("parent.id = :parentId", { parentId: filter.parentId });
+      query = query.andWhere("parent.id = :parentId", {
+        parentId: filter.parentId,
+      });
     }
 
     // 状态过滤
@@ -200,21 +218,32 @@ export class GoalRepository {
     }
 
     // 放弃日期范围过滤
-    if ((filter as any).abandonedDateStart && (filter as any).abandonedDateEnd) {
+    if (
+      (filter as any).abandonedDateStart &&
+      (filter as any).abandonedDateEnd
+    ) {
       query = query.andWhere(
         "goal.abandonedAt BETWEEN :abandonedDateStart AND :abandonedDateEnd",
         {
-          abandonedDateStart: new Date((filter as any).abandonedDateStart + "T00:00:00"),
-          abandonedDateEnd: new Date((filter as any).abandonedDateEnd + "T23:59:59"),
+          abandonedDateStart: new Date(
+            (filter as any).abandonedDateStart + "T00:00:00"
+          ),
+          abandonedDateEnd: new Date(
+            (filter as any).abandonedDateEnd + "T23:59:59"
+          ),
         }
       );
     } else if ((filter as any).abandonedDateStart) {
       query = query.andWhere("goal.abandonedAt >= :abandonedDateStart", {
-        abandonedDateStart: new Date((filter as any).abandonedDateStart + "T00:00:00"),
+        abandonedDateStart: new Date(
+          (filter as any).abandonedDateStart + "T00:00:00"
+        ),
       });
     } else if ((filter as any).abandonedDateEnd) {
       query = query.andWhere("goal.abandonedAt <= :abandonedDateEnd", {
-        abandonedDateEnd: new Date((filter as any).abandonedDateEnd + "T23:59:59"),
+        abandonedDateEnd: new Date(
+          (filter as any).abandonedDateEnd + "T23:59:59"
+        ),
       });
     }
 

@@ -1,6 +1,6 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { CreateTodoDto, UpdateTodoDto, TodoDto, TodoModelDto } from "./dto";
-import { TodoStatus } from "./todo.enum";
+import { TodoStatus } from "@life-toolkit/enum";
 import { Todo } from "./todo.entity";
 import dayjs from "dayjs";
 import { BaseMapper } from "../../base/base.mapper";

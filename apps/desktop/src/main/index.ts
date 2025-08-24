@@ -63,11 +63,16 @@ function getPreloadPath() {
 let mainWindow = null;
 
 // 默认加载的URL - 使用渲染进程的开发服务器
-const DEFAULT_URL = isDev && process.env.ELECTRON_RENDERER_URL
-  ? process.env.ELECTRON_RENDERER_URL
-  : isDev
-  ? 'http://localhost:5174/'
-  : `file://${path.join(__dirname, '../renderer/index.html')}`;
+let DEFAULT_URL: string;
+if (isDev) {
+  if (process.env.ELECTRON_RENDERER_URL) {
+    DEFAULT_URL = process.env.ELECTRON_RENDERER_URL;
+  } else {
+    DEFAULT_URL = "http://localhost:5173/";
+  }
+} else {
+  DEFAULT_URL = `file://${path.join(__dirname, "../renderer/index.html")}`;
+}
 
 function createWindow() {
   // 创建浏览器窗口
@@ -85,7 +90,7 @@ function createWindow() {
   });
 
   // 加载默认URL
-  mainWindow.loadURL(DEFAULT_URL);
+  mainWindow.loadURL(DEFAULT_URL + "/growth/habit/habit-list");
 
   // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
   mainWindow.webContents.once("did-finish-load", () => {

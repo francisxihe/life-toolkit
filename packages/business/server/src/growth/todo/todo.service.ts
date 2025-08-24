@@ -6,7 +6,7 @@ import {
   TodoListFilterDto,
   TodoDto,
 } from "./dto";
-import { TodoStatus } from "./todo.enum";
+import { TodoStatus } from "@life-toolkit/enum";
 
 export class TodoService {
   protected todoRepeatService: TodoRepeatService;

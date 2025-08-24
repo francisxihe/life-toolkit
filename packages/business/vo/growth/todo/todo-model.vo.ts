@@ -1,12 +1,7 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { TaskVo } from "../task/task-model.vo";
 import { RepeatVo } from "@life-toolkit/components-repeat/vo";
-
-export enum TodoStatus {
-  TODO = "todo",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
+import { TodoStatus } from "@life-toolkit/enum";
 
 export type TodoModelVo = {
   name: string;

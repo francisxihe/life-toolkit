@@ -1,6 +1,6 @@
 import { FindOptionsWhere } from "typeorm";
 import { Goal } from "./goal.entity";
-import { GoalStatus } from "./goal.enum";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import {
   CreateGoalDto,
   UpdateGoalDto,

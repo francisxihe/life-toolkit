@@ -4,9 +4,10 @@ import { IMPORTANCE_MAP } from '../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
-import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo/growth';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
 import { useGoalDetail } from '../../components/GoalDetail';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 export default function GoalTable() {
   const { goalList, getGoalPage } = useGoalAllContext();

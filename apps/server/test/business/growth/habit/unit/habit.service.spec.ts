@@ -9,7 +9,7 @@ import {
   Todo,
 } from "../../../../../src/business/growth/todo/entities";
 import { CreateHabitDto, HabitMapper } from "@life-toolkit/business-server";
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitDifficulty } from "@life-toolkit/enum";
 
 describe("HabitService", () => {
   let service: HabitService;

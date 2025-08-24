@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository, TreeRepository, FindOptionsWhere } from "typeorm";
-import { Task } from "./entities";
+import { Task } from "./task.entity";
 import { CreateTaskDto, UpdateTaskDto, TaskDto, TaskMapper } from "@life-toolkit/business-server";
 
 @Injectable()

@@ -5,8 +5,9 @@ import { FlexibleContainer } from 'francis-component-react';
 import IconSelector from '../IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP, GoalService } from '../../service';
-import { GoalVo, GoalStatus } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo/growth';
 import clsx from 'clsx';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 const { Paragraph } = Typography;
 

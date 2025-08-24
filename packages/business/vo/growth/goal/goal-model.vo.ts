@@ -1,17 +1,6 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { TaskVo } from "../task/task-model.vo";
-
-export enum GoalStatus {
-  TODO = "todo",
-  IN_PROGRESS = "in_progress",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
-
-export enum GoalType {
-  OBJECTIVE = "objective",
-  KEY_RESULT = "key_result",
-}
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 export type GoalModelVo = {
   name: string;

@@ -1,13 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Todo, TodoStatus, TodoRepeat, TodoSource } from "./entities";
+import { Todo } from "./todo.entity";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { RepeatService } from "@life-toolkit/components-repeat/server";
 import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
 import { CreateTodoDto, TodoDto } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
+import { TodoRepeat } from "./todo-repeat.entity";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 // 添加dayjs插件
 dayjs.extend(isBetween);
@@ -95,12 +97,12 @@ export class TodoRepeatService extends RepeatService {
       repeatId: repeat.id,
       source: TodoSource.REPEAT,
     });
-    
+
     // 更新重复配置，将其与新创建的待办关联
     await this.update(repeat.id, {
       ...repeat,
     });
-    
+
     return savedTodo;
   }
 }

@@ -6,7 +6,7 @@ import {
   GoalListFilterDto,
   GoalDto,
 } from "./dto";
-import { GoalStatus } from "./goal.enum";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 export class GoalService {
   goalRepository: GoalRepository;

@@ -1,16 +1,7 @@
 import { BaseEntity } from "../../base/base.entity";
-import { TodoStatus } from "./todo.enum";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import { Task } from "../task";
 import { TodoRepeat } from "./todo-repeat.entity";
-
-export enum TodoSource {
-  /** 手动创建 */
-  MANUAL = "manual",
-  /** 重复创建 */
-  REPEAT = "repeat",
-  /** 习惯创建 */
-  HABIT = "habit",
-}
 
 export class Todo extends BaseEntity {
   name!: string;

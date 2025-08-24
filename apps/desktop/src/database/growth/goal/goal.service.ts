@@ -1,6 +1,4 @@
-import { GoalType, GoalStatus } from "./goal.entity";
-import { GoalRepository } from "./goal.repository";
-import { GoalTreeRepository } from "./goal-tree.repository";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import {
   GoalService as _GoalService,
   CreateGoalDto,
@@ -9,6 +7,8 @@ import {
   GoalPageFilterDto,
   GoalDto,
 } from "@life-toolkit/business-server";
+import { GoalRepository } from "./goal.repository";
+import { GoalTreeRepository } from "./goal-tree.repository";
 
 export default class GoalService {
   private goalService: _GoalService;

@@ -9,7 +9,7 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Todo, TodoStatus } from "./entities";
+import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -18,6 +18,7 @@ import {
   TodoDto,
 } from "@life-toolkit/business-server";
 import dayjs from "dayjs";
+import { TodoStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class TodoRepository {

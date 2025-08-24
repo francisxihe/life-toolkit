@@ -13,7 +13,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
-import { Goal } from "../../goal/entities";
+import { Goal } from "../../goal/goal.entity";
 import { Todo } from "../../todo/entities";
 import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
 
