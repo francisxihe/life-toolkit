@@ -65,9 +65,9 @@ Scenario: 创建重复待办事项
   And 重复待办事项出现在明天的列表中
 
 Scenario: 标记待办事项完成
-  Given 用户有一个状态为"待办"的待办事项
-  When 用户点击该待办事项的完成按钮
-  Then 该待办事项状态变更为"已完成"
+  Given 待办状态为 "TODO"
+  When 用户点击"开始"
+  Then 状态变更为 "IN_PROGRESS"
   And 记录完成时间
   And 如果是重复待办，系统自动创建下一个重复待办
 
@@ -97,6 +97,10 @@ Scenario: 批量完成待办事项
 - 数据规则: 标题必填，描述可选，计划日期必填，标签至少一个
 - 状态规则: 待办 → 完成/放弃，完成/放弃 → 待办(可恢复)
 - 重复规则: 完成/放弃重复待办后，自动生成下一个重复待办
+- 可见性规则: 新增 isDailyVisible 字段控制是否出现在“今日/每日视图”。默认值：状态：TODO/IN_PROGRESS/DONE/ABANDONED → true；source=task → false；source=repeat → 继承上一实例的 isDailyVisible。
+- 来源规则: 新增 source 字段 ∈ {standalone, task, repeat, import}；当 source=task 时记录 linkedTaskId；当 source=repeat 时保留 originalRepeatId；当 source=import 时记录 importSource(如日历/外部导入)。
+- 过滤规则（日视图）: 每日待办列表仅展示 isDailyVisible=true 的 Todo（按计划日期/状态再分组）；任务详情中的执行清单不受该过滤限制。
+- UI 规则: 创建“独立待办”时默认勾选“加入每日清单”；来源于任务的待办默认不勾选，仅可在任务详情中切换该开关。
 
 ## 三、产品设计
 
@@ -217,6 +221,20 @@ Scenario: 批量完成待办事项
 - 已超过结束条件: 停止创建新的重复待办
 - 重复配置丢失: 记录错误日志，不创建新待办
 
+### 待办可见性与来源
+**业务目标**:
+- 控制不同来源的待办是否进入每日执行清单，避免清单过载
+
+**功能与规则**:
+- 字段：isDailyVisible(Boolean)，source(Enum)，linkedTaskId(Optional)
+- 默认：独立创建的待办 isDailyVisible=true；来源于任务的待办 isDailyVisible=false；重复待办继承上一实例的 isDailyVisible
+- 过滤：每日视图仅展示 isDailyVisible=true 的待办；任务详情的执行清单展示全部关联待办
+
+**UI/交互**:
+- 创建独立待办：表单含“加入每日清单”开关，默认打开
+- 来源于任务：只在任务详情的执行清单中提供“加入每日清单”开关，默认关闭
+- 切换开关即时生效，影响每日视图是否出现
+
 ### 标签管理
 **业务目标**: 
 - 解决任务分类混乱问题
@@ -259,9 +277,7 @@ Scenario Outline: 待办事项基础功能验收
 Examples:
   | existing_count | action | input_data | expected_result | final_state |
   | 0 | 创建 | 标题:"买菜",描述:"超市购物",标签:["生活"] | 创建成功提示 | 有1个待办事项 |
-  | 1 | 完成 | 点击完成按钮 | 状态更新为已完成 | 有1个已完成事项 |
-  | 1 | 放弃 | 点击放弃按钮 | 状态更新为已放弃 | 有1个已放弃事项 |
-  | 1 | 恢复 | 点击恢复按钮 | 状态更新为待办 | 有1个待办事项 |
+  | 1 | 编辑 | 修改标题为"买水果" | 保存成功提示 | 待办事项已更新 |
   | 1 | 删除 | 点击删除按钮 | 删除确认提示 | 待办事项被删除 |
 ```
 
@@ -280,6 +296,31 @@ Examples:
   | 每月 | 放弃 | 创建下一个重复待办 | 下月同一天 |
   | 自定义(每3天) | 完成 | 创建下一个重复待办 | 3天后 |
   | 每日(已达结束日期) | 完成 | 不创建新的重复待办 | 无 |
+```
+
+```gherkin
+Scenario: 来源于任务的待办默认不进入每日列表
+  Given 存在一个任务A
+  And 在任务A详情的执行清单中创建一个待办T，计划日期为今天
+  Then 待办T的 source=task 且 isDailyVisible=false
+  And 在“今日/每日视图”中不出现待办T
+  And 在任务A详情的执行清单中可见待办T
+
+Scenario: 切换“加入每日清单”后进入每日视图
+  Given 待办T 的 isDailyVisible=false 且计划日期为今天
+  When 在任务详情中开启待办T的“加入每日清单”
+  Then 待办T 的 isDailyVisible=true
+  And 在“今日/每日视图”出现待办T
+
+Scenario: 重复待办继承上一实例的可见性
+  Given 存在一个重复待办R，当前实例 isDailyVisible=false
+  When 将R标记完成后系统生成下一实例R+1
+  Then R+1 的 isDailyVisible=false
+
+Scenario: 每日视图仅展示 isDailyVisible=true 的待办
+  Given 今天存在多个待办，包含 isDailyVisible=false 与 true 的条目
+  When 打开“今日/每日视图”
+  Then 仅展示 isDailyVisible=true 的待办
 ```
 
 **业务验收**: 

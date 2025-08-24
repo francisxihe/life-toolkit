@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import svgrPlugin from "@arco-plugins/vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
-import { vitePluginForArco } from '@arco-plugins/vite-react';
+import { vitePluginForArco } from "@arco-plugins/vite-react";
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -85,6 +85,9 @@ export default defineConfig({
   renderer: {
     // 渲染进程配置
     root: path.resolve(currentDirPath, "src/render"),
+    server: {
+      port: 8100,
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -92,7 +95,7 @@ export default defineConfig({
         svgrOptions: {},
       }),
       vitePluginForArco({
-        theme: '@arco-themes/react-francis',
+        theme: "@arco-themes/react-francis",
         modifyVars: {
           // 'arcoblue-6': setting.themeColor,
         },
@@ -110,10 +113,13 @@ export default defineConfig({
       alias: [
         {
           find: /^@\/(.*)$/,
-          replacement: path.resolve(currentDirPath, "../../packages/business/web/src/$1"),
+          replacement: path.resolve(
+            currentDirPath,
+            "../../packages/business/web/src/$1"
+          ),
         },
         {
-          find: '@',
+          find: "@",
           replacement: path.resolve(currentDirPath, "src/render"),
         },
       ],
@@ -134,11 +140,11 @@ export default defineConfig({
     },
     optimizeDeps: {
       include: [
-        'react',
-        'react-dom',
-        'react-dnd',
-        'react-dnd-html5-backend',
-        'mitt',
+        "react",
+        "react-dom",
+        "react-dnd",
+        "react-dnd-html5-backend",
+        "mitt",
       ],
       exclude: [],
     },
