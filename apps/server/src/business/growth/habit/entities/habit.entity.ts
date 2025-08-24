@@ -15,19 +15,7 @@ import { Type } from "class-transformer";
 import { BaseEntity } from "@/base/base.entity";
 import { Goal } from "../../goal/entities";
 import { Todo } from "../../todo/entities";
-
-export enum HabitStatus {
-  ACTIVE = "active", // 活跃中
-  PAUSED = "paused", // 暂停
-  COMPLETED = "completed", // 已完成
-  ABANDONED = "abandoned", // 已放弃
-}
-
-export enum HabitDifficulty {
-  EASY = "easy", // 容易
-  MEDIUM = "medium", // 中等
-  HARD = "hard", // 困难
-}
+import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
 
 @Entity("habit")
 export class Habit extends BaseEntity {
@@ -73,10 +61,10 @@ export class Habit extends BaseEntity {
   @Column({
     type: "enum",
     enum: HabitDifficulty,
-    default: HabitDifficulty.MEDIUM,
+    default: HabitDifficulty.Challenger,
   })
   @IsEnum(HabitDifficulty)
-  difficulty: HabitDifficulty = HabitDifficulty.MEDIUM;
+  difficulty: HabitDifficulty = HabitDifficulty.Challenger;
 
   /** 习惯开始日期 */
   @Column("date")

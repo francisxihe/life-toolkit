@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HabitStatus, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
 import type { Habit } from '@life-toolkit/vo';
+import { HabitStatus, HabitDifficulty } from '@life-toolkit/enum';
 
 describe('Habit Simple Tests', () => {
   describe('Habit Entity', () => {
@@ -10,14 +10,14 @@ describe('Habit Simple Tests', () => {
         description: '培养阅读习惯',
         importance: 4,
         tags: ['学习'],
-        difficulty: HabitDifficulty.MEDIUM,
+        difficulty: HabitDifficulty.Challenger,
       };
 
       expect(habit.name).toBe('每天阅读');
       expect(habit.description).toBe('培养阅读习惯');
       expect(habit.importance).toBe(4);
       expect(habit.tags).toEqual(['学习']);
-      expect(habit.difficulty).toBe(HabitDifficulty.MEDIUM);
+      expect(habit.difficulty).toBe(HabitDifficulty.Challenger);
     });
 
     it('should create a habit with minimal properties', () => {
@@ -40,9 +40,9 @@ describe('Habit Simple Tests', () => {
         description: '保持健康',
         importance: 5,
         tags: ['健康', '运动'],
-        difficulty: HabitDifficulty.HARD,
-        startDate: new Date('2024-01-01'),
-        targetDate: new Date('2024-12-31'),
+        difficulty: HabitDifficulty.Legendary,
+        startDate: '2024-01-01',
+        targetDate: '2024-12-31',
         currentStreak: 7,
         longestStreak: 15,
         completedCount: 30,
@@ -56,7 +56,7 @@ describe('Habit Simple Tests', () => {
       expect(habitVo.description).toBe('保持健康');
       expect(habitVo.importance).toBe(5);
       expect(habitVo.tags).toEqual(['健康', '运动']);
-      expect(habitVo.difficulty).toBe(HabitDifficulty.HARD);
+      expect(habitVo.difficulty).toBe(HabitDifficulty.Legendary);
       expect(habitVo.currentStreak).toBe(7);
       expect(habitVo.longestStreak).toBe(15);
       expect(habitVo.completedCount).toBe(30);
@@ -73,9 +73,9 @@ describe('Habit Simple Tests', () => {
 
   describe('Habit Difficulty', () => {
     it('should have correct difficulty values', () => {
-      expect(HabitDifficulty.EASY).toBe('easy');
-      expect(HabitDifficulty.MEDIUM).toBe('medium');
-      expect(HabitDifficulty.HARD).toBe('hard');
+      expect(HabitDifficulty.GettingStarted).toBe('gettingStarted');
+      expect(HabitDifficulty.Challenger).toBe('challenger');
+      expect(HabitDifficulty.Legendary).toBe('legendary');
     });
   });
 

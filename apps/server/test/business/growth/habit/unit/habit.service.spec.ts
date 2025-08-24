@@ -1,14 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { HabitService } from '../../../../../src/business/growth/habit/habit.service';
-import { Habit, HabitDifficulty } from '../../../../../src/business/growth/habit/entities';
-import { Goal } from '../../../../../src/business/growth/goal/entities';
-import { TodoRepeat, Todo } from '../../../../../src/business/growth/todo/entities';
-import { HabitMapper } from '../../../../../src/business/growth/habit/mapper';
-import { CreateHabitDto } from '../../../../../src/business/growth/habit/dto';
+import { Test, TestingModule } from "@nestjs/testing";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { HabitService } from "../../../../../src/business/growth/habit/habit.service";
+import { Habit } from "../../../../../src/business/growth/habit/entities";
+import { Goal } from "../../../../../src/business/growth/goal/entities";
+import {
+  TodoRepeat,
+  Todo,
+} from "../../../../../src/business/growth/todo/entities";
+import { CreateHabitDto, HabitMapper } from "@life-toolkit/business-server";
+import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
 
-describe('HabitService', () => {
+describe("HabitService", () => {
   let service: HabitService;
   let habitRepository: Repository<Habit>;
   let goalRepository: Repository<Goal>;
@@ -70,33 +73,37 @@ describe('HabitService', () => {
     service = module.get<HabitService>(HabitService);
     habitRepository = module.get<Repository<Habit>>(getRepositoryToken(Habit));
     goalRepository = module.get<Repository<Goal>>(getRepositoryToken(Goal));
-    todoRepeatRepository = module.get<Repository<TodoRepeat>>(getRepositoryToken(TodoRepeat));
+    todoRepeatRepository = module.get<Repository<TodoRepeat>>(
+      getRepositoryToken(TodoRepeat)
+    );
     todoRepository = module.get<Repository<Todo>>(getRepositoryToken(Todo));
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(service).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create habit with goal associations', async () => {
+  describe("create", () => {
+    it("should create habit with goal associations", async () => {
       const createHabitDto: CreateHabitDto = {
-        name: '早起拉伸',
-        description: '每天早上6点起床后进行10分钟拉伸运动',
-        difficulty: HabitDifficulty.MEDIUM,
+        name: "早起拉伸",
+        description: "每天早上6点起床后进行10分钟拉伸运动",
+        difficulty: HabitDifficulty.Skilled,
         importance: 4,
-        goalIds: ['goal-1', 'goal-2'],
+        goalIds: ["goal-1", "goal-2"],
+        tags: ["早晨高效工作", "保持健康"],
+        startDate: new Date(),
       };
 
       const mockGoals = [
-        { id: 'goal-1', name: '早晨高效工作' },
-        { id: 'goal-2', name: '保持健康' },
+        { id: "goal-1", name: "早晨高效工作" },
+        { id: "goal-2", name: "保持健康" },
       ];
 
       const mockHabit = {
-        id: 'habit-1',
-        name: '早起拉伸',
-        difficulty: HabitDifficulty.MEDIUM,
+        id: "habit-1",
+        name: "早起拉伸",
+        difficulty: HabitDifficulty.Skilled,
         goals: mockGoals,
       };
 
@@ -114,14 +121,14 @@ describe('HabitService', () => {
       expect(result).toEqual(mockHabit);
     });
 
-    it('should create habit without goal associations', async () => {
+    it("should create habit without goal associations", async () => {
       const createHabitDto: CreateHabitDto = {
-        name: '阅读',
+        name: "阅读",
       };
 
       const mockHabit = {
-        id: 'habit-2',
-        name: '阅读',
+        id: "habit-2",
+        name: "阅读",
         goals: [],
       };
 
@@ -135,18 +142,18 @@ describe('HabitService', () => {
     });
   });
 
-  describe('getHabitTodos', () => {
-    it('should return habit todos grouped by status', async () => {
-      const habitId = 'habit-1';
-      const mockHabit = { id: habitId, name: '阅读习惯' };
+  describe("getHabitTodos", () => {
+    it("should return habit todos grouped by status", async () => {
+      const habitId = "habit-1";
+      const mockHabit = { id: habitId, name: "阅读习惯" };
       const mockTodoRepeats = [
-        { id: 'repeat-1', habitId },
-        { id: 'repeat-2', habitId },
+        { id: "repeat-1", habitId },
+        { id: "repeat-2", habitId },
       ];
       const mockTodos = [
-        { id: 'todo-1', status: 'todo', repeatId: 'repeat-1' },
-        { id: 'todo-2', status: 'done', originalRepeatId: 'repeat-1' },
-        { id: 'todo-3', status: 'abandoned', originalRepeatId: 'repeat-2' },
+        { id: "todo-1", status: "todo", repeatId: "repeat-1" },
+        { id: "todo-2", status: "done", originalRepeatId: "repeat-1" },
+        { id: "todo-3", status: "abandoned", originalRepeatId: "repeat-2" },
       ];
 
       const mockQueryBuilder = {
@@ -162,16 +169,20 @@ describe('HabitService', () => {
       const result = await service.getHabitTodos(habitId);
 
       expect(result).toEqual({
-        activeTodos: [{ id: 'todo-1', status: 'todo', repeatId: 'repeat-1' }],
-        completedTodos: [{ id: 'todo-2', status: 'done', originalRepeatId: 'repeat-1' }],
-        abandonedTodos: [{ id: 'todo-3', status: 'abandoned', originalRepeatId: 'repeat-2' }],
+        activeTodos: [{ id: "todo-1", status: "todo", repeatId: "repeat-1" }],
+        completedTodos: [
+          { id: "todo-2", status: "done", originalRepeatId: "repeat-1" },
+        ],
+        abandonedTodos: [
+          { id: "todo-3", status: "abandoned", originalRepeatId: "repeat-2" },
+        ],
         totalCount: 3,
       });
     });
 
-    it('should return empty result when no todo repeats exist', async () => {
-      const habitId = 'habit-1';
-      const mockHabit = { id: habitId, name: '阅读习惯' };
+    it("should return empty result when no todo repeats exist", async () => {
+      const habitId = "habit-1";
+      const mockHabit = { id: habitId, name: "阅读习惯" };
 
       mockHabitRepository.findOne.mockResolvedValue(mockHabit);
       mockTodoRepeatRepository.find.mockResolvedValue([]);
@@ -187,28 +198,56 @@ describe('HabitService', () => {
     });
   });
 
-  describe('getHabitAnalytics', () => {
-    it('should return habit analytics data', async () => {
-      const habitId = 'habit-1';
+  describe("getHabitAnalytics", () => {
+    it("should return habit analytics data", async () => {
+      const habitId = "habit-1";
       const mockHabit = {
         id: habitId,
-        name: '阅读习惯',
+        name: "阅读习惯",
         currentStreak: 5,
         longestStreak: 10,
       };
 
-             const mockTodosResult = {
-         activeTodos: [{ id: 'todo-1', name: 'Todo 1', status: 'todo', tags: [], planDate: new Date() } as any],
-         completedTodos: [
-           { id: 'todo-2', name: 'Todo 2', status: 'done', tags: [], planDate: new Date() } as any,
-           { id: 'todo-3', name: 'Todo 3', status: 'done', tags: [], planDate: new Date() } as any
-         ],
-         abandonedTodos: [{ id: 'todo-4', name: 'Todo 4', status: 'abandoned', tags: [], planDate: new Date() } as any],
-         totalCount: 4,
-       };
+      const mockTodosResult = {
+        activeTodos: [
+          {
+            id: "todo-1",
+            name: "Todo 1",
+            status: "todo",
+            tags: [],
+            planDate: new Date(),
+          } as any,
+        ],
+        completedTodos: [
+          {
+            id: "todo-2",
+            name: "Todo 2",
+            status: "done",
+            tags: [],
+            planDate: new Date(),
+          } as any,
+          {
+            id: "todo-3",
+            name: "Todo 3",
+            status: "done",
+            tags: [],
+            planDate: new Date(),
+          } as any,
+        ],
+        abandonedTodos: [
+          {
+            id: "todo-4",
+            name: "Todo 4",
+            status: "abandoned",
+            tags: [],
+            planDate: new Date(),
+          } as any,
+        ],
+        totalCount: 4,
+      };
 
-       mockHabitRepository.findOne.mockResolvedValue(mockHabit);
-       jest.spyOn(service, 'getHabitTodos').mockResolvedValue(mockTodosResult);
+      mockHabitRepository.findOne.mockResolvedValue(mockHabit);
+      jest.spyOn(service, "getHabitTodos").mockResolvedValue(mockTodosResult);
 
       const result = await service.getHabitAnalytics(habitId);
 
@@ -224,12 +263,12 @@ describe('HabitService', () => {
     });
   });
 
-  describe('findByGoalId', () => {
-    it('should return habits associated with a goal', async () => {
-      const goalId = 'goal-1';
+  describe("findByGoalId", () => {
+    it("should return habits associated with a goal", async () => {
+      const goalId = "goal-1";
       const mockHabits = [
-        { id: 'habit-1', name: '早起拉伸' },
-        { id: 'habit-2', name: '冥想' },
+        { id: "habit-1", name: "早起拉伸" },
+        { id: "habit-2", name: "冥想" },
       ];
 
       const mockQueryBuilder = {
@@ -242,21 +281,28 @@ describe('HabitService', () => {
 
       const result = await service.findByGoalId(goalId);
 
-      expect(mockHabitRepository.createQueryBuilder).toHaveBeenCalledWith('habit');
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith('habit.goals', 'goal');
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith('goal.id = :goalId', { goalId });
+      expect(mockHabitRepository.createQueryBuilder).toHaveBeenCalledWith(
+        "habit"
+      );
+      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith(
+        "habit.goals",
+        "goal"
+      );
+      expect(mockQueryBuilder.where).toHaveBeenCalledWith("goal.id = :goalId", {
+        goalId,
+      });
       expect(result).toEqual(mockHabits);
     });
   });
 
-  describe('findOneWithRelations', () => {
-    it('should return habit with goals and todoRepeats', async () => {
-      const habitId = 'habit-1';
+  describe("findOneWithRelations", () => {
+    it("should return habit with goals and todoRepeats", async () => {
+      const habitId = "habit-1";
       const mockHabit = {
-        id: 'habit-1',
-        name: '早起拉伸',
-        goals: [{ id: 'goal-1', name: '早晨高效工作' }],
-        todoRepeats: [{ id: 'repeat-1', repeatMode: 'daily' }],
+        id: "habit-1",
+        name: "早起拉伸",
+        goals: [{ id: "goal-1", name: "早晨高效工作" }],
+        todoRepeats: [{ id: "repeat-1", repeatMode: "daily" }],
       };
 
       mockHabitRepository.findOne.mockResolvedValue(mockHabit);
@@ -265,9 +311,9 @@ describe('HabitService', () => {
 
       expect(mockHabitRepository.findOne).toHaveBeenCalledWith({
         where: { id: habitId },
-        relations: ['goals', 'todoRepeats'],
+        relations: ["goals", "todoRepeats"],
       });
       expect(result).toEqual(mockHabit);
     });
   });
-}); 
+});

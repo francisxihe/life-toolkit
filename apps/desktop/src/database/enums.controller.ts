@@ -2,8 +2,8 @@ import { ipcMain } from 'electron';
 import { GoalType, GoalStatus } from './growth/goal/goal.entity';
 import { TaskStatus } from './growth/task/task.entity';
 import { TodoStatus, TodoSource } from './growth/todo/todo.entity';
-import { HabitStatus, HabitDifficulty } from './growth/habit/habit.entity';
-import type { RouteDef, RestHandlerCtx } from '../main/rest-router';
+import { HabitStatus, HabitDifficulty } from '@life-toolkit/business-server';
+import type { RouteDef, RestHandlerCtx } from '@life-toolkit/electron-ipc-router';
 
 /**
  * 注册枚举类型相关的 IPC 处理器

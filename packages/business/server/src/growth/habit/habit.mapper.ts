@@ -1,7 +1,7 @@
 import type { Habit as HabitVO } from "@life-toolkit/vo";
 import { CreateHabitDto, UpdateHabitDto, HabitDto, HabitModelDto } from "./dto";
 import { Habit } from "./habit.entity";
-import { HabitStatus } from "./habit.enum";
+import { HabitStatus } from "@life-toolkit/enum";
 import { BaseMapper } from "../../base/base.mapper";
 import dayjs from "dayjs";
 

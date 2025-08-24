@@ -1,4 +1,4 @@
-import { HabitDifficulty, HabitStatus } from "./habit.enum";
+import { HabitDifficulty, HabitStatus } from "@life-toolkit/enum";
 import { BaseEntity } from "../../base/base.entity";
 import { Goal } from "../goal";
 import { Todo } from "../todo";
@@ -18,7 +18,7 @@ export class Habit extends BaseEntity {
   tags!: string[];
 
   /** 习惯难度 */
-  difficulty: HabitDifficulty = HabitDifficulty.MEDIUM;
+  difficulty: HabitDifficulty = HabitDifficulty.Challenger;
 
   /** 习惯开始日期 */
   startDate: Date = new Date();

@@ -18,6 +18,7 @@
  "dependencies": {
   "@life-toolkit/business-server": "workspace:*",
   "@life-toolkit/business-web": "workspace:*",
+  "@life-toolkit/enum": "workspace:*",
   "@life-toolkit/electron-ipc-router": "workspace:*",
   "@life-toolkit/share-types": "workspace:*",
   "class-transformer": "^0.5.1",

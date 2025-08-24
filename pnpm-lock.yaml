@@ -75,6 +75,9 @@ importers:
       '@life-toolkit/electron-ipc-router':
         specifier: workspace:*
         version: link:../../packages/common/electron-ipc-router
+      '@life-toolkit/enum':
+        specifier: workspace:*
+        version: link:../../packages/business/enum
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
@@ -340,6 +343,8 @@ importers:
         specifier: ^0.24.0
         version: 0.24.0
 
+  packages/business/enum: {}
+
   packages/business/server:
     dependencies:
       class-transformer:
@@ -364,6 +369,9 @@ importers:
       '@life-toolkit/components-repeat':
         specifier: workspace:*
         version: link:../../components/repeat
+      '@life-toolkit/enum':
+        specifier: workspace:*
+        version: link:../enum
 
   packages/business/web:
     dependencies:
@@ -388,6 +396,9 @@ importers:
       '@life-toolkit/components-web-ui':
         specifier: workspace:*
         version: link:../../components-web/ui
+      '@life-toolkit/enum':
+        specifier: workspace:*
+        version: link:../enum
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../share/types

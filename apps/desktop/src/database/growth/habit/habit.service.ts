@@ -1,4 +1,4 @@
-import { HabitStatus, HabitDifficulty } from "./habit.entity";
+import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
 import { HabitRepository } from "./habit.repository";
 import {
   HabitService as BusinessHabitService,
@@ -133,7 +133,10 @@ export class HabitService {
     const analytics = await this.service.getHabitAnalytics(id);
     const startDate = (habit as any).startDate as Date | undefined;
     const daysActive = startDate
-      ? Math.ceil((new Date().getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24))
+      ? Math.ceil(
+          (new Date().getTime() - new Date(startDate).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
       : 0;
     return {
       currentStreak: (habit as any).currentStreak || 0,
@@ -153,21 +156,43 @@ export class HabitService {
   }> {
     const list = await this.service.findAll({} as HabitListFilterDto);
     const totalHabits = list.length;
-    const activeHabits = list.filter((h: any) => h.status === HabitStatus.ACTIVE).length;
-    const pausedHabits = list.filter((h: any) => h.status === HabitStatus.PAUSED).length;
-    const completedHabits = list.filter((h: any) => h.status === HabitStatus.COMPLETED).length;
-    const totalStreak = list.reduce((sum: number, h: any) => sum + (h.currentStreak || 0), 0);
-    const averageStreak = totalHabits > 0 ? Math.round((totalStreak / totalHabits) * 100) / 100 : 0;
-    return { totalHabits, activeHabits, pausedHabits, completedHabits, averageStreak };
+    const activeHabits = list.filter(
+      (h: any) => h.status === HabitStatus.ACTIVE
+    ).length;
+    const pausedHabits = list.filter(
+      (h: any) => h.status === HabitStatus.PAUSED
+    ).length;
+    const completedHabits = list.filter(
+      (h: any) => h.status === HabitStatus.COMPLETED
+    ).length;
+    const totalStreak = list.reduce(
+      (sum: number, h: any) => sum + (h.currentStreak || 0),
+      0
+    );
+    const averageStreak =
+      totalHabits > 0 ? Math.round((totalStreak / totalHabits) * 100) / 100 : 0;
+    return {
+      totalHabits,
+      activeHabits,
+      pausedHabits,
+      completedHabits,
+      averageStreak,
+    };
   }
 
-  async page(pageNum: number, pageSize: number): Promise<{
+  async page(
+    pageNum: number,
+    pageSize: number
+  ): Promise<{
     data: HabitDto[];
     total: number;
     pageNum: number;
     pageSize: number;
   }> {
-    const res = await this.service.page({ pageNum, pageSize } as unknown as HabitPageFilterDto);
+    const res = await this.service.page({
+      pageNum,
+      pageSize,
+    } as unknown as HabitPageFilterDto);
     return {
       data: res.list ?? [],
       total: res.total,
@@ -190,12 +215,16 @@ export class HabitService {
     const f: any = {} as HabitListFilterDto;
     if (!filter) return await this.service.findAll(f);
     if (filter.status !== undefined) f.status = filter.status as any;
-    if (filter.difficulty !== undefined) f.difficulty = filter.difficulty as any;
-    if (filter.importance !== undefined) (f as any).importance = filter.importance;
+    if (filter.difficulty !== undefined)
+      f.difficulty = filter.difficulty as any;
+    if (filter.importance !== undefined)
+      (f as any).importance = filter.importance;
     if (filter.keyword) (f as any).keyword = filter.keyword;
-    if (filter.startDateStart) (f as any).startDateStart = filter.startDateStart;
+    if (filter.startDateStart)
+      (f as any).startDateStart = filter.startDateStart;
     if (filter.startDateEnd) (f as any).startDateEnd = filter.startDateEnd;
-    if (filter.targetDateStart) (f as any).targetDateStart = filter.targetDateStart;
+    if (filter.targetDateStart)
+      (f as any).targetDateStart = filter.targetDateStart;
     if (filter.targetDateEnd) (f as any).targetDateEnd = filter.targetDateEnd;
     if (filter.goalId) (f as any).goalId = filter.goalId;
     return await this.service.findAll(f);
@@ -210,7 +239,10 @@ export class HabitService {
   }
 
   async completeHabit(id: string): Promise<void> {
-    await this.update(id, { status: HabitStatus.COMPLETED, targetDate: new Date() });
+    await this.update(id, {
+      status: HabitStatus.COMPLETED,
+      targetDate: new Date(),
+    });
   }
 }
 

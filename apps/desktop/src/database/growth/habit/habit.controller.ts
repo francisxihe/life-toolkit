@@ -9,7 +9,7 @@ import {
   Query,
 } from "@life-toolkit/electron-ipc-router";
 import { habitService } from "./habit.service";
-import { HabitStatus } from "./habit.entity";
+import { HabitStatus } from "@life-toolkit/enum";
 import type { Habit as HabitVO } from "@life-toolkit/vo";
 import { HabitMapper } from "@life-toolkit/business-server";
 

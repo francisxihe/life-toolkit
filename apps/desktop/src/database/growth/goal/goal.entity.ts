@@ -3,6 +3,7 @@ import { Entity, Column, TreeChildren, TreeParent, Tree, OneToMany } from "typeo
 import { BaseEntity } from "../../base.entity";
 import { Task } from "../task/task.entity";
 
+
 export enum GoalStatus {
   TODO = "todo",
   IN_PROGRESS = "in_progress",

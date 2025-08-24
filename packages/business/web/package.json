@@ -28,6 +28,7 @@
     "@life-toolkit/components-web-mind": "workspace:*",
     "@life-toolkit/components-repeat": "workspace:*",
     "@life-toolkit/components-web-ui": "workspace:*",
+    "@life-toolkit/enum": "workspace:*",
     "@life-toolkit/tabs": "workspace:*",
     "@life-toolkit/share-types": "workspace:*",
     "@loadable/component": "^5.13.2",

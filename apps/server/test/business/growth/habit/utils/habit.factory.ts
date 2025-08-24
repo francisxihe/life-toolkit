@@ -1,4 +1,4 @@
-import { HabitStatus, HabitDifficulty } from '../../../../../src/business/growth/habit/entities/habit.entity';
+import { HabitStatus, HabitDifficulty } from '@life-toolkit/business-server';
 import type { 
   Habit, 
   HabitLogVo, 
@@ -7,6 +7,7 @@ import type {
   CreateHabitLogVo, 
   UpdateHabitLogVo 
 } from '@life-toolkit/vo';
+import dayjs from 'dayjs';
 
 /**
  * 习惯测试数据工厂
@@ -21,7 +22,7 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      difficulty: HabitDifficulty.MEDIUM,
+      difficulty: HabitDifficulty.Skilled,
       ...overrides,
     };
   }
@@ -40,7 +41,7 @@ export class HabitTestFactory {
    * 创建完整的HabitVo
    */
   static createFullHabitVo(overrides?: Partial<Habit.HabitVo>): Habit.HabitVo {
-    const now = new Date();
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
     return {
       id: 'habit-1',
       name: '每天阅读30分钟',
@@ -48,7 +49,7 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      difficulty: HabitDifficulty.MEDIUM,
+      difficulty: HabitDifficulty.Skilled,
       startDate: now,
       currentStreak: 5,
       longestStreak: 10,
@@ -77,7 +78,7 @@ export class HabitTestFactory {
   static createHabitLogVo(overrides?: Partial<Habit.CreateHabitLogVo>): Habit.CreateHabitLogVo {
     return {
       habitId: 'habit-1',
-      logDate: new Date(),
+      logDate: dayjs().format('YYYY-MM-DD HH:mm:ss'),
       completionScore: 2,
       note: '今天完成得很好',
       mood: 4,
@@ -89,7 +90,7 @@ export class HabitTestFactory {
    * 创建完整的HabitLogVo
    */
   static createFullHabitLogVo(overrides?: Partial<Habit.HabitLogVo>): Habit.HabitLogVo {
-    const now = new Date();
+    const now = dayjs().format('YYYY-MM-DD HH:mm:ss');
     return {
       id: 'log-1',
       habitId: 'habit-1',
@@ -134,9 +135,11 @@ export class HabitTestFactory {
    */
   static createHabitsWithDifferentDifficulties(): Habit.HabitVo[] {
     return [
-      this.createFullHabitVo({ id: 'habit-easy', name: '简单习惯', difficulty: HabitDifficulty.EASY }),
-      this.createFullHabitVo({ id: 'habit-medium', name: '中等习惯', difficulty: HabitDifficulty.MEDIUM }),
-      this.createFullHabitVo({ id: 'habit-hard', name: '困难习惯', difficulty: HabitDifficulty.HARD }),
+      this.createFullHabitVo({ id: 'habit-getting-started', name: '入门习惯', difficulty: HabitDifficulty.GettingStarted }),
+      this.createFullHabitVo({ id: 'habit-challenger', name: '挑战习惯', difficulty: HabitDifficulty.Challenger }),
+      this.createFullHabitVo({ id: 'habit-skilled', name: '熟练习惯', difficulty: HabitDifficulty.Skilled }),
+      this.createFullHabitVo({ id: 'habit-master', name: '高手习惯', difficulty: HabitDifficulty.Master }),
+      this.createFullHabitVo({ id: 'habit-legendary', name: '传说习惯', difficulty: HabitDifficulty.Legendary }),
     ];
   }
 
