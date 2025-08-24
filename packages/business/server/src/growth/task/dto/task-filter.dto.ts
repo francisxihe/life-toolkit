@@ -1,7 +1,7 @@
 import { IsOptional, IsString, IsDateString } from "class-validator";
 import { PageDto } from "../../../base/page.dto";
 import { TaskDto } from "./task-model.dto";
-import { PickType, IntersectionType, PartialType } from "../../../common/mapped-types";
+import { PickType, IntersectionType, PartialType } from "@life-toolkit/mapped-types";
 
 export class TaskListFilterDto extends PartialType(
   PickType(TaskDto, ["importance", "urgency", "status", "startAt", "endAt"] as const)

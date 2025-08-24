@@ -1,6 +1,5 @@
 import { Repository, In, Like, DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
@@ -8,6 +7,7 @@ import {
   TodoListFilterDto,
   TodoDto,
   TodoMapper,
+  Todo,
 } from "@life-toolkit/business-server";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 

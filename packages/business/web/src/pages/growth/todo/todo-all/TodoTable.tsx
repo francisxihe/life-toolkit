@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { TodoService } from '../../service';
 import { openModal } from '@/hooks/OpenModal';
 import { TodoEditor } from '../../components';
-import { TodoStatus } from '@life-toolkit/vo/growth';
+import { TodoStatus } from '@life-toolkit/enum';
 
 export default function TodoTable() {
   const { todoList, getTodoPage } = useTodoAllContext();

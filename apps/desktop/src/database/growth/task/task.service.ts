@@ -1,5 +1,4 @@
 import { TreeRepository } from "typeorm";
-import { Task } from "./task.entity";
 import { AppDataSource } from "../../database.config";
 import {
   TaskService as BusinessTaskService,
@@ -9,6 +8,7 @@ import {
   TaskPageFilterDto,
   TaskDto,
   TaskWithTrackTimeDto,
+  Task,
 } from "@life-toolkit/business-server";
 import { TaskRepository as DesktopTaskRepository } from "./task.repository";
 import { TaskTreeRepository as DesktopTaskTreeRepository } from "./task-tree.repository";
@@ -23,7 +23,11 @@ export class TaskService {
     const repo = new DesktopTaskRepository();
     const treeRepoAdapter = new DesktopTaskTreeRepository();
     const todoCleanup = new DesktopTodoCleanupService();
-    this.service = new BusinessTaskService(repo as any, treeRepoAdapter as any, todoCleanup as any);
+    this.service = new BusinessTaskService(
+      repo as any,
+      treeRepoAdapter as any,
+      todoCleanup as any
+    );
     this.treeRepo = AppDataSource.getTreeRepository(Task);
   }
 
@@ -69,7 +73,10 @@ export class TaskService {
     return await this.treeRepo.findTrees();
   }
 
-  async update(id: string, data: Partial<Task> & { parentId?: string }): Promise<TaskDto> {
+  async update(
+    id: string,
+    data: Partial<Task> & { parentId?: string }
+  ): Promise<TaskDto> {
     const dto: UpdateTaskDto = {
       name: (data as any).name,
       description: (data as any).description,
@@ -85,8 +92,10 @@ export class TaskService {
     } as any;
 
     // 若仅变更状态，自动处理时间戳
-    if ((data as any)?.status === TaskStatus.DONE && !dto.doneAt) dto.doneAt = new Date();
-    if ((data as any)?.status === TaskStatus.ABANDONED && !dto.abandonedAt) dto.abandonedAt = new Date();
+    if ((data as any)?.status === TaskStatus.DONE && !dto.doneAt)
+      dto.doneAt = new Date();
+    if ((data as any)?.status === TaskStatus.ABANDONED && !dto.abandonedAt)
+      dto.abandonedAt = new Date();
     if ((data as any)?.status === TaskStatus.TODO) {
       // 还原状态时不强制清空时间，交由业务/仓储按需处理
     }
@@ -113,13 +122,19 @@ export class TaskService {
     await this.service.update(id, dto);
   }
 
-  async page(pageNum: number, pageSize: number): Promise<{
+  async page(
+    pageNum: number,
+    pageSize: number
+  ): Promise<{
     data: TaskDto[];
     total: number;
     pageNum: number;
     pageSize: number;
   }> {
-    const res = await this.service.page({ pageNum, pageSize } as unknown as TaskPageFilterDto);
+    const res = await this.service.page({
+      pageNum,
+      pageSize,
+    } as unknown as TaskPageFilterDto);
     return { data: res.list ?? [], total: res.total, pageNum, pageSize } as any;
   }
 
@@ -136,7 +151,8 @@ export class TaskService {
     if (!filter) return await this.findAll();
     const f: any = {} as TaskListFilterDto;
     if (filter.status !== undefined) f.status = filter.status as any;
-    if (filter.importance !== undefined) f.importance = filter.importance as any;
+    if (filter.importance !== undefined)
+      f.importance = filter.importance as any;
     if (filter.urgency !== undefined) f.urgency = filter.urgency as any;
     if (filter.keyword) (f as any).keyword = filter.keyword;
     if (filter.startDate) f.startAt = filter.startDate;

@@ -1,5 +1,5 @@
 import { Goal } from "../goal.entity";
-import { PartialType, PickType } from "../../../common/mapped-types";
+import { PartialType, PickType } from "@life-toolkit/mapped-types";
 import { GoalDto } from "./goal-model.dto";
 
 // 创建DTO - 选择需要的字段

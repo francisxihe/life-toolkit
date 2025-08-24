@@ -4,7 +4,7 @@ import {
   PickType,
   IntersectionType,
   PartialType,
-} from "../../../common/mapped-types";
+} from "@life-toolkit/mapped-types";
 import { TodoListFiltersVo } from "@life-toolkit/vo";
 
 export class TodoListFilterDto extends PartialType(

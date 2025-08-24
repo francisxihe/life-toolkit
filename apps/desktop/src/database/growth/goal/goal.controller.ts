@@ -11,7 +11,7 @@ import {
 import { goalService } from "./goal.service";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import { GoalMapper } from "@life-toolkit/business-server";
-import { GoalStatus, GoalType } from "./goal.entity";
+import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
 @Controller("/goal")
 export class GoalController {

@@ -126,7 +126,6 @@ export default class GoalService {
   async list(filter?: {
     type?: GoalType;
     status?: GoalStatus;
-    priority?: number;
     keyword?: string;
     startDate?: Date;
     endDate?: Date;

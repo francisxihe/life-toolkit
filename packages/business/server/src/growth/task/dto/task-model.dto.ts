@@ -1,6 +1,6 @@
 import { Task } from "../task.entity";
 import { BaseModelDto } from "../../../base/base-model.dto";
-import { OmitType, IntersectionType } from "../../../common/mapped-types";
+import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
 import { GoalDto } from "../../goal/dto";
 import { TrackTimeDto } from "../../track-time/dto";
 import { TodoDto } from "../../todo/dto";

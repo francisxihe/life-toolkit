@@ -4,7 +4,7 @@ import {
   IntersectionType,
   PartialType,
   OmitType,
-} from "../../../common/mapped-types";
+} from "@life-toolkit/mapped-types";
 import { Todo } from "../todo.entity";
 import {
   CreateRepeatDto,

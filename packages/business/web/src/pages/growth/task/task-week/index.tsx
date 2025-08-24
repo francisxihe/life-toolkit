@@ -6,9 +6,10 @@ import { Collapse, Divider, Button } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TaskStatus, TaskItemVo } from '@life-toolkit/vo/growth';
+import { TaskItemVo } from '@life-toolkit/vo/growth';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useTaskDetail, TaskEditor } from '../../components';
+import { TaskStatus } from '@life-toolkit/enum';
 
 const { Fixed, Shrink } = FlexibleContainer;
 

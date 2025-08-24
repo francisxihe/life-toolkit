@@ -1,31 +1,26 @@
 import { Repository, In, DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import {
-  Goal as DesktopGoal,
-  GoalStatus as DesktopGoalStatus,
-  GoalType as DesktopGoalType,
-} from "./goal.entity";
+import { Goal } from "@life-toolkit/business-server";
 import {
   CreateGoalDto,
   UpdateGoalDto,
   GoalPageFilterDto,
   GoalListFilterDto,
   GoalDto,
-  GoalStatus,
-  GoalType,
   Goal as BusinessGoal,
 } from "@life-toolkit/business-server";
+import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
-  private repo: Repository<DesktopGoal>;
+  private repo: Repository<Goal>;
 
   constructor() {
-    this.repo = AppDataSource.getRepository(DesktopGoal);
+    this.repo = AppDataSource.getRepository(Goal);
   }
 
   // 映射 Desktop 实体到 Business DTO
-  private toDto(entity: DesktopGoal): GoalDto {
+  private toDto(entity: Goal): GoalDto {
     return {
       // BaseModelDto
       id: entity.id,
@@ -44,7 +39,6 @@ export class GoalRepository {
       abandonedAt: entity.abandonedAt,
       parent: entity.parent as any,
       children: (entity.children || []) as any,
-      priority: entity.priority,
       taskList: (entity.taskList || []) as any,
     } as unknown as GoalDto;
   }
@@ -131,16 +125,13 @@ export class GoalRepository {
     const entity = this.repo.create({
       name: createGoalDto.name,
       description: createGoalDto.description,
-      type:
-        (createGoalDto.type as unknown as DesktopGoalType) ??
-        DesktopGoalType.OBJECTIVE,
+      type: (createGoalDto.type as unknown as GoalType) ?? GoalType.OBJECTIVE,
       status:
-        (createGoalDto.status as unknown as DesktopGoalStatus) ??
-        DesktopGoalStatus.TODO,
+        (createGoalDto.status as unknown as GoalStatus) ?? GoalStatus.TODO,
       importance: createGoalDto.importance ?? 1,
       startAt: createGoalDto.startAt,
       endAt: createGoalDto.endAt,
-    } as DeepPartial<DesktopGoal>);
+    } as DeepPartial<Goal>);
 
     const saved = await this.repo.save(entity);
     return this.toDto(saved);
@@ -199,7 +190,7 @@ export class GoalRepository {
   ): Promise<void> {
     await this.repo.update(
       { id: In(ids) },
-      updateData as unknown as Partial<DesktopGoal>
+      updateData as unknown as Partial<Goal>
     );
   }
 
@@ -222,14 +213,14 @@ export class GoalRepository {
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     Object.assign(entity, {
       status: status as any,
-      ...(extra as unknown as Partial<DesktopGoal>),
+      ...(extra as unknown as Partial<Goal>),
     });
     await this.repo.save(entity);
   }
 
   async batchDone(ids: string[]): Promise<void> {
     await this.repo.update({ id: In(ids) }, {
-      status: DesktopGoalStatus.DONE,
+      status: GoalStatus.DONE,
       completedAt: new Date(),
     } as any);
   }

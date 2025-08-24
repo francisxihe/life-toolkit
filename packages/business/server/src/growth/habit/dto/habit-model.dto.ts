@@ -1,6 +1,6 @@
 import { Habit } from "..";
 import { BaseModelDto } from "../../../base/base-model.dto";
-import { OmitType, IntersectionType } from "../../../common/mapped-types";
+import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
 
 export class HabitDto extends IntersectionType(BaseModelDto, Habit) {}
 

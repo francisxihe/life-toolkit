@@ -5,8 +5,9 @@ import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service/todo.constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { useTodoAllContext } from './context';
-import { TodoStatus, TodoPageFiltersVo } from '@life-toolkit/vo/growth';
+import { TodoPageFiltersVo } from '@life-toolkit/vo/growth';
 import { TableFilter } from '@/components/Layout/TableFilter';
+import { TodoStatus } from '@life-toolkit/enum';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;

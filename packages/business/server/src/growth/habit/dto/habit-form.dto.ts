@@ -1,5 +1,5 @@
 import { Habit } from "..";
-import { PartialType, IntersectionType, PickType } from "../../../common/mapped-types";
+import { PartialType, IntersectionType, PickType } from "@life-toolkit/mapped-types";
 import { HabitDto } from "./habit-model.dto";
 
 export class CreateHabitDto extends PickType(HabitDto, [

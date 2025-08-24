@@ -1,14 +1,14 @@
 import { In, TreeRepository, FindOptionsWhere } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Goal as DesktopGoal } from "./goal.entity";
+import { Goal } from "@life-toolkit/business-server";
 import { CreateGoalDto, UpdateGoalDto, GoalDto, Goal as BusinessGoal } from "@life-toolkit/business-server";
 
 export class GoalTreeRepository {
   getTreeRepository(): TreeRepository<BusinessGoal> {
-    return AppDataSource.getTreeRepository(DesktopGoal) as unknown as TreeRepository<BusinessGoal>;
+    return AppDataSource.getTreeRepository(Goal) as unknown as TreeRepository<BusinessGoal>;
   }
 
-  private toDto(entity: DesktopGoal): GoalDto {
+  private toDto(entity: Goal): GoalDto {
     return {
       id: entity.id,
       createdAt: entity.createdAt,
@@ -25,59 +25,58 @@ export class GoalTreeRepository {
       abandonedAt: undefined,
       parent: entity.parent as any,
       children: (entity.children || []) as any,
-      priority: entity.priority,
       taskList: (entity.taskList || []) as any,
     } as any;
   }
 
   async findOne(where: FindOptionsWhere<BusinessGoal> | FindOptionsWhere<BusinessGoal>[]): Promise<BusinessGoal | null> {
-    const repo = AppDataSource.getTreeRepository(DesktopGoal);
+    const repo = AppDataSource.getTreeRepository(Goal);
     return (await repo.findOne({ where: (where as unknown) as any, relations: ["children"] })) as unknown as BusinessGoal | null;
   }
 
   async remove(entity: BusinessGoal): Promise<void> {
-    await AppDataSource.getTreeRepository(DesktopGoal).remove((entity as unknown) as DesktopGoal);
+    await AppDataSource.getTreeRepository(Goal).remove((entity as unknown) as Goal);
   }
 
   async save(entity: BusinessGoal): Promise<BusinessGoal> {
-    return (await AppDataSource.getTreeRepository(DesktopGoal).save((entity as unknown) as DesktopGoal)) as unknown as BusinessGoal;
+    return (await AppDataSource.getTreeRepository(Goal).save((entity as unknown) as Goal)) as unknown as BusinessGoal;
   }
 
   async findRoots(): Promise<BusinessGoal[]> {
-    return (await AppDataSource.getTreeRepository(DesktopGoal).findRoots()) as unknown as BusinessGoal[];
+    return (await AppDataSource.getTreeRepository(Goal).findRoots()) as unknown as BusinessGoal[];
   }
 
   async findDescendants(entity: BusinessGoal): Promise<BusinessGoal[]> {
-    return (await AppDataSource.getTreeRepository(DesktopGoal).findDescendants((entity as unknown) as DesktopGoal)) as unknown as BusinessGoal[];
+    return (await AppDataSource.getTreeRepository(Goal).findDescendants((entity as unknown) as Goal)) as unknown as BusinessGoal[];
   }
 
   async findAncestors(entity: BusinessGoal): Promise<BusinessGoal[]> {
-    return (await AppDataSource.getTreeRepository(DesktopGoal).findAncestors((entity as unknown) as DesktopGoal)) as unknown as BusinessGoal[];
+    return (await AppDataSource.getTreeRepository(Goal).findAncestors((entity as unknown) as Goal)) as unknown as BusinessGoal[];
   }
 
   async findDescendantsTree(entity: BusinessGoal): Promise<BusinessGoal> {
-    return (await AppDataSource.getTreeRepository(DesktopGoal).findDescendantsTree((entity as unknown) as DesktopGoal)) as unknown as BusinessGoal;
+    return (await AppDataSource.getTreeRepository(Goal).findDescendantsTree((entity as unknown) as Goal)) as unknown as BusinessGoal;
   }
 
   async updateParent(currentGoal: BusinessGoal, parentId: string, treeRepo?: unknown): Promise<void> {
-    const repo = (treeRepo as unknown as TreeRepository<DesktopGoal>) ?? AppDataSource.getTreeRepository(DesktopGoal);
+    const repo = (treeRepo as unknown as TreeRepository<Goal>) ?? AppDataSource.getTreeRepository(Goal);
     const parent = await repo.findOne({ where: { id: parentId } });
     if (!parent) throw new Error(`父目标不存在，ID: ${parentId}`);
     (currentGoal as any).parent = parent;
-    await repo.save((currentGoal as unknown) as DesktopGoal);
+    await repo.save((currentGoal as unknown) as Goal);
   }
 
   async deleteDescendants(target: BusinessGoal | BusinessGoal[], treeRepo?: unknown): Promise<void> {
-    const repo = (treeRepo as unknown as TreeRepository<DesktopGoal>) ?? AppDataSource.getTreeRepository(DesktopGoal);
+    const repo = (treeRepo as unknown as TreeRepository<Goal>) ?? AppDataSource.getTreeRepository(Goal);
     const allIds: string[] = [];
 
     if (Array.isArray(target)) {
       for (const t of target as any[]) {
-        const descendantsNodes = await repo.findDescendants(t as DesktopGoal);
+        const descendantsNodes = await repo.findDescendants(t as Goal);
         allIds.push(...descendantsNodes.map((node) => node.id));
       }
     } else {
-      const descendantsNodes = await repo.findDescendants((target as unknown) as DesktopGoal);
+      const descendantsNodes = await repo.findDescendants((target as unknown) as Goal);
       allIds.push(...descendantsNodes.map((node) => node.id));
     }
 
@@ -85,12 +84,12 @@ export class GoalTreeRepository {
   }
 
   async buildTree(node: BusinessGoal): Promise<BusinessGoal> {
-    const repo = AppDataSource.getTreeRepository(DesktopGoal);
-    const tree = await repo.findDescendantsTree((node as unknown) as DesktopGoal);
+    const repo = AppDataSource.getTreeRepository(Goal);
+    const tree = await repo.findDescendantsTree((node as unknown) as Goal);
     // 过滤软删除
-    const filterDeleted = (n: DesktopGoal): DesktopGoal | null => {
+    const filterDeleted = (n: Goal): Goal | null => {
       if (n.deletedAt) return null;
-      const children: DesktopGoal[] = [];
+      const children: Goal[] = [];
       for (const c of n.children || []) {
         const fc = filterDeleted(c);
         if (fc) children.push(fc);
@@ -99,7 +98,7 @@ export class GoalTreeRepository {
       return n;
     };
     const filtered = filterDeleted(tree);
-    return (filtered || (node as unknown as DesktopGoal)) as unknown as BusinessGoal;
+    return (filtered || (node as unknown as Goal)) as unknown as BusinessGoal;
   }
 
   filterTreeNodes(node: BusinessGoal, nodeIdsToInclude: Set<string>): BusinessGoal | null {
@@ -116,12 +115,12 @@ export class GoalTreeRepository {
   }
 
   async collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number; }): Promise<Set<string>> {
-    const treeRepo = AppDataSource.getTreeRepository(DesktopGoal);
+    const treeRepo = AppDataSource.getTreeRepository(Goal);
     const roots = await treeRepo.findRoots();
     const res = new Set<string>();
     for (const r of roots) {
       const full = await treeRepo.findDescendantsTree(r);
-      const traverse = (n: DesktopGoal) => {
+      const traverse = (n: Goal) => {
         if (
           (!filter.status || (n.status as any) === filter.status) &&
           (!filter.keyword || n.name.includes(filter.keyword) || (n.description || '').includes(filter.keyword)) &&
@@ -138,7 +137,7 @@ export class GoalTreeRepository {
 
   async createWithParent(dto: CreateGoalDto): Promise<GoalDto> {
     return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(DesktopGoal);
+      const treeRepository = manager.getTreeRepository(Goal);
       const current = treeRepository.create({
         name: dto.name,
         description: dto.description,
@@ -162,7 +161,7 @@ export class GoalTreeRepository {
 
   async updateWithParent(id: string, dto: UpdateGoalDto): Promise<GoalDto> {
     return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(DesktopGoal);
+      const treeRepository = manager.getTreeRepository(Goal);
       const current = await treeRepository.findOne({ where: { id } });
       if (!current) throw new Error(`目标不存在，ID: ${id}`);
 
@@ -193,7 +192,7 @@ export class GoalTreeRepository {
   }
 
   async getFilteredTree(filter: { status?: string; keyword?: string; importance?: number; }): Promise<GoalDto[]> {
-    const treeRepo = AppDataSource.getTreeRepository(DesktopGoal);
+    const treeRepo = AppDataSource.getTreeRepository(Goal);
     if (!filter.status && !filter.keyword && !filter.importance) {
       const roots = await treeRepo.findRoots();
       const trees: GoalDto[] = [];
@@ -220,7 +219,7 @@ export class GoalTreeRepository {
   }
 
   async processTreeFilter(filter: { withoutSelf?: boolean; id?: string; parentId?: string; }): Promise<{ includeIds?: string[]; excludeIds?: string[]; }> {
-    const treeRepo = AppDataSource.getTreeRepository(DesktopGoal);
+    const treeRepo = AppDataSource.getTreeRepository(Goal);
     let includeIds: string[] = [];
     let excludeIds: string[] = [];
 
@@ -246,7 +245,7 @@ export class GoalTreeRepository {
   }
 
   async findDetail(id: string): Promise<GoalDto> {
-    const treeRepo = AppDataSource.getTreeRepository(DesktopGoal);
+    const treeRepo = AppDataSource.getTreeRepository(Goal);
     const entity = await treeRepo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 

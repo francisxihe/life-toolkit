@@ -103,13 +103,6 @@ export class Goal extends BaseEntity {
   })
   children: Goal[];
 
-  /** 目标优先级 */
-  @Column({ nullable: true })
-  @IsOptional()
-  @IsNumber()
-  @Type(() => Number)
-  priority?: number;
-
   /** 任务 */
   @OneToMany(() => Task, (task) => task.goal)
   taskList: Task[];

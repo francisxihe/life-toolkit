@@ -12,8 +12,8 @@ export class Repeat {
 
   /** 重复模式 */
   @Column({
-    type: "enum",
-    enum: RepeatMode,
+    type: "varchar",
+    length: 20,
   })
   repeatMode!: RepeatMode;
 
@@ -24,8 +24,8 @@ export class Repeat {
 
   /** 重复结束模式 */
   @Column({
-    type: "enum",
-    enum: RepeatEndMode,
+    type: "varchar",
+    length: 20,
   })
   repeatEndMode!: RepeatEndMode;
 

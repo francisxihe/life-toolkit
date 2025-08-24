@@ -5,7 +5,7 @@ import {
   PartialType,
   IntersectionType,
   PickType,
-} from "../../common/mapped-types";
+} from "@life-toolkit/mapped-types";
 
 export class TrackTimeDto extends IntersectionType(
   BaseModelDto,

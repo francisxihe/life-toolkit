@@ -7,9 +7,9 @@ import {
   Radio,
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
-import { GoalType } from '@life-toolkit/vo/growth';
 import { useEffect } from 'react';
 import { GoalMapping } from '../../service';
+import { GoalType } from '@life-toolkit/enum';
 
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;

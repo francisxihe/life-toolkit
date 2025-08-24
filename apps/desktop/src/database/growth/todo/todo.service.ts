@@ -1,6 +1,5 @@
 import { Repository } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Todo as DesktopTodo } from "./todo.entity";
 import {
   TodoService as BusinessTodoService,
   CreateTodoDto,
@@ -9,6 +8,7 @@ import {
   TodoPageFilterDto,
   TodoDto,
   TodoMapper,
+  Todo,
 } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
 import TodoRepeatService from "./todo.repeat.service";
@@ -16,7 +16,7 @@ import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 export class TodoService {
   private service: BusinessTodoService;
-  private repo: Repository<DesktopTodo>;
+  private repo: Repository<Todo>;
 
   constructor() {
     const repeatService = new TodoRepeatService();
@@ -25,7 +25,7 @@ export class TodoService {
       repeatService as any,
       todoRepository as any
     );
-    this.repo = AppDataSource.getRepository(DesktopTodo);
+    this.repo = AppDataSource.getRepository(Todo);
   }
 
   async createTodo(todoData: {

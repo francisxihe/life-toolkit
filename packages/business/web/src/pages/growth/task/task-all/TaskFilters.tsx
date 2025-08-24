@@ -11,9 +11,10 @@ import {
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../constants';
 import { TagSelector } from '../../../../components/TagSelector';
-import { TaskPageFiltersVo, TaskStatus } from '@life-toolkit/vo/growth';
+import { TaskPageFiltersVo,  } from '@life-toolkit/vo/growth';
 import { useTaskAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
+import { TaskStatus } from '@life-toolkit/enum';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;

@@ -1,6 +1,4 @@
 import { ipcMain } from "electron";
-import { GoalType, GoalStatus } from "./growth/goal/goal.entity";
-import { TaskStatus } from "./growth/task/task.entity";
 import type {
   RouteDef,
   RestHandlerCtx,
@@ -10,6 +8,9 @@ import {
   TodoSource,
   HabitStatus,
   HabitDifficulty,
+  TaskStatus,
+  GoalType,
+  GoalStatus,
 } from "@life-toolkit/enum";
 
 /**

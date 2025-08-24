@@ -9,10 +9,9 @@ import {
   Query,
 } from "@life-toolkit/electron-ipc-router";
 import { todoService } from "./todo.service";
-import { TodoStatus } from "./todo.entity";
-import type { Todo as TodoVO, TodoListVo } from "@life-toolkit/vo";
-import { TodoMapper } from "@life-toolkit/business-server";
-import { TodoListFilterDto } from "@life-toolkit/business-server";
+import { TodoStatus } from "@life-toolkit/enum";
+import type { Todo as TodoVO } from "@life-toolkit/vo";
+import { TodoMapper, TodoListFilterDto } from "@life-toolkit/business-server";
 @Controller("/todo")
 export class TodoController {
   @Post("/create")
@@ -108,7 +107,7 @@ export class TodoController {
 
   @Put("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await todoService.abandon(id); 
+    return await todoService.abandon(id);
   }
 
   @Put("/restore/:id")

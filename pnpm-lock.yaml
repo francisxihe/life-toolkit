@@ -44,7 +44,7 @@ importers:
         version: 5.5.4(@types/eslint@9.6.1)(eslint-config-prettier@9.1.2(eslint@9.33.0(jiti@2.5.1)))(eslint@9.33.0(jiti@2.5.1))(prettier@3.6.2)
       jest:
         specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+        version: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -56,7 +56,7 @@ importers:
         version: 0.34.3
       ts-jest:
         specifier: ^29.1.0
-        version: 29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)))(typescript@5.9.2)
+        version: 29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)))(typescript@5.9.2)
       turbo:
         specifier: ^2.0.1
         version: 2.5.6
@@ -75,9 +75,15 @@ importers:
       '@life-toolkit/electron-ipc-router':
         specifier: workspace:*
         version: link:../../packages/common/electron-ipc-router
+      '@life-toolkit/entity':
+        specifier: workspace:*
+        version: link:../../packages/business/entity
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
+      '@life-toolkit/mapped-types':
+        specifier: workspace:*
+        version: link:../../packages/common/mapped-types
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
@@ -101,10 +107,10 @@ importers:
         version: 5.1.7
       typeorm:
         specifier: ^0.3.17
-        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       typeorm-naming-strategies:
         specifier: ^4.1.0
-        version: 4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)))
+        version: 4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)))
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
@@ -115,6 +121,9 @@ importers:
       '@arco-plugins/vite-react':
         specifier: ^1.3.3
         version: 1.3.3
+      '@swc/core':
+        specifier: ^1.13.4
+        version: 1.13.4
       '@tailwindcss/vite':
         specifier: ^4.1.11
         version: 4.1.12(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
@@ -133,6 +142,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.0.0
         version: 4.7.0(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
+      chokidar:
+        specifier: ^4.0.3
+        version: 4.0.3
       electron:
         specifier: ^36.0.0
         version: 36.8.1
@@ -147,13 +159,16 @@ importers:
         version: 2.0.0
       electron-vite:
         specifier: ^3.1.0
-        version: 3.1.0(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
+        version: 3.1.0(@swc/core@1.13.4)(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
       less:
         specifier: ^4.1.2
         version: 4.4.1
       vite:
         specifier: 5.4.15
         version: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)
+      vite-plugin-swc:
+        specifier: ^0.0.2
+        version: 0.0.2(@swc/core@1.13.4)(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
 
   apps/server:
     dependencies:
@@ -183,7 +198,7 @@ importers:
         version: 3.0.4(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)
       '@nestjs/typeorm':
         specifier: ^10.0.1
-        version: 10.0.2(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2)))
+        version: 10.0.2(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)))
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1(encoding@0.1.13)
@@ -213,13 +228,13 @@ importers:
         version: 5.1.7
       ts-loader:
         specifier: ^9.5.2
-        version: 9.5.2(typescript@5.7.2)(webpack@5.97.1)
+        version: 9.5.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.13.4))
       typeorm:
         specifier: ^0.3.17
-        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2))
+        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2))
       typeorm-naming-strategies:
         specifier: ^4.1.0
-        version: 4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2)))
+        version: 4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)))
       uuid:
         specifier: ^11.0.5
         version: 11.1.0
@@ -229,7 +244,7 @@ importers:
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
-        version: 10.4.9
+        version: 10.4.9(@swc/core@1.13.4)
       '@nestjs/schematics':
         specifier: ^10.0.0
         version: 10.2.3(chokidar@3.6.0)(typescript@5.7.2)
@@ -253,7 +268,7 @@ importers:
         version: 6.3.4
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@types/node@22.13.0)(typescript@5.7.2)
+        version: 10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
@@ -343,6 +358,15 @@ importers:
         specifier: ^0.24.0
         version: 0.24.0
 
+  packages/business/entity:
+    dependencies:
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
+      typeorm-naming-strategies:
+        specifier: ^4.1.0
+        version: 4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)))
+
   packages/business/enum: {}
 
   packages/business/server:
@@ -352,17 +376,20 @@ importers:
         version: 0.5.1
       typeorm:
         specifier: ^0.3.20
-        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
     devDependencies:
       '@life-toolkit/components-repeat':
         specifier: workspace:*
         version: link:../../components/repeat
+      '@life-toolkit/mapped-types':
+        specifier: workspace:*
+        version: link:../../common/mapped-types
       ts-mixer:
         specifier: ^6.0.3
         version: 6.0.4
       tsup:
         specifier: ^7.0.0
-        version: 7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
+        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/business/vo:
     dependencies:
@@ -483,7 +510,7 @@ importers:
     devDependencies:
       '@arco-design/webpack-plugin':
         specifier: ^1.6.0
-        version: 1.7.0(webpack@5.97.1)
+        version: 1.7.0(webpack@5.97.1(@swc/core@1.13.4))
       '@arco-plugins/vite-plugin-svgr':
         specifier: ^0.7.2
         version: 0.7.2(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1))
@@ -522,7 +549,7 @@ importers:
         version: 4.4.1
       less-loader:
         specifier: 7.3.0
-        version: 7.3.0(less@4.4.1)(webpack@5.97.1)
+        version: 7.3.0(less@4.4.1)(webpack@5.97.1(@swc/core@1.13.4))
       postcss:
         specifier: 8.4.30
         version: 8.4.30
@@ -564,7 +591,7 @@ importers:
     devDependencies:
       tsup:
         specifier: ^7.0.0
-        version: 7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
+        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/common/electron-ipc-router:
     dependencies:
@@ -580,7 +607,17 @@ importers:
     devDependencies:
       tsup:
         specifier: ^7.0.0
-        version: 7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
+        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
+
+  packages/common/mapped-types:
+    dependencies:
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+    devDependencies:
+      tsup:
+        specifier: ^7.0.0
+        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/components-web/mind:
     dependencies:
@@ -678,7 +715,7 @@ importers:
         version: 18.3.1
       typeorm:
         specifier: '*'
-        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.1.4
@@ -725,7 +762,7 @@ importers:
         version: 6.21.0(eslint@9.33.0(jiti@2.5.1))(typescript@5.9.2)
       tsup:
         specifier: ^7.0.0
-        version: 7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
+        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/share-web/request:
     dependencies:
@@ -1651,8 +1688,8 @@ packages:
     resolution: {integrity: sha512-Qkzpg2s9GnVV2I2BjRksUi43U5e6+zaQMcjoJy0C+C5oxaKl+fmckGDQFtRpZpZV0NQekuZZ+tGz7EA9TVnQtQ==}
     engines: {node: '>=12'}
 
-  '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
-    resolution: {tarball: https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2}
+  '@electron/node-gyp@git+https://git@github.com:electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2':
+    resolution: {commit: 06b29aafb7708acef8b3669835c8a7857ebc92d2, repo: git@github.com:electron/node-gyp.git, type: git}
     version: 10.2.0-electron.1
     engines: {node: '>=12.13.0'}
     hasBin: true
@@ -2959,6 +2996,85 @@ packages:
   '@svgr/webpack@5.5.0':
     resolution: {integrity: sha512-DOBOK255wfQxguUta2INKkzPj6AIS6iafZYiYmHn6W3pHlycSRRlvWKCfLDG10fXfLWqE3DJHgRUOyJYmARa7g==}
     engines: {node: '>=10'}
+
+  '@swc/core-darwin-arm64@1.13.4':
+    resolution: {integrity: sha512-CGbTu9dGBwgklUj+NAQAYyPjBuoHaNRWK4QXJRv1QNIkhtE27aY7QA9uEON14SODxsio3t8+Pjjl2Mzx1Pxf+g==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@swc/core-darwin-x64@1.13.4':
+    resolution: {integrity: sha512-qLFwYmLrqHNCf+JO9YLJT6IP/f9LfbXILTaqyfluFLW1GCfJyvUrSt3CWaL2lwwyT1EbBh6BVaAAecXiJIo3vg==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@swc/core-linux-arm-gnueabihf@1.13.4':
+    resolution: {integrity: sha512-y7SeNIA9em3+smNMpr781idKuNwJNAqewiotv+pIR5FpXdXXNjHWW+jORbqQYd61k6YirA5WQv+Af4UzqEX17g==}
+    engines: {node: '>=10'}
+    cpu: [arm]
+    os: [linux]
+
+  '@swc/core-linux-arm64-gnu@1.13.4':
+    resolution: {integrity: sha512-u0c51VdzRmXaphLgghY9+B2Frzler6nIv+J788nqIh6I0ah3MmMW8LTJKZfdaJa3oFxzGNKXsJiaU2OFexNkug==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@swc/core-linux-arm64-musl@1.13.4':
+    resolution: {integrity: sha512-Z92GJ98x8yQHn4I/NPqwAQyHNkkMslrccNVgFcnY1msrb6iGSw5uFg2H2YpvQ5u2/Yt6CRpLIUVVh8SGg1+gFA==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@swc/core-linux-x64-gnu@1.13.4':
+    resolution: {integrity: sha512-rSUcxgpFF0L8Fk1CbUf946XCX1CRp6eaHfKqplqFNWCHv8HyqAtSFvgCHhT+bXru6Ca/p3sLC775SUeSWhsJ9w==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@swc/core-linux-x64-musl@1.13.4':
+    resolution: {integrity: sha512-qY77eFUvmdXNSmTW+I1fsz4enDuB0I2fE7gy6l9O4koSfjcCxkXw2X8x0lmKLm3FRiINS1XvZSg2G+q4NNQCRQ==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@swc/core-win32-arm64-msvc@1.13.4':
+    resolution: {integrity: sha512-xjPeDrOf6elCokxuyxwoskM00JJFQMTT2hTQZE24okjG3JiXzSFV+TmzYSp+LWNxPpnufnUUy/9Ee8+AcpslGw==}
+    engines: {node: '>=10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@swc/core-win32-ia32-msvc@1.13.4':
+    resolution: {integrity: sha512-Ta+Bblc9tE9X9vQlpa3r3+mVnHYdKn09QsZ6qQHvuXGKWSS99DiyxKTYX2vxwMuoTObR0BHvnhNbaGZSV1VwNA==}
+    engines: {node: '>=10'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@swc/core-win32-x64-msvc@1.13.4':
+    resolution: {integrity: sha512-pHnb4QwGiuWs4Z9ePSgJ48HP3NZIno6l75SB8YLCiPVDiLhvCLKEjz/caPRsFsmet9BEP8e3bAf2MV8MXgaTSg==}
+    engines: {node: '>=10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@swc/core@1.13.4':
+    resolution: {integrity: sha512-bCq2GCuKV16DSOOEdaRqHMm1Ok4YEoLoNdgdzp8BS/Hxxr/0NVCHBUgRLLRy/TlJGv20Idx+djd5FIDvsnqMaw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      '@swc/helpers': '>=0.5.17'
+    peerDependenciesMeta:
+      '@swc/helpers':
+        optional: true
+
+  '@swc/counter@0.1.3':
+    resolution: {integrity: sha512-e2BR4lsJkkRlKZ/qCHPw9ZaSxc0MVUd7gtbtaB7aMvHeJVYe8sOB8DBZkP2DtISHGSku9sCK6T6cnY0CtXrOCQ==}
+
+  '@swc/types@0.1.24':
+    resolution: {integrity: sha512-tjTMh3V4vAORHtdTprLlfoMptu1WfTZG9Rsca6yOKyNYsRr+MUXutKmliB17orgSZk5DpnDxs8GUdd/qwYxOng==}
 
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
@@ -4332,6 +4448,10 @@ packages:
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
+
+  chokidar@4.0.3:
+    resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
+    engines: {node: '>= 14.16.0'}
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
@@ -7926,6 +8046,10 @@ packages:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
     engines: {node: '>=8.10.0'}
 
+  readdirp@4.1.2:
+    resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
+    engines: {node: '>= 14.18.0'}
+
   redent@3.0.0:
     resolution: {integrity: sha512-6tDA8g98We0zd0GvVeMT9arEOnTw9qM03L9cJXaCjrip1OO764RDBLBfrB4cwzNGDj5OA5ioymC9GkizgWJDUg==}
     engines: {node: '>=8'}
@@ -9233,6 +9357,12 @@ packages:
     peerDependencies:
       vite: 5.4.15
 
+  vite-plugin-swc@0.0.2:
+    resolution: {integrity: sha512-8u11xSNvu9IYlLtdCPmAVtbw2caEwPgz+aFiSod6Q4bK4LAHAY4qhiQYPeLq2iGRBRloxDnVOsSQhn9nlwA6YA==}
+    peerDependencies:
+      '@swc/core': ^1.2.98
+      vite: 5.4.15
+
   vite@5.4.15:
     resolution: {integrity: sha512-6ANcZRivqL/4WtwPGTKNaosuNJr5tWiftOC7liM7G9+rMb8+oeJeyzymDu4rTN93seySBmbjSfsS3Vzr19KNtA==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -9887,13 +10017,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@arco-design/webpack-plugin@1.7.0(webpack@5.97.1)':
+  '@arco-design/webpack-plugin@1.7.0(webpack@5.97.1(@swc/core@1.13.4))':
     dependencies:
       babel-plugin-import: 1.13.8
       chalk: 4.1.2
       lodash: 4.17.21
       micromatch: 4.0.8
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
     transitivePeerDependencies:
       - supports-color
 
@@ -10773,7 +10903,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron/node-gyp@https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2':
+  '@electron/node-gyp@git+https://git@github.com:electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2':
     dependencies:
       env-paths: 2.2.1
       exponential-backoff: 3.1.2
@@ -10810,7 +10940,7 @@ snapshots:
 
   '@electron/rebuild@3.7.0':
     dependencies:
-      '@electron/node-gyp': https://codeload.github.com/electron/node-gyp/tar.gz/06b29aafb7708acef8b3669835c8a7857ebc92d2
+      '@electron/node-gyp': git+https://git@github.com:electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2
       '@malept/cross-spawn-promise': 2.0.0
       chalk: 4.1.2
       debug: 4.4.1
@@ -11263,7 +11393,7 @@ snapshots:
       jest-util: 29.7.0
       slash: 3.0.0
 
-  '@jest/core@29.7.0(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))':
+  '@jest/core@29.7.0(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))':
     dependencies:
       '@jest/console': 29.7.0
       '@jest/reporters': 29.7.0
@@ -11277,7 +11407,7 @@ snapshots:
       exit: 0.1.2
       graceful-fs: 4.2.11
       jest-changed-files: 29.7.0
-      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       jest-haste-map: 29.7.0
       jest-message-util: 29.7.0
       jest-regex-util: 29.6.3
@@ -11497,7 +11627,7 @@ snapshots:
       nanostores: 0.11.4
       react: 18.3.1
 
-  '@nestjs/cli@10.4.9':
+  '@nestjs/cli@10.4.9(@swc/core@1.13.4)':
     dependencies:
       '@angular-devkit/core': 17.3.11(chokidar@3.6.0)
       '@angular-devkit/schematics': 17.3.11(chokidar@3.6.0)
@@ -11507,7 +11637,7 @@ snapshots:
       chokidar: 3.6.0
       cli-table3: 0.6.5
       commander: 4.1.1
-      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1)
+      fork-ts-checker-webpack-plugin: 9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.13.4))
       glob: 10.4.5
       inquirer: 8.2.6
       node-emoji: 1.11.0
@@ -11516,8 +11646,10 @@ snapshots:
       tsconfig-paths: 4.2.0
       tsconfig-paths-webpack-plugin: 4.2.0
       typescript: 5.7.2
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
       webpack-node-externals: 3.0.0
+    optionalDependencies:
+      '@swc/core': 1.13.4
     transitivePeerDependencies:
       - esbuild
       - uglify-js
@@ -11614,13 +11746,13 @@ snapshots:
     optionalDependencies:
       '@nestjs/platform-express': 10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20)
 
-  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2)))':
+  '@nestjs/typeorm@10.0.2(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/core@10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)))':
     dependencies:
       '@nestjs/common': 10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core': 10.4.20(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@10.4.20)(encoding@0.1.13)(reflect-metadata@0.1.14)(rxjs@7.8.2)
       reflect-metadata: 0.1.14
       rxjs: 7.8.2
-      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2))
+      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2))
       uuid: 9.0.1
 
   '@noble/hashes@1.8.0': {}
@@ -11971,6 +12103,58 @@ snapshots:
       loader-utils: 2.0.4
     transitivePeerDependencies:
       - supports-color
+
+  '@swc/core-darwin-arm64@1.13.4':
+    optional: true
+
+  '@swc/core-darwin-x64@1.13.4':
+    optional: true
+
+  '@swc/core-linux-arm-gnueabihf@1.13.4':
+    optional: true
+
+  '@swc/core-linux-arm64-gnu@1.13.4':
+    optional: true
+
+  '@swc/core-linux-arm64-musl@1.13.4':
+    optional: true
+
+  '@swc/core-linux-x64-gnu@1.13.4':
+    optional: true
+
+  '@swc/core-linux-x64-musl@1.13.4':
+    optional: true
+
+  '@swc/core-win32-arm64-msvc@1.13.4':
+    optional: true
+
+  '@swc/core-win32-ia32-msvc@1.13.4':
+    optional: true
+
+  '@swc/core-win32-x64-msvc@1.13.4':
+    optional: true
+
+  '@swc/core@1.13.4':
+    dependencies:
+      '@swc/counter': 0.1.3
+      '@swc/types': 0.1.24
+    optionalDependencies:
+      '@swc/core-darwin-arm64': 1.13.4
+      '@swc/core-darwin-x64': 1.13.4
+      '@swc/core-linux-arm-gnueabihf': 1.13.4
+      '@swc/core-linux-arm64-gnu': 1.13.4
+      '@swc/core-linux-arm64-musl': 1.13.4
+      '@swc/core-linux-x64-gnu': 1.13.4
+      '@swc/core-linux-x64-musl': 1.13.4
+      '@swc/core-win32-arm64-msvc': 1.13.4
+      '@swc/core-win32-ia32-msvc': 1.13.4
+      '@swc/core-win32-x64-msvc': 1.13.4
+
+  '@swc/counter@0.1.3': {}
+
+  '@swc/types@0.1.24':
+    dependencies:
+      '@swc/counter': 0.1.3
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
@@ -14187,6 +14371,10 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
+  chokidar@4.0.3:
+    dependencies:
+      readdirp: 4.1.2
+
   chownr@1.1.4: {}
 
   chownr@2.0.0: {}
@@ -14428,13 +14616,13 @@ snapshots:
       buffer: 5.7.1
     optional: true
 
-  create-jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  create-jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
       '@jest/types': 29.6.3
       chalk: 4.1.2
       exit: 0.1.2
       graceful-fs: 4.2.11
-      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       jest-util: 29.7.0
       prompts: 2.4.2
     transitivePeerDependencies:
@@ -14927,7 +15115,7 @@ snapshots:
 
   electron-to-chromium@1.5.207: {}
 
-  electron-vite@3.1.0(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)):
+  electron-vite@3.1.0(@swc/core@1.13.4)(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)):
     dependencies:
       '@babel/core': 7.28.3
       '@babel/plugin-transform-arrow-functions': 7.27.1(@babel/core@7.28.3)
@@ -14936,6 +15124,8 @@ snapshots:
       magic-string: 0.30.17
       picocolors: 1.1.1
       vite: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)
+    optionalDependencies:
+      '@swc/core': 1.13.4
     transitivePeerDependencies:
       - supports-color
 
@@ -15598,7 +15788,7 @@ snapshots:
       cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
-  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1):
+  fork-ts-checker-webpack-plugin@9.0.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.13.4)):
     dependencies:
       '@babel/code-frame': 7.27.1
       chalk: 4.1.2
@@ -15613,7 +15803,7 @@ snapshots:
       semver: 7.7.2
       tapable: 2.2.2
       typescript: 5.7.2
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
 
   form-data-encoder@1.7.2: {}
 
@@ -16413,16 +16603,16 @@ snapshots:
       - babel-plugin-macros
       - supports-color
 
-  jest-cli@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  jest-cli@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       '@jest/test-result': 29.7.0
       '@jest/types': 29.6.3
       chalk: 4.1.2
-      create-jest: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      create-jest: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       exit: 0.1.2
       import-local: 3.2.0
-      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      jest-config: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       jest-util: 29.7.0
       jest-validate: 29.7.0
       yargs: 17.7.2
@@ -16432,7 +16622,7 @@ snapshots:
       - supports-color
       - ts-node
 
-  jest-config@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  jest-config@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
       '@babel/core': 7.28.3
       '@jest/test-sequencer': 29.7.0
@@ -16458,7 +16648,7 @@ snapshots:
       strip-json-comments: 3.1.1
     optionalDependencies:
       '@types/node': 22.13.0
-      ts-node: 10.9.2(@types/node@22.13.0)(typescript@5.9.2)
+      ts-node: 10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -16699,12 +16889,12 @@ snapshots:
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
-  jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
-      '@jest/core': 29.7.0(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      '@jest/core': 29.7.0(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       '@jest/types': 29.6.3
       import-local: 3.2.0
-      jest-cli: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      jest-cli: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
     transitivePeerDependencies:
       - '@types/node'
       - babel-plugin-macros
@@ -16860,13 +17050,13 @@ snapshots:
 
   lazy-val@1.0.5: {}
 
-  less-loader@7.3.0(less@4.4.1)(webpack@5.97.1):
+  less-loader@7.3.0(less@4.4.1)(webpack@5.97.1(@swc/core@1.13.4)):
     dependencies:
       klona: 2.0.6
       less: 4.4.1
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
 
   less@4.4.1:
     dependencies:
@@ -17721,13 +17911,13 @@ snapshots:
     dependencies:
       postcss: 8.4.30
 
-  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  postcss-load-config@4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
       lilconfig: 3.1.3
       yaml: 2.8.1
     optionalDependencies:
       postcss: 8.5.6
-      ts-node: 10.9.2(@types/node@22.13.0)(typescript@5.9.2)
+      ts-node: 10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)
 
   postcss-media-query-parser@0.2.3: {}
 
@@ -18470,6 +18660,8 @@ snapshots:
   readdirp@3.6.0:
     dependencies:
       picomatch: 2.3.1
+
+  readdirp@4.1.2: {}
 
   redent@3.0.0:
     dependencies:
@@ -19400,14 +19592,16 @@ snapshots:
       mkdirp: 0.5.6
       rimraf: 2.6.3
 
-  terser-webpack-plugin@5.3.14(webpack@5.97.1):
+  terser-webpack-plugin@5.3.14(@swc/core@1.13.4)(webpack@5.97.1(@swc/core@1.13.4)):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.30
       jest-worker: 27.5.1
       schema-utils: 4.3.2
       serialize-javascript: 6.0.2
       terser: 5.43.1
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
+    optionalDependencies:
+      '@swc/core': 1.13.4
 
   terser@5.43.1:
     dependencies:
@@ -19525,12 +19719,12 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-jest@29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)))(typescript@5.9.2):
+  ts-jest@29.4.1(@babel/core@7.28.3)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.28.3))(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)))(typescript@5.9.2):
     dependencies:
       bs-logger: 0.2.6
       fast-json-stable-stringify: 2.1.0
       handlebars: 4.7.8
-      jest: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      jest: 29.7.0(@types/node@22.13.0)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       json5: 2.2.3
       lodash.memoize: 4.1.2
       make-error: 1.3.6
@@ -19545,7 +19739,7 @@ snapshots:
       babel-jest: 29.7.0(@babel/core@7.28.3)
       jest-util: 29.7.0
 
-  ts-loader@9.5.2(typescript@5.7.2)(webpack@5.97.1):
+  ts-loader@9.5.2(typescript@5.7.2)(webpack@5.97.1(@swc/core@1.13.4)):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.18.3
@@ -19553,11 +19747,11 @@ snapshots:
       semver: 7.7.2
       source-map: 0.7.6
       typescript: 5.7.2
-      webpack: 5.97.1
+      webpack: 5.97.1(@swc/core@1.13.4)
 
   ts-mixer@6.0.4: {}
 
-  ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2):
+  ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -19574,8 +19768,10 @@ snapshots:
       typescript: 5.7.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    optionalDependencies:
+      '@swc/core': 1.13.4
 
-  ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2):
+  ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -19592,6 +19788,8 @@ snapshots:
       typescript: 5.9.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    optionalDependencies:
+      '@swc/core': 1.13.4
     optional: true
 
   tsconfig-paths-webpack-plugin@4.2.0:
@@ -19613,7 +19811,7 @@ snapshots:
 
   tslib@2.8.1: {}
 
-  tsup@7.3.0(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2):
+  tsup@7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2):
     dependencies:
       bundle-require: 4.2.1(esbuild@0.19.12)
       cac: 6.7.14
@@ -19623,13 +19821,14 @@ snapshots:
       execa: 5.1.1
       globby: 11.1.0
       joycon: 3.1.1
-      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      postcss-load-config: 4.0.2(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
       resolve-from: 5.0.0
       rollup: 4.46.4
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
     optionalDependencies:
+      '@swc/core': 1.13.4
       postcss: 8.5.6
       typescript: 5.9.2
     transitivePeerDependencies:
@@ -19728,15 +19927,15 @@ snapshots:
 
   typedarray@0.0.6: {}
 
-  typeorm-naming-strategies@4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2))):
+  typeorm-naming-strategies@4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2))):
     dependencies:
-      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2))
+      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2))
 
-  typeorm-naming-strategies@4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))):
+  typeorm-naming-strategies@4.1.0(typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))):
     dependencies:
-      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2))
+      typeorm: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
 
-  typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.2)):
+  typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 3.17.0
@@ -19756,12 +19955,12 @@ snapshots:
     optionalDependencies:
       mysql2: 3.14.3
       sqlite3: 5.1.7
-      ts-node: 10.9.2(@types/node@22.13.0)(typescript@5.7.2)
+      ts-node: 10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.7.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
 
-  typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.9.2)):
+  typeorm@0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)):
     dependencies:
       '@sqltools/formatter': 1.2.5
       ansis: 3.17.0
@@ -19781,7 +19980,7 @@ snapshots:
     optionalDependencies:
       mysql2: 3.14.3
       sqlite3: 5.1.7
-      ts-node: 10.9.2(@types/node@22.13.0)(typescript@5.9.2)
+      ts-node: 10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2)
     transitivePeerDependencies:
       - babel-plugin-macros
       - supports-color
@@ -19964,6 +20163,12 @@ snapshots:
       pathe: 0.2.0
       vite: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)
 
+  vite-plugin-swc@0.0.2(@swc/core@1.13.4)(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)):
+    dependencies:
+      '@swc/core': 1.13.4
+      lodash.merge: 4.6.2
+      vite: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1)
+
   vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.43.1):
     dependencies:
       esbuild: 0.21.5
@@ -20009,7 +20214,7 @@ snapshots:
 
   webpack-sources@3.3.3: {}
 
-  webpack@5.97.1:
+  webpack@5.97.1(@swc/core@1.13.4):
     dependencies:
       '@types/eslint-scope': 3.7.7
       '@types/estree': 1.0.8
@@ -20031,7 +20236,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.2
-      terser-webpack-plugin: 5.3.14(webpack@5.97.1)
+      terser-webpack-plugin: 5.3.14(@swc/core@1.13.4)(webpack@5.97.1(@swc/core@1.13.4))
       watchpack: 2.4.4
       webpack-sources: 3.3.3
     transitivePeerDependencies:

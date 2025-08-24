@@ -1,8 +1,5 @@
 import { In, Repository } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Habit as DesktopHabit } from "./habit.entity";
-import { Goal as DesktopGoal } from "../goal/goal.entity";
-import { Todo as DesktopTodo } from "../todo/todo.entity";
 import {
   HabitRepository as BusinessHabitRepository,
   CreateHabitDto,
@@ -10,21 +7,24 @@ import {
   HabitListFilterDto,
   HabitPageFilterDto,
   HabitDto,
+  Goal,
+  Todo,
+  Habit,
 } from "@life-toolkit/business-server";
 import { HabitStatus, HabitDifficulty, TodoStatus } from "@life-toolkit/enum";
 
 export class HabitRepository implements BusinessHabitRepository {
-  private repo: Repository<DesktopHabit>;
-  private goalRepo: Repository<DesktopGoal>;
-  private todoRepo: Repository<DesktopTodo>;
+  private repo: Repository<Habit>;
+  private goalRepo: Repository<Goal>;
+  private todoRepo: Repository<Todo>;
 
   constructor() {
-    this.repo = AppDataSource.getRepository(DesktopHabit);
-    this.goalRepo = AppDataSource.getRepository(DesktopGoal);
-    this.todoRepo = AppDataSource.getRepository(DesktopTodo);
+    this.repo = AppDataSource.getRepository(Habit);
+    this.goalRepo = AppDataSource.getRepository(Goal);
+    this.todoRepo = AppDataSource.getRepository(Todo);
   }
 
-  private toDto(entity: DesktopHabit): HabitDto {
+  private toDto(entity: Habit): HabitDto {
     return {
       id: entity.id,
       createdAt: entity.createdAt,
@@ -130,7 +130,7 @@ export class HabitRepository implements BusinessHabitRepository {
       startDate: (createHabitDto as any).startDate ?? new Date(),
       targetDate: (createHabitDto as any).targetDate,
       status: HabitStatus.ACTIVE as any,
-    } as Partial<DesktopHabit>);
+    } as Partial<Habit>);
 
     const goalIds = (createHabitDto as any).goalIds as string[] | undefined;
     if (goalIds && goalIds.length > 0) {
@@ -225,7 +225,7 @@ export class HabitRepository implements BusinessHabitRepository {
   async batchUpdate(ids: string[], updateData: Partial<any>): Promise<void> {
     await this.repo.update(
       { id: In(ids) },
-      updateData as unknown as Partial<DesktopHabit>
+      updateData as unknown as Partial<Habit>
     );
   }
 

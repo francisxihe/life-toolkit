@@ -1,6 +1,10 @@
 import { PageDto } from "../../../base/page.dto";
 import { GoalDto } from "./goal-model.dto";
-import { PickType, IntersectionType, PartialType } from "../../../common/mapped-types";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+} from "@life-toolkit/mapped-types";
 
 // 列表过滤DTO - 选择可过滤的字段
 export class GoalListFilterDto extends PartialType(
@@ -28,7 +32,7 @@ export class GoalListFilterDto extends PartialType(
 
   /** 放弃结束日期 */
   abandonedDateEnd?: string;
-  
+
   /** 排除自身 */
   withoutSelf?: boolean;
 
