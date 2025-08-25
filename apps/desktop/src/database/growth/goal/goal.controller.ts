@@ -8,11 +8,18 @@ import {
   Put,
   Query,
 } from "@life-toolkit/electron-ipc-router";
-import { goalService } from "./goal.service";
-import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { GoalMapper, GoalListFilterDto } from "@life-toolkit/business-server";
+import type {
+  Goal as GoalVO,
+  GoalListFiltersVo,
+  GoalPageFiltersVo,
+} from "@life-toolkit/vo";
+import {
+  GoalMapper,
+  GoalListFilterDto,
+  GoalPageFilterDto,
+} from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
-import type { GoalListFiltersVo } from "@life-toolkit/vo";
+import { goalService } from "./goal.service";
 
 @Controller("/goal")
 export class GoalController {
@@ -20,11 +27,6 @@ export class GoalController {
   async create(@Body() payload: GoalVO.CreateGoalVo) {
     const dto = await goalService.create(GoalMapper.voToCreateDto(payload));
     return GoalMapper.dtoToItemVo(dto);
-  }
-
-  @Get("/findAll")
-  async findAll() {
-    return GoalMapper.dtoToVoList(await goalService.findAll());
   }
 
   @Get("/findById/:id")
@@ -44,30 +46,32 @@ export class GoalController {
   }
 
   @Get("/page")
-  async page(
-    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
-  ) {
-    const pageNum = Number(q?.pageNum) || 1;
-    const pageSize = Number(q?.pageSize) || 10;
-    const res = await goalService.page(pageNum, pageSize);
-    return GoalMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
+  async page(@Query() query?: GoalPageFiltersVo) {
+    const goalPageFilterDto = new GoalPageFilterDto();
+    goalPageFilterDto.importPageVo(query);
+    const res = await goalService.page(goalPageFilterDto);
+    return GoalMapper.dtoToPageVo(
+      res.list,
+      res.total,
+      goalPageFilterDto.pageNum,
+      goalPageFilterDto.pageSize
+    );
   }
 
   @Get("/list")
-  async list(@Query() filter?: GoalListFiltersVo) {
-    const f = new GoalListFilterDto();
-    if (filter?.type !== undefined) f.type = filter.type as any;
-    if (filter?.status !== undefined) (f as any).status = filter.status as any;
-    if (filter?.keyword) f.keyword = filter.keyword;
-    if (filter?.startAt) f.startAt = filter.startAt as any;
-    if (filter?.endAt) f.endAt = filter.endAt as any;
-    if (filter?.parentId) f.parentId = filter.parentId as any;
-    return GoalMapper.dtoToListVo(await goalService.list(f));
+  async list(@Query() query?: GoalListFiltersVo) {
+    const goalListFilterDto = new GoalListFilterDto();
+    goalListFilterDto.importListVo(query);
+    const list = await goalService.findAll(goalListFilterDto);
+    return GoalMapper.dtoToListVo(list);
   }
 
   @Get("/tree")
-  async tree() {
-    return (await goalService.findTree()).map((dto) => GoalMapper.dtoToVo(dto));
+  async tree(@Query() query?: GoalListFiltersVo) {
+    const goalListFilterDto = new GoalListFilterDto();
+    goalListFilterDto.importListVo(query);
+    const list = await goalService.getTree(goalListFilterDto);
+    return list.map((dto) => GoalMapper.dtoToVo(dto));
   }
 
   @Get("/findRoots")
@@ -75,11 +79,6 @@ export class GoalController {
     return (await goalService.findRoots()).map((dto) =>
       GoalMapper.dtoToVo(dto)
     );
-  }
-
-  @Get("/getTree")
-  async getTree() {
-    return (await goalService.findTree()).map((dto) => GoalMapper.dtoToVo(dto));
   }
 
   @Get("/findDetail/:id")

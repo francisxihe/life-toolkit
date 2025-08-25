@@ -13,4 +13,8 @@ export class TodoDto extends IntersectionType(
   habit?: any;
 }
 
-export class TodoModelDto extends OmitType(TodoDto, ["task", "repeat", "habit"] as const) {}
+export class TodoModelDto extends OmitType(TodoDto, [
+  "task",
+  "repeat",
+  "habit",
+] as const) {}

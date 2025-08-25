@@ -2,12 +2,13 @@ import { TaskRepository, TaskTreeRepository, TodoCleanupService } from "./task.r
 import {
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskPageFiltersDto,
+  TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
 } from "./dto";
 import { Task } from "./task.entity";
+import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class TaskService {
   protected taskRepository: TaskRepository;
@@ -43,7 +44,7 @@ export class TaskService {
     await this.taskTreeRepository.deleteByIds(allIds);
   }
 
-  async deleteByFilter(filter: TaskListFilterDto): Promise<void> {
+  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
     const taskList = await this.findAll(filter);
     if (!taskList.length) return;
     const toDeleteIds = taskList.map((t) => t.id);
@@ -70,7 +71,7 @@ export class TaskService {
     return dto;
   }
 
-  async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
+  async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     let excludeIds: string[] = [];
     if ((filter as any).withoutSelf && (filter as any).id) {
       const node = await this.taskTreeRepository.findOne({ id: (filter as any).id } as Partial<Task>);
@@ -83,8 +84,14 @@ export class TaskService {
     return taskList;
   }
 
-  async page(filter: TaskPageFilterDto): Promise<{ list: TaskDto[]; total: number }> {
-    return await this.taskRepository.page(filter);
+  async list(filter: TaskListFiltersDto): Promise<ListResponseDto<TaskDto>> {
+    const list = await this.findAll(filter);
+    return new ListResponseDto({ list, total: list.length });
+  }
+
+  async page(filter: TaskPageFiltersDto): Promise<PageResponseDto<TaskDto>> {
+    const { list, total } = await this.taskRepository.page(filter);
+    return new PageResponseDto({ list, total, pageNum: (filter as any).pageNum, pageSize: (filter as any).pageSize });
   }
 
   async findById(id: string): Promise<TaskDto> {

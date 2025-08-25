@@ -17,80 +17,64 @@ export class GoalTreeRepository {
     where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]
   ): Promise<Goal | null> {
     const repo = AppDataSource.getTreeRepository(Goal);
-    return (await repo.findOne({
-      where: where as unknown as any,
+    return await repo.findOne({
+      where,
       relations: ["children"],
-    })) as unknown as Goal | null;
+    });
   }
 
   async remove(entity: Goal): Promise<void> {
-    await AppDataSource.getTreeRepository(Goal).remove(
-      entity as unknown as Goal
-    );
+    await AppDataSource.getTreeRepository(Goal).remove(entity);
   }
 
   async save(entity: Goal): Promise<Goal> {
-    return (await AppDataSource.getTreeRepository(Goal).save(
-      entity as unknown as Goal
-    )) as unknown as Goal;
+    return await AppDataSource.getTreeRepository(Goal).save(entity);
   }
 
   async findRoots(): Promise<Goal[]> {
-    return (await AppDataSource.getTreeRepository(
-      Goal
-    ).findRoots()) as unknown as Goal[];
+    return await AppDataSource.getTreeRepository(Goal).findRoots();
   }
 
   async findDescendants(entity: Goal): Promise<Goal[]> {
-    return (await AppDataSource.getTreeRepository(Goal).findDescendants(
-      entity as unknown as Goal
-    )) as unknown as Goal[];
+    return await AppDataSource.getTreeRepository(Goal).findDescendants(entity);
   }
 
   async findAncestors(entity: Goal): Promise<Goal[]> {
-    return (await AppDataSource.getTreeRepository(Goal).findAncestors(
-      entity as unknown as Goal
-    )) as unknown as Goal[];
+    return await AppDataSource.getTreeRepository(Goal).findAncestors(entity);
   }
 
   async findDescendantsTree(entity: Goal): Promise<Goal> {
-    return (await AppDataSource.getTreeRepository(Goal).findDescendantsTree(
-      entity as unknown as Goal
-    )) as unknown as Goal;
+    return await AppDataSource.getTreeRepository(Goal).findDescendantsTree(
+      entity
+    );
   }
 
   async updateParent(
     currentGoal: Goal,
     parentId: string,
-    treeRepo?: unknown
+    treeRepo?: TreeRepository<Goal>
   ): Promise<void> {
-    const repo =
-      (treeRepo as unknown as TreeRepository<Goal>) ??
-      AppDataSource.getTreeRepository(Goal);
+    const repo = treeRepo ?? AppDataSource.getTreeRepository(Goal);
     const parent = await repo.findOne({ where: { id: parentId } });
     if (!parent) throw new Error(`父目标不存在，ID: ${parentId}`);
-    (currentGoal as any).parent = parent;
-    await repo.save(currentGoal as unknown as Goal);
+    currentGoal.parent = parent;
+    await repo.save(currentGoal);
   }
 
   async deleteDescendants(
     target: Goal | Goal[],
-    treeRepo?: unknown
+    treeRepo?: TreeRepository<Goal>
   ): Promise<void> {
-    const repo =
-      (treeRepo as unknown as TreeRepository<Goal>) ??
-      AppDataSource.getTreeRepository(Goal);
+    const repo = treeRepo ?? AppDataSource.getTreeRepository(Goal);
     const allIds: string[] = [];
 
     if (Array.isArray(target)) {
-      for (const t of target as any[]) {
-        const descendantsNodes = await repo.findDescendants(t as Goal);
+      for (const t of target) {
+        const descendantsNodes = await repo.findDescendants(t);
         allIds.push(...descendantsNodes.map((node) => node.id));
       }
     } else {
-      const descendantsNodes = await repo.findDescendants(
-        target as unknown as Goal
-      );
+      const descendantsNodes = await repo.findDescendants(target);
       allIds.push(...descendantsNodes.map((node) => node.id));
     }
 
@@ -99,7 +83,7 @@ export class GoalTreeRepository {
 
   async buildTree(node: Goal): Promise<Goal> {
     const repo = AppDataSource.getTreeRepository(Goal);
-    const tree = await repo.findDescendantsTree(node as unknown as Goal);
+    const tree = await repo.findDescendantsTree(node);
     // 过滤软删除
     const filterDeleted = (n: Goal): Goal | null => {
       if (n.deletedAt) return null;
@@ -112,24 +96,21 @@ export class GoalTreeRepository {
       return n;
     };
     const filtered = filterDeleted(tree);
-    return (filtered || (node as unknown as Goal)) as unknown as Goal;
+    return filtered || node;
   }
 
   filterTreeNodes(node: Goal, nodeIdsToInclude: Set<string>): Goal | null {
-    const n = node as any;
-    if (!nodeIdsToInclude.has(n.id)) return null;
-    const clone: any = { ...n, children: [] };
-    if (Array.isArray(n.children) && n.children.length > 0) {
-      const filteredChildren = (n.children as any[])
-        .map((child) => this.filterTreeNodes(child as any, nodeIdsToInclude))
-        .filter((child): child is any => child !== null) as any[];
-      clone.children = filteredChildren;
+    if (!nodeIdsToInclude.has(node.id)) return null;
+    const children: Goal[] = [];
+    for (const child of node.children || []) {
+      const fc = this.filterTreeNodes(child, nodeIdsToInclude);
+      if (fc) children.push(fc);
     }
-    return clone as Goal;
+    return { ...node, children } as Goal;
   }
 
   async collectIdsByFilter(filter: {
-    status?: string;
+    status?: Goal["status"];
     keyword?: string;
     importance?: number;
   }): Promise<Set<string>> {
@@ -140,7 +121,7 @@ export class GoalTreeRepository {
       const full = await treeRepo.findDescendantsTree(r);
       const traverse = (n: Goal) => {
         if (
-          (!filter.status || (n.status as any) === filter.status) &&
+          (!filter.status || n.status === filter.status) &&
           (!filter.keyword ||
             n.name.includes(filter.keyword) ||
             (n.description || "").includes(filter.keyword)) &&
@@ -161,9 +142,9 @@ export class GoalTreeRepository {
       const current = treeRepository.create({
         name: dto.name,
         description: dto.description,
-        type: dto.type as any,
-        status: (dto as any).status,
-        importance: dto.importance as any,
+        type: dto.type,
+        status: dto.status,
+        importance: dto.importance,
         startAt: dto.startAt,
         endAt: dto.endAt,
       });
@@ -189,21 +170,16 @@ export class GoalTreeRepository {
 
       if (dto.name !== undefined) current.name = dto.name;
       if (dto.description !== undefined) current.description = dto.description;
-      if (dto.type !== undefined) current.type = dto.type as any;
-      if (dto.importance !== undefined)
-        current.importance = dto.importance as any;
-      if (dto.status !== undefined) current.status = dto.status as any;
+      if (dto.type !== undefined) current.type = dto.type;
+      if (dto.importance !== undefined) current.importance = dto.importance;
+      if (dto.status !== undefined) current.status = dto.status;
       if (dto.startAt !== undefined) current.startAt = dto.startAt;
       if (dto.endAt !== undefined) current.endAt = dto.endAt;
 
-      if ((dto as any).parentId) {
-        await this.updateParent(
-          current as any,
-          (dto as any).parentId,
-          treeRepository
-        );
-      } else if ((dto as any).parentId === null) {
-        current.parent = undefined as any;
+      if ("parentId" in dto && dto.parentId) {
+        await this.updateParent(current, dto.parentId, treeRepository);
+      } else if ("parentId" in dto && dto.parentId === null) {
+        current.parent = undefined;
         await treeRepository.save(current);
       }
 
@@ -215,11 +191,11 @@ export class GoalTreeRepository {
   async deleteWithTree(id: string): Promise<void> {
     const goal = await this.findOne({ id });
     if (!goal) throw new Error(`目标不存在，ID: ${id}`);
-    await this.remove(goal as any);
+    await this.remove(goal);
   }
 
   async getFilteredTree(filter: {
-    status?: string;
+    status?: Goal["status"];
     keyword?: string;
     importance?: number;
   }): Promise<GoalDto[]> {
@@ -228,8 +204,8 @@ export class GoalTreeRepository {
       const roots = await treeRepo.findRoots();
       const trees: GoalDto[] = [];
       for (const r of roots) {
-        const full = await this.buildTree(r as any);
-        trees.push(GoalMapper.entityToDto(full as any));
+        const full = await this.buildTree(r);
+        trees.push(GoalMapper.entityToDto(full));
       }
       return trees;
     }
@@ -241,9 +217,9 @@ export class GoalTreeRepository {
     const trees: GoalDto[] = [];
     for (const r of roots) {
       if (includeIds.has(r.id)) {
-        const full = await this.buildTree(r as any);
-        const filtered = this.filterTreeNodes(full as any, includeIds);
-        if (filtered) trees.push(GoalMapper.entityToDto(filtered as any));
+        const full = await this.buildTree(r);
+        const filtered = this.filterTreeNodes(full, includeIds);
+        if (filtered) trees.push(GoalMapper.entityToDto(filtered));
       }
     }
     return trees;
@@ -290,7 +266,8 @@ export class GoalTreeRepository {
       relations: ["parent", "taskList"],
     });
     if (withRelations) {
-      (withChildren as any).parent = withRelations.parent;
+      withChildren.parent = withRelations.parent;
+      // 仅同步引用集合
       (withChildren as any).taskList = (withRelations as any).taskList;
     }
 

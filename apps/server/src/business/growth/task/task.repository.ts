@@ -17,8 +17,8 @@ import {
   TaskMapper,
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskPageFiltersDto,
+  TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
 } from "@life-toolkit/business-server";
@@ -67,7 +67,7 @@ export class TaskRepository {
   }
 
   async findAll(
-    filter: TaskListFilterDto & { excludeIds?: string[] }
+    filter: TaskListFiltersDto & { excludeIds?: string[] }
   ): Promise<TaskDto[]> {
     const where: FindOptionsWhere<Task> = this.buildWhere(filter as any);
     if (filter.excludeIds && filter.excludeIds.length) {
@@ -83,7 +83,7 @@ export class TaskRepository {
   }
 
   async page(
-    filter: TaskPageFilterDto
+    filter: TaskPageFiltersDto
   ): Promise<{ list: TaskDto[]; total: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
@@ -145,7 +145,7 @@ export class TaskRepository {
   }
 
   // where 构建
-  private buildWhere(filter: TaskPageFilterDto): FindOptionsWhere<Task> {
+  private buildWhere(filter: TaskPageFiltersDto): FindOptionsWhere<Task> {
     const where: FindOptionsWhere<Task> = {};
 
     if (filter.doneDateStart && filter.doneDateEnd) {

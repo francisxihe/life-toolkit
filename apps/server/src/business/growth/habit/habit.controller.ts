@@ -111,13 +111,6 @@ export class HabitController {
     return HabitMapper.dtoToVo(habit);
   }
 
-  @Get("by-goal/:goalId")
-  @Response()
-  async findByGoalId(@Param("goalId") goalId: string) {
-    const habits = await this.habitService.findByGoalId(goalId);
-    return HabitMapper.dtoToListVo(habits);
-  }
-
   @Get("todos/:id")
   @Response()
   async getHabitTodos(@Param("id") id: string) {

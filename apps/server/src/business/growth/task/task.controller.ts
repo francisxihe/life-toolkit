@@ -18,8 +18,8 @@ import type {
 } from "@life-toolkit/vo";
 import {
   TaskMapper,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskPageFiltersDto,
+  TaskListFiltersDto,
 } from "@life-toolkit/business-server";
 import { OperationMapper } from "@/common/operation";
 
@@ -86,7 +86,7 @@ export class TaskController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TaskPageFilterDto) {
+  async page(@Query() filter: TaskPageFiltersDto) {
     const { list, total } = await this.taskService.page(filter);
     return TaskMapper.dtoToPageVo(
       list,
@@ -99,7 +99,7 @@ export class TaskController {
   @Get("list")
   @Response()
   async list(@Query() filter: TaskListFiltersVo) {
-    const taskListFilterDto = new TaskListFilterDto();
+    const taskListFilterDto = new TaskListFiltersDto();
     taskListFilterDto.withoutSelf = filter.withoutSelf;
     taskListFilterDto.id = filter.id;
     taskListFilterDto.importance = filter.importance;

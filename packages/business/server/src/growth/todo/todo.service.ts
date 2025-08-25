@@ -2,11 +2,12 @@ import { TodoRepository, TodoRepeatService } from "./todo.repository";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFilterDto,
+  TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
 } from "./dto";
 import { TodoStatus } from "@life-toolkit/enum";
+import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class TodoService {
   protected todoRepeatService: TodoRepeatService;
@@ -39,13 +40,15 @@ export class TodoService {
     return await this.todoRepository.findAll(filter);
   }
 
-  async page(filter: TodoPageFilterDto): Promise<{
-    list: TodoDto[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
-    return await this.todoRepository.findPage(filter);
+  async list(filter: TodoListFilterDto): Promise<ListResponseDto<TodoDto>> {
+    const list = await this.todoRepository.findAll(filter);
+    return new ListResponseDto({ list, total: list.length });
+  }
+
+  async page(filter: TodoPageFiltersDto): Promise<PageResponseDto<TodoDto>> {
+    const { list, total, pageNum, pageSize } =
+      await this.todoRepository.findPage(filter);
+    return new PageResponseDto({ list, total, pageNum, pageSize });
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {

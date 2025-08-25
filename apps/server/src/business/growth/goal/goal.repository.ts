@@ -5,7 +5,6 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In, FindOptionsWhere } from "typeorm";
-import { Goal } from "./goal.entity";
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -13,7 +12,7 @@ import {
   GoalListFilterDto,
   GoalDto,
 } from "@life-toolkit/business-server";
-import { GoalMapper } from "@life-toolkit/business-server";
+import { GoalMapper, Goal } from "@life-toolkit/business-server";
 import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 @Injectable()

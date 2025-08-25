@@ -8,10 +8,14 @@ import {
   Put,
   Query,
 } from "@life-toolkit/electron-ipc-router";
-import { taskService } from "./task.service";
 import { TaskStatus } from "@life-toolkit/enum";
-import type { Task as TaskVO } from "@life-toolkit/vo";
-import { TaskMapper } from "@life-toolkit/business-server";
+import type { Task as TaskVO, TaskPageFiltersVo, TaskListFiltersVo } from "@life-toolkit/vo";
+import {
+  TaskMapper,
+  TaskListFiltersDto,
+  TaskPageFiltersDto,
+} from "@life-toolkit/business-server";
+import { taskService } from "./task.service";
 
 @Controller("/task")
 export class TaskController {
@@ -22,41 +26,13 @@ export class TaskController {
     );
   }
 
-  @Get("/findAll")
-  async findAll() {
-    return TaskMapper.dtoToVoList(await taskService.findAll());
-  }
-
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
     return TaskMapper.dtoToVo(await taskService.findById(id));
   }
 
-  @Get("/findTree")
-  async findTree() {
-    return (await taskService.findTree()).map((e) =>
-      TaskMapper.dtoToVo(TaskMapper.entityToDto(e as any))
-    );
-  }
-
-  @Get("/findByGoalId/:goalId")
-  async findByGoalId(@Param("goalId") goalId: string) {
-    return TaskMapper.dtoToVoList(await taskService.findByGoalId(goalId));
-  }
-
-  @Post("/updateStatus/:id")
-  async updateStatus(
-    @Param("id") id: string,
-    @Body() payload?: { status?: TaskStatus }
-  ) {
-    return await taskService.updateStatus(id, payload?.status as TaskStatus);
-  }
-
   @Put("/update/:id")
-  async update(
-    @Param("id") id: string,
-    @Body() payload: TaskVO.CreateTaskVo
-  ) {
+  async update(@Param("id") id: string, @Body() payload: TaskVO.CreateTaskVo) {
     return TaskMapper.dtoToVo(
       await taskService.update(
         id,
@@ -71,18 +47,24 @@ export class TaskController {
   }
 
   @Get("/page")
-  async page(
-    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
-  ) {
-    const pageNum = Number(q?.pageNum) || 1;
-    const pageSize = Number(q?.pageSize) || 10;
-    const res = await taskService.page(pageNum, pageSize);
-    return TaskMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
+  async page(@Query() query?: TaskPageFiltersVo) {
+    const taskPageFiltersDto = new TaskPageFiltersDto();
+    taskPageFiltersDto.importPageVo(query);
+    const res = await taskService.page(taskPageFiltersDto);
+    return TaskMapper.dtoToPageVo(
+      res.list,
+      res.total,
+      taskPageFiltersDto.pageNum,
+      taskPageFiltersDto.pageSize
+    );
   }
 
   @Get("/list")
-  async list() {
-    return TaskMapper.dtoToListVo(await taskService.list());
+  async list(@Query() query?: TaskListFiltersVo) {
+    const taskListFiltersDto = new TaskListFiltersDto();
+    taskListFiltersDto.importListVo(query);
+    const list = await taskService.list(taskListFiltersDto);
+    return TaskMapper.dtoToListVo(list);
   }
 
   @Get("/taskWithTrackTime/:id")

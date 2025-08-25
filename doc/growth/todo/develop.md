@@ -654,7 +654,7 @@ interface TodoAPISpecification {
       method: "GET";
       path: "/page";
       description: "分页获取待办事项";
-      query_params: "TodoPageFilterDto";
+      query_params: "TodoPageFiltersDto";
       response: "PageVo<TodoVo>";
       status_codes: {
         200: "获取成功";

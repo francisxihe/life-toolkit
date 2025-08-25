@@ -24,7 +24,6 @@ export interface HabitRepository {
     status: HabitStatus,
     additionalData?: Record<string, any>
   ): Promise<void>;
-  findByGoalId(goalId: string): Promise<HabitDto[]>;
   updateStreak(id: string, increment: boolean): Promise<HabitDto>;
 
   // 聚合查询

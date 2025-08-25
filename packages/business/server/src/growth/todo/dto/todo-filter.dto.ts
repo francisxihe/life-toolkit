@@ -1,4 +1,4 @@
-import { PageDto } from "../../../base/page.dto";
+import { PageFilterDto } from "../../../common/filter";
 import { TodoDto } from "./todo-model.dto";
 import {
   PickType,
@@ -31,8 +31,8 @@ export class TodoListFilterDto extends PartialType(
   }
 }
 
-export class TodoPageFilterDto extends IntersectionType(
-  PageDto,
+export class TodoPageFiltersDto extends IntersectionType(
+  PageFilterDto,
   TodoListFilterDto
 ) {
   importPageVo(filterVo: TodoPageFiltersVo) {

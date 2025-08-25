@@ -12,11 +12,11 @@ import {
 import { Goal } from "../goal/goal.entity";
 import { Todo } from "../todo/todo.entity";
 import { HabitMapper } from "@life-toolkit/business-server";
-import { HabitRepository as BusinessHabitRepository } from "@life-toolkit/business-server";
+import { HabitRepository as _HabitRepository } from "@life-toolkit/business-server";
 import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
 
 @Injectable()
-export class HabitRepository implements BusinessHabitRepository {
+export class HabitRepository implements _HabitRepository {
   constructor(
     @InjectRepository(Habit)
     private readonly habitRepository: Repository<Habit>,
@@ -168,16 +168,6 @@ export class HabitRepository implements BusinessHabitRepository {
   ): Promise<void> {
     const updateData = { status, ...additionalData };
     await this.habitRepository.update({ id }, updateData);
-  }
-
-  async findByGoalId(goalId: string): Promise<HabitDto[]> {
-    const habits = await this.habitRepository
-      .createQueryBuilder("habit")
-      .leftJoinAndSelect("habit.goals", "goal")
-      .where("goal.id = :goalId", { goalId })
-      .getMany();
-
-    return habits.map((habit) => HabitMapper.entityToDto(habit));
   }
 
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {

@@ -3,7 +3,7 @@ import { AppDataSource } from "../../database.config";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFilterDto,
+  TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
   TodoMapper,
@@ -96,7 +96,7 @@ export class TodoRepository {
     return list.map((it) => TodoMapper.entityToDto(it));
   }
 
-  async findPage(filter: TodoPageFilterDto): Promise<{
+  async findPage(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -144,7 +144,7 @@ export class TodoRepository {
     return true;
   }
 
-  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
+  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
     const qb = this.repo.createQueryBuilder("todo");
     if (filter.taskIds && filter.taskIds.length > 0) {
       qb.where("todo.taskId IN (:...ids)", { ids: filter.taskIds });

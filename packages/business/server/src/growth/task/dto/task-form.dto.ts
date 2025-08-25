@@ -1,6 +1,10 @@
 import { Task } from "../task.entity";
 import { TaskDto } from "./task-model.dto";
-import { IntersectionType, PartialType, PickType } from "@life-toolkit/mapped-types";
+import {
+  IntersectionType,
+  PartialType,
+  PickType,
+} from "@life-toolkit/mapped-types";
 
 export class CreateTaskDto extends PickType(TaskDto, [
   "name",
@@ -21,4 +25,5 @@ export class CreateTaskDto extends PickType(TaskDto, [
 
 export class UpdateTaskDto extends IntersectionType(
   PartialType(CreateTaskDto),
+  PickType(TaskDto, ["status"] as const)
 ) {}

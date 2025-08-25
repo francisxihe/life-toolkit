@@ -3,8 +3,8 @@ import { AppDataSource } from "../../database.config";
 import {
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskPageFiltersDto,
+  TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
@@ -19,7 +19,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   }
 
   private buildQuery(
-    filter: TaskListFilterDto & {
+    filter: TaskListFiltersDto & {
       excludeIds?: string[];
     }
   ) {
@@ -132,14 +132,14 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     return TaskMapper.entityToDto(entity);
   }
 
-  async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
+  async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
     return list.map((e) => TaskMapper.entityToDto(e));
   }
 
   async page(
-    filter: TaskPageFilterDto
+    filter: TaskPageFiltersDto
   ): Promise<{ list: TaskDto[]; total: number }> {
     const pageNum = filter.pageNum ?? 1;
     const pageSize = filter.pageSize ?? 10;

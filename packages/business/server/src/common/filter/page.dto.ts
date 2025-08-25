@@ -1,7 +1,7 @@
 import { IsOptional, IsNumber } from "class-validator";
 import { Type } from "class-transformer";
 
-export class PageDto {
+export class PageFilterDto {
   @IsOptional()
   @IsNumber()
   @Type(() => Number)

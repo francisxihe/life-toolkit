@@ -2,7 +2,7 @@ import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFilterDto,
+  TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
 } from "./dto";
@@ -15,7 +15,7 @@ export interface TodoRepository {
     extras: Partial<Todo>
   ): Promise<TodoDto>;
   findAll(filter: TodoListFilterDto): Promise<TodoDto[]>;
-  findPage(filter: TodoPageFilterDto): Promise<{
+  findPage(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -27,7 +27,7 @@ export interface TodoRepository {
     updateTodoDto: UpdateTodoDto
   ): Promise<TodoDto[]>;
   delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: TodoPageFilterDto): Promise<void>;
+  deleteByFilter(filter: TodoPageFiltersDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<TodoDto>;
   updateRepeatId(id: string, repeatId: string): Promise<void>;
   softDeleteByTaskIds(taskIds: string[]): Promise<void>;

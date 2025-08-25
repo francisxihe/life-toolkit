@@ -1,13 +1,13 @@
-import { PageDto } from "../../../base/page.dto";
+import { PageFilterDto } from "../../../common/filter";
 import { TaskDto } from "./task-model.dto";
 import {
   PickType,
   IntersectionType,
   PartialType,
 } from "@life-toolkit/mapped-types";
-import { TaskListFiltersVo } from "@life-toolkit/vo/growth/task";
+import { TaskListFiltersVo, TaskPageFiltersVo } from "@life-toolkit/vo/growth/task";
 
-export class TaskListFilterDto extends PartialType(
+export class TaskListFiltersDto extends PartialType(
   PickType(TaskDto, [
     "importance",
     "urgency",
@@ -51,14 +51,20 @@ export class TaskListFilterDto extends PartialType(
   }
 }
 
-export class TaskPageFilterDto extends IntersectionType(
-  PageDto,
-  TaskListFilterDto
-) {}
+export class TaskPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  TaskListFiltersDto
+) {
+  importPageVo(filterVo: TaskPageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
 
 function importListVo(
   filterVo: TaskListFiltersVo,
-  filterDto: TaskListFilterDto
+  filterDto: TaskListFiltersDto
 ) {
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.importance !== undefined)

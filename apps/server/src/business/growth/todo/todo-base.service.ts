@@ -14,7 +14,7 @@ import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFilterDto,
+  TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
 } from "@life-toolkit/business-server";
@@ -51,7 +51,7 @@ export class TodoBaseService {
     return todoList as TodoDto[];
   }
 
-  async findPage(filter: TodoPageFilterDto): Promise<{
+  async findPage(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -95,7 +95,7 @@ export class TodoBaseService {
     return (result.affected ?? 0) > 0;
   }
 
-  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
+  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
     await this.todoRepository.delete(getWhere(filter));
   }
 
@@ -128,7 +128,7 @@ export class TodoBaseService {
   }
 }
 
-function getWhere(filter: TodoPageFilterDto) {
+function getWhere(filter: TodoPageFiltersDto) {
   const where: FindOptionsWhere<Todo> = {};
   if (filter.planDateStart && filter.planDateEnd) {
     where.planDate = Between(

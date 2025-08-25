@@ -13,8 +13,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 
-@Entity("todo")
-export class Todo extends BaseEntity {
+export class TodoModel extends BaseEntity {
   /** 待办名称 */
   @Column("varchar")
   @IsString()
@@ -80,6 +79,18 @@ export class Todo extends BaseEntity {
   @IsISO8601()
   planDate: Date = new Date();
 
+  /** 来源 */
+  @Column({
+    type: "varchar",
+    length: 20,
+    nullable: true,
+  })
+  @IsOptional()
+  source?: TodoSource;
+}
+
+@Entity("todo")
+export class Todo extends TodoModel {
   /** 关联的任务 */
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
@@ -117,13 +128,4 @@ export class Todo extends BaseEntity {
   @IsString()
   @IsOptional()
   habitId?: string;
-
-  /** 来源 */
-  @Column({
-    type: "varchar",
-    length: 20,
-    nullable: true,
-  })
-  @IsOptional()
-  source?: TodoSource;
 }

@@ -2,8 +2,8 @@ import { Task } from "./task.entity";
 import {
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskPageFiltersDto,
+  TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
 } from "./dto";
@@ -13,8 +13,8 @@ export interface TaskRepository {
   update(id: string, updateTaskDto: UpdateTaskDto): Promise<void>;
   removeByIds(ids: string[]): Promise<void>;
   findById(id: string, relations?: string[]): Promise<TaskDto>;
-  findAll(filter: TaskListFilterDto & { excludeIds?: string[] }): Promise<TaskDto[]>;
-  page(filter: TaskPageFilterDto): Promise<{ list: TaskDto[]; total: number }>;
+  findAll(filter: TaskListFiltersDto & { excludeIds?: string[] }): Promise<TaskDto[]>;
+  page(filter: TaskPageFiltersDto): Promise<{ list: TaskDto[]; total: number }>;
   taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto>;
   findByGoalIds(goalIds: string[]): Promise<Task[]>;
 }

@@ -1,4 +1,4 @@
-import { PageDto } from "../../../base/page.dto";
+import { PageFilterDto } from "../../../common/filter";
 import { HabitDto } from "./habit-model.dto";
 import {
   PickType,
@@ -43,7 +43,7 @@ export class HabitListFiltersDto extends PartialType(
 }
 
 export class HabitPageFiltersDto extends IntersectionType(
-  PageDto,
+  PageFilterDto,
   HabitListFiltersDto
 ) {
   importPageVo(filterVo: HabitPageFiltersVo) {

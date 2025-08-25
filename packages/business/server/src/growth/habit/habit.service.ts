@@ -7,6 +7,7 @@ import {
   HabitDto,
 } from "./dto";
 import { HabitStatus } from "@life-toolkit/enum";
+import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class HabitService {
   habitRepository: HabitRepository;
@@ -38,17 +39,26 @@ export class HabitService {
     return await this.habitRepository.findAll(filter);
   }
 
+  async list(
+    filter: HabitListFiltersDto
+  ): Promise<ListResponseDto<HabitDto>> {
+    const list = await this.habitRepository.findAll(filter);
+    return new ListResponseDto({ list, total: list.length });
+  }
+
   async page(
     filter: HabitPageFiltersDto
-  ): Promise<{ list: HabitDto[]; total: number }> {
-    return await this.habitRepository.page(filter);
+  ): Promise<PageResponseDto<HabitDto>> {
+    const { list, total } = await this.habitRepository.page(filter);
+    return new PageResponseDto({
+      list,
+      total,
+      pageNum: (filter as any).pageNum,
+      pageSize: (filter as any).pageSize,
+    });
   }
 
   //  ====== 业务逻辑编排 ======
-  async findByGoalId(goalId: string): Promise<HabitDto[]> {
-    return await this.habitRepository.findByGoalId(goalId);
-  }
-
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
     return await this.habitRepository.updateStreak(id, increment);
   }

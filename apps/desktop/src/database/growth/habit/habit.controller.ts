@@ -82,7 +82,7 @@ export class HabitController {
     habitPageFilter.importPageVo(query);
     const res = await habitService.page(habitPageFilter);
     return HabitMapper.dtoToPageVo(
-      res.data,
+      res.list,
       res.total,
       habitPageFilter.pageNum,
       habitPageFilter.pageSize
@@ -91,17 +91,10 @@ export class HabitController {
 
   @Get("/list")
   async list(@Query() query?: HabitListFiltersVo) {
-    const habitListFilter = new HabitListFiltersDto();
-    habitListFilter.importListVo(query);
-    const list = await habitService.list(habitListFilter);
-    return HabitMapper.dtoToListVo(list);
-  }
-
-  @Get("/findByGoalId/:goalId")
-  async findByGoalId(@Param("goalId") goalId: string) {
-    return (await habitService.findByGoalId(goalId)).map((dto) =>
-      HabitMapper.dtoToItemVo(dto)
-    );
+    const habitListFilterDto = new HabitListFiltersDto();
+    habitListFilterDto.importListVo(query);
+    const list = await habitService.list(habitListFilterDto);
+    return HabitMapper.dtoToListVo(list.list);
   }
 
   @Get("/getHabitTodos/:id")

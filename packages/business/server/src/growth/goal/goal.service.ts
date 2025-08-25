@@ -7,6 +7,7 @@ import {
   GoalDto,
 } from "./dto";
 import { GoalType, GoalStatus } from "@life-toolkit/enum";
+import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class GoalService {
   goalRepository: GoalRepository;
@@ -44,6 +45,13 @@ export class GoalService {
     return await this.goalRepository.findAll(processedFilter);
   }
 
+  async list(
+    filter: GoalListFilterDto
+  ): Promise<ListResponseDto<GoalDto>> {
+    const list = await this.findAll(filter);
+    return new ListResponseDto({ list, total: list.length });
+  }
+
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
     if (updateGoalDto.parentId !== undefined) {
       return await this.goalTreeRepository.updateWithParent(id, updateGoalDto);
@@ -72,8 +80,14 @@ export class GoalService {
 
   async page(
     filter: GoalPageFilterDto
-  ): Promise<{ list: GoalDto[]; total: number }> {
-    return await this.goalRepository.page(filter);
+  ): Promise<PageResponseDto<GoalDto>> {
+    const { list, total } = await this.goalRepository.page(filter);
+    return new PageResponseDto({
+      list,
+      total,
+      pageNum: (filter as any).pageNum,
+      pageSize: (filter as any).pageSize,
+    });
   }
 
   async findDetail(id: string) {
@@ -121,6 +135,10 @@ export class GoalService {
       status: GoalStatus.DONE,
       doneAt: new Date(),
     });
+  }
+
+  async findRoots(): Promise<GoalDto[]> {
+    return await this.goalTreeRepository.findRoots();
   }
 
   private canMarkAsDone(entity: GoalDto): boolean {

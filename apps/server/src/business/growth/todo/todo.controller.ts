@@ -9,7 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoPageFilterDto, TodoListFilterDto } from "@life-toolkit/business-server";
+import { TodoPageFiltersDto, TodoListFilterDto } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
@@ -79,7 +79,7 @@ export class TodoController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TodoPageFilterDto) {
+  async page(@Query() filter: TodoPageFiltersDto) {
     const { list, total } = await this.todoService.page(filter);
     return TodoMapper.dtoToPageVo(
       list,

@@ -263,38 +263,6 @@ describe("HabitService", () => {
     });
   });
 
-  describe("findByGoalId", () => {
-    it("should return habits associated with a goal", async () => {
-      const goalId = "goal-1";
-      const mockHabits = [
-        { id: "habit-1", name: "早起拉伸" },
-        { id: "habit-2", name: "冥想" },
-      ];
-
-      const mockQueryBuilder = {
-        leftJoin: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        getMany: jest.fn().mockResolvedValue(mockHabits),
-      };
-
-      mockHabitRepository.createQueryBuilder.mockReturnValue(mockQueryBuilder);
-
-      const result = await service.findByGoalId(goalId);
-
-      expect(mockHabitRepository.createQueryBuilder).toHaveBeenCalledWith(
-        "habit"
-      );
-      expect(mockQueryBuilder.leftJoin).toHaveBeenCalledWith(
-        "habit.goals",
-        "goal"
-      );
-      expect(mockQueryBuilder.where).toHaveBeenCalledWith("goal.id = :goalId", {
-        goalId,
-      });
-      expect(result).toEqual(mockHabits);
-    });
-  });
-
   describe("findOneWithRelations", () => {
     it("should return habit with goals and todoRepeats", async () => {
       const habitId = "habit-1";

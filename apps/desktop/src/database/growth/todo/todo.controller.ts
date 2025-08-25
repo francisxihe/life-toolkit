@@ -9,34 +9,25 @@ import {
   Query,
 } from "@life-toolkit/electron-ipc-router";
 import { todoService } from "./todo.service";
-import { TodoStatus } from "@life-toolkit/enum";
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { TodoMapper, TodoListFilterDto } from "@life-toolkit/business-server";
+import {
+  TodoMapper,
+  TodoListFilterDto,
+  TodoPageFiltersDto,
+} from "@life-toolkit/business-server";
+
 @Controller("/todo")
 export class TodoController {
   @Post("/create")
   async create(@Body() payload: TodoVO.CreateTodoVo) {
     const createDto = TodoMapper.voToCreateDto(payload);
-    const dto = await todoService.createTodo(createDto as any);
+    const dto = await todoService.create(createDto as any);
     return TodoMapper.dtoToVo(dto);
-  }
-
-  @Get("/findAll")
-  async findAll() {
-    return TodoMapper.dtoToVoList(await todoService.findAll());
   }
 
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
     return TodoMapper.dtoToVo(await todoService.findById(id));
-  }
-
-  @Put("/updateStatus/:id")
-  async updateStatus(
-    @Param("id") id: string,
-    @Body() payload?: { status?: TodoStatus }
-  ) {
-    return await todoService.updateStatus(id, payload?.status as TodoStatus);
   }
 
   @Put("/update/:id")
@@ -57,17 +48,15 @@ export class TodoController {
   }
 
   @Get("/page")
-  async page(
-    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
-  ) {
-    const pageNum = Number(q?.pageNum) || 1;
-    const pageSize = Number(q?.pageSize) || 10;
-    const res = await todoService.page(pageNum, pageSize);
+  async page(@Query() q?: TodoVO.TodoPageFiltersVo) {
+    const todoPageFiltersDto = new TodoPageFiltersDto();
+    todoPageFiltersDto.importPageVo(q);
+    const res = await todoService.page(todoPageFiltersDto);
     return TodoMapper.dtoToPageVo(
-      res.data,
+      res.list,
       res.total,
-      (res as any).pageNum ?? pageNum,
-      (res as any).pageSize ?? pageSize
+      todoPageFiltersDto.pageNum,
+      todoPageFiltersDto.pageSize
     );
   }
 
@@ -80,7 +69,9 @@ export class TodoController {
 
   @Put("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
-    return await todoService.batchDone(body?.idList ?? []);
+    return await todoService.batchDone({
+      idList: body?.idList ?? [],
+    });
   }
 
   @Put("/abandon/:id")

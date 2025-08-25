@@ -21,7 +21,6 @@ describe("HabitController", () => {
     findPage: jest.fn(),
     findOne: jest.fn(),
     findOneWithRelations: jest.fn(),
-    findByGoalId: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
     abandon: jest.fn(),
@@ -371,45 +370,6 @@ describe("HabitController", () => {
           pageNum: 1,
           pageSize: 10,
         },
-        message: "SUCCESS",
-      });
-    });
-  });
-
-  describe("findByGoalId", () => {
-    it("should return habits associated with a goal", async () => {
-      const goalId = "goal-1";
-      const mockEntities = [
-        { id: "habit-1", name: "每天阅读30分钟" },
-        { id: "habit-2", name: "早起锻炼" },
-      ];
-
-      const mockVos: Habit.HabitVo[] = mockEntities.map((entity) => ({
-        id: entity.id,
-        name: entity.name,
-        status: HabitStatus.ACTIVE,
-        importance: 4,
-        tags: [],
-        difficulty: Difficulty.Skilled,
-        startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        currentStreak: 0,
-        longestStreak: 0,
-        completedCount: 0,
-        createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      }));
-
-      mockHabitService.findByGoalId.mockResolvedValue(mockEntities);
-      mockHabitMapper.toVo.mockImplementation((entity) =>
-        mockVos.find((vo) => vo.id === entity.id)
-      );
-
-      const result = await controller.findByGoalId(goalId);
-
-      expect(mockHabitService.findByGoalId).toHaveBeenCalledWith(goalId);
-      expect(result).toEqual({
-        code: 200,
-        data: { list: mockVos },
         message: "SUCCESS",
       });
     });

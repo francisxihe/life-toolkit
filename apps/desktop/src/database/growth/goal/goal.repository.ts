@@ -60,7 +60,7 @@ export class GoalRepository {
       });
     }
 
-    const keyword = filter.keyword as string | undefined;
+    const keyword = filter.keyword;
     if (keyword) {
       qb = qb.andWhere("(goal.name LIKE :kw OR goal.description LIKE :kw)", {
         kw: `%${keyword}%`,
@@ -68,8 +68,8 @@ export class GoalRepository {
     }
 
     // 计划时间范围（desktop 字段：startDate/targetDate）
-    const planDateStart = filter.planDateStart as string | undefined;
-    const planDateEnd = filter.planDateEnd as string | undefined;
+    const planDateStart = filter.planDateStart;
+    const planDateEnd = filter.planDateEnd;
     if (planDateStart) {
       qb = qb.andWhere("goal.startAt >= :planDateStart", {
         planDateStart: new Date(`${planDateStart}T00:00:00`),
@@ -82,8 +82,8 @@ export class GoalRepository {
     }
 
     // 完成日期范围（desktop: completedAt）
-    const doneDateStart = filter.doneDateStart as string | undefined;
-    const doneDateEnd = filter.doneDateEnd as string | undefined;
+    const doneDateStart = filter.doneDateStart;
+    const doneDateEnd = filter.doneDateEnd;
     if (doneDateStart && doneDateEnd) {
       qb = qb.andWhere("goal.doneAt BETWEEN :ds AND :de", {
         ds: new Date(`${doneDateStart}T00:00:00`),
@@ -100,8 +100,8 @@ export class GoalRepository {
     }
 
     // 放弃日期范围
-    const abandonedDateStart = filter.abandonedDateStart as string | undefined;
-    const abandonedDateEnd = filter.abandonedDateEnd as string | undefined;
+    const abandonedDateStart = filter.abandonedDateStart;
+    const abandonedDateEnd = filter.abandonedDateEnd;
     if (abandonedDateStart && abandonedDateEnd) {
       qb = qb.andWhere("goal.abandonedAt BETWEEN :ads AND :ade", {
         ads: new Date(`${abandonedDateStart}T00:00:00`),

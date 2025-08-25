@@ -54,15 +54,15 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
-    const keyword = filter.keyword as string | undefined;
+    const keyword = filter.keyword;
     if (keyword) {
       qb = qb.andWhere("(habit.name LIKE :kw OR habit.description LIKE :kw)", {
         kw: `%${keyword}%`,
       });
     }
 
-    const startDateStart = filter.startDateStart as string | undefined;
-    const startDateEnd = filter.startDateEnd as string | undefined;
+    const startDateStart = filter.startDateStart;
+    const startDateEnd = filter.startDateEnd;
     if (startDateStart) {
       qb = qb.andWhere("habit.startDate >= :sds", {
         sds: new Date(`${startDateStart}T00:00:00`),
@@ -74,8 +74,8 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
-    const endDataStart = filter.endDataStart as string | undefined;
-    const endDataEnd = filter.endDataEnd as string | undefined;
+    const endDataStart = filter.endDataStart;
+    const endDataEnd = filter.endDataEnd;
     if (endDataStart) {
       qb = qb.andWhere("habit.targetDate >= :tds", {
         tds: new Date(`${endDataStart}T00:00:00`),
@@ -87,7 +87,7 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
-    const goalId = filter.goalId as string | undefined;
+    const goalId = filter.goalId;
     if (goalId) {
       qb = qb.andWhere("goal.id = :goalId", { goalId });
     }
@@ -208,16 +208,6 @@ export class HabitRepository implements BusinessHabitRepository {
       ...additionalData,
     });
     await this.repo.save(entity);
-  }
-
-  async findByGoalId(goalId: string): Promise<HabitDto[]> {
-    const list = await this.repo
-      .createQueryBuilder("habit")
-      .leftJoin("habit.goals", "goal")
-      .where("goal.id = :goalId", { goalId })
-      .andWhere("habit.deletedAt IS NULL")
-      .getMany();
-    return list.map((e) => HabitMapper.entityToDto(e));
   }
 
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
