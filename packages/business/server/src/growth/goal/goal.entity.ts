@@ -3,8 +3,8 @@ import { BaseEntity } from "../../base/base.entity";
 import {
   GoalType,
   GoalStatus,
-  GoalImportance,
-  GoalDifficulty,
+  Importance,
+  Difficulty,
 } from "@life-toolkit/enum";
 import { Task } from "../task";
 import {
@@ -41,18 +41,18 @@ export class Goal extends BaseEntity {
   /** 目标重要程度 */
   @Column({
     type: "simple-enum",
-    enum: GoalImportance,
-    default: GoalImportance.Supplementary,
+    enum: Importance,
+    default: Importance.Supplementary,
   })
-  importance!: GoalImportance;
+  importance!: Importance;
 
   /** 目标难度 */
   @Column({
     type: "simple-enum",
-    enum: GoalDifficulty,
-    default: GoalDifficulty.GettingStarted,
+    enum: Difficulty,
+    default: Difficulty.GettingStarted,
   })
-  difficulty?: GoalDifficulty;
+  difficulty?: Difficulty;
 
   /** 目标开始时间 */
   @Column("datetime", { nullable: true })

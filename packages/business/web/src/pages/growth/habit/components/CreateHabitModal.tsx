@@ -17,7 +17,7 @@ import {
   CreateHabitVo,
   GoalVo,
 } from '@life-toolkit/vo/growth';
-import { HabitDifficulty } from '@life-toolkit/enum';
+import { Difficulty } from '@life-toolkit/enum';
 import { HABIT_DIFFICULTY_OPTIONS } from '../constants';
 import dayjs from 'dayjs';
 
@@ -63,7 +63,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         name: values.name,
         description: values.description,
         importance: values.importance || 3,
-        difficulty: values.difficulty || HabitDifficulty.Challenger,
+        difficulty: values.difficulty || Difficulty.Challenger,
         tags: values.tags || [],
         startAt: dayjs(values.startAt).format('YYYY-MM-DD'),
         targetAt: dayjs(values.targetAt).format('YYYY-MM-DD'),
@@ -176,7 +176,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
           <Form.Item
             label="难度等级"
             field="difficulty"
-            initialValue={HabitDifficulty.Challenger}
+            initialValue={Difficulty.Challenger}
           >
             <Select placeholder="选择难度等级">
               {HABIT_DIFFICULTY_OPTIONS.map((option) => (

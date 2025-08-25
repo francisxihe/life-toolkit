@@ -1,15 +1,10 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import {
-  GoalVo,
-  UpdateGoalVo,
-  GoalItemVo,
-  CreateGoalVo,
-} from '@life-toolkit/vo/growth';
+import { GoalVo, GoalItemVo } from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { GoalType, GoalStatus } from '@life-toolkit/enum';
+import { GoalType, GoalStatus, Importance } from '@life-toolkit/enum';
 
 export type GoalDetailContextProps = {
   goalId?: string;
@@ -40,8 +35,9 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
 
   const defaultFormData: GoalFormData = {
     name: '',
-    type: GoalType.KEY_RESULT,
-    status: GoalStatus.TODO,
+    type: props.initialFormData?.type || GoalType.KEY_RESULT,
+    status: props.initialFormData?.status || GoalStatus.TODO,
+    importance: props.initialFormData?.importance || Importance.Helpful,
     planTimeRange: [undefined, undefined],
     children: [],
     ...props.initialFormData,

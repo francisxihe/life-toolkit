@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import type { Habit } from '@life-toolkit/vo';
-import { HabitStatus, HabitDifficulty } from '@life-toolkit/enum';
+import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 
 describe('Habit Simple Tests', () => {
   describe('Habit Entity', () => {
@@ -10,14 +10,14 @@ describe('Habit Simple Tests', () => {
         description: '培养阅读习惯',
         importance: 4,
         tags: ['学习'],
-        difficulty: HabitDifficulty.Challenger,
+        difficulty: Difficulty.Challenger,
       };
 
       expect(habit.name).toBe('每天阅读');
       expect(habit.description).toBe('培养阅读习惯');
       expect(habit.importance).toBe(4);
       expect(habit.tags).toEqual(['学习']);
-      expect(habit.difficulty).toBe(HabitDifficulty.Challenger);
+      expect(habit.difficulty).toBe(Difficulty.Challenger);
     });
 
     it('should create a habit with minimal properties', () => {
@@ -40,7 +40,7 @@ describe('Habit Simple Tests', () => {
         description: '保持健康',
         importance: 5,
         tags: ['健康', '运动'],
-        difficulty: HabitDifficulty.Legendary,
+        difficulty: Difficulty.Legendary,
         startDate: '2024-01-01',
         targetDate: '2024-12-31',
         currentStreak: 7,
@@ -56,7 +56,7 @@ describe('Habit Simple Tests', () => {
       expect(habitVo.description).toBe('保持健康');
       expect(habitVo.importance).toBe(5);
       expect(habitVo.tags).toEqual(['健康', '运动']);
-      expect(habitVo.difficulty).toBe(HabitDifficulty.Legendary);
+      expect(habitVo.difficulty).toBe(Difficulty.Legendary);
       expect(habitVo.currentStreak).toBe(7);
       expect(habitVo.longestStreak).toBe(15);
       expect(habitVo.completedCount).toBe(30);
@@ -73,9 +73,9 @@ describe('Habit Simple Tests', () => {
 
   describe('Habit Difficulty', () => {
     it('should have correct difficulty values', () => {
-      expect(HabitDifficulty.GettingStarted).toBe('gettingStarted');
-      expect(HabitDifficulty.Challenger).toBe('challenger');
-      expect(HabitDifficulty.Legendary).toBe('legendary');
+      expect(Difficulty.GettingStarted).toBe('gettingStarted');
+      expect(Difficulty.Challenger).toBe('challenger');
+      expect(Difficulty.Legendary).toBe('legendary');
     });
   });
 

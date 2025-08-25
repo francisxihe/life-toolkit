@@ -1,4 +1,4 @@
-import { HabitStatus, HabitDifficulty } from '@life-toolkit/business-server';
+import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 import type { 
   Habit, 
   HabitLogVo, 
@@ -22,7 +22,7 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      difficulty: HabitDifficulty.Skilled,
+      difficulty: Difficulty.Skilled,
       ...overrides,
     };
   }
@@ -49,7 +49,7 @@ export class HabitTestFactory {
       description: '培养阅读习惯，提升知识储备',
       importance: 4,
       tags: ['学习', '阅读'],
-      difficulty: HabitDifficulty.Skilled,
+      difficulty: Difficulty.Skilled,
       startDate: now,
       currentStreak: 5,
       longestStreak: 10,
@@ -135,11 +135,11 @@ export class HabitTestFactory {
    */
   static createHabitsWithDifferentDifficulties(): Habit.HabitVo[] {
     return [
-      this.createFullHabitVo({ id: 'habit-getting-started', name: '入门习惯', difficulty: HabitDifficulty.GettingStarted }),
-      this.createFullHabitVo({ id: 'habit-challenger', name: '挑战习惯', difficulty: HabitDifficulty.Challenger }),
-      this.createFullHabitVo({ id: 'habit-skilled', name: '熟练习惯', difficulty: HabitDifficulty.Skilled }),
-      this.createFullHabitVo({ id: 'habit-master', name: '高手习惯', difficulty: HabitDifficulty.Master }),
-      this.createFullHabitVo({ id: 'habit-legendary', name: '传说习惯', difficulty: HabitDifficulty.Legendary }),
+      this.createFullHabitVo({ id: 'habit-getting-started', name: '入门习惯', difficulty: Difficulty.GettingStarted }),
+      this.createFullHabitVo({ id: 'habit-challenger', name: '挑战习惯', difficulty: Difficulty.Challenger }),
+      this.createFullHabitVo({ id: 'habit-skilled', name: '熟练习惯', difficulty: Difficulty.Skilled }),
+      this.createFullHabitVo({ id: 'habit-master', name: '高手习惯', difficulty: Difficulty.Master }),
+      this.createFullHabitVo({ id: 'habit-legendary', name: '传说习惯', difficulty: Difficulty.Legendary }),
     ];
   }
 

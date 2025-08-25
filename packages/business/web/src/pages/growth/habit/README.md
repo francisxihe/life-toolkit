@@ -84,7 +84,7 @@ interface HabitVo {
   description?: string;
   status: HabitStatus;
   importance?: number;
-  difficulty?: HabitDifficulty;
+  difficulty?: Difficulty;
   tags?: string[];
   startAt?: string;
   targetAt?: string;

@@ -1,6 +1,6 @@
 import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
 import dayjs from 'dayjs';
-import { IMPORTANCE_MAP } from '../constants';
+import { IMPORTANCE_MAP } from '../../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';

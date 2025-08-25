@@ -1,4 +1,4 @@
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitStatus, Difficulty } from "@life-toolkit/enum";
 import { HabitRepository } from "./habit.repository";
 import {
   HabitService as BusinessHabitService,
@@ -22,7 +22,7 @@ export class HabitService {
     name: string;
     status?: HabitStatus;
     description?: string;
-    difficulty?: HabitDifficulty;
+    difficulty?: Difficulty;
     startDate?: Date;
     targetDate?: Date;
     importance?: number;
@@ -39,7 +39,7 @@ export class HabitService {
     name: string;
     status?: HabitStatus;
     description?: string;
-    difficulty?: HabitDifficulty;
+    difficulty?: Difficulty;
     startDate?: Date;
     targetDate?: Date;
     importance?: number;
@@ -139,7 +139,7 @@ export class HabitService {
 
   async list(filter?: {
     status?: HabitStatus;
-    difficulty?: HabitDifficulty;
+    difficulty?: Difficulty;
     importance?: number;
     keyword?: string;
     startDateStart?: string;

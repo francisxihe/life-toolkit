@@ -6,7 +6,7 @@ import {
   HabitPageFilterDto,
   HabitFilterDto,
 } from "@life-toolkit/business-server";
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitStatus, Difficulty } from "@life-toolkit/enum";
 import type { Habit } from "@life-toolkit/vo";
 import dayjs from "dayjs";
 
@@ -74,7 +74,7 @@ describe("HabitController", () => {
         description: "培养阅读习惯",
         importance: 4,
         tags: ["学习", "阅读"],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
       };
 
       const mockDto = { ...createHabitVo };
@@ -96,7 +96,7 @@ describe("HabitController", () => {
         description: "培养阅读习惯",
         importance: 4,
         tags: ["学习", "阅读"],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,
@@ -145,7 +145,7 @@ describe("HabitController", () => {
         status: HabitStatus.ACTIVE,
         importance: 5,
         tags: [],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,
@@ -188,7 +188,7 @@ describe("HabitController", () => {
         status: HabitStatus.ACTIVE,
         importance: 4,
         tags: [],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,
@@ -229,7 +229,7 @@ describe("HabitController", () => {
         status: HabitStatus.ACTIVE,
         importance: 4,
         tags: [],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,
@@ -315,7 +315,7 @@ describe("HabitController", () => {
     it("should return a list of habits", async () => {
       const filter: HabitFilterDto = {
         status: HabitStatus.ACTIVE,
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
       };
 
       const mockHabits = [
@@ -330,7 +330,7 @@ describe("HabitController", () => {
           status: HabitStatus.ACTIVE,
           importance: 4,
           tags: [],
-          difficulty: HabitDifficulty.Skilled,
+          difficulty: Difficulty.Skilled,
           startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
           currentStreak: 0,
           longestStreak: 0,
@@ -344,7 +344,7 @@ describe("HabitController", () => {
           status: HabitStatus.ACTIVE,
           importance: 5,
           tags: [],
-          difficulty: HabitDifficulty.Skilled,
+          difficulty: Difficulty.Skilled,
           startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
           currentStreak: 0,
           longestStreak: 0,
@@ -391,7 +391,7 @@ describe("HabitController", () => {
         status: HabitStatus.ACTIVE,
         importance: 4,
         tags: [],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,
@@ -433,7 +433,7 @@ describe("HabitController", () => {
         status: HabitStatus.ACTIVE,
         importance: 4,
         tags: [],
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
         currentStreak: 0,
         longestStreak: 0,

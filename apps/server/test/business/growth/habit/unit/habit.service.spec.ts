@@ -9,7 +9,7 @@ import {
   Todo,
 } from "../../../../../src/business/growth/todo/entities";
 import { CreateHabitDto, HabitMapper } from "@life-toolkit/business-server";
-import { HabitDifficulty } from "@life-toolkit/enum";
+import { Difficulty } from "@life-toolkit/enum";
 
 describe("HabitService", () => {
   let service: HabitService;
@@ -88,7 +88,7 @@ describe("HabitService", () => {
       const createHabitDto: CreateHabitDto = {
         name: "早起拉伸",
         description: "每天早上6点起床后进行10分钟拉伸运动",
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         importance: 4,
         goalIds: ["goal-1", "goal-2"],
         tags: ["早晨高效工作", "保持健康"],
@@ -103,7 +103,7 @@ describe("HabitService", () => {
       const mockHabit = {
         id: "habit-1",
         name: "早起拉伸",
-        difficulty: HabitDifficulty.Skilled,
+        difficulty: Difficulty.Skilled,
         goals: mockGoals,
       };
 

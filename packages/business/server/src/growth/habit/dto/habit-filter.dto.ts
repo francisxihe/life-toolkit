@@ -2,7 +2,6 @@ import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
 import { PageDto } from "../../../base/page.dto";
 import { HabitDto } from "./habit-model.dto";
 import { PickType, IntersectionType, PartialType } from "@life-toolkit/mapped-types";
-import { HabitStatus, HabitDifficulty } from "..";
 
 export class HabitListFilterDto extends PartialType(
   PickType(HabitDto, ["status", "difficulty", "tags", "importance"] as const)

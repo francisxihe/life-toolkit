@@ -9,8 +9,8 @@ import {
 import { useGoalDetailContext } from './context';
 import { useEffect } from 'react';
 import { GoalMapping } from '../../service';
-import { GoalType, GoalImportance, GoalDifficulty } from '@life-toolkit/enum';
-import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../goal/constants';
+import { GoalType, Importance, Difficulty } from '@life-toolkit/enum';
+import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
@@ -59,7 +59,7 @@ export default function GoalForm() {
         </Item>
         <Item span={24} label="重要程度" name="importance">
           <Select
-            defaultValue={GoalImportance.Helpful}
+            defaultValue={Importance.Helpful}
             options={[...IMPORTANCE_MAP.entries()].map(([key, value]) => ({
               label: value.label,
               value: key,
@@ -68,7 +68,7 @@ export default function GoalForm() {
         </Item>
         <Item span={24} label="难度" name="difficulty">
           <Select
-            defaultValue={GoalDifficulty.Skilled}
+            defaultValue={Difficulty.Skilled}
             options={[...DIFFICULTY_MAP.entries()].map(([key, value]) => ({
               label: value.label,
               value: key,

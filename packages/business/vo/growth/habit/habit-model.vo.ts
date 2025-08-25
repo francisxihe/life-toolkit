@@ -1,6 +1,6 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { GoalVo } from "../goal/goal-model.vo";
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitStatus, Difficulty } from "@life-toolkit/enum";
 
 export enum HabitCompletionScore {
   NOT_COMPLETED = 0,
@@ -14,7 +14,7 @@ export type HabitModelVo = {
   description?: string;
   importance?: number;
   tags?: string[];
-  difficulty?: HabitDifficulty;
+  difficulty?: Difficulty;
   startAt?: string;
   targetAt?: string;
   currentStreak?: number;

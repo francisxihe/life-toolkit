@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Entity, Column, ManyToMany, JoinTable, OneToMany } from "typeorm";
-import { HabitDifficulty, HabitStatus } from "@life-toolkit/enum";
+import { Difficulty, HabitStatus } from "@life-toolkit/enum";
 import { BaseEntity } from "../../base/base.entity";
 import { Goal } from "../goal";
 import { Todo } from "../todo";
@@ -34,10 +34,10 @@ export class Habit extends BaseEntity {
   /** 习惯难度 */
   @Column({
     type: "simple-enum",
-    enum: HabitDifficulty,
-    default: HabitDifficulty.Skilled,
+    enum: Difficulty,
+    default: Difficulty.Skilled,
   })
-  difficulty: HabitDifficulty = HabitDifficulty.Skilled;
+  difficulty: Difficulty = Difficulty.Skilled;
 
   /** 习惯开始日期 */
   @Column("date")

@@ -26,9 +26,10 @@ import {
 } from '@arco-design/web-react/icon';
 import { HabitController } from '@life-toolkit/api';
 import { HabitVo } from '@life-toolkit/vo/growth/habit';
-import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from './constants';
+import { HABIT_STATUS_OPTIONS } from './constants';
 import { useHabitContext } from './context';
 import { HabitStatus } from '@life-toolkit/enum';
+import { DIFFICULTY_MAP } from '../constants';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -38,7 +39,7 @@ export const HabitDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { refreshHabits } = useHabitContext();
-  
+
   const [habit, setHabit] = useState<HabitVo | null>(null);
   const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
@@ -46,7 +47,7 @@ export const HabitDetailPage: React.FC = () => {
   // 获取习惯详情
   const fetchHabitDetail = useCallback(async () => {
     if (!id) return;
-    
+
     try {
       setLoading(true);
       const response = await HabitController.getHabitDetail(id);
@@ -64,42 +65,45 @@ export const HabitDetailPage: React.FC = () => {
   }, [fetchHabitDetail]);
 
   // 处理习惯操作
-  const handleHabitAction = useCallback(async (action: string) => {
-    if (!habit) return;
+  const handleHabitAction = useCallback(
+    async (action: string) => {
+      if (!habit) return;
 
-    try {
-      setActionLoading(true);
-      
-      switch (action) {
-        case 'complete':
-          await HabitController.batchDoneHabit({ idList: [habit.id] });
-          Message.success('习惯已完成');
-          break;
-        case 'pause':
-          await HabitController.pauseHabit(habit.id);
-          Message.success('习惯已暂停');
-          break;
-        case 'resume':
-          await HabitController.resumeHabit(habit.id);
-          Message.success('习惯已恢复');
-          break;
-        case 'abandon':
-          await HabitController.abandonHabit(habit.id);
-          Message.success('习惯已放弃');
-          break;
-        default:
-          return;
+      try {
+        setActionLoading(true);
+
+        switch (action) {
+          case 'complete':
+            await HabitController.batchDoneHabit({ idList: [habit.id] });
+            Message.success('习惯已完成');
+            break;
+          case 'pause':
+            await HabitController.pauseHabit(habit.id);
+            Message.success('习惯已暂停');
+            break;
+          case 'resume':
+            await HabitController.resumeHabit(habit.id);
+            Message.success('习惯已恢复');
+            break;
+          case 'abandon':
+            await HabitController.abandonHabit(habit.id);
+            Message.success('习惯已放弃');
+            break;
+          default:
+            return;
+        }
+
+        fetchHabitDetail();
+        refreshHabits();
+      } catch (error) {
+        console.error(`${action}习惯失败:`, error);
+        Message.error(`${action}习惯失败`);
+      } finally {
+        setActionLoading(false);
       }
-      
-      fetchHabitDetail();
-      refreshHabits();
-    } catch (error) {
-      console.error(`${action}习惯失败:`, error);
-      Message.error(`${action}习惯失败`);
-    } finally {
-      setActionLoading(false);
-    }
-  }, [habit, fetchHabitDetail, refreshHabits]);
+    },
+    [habit, fetchHabitDetail, refreshHabits],
+  );
 
   // 处理删除习惯
   const handleDelete = useCallback(() => {
@@ -123,13 +127,20 @@ export const HabitDetailPage: React.FC = () => {
   }, [habit, navigate, refreshHabits]);
 
   // 获取状态配置
-  const statusConfig = habit ? HABIT_STATUS_OPTIONS.find(option => option.value === habit.status) : null;
-  const difficultyConfig = habit ? HABIT_DIFFICULTY_OPTIONS.find(option => option.value === habit.difficulty) : null;
+  const statusConfig = habit
+    ? HABIT_STATUS_OPTIONS.find((option) => option.value === habit.status)
+    : null;
+  const difficultyConfig = habit ? DIFFICULTY_MAP.get(habit.difficulty) : null;
 
   // 计算完成率
-  const completionRate = habit?.completedCount && habit?.currentStreak 
-    ? Math.round((habit.completedCount / (habit.currentStreak + habit.completedCount)) * 100)
-    : 0;
+  const completionRate =
+    habit?.completedCount && habit?.currentStreak
+      ? Math.round(
+          (habit.completedCount /
+            (habit.currentStreak + habit.completedCount)) *
+            100,
+        )
+      : 0;
 
   if (loading) {
     return (
@@ -174,7 +185,7 @@ export const HabitDetailPage: React.FC = () => {
               )}
             </div>
           </div>
-          
+
           <Space>
             {/* 状态操作按钮 */}
             {habit.status === HabitStatus.ACTIVE && (
@@ -196,7 +207,7 @@ export const HabitDetailPage: React.FC = () => {
                 </Button>
               </>
             )}
-            
+
             {habit.status === HabitStatus.PAUSED && (
               <Button
                 type="primary"
@@ -207,8 +218,9 @@ export const HabitDetailPage: React.FC = () => {
                 恢复
               </Button>
             )}
-            
-            {(habit.status === HabitStatus.ACTIVE || habit.status === HabitStatus.PAUSED) && (
+
+            {(habit.status === HabitStatus.ACTIVE ||
+              habit.status === HabitStatus.PAUSED) && (
               <Button
                 icon={<IconClose />}
                 loading={actionLoading}
@@ -217,10 +229,8 @@ export const HabitDetailPage: React.FC = () => {
                 放弃
               </Button>
             )}
-            
-            <Button icon={<IconEdit />}>
-              编辑
-            </Button>
+
+            <Button icon={<IconEdit />}>编辑</Button>
             <Button
               type="primary"
               status="danger"
@@ -266,15 +276,21 @@ export const HabitDetailPage: React.FC = () => {
                         <Tag color={difficultyConfig.color}>
                           {difficultyConfig.label}
                         </Tag>
-                      ) : '-',
+                      ) : (
+                        '-'
+                      ),
                     },
                     {
                       label: '开始时间',
-                      value: habit.startAt ? new Date(habit.startAt).toLocaleDateString() : '-',
+                      value: habit.startAt
+                        ? new Date(habit.startAt).toLocaleDateString()
+                        : '-',
                     },
                     {
                       label: '目标时间',
-                      value: habit.targetAt ? new Date(habit.targetAt).toLocaleDateString() : '长期习惯',
+                      value: habit.targetAt
+                        ? new Date(habit.targetAt).toLocaleDateString()
+                        : '长期习惯',
                     },
                     {
                       label: '创建时间',
@@ -286,14 +302,14 @@ export const HabitDetailPage: React.FC = () => {
                     },
                   ]}
                 />
-                
+
                 {habit.description && (
                   <div className="mt-4">
                     <Text className="font-medium">描述：</Text>
                     <Paragraph className="mt-2">{habit.description}</Paragraph>
                   </div>
                 )}
-                
+
                 {habit.tags && habit.tags.length > 0 && (
                   <div className="mt-4">
                     <Text className="font-medium">标签：</Text>
@@ -308,7 +324,7 @@ export const HabitDetailPage: React.FC = () => {
                 )}
               </Card>
             </TabPane>
-            
+
             <TabPane key="goals" title="关联目标">
               <Card>
                 {habit.goals && habit.goals.length > 0 ? (
@@ -411,7 +427,9 @@ export const HabitDetailPage: React.FC = () => {
               {habit.abandonedAt && (
                 <div className="flex justify-between">
                   <Text type="secondary">放弃时间:</Text>
-                  <Text>{new Date(habit.abandonedAt).toLocaleDateString()}</Text>
+                  <Text>
+                    {new Date(habit.abandonedAt).toLocaleDateString()}
+                  </Text>
                 </div>
               )}
             </div>
@@ -422,4 +440,4 @@ export const HabitDetailPage: React.FC = () => {
   );
 };
 
-export default HabitDetailPage; 
+export default HabitDetailPage;

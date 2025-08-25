@@ -7,7 +7,7 @@ import {
   TodoStatus,
   TodoSource,
   HabitStatus,
-  HabitDifficulty,
+  Difficulty,
   TaskStatus,
   GoalType,
   GoalStatus,
@@ -43,7 +43,7 @@ export function registerEnumsIpcHandlers(): void {
   });
 
   ipcMain.handle("enums:getHabitDifficulties", () => {
-    return Object.values(HabitDifficulty);
+    return Object.values(Difficulty);
   });
 }
 
@@ -82,6 +82,6 @@ export const enumRestRoutes: RouteDef[] = [
   {
     method: "GET",
     path: "/enums/getHabitDifficulties",
-    handler: (_: RestHandlerCtx) => Object.values(HabitDifficulty),
+    handler: (_: RestHandlerCtx) => Object.values(Difficulty),
   },
 ];

@@ -1,13 +1,13 @@
 export * from "./habit-model.vo";
 import { HabitVo, HabitItemVo, HabitCompletionScore } from "./habit-model.vo";
 import { self } from "../../base";
-import { HabitStatus, HabitDifficulty } from "@life-toolkit/enum";
+import { HabitStatus, Difficulty } from "@life-toolkit/enum";
 
 export type HabitListFiltersVo = Partial<
   Pick<HabitVo, "status" | "difficulty" | "importance" | "tags"> & {
     keyword?: string;
     statusList?: HabitStatus[];
-    difficultyList?: HabitDifficulty[];
+    difficultyList?: Difficulty[];
     importanceMin?: number;
     importanceMax?: number;
     startAtFrom?: string;

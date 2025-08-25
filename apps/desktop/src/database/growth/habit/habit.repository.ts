@@ -12,7 +12,7 @@ import {
   Habit,
   HabitMapper,
 } from "@life-toolkit/business-server";
-import { HabitStatus, HabitDifficulty, TodoStatus } from "@life-toolkit/enum";
+import { HabitStatus, Difficulty, TodoStatus } from "@life-toolkit/enum";
 
 export class HabitRepository implements BusinessHabitRepository {
   private repo: Repository<Habit>;
@@ -44,7 +44,7 @@ export class HabitRepository implements BusinessHabitRepository {
 
     if (filter.difficulty) {
       qb = qb.andWhere("habit.difficulty = :difficulty", {
-        difficulty: filter.difficulty as HabitDifficulty,
+        difficulty: filter.difficulty as Difficulty,
       });
     }
 
@@ -104,8 +104,8 @@ export class HabitRepository implements BusinessHabitRepository {
       importance: (createHabitDto as any).importance,
       tags: (createHabitDto as any).tags,
       difficulty:
-        (createHabitDto.difficulty as unknown as HabitDifficulty) ??
-        HabitDifficulty.Skilled,
+        (createHabitDto.difficulty as unknown as Difficulty) ??
+        Difficulty.Skilled,
       startDate: (createHabitDto as any).startDate ?? new Date(),
       targetDate: (createHabitDto as any).targetDate,
       status: HabitStatus.ACTIVE as any,
