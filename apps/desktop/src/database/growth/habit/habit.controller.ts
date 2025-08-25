@@ -41,29 +41,12 @@ export class HabitController {
     );
   }
 
-  @Get("/findByStatus/:status")
-  async findByStatus(@Param("status") status: string) {
-    return (await habitService.findByStatus(status as HabitStatus)).map((dto) =>
-      HabitMapper.dtoToItemVo(dto)
-    );
-  }
-
   @Post("/updateStreak/:id")
   async updateStreak(
     @Param("id") id: string,
     @Body() body?: { completed?: boolean }
   ) {
     return await habitService.updateStreak(id, body?.completed);
-  }
-
-  @Get("/getStatistics/:id")
-  async getStatistics(@Param("id") id: string) {
-    return await habitService.getHabitStatistics(id);
-  }
-
-  @Get("/getOverallStatistics")
-  async getOverallStatistics() {
-    return await habitService.getOverallStatistics();
   }
 
   @Post("/pauseHabit")

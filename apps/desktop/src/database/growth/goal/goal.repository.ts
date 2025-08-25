@@ -1,13 +1,13 @@
 import { Repository, In, DeepPartial } from "typeorm";
 import { AppDataSource } from "../../database.config";
-import { Goal } from "@life-toolkit/business-server";
 import {
   CreateGoalDto,
   UpdateGoalDto,
   GoalPageFilterDto,
   GoalListFilterDto,
   GoalDto,
-  Goal as BusinessGoal,
+  Goal,
+  GoalMapper,
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
@@ -17,30 +17,6 @@ export class GoalRepository {
 
   constructor() {
     this.repo = AppDataSource.getRepository(Goal);
-  }
-
-  // 映射 Desktop 实体到 Business DTO
-  private toDto(entity: Goal): GoalDto {
-    return {
-      // BaseModelDto
-      id: entity.id,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt,
-      // Goal
-      name: entity.name,
-      description: entity.description,
-      status: entity.status as unknown as GoalStatus,
-      type: entity.type as unknown as GoalType,
-      importance: entity.importance,
-      startAt: entity.startAt,
-      endAt: entity.endAt,
-      doneAt: entity.doneAt,
-      abandonedAt: entity.abandonedAt,
-      parent: entity.parent as any,
-      children: (entity.children || []) as any,
-      taskList: (entity.taskList || []) as any,
-    } as unknown as GoalDto;
   }
 
   private buildQuery(filter: GoalListFilterDto) {
@@ -134,19 +110,19 @@ export class GoalRepository {
     } as DeepPartial<Goal>);
 
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return GoalMapper.entityToDto(saved);
   }
 
   async findById(id: string, relations?: string[]): Promise<GoalDto> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return this.toDto(entity);
+    return GoalMapper.entityToDto(entity);
   }
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => this.toDto(e));
+    return list.map((e) => GoalMapper.entityToDto(e));
   }
 
   async page(
@@ -158,7 +134,7 @@ export class GoalRepository {
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => this.toDto(e)), total };
+    return { list: entities.map((e) => GoalMapper.entityToDto(e)), total };
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
@@ -171,7 +147,7 @@ export class GoalRepository {
     };
 
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return GoalMapper.entityToDto(saved);
   }
 
   async remove(id: string): Promise<void> {
@@ -184,10 +160,7 @@ export class GoalRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(
-    ids: string[],
-    updateData: Partial<BusinessGoal>
-  ): Promise<void> {
+  async batchUpdate(ids: string[], updateData: Partial<Goal>): Promise<void> {
     await this.repo.update(
       { id: In(ids) },
       updateData as unknown as Partial<Goal>
@@ -201,13 +174,13 @@ export class GoalRepository {
     });
     console.log("=====================", entity);
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return this.toDto(entity);
+    return GoalMapper.entityToDto(entity);
   }
 
   async updateStatus(
     id: string,
     status: GoalStatus,
-    extra: Partial<BusinessGoal> = {}
+    extra: Partial<Goal> = {}
   ): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);

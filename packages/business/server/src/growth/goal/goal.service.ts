@@ -76,8 +76,7 @@ export class GoalService {
     return await this.goalRepository.page(filter);
   }
 
-  async findDetail(id: string): Promise<GoalDto> {
-    // 使用仓储层实现（包含 parent/children/taskList）
+  async findDetail(id: string) {
     return await this.goalTreeRepository.findDetail(id);
   }
 

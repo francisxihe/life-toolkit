@@ -44,13 +44,6 @@ export class TaskController {
     return TaskMapper.dtoToVoList(await taskService.findByGoalId(goalId));
   }
 
-  @Get("/findByStatus/:status")
-  async findByStatus(@Param("status") status: string) {
-    return TaskMapper.dtoToVoList(
-      await taskService.findByStatus(status as TaskStatus)
-    );
-  }
-
   @Post("/updateStatus/:id")
   async updateStatus(
     @Param("id") id: string,

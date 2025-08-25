@@ -12,6 +12,7 @@ import { goalService } from "./goal.service";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import { GoalMapper } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
+import type { GoalListFiltersVo } from "@life-toolkit/vo";
 
 @Controller("/goal")
 export class GoalController {
@@ -53,11 +54,9 @@ export class GoalController {
   }
 
   @Get("/list")
-  async list(@Query() filter?: any) {
+  async list(@Query() filter?: GoalListFiltersVo) {
     return GoalMapper.dtoToListVo(await goalService.list(filter));
   }
-
-  // --- 以下为对齐原 REST 路由补充 ---
 
   @Get("/tree")
   async tree() {
@@ -71,35 +70,6 @@ export class GoalController {
     );
   }
 
-  // GET /goal/findChildren （payload 透传 parentId）
-  @Get("/findChildren")
-  async findChildrenByQuery(@Query() q?: { parentId?: string }) {
-    const list = await goalService.findChildren(String(q?.parentId || ""));
-    return list.map((dto) => GoalMapper.dtoToVo(dto));
-  }
-
-  // GET /goal/findChildren/:parentId
-  @Get("/findChildren/:parentId")
-  async findChildrenByParam(@Param("parentId") parentId: string) {
-    const list = await goalService.findChildren(parentId);
-    return list.map((dto) => GoalMapper.dtoToVo(dto));
-  }
-
-  @Get("/findByType/:type")
-  async findByType(@Param("type") type: string) {
-    return GoalMapper.dtoToVoList(
-      await goalService.findByType(type as GoalType)
-    );
-  }
-
-  @Get("/findByStatus/:status")
-  async findByStatus(@Param("status") status: string) {
-    return GoalMapper.dtoToVoList(
-      await goalService.findByStatus(status as GoalStatus)
-    );
-  }
-
-  // 与 getTree 对齐（等价于 tree）
   @Get("/getTree")
   async getTree() {
     return (await goalService.findTree()).map((dto) => GoalMapper.dtoToVo(dto));
@@ -107,7 +77,7 @@ export class GoalController {
 
   @Get("/findDetail/:id")
   async findDetail(@Param("id") id: string) {
-    return GoalMapper.dtoToVo(await goalService.findById(id));
+    return GoalMapper.dtoToVo(await goalService.findDetail(id));
   }
 
   @Post("/batchDone")
@@ -118,14 +88,14 @@ export class GoalController {
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
     return GoalMapper.dtoToVo(
-      await goalService.update(id, { status: GoalStatus.ABANDONED } as any)
+      await goalService.update(id, { status: GoalStatus.ABANDONED })
     );
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) {
     return GoalMapper.dtoToVo(
-      await goalService.update(id, { status: GoalStatus.TODO } as any)
+      await goalService.update(id, { status: GoalStatus.TODO })
     );
   }
 }

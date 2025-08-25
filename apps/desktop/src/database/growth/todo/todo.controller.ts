@@ -31,28 +31,6 @@ export class TodoController {
     return TodoMapper.dtoToVo(await todoService.findById(id));
   }
 
-  @Get("/findByStatus/:status")
-  async findByStatus(@Param("status") status: string) {
-    return TodoMapper.dtoToVoList(
-      await todoService.findByStatus(status as TodoStatus)
-    );
-  }
-
-  @Get("/findTodayTodos")
-  async findTodayTodos() {
-    return TodoMapper.dtoToVoList(await todoService.findTodayTodos());
-  }
-
-  @Get("/findOverdueTodos")
-  async findOverdueTodos() {
-    return TodoMapper.dtoToVoList(await todoService.findOverdueTodos());
-  }
-
-  @Get("/findHighImportanceTodos")
-  async findHighImportanceTodos() {
-    return TodoMapper.dtoToVoList(await todoService.findHighImportanceTodos());
-  }
-
   @Put("/updateStatus/:id")
   async updateStatus(
     @Param("id") id: string,
@@ -118,10 +96,5 @@ export class TodoController {
   @Put("/done/:id")
   async done(@Param("id") id: string) {
     return await todoService.done(id);
-  }
-
-  @Get("/getStatistics")
-  async getStatistics() {
-    return await todoService.getStatistics();
   }
 }

@@ -10,6 +10,7 @@ import {
   Goal,
   Todo,
   Habit,
+  HabitMapper,
 } from "@life-toolkit/business-server";
 import { HabitStatus, HabitDifficulty, TodoStatus } from "@life-toolkit/enum";
 
@@ -22,28 +23,6 @@ export class HabitRepository implements BusinessHabitRepository {
     this.repo = AppDataSource.getRepository(Habit);
     this.goalRepo = AppDataSource.getRepository(Goal);
     this.todoRepo = AppDataSource.getRepository(Todo);
-  }
-
-  private toDto(entity: Habit): HabitDto {
-    return {
-      id: entity.id,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt,
-      name: entity.name,
-      description: entity.description,
-      status: entity.status as HabitStatus,
-      difficulty: entity.difficulty as HabitDifficulty,
-      importance: entity.importance,
-      tags: entity.tags,
-      startDate: entity.startDate,
-      targetDate: entity.targetDate,
-      currentStreak: entity.currentStreak,
-      longestStreak: entity.longestStreak,
-      completedCount: entity.completedCount,
-      goals: (entity.goals || []) as any,
-      todos: (entity.todos || []) as any,
-    };
   }
 
   private buildQuery(filter: HabitListFilterDto) {
@@ -139,19 +118,19 @@ export class HabitRepository implements BusinessHabitRepository {
     }
 
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return HabitMapper.entityToDto(saved);
   }
 
   async findById(id: string, relations?: string[]): Promise<HabitDto> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    return this.toDto(entity);
+    return HabitMapper.entityToDto(entity);
   }
 
   async findAll(filter: HabitListFilterDto): Promise<HabitDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => this.toDto(e));
+    return list.map((e) => HabitMapper.entityToDto(e));
   }
 
   async page(
@@ -163,7 +142,7 @@ export class HabitRepository implements BusinessHabitRepository {
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => this.toDto(e)), total };
+    return { list: entities.map((e) => HabitMapper.entityToDto(e)), total };
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
@@ -209,7 +188,7 @@ export class HabitRepository implements BusinessHabitRepository {
     }
 
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return HabitMapper.entityToDto(saved);
   }
 
   async delete(id: string): Promise<void> {
@@ -250,7 +229,7 @@ export class HabitRepository implements BusinessHabitRepository {
       .where("goal.id = :goalId", { goalId })
       .andWhere("habit.deletedAt IS NULL")
       .getMany();
-    return list.map((e) => this.toDto(e));
+    return list.map((e) => HabitMapper.entityToDto(e));
   }
 
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
@@ -269,7 +248,7 @@ export class HabitRepository implements BusinessHabitRepository {
       (entity as any).currentStreak = 0;
     }
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return HabitMapper.entityToDto(saved);
   }
 
   async getHabitTodos(habitId: string): Promise<{

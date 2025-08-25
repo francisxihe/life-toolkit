@@ -12,8 +12,8 @@ import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 export type GoalDetailContextProps = {
+  goalId?: string;
   children: React.ReactNode;
-  goalId: string;
   initialFormData?: Partial<GoalFormData>;
   size?: 'small' | 'default';
   onClose?: () => Promise<void>;
@@ -40,6 +40,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
 
   const defaultFormData: GoalFormData = {
     name: '',
+    type: GoalType.KEY_RESULT,
     status: GoalStatus.TODO,
     planTimeRange: [undefined, undefined],
     children: [],

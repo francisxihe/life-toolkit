@@ -1,6 +1,11 @@
 import "reflect-metadata";
 import { BaseEntity } from "../../base/base.entity";
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
+import {
+  GoalType,
+  GoalStatus,
+  GoalImportance,
+  GoalDifficulty,
+} from "@life-toolkit/enum";
 import { Task } from "../task";
 import {
   Entity,
@@ -22,7 +27,6 @@ export class Goal extends BaseEntity {
   @Column({
     type: "simple-enum",
     enum: GoalType,
-    nullable: true,
   })
   type!: GoalType;
 
@@ -34,6 +38,22 @@ export class Goal extends BaseEntity {
   })
   status!: GoalStatus;
 
+  /** 目标重要程度 */
+  @Column({
+    type: "simple-enum",
+    enum: GoalImportance,
+    default: GoalImportance.Supplementary,
+  })
+  importance!: GoalImportance;
+
+  /** 目标难度 */
+  @Column({
+    type: "simple-enum",
+    enum: GoalDifficulty,
+    default: GoalDifficulty.GettingStarted,
+  })
+  difficulty?: GoalDifficulty;
+
   /** 目标开始时间 */
   @Column("datetime", { nullable: true })
   startAt?: Date;
@@ -41,14 +61,6 @@ export class Goal extends BaseEntity {
   /** 目标结束时间 */
   @Column("datetime", { nullable: true })
   endAt?: Date;
-
-  /** 目标重要程度 */
-  @Column("int", { nullable: true })
-  importance?: number;
-
-  /** 目标难度 */
-  @Column("int", { nullable: true })
-  difficulty?: number;
 
   /** 目标描述 */
   @Column("text", { nullable: true })

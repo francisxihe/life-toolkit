@@ -54,7 +54,6 @@ export class GoalController {
    * 根据ID查询目标详情
    */
   @Get("detail/:id")
-
   @Response()
   async findDetail(@Param("id") id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findDetail(id);

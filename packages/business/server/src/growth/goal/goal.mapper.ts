@@ -1,23 +1,12 @@
 import type { Goal as GoalVO } from "@life-toolkit/vo";
-import {
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalDto,
-  GoalModelDto,
-} from "./dto";
+import { CreateGoalDto, UpdateGoalDto, GoalDto, GoalModelDto } from "./dto";
 import { Goal } from "./goal.entity";
 import { BaseMapper } from "../../base/base.mapper";
 import dayjs from "dayjs";
+import { GoalType } from "@life-toolkit/enum";
 
-// 核心映射器类
-class GoalMapperCore {
-  /**
-   * 实体转DTO
-   */
-  static importEntity<T>(entity: T): Goal {
-    return entity as Goal;
-  }
-
+// 最终导出类
+export class GoalMapper {
   // ==================== Entity ↔ DTO ====================
 
   /**
@@ -33,6 +22,7 @@ class GoalMapperCore {
     dto.status = entity.status;
     dto.type = entity.type;
     dto.importance = entity.importance;
+    dto.difficulty = entity.difficulty;
 
     // 日期字段映射 (保持Date类型)
     dto.startAt = entity.startAt;
@@ -64,16 +54,17 @@ class GoalMapperCore {
    * DTO转项目VO
    */
   static dtoToItemVo(dto: GoalDto): GoalVO.GoalItemVo {
-    const vo: any = {
+    const vo: GoalVO.GoalItemVo = {
       // 基础字段
       ...BaseMapper.dtoToVo(dto),
 
       // 业务字段
-      name: dto.name || "",
+      name: dto.name,
       description: dto.description,
-      status: dto.status || "todo",
+      status: dto.status,
       type: dto.type,
-      importance: dto.importance ?? 3,
+      importance: dto.importance,
+      difficulty: dto.difficulty,
 
       // 日期字段转换 (Date → string)
       startAt: dto.startAt
@@ -157,7 +148,8 @@ class GoalMapperCore {
     dto.name = vo.name;
     dto.description = vo.description;
     dto.type = vo.type;
-    dto.importance = vo.importance ?? 3;
+    dto.importance = vo.importance;
+    dto.difficulty = vo.difficulty;
     dto.parentId = vo.parentId;
 
     // 日期字段转换 (string → Date)
@@ -186,6 +178,9 @@ class GoalMapperCore {
     if (vo.importance !== undefined) {
       dto.importance = vo.importance;
     }
+    if (vo.difficulty !== undefined) {
+      dto.difficulty = vo.difficulty;
+    }
     if (vo.parentId !== undefined) {
       dto.parentId = vo.parentId;
     }
@@ -199,6 +194,3 @@ class GoalMapperCore {
     return dto;
   }
 }
-
-// 最终导出类
-export class GoalMapper extends GoalMapperCore {}

@@ -9,7 +9,8 @@ import {
 import { useGoalDetailContext } from './context';
 import { useEffect } from 'react';
 import { GoalMapping } from '../../service';
-import { GoalType } from '@life-toolkit/enum';
+import { GoalType, GoalImportance, GoalDifficulty } from '@life-toolkit/enum';
+import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../goal/constants';
 
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
@@ -55,6 +56,24 @@ export default function GoalForm() {
             <Radio value={GoalType.OBJECTIVE}>战略规划</Radio>
             <Radio value={GoalType.KEY_RESULT}>成果指标</Radio>
           </Radio.Group>
+        </Item>
+        <Item span={24} label="重要程度" name="importance">
+          <Select
+            defaultValue={GoalImportance.Helpful}
+            options={[...IMPORTANCE_MAP.entries()].map(([key, value]) => ({
+              label: value.label,
+              value: key,
+            }))}
+          ></Select>
+        </Item>
+        <Item span={24} label="难度" name="difficulty">
+          <Select
+            defaultValue={GoalDifficulty.Skilled}
+            options={[...DIFFICULTY_MAP.entries()].map(([key, value]) => ({
+              label: value.label,
+              value: key,
+            }))}
+          ></Select>
         </Item>
 
         <Item span={24} label="父级目标" name="parentId">

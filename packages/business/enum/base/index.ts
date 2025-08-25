@@ -1,23 +1,38 @@
 export enum Difficulty {
-  GettingStarted = 1, // 上手
-  Skilled = 2, // 熟练
-  Challenger = 3, // 挑战
-  Master = 4, // 高手
-  Legendary = 5, // 传说
+  /** 轻而易举 */
+  GettingStarted = 1,
+  /** 略费手脚 */
+  Skilled = 2,
+  /** 颇费周章 */
+  Challenger = 3,
+  /** 千回百转 */
+  Master = 4,
+  /** 登峰造极 */
+  Legendary = 5,
 }
 
 export enum Importance {
-  Supplementary = 1, // 可有可无
-  Helpful = 2, // 有点用处
-  Core = 3, // 比较重要
-  Key = 4, // 非常关键
-  Essential = 5, // 必须处理
+  /** 聊胜于无 */
+  Supplementary = 1,
+  /** 略有裨益 */
+  Helpful = 2,
+  /** 举足轻重 */
+  Core = 3,
+  /** 至关紧要 */
+  Key = 4,
+  /** 不容或缺 */
+  Essential = 5,
 }
 
 export enum Urgency {
-  Someday = 1, // 可延后
-  Later = 2, // 低优先
-  Soon = 3, // 常规优先
-  Now = 4, // 高优先
-  ASAP = 5, // 十万火急
+  /** 来日方长 */
+  Someday = 1,
+  /** 按部就班 */
+  Later = 2,
+  /** 事不宜迟 */
+  Soon = 3,
+  /** 刻不容缓 */
+  Now = 4,
+  /** 十万火急 */
+  ASAP = 5,
 }

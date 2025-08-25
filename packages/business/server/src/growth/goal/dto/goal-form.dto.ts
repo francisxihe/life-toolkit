@@ -10,6 +10,7 @@ export class CreateGoalDto extends PickType(GoalDto, [
   "endAt",
   "description",
   "importance",
+  "difficulty",
   "status",
 ] as const) {
   // 额外字段

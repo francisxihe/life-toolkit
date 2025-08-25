@@ -14,40 +14,6 @@ import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 export class TodoRepository /* implements import("@life-toolkit/business-server").TodoRepository */ {
   private repo: Repository<Todo> = AppDataSource.getRepository(Todo);
 
-  private toDto(e: Todo): TodoDto {
-    // 仅映射已知字段，其余保持为 any 以兼容业务层 DTO
-    const dto: any = {
-      id: e.id,
-      name: e.name,
-      description: e.description,
-      status: e.status as any,
-      importance: e.importance,
-      urgency: e.urgency,
-      tags: e.tags,
-      doneAt: e.doneAt as any,
-      abandonedAt: e.abandonedAt as any,
-      planDate: e.planDate as any,
-      planStartAt: e.planStartAt,
-      planEndAt: e.planEndAt,
-      taskId: e.taskId,
-      repeatId: e.repeatId,
-      originalRepeatId: e.originalRepeatId,
-      createdAt: (e as any).createdAt,
-      updatedAt: (e as any).updatedAt,
-      deletedAt: (e as any).deletedAt,
-      source: e.source as any,
-      // 关联映射（最小化）
-      task: e.task
-        ? { id: (e.task as any).id, name: (e.task as any).name }
-        : undefined,
-      repeat: e.repeatId ? { id: e.repeatId } : undefined,
-      habit: e.habit
-        ? { id: (e.habit as any).id, name: (e.habit as any).name }
-        : undefined,
-    };
-    return dto as TodoDto;
-  }
-
   async create(createDto: CreateTodoDto): Promise<TodoDto> {
     const entity = this.repo.create({
       name: createDto.name,
@@ -63,7 +29,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       source: ((createDto as any).source as TodoSource) ?? TodoSource.MANUAL,
     } as DeepPartial<Todo>);
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return TodoMapper.entityToDto(saved);
   }
 
   async createWithExtras(
@@ -85,7 +51,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       ...extras,
     } as DeepPartial<Todo>);
     const saved = await this.repo.save(entity);
-    return this.toDto(saved);
+    return TodoMapper.entityToDto(saved);
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
@@ -121,9 +87,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
 
     const list = await qb.orderBy("todo.createdAt", "DESC").getMany();
 
-    return list.map((it) =>
-      TodoMapper.entityToDto(TodoMapper.importEntity<Todo>(it))
-    );
+    return list.map((it) => TodoMapper.entityToDto(it));
   }
 
   async findPage(filter: TodoPageFilterDto): Promise<{
@@ -165,7 +129,12 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       .take(pageSize)
       .orderBy("todo.createdAt", "DESC")
       .getManyAndCount();
-    return { list: list.map((it) => this.toDto(it)), total, pageNum, pageSize };
+    return {
+      list: list.map((it) => TodoMapper.entityToDto(it)),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async update(id: string, updateDto: UpdateTodoDto): Promise<TodoDto> {
@@ -186,9 +155,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       .where("todo.id IN (:...ids)", { ids: idList })
       .getMany();
 
-    return list.map((it) =>
-      TodoMapper.entityToDto(TodoMapper.importEntity<Todo>(it))
-    );
+    return list.map((it) => TodoMapper.entityToDto(it));
   }
 
   async delete(id: string): Promise<boolean> {
@@ -210,7 +177,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       where: { id },
       relations: relations ?? ["task", "habit"],
     });
-    return this.toDto(todo as Todo);
+    return TodoMapper.entityToDto(todo as Todo);
   }
 
   async updateRepeatId(id: string, repeatId: string): Promise<void> {
@@ -230,6 +197,6 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     const todo = await this.repo.findOne({
       where: { repeatId, planDate: date as any },
     });
-    return todo ? this.toDto(todo) : null;
+    return todo ? TodoMapper.entityToDto(todo) : null;
   }
 }

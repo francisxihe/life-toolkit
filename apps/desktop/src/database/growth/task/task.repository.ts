@@ -8,41 +8,14 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
+  TaskMapper,
 } from "@life-toolkit/business-server";
-import { TaskStatus } from "@life-toolkit/enum";
 
 export class TaskRepository /* implements import("@life-toolkit/business-server").TaskRepository */ {
   private repo: Repository<Task>;
 
   constructor() {
     this.repo = AppDataSource.getRepository(Task);
-  }
-
-  private toDto(entity: Task): TaskDto {
-    const dto: any = {
-      id: entity.id,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-      deletedAt: entity.deletedAt,
-      name: entity.name,
-      description: entity.description,
-      status: entity.status as unknown as TaskStatus,
-      // desktop 不含 importance/urgency/estimateTime/startAt/abandonedAt
-      importance: undefined,
-      urgency: undefined,
-      estimateTime: undefined,
-      startAt: undefined,
-      endAt: entity.dueDate,
-      doneAt: entity.completedAt,
-      abandonedAt: undefined,
-      tags: entity.tags,
-      parent: (entity as any).parent,
-      children: (entity as any).children,
-      goal: (entity as any).goal,
-      goalId: entity.goalId,
-      todoList: (entity as any).todoList,
-    };
-    return dto as TaskDto;
   }
 
   private buildQuery(filter: TaskListFilterDto & { excludeIds?: string[] }) {
@@ -130,7 +103,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     if (updateTaskDto.tags !== undefined)
       entity.tags = updateTaskDto.tags as any;
     if ((updateTaskDto as any).endAt !== undefined)
-      entity.dueDate = (updateTaskDto as any).endAt as any;
+      entity.endAt = (updateTaskDto as any).endAt as any;
     if (updateTaskDto.goalId !== undefined)
       entity.goalId = updateTaskDto.goalId as any;
     // 其它字段（importance/urgency/estimateTime/startAt/abandonedAt/doneAt）desktop 不存储，忽略
@@ -148,7 +121,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       relations: relations ?? ["parent", "children", "goal", "todoList"],
     });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    return this.toDto(entity);
+    return TaskMapper.entityToDto(entity);
   }
 
   async findAll(
@@ -156,7 +129,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   ): Promise<TaskDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => this.toDto(e));
+    return list.map((e) => TaskMapper.entityToDto(e));
   }
 
   async page(
@@ -168,7 +141,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => this.toDto(e)), total };
+    return { list: entities.map((e) => TaskMapper.entityToDto(e)), total };
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {

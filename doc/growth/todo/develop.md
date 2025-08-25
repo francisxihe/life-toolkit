@@ -295,13 +295,6 @@ interface TodoModuleStructure {
         response_vo: "TodoVo[]";
         permissions: ["authenticated", "owner"];
       },
-      {
-        operation: "getStatistics";
-        endpoint: "GET /api/todo/statistics";
-        request_dto: "StatisticsFilterDto";
-        response_vo: "TodoStatisticsVo";
-        permissions: ["authenticated"];
-      }
     ];
   };
   

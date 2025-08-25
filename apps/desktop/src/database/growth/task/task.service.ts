@@ -111,10 +111,6 @@ export class TaskService {
     return await this.service.findAll({ goalIds: [goalId] } as any);
   }
 
-  async findByStatus(status: TaskStatus): Promise<TaskDto[]> {
-    return await this.service.findAll({ status } as any);
-  }
-
   async updateStatus(id: string, status: TaskStatus): Promise<void> {
     const dto: UpdateTaskDto = { status: status as any } as any;
     if (status === TaskStatus.DONE) (dto as any).doneAt = new Date();

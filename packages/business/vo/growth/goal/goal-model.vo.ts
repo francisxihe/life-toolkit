@@ -7,11 +7,13 @@ export type GoalModelVo = {
 
   status: GoalStatus;
 
-  type?: GoalType;
+  type: GoalType;
 
   description?: string;
 
-  importance?: number;
+  importance: number;
+
+  difficulty?: number;
 
   startAt?: string;
 

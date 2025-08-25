@@ -68,59 +68,6 @@ export class TodoService {
     return await this.service.findById(id);
   }
 
-  async findByStatus(status: TodoStatus): Promise<TodoDto[]> {
-    return await this.service.findAll({ status } as any);
-  }
-
-  private async findByDateRange(
-    startDate: Date,
-    endDate: Date
-  ): Promise<TodoDto[]> {
-    const list = await this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit")
-      .where("todo.planDate >= :startDate", { startDate })
-      .andWhere("todo.planDate <= :endDate", { endDate })
-      .orderBy("todo.planDate", "ASC")
-      .getMany();
-    return list as any;
-  }
-
-  async findTodayTodos(): Promise<TodoDto[]> {
-    const today = new Date();
-    const startOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate()
-    );
-    const endOfDay = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      23,
-      59,
-      59
-    );
-    return await this.findByDateRange(startOfDay, endOfDay);
-  }
-
-  async findOverdueTodos(): Promise<TodoDto[]> {
-    const now = new Date();
-    const list = await this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit")
-      .where("todo.planDate < :now", { now })
-      .andWhere("todo.status != :doneStatus", { doneStatus: TodoStatus.DONE })
-      .andWhere("todo.status != :abandonedStatus", {
-        abandonedStatus: TodoStatus.ABANDONED,
-      })
-      .orderBy("todo.planDate", "ASC")
-      .getMany();
-    return list as any;
-  }
-
   async updateStatus(id: string, status: TodoStatus): Promise<void> {
     if (status === TodoStatus.DONE) return await this.service.done(id);
     if (status === TodoStatus.ABANDONED) return await this.service.abandon(id);
@@ -128,40 +75,7 @@ export class TodoService {
     // 其它状态直接更新字段
     await this.repo.update(id, { status: status as any } as any);
   }
-
-  async findHighImportanceTodos(): Promise<TodoDto[]> {
-    const list = await this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit")
-      .where("todo.importance >= :importance", { importance: 8 })
-      .andWhere("todo.status != :doneStatus", { doneStatus: TodoStatus.DONE })
-      .andWhere("todo.status != :abandonedStatus", {
-        abandonedStatus: TodoStatus.ABANDONED,
-      })
-      .orderBy("todo.importance", "DESC")
-      .addOrderBy("todo.planDate", "ASC")
-      .getMany();
-    return list as any;
-  }
-
-  async getStatistics(): Promise<{
-    total: number;
-    todo: number;
-    inProgress: number;
-    done: number;
-    abandoned: number;
-  }> {
-    const [total, todo, inProgress, done, abandoned] = await Promise.all([
-      this.repo.count(),
-      this.repo.count({ where: { status: TodoStatus.TODO } as any }),
-      this.repo.count({ where: { status: TodoStatus.IN_PROGRESS } as any }),
-      this.repo.count({ where: { status: TodoStatus.DONE } as any }),
-      this.repo.count({ where: { status: TodoStatus.ABANDONED } as any }),
-    ]);
-    return { total, todo, inProgress, done, abandoned };
-  }
-
+  
   async update(
     id: string,
     data: {

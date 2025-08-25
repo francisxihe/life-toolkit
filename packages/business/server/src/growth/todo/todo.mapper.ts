@@ -8,10 +8,6 @@ import { TaskMapper } from "../task/task.mapper";
 import { RepeatMapper } from "@life-toolkit/components-repeat/server";
 
 export class TodoMapper {
-  static importEntity<T>(entity: T): Todo {
-    return entity as Todo;
-  }
-
   /**
    * 实体转模型DTO（仅基础字段，不含关联，Date 保持为 Date）
    */

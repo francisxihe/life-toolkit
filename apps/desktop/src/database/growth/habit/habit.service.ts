@@ -78,10 +78,6 @@ export class HabitService {
     return await this.service.findAll({ status: HabitStatus.ACTIVE } as any);
   }
 
-  async findByStatus(status: HabitStatus): Promise<HabitDto[]> {
-    return await this.service.findAll({ status } as any);
-  }
-
   async findByGoalId(goalId: string): Promise<HabitDto[]> {
     return await this.service.findByGoalId(goalId);
   }
@@ -118,66 +114,6 @@ export class HabitService {
 
   async getHabitAnalytics(id: string) {
     return await this.service.getHabitAnalytics(id);
-  }
-
-  // 兼容旧统计：复用业务聚合并计算 daysActive
-  async getHabitStatistics(id: string): Promise<{
-    currentStreak: number;
-    longestStreak: number;
-    completedCount: number;
-    completionRate: number;
-    daysActive: number;
-  } | null> {
-    const habit = await this.service.findById(id);
-    if (!habit) return null as any;
-    const analytics = await this.service.getHabitAnalytics(id);
-    const startDate = (habit as any).startDate as Date | undefined;
-    const daysActive = startDate
-      ? Math.ceil(
-          (new Date().getTime() - new Date(startDate).getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
-      : 0;
-    return {
-      currentStreak: (habit as any).currentStreak || 0,
-      longestStreak: (habit as any).longestStreak || 0,
-      completedCount: analytics.completedTodos || 0,
-      completionRate: Math.round((analytics.completionRate || 0) * 100) / 100,
-      daysActive,
-    };
-  }
-
-  async getOverallStatistics(): Promise<{
-    totalHabits: number;
-    activeHabits: number;
-    pausedHabits: number;
-    completedHabits: number;
-    averageStreak: number;
-  }> {
-    const list = await this.service.findAll({} as HabitListFilterDto);
-    const totalHabits = list.length;
-    const activeHabits = list.filter(
-      (h: any) => h.status === HabitStatus.ACTIVE
-    ).length;
-    const pausedHabits = list.filter(
-      (h: any) => h.status === HabitStatus.PAUSED
-    ).length;
-    const completedHabits = list.filter(
-      (h: any) => h.status === HabitStatus.COMPLETED
-    ).length;
-    const totalStreak = list.reduce(
-      (sum: number, h: any) => sum + (h.currentStreak || 0),
-      0
-    );
-    const averageStreak =
-      totalHabits > 0 ? Math.round((totalStreak / totalHabits) * 100) / 100 : 0;
-    return {
-      totalHabits,
-      activeHabits,
-      pausedHabits,
-      completedHabits,
-      averageStreak,
-    };
   }
 
   async page(
