@@ -63,7 +63,7 @@ export class TodoRepository {
       planEndAt: createDto.planEndAt,
       taskId: createDto.taskId,
       source: TodoSource.MANUAL,
-    } as Partial<Todo>);
+    });
     const saved = await this.repo.save(entity);
     return TodoMapper.entityToDto(saved);
   }
@@ -85,7 +85,7 @@ export class TodoRepository {
       taskId: createDto.taskId,
       source: TodoSource.MANUAL,
       ...extras,
-    } as Partial<Todo>);
+    });
     const saved = await this.repo.save(entity);
     return TodoMapper.entityToDto(saved);
   }
@@ -119,8 +119,11 @@ export class TodoRepository {
   }
 
   async update(id: string, updateDto: UpdateTodoDto): Promise<TodoDto> {
-    await this.repo.update(id, updateDto);
-    return await this.findById(id);
+    const entity = await this.repo.findOne({ where: { id } });
+    if (!entity) throw new Error(`待办不存在，ID: ${id}`);
+    updateDto.applyToUpdateEntity(entity);
+    const saved = await this.repo.save(entity);
+    return TodoMapper.entityToDto(saved);
   }
 
   async batchUpdate(

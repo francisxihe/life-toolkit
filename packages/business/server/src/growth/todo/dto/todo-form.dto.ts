@@ -24,6 +24,19 @@ export class CreateTodoDto extends PickType(TodoDto, [
 ] as const) {
   taskId?: string;
   repeat?: CreateRepeatDto;
+
+  applyToCreateEntity(entity: Todo) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.planStartAt !== undefined) entity.planStartAt = this.planStartAt;
+    if (this.planEndAt !== undefined) entity.planEndAt = this.planEndAt;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.urgency !== undefined) entity.urgency = this.urgency;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.taskId !== undefined) entity.taskId = this.taskId;
+  }
 }
 
 export class UpdateTodoDto extends IntersectionType(
@@ -32,4 +45,19 @@ export class UpdateTodoDto extends IntersectionType(
   PickType(TodoDto, ["doneAt", "abandonedAt"] as const)
 ) {
   repeat?: UpdateRepeatDto;
+
+  applyToUpdateEntity(entity: Todo) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.planStartAt !== undefined) entity.planStartAt = this.planStartAt;
+    if (this.planEndAt !== undefined) entity.planEndAt = this.planEndAt;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.urgency !== undefined) entity.urgency = this.urgency;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.doneAt !== undefined) entity.doneAt = this.doneAt;
+    if (this.abandonedAt !== undefined) entity.abandonedAt = this.abandonedAt;
+    if (this.taskId !== undefined) entity.taskId = this.taskId;
+  }
 }

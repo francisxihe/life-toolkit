@@ -105,7 +105,7 @@ export class HabitRepository implements BusinessHabitRepository {
       startDate: createHabitDto.startDate ?? new Date(),
       targetDate: createHabitDto.targetDate,
       status: HabitStatus.ACTIVE,
-    } as Partial<Habit>);
+    });
 
     const goalIds = createHabitDto.goalIds as string[] | undefined;
     if (goalIds && goalIds.length > 0) {
@@ -148,26 +148,7 @@ export class HabitRepository implements BusinessHabitRepository {
     });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
 
-    if (updateHabitDto.name !== undefined) entity.name = updateHabitDto.name;
-    if (updateHabitDto.description !== undefined)
-      entity.description = updateHabitDto.description;
-    if (updateHabitDto.importance !== undefined)
-      entity.importance = updateHabitDto.importance;
-    if (updateHabitDto.tags !== undefined) entity.tags = updateHabitDto.tags;
-    if (updateHabitDto.difficulty !== undefined)
-      entity.difficulty = updateHabitDto.difficulty;
-    if (updateHabitDto.startDate !== undefined)
-      entity.startDate = updateHabitDto.startDate;
-    if (updateHabitDto.targetDate !== undefined)
-      entity.targetDate = updateHabitDto.targetDate;
-    if (updateHabitDto.status !== undefined)
-      entity.status = updateHabitDto.status;
-    if (updateHabitDto.currentStreak !== undefined)
-      entity.currentStreak = updateHabitDto.currentStreak;
-    if (updateHabitDto.longestStreak !== undefined)
-      entity.longestStreak = updateHabitDto.longestStreak;
-    if (updateHabitDto.completedCount !== undefined)
-      entity.completedCount = updateHabitDto.completedCount;
+    updateHabitDto.applyToUpdateEntity(entity);
 
     const goalIds = updateHabitDto.goalIds as string[] | undefined;
     if (goalIds) {
@@ -179,6 +160,7 @@ export class HabitRepository implements BusinessHabitRepository {
     }
 
     const saved = await this.repo.save(entity);
+
     return HabitMapper.entityToDto(saved);
   }
 

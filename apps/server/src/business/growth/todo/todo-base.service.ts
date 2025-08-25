@@ -128,7 +128,7 @@ export class TodoBaseService {
   }
 }
 
-function getWhere(filter: TodoPageFiltersDto) {
+function getWhere(filter: TodoPageFiltersDto | TodoListFilterDto) {
   const where: FindOptionsWhere<Todo> = {};
   if (filter.planDateStart && filter.planDateEnd) {
     where.planDate = Between(

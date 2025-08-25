@@ -129,7 +129,7 @@ export class GoalRepository {
       importance: createGoalDto.importance ?? 1,
       startAt: createGoalDto.startAt,
       endAt: createGoalDto.endAt,
-    } as Partial<Goal>);
+    });
 
     const saved = await this.repo.save(entity);
     return GoalMapper.entityToDto(saved);
@@ -160,13 +160,10 @@ export class GoalRepository {
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    let entity = await this.repo.findOne({ where: { id } });
+    const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 
-    entity = {
-      ...entity,
-      ...updateGoalDto,
-    };
+    updateGoalDto.applyToUpdateEntity(entity);
 
     const saved = await this.repo.save(entity);
     return GoalMapper.entityToDto(saved);

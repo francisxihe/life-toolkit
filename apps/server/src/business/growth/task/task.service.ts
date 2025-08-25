@@ -7,10 +7,10 @@ import { TaskTreeRepository } from "./task-tree.repository";
 @Injectable()
 export class TaskService extends TaskServiceBase {
   constructor(
-    readonly taskRepository: TaskRepository,
-    readonly taskTreeRepository: TaskTreeRepository,
-    readonly todoService: TodoService
+    taskRepository: TaskRepository,
+    taskTreeRepository: TaskTreeRepository,
+    todoService: TodoService
   ) {
-    super(taskRepository as unknown as any, taskTreeRepository as unknown as any, todoService as unknown as any);
+    super(taskRepository, taskTreeRepository, todoService);
   }
 }

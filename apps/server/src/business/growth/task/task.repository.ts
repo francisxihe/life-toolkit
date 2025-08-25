@@ -71,14 +71,14 @@ export class TaskRepository {
   ): Promise<TaskDto[]> {
     const where: FindOptionsWhere<Task> = this.buildWhere(filter as any);
     if (filter.excludeIds && filter.excludeIds.length) {
-      (where as any).id = Not(In(filter.excludeIds));
+      where.id = Not(In(filter.excludeIds));
     }
     const entities = await this.taskRepository.find({
       where,
       relations: ["children", "goal"],
     });
     return entities
-      .filter((t) => !(t as any).parent)
+      .filter((t) => !t.parent)
       .map((t) => TaskMapper.entityToDto(t));
   }
 
@@ -129,7 +129,7 @@ export class TaskRepository {
     await this.taskRepository.update(id, {
       status,
       [dateField]: new Date(),
-    } as any);
+    });
     return true;
   }
 
@@ -174,15 +174,33 @@ export class TaskRepository {
       );
     }
 
-    if (filter.startAt) where.startAt = MoreThan(new Date(filter.startAt));
-    if (filter.endAt) where.endAt = LessThan(new Date(filter.endAt));
-    if ((filter as any).keyword)
-      where.name = Like(`%${(filter as any).keyword}%`);
+    if (filter.startDateStart && filter.startDateEnd) {
+      where.startAt = Between(
+        new Date(filter.startDateStart),
+        new Date(filter.startDateEnd)
+      );
+    } else if (filter.startDateStart) {
+      where.startAt = MoreThan(new Date(filter.startDateStart));
+    } else if (filter.startDateEnd) {
+      where.startAt = LessThan(new Date(filter.startDateEnd));
+    }
+
+    if (filter.endDateStart && filter.endDateEnd) {
+      where.endAt = Between(
+        new Date(filter.endDateStart),
+        new Date(filter.endDateEnd)
+      );
+    } else if (filter.endDateStart) {
+      where.endAt = MoreThan(new Date(filter.endDateStart));
+    } else if (filter.endDateEnd) {
+      where.endAt = LessThan(new Date(filter.endDateEnd));
+    }
+
+    if (filter.keyword) where.name = Like(`%${filter.keyword}%`);
     if (filter.status) where.status = filter.status;
     if (filter.importance) where.importance = filter.importance;
     if (filter.urgency) where.urgency = filter.urgency;
-    if ((filter as any).goalIds)
-      (where as any).goalId = In((filter as any).goalIds);
+    if (filter.goalIds) where.goalId = In(filter.goalIds);
 
     return where;
   }

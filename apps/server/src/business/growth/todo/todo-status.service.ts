@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
-import { TodoStatus, Todo } from "./entities";
+import { Todo } from "@life-toolkit/business-server";
+import { TodoStatus } from "@life-toolkit/enum";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,
@@ -28,7 +29,7 @@ export class TodoStatusService {
       // 如果是重复待办，需要在事务中处理
       if (todo.repeatId) {
         const repeatId = todo.repeatId;
-        
+
         // 先将当前待办转为普通待办，清除重复配置关联
         await manager.update(Todo, id, {
           status,
@@ -36,7 +37,7 @@ export class TodoStatusService {
           originalRepeatId: repeatId, // 保存原始重复配置ID
           repeatId: undefined, // 移除重复配置关联
         });
-        
+
         // 然后创建下一个重复待办
         await this.todoRepeatService.createNextTodo(todo);
       } else {

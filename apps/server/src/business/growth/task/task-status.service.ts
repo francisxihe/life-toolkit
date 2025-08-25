@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { TaskStatus, Task } from "./entities";
+import { Task } from "@life-toolkit/business-server";
+import { TaskStatus } from "@life-toolkit/enum";
 import {
   OperationByIdListDto,
   OperationByIdListResultDto,

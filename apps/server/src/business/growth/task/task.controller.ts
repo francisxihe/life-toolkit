@@ -100,15 +100,7 @@ export class TaskController {
   @Response()
   async list(@Query() filter: TaskListFiltersVo) {
     const taskListFilterDto = new TaskListFiltersDto();
-    taskListFilterDto.withoutSelf = filter.withoutSelf;
-    taskListFilterDto.id = filter.id;
-    taskListFilterDto.importance = filter.importance;
-    taskListFilterDto.urgency = filter.urgency;
-    taskListFilterDto.status = filter.status;
-    taskListFilterDto.startAt = filter.startAt
-      ? new Date(filter.startAt)
-      : undefined;
-    taskListFilterDto.endAt = filter.endAt ? new Date(filter.endAt) : undefined;
+    taskListFilterDto.importListVo(filter);
     const taskList = await this.taskService.findAll(taskListFilterDto);
     return TaskMapper.dtoToListVo(taskList);
   }

@@ -128,6 +128,28 @@ export class TodoRepository {
     return this.findById(id);
   }
 
+  async batchUpdate(
+    idList: string[],
+    updateTodoDto: UpdateTodoDto
+  ): Promise<TodoDto[]> {
+    if (!idList || idList.length === 0) return [];
+
+    await this.todoRepository.update(
+      { id: In(idList) },
+      {
+        ...updateTodoDto,
+        planDate: updateTodoDto.planDate
+          ? dayjs(updateTodoDto.planDate).toDate()
+          : undefined,
+      }
+    );
+
+    const updated = await this.todoRepository.find({
+      where: { id: In(idList) },
+    });
+    return (updated as unknown as TodoDto[]) || [];
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.todoRepository.softDelete(id);
     return (result.affected ?? 0) > 0;
@@ -154,7 +176,7 @@ export class TodoRepository {
           relations: ["repeat"],
         });
         if (todoWithRepeat?.repeat) {
-          (todo as any).repeat = todoWithRepeat.repeat;
+          todo.repeat = todoWithRepeat.repeat;
         }
       }
 
@@ -174,7 +196,9 @@ export class TodoRepository {
     await this.todoRepository.softDelete({ taskId: In(taskIds) });
   }
 
-  private buildWhere(filter: TodoPageFiltersDto): FindOptionsWhere<Todo> {
+  private buildWhere(
+    filter: TodoPageFiltersDto | TodoListFilterDto
+  ): FindOptionsWhere<Todo> {
     const where: FindOptionsWhere<Todo> = {};
     if (filter.planDateStart && filter.planDateEnd) {
       where.planDate = Between(
@@ -212,23 +236,23 @@ export class TodoRepository {
         new Date(filter.abandonedDateEnd + "T23:59:59")
       );
     }
-    if ((filter as any).keyword) {
-      where.name = Like(`%${(filter as any).keyword}%`);
+    if (filter.keyword) {
+      where.name = Like(`%${filter.keyword}%`);
     }
     if (filter.status) {
       where.status = filter.status;
     }
-    if ((filter as any).importance) {
-      where.importance = (filter as any).importance;
+    if (filter.importance) {
+      where.importance = filter.importance;
     }
-    if ((filter as any).urgency) {
-      where.urgency = (filter as any).urgency;
+    if (filter.urgency) {
+      where.urgency = filter.urgency;
     }
-    if ((filter as any).taskId) {
-      where.taskId = (filter as any).taskId;
+    if (filter.taskId) {
+      where.taskId = filter.taskId;
     }
-    if ((filter as any).taskIds) {
-      where.taskId = In((filter as any).taskIds);
+    if (filter.taskIds) {
+      where.taskId = In(filter.taskIds);
     }
 
     return where;

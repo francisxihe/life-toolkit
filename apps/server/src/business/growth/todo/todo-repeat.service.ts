@@ -79,7 +79,7 @@ export class TodoRepeatService extends RepeatService {
     }
 
     // 创建下一个待办
-    const createTodoDto: CreateTodoDto = {
+    const createTodoDto: CreateTodoDto = Object.assign(new CreateTodoDto(), {
       name: todoWithRepeat.name,
       description: todoWithRepeat.description,
       tags: todoWithRepeat.tags,
@@ -90,7 +90,7 @@ export class TodoRepeatService extends RepeatService {
       planEndAt: todoWithRepeat.planEndAt,
       status: TodoStatus.TODO,
       taskId: todoWithRepeat.taskId,
-    };
+    });
 
     // 通过仓储创建并设置 repeatId、source
     const savedTodo = await this.todoRepo.createWithExtras(createTodoDto, {

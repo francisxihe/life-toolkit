@@ -100,17 +100,26 @@ export class HabitService {
   }
 
   async pauseHabit(id: string): Promise<void> {
-    await this.update(id, { status: HabitStatus.PAUSED });
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.PAUSED })
+    );
   }
 
   async resumeHabit(id: string): Promise<void> {
-    await this.update(id, { status: HabitStatus.ACTIVE });
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
+    );
   }
 
   async completeHabit(id: string): Promise<void> {
-    await this.update(id, {
-      status: HabitStatus.COMPLETED,
-      targetDate: new Date(),
-    });
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), {
+        status: HabitStatus.COMPLETED,
+        targetDate: new Date(),
+      })
+    );
   }
 }

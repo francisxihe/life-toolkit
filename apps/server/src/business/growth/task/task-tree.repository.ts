@@ -1,8 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { In, Repository, TreeRepository, FindOptionsWhere } from "typeorm";
-import { Task } from "./task.entity";
-import { CreateTaskDto, UpdateTaskDto, TaskDto, TaskMapper } from "@life-toolkit/business-server";
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+  TaskDto,
+  TaskMapper,
+  Task,
+} from "@life-toolkit/business-server";
 
 @Injectable()
 export class TaskTreeRepository {
@@ -36,7 +41,10 @@ export class TaskTreeRepository {
     treeRepo?: TreeRepository<Task>
   ) {
     const repo = treeRepo ?? this.getTreeRepository();
-    const parentTask = await repo.findOne({ where: { id: parentId }, relations: ["children"] });
+    const parentTask = await repo.findOne({
+      where: { id: parentId },
+      relations: ["children"],
+    });
     if (!parentTask) throw new NotFoundException("Parent task not found");
     parentTask.children.push(task);
     await repo.save(parentTask);
@@ -79,36 +87,45 @@ export class TaskTreeRepository {
   }
 
   async createWithParent(dto: CreateTaskDto): Promise<TaskDto> {
-    return await this.getTreeRepository().manager.transaction(async (manager) => {
-      const treeRepo = manager.getTreeRepository(Task);
-      const entity = treeRepo.create({ ...(dto as any) }) as unknown as Task;
-      if (dto.parentId) {
-        const parent = await treeRepo.findOne({ where: { id: dto.parentId } });
-        if (!parent) throw new NotFoundException("Parent task not found");
-        parent.children = parent.children || [];
-        parent.children.push(entity as any);
-        await treeRepo.save(parent);
+    return await this.getTreeRepository().manager.transaction(
+      async (manager) => {
+        const treeRepo = manager.getTreeRepository(Task);
+        const entity = treeRepo.create({ ...dto }) as unknown as Task;
+        if (dto.parentId) {
+          const parent = await treeRepo.findOne({
+            where: { id: dto.parentId },
+          });
+          if (!parent) throw new NotFoundException("Parent task not found");
+          parent.children = parent.children || [];
+          parent.children.push(entity);
+          await treeRepo.save(parent);
+        }
+        const saved = (await treeRepo.save(entity)) as unknown as Task;
+        return TaskMapper.entityToDto(saved);
       }
-      const saved = (await treeRepo.save(entity)) as unknown as Task;
-      return TaskMapper.entityToDto(saved);
-    });
+    );
   }
 
   async updateWithParent(id: string, dto: UpdateTaskDto): Promise<TaskDto> {
-    return await this.getTreeRepository().manager.transaction(async (manager) => {
-      const treeRepo = manager.getTreeRepository(Task);
-      const entity = await treeRepo.findOne({ where: { id } });
-      if (!entity) throw new NotFoundException("Task not found");
-      Object.assign(entity, dto);
-      if (dto.parentId) {
-        await this.updateParent({ task: entity, parentId: dto.parentId }, treeRepo);
-      } else if (dto.parentId === null) {
-        (entity as any).parent = undefined;
-        await treeRepo.save(entity);
+    return await this.getTreeRepository().manager.transaction(
+      async (manager) => {
+        const treeRepo = manager.getTreeRepository(Task);
+        const entity = await treeRepo.findOne({ where: { id } });
+        if (!entity) throw new NotFoundException("Task not found");
+        Object.assign(entity, dto);
+        if (dto.parentId) {
+          await this.updateParent(
+            { task: entity, parentId: dto.parentId },
+            treeRepo
+          );
+        } else if (dto.parentId === null) {
+          entity.parent = undefined;
+          await treeRepo.save(entity);
+        }
+        const saved = (await treeRepo.save(entity)) as unknown as Task;
+        return TaskMapper.entityToDto(saved);
       }
-      const saved = (await treeRepo.save(entity)) as unknown as Task;
-      return TaskMapper.entityToDto(saved);
-    });
+    );
   }
 
   async deleteWithTree(id: string): Promise<void> {

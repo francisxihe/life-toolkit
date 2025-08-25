@@ -17,8 +17,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { TaskStatus } from "@life-toolkit/enum";
-import { Goal } from "../goal/goal.entity";
-import { Todo } from "../todo/todo.entity";
+import { Goal, Todo } from "@life-toolkit/business-server";
 
 @Entity("task")
 @Tree("closure-table")

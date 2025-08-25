@@ -97,8 +97,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       tags: createTaskDto.tags,
       goalId: createTaskDto.goalId,
       endAt: createTaskDto.endAt,
-      // status 走默认值
-    } as DeepPartial<Task>);
+    });
     const saved = await this.repo.save(entity);
     return saved;
   }
@@ -106,15 +105,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    if (updateTaskDto.name !== undefined) entity.name = updateTaskDto.name;
-    if (updateTaskDto.description !== undefined)
-      entity.description = updateTaskDto.description;
-    if (updateTaskDto.tags !== undefined) entity.tags = updateTaskDto.tags;
-    const endAt = (updateTaskDto as unknown as { endAt?: Date }).endAt;
-    if (endAt !== undefined) entity.endAt = endAt;
-    if (updateTaskDto.goalId !== undefined)
-      entity.goalId = updateTaskDto.goalId;
-    // 其它字段（importance/urgency/estimateTime/startAt/abandonedAt/doneAt）desktop 不存储，忽略
+    updateTaskDto.applyToUpdateEntity(entity);
     await this.repo.save(entity);
   }
 

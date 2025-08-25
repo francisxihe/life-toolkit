@@ -32,22 +32,20 @@ export class GoalService {
 
   async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
     const treeFilters = await this.goalTreeRepository.processTreeFilter({
-      withoutSelf: (filter as any).withoutSelf,
-      id: (filter as any).id,
+      withoutSelf: filter.withoutSelf,
+      id: filter.id,
       parentId: filter.parentId,
     });
 
     const processedFilter = {
       ...filter,
       ...treeFilters,
-    } as any;
+    };
 
-    return await this.goalRepository.findAll(processedFilter);
+    return await this.goalRepository.findAll(processedFilter as any);
   }
 
-  async list(
-    filter: GoalListFilterDto
-  ): Promise<ListResponseDto<GoalDto>> {
+  async list(filter: GoalListFilterDto): Promise<ListResponseDto<GoalDto>> {
     const list = await this.findAll(filter);
     return new ListResponseDto({ list, total: list.length });
   }
@@ -73,20 +71,18 @@ export class GoalService {
     // 交由仓储层处理树形构建与过滤
     return await this.goalTreeRepository.getFilteredTree({
       status: filter.status,
-      keyword: (filter as any).keyword,
+      keyword: filter.keyword,
       importance: filter.importance,
     });
   }
 
-  async page(
-    filter: GoalPageFilterDto
-  ): Promise<PageResponseDto<GoalDto>> {
+  async page(filter: GoalPageFilterDto): Promise<PageResponseDto<GoalDto>> {
     const { list, total } = await this.goalRepository.page(filter);
     return new PageResponseDto({
       list,
       total,
-      pageNum: (filter as any).pageNum,
-      pageSize: (filter as any).pageSize,
+      pageNum: filter.pageNum,
+      pageSize: filter.pageSize,
     });
   }
 
@@ -100,10 +96,13 @@ export class GoalService {
     if (!this.canMarkAsDone(entity)) {
       throw new Error("当前状态不允许标记为完成");
     }
-    await this.goalRepository.update(id, {
-      status: GoalStatus.DONE,
-      doneAt: new Date(),
-    });
+    await this.goalRepository.update(
+      id,
+      Object.assign(new UpdateGoalDto(), {
+        status: GoalStatus.DONE,
+        doneAt: new Date(),
+      })
+    );
     return true;
   }
 
@@ -112,10 +111,13 @@ export class GoalService {
     if (!this.canAbandon(entity)) {
       throw new Error("当前状态不允许放弃");
     }
-    await this.goalRepository.update(id, {
-      status: GoalStatus.ABANDONED,
-      abandonedAt: new Date(),
-    });
+    await this.goalRepository.update(
+      id,
+      Object.assign(new UpdateGoalDto(), {
+        status: GoalStatus.ABANDONED,
+        abandonedAt: new Date(),
+      })
+    );
     return true;
   }
 
@@ -124,9 +126,12 @@ export class GoalService {
     if (!this.canRestore(entity)) {
       throw new Error("当前状态不允许恢复");
     }
-    await this.goalRepository.update(id, {
-      status: GoalStatus.TODO,
-    });
+    await this.goalRepository.update(
+      id,
+      Object.assign(new UpdateGoalDto(), {
+        status: GoalStatus.TODO,
+      })
+    );
     return true;
   }
 
