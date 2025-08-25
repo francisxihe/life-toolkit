@@ -1,19 +1,19 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
-import { Habit } from "./entities";
+import { Habit } from "./habit.entity";
 import {
   CreateHabitDto,
   UpdateHabitDto,
   HabitFilterDto,
-  HabitPageFilterDto,
+  HabitPageFiltersDto,
   HabitDto,
 } from "@life-toolkit/business-server";
 import { Goal } from "../goal/goal.entity";
-import { Todo, TodoStatus } from "../todo/entities";
+import { Todo } from "../todo/todo.entity";
 import { HabitMapper } from "@life-toolkit/business-server";
 import { HabitRepository as BusinessHabitRepository } from "@life-toolkit/business-server";
-import { HabitStatus } from "@life-toolkit/enum";
+import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class HabitRepository implements BusinessHabitRepository {
@@ -68,7 +68,7 @@ export class HabitRepository implements BusinessHabitRepository {
   }
 
   async page(
-    filter: HabitPageFilterDto
+    filter: HabitPageFiltersDto
   ): Promise<{ list: HabitDto[]; total: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;

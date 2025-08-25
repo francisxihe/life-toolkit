@@ -35,7 +35,7 @@ export default class HabitController {
     return request({ method: "remove" })(`/habit/delete/${id}`);
   }
 
-  static async batchCompleteHabit(params: OperationByIdListVo) {
+  static async batchDoneHabit(params: OperationByIdListVo) {
     return request({ method: "put" })("/habit/batchDone", params);
   }
 

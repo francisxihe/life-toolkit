@@ -3,7 +3,7 @@ import { HabitController } from "../../../../../src/business/growth/habit/habit.
 import { HabitService } from "../../../../../src/business/growth/habit/habit.service";
 import {
   HabitMapper,
-  HabitPageFilterDto,
+  HabitPageFiltersDto,
   HabitFilterDto,
 } from "@life-toolkit/business-server";
 import { HabitStatus, Difficulty } from "@life-toolkit/enum";
@@ -203,49 +203,6 @@ describe("HabitController", () => {
       const result = await controller.findById(habitId);
 
       expect(mockHabitService.findOne).toHaveBeenCalledWith(habitId);
-      expect(mockHabitMapper.toVo).toHaveBeenCalledWith(mockEntity);
-      expect(result).toEqual({
-        code: 200,
-        data: mockVo,
-        message: "SUCCESS",
-      });
-    });
-  });
-
-  describe("findByIdWithRelations", () => {
-    it("should return a habit with relations by id", async () => {
-      const habitId = "habit-1";
-      const mockEntity = {
-        id: habitId,
-        name: "每天阅读30分钟",
-        status: HabitStatus.ACTIVE,
-        goals: [{ id: "goal-1", title: "学习目标" }],
-        todoRepeats: [{ id: "repeat-1", repeatMode: "daily" }],
-      };
-
-      const mockVo: Habit.HabitVo = {
-        id: habitId,
-        name: "每天阅读30分钟",
-        status: HabitStatus.ACTIVE,
-        importance: 4,
-        tags: [],
-        difficulty: Difficulty.Skilled,
-        startAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        currentStreak: 0,
-        longestStreak: 0,
-        completedCount: 0,
-        createdAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-        updatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-      };
-
-      mockHabitService.findOneWithRelations.mockResolvedValue(mockEntity);
-      mockHabitMapper.toVo.mockReturnValue(mockVo);
-
-      const result = await controller.findByIdWithRelations(habitId);
-
-      expect(mockHabitService.findOneWithRelations).toHaveBeenCalledWith(
-        habitId
-      );
       expect(mockHabitMapper.toVo).toHaveBeenCalledWith(mockEntity);
       expect(result).toEqual({
         code: 200,

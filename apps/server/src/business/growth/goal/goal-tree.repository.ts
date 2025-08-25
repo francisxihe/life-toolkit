@@ -12,9 +12,9 @@ import {
   CreateGoalDto,
   UpdateGoalDto,
   GoalDto,
+  Goal,
 } from "@life-toolkit/business-server";
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
-import { Goal } from "./goal.entity";
+import { GoalStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class GoalTreeRepository {

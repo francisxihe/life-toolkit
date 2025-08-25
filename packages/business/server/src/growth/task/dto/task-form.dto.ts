@@ -21,5 +21,4 @@ export class CreateTaskDto extends PickType(TaskDto, [
 
 export class UpdateTaskDto extends IntersectionType(
   PartialType(CreateTaskDto),
-  PickType(Task, ["id"] as const)
 ) {}

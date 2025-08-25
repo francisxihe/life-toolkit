@@ -4,11 +4,11 @@ export class OperationByIdListDto {
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
-  idList: string[];
+  idList!: string[];
 }
 
 export class OperationByIdListResultDto {
   @IsNotEmpty()
   @IsBoolean()
-  result: boolean;
+  result!: boolean;
 }

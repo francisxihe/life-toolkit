@@ -412,7 +412,7 @@ import { HabitStatus } from "../entities";
 import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 // 列表过滤DTO
-export class HabitListFilterDto extends PartialType(
+export class HabitListFiltersDto extends PartialType(
   PickType(HabitDto, ["status", "importance", "userId"] as const)
 ) {
   /** 搜索关键词 */
@@ -463,9 +463,9 @@ export class HabitListFilterDto extends PartialType(
 }
 
 // 分页过滤DTO
-export class HabitPageFilterDto extends IntersectionType(
+export class HabitPageFiltersDto extends IntersectionType(
   PageDto,
-  HabitListFilterDto
+  HabitListFiltersDto
 ) {}
 
 // 标记完成DTO
@@ -859,7 +859,7 @@ interface HabitApiDesign {
       method: "GET";
       summary: "查询习惯列表";
       description: "分页查询用户的习惯列表";
-      parameters: HabitPageFilterDto;
+      parameters: HabitPageFiltersDto;
       responses: [
         { status_code: 200; schema: "HabitPageVo"; description: "查询成功" },
       ];

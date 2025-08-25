@@ -10,8 +10,8 @@ export type HabitListFiltersVo = Partial<
     difficultyList?: Difficulty[];
     importanceMin?: number;
     importanceMax?: number;
-    startAtFrom?: string;
-    startAtTo?: string;
+    startDateStart?: string;
+    startDateEnd?: string;
     goalIds?: string[];
   } & self
 >;

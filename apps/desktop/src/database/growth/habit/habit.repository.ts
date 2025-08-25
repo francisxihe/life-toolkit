@@ -4,8 +4,8 @@ import {
   HabitRepository as BusinessHabitRepository,
   CreateHabitDto,
   UpdateHabitDto,
-  HabitListFilterDto,
-  HabitPageFilterDto,
+  HabitListFiltersDto,
+  HabitPageFiltersDto,
   HabitDto,
   Goal,
   Todo,
@@ -25,7 +25,7 @@ export class HabitRepository implements BusinessHabitRepository {
     this.todoRepo = AppDataSource.getRepository(Todo);
   }
 
-  private buildQuery(filter: HabitListFilterDto) {
+  private buildQuery(filter: HabitListFiltersDto) {
     let qb = this.repo
       .createQueryBuilder("habit")
       .leftJoinAndSelect("habit.goals", "goal")
@@ -127,14 +127,14 @@ export class HabitRepository implements BusinessHabitRepository {
     return HabitMapper.entityToDto(entity);
   }
 
-  async findAll(filter: HabitListFilterDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
     return list.map((e) => HabitMapper.entityToDto(e));
   }
 
   async page(
-    filter: HabitPageFilterDto
+    filter: HabitPageFiltersDto
   ): Promise<{ list: HabitDto[]; total: number }> {
     const { pageNum = 1, pageSize = 10 } = filter as any;
     const qb = this.buildQuery(filter);

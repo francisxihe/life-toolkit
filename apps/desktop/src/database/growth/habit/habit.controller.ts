@@ -10,8 +10,16 @@ import {
 } from "@life-toolkit/electron-ipc-router";
 import { habitService } from "./habit.service";
 import { HabitStatus } from "@life-toolkit/enum";
-import type { Habit as HabitVO } from "@life-toolkit/vo";
+import type {
+  Habit as HabitVO,
+  HabitListFiltersVo,
+  HabitPageFiltersVo,
+} from "@life-toolkit/vo";
 import { HabitMapper } from "@life-toolkit/business-server";
+import {
+  HabitListFiltersDto,
+  HabitPageFiltersDto,
+} from "@life-toolkit/business-server";
 
 @Controller("/habit")
 export class HabitController {
@@ -22,23 +30,9 @@ export class HabitController {
     );
   }
 
-  @Get("/findAll")
-  async findAll() {
-    return (await habitService.findAll()).map((dto) =>
-      HabitMapper.dtoToItemVo(dto)
-    );
-  }
-
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
     return HabitMapper.dtoToVo(await habitService.findById(id));
-  }
-
-  @Get("/findActiveHabits")
-  async findActiveHabits() {
-    return (await habitService.findActiveHabits()).map((dto) =>
-      HabitMapper.dtoToItemVo(dto)
-    );
   }
 
   @Post("/updateStreak/:id")
@@ -83,23 +77,24 @@ export class HabitController {
   }
 
   @Get("/page")
-  async page(
-    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
-  ) {
-    const pageNum = Number(q?.pageNum) || 1;
-    const pageSize = Number(q?.pageSize) || 10;
-    const res = await habitService.page(pageNum, pageSize);
-    return HabitMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
+  async page(@Query() q?: HabitPageFiltersVo) {
+    const habitPageFilter = new HabitPageFiltersDto();
+    habitPageFilter.importVo(q);
+    const res = await habitService.page(habitPageFilter);
+    return HabitMapper.dtoToPageVo(
+      res.data,
+      res.total,
+      habitPageFilter.pageNum,
+      habitPageFilter.pageSize
+    );
   }
 
   @Get("/list")
-  async list() {
-    return HabitMapper.dtoToListVo(await habitService.list());
-  }
-
-  @Get("/findByIdWithRelations/:id")
-  async findByIdWithRelations(@Param("id") id: string) {
-    return HabitMapper.dtoToVo(await habitService.findByIdWithRelations(id));
+  async list(@Query() query?: HabitListFiltersVo) {
+    const habitListFilter = new HabitListFiltersDto();
+    habitListFilter.importVo(query);
+    const list = await habitService.list(habitListFilter);
+    return HabitMapper.dtoToListVo(list);
   }
 
   @Get("/findByGoalId/:goalId")

@@ -9,7 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { HabitService } from "./habit.service";
-import { HabitPageFilterDto, HabitFilterDto } from "@life-toolkit/business-server";
+import { HabitPageFiltersDto, HabitFilterDto } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 import { HabitMapper } from "@life-toolkit/business-server";
 import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
@@ -87,7 +87,7 @@ export class HabitController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: HabitPageFilterDto) {
+  async page(@Query() filter: HabitPageFiltersDto) {
     const { list, total } = await this.habitService.page(filter);
     return HabitMapper.dtoToPageVo(
       list,
@@ -108,13 +108,6 @@ export class HabitController {
   @Response()
   async findById(@Param("id") id: string) {
     const habit = await this.habitService.findById(id);
-    return HabitMapper.dtoToVo(habit);
-  }
-
-  @Get("detail-with-relations/:id")
-  @Response()
-  async findByIdWithRelations(@Param("id") id: string) {
-    const habit = await this.habitService.findByIdWithRelations(id);
     return HabitMapper.dtoToVo(habit);
   }
 

@@ -1,9 +1,9 @@
-import { HabitStatus } from "./habit.enum";
+import { HabitStatus } from "@life-toolkit/enum";
 import {
   CreateHabitDto,
   UpdateHabitDto,
   HabitFilterDto,
-  HabitPageFilterDto,
+  HabitPageFiltersDto,
   HabitDto,
 } from "./dto";
 
@@ -12,7 +12,7 @@ export interface HabitRepository {
   create(createHabitDto: CreateHabitDto): Promise<HabitDto>;
   findById(id: string, relations?: string[]): Promise<HabitDto>;
   findAll(filter: HabitFilterDto): Promise<HabitDto[]>;
-  page(filter: HabitPageFilterDto): Promise<{ list: HabitDto[]; total: number }>;
+  page(filter: HabitPageFiltersDto): Promise<{ list: HabitDto[]; total: number }>;
   update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto>;
   delete(id: string): Promise<void>;
   softDelete(id: string): Promise<void>;
