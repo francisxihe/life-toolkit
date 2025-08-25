@@ -288,8 +288,8 @@ export const HabitDetailPage: React.FC = () => {
                     },
                     {
                       label: '目标时间',
-                      value: habit.targetAt
-                        ? new Date(habit.targetAt).toLocaleDateString()
+                      value: habit.endAt
+                        ? new Date(habit.endAt).toLocaleDateString()
                         : '长期习惯',
                     },
                     {
@@ -412,10 +412,10 @@ export const HabitDetailPage: React.FC = () => {
                   <Text>{new Date(habit.startAt).toLocaleDateString()}</Text>
                 </div>
               )}
-              {habit.targetAt && (
+              {habit.endAt && (
                 <div className="flex justify-between">
                   <Text type="secondary">目标时间:</Text>
-                  <Text>{new Date(habit.targetAt).toLocaleDateString()}</Text>
+                  <Text>{new Date(habit.endAt).toLocaleDateString()}</Text>
                 </div>
               )}
               {habit.doneAt && (

@@ -1,4 +1,4 @@
-import { Repository, In, Like, DeepPartial } from "typeorm";
+import { Repository, In } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import {
   CreateTodoDto,
@@ -11,50 +11,10 @@ import {
 } from "@life-toolkit/business-server";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
-export class TodoRepository /* implements import("@life-toolkit/business-server").TodoRepository */ {
+export class TodoRepository {
   private repo: Repository<Todo> = AppDataSource.getRepository(Todo);
 
-  async create(createDto: CreateTodoDto): Promise<TodoDto> {
-    const entity = this.repo.create({
-      name: createDto.name,
-      description: (createDto as any).description,
-      status: ((createDto as any).status as TodoStatus) ?? TodoStatus.TODO,
-      importance: (createDto as any).importance,
-      urgency: (createDto as any).urgency,
-      tags: (createDto as any).tags,
-      planDate: (createDto as any).planDate as any,
-      planStartAt: (createDto as any).planStartAt,
-      planEndAt: (createDto as any).planEndAt,
-      taskId: (createDto as any).taskId,
-      source: ((createDto as any).source as TodoSource) ?? TodoSource.MANUAL,
-    } as DeepPartial<Todo>);
-    const saved = await this.repo.save(entity);
-    return TodoMapper.entityToDto(saved);
-  }
-
-  async createWithExtras(
-    createDto: CreateTodoDto,
-    extras: Partial<Todo>
-  ): Promise<TodoDto> {
-    const entity = this.repo.create({
-      name: createDto.name,
-      description: (createDto as any).description,
-      status: ((createDto as any).status as TodoStatus) ?? TodoStatus.TODO,
-      importance: (createDto as any).importance,
-      urgency: (createDto as any).urgency,
-      tags: (createDto as any).tags,
-      planDate: (createDto as any).planDate as any,
-      planStartAt: (createDto as any).planStartAt,
-      planEndAt: (createDto as any).planEndAt,
-      taskId: (createDto as any).taskId,
-      source: ((createDto as any).source as TodoSource) ?? TodoSource.MANUAL,
-      ...extras,
-    } as DeepPartial<Todo>);
-    const saved = await this.repo.save(entity);
-    return TodoMapper.entityToDto(saved);
-  }
-
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  private buildQuery(filter: TodoListFilterDto) {
     const qb = this.repo
       .createQueryBuilder("todo")
       .leftJoinAndSelect("todo.task", "task")
@@ -77,16 +37,62 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     if (filter.planDateEnd)
       qb.andWhere("todo.planDate <= :de", { de: filter.planDateEnd });
     if (filter.doneDateStart)
-      qb.andWhere("todo.doneAt >= :ds", { ds: filter.doneDateStart });
+      qb.andWhere("todo.doneAt >= :dds", { dds: filter.doneDateStart });
     if (filter.doneDateEnd)
-      qb.andWhere("todo.doneAt <= :de", { de: filter.doneDateEnd });
+      qb.andWhere("todo.doneAt <= :dde", { dde: filter.doneDateEnd });
     if (filter.abandonedDateStart)
-      qb.andWhere("todo.abandonedAt >= :ds", { ds: filter.abandonedDateStart });
+      qb.andWhere("todo.abandonedAt >= :ads", {
+        ads: filter.abandonedDateStart,
+      });
     if (filter.abandonedDateEnd)
-      qb.andWhere("todo.abandonedAt <= :de", { de: filter.abandonedDateEnd });
+      qb.andWhere("todo.abandonedAt <= :ade", { ade: filter.abandonedDateEnd });
 
+    return qb;
+  }
+
+  async create(createDto: CreateTodoDto): Promise<TodoDto> {
+    const entity = this.repo.create({
+      name: createDto.name,
+      description: createDto.description,
+      status: createDto.status ?? TodoStatus.TODO,
+      importance: createDto.importance,
+      urgency: createDto.urgency,
+      tags: createDto.tags,
+      planDate: createDto.planDate,
+      planStartAt: createDto.planStartAt,
+      planEndAt: createDto.planEndAt,
+      taskId: createDto.taskId,
+      source: TodoSource.MANUAL,
+    } as Partial<Todo>);
+    const saved = await this.repo.save(entity);
+    return TodoMapper.entityToDto(saved);
+  }
+
+  async createWithExtras(
+    createDto: CreateTodoDto,
+    extras: Partial<Todo>
+  ): Promise<TodoDto> {
+    const entity = this.repo.create({
+      name: createDto.name,
+      description: createDto.description,
+      status: createDto.status ?? TodoStatus.TODO,
+      importance: createDto.importance,
+      urgency: createDto.urgency,
+      tags: createDto.tags,
+      planDate: createDto.planDate,
+      planStartAt: createDto.planStartAt,
+      planEndAt: createDto.planEndAt,
+      taskId: createDto.taskId,
+      source: TodoSource.MANUAL,
+      ...extras,
+    } as Partial<Todo>);
+    const saved = await this.repo.save(entity);
+    return TodoMapper.entityToDto(saved);
+  }
+
+  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+    const qb = this.buildQuery(filter);
     const list = await qb.orderBy("todo.createdAt", "DESC").getMany();
-
     return list.map((it) => TodoMapper.entityToDto(it));
   }
 
@@ -96,33 +102,8 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     pageNum: number;
     pageSize: number;
   }> {
-    const pageNum = (filter as any).pageNum ?? 1;
-    const pageSize = (filter as any).pageSize ?? 10;
-    const qb = this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit");
-
-    if ((filter as any).status !== undefined)
-      qb.andWhere("todo.status = :status", { status: (filter as any).status });
-    if ((filter as any).importance !== undefined)
-      qb.andWhere("todo.importance = :importance", {
-        importance: (filter as any).importance,
-      });
-    if ((filter as any).urgency !== undefined)
-      qb.andWhere("todo.urgency = :urgency", {
-        urgency: (filter as any).urgency,
-      });
-    if ((filter as any).taskId)
-      qb.andWhere("todo.taskId = :taskId", { taskId: (filter as any).taskId });
-    if ((filter as any).keyword)
-      qb.andWhere("todo.name LIKE :kw", { kw: `%${(filter as any).keyword}%` });
-    if ((filter as any).planDateStart)
-      qb.andWhere("todo.planDate >= :ds", {
-        ds: (filter as any).planDateStart,
-      });
-    if ((filter as any).planDateEnd)
-      qb.andWhere("todo.planDate <= :de", { de: (filter as any).planDateEnd });
+    const { pageNum = 1, pageSize = 10 } = filter;
+    const qb = this.buildQuery(filter);
 
     const [list, total] = await qb
       .skip((pageNum - 1) * pageSize)
@@ -165,8 +146,8 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
 
   async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
     const qb = this.repo.createQueryBuilder("todo");
-    if ((filter as any).taskIds && (filter as any).taskIds.length > 0) {
-      qb.where("todo.taskId IN (:...ids)", { ids: (filter as any).taskIds });
+    if (filter.taskIds && filter.taskIds.length > 0) {
+      qb.where("todo.taskId IN (:...ids)", { ids: filter.taskIds });
     }
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));
@@ -177,7 +158,8 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
       where: { id },
       relations: relations ?? ["task", "habit"],
     });
-    return TodoMapper.entityToDto(todo as Todo);
+    if (!todo) throw new Error(`待办不存在，ID: ${id}`);
+    return TodoMapper.entityToDto(todo);
   }
 
   async updateRepeatId(id: string, repeatId: string): Promise<void> {
@@ -195,7 +177,7 @@ export class TodoRepository /* implements import("@life-toolkit/business-server"
     date: Date
   ): Promise<TodoDto | null> {
     const todo = await this.repo.findOne({
-      where: { repeatId, planDate: date as any },
+      where: { repeatId, planDate: date },
     });
     return todo ? TodoMapper.entityToDto(todo) : null;
   }

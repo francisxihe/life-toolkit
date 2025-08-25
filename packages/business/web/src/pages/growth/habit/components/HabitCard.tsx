@@ -194,8 +194,8 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           {habit.startAt && (
             <div>开始时间: {new Date(habit.startAt).toLocaleDateString()}</div>
           )}
-          {habit.targetAt && (
-            <div>目标时间: {new Date(habit.targetAt).toLocaleDateString()}</div>
+          {habit.endAt && (
+            <div>目标时间: {new Date(habit.endAt).toLocaleDateString()}</div>
           )}
         </div>
       </div>

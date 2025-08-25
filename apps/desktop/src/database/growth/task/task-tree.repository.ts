@@ -30,7 +30,7 @@ export class TaskTreeRepository {
         description: dto.description,
         tags: (dto as any).tags,
         goalId: (dto as any).goalId,
-        dueDate: (dto as any).endAt,
+        endAt: (dto as any).endAt,
         status: (dto as any).status,
       });
 
@@ -60,7 +60,7 @@ export class TaskTreeRepository {
       if ((dto as any).tags !== undefined)
         (current as any).tags = (dto as any).tags as any;
       if ((dto as any).endAt !== undefined)
-        (current as any).dueDate = (dto as any).endAt as any;
+        (current as any).endAt = (dto as any).endAt as any;
       if ((dto as any).goalId !== undefined)
         (current as any).goalId = (dto as any).goalId as any;
       if ((dto as any).status !== undefined)

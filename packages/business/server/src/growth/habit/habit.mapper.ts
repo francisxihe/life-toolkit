@@ -39,7 +39,7 @@ export class HabitMapper {
       startAt: dto.startDate
         ? dayjs(dto.startDate).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
-      targetAt: dto.targetDate
+      endAt: dto.targetDate
         ? dayjs(dto.targetDate).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
       currentStreak: dto.currentStreak,
@@ -72,8 +72,8 @@ export class HabitMapper {
     if (vo.startAt) {
       dto.startDate = dayjs(vo.startAt).toDate();
     }
-    if (vo.targetAt) {
-      dto.targetDate = dayjs(vo.targetAt).toDate();
+    if (vo.endAt) {
+      dto.targetDate = dayjs(vo.endAt).toDate();
     }
     dto.goalIds = vo.goalIds;
     return dto;
@@ -100,8 +100,8 @@ export class HabitMapper {
     if (vo.startAt !== undefined) {
       dto.startDate = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
     }
-    if (vo.targetAt !== undefined) {
-      dto.targetDate = vo.targetAt ? dayjs(vo.targetAt).toDate() : undefined;
+    if (vo.endAt !== undefined) {
+      dto.targetDate = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     }
     if (vo.status !== undefined) {
       dto.status = vo.status as any;
@@ -150,7 +150,7 @@ export class HabitMapper {
       startAt: dto.startDate
         ? dayjs(dto.startDate).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
-      targetAt: dto.targetDate
+      endAt: dto.targetDate
         ? dayjs(dto.targetDate).format("YYYY/MM/DD HH:mm:ss")
         : undefined,
       currentStreak: dto.currentStreak,

@@ -12,6 +12,8 @@ export type HabitListFiltersVo = Partial<
     importanceMax?: number;
     startDateStart?: string;
     startDateEnd?: string;
+    endDataStart?: string;
+    endDataEnd?: string;
     goalIds?: string[];
   } & self
 >;

@@ -63,7 +63,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         difficulty: values.difficulty || Difficulty.Challenger,
         tags: values.tags || [],
         startAt: dayjs(values.startAt).format('YYYY-MM-DD'),
-        targetAt: dayjs(values.targetAt).format('YYYY-MM-DD'),
+        endAt: dayjs(values.endAt).format('YYYY-MM-DD'),
         goalIds: selectedGoals,
       };
 
@@ -213,7 +213,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
             />
           </Form.Item>
 
-          <Form.Item label="目标日期" field="targetAt">
+          <Form.Item label="目标日期" field="endAt">
             <DatePicker
               style={{ width: '100%' }}
               disabledDate={(date) => {

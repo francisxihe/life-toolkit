@@ -27,15 +27,7 @@ export class TodoListFilterDto extends PartialType(
   taskIds?: string[];
 
   importListVo(filterVo: TodoListFiltersVo) {
-    this.importance = filterVo.importance;
-    this.urgency = filterVo.urgency;
-    this.status = filterVo.status;
-    this.planDateStart = filterVo.planDateStart;
-    this.planDateEnd = filterVo.planDateEnd;
-    this.doneDateStart = filterVo.doneDateStart;
-    this.doneDateEnd = filterVo.doneDateEnd;
-    this.abandonedDateStart = filterVo.abandonedDateStart;
-    this.abandonedDateEnd = filterVo.abandonedDateEnd;
+    importListVo(filterVo, this);
   }
 }
 
@@ -44,8 +36,23 @@ export class TodoPageFilterDto extends IntersectionType(
   TodoListFilterDto
 ) {
   importPageVo(filterVo: TodoPageFiltersVo) {
-    this.importListVo(filterVo);
+    importListVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
+}
+
+function importListVo(
+  filterVo: TodoListFiltersVo,
+  filterDto: TodoListFilterDto
+) {
+  filterDto.importance = filterVo.importance;
+  filterDto.urgency = filterVo.urgency;
+  filterDto.status = filterVo.status;
+  filterDto.planDateStart = filterVo.planDateStart;
+  filterDto.planDateEnd = filterVo.planDateEnd;
+  filterDto.doneDateStart = filterVo.doneDateStart;
+  filterDto.doneDateEnd = filterVo.doneDateEnd;
+  filterDto.abandonedDateStart = filterVo.abandonedDateStart;
+  filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
 }

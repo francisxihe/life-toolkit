@@ -17,16 +17,16 @@ export class HabitListFiltersDto extends PartialType(
   keyword?: string;
 
   /** 开始日期范围 - 开始 */
-  startDateStart?: string;
+  startDateStart?: Date;
 
   /** 开始日期范围 - 结束 */
-  startDateEnd?: string;
+  startDateEnd?: Date;
 
   /** 目标日期范围 - 开始 */
-  targetDateStart?: string;
+  endDataStart?: Date;
 
   /** 目标日期范围 - 结束 */
-  targetDateEnd?: string;
+  endDataEnd?: Date;
 
   /** 不包含自身 */
   withoutSelf?: boolean;
@@ -38,14 +38,7 @@ export class HabitListFiltersDto extends PartialType(
   goalId?: string;
 
   importListVo(filterVo: HabitListFiltersVo) {
-    if (filterVo.status !== undefined) this.status = filterVo.status;
-    if (filterVo.difficulty !== undefined)
-      this.difficulty = filterVo.difficulty;
-    if (filterVo.importance !== undefined)
-      this.importance = filterVo.importance;
-    if (filterVo.keyword) this.keyword = filterVo.keyword;
-    if (filterVo.startDateStart) this.startDateStart = filterVo.startDateStart;
-    if (filterVo.startDateEnd) this.startDateEnd = filterVo.startDateEnd;
+    importListVo(filterVo, this);
   }
 }
 
@@ -54,8 +47,28 @@ export class HabitPageFiltersDto extends IntersectionType(
   HabitListFiltersDto
 ) {
   importPageVo(filterVo: HabitPageFiltersVo) {
-    this.importListVo(filterVo);
+    importListVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
+}
+
+function importListVo(
+  filterVo: HabitListFiltersVo,
+  filterDto: HabitListFiltersDto
+) {
+  if (filterVo.status !== undefined) filterDto.status = filterVo.status;
+  if (filterVo.difficulty !== undefined)
+    filterDto.difficulty = filterVo.difficulty;
+  if (filterVo.importance !== undefined)
+    filterDto.importance = filterVo.importance;
+  if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
+  if (filterVo.startDateStart)
+    filterDto.startDateStart = new Date(filterVo.startDateStart);
+  if (filterVo.startDateEnd)
+    filterDto.startDateEnd = new Date(filterVo.startDateEnd);
+  if (filterVo.endDataStart)
+    filterDto.endDataStart = new Date(filterVo.endDataStart);
+  if (filterVo.endDataEnd)
+    filterDto.endDataEnd = new Date(filterVo.endDataEnd);
 }

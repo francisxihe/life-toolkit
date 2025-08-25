@@ -16,7 +16,7 @@ export type HabitModelVo = {
   tags?: string[];
   difficulty?: Difficulty;
   startAt?: string;
-  targetAt?: string;
+  endAt?: string;
   currentStreak?: number;
   longestStreak?: number;
   completedCount?: number;

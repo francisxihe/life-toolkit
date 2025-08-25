@@ -20,9 +20,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 
-@Entity("task")
-@Tree("closure-table")
-export class Task extends BaseEntity {
+export class TaskModel extends BaseEntity {
   /** 任务名称 */
   @Column("varchar")
   @IsString()
@@ -97,7 +95,11 @@ export class Task extends BaseEntity {
   /** 计划任务结束时间 */
   @Column("datetime", { nullable: true })
   endAt?: Date;
+}
 
+@Entity("task")
+@Tree("closure-table")
+export class Task extends TaskModel {
   /** 父任务 */
   @TreeParent({
     onDelete: "CASCADE",

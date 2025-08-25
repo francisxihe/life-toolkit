@@ -24,6 +24,10 @@ export type TaskListFiltersVo = Partial<
     doneDateEnd?: TaskVo["doneAt"];
     abandonedDateStart?: TaskVo["abandonedAt"];
     abandonedDateEnd?: TaskVo["abandonedAt"];
+    startDateStart?: TaskVo["startAt"];
+    startDateEnd?: TaskVo["startAt"];
+    endDateStart?: TaskVo["endAt"];
+    endDateEnd?: TaskVo["endAt"];
   } & self
 >;
 

@@ -333,14 +333,14 @@ export class HabitRepository implements BusinessHabitRepository {
         startDateEnd: filter.startDateEnd,
       });
     }
-    if (filter.targetDateStart) {
-      query = query.andWhere("habit.targetDate >= :targetDateStart", {
-        targetDateStart: filter.targetDateStart,
+    if (filter.endDataStart) {
+      query = query.andWhere("habit.targetDate >= :endDataStart", {
+        endDataStart: filter.endDataStart,
       });
     }
-    if (filter.targetDateEnd) {
-      query = query.andWhere("habit.targetDate <= :targetDateEnd", {
-        targetDateEnd: filter.targetDateEnd,
+    if (filter.endDataEnd) {
+      query = query.andWhere("habit.targetDate <= :endDataEnd", {
+        endDataEnd: filter.endDataEnd,
       });
     }
 

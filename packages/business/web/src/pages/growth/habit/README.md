@@ -87,7 +87,7 @@ interface HabitVo {
   difficulty?: Difficulty;
   tags?: string[];
   startAt?: string;
-  targetAt?: string;
+  endAt?: string;
   currentStreak?: number;
   longestStreak?: number;
   completedCount?: number;

@@ -1,4 +1,4 @@
-import { Repository, In, DeepPartial } from "typeorm";
+import { Repository, In } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import {
   CreateGoalDto,
@@ -11,6 +11,11 @@ import {
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
+type GoalListFilterExt = GoalListFilterDto & {
+  includeIds?: string[];
+  excludeIds?: string[];
+};
+
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
   private repo: Repository<Goal>;
@@ -19,15 +24,15 @@ export class GoalRepository {
     this.repo = AppDataSource.getRepository(Goal);
   }
 
-  private buildQuery(filter: GoalListFilterDto) {
+  private buildQuery(filter: GoalListFilterExt) {
     let qb = this.repo
       .createQueryBuilder("goal")
       .leftJoinAndSelect("goal.parent", "parent")
       .andWhere("goal.deletedAt IS NULL");
 
     // includeIds / excludeIds
-    const includeIds = (filter as any).includeIds as string[] | undefined;
-    const excludeIds = (filter as any).excludeIds as string[] | undefined;
+    const includeIds = filter.includeIds;
+    const excludeIds = filter.excludeIds;
     if (includeIds && includeIds.length > 0) {
       qb = qb.andWhere("goal.id IN (:...includeIds)", { includeIds });
     }
@@ -41,12 +46,12 @@ export class GoalRepository {
 
     if (filter.status) {
       qb = qb.andWhere("goal.status = :status", {
-        status: filter.status as any,
+        status: filter.status,
       });
     }
 
     if (filter.type) {
-      qb = qb.andWhere("goal.type = :type", { type: filter.type as any });
+      qb = qb.andWhere("goal.type = :type", { type: filter.type });
     }
 
     if (filter.importance) {
@@ -55,7 +60,7 @@ export class GoalRepository {
       });
     }
 
-    const keyword = (filter as any).keyword as string | undefined;
+    const keyword = filter.keyword as string | undefined;
     if (keyword) {
       qb = qb.andWhere("(goal.name LIKE :kw OR goal.description LIKE :kw)", {
         kw: `%${keyword}%`,
@@ -63,8 +68,8 @@ export class GoalRepository {
     }
 
     // 计划时间范围（desktop 字段：startDate/targetDate）
-    const planDateStart = (filter as any).planDateStart as string | undefined;
-    const planDateEnd = (filter as any).planDateEnd as string | undefined;
+    const planDateStart = filter.planDateStart as string | undefined;
+    const planDateEnd = filter.planDateEnd as string | undefined;
     if (planDateStart) {
       qb = qb.andWhere("goal.startAt >= :planDateStart", {
         planDateStart: new Date(`${planDateStart}T00:00:00`),
@@ -77,20 +82,38 @@ export class GoalRepository {
     }
 
     // 完成日期范围（desktop: completedAt）
-    const doneDateStart = (filter as any).doneDateStart as string | undefined;
-    const doneDateEnd = (filter as any).doneDateEnd as string | undefined;
+    const doneDateStart = filter.doneDateStart as string | undefined;
+    const doneDateEnd = filter.doneDateEnd as string | undefined;
     if (doneDateStart && doneDateEnd) {
-      qb = qb.andWhere("goal.completedAt BETWEEN :ds AND :de", {
+      qb = qb.andWhere("goal.doneAt BETWEEN :ds AND :de", {
         ds: new Date(`${doneDateStart}T00:00:00`),
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     } else if (doneDateStart) {
-      qb = qb.andWhere("goal.completedAt >= :ds", {
+      qb = qb.andWhere("goal.doneAt >= :ds", {
         ds: new Date(`${doneDateStart}T00:00:00`),
       });
     } else if (doneDateEnd) {
-      qb = qb.andWhere("goal.completedAt <= :de", {
+      qb = qb.andWhere("goal.doneAt <= :de", {
         de: new Date(`${doneDateEnd}T23:59:59`),
+      });
+    }
+
+    // 放弃日期范围
+    const abandonedDateStart = filter.abandonedDateStart as string | undefined;
+    const abandonedDateEnd = filter.abandonedDateEnd as string | undefined;
+    if (abandonedDateStart && abandonedDateEnd) {
+      qb = qb.andWhere("goal.abandonedAt BETWEEN :ads AND :ade", {
+        ads: new Date(`${abandonedDateStart}T00:00:00`),
+        ade: new Date(`${abandonedDateEnd}T23:59:59`),
+      });
+    } else if (abandonedDateStart) {
+      qb = qb.andWhere("goal.abandonedAt >= :ads", {
+        ads: new Date(`${abandonedDateStart}T00:00:00`),
+      });
+    } else if (abandonedDateEnd) {
+      qb = qb.andWhere("goal.abandonedAt <= :ade", {
+        ade: new Date(`${abandonedDateEnd}T23:59:59`),
       });
     }
 
@@ -101,13 +124,12 @@ export class GoalRepository {
     const entity = this.repo.create({
       name: createGoalDto.name,
       description: createGoalDto.description,
-      type: (createGoalDto.type as unknown as GoalType) ?? GoalType.OBJECTIVE,
-      status:
-        (createGoalDto.status as unknown as GoalStatus) ?? GoalStatus.TODO,
+      type: createGoalDto.type ?? GoalType.OBJECTIVE,
+      status: createGoalDto.status ?? GoalStatus.TODO,
       importance: createGoalDto.importance ?? 1,
       startAt: createGoalDto.startAt,
       endAt: createGoalDto.endAt,
-    } as DeepPartial<Goal>);
+    } as Partial<Goal>);
 
     const saved = await this.repo.save(entity);
     return GoalMapper.entityToDto(saved);
@@ -128,7 +150,7 @@ export class GoalRepository {
   async page(
     filter: GoalPageFilterDto
   ): Promise<{ list: GoalDto[]; total: number }> {
-    const { pageNum = 1, pageSize = 10 } = filter as any;
+    const { pageNum = 1, pageSize = 10 } = filter;
     const qb = this.buildQuery(filter);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
@@ -161,10 +183,7 @@ export class GoalRepository {
   }
 
   async batchUpdate(ids: string[], updateData: Partial<Goal>): Promise<void> {
-    await this.repo.update(
-      { id: In(ids) },
-      updateData as unknown as Partial<Goal>
-    );
+    await this.repo.update({ id: In(ids) }, updateData);
   }
 
   async findDetail(id: string): Promise<GoalDto> {
@@ -172,7 +191,6 @@ export class GoalRepository {
       where: { id },
       relations: ["parent", "children", "taskList"],
     });
-    console.log("=====================", entity);
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     return GoalMapper.entityToDto(entity);
   }
@@ -185,16 +203,19 @@ export class GoalRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     Object.assign(entity, {
-      status: status as any,
-      ...(extra as unknown as Partial<Goal>),
+      status: status,
+      ...extra,
     });
     await this.repo.save(entity);
   }
 
   async batchDone(ids: string[]): Promise<void> {
-    await this.repo.update({ id: In(ids) }, {
-      status: GoalStatus.DONE,
-      completedAt: new Date(),
-    } as any);
+    await this.repo.update(
+      { id: In(ids) },
+      {
+        status: GoalStatus.DONE,
+        doneAt: new Date(),
+      }
+    );
   }
 }

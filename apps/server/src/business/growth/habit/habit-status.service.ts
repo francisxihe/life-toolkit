@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from "@nestjs/common";
 import { HabitRepository } from "./habit.repository";
-import { HabitStatus } from "./entities";
+import { HabitStatus } from "@life-toolkit/enum";
 import { HabitDto } from "@life-toolkit/business-server";
 import { OperationByIdListDto } from "@/common/operation";
 

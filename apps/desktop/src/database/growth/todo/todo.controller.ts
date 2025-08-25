@@ -74,7 +74,7 @@ export class TodoController {
   @Get("/list")
   async list(@Query() query: TodoVO.TodoListFiltersVo) {
     const filter = new TodoListFilterDto();
-    filter.importVo(query);
+    filter.importListVo(query);
     return await todoService.list(filter);
   }
 

@@ -74,16 +74,16 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
-    const targetDateStart = filter.targetDateStart as string | undefined;
-    const targetDateEnd = filter.targetDateEnd as string | undefined;
-    if (targetDateStart) {
+    const endDataStart = filter.endDataStart as string | undefined;
+    const endDataEnd = filter.endDataEnd as string | undefined;
+    if (endDataStart) {
       qb = qb.andWhere("habit.targetDate >= :tds", {
-        tds: new Date(`${targetDateStart}T00:00:00`),
+        tds: new Date(`${endDataStart}T00:00:00`),
       });
     }
-    if (targetDateEnd) {
+    if (endDataEnd) {
       qb = qb.andWhere("habit.targetDate <= :tde", {
-        tde: new Date(`${targetDateEnd}T23:59:59`),
+        tde: new Date(`${endDataEnd}T23:59:59`),
       });
     }
 

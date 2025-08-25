@@ -18,45 +18,55 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     this.repo = AppDataSource.getRepository(Task);
   }
 
-  private buildQuery(filter: TaskListFilterDto & { excludeIds?: string[] }) {
+  private buildQuery(
+    filter: TaskListFilterDto & {
+      excludeIds?: string[];
+    }
+  ) {
     let qb = this.repo
       .createQueryBuilder("task")
       .leftJoinAndSelect("task.parent", "parent")
       .leftJoinAndSelect("task.children", "children")
       .andWhere("task.deletedAt IS NULL");
 
-    const excludeIds = (filter as any).excludeIds as string[] | undefined;
+    const { excludeIds } = filter;
     if (excludeIds && excludeIds.length)
       qb = qb.andWhere("task.id NOT IN (:...excludeIds)", { excludeIds });
 
-    const keyword = (filter as any).keyword as string | undefined;
+    const { keyword } = filter;
     if (keyword)
       qb = qb.andWhere("(task.name LIKE :kw OR task.description LIKE :kw)", {
         kw: `%${keyword}%`,
       });
 
-    if (filter.status)
+    const { status } = filter;
+    if (status)
       qb = qb.andWhere("task.status = :status", {
-        status: filter.status as any,
+        status,
       });
 
-    // importance/urgency desktop 不存在，忽略
-
-    // 时间范围映射：startAt/endAt -> dueDate（仅 endAt 有对应）
-    const startAt = (filter as any).startAt as string | undefined;
-    const endAt = (filter as any).endAt as string | undefined;
-    if (startAt)
-      qb = qb.andWhere("task.dueDate >= :startAt", {
-        startAt: new Date(`${startAt}T00:00:00`),
+    const { startDateStart, startDateEnd } = filter;
+    if (startDateStart)
+      qb = qb.andWhere("task.startAt >= :startDateStart", {
+        startDateStart: new Date(`${startDateStart}T00:00:00`),
       });
-    if (endAt)
-      qb = qb.andWhere("task.dueDate <= :endAt", {
-        endAt: new Date(`${endAt}T23:59:59`),
+    if (startDateEnd)
+      qb = qb.andWhere("task.startAt <= :startDateEnd", {
+        startDateEnd: new Date(`${startDateEnd}T23:59:59`),
+      });
+
+    const { endDateStart, endDateEnd } = filter;
+    if (endDateStart)
+      qb = qb.andWhere("task.endAt >= :endDateStart", {
+        endDateStart: new Date(`${endDateStart}T00:00:00`),
+      });
+    if (endDateEnd)
+      qb = qb.andWhere("task.endAt <= :endDateEnd", {
+        endDateEnd: new Date(`${endDateEnd}T23:59:59`),
       });
 
     // 完成时间范围：doneDateStart/doneDateEnd -> completedAt
-    const doneDateStart = (filter as any).doneDateStart as string | undefined;
-    const doneDateEnd = (filter as any).doneDateEnd as string | undefined;
+    const { doneDateStart, doneDateEnd } = filter;
     if (doneDateStart && doneDateEnd) {
       qb = qb.andWhere("task.completedAt BETWEEN :ds AND :de", {
         ds: new Date(`${doneDateStart}T00:00:00`),
@@ -73,7 +83,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     }
 
     // goalIds 过滤
-    const goalIds = (filter as any).goalIds as string[] | undefined;
+    const { goalIds } = filter;
     if (goalIds && goalIds.length)
       qb = qb.andWhere("task.goalId IN (:...goalIds)", { goalIds });
 
@@ -86,12 +96,11 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       description: createTaskDto.description,
       tags: createTaskDto.tags,
       goalId: createTaskDto.goalId,
-      // endAt 对应 desktop 的 dueDate
-      dueDate: (createTaskDto as any).endAt,
+      endAt: createTaskDto.endAt,
       // status 走默认值
     } as DeepPartial<Task>);
     const saved = await this.repo.save(entity);
-    return saved as unknown as Task;
+    return saved;
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
@@ -100,12 +109,11 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     if (updateTaskDto.name !== undefined) entity.name = updateTaskDto.name;
     if (updateTaskDto.description !== undefined)
       entity.description = updateTaskDto.description;
-    if (updateTaskDto.tags !== undefined)
-      entity.tags = updateTaskDto.tags as any;
-    if ((updateTaskDto as any).endAt !== undefined)
-      entity.endAt = (updateTaskDto as any).endAt as any;
+    if (updateTaskDto.tags !== undefined) entity.tags = updateTaskDto.tags;
+    const endAt = (updateTaskDto as unknown as { endAt?: Date }).endAt;
+    if (endAt !== undefined) entity.endAt = endAt;
     if (updateTaskDto.goalId !== undefined)
-      entity.goalId = updateTaskDto.goalId as any;
+      entity.goalId = updateTaskDto.goalId;
     // 其它字段（importance/urgency/estimateTime/startAt/abandonedAt/doneAt）desktop 不存储，忽略
     await this.repo.save(entity);
   }
@@ -124,9 +132,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     return TaskMapper.entityToDto(entity);
   }
 
-  async findAll(
-    filter: TaskListFilterDto & { excludeIds?: string[] }
-  ): Promise<TaskDto[]> {
+  async findAll(filter: TaskListFilterDto): Promise<TaskDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
     return list.map((e) => TaskMapper.entityToDto(e));
@@ -135,8 +141,9 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   async page(
     filter: TaskPageFilterDto
   ): Promise<{ list: TaskDto[]; total: number }> {
-    const { pageNum = 1, pageSize = 10 } = (filter as any) || {};
-    const qb = this.buildQuery(filter as any);
+    const pageNum = filter.pageNum ?? 1;
+    const pageSize = filter.pageSize ?? 10;
+    const qb = this.buildQuery(filter);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
@@ -146,12 +153,13 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
     const base = await this.findById(taskId);
-    return { ...(base as any), trackTimeList: [] } as TaskWithTrackTimeDto;
+    const result: TaskWithTrackTimeDto = { ...base, trackTimeList: [] };
+    return result;
   }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
-    if (!goalIds || goalIds.length === 0) return [] as any;
+    if (!goalIds || goalIds.length === 0) return [];
     const list = await this.repo.find({ where: { goalId: In(goalIds) } });
-    return list as unknown as Task[];
+    return list;
   }
 }
