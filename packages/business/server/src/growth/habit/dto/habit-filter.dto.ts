@@ -1,4 +1,3 @@
-import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
 import { PageDto } from "../../../base/page.dto";
 import { HabitDto } from "./habit-model.dto";
 import {
@@ -6,7 +5,10 @@ import {
   IntersectionType,
   PartialType,
 } from "@life-toolkit/mapped-types";
-import { HabitListFiltersVo } from "@life-toolkit/vo/growth/habit";
+import {
+  HabitListFiltersVo,
+  HabitPageFiltersVo,
+} from "@life-toolkit/vo/growth/habit";
 
 export class HabitListFiltersDto extends PartialType(
   PickType(HabitDto, ["status", "difficulty", "tags", "importance"] as const)
@@ -35,7 +37,7 @@ export class HabitListFiltersDto extends PartialType(
   /** 目标ID */
   goalId?: string;
 
-  importVo(filterVo: HabitListFiltersVo) {
+  importListVo(filterVo: HabitListFiltersVo) {
     if (filterVo.status !== undefined) this.status = filterVo.status;
     if (filterVo.difficulty !== undefined)
       this.difficulty = filterVo.difficulty;
@@ -50,7 +52,10 @@ export class HabitListFiltersDto extends PartialType(
 export class HabitPageFiltersDto extends IntersectionType(
   PageDto,
   HabitListFiltersDto
-) {}
-
-// 为了向后兼容，保留旧的命名
-export class HabitFilterDto extends HabitListFiltersDto {}
+) {
+  importPageVo(filterVo: HabitPageFiltersVo) {
+    this.importListVo(filterVo);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}

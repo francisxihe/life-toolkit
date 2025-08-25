@@ -1,4 +1,3 @@
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import {
   GoalService as _GoalService,
   CreateGoalDto,
@@ -83,23 +82,8 @@ export default class GoalService {
     await this.goalService.batchDone(ids);
   }
 
-  async list(filter?: {
-    type?: GoalType;
-    status?: GoalStatus;
-    keyword?: string;
-    startDate?: Date;
-    endDate?: Date;
-    parentId?: string;
-  }): Promise<GoalDto[]> {
-    const f: GoalListFilterDto = {};
-    if (filter?.type !== undefined) f.type = filter.type;
-    if (filter?.status !== undefined) f.status = filter.status;
-    if (filter?.keyword) f.keyword = filter.keyword;
-    if (filter?.startDate) f.startAt = filter.startDate;
-    if (filter?.endDate) f.endAt = filter.endDate;
-    if (filter?.parentId) f.parentId = filter.parentId;
-    const list = await this.goalService.findAll(f);
-    return list;
+  async list(filter?: GoalListFilterDto): Promise<GoalDto[]> {
+    return await this.goalService.findAll(filter);
   }
 }
 

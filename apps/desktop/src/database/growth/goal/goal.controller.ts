@@ -10,7 +10,7 @@ import {
 } from "@life-toolkit/electron-ipc-router";
 import { goalService } from "./goal.service";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { GoalMapper } from "@life-toolkit/business-server";
+import { GoalMapper, GoalListFilterDto } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 import type { GoalListFiltersVo } from "@life-toolkit/vo";
 
@@ -55,7 +55,14 @@ export class GoalController {
 
   @Get("/list")
   async list(@Query() filter?: GoalListFiltersVo) {
-    return GoalMapper.dtoToListVo(await goalService.list(filter));
+    const f = new GoalListFilterDto();
+    if (filter?.type !== undefined) f.type = filter.type as any;
+    if (filter?.status !== undefined) (f as any).status = filter.status as any;
+    if (filter?.keyword) f.keyword = filter.keyword;
+    if (filter?.startAt) f.startAt = filter.startAt as any;
+    if (filter?.endAt) f.endAt = filter.endAt as any;
+    if (filter?.parentId) f.parentId = filter.parentId as any;
+    return GoalMapper.dtoToListVo(await goalService.list(f));
   }
 
   @Get("/tree")

@@ -17,7 +17,7 @@ export class HabitService {
   }
 
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    return this.create(createHabitDto);
+    return await this.service.create(createHabitDto);
   }
 
   async findById(id: string): Promise<HabitDto> {
@@ -58,7 +58,13 @@ export class HabitService {
     pageNum: number;
     pageSize: number;
   }> {
-    return await this.service.page(filter);
+    const res = await this.service.page(filter);
+    return {
+      data: res.list ?? [],
+      total: res.total,
+      pageNum: (filter as any).pageNum,
+      pageSize: (filter as any).pageSize,
+    } as any;
   }
 
   async list(filter?: HabitListFiltersDto): Promise<HabitDto[]> {
@@ -79,3 +85,4 @@ export class HabitService {
 }
 
 export const habitService = new HabitService();
+

@@ -9,7 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { HabitService } from "./habit.service";
-import { HabitPageFiltersDto, HabitFilterDto } from "@life-toolkit/business-server";
+import { HabitPageFiltersDto, HabitListFiltersDto } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 import { HabitMapper } from "@life-toolkit/business-server";
 import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
@@ -99,7 +99,7 @@ export class HabitController {
 
   @Get("list")
   @Response()
-  async list(@Query() filter: HabitFilterDto) {
+  async list(@Query() filter: HabitListFiltersDto) {
     const habits = await this.habitService.findAll(filter);
     return HabitMapper.dtoToListVo(habits);
   }

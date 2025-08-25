@@ -2,7 +2,7 @@ import { HabitRepository } from "./habit.repository";
 import {
   CreateHabitDto,
   UpdateHabitDto,
-  HabitFilterDto,
+  HabitListFiltersDto,
   HabitPageFiltersDto,
   HabitDto,
 } from "./dto";
@@ -34,7 +34,7 @@ export class HabitService {
     return await this.habitRepository.findById(id);
   }
 
-  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     return await this.habitRepository.findAll(filter);
   }
 

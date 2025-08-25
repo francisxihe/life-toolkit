@@ -5,7 +5,7 @@ import {
   IntersectionType,
   PartialType,
 } from "@life-toolkit/mapped-types";
-import { TodoListFiltersVo } from "@life-toolkit/vo";
+import { TodoListFiltersVo, TodoPageFiltersVo } from "@life-toolkit/vo";
 
 export class TodoListFilterDto extends PartialType(
   PickType(TodoDto, ["importance", "urgency", "status", "taskId"] as const)
@@ -26,7 +26,7 @@ export class TodoListFilterDto extends PartialType(
 
   taskIds?: string[];
 
-  importVo(filterVo: TodoListFiltersVo) {
+  importListVo(filterVo: TodoListFiltersVo) {
     this.importance = filterVo.importance;
     this.urgency = filterVo.urgency;
     this.status = filterVo.status;
@@ -42,4 +42,10 @@ export class TodoListFilterDto extends PartialType(
 export class TodoPageFilterDto extends IntersectionType(
   PageDto,
   TodoListFilterDto
-) {}
+) {
+  importPageVo(filterVo: TodoPageFiltersVo) {
+    this.importListVo(filterVo);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}

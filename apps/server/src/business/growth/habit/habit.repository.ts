@@ -5,7 +5,7 @@ import { Habit } from "./habit.entity";
 import {
   CreateHabitDto,
   UpdateHabitDto,
-  HabitFilterDto,
+  HabitListFiltersDto,
   HabitPageFiltersDto,
   HabitDto,
 } from "@life-toolkit/business-server";
@@ -61,7 +61,7 @@ export class HabitRepository implements BusinessHabitRepository {
     return HabitMapper.entityToDto(habit);
   }
 
-  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     const query = this.buildQuery(filter);
     const habits = await query.getMany();
     return habits.map((habit) => HabitMapper.entityToDto(habit));
@@ -264,7 +264,7 @@ export class HabitRepository implements BusinessHabitRepository {
   }
 
   // 构建查询条件的私有方法
-  private buildQuery(filter: HabitFilterDto) {
+  private buildQuery(filter: HabitListFiltersDto) {
     let query = this.habitRepository.createQueryBuilder("habit");
 
     // 软删除过滤（与 Goal 仓储保持一致）

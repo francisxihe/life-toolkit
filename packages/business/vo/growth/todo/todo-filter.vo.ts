@@ -27,16 +27,7 @@ export type TodoListFiltersVo = {
   abandonedDateEnd?: string;
 };
 
-export type TodoPageFiltersVo = {
-  keyword?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
-  importance?: TodoVo["importance"];
-  urgency?: TodoVo["urgency"];
-  status?: TodoVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
-  tags?: string[];
+export type TodoPageFiltersVo = TodoListFiltersVo & {
+  pageNum: number;
+  pageSize: number;
 };

@@ -4,7 +4,7 @@ import { HabitService } from "../../../../../src/business/growth/habit/habit.ser
 import {
   HabitMapper,
   HabitPageFiltersDto,
-  HabitFilterDto,
+  HabitListFiltersDto,
 } from "@life-toolkit/business-server";
 import { HabitStatus, Difficulty } from "@life-toolkit/enum";
 import type { Habit } from "@life-toolkit/vo";
@@ -270,7 +270,7 @@ describe("HabitController", () => {
 
   describe("list", () => {
     it("should return a list of habits", async () => {
-      const filter: HabitFilterDto = {
+      const filter: HabitListFiltersDto = {
         status: HabitStatus.ACTIVE,
         difficulty: Difficulty.Skilled,
       };

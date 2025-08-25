@@ -77,9 +77,9 @@ export class HabitController {
   }
 
   @Get("/page")
-  async page(@Query() q?: HabitPageFiltersVo) {
+  async page(@Query() query?: HabitPageFiltersVo) {
     const habitPageFilter = new HabitPageFiltersDto();
-    habitPageFilter.importVo(q);
+    habitPageFilter.importPageVo(query);
     const res = await habitService.page(habitPageFilter);
     return HabitMapper.dtoToPageVo(
       res.data,
@@ -92,7 +92,7 @@ export class HabitController {
   @Get("/list")
   async list(@Query() query?: HabitListFiltersVo) {
     const habitListFilter = new HabitListFiltersDto();
-    habitListFilter.importVo(query);
+    habitListFilter.importListVo(query);
     const list = await habitService.list(habitListFilter);
     return HabitMapper.dtoToListVo(list);
   }
