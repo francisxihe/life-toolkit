@@ -9,17 +9,18 @@ import {
   Query,
 } from "@nestjs/common";
 import { HabitService } from "./habit.service";
-import { HabitPageFiltersDto, HabitListFiltersDto } from "@life-toolkit/business-server";
+import {
+  HabitPageFiltersDto,
+  HabitListFiltersDto,
+  HabitMapper,
+} from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
-import { HabitMapper } from "@life-toolkit/business-server";
 import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("habit")
 export class HabitController {
-  constructor(
-    private readonly habitService: HabitService
-  ) {}
+  constructor(private readonly habitService: HabitService) {}
 
   @Put("batch-done")
   @Response()

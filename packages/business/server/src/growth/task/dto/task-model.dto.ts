@@ -6,11 +6,11 @@ import { TrackTimeDto } from "../../track-time/dto";
 import { TodoDto } from "../../todo/dto";
 
 export class TaskDto extends IntersectionType(BaseModelDto, Task) {
-  children!: TaskDto[];
-  parent?: TaskDto;
-  goal?: GoalDto;
-  trackTimeList?: TrackTimeDto[];
-  todoList?: TodoDto[];
+  declare children: TaskDto[];
+  declare parent?: TaskDto;
+  declare goal?: GoalDto;
+  declare trackTimeList?: TrackTimeDto[];
+  declare todoList?: TodoDto[];
 }
 
 export class TaskModelDto extends IntersectionType(BaseModelDto, TaskModel) {}

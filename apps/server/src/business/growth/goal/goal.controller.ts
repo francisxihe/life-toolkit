@@ -1,8 +1,20 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+} from "@nestjs/common";
 import { GoalService } from "./goal.service";
-import { GoalMapper } from "@life-toolkit/business-server";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { GoalPageFilterDto, GoalListFilterDto } from "@life-toolkit/business-server";
+import {
+  GoalMapper,
+  GoalPageFilterDto,
+  GoalListFilterDto,
+} from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 
 @Controller("goal")
@@ -14,7 +26,9 @@ export class GoalController {
    */
   @Post("create")
   @Response()
-  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalItemVo> {
+  async create(
+    @Body() createVo: GoalVO.CreateGoalVo
+  ): Promise<GoalVO.GoalItemVo> {
     const createDto = GoalMapper.voToCreateDto(createVo);
     const dto = await this.goalService.create(createDto);
     return GoalMapper.dtoToItemVo(dto);
@@ -27,7 +41,12 @@ export class GoalController {
   @Response()
   async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
     const { list, total } = await this.goalService.page(filter);
-    return GoalMapper.dtoToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
+    return GoalMapper.dtoToPageVo(
+      list,
+      total,
+      filter.pageNum || 1,
+      filter.pageSize || 10
+    );
   }
 
   /**
@@ -47,7 +66,7 @@ export class GoalController {
   @Response()
   async getTree(@Query() filter: GoalListFilterDto): Promise<GoalVO.GoalVo[]> {
     const goalTree = await this.goalService.getTree(filter);
-    return goalTree.map(goal => GoalMapper.dtoToVo(goal));
+    return goalTree.map((goal) => GoalMapper.dtoToVo(goal));
   }
 
   /**

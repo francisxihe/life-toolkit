@@ -8,31 +8,28 @@ import {
   Put,
   Query,
 } from "@life-toolkit/electron-ipc-router";
-import { habitService } from "./habit.service";
-import { HabitStatus } from "@life-toolkit/enum";
 import type {
   Habit as HabitVO,
   HabitListFiltersVo,
   HabitPageFiltersVo,
 } from "@life-toolkit/vo";
-import {
-  HabitMapper,
-  HabitListFiltersDto,
-  HabitPageFiltersDto,
-} from "@life-toolkit/business-server";
+import { HabitController as _HabitController } from "@life-toolkit/business-server";
+import { habitService } from "./habit.service";
 
 @Controller("/habit")
 export class HabitController {
+  private readonly controller: _HabitController;
+  constructor() {
+    this.controller = new _HabitController(habitService);
+  }
   @Post("/create")
   async create(@Body() payload: HabitVO.CreateHabitVo) {
-    return HabitMapper.dtoToVo(
-      await habitService.create(HabitMapper.voToCreateDto(payload))
-    );
+    return this.controller.create(payload);
   }
 
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
-    return HabitMapper.dtoToVo(await habitService.findById(id));
+    return this.controller.findById(id);
   }
 
   @Post("/updateStreak/:id")
@@ -40,22 +37,22 @@ export class HabitController {
     @Param("id") id: string,
     @Body() body?: { completed?: boolean }
   ) {
-    return await habitService.updateStreak(id, body?.completed);
+    return this.controller.updateStreak(id, body);
   }
 
   @Post("/pauseHabit")
   async pauseHabit(@Body() body?: { id?: string }) {
-    return await habitService.pauseHabit(body?.id);
+    return this.controller.pauseHabit(body);
   }
 
   @Post("/resumeHabit")
   async resumeHabit(@Body() body?: { id?: string }) {
-    return await habitService.resumeHabit(body?.id);
+    return this.controller.resumeHabit(body);
   }
 
   @Post("/completeHabit")
   async completeHabit(@Body() body?: { id?: string }) {
-    return await habitService.completeHabit(body?.id);
+    return this.controller.completeHabit(body);
   }
 
   @Put("/update/:id")
@@ -63,76 +60,56 @@ export class HabitController {
     @Param("id") id: string,
     @Body() payload: HabitVO.UpdateHabitVo
   ) {
-    return HabitMapper.dtoToVo(
-      await habitService.update(
-        id,
-        HabitMapper.voToUpdateDto(payload as HabitVO.UpdateHabitVo)
-      )
-    );
+    return this.controller.update(id, payload);
   }
 
   @Delete("/delete/:id")
   async remove(@Param("id") id: string) {
-    return await habitService.delete(id);
+    return this.controller.remove(id);
   }
 
   @Get("/page")
   async page(@Query() query?: HabitPageFiltersVo) {
-    const habitPageFilter = new HabitPageFiltersDto();
-    habitPageFilter.importPageVo(query);
-    const { list, total, pageNum, pageSize } = await habitService.page(habitPageFilter);
-    return HabitMapper.dtoToPageVo(
-      list,
-      total,
-      pageNum,
-      pageSize
-    );
+    return this.controller.page(query);
   }
 
   @Get("/list")
   async list(@Query() query?: HabitListFiltersVo) {
-    const habitListFilterDto = new HabitListFiltersDto();
-    habitListFilterDto.importListVo(query);
-    const list = await habitService.list(habitListFilterDto);
-    return HabitMapper.dtoToListVo(list);
+    return this.controller.list(query);
   }
 
   @Get("/getHabitTodos/:id")
   async getHabitTodos(@Param("id") id: string) {
-    return await habitService.getHabitTodos(id);
+    return this.controller.getHabitTodos(id);
   }
 
   @Get("/getHabitAnalytics/:id")
   async getHabitAnalytics(@Param("id") id: string) {
-    return await habitService.getHabitAnalytics(id);
+    return this.controller.getHabitAnalytics(id);
   }
 
   @Post("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
-    return await Promise.all(
-      (body?.idList ?? []).map((id: string) =>
-        habitService.completeHabit(id)
-      )
-    );
+    return this.controller.batchDone(body);
   }
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await habitService.abandon(id);
+    return this.controller.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) { 
-    return await habitService.restore(id);
+    return this.controller.restore(id);
   }
 
   @Post("/pause")
   async pause(@Body() body?: { id?: string }) {
-    return await habitService.pauseHabit(body?.id);
+    return this.controller.pause(body);
   }
 
   @Post("/resume")
   async resume(@Body() body?: { id?: string }) {
-    return await habitService.resumeHabit(body?.id);
+    return this.controller.resume(body);
   }
 }

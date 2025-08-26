@@ -9,14 +9,17 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoPageFiltersDto, TodoListFilterDto } from "@life-toolkit/business-server";
+import {
+  TodoMapper,
+  TodoPageFiltersDto,
+  TodoListFilterDto,
+} from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
   OperationByIdListVo,
   TodoListFiltersVo,
 } from "@life-toolkit/vo";
-import { TodoMapper } from "@life-toolkit/business-server";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
@@ -56,7 +59,7 @@ export class TodoController {
   @Response()
   async create(@Body() createTodoVo: Todo.CreateTodoVo) {
     const createdDto = TodoMapper.voToCreateDto(createTodoVo);
-    const dto = await this.todoService.create(createdDto);  
+    const dto = await this.todoService.create(createdDto);
     return TodoMapper.dtoToVo(dto);
   }
 

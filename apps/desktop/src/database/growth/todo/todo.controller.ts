@@ -8,26 +8,24 @@ import {
   Put,
   Query,
 } from "@life-toolkit/electron-ipc-router";
-import { todoService } from "./todo.service";
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import {
-  TodoMapper,
-  TodoListFilterDto,
-  TodoPageFiltersDto,
-} from "@life-toolkit/business-server";
+import { TodoController as _TodoController } from "@life-toolkit/business-server";
+import { todoService } from "./todo.service";
 
 @Controller("/todo")
 export class TodoController {
+  private readonly controller: _TodoController;
+  constructor() {
+    this.controller = new _TodoController(todoService);
+  }
   @Post("/create")
   async create(@Body() payload: TodoVO.CreateTodoVo) {
-    const createDto = TodoMapper.voToCreateDto(payload);
-    const dto = await todoService.create(createDto);
-    return TodoMapper.dtoToVo(dto);
+    return this.controller.create(payload);
   }
 
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
-    return TodoMapper.dtoToVo(await todoService.findById(id));
+    return this.controller.findById(id);
   }
 
   @Put("/update/:id")
@@ -35,58 +33,41 @@ export class TodoController {
     @Param("id") id: string,
     @Body() payload: { updateVo?: TodoVO.UpdateTodoVo } & TodoVO.UpdateTodoVo
   ) {
-    const updateDto = TodoMapper.voToUpdateDto(
-      (payload?.updateVo ?? payload) as TodoVO.UpdateTodoVo 
-    );
-    const dto = await todoService.update(id, updateDto);
-    return TodoMapper.dtoToVo(dto);
+    return this.controller.update(id, payload);
   }
 
   @Delete("/delete/:id")
   async remove(@Param("id") id: string) {
-    return await todoService.delete(id);
+    return this.controller.remove(id);
   }
 
   @Get("/page")
   async page(@Query() q?: TodoVO.TodoPageFiltersVo) {
-    const todoPageFiltersDto = new TodoPageFiltersDto();
-    todoPageFiltersDto.importPageVo(q);
-    const { list, total, pageNum, pageSize } = await todoService.page(todoPageFiltersDto);
-    return TodoMapper.dtoToPageVo(
-      list,
-      total,
-      pageNum,
-      pageSize
-    );
+    return this.controller.page(q);
   }
 
   @Get("/list")
   async list(@Query() query: TodoVO.TodoListFiltersVo) {
-    const filter = new TodoListFilterDto();
-    filter.importListVo(query);
-    const list = await todoService.list(filter);
-    return TodoMapper.dtoToListVo(list);
+    return this.controller.list(query);
   }
 
   @Put("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
-    return await todoService.batchDone({
-      idList: body?.idList ?? [],
-    });
+    return this.controller.batchDone(body);
   }
 
   @Put("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await todoService.abandon(id);
+    return this.controller.abandon(id);
   }
 
   @Put("/restore/:id")
   async restore(@Param("id") id: string) {
-    return await todoService.restore(id);
+    return this.controller.restore(id);
   }
 
   @Put("/done/:id")
   async done(@Param("id") id: string) {
-    return await todoService.done(id);
+    return this.controller.done(id);
   }
 }

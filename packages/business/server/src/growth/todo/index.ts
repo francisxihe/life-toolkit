@@ -4,3 +4,4 @@ export * from "./dto";
 export * from "./todo.mapper";
 export * from "./todo.repository";
 export * from "./todo.service";
+export * from "./todo.controller";

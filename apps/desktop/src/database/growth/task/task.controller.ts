@@ -8,90 +8,63 @@ import {
   Put,
   Query,
 } from "@life-toolkit/electron-ipc-router";
-import { TaskStatus } from "@life-toolkit/enum";
 import type { Task as TaskVO, TaskPageFiltersVo, TaskListFiltersVo } from "@life-toolkit/vo";
-import {
-  TaskMapper,
-  TaskListFiltersDto,
-  TaskPageFiltersDto,
-} from "@life-toolkit/business-server";
+import { TaskController as _TaskController } from "@life-toolkit/business-server";
 import { taskService } from "./task.service";
 
 @Controller("/task")
 export class TaskController {
+  private readonly controller: _TaskController;
+  constructor() {
+    this.controller = new _TaskController(taskService);
+  }
   @Post("/create")
   async create(@Body() payload: TaskVO.CreateTaskVo) {
-    return TaskMapper.dtoToVo(
-      await taskService.create(TaskMapper.voToCreateDto(payload))
-    );
+    return this.controller.create(payload);
   }
 
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(await taskService.findById(id));
+    return this.controller.findById(id);
   }
 
   @Put("/update/:id")
   async update(@Param("id") id: string, @Body() payload: TaskVO.CreateTaskVo) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(
-        id,
-        TaskMapper.voToUpdateDto(payload as TaskVO.CreateTaskVo)
-      )
-    );
+    return this.controller.update(id, payload);
   }
 
   @Delete("/delete/:id")
   async remove(@Param("id") id: string) {
-    return await taskService.delete(id);
+    return this.controller.remove(id);
   }
 
   @Get("/page")
   async page(@Query() query?: TaskPageFiltersVo) {
-    const taskPageFiltersDto = new TaskPageFiltersDto();
-    taskPageFiltersDto.importPageVo(query);
-    const { list, total, pageNum, pageSize } = await taskService.page(taskPageFiltersDto);
-    return TaskMapper.dtoToPageVo(
-      list,
-      total,
-      pageNum,
-      pageSize
-    );
+    return this.controller.page(query);
   }
 
   @Get("/list")
   async list(@Query() query?: TaskListFiltersVo) {
-    const taskListFiltersDto = new TaskListFiltersDto();
-    taskListFiltersDto.importListVo(query);
-    const list = await taskService.list(taskListFiltersDto);
-    return TaskMapper.dtoToListVo(list);
+    return this.controller.list(query);
   }
 
   @Get("/taskWithTrackTime/:id")
   async taskWithTrackTime(@Param("id") id: string) {
-    return TaskMapper.dtoToWithTrackTimeVo(
-      await taskService.taskWithTrackTime(id)
-    );
+    return this.controller.taskWithTrackTime(id);
   }
 
   @Post("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
-    return (
-      await Promise.all(
-        (body?.idList ?? []).map((id: string) =>
-          taskService.completeTask(id)
-        )
-      )
-    ).map((dto) => TaskMapper.dtoToVo(dto));
+    return this.controller.batchDone(body);
   }
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await taskService.abandon(id);
+    return this.controller.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) {
-    return await taskService.restore(id);
+    return this.controller.restore(id);
   }
 }

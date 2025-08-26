@@ -17,87 +17,74 @@ import {
   GoalMapper,
   GoalListFilterDto,
   GoalPageFilterDto,
+  GoalController as _GoalController,
 } from "@life-toolkit/business-server";
-import { GoalStatus, GoalType } from "@life-toolkit/enum";
 import { goalService } from "./goal.service";
 
 @Controller("/goal")
 export class GoalController {
+  private readonly controller: _GoalController;
+  constructor() {
+    this.controller = new _GoalController(goalService);
+  }
+
   @Post("/create")
   async create(@Body() payload: GoalVO.CreateGoalVo) {
-    const dto = await goalService.create(GoalMapper.voToCreateDto(payload));
-    return GoalMapper.dtoToItemVo(dto);
+    return this.controller.create(payload);
   }
 
   @Get("/findById/:id")
   async findById(@Param("id") id: string) {
-    return GoalMapper.dtoToVo(await goalService.findById(id));
+    return this.controller.findById(id);
   }
 
   @Put("/update/:id")
   async update(@Param("id") id: string, @Body() payload: GoalVO.UpdateGoalVo) {
-    const dto = await goalService.update(id, GoalMapper.voToUpdateDto(payload));
-    return GoalMapper.dtoToVo(dto);
+    return this.controller.update(id, payload);
   }
 
   @Delete("/delete/:id")
   async remove(@Param("id") id: string) {
-    return await goalService.delete(id);
+    return this.controller.remove(id);
   }
 
   @Get("/page")
   async page(@Query() query?: GoalPageFiltersVo) {
-    const goalPageFilterDto = new GoalPageFilterDto();
-    goalPageFilterDto.importPageVo(query);
-    const { list, total, pageNum, pageSize } = await goalService.page(goalPageFilterDto);
-    return GoalMapper.dtoToPageVo(
-      list,
-      total,
-      pageNum,
-      pageSize
-    );
+    return this.controller.page(query);
   }
 
   @Get("/list")
   async list(@Query() query?: GoalListFiltersVo) {
-    const goalListFilterDto = new GoalListFilterDto();
-    goalListFilterDto.importListVo(query);
-    const list = await goalService.list(goalListFilterDto);
-    return GoalMapper.dtoToListVo(list);
+    return this.controller.list(query);
   }
 
   @Get("/tree")
   async tree(@Query() query?: GoalListFiltersVo) {
-    const goalListFilterDto = new GoalListFilterDto();
-    goalListFilterDto.importListVo(query);
-    const list = await goalService.getTree(goalListFilterDto);
-    return list.map((dto) => GoalMapper.dtoToVo(dto));
+    return this.controller.tree(query);
   }
 
   @Get("/findRoots")
   async findRoots() {
-    return (await goalService.findRoots()).map((dto) =>
-      GoalMapper.dtoToVo(dto)
-    );
+    return this.controller.findRoots();
   }
 
   @Get("/findDetail/:id")
   async findDetail(@Param("id") id: string) {
-    return GoalMapper.dtoToVo(await goalService.findDetail(id));
+    return this.controller.findDetail(id);
   }
 
   @Post("/batchDone")
   async batchDone(@Body() body?: { idList?: string[] }) {
-    await goalService.batchDone(body?.idList ?? []);
+    return this.controller.batchDone(body);
   }
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return await goalService.abandon(id);
+    return this.controller.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) {
-    return await goalService.restore(id);
+    return this.controller.restore(id);
   }
 }
