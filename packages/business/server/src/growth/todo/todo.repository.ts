@@ -15,7 +15,7 @@ export interface TodoRepository {
     extras: Partial<Todo>
   ): Promise<TodoDto>;
   findAll(filter: TodoListFilterDto): Promise<TodoDto[]>;
-  findPage(filter: TodoPageFiltersDto): Promise<{
+  page(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;

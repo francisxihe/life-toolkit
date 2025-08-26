@@ -96,7 +96,7 @@ export class TodoRepository {
     return list.map((it) => TodoMapper.entityToDto(it));
   }
 
-  async findPage(filter: TodoPageFiltersDto): Promise<{
+  async page(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;

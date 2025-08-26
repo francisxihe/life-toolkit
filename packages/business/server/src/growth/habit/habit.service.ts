@@ -7,7 +7,6 @@ import {
   HabitDto,
 } from "./dto";
 import { HabitStatus } from "@life-toolkit/enum";
-import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class HabitService {
   habitRepository: HabitRepository;
@@ -39,23 +38,17 @@ export class HabitService {
     return await this.habitRepository.findAll(filter);
   }
 
-  async list(
-    filter: HabitListFiltersDto
-  ): Promise<ListResponseDto<HabitDto>> {
+  async list(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     const list = await this.habitRepository.findAll(filter);
-    return new ListResponseDto({ list, total: list.length });
+    return list;
   }
 
   async page(
     filter: HabitPageFiltersDto
-  ): Promise<PageResponseDto<HabitDto>> {
-    const { list, total } = await this.habitRepository.page(filter);
-    return new PageResponseDto({
-      list,
-      total,
-      pageNum: (filter as any).pageNum,
-      pageSize: (filter as any).pageSize,
-    });
+  ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
+    const { list, total, pageNum, pageSize } =
+      await this.habitRepository.page(filter);
+    return { list, total, pageNum, pageSize };
   }
 
   //  ====== 业务逻辑编排 ======
@@ -97,6 +90,20 @@ export class HabitService {
       longestStreak: habit.longestStreak,
       recentTodos,
     };
+  }
+
+  async abandon(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED })
+    );
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
+    );
   }
 
   async pauseHabit(id: string): Promise<void> {

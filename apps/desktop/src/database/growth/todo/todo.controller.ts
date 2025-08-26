@@ -21,7 +21,7 @@ export class TodoController {
   @Post("/create")
   async create(@Body() payload: TodoVO.CreateTodoVo) {
     const createDto = TodoMapper.voToCreateDto(payload);
-    const dto = await todoService.create(createDto as any);
+    const dto = await todoService.create(createDto);
     return TodoMapper.dtoToVo(dto);
   }
 
@@ -36,9 +36,9 @@ export class TodoController {
     @Body() payload: { updateVo?: TodoVO.UpdateTodoVo } & TodoVO.UpdateTodoVo
   ) {
     const updateDto = TodoMapper.voToUpdateDto(
-      (payload?.updateVo ?? payload) as TodoVO.UpdateTodoVo
+      (payload?.updateVo ?? payload) as TodoVO.UpdateTodoVo 
     );
-    const dto = await todoService.update(id, updateDto as any);
+    const dto = await todoService.update(id, updateDto);
     return TodoMapper.dtoToVo(dto);
   }
 
@@ -51,12 +51,12 @@ export class TodoController {
   async page(@Query() q?: TodoVO.TodoPageFiltersVo) {
     const todoPageFiltersDto = new TodoPageFiltersDto();
     todoPageFiltersDto.importPageVo(q);
-    const res = await todoService.page(todoPageFiltersDto);
+    const { list, total, pageNum, pageSize } = await todoService.page(todoPageFiltersDto);
     return TodoMapper.dtoToPageVo(
-      res.list,
-      res.total,
-      todoPageFiltersDto.pageNum,
-      todoPageFiltersDto.pageSize
+      list,
+      total,
+      pageNum,
+      pageSize
     );
   }
 
@@ -64,7 +64,8 @@ export class TodoController {
   async list(@Query() query: TodoVO.TodoListFiltersVo) {
     const filter = new TodoListFilterDto();
     filter.importListVo(query);
-    return await todoService.list(filter);
+    const list = await todoService.list(filter);
+    return TodoMapper.dtoToListVo(list);
   }
 
   @Put("/batchDone")

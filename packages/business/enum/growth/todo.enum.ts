@@ -11,4 +11,6 @@ export enum TodoSource {
   REPEAT = "repeat",
   /** 习惯创建 */
   HABIT = "habit",
+  /** 任务创建 */
+  TASK = "task",
 }

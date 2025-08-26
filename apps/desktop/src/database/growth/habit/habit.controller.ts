@@ -80,12 +80,12 @@ export class HabitController {
   async page(@Query() query?: HabitPageFiltersVo) {
     const habitPageFilter = new HabitPageFiltersDto();
     habitPageFilter.importPageVo(query);
-    const res = await habitService.page(habitPageFilter);
+    const { list, total, pageNum, pageSize } = await habitService.page(habitPageFilter);
     return HabitMapper.dtoToPageVo(
-      res.list,
-      res.total,
-      habitPageFilter.pageNum,
-      habitPageFilter.pageSize
+      list,
+      total,
+      pageNum,
+      pageSize
     );
   }
 
@@ -94,7 +94,7 @@ export class HabitController {
     const habitListFilterDto = new HabitListFiltersDto();
     habitListFilterDto.importListVo(query);
     const list = await habitService.list(habitListFilterDto);
-    return HabitMapper.dtoToListVo(list.list);
+    return HabitMapper.dtoToListVo(list);
   }
 
   @Get("/getHabitTodos/:id")
@@ -111,23 +111,19 @@ export class HabitController {
   async batchDone(@Body() body?: { idList?: string[] }) {
     return await Promise.all(
       (body?.idList ?? []).map((id: string) =>
-        habitService.update(id, { status: HabitStatus.COMPLETED })
+        habitService.completeHabit(id)
       )
     );
   }
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return HabitMapper.dtoToVo(
-      await habitService.update(id, { status: HabitStatus.PAUSED })
-    );
+    return await habitService.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) { 
-    return HabitMapper.dtoToVo(
-      await habitService.update(id, { status: HabitStatus.ACTIVE }) 
-    );
+    return await habitService.restore(id);
   }
 
   @Post("/pause")

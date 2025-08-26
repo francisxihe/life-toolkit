@@ -17,7 +17,7 @@ export interface GoalRepository {
 
   findAll(filter: GoalListFilterDto): Promise<GoalDto[]>;
 
-  page(filter: GoalPageFilterDto): Promise<{ list: GoalDto[]; total: number }>;
+  page(filter: GoalPageFilterDto): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }>;
 
   update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto>;
 

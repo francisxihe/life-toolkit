@@ -7,7 +7,6 @@ import {
   GoalDto,
 } from "./dto";
 import { GoalType, GoalStatus } from "@life-toolkit/enum";
-import { ListResponseDto, PageResponseDto } from "../../common/response";
 
 export class GoalService {
   goalRepository: GoalRepository;
@@ -45,9 +44,9 @@ export class GoalService {
     return await this.goalRepository.findAll(processedFilter as any);
   }
 
-  async list(filter: GoalListFilterDto): Promise<ListResponseDto<GoalDto>> {
+  async list(filter: GoalListFilterDto): Promise<GoalDto[]> {
     const list = await this.findAll(filter);
-    return new ListResponseDto({ list, total: list.length });
+    return list;
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
@@ -76,14 +75,12 @@ export class GoalService {
     });
   }
 
-  async page(filter: GoalPageFilterDto): Promise<PageResponseDto<GoalDto>> {
-    const { list, total } = await this.goalRepository.page(filter);
-    return new PageResponseDto({
-      list,
-      total,
-      pageNum: filter.pageNum,
-      pageSize: filter.pageSize,
-    });
+  async page(
+    filter: GoalPageFilterDto
+  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
+    const { list, total, pageNum, pageSize } =
+      await this.goalRepository.page(filter);
+    return { list, total, pageNum, pageSize };
   }
 
   async findDetail(id: string) {

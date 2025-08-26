@@ -12,7 +12,7 @@ export interface HabitRepository {
   create(createHabitDto: CreateHabitDto): Promise<HabitDto>;
   findById(id: string, relations?: string[]): Promise<HabitDto>;
   findAll(filter: HabitListFiltersDto): Promise<HabitDto[]>;
-  page(filter: HabitPageFiltersDto): Promise<{ list: HabitDto[]; total: number }>;
+  page(filter: HabitPageFiltersDto): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }>;
   update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto>;
   delete(id: string): Promise<void>;
   softDelete(id: string): Promise<void>;

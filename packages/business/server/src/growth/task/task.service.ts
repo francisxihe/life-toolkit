@@ -1,4 +1,8 @@
-import { TaskRepository, TaskTreeRepository, TodoCleanupService } from "./task.repository";
+import {
+  TaskRepository,
+  TaskTreeRepository,
+  TodoCleanupService,
+} from "./task.repository";
 import {
   CreateTaskDto,
   UpdateTaskDto,
@@ -8,7 +12,7 @@ import {
   TaskWithTrackTimeDto,
 } from "./dto";
 import { Task } from "./task.entity";
-import { ListResponseDto, PageResponseDto } from "../../common/response";
+import { TaskStatus } from "@life-toolkit/enum";
 
 export class TaskService {
   protected taskRepository: TaskRepository;
@@ -28,18 +32,21 @@ export class TaskService {
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
     const entity = await this.taskRepository.create(createTaskDto);
     if (createTaskDto.parentId) {
-      await (this.taskTreeRepository as any).updateParent({
+      await this.taskTreeRepository.updateParent({
         task: entity as Task,
         parentId: createTaskDto.parentId,
       });
     }
-    return await this.taskRepository.findById((entity as any).id);
+    return await this.taskRepository.findById(entity.id);
   }
 
   async delete(id: string): Promise<void> {
-    const taskToDelete = await this.taskTreeRepository.findOne({ id } as Partial<Task>);
+    const taskToDelete = await this.taskTreeRepository.findOne({
+      id,
+    } as Partial<Task>);
     if (!taskToDelete) throw new Error("Task not found");
-    const allIds = await this.taskTreeRepository.computeDescendantIds(taskToDelete);
+    const allIds =
+      await this.taskTreeRepository.computeDescendantIds(taskToDelete);
     await this.todoCleanup.deleteByTaskIds(allIds);
     await this.taskTreeRepository.deleteByIds(allIds);
   }
@@ -67,31 +74,42 @@ export class TaskService {
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
     // 处理父子关系及基本字段更新（委托给树仓储）
-    const dto = await this.taskTreeRepository.updateWithParent(id, updateTaskDto);
+    const dto = await this.taskTreeRepository.updateWithParent(
+      id,
+      updateTaskDto
+    );
     return dto;
   }
 
   async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     let excludeIds: string[] = [];
-    if ((filter as any).withoutSelf && (filter as any).id) {
-      const node = await this.taskTreeRepository.findOne({ id: (filter as any).id } as Partial<Task>);
+    if (filter.withoutSelf && filter.id) {
+      const node = await this.taskTreeRepository.findOne({
+        id: filter.id,
+      } as Partial<Task>);
       if (node) {
         const ids = await this.taskTreeRepository.computeDescendantIds(node);
-        excludeIds = ids.concat((filter as any).id);
+        excludeIds = ids.concat(filter.id);
       }
     }
-    const taskList = await this.taskRepository.findAll({ ...(filter as any), excludeIds });
+    const taskList = await this.taskRepository.findAll({
+      ...(filter as any),
+      excludeIds,
+    });
     return taskList;
   }
 
-  async list(filter: TaskListFiltersDto): Promise<ListResponseDto<TaskDto>> {
+  async list(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     const list = await this.findAll(filter);
-    return new ListResponseDto({ list, total: list.length });
+    return list;
   }
 
-  async page(filter: TaskPageFiltersDto): Promise<PageResponseDto<TaskDto>> {
-    const { list, total } = await this.taskRepository.page(filter);
-    return new PageResponseDto({ list, total, pageNum: (filter as any).pageNum, pageSize: (filter as any).pageSize });
+  async page(
+    filter: TaskPageFiltersDto
+  ): Promise<{ list: TaskDto[]; total: number; pageNum: number; pageSize: number }> {
+    const { list, total, pageNum, pageSize } =
+      await this.taskRepository.page(filter);
+    return { list, total, pageNum, pageSize };
   }
 
   async findById(id: string): Promise<TaskDto> {
@@ -104,5 +122,19 @@ export class TaskService {
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
     return await this.taskRepository.findByGoalIds(goalIds);
+  }
+
+  async abandon(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateTaskDto(), { status: TaskStatus.ABANDONED })
+    );
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateTaskDto(), { status: TaskStatus.TODO })
+    );
   }
 }

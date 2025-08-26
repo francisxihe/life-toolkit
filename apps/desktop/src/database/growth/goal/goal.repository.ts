@@ -149,14 +149,19 @@ export class GoalRepository {
 
   async page(
     filter: GoalPageFilterDto
-  ): Promise<{ list: GoalDto[]; total: number }> {
+  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const qb = this.buildQuery(filter);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => GoalMapper.entityToDto(e)), total };
+    return {
+      list: entities.map((e) => GoalMapper.entityToDto(e)),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {

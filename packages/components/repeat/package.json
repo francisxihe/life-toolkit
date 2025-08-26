@@ -17,7 +17,7 @@
     "./server/service": "./dist/server/service.js",
     "./server/mapper": "./dist/server/mapper.js",
     "./server/dto": "./dist/server/dto.js",
-    "./web": "./web/index.tsx",
+    "./web": "./web/index.ts",
     "./types": "./dist/types/index.js",
     "./types/repeat-end": "./dist/types/repeat-end.js",
     "./common": "./dist/common/index.js",

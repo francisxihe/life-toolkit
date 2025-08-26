@@ -1,8 +1,7 @@
 ---
 trigger: always_on
-description: 
-globs: 
 ---
+
 # Life Toolkit 系统架构规则
 
 ## 🏗️ 项目概述
@@ -192,7 +191,6 @@ Entity → DTO → VO
 Client Response
 ```
 
-- 服务返回统一使用 `ListResponseDto` 与 `PageResponseDto`（位于 `packages/business/server/src/common/response/`）。
 
 ## 🛠️ 开发工具链
 

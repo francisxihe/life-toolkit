@@ -89,7 +89,7 @@ export class TodoRepository {
     return todoList as TodoDto[];
   }
 
-  async findPage(filter: TodoPageFiltersDto): Promise<{
+  async page(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;

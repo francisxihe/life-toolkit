@@ -132,14 +132,19 @@ export class HabitRepository implements BusinessHabitRepository {
 
   async page(
     habitPageFiltersDto: HabitPageFiltersDto
-  ): Promise<{ list: HabitDto[]; total: number }> {
+  ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = habitPageFiltersDto;
     const qb = this.buildQuery(habitPageFiltersDto);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => HabitMapper.entityToDto(e)), total };
+    return {
+      list: entities.map((e) => HabitMapper.entityToDto(e)),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {

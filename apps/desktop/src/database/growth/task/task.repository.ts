@@ -129,9 +129,12 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     return list.map((e) => TaskMapper.entityToDto(e));
   }
 
-  async page(
-    filter: TaskPageFiltersDto
-  ): Promise<{ list: TaskDto[]; total: number }> {
+  async page(filter: TaskPageFiltersDto): Promise<{
+    list: TaskDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const pageNum = filter.pageNum ?? 1;
     const pageSize = filter.pageSize ?? 10;
     const qb = this.buildQuery(filter);
@@ -139,7 +142,13 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
       .getManyAndCount();
-    return { list: entities.map((e) => TaskMapper.entityToDto(e)), total };
+
+    return {
+      list: entities.map((e) => TaskMapper.entityToDto(e)),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {

@@ -50,12 +50,12 @@ export class TaskController {
   async page(@Query() query?: TaskPageFiltersVo) {
     const taskPageFiltersDto = new TaskPageFiltersDto();
     taskPageFiltersDto.importPageVo(query);
-    const res = await taskService.page(taskPageFiltersDto);
+    const { list, total, pageNum, pageSize } = await taskService.page(taskPageFiltersDto);
     return TaskMapper.dtoToPageVo(
-      res.list,
-      res.total,
-      taskPageFiltersDto.pageNum,
-      taskPageFiltersDto.pageSize
+      list,
+      total,
+      pageNum,
+      pageSize
     );
   }
 
@@ -79,7 +79,7 @@ export class TaskController {
     return (
       await Promise.all(
         (body?.idList ?? []).map((id: string) =>
-          taskService.update(id, { status: TaskStatus.DONE })
+          taskService.completeTask(id)
         )
       )
     ).map((dto) => TaskMapper.dtoToVo(dto));
@@ -87,15 +87,11 @@ export class TaskController {
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(id, { status: TaskStatus.ABANDONED })
-    );
+    return await taskService.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(id, { status: TaskStatus.TODO })
-    );
+    return await taskService.restore(id);
   }
 }

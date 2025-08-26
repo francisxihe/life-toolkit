@@ -18,7 +18,7 @@ describe("HabitController", () => {
   const mockHabitService = {
     create: jest.fn(),
     findAll: jest.fn(),
-    findPage: jest.fn(),
+    page: jest.fn(),
     findOne: jest.fn(),
     findOneWithRelations: jest.fn(),
     update: jest.fn(),
@@ -356,12 +356,12 @@ describe("HabitController", () => {
         updatedAt: dayjs().format("YYYY-MM-DD HH:mm:ss"),
       };
 
-      mockHabitService.findPage.mockResolvedValue(mockPageResult);
+      mockHabitService.page.mockResolvedValue(mockPageResult);
       mockHabitMapper.toVo.mockReturnValue(mockVo);
 
       const result = await controller.page(filter);
 
-      expect(mockHabitService.findPage).toHaveBeenCalledWith(filter);
+      expect(mockHabitService.page).toHaveBeenCalledWith(filter);
       expect(result).toEqual({
         code: 200,
         data: {

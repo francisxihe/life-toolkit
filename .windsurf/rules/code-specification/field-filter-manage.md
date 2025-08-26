@@ -1,8 +1,8 @@
 ---
 trigger: model_decision
 description: AI 筛选流转结构（系统全链路）
-globs:
 ---
+
 # 筛选流转结构（Monorepo 全链路）
 
 以下是系统筛选功能在整个技术栈中的完整流转结构，用于指导筛选相关的设计、实现和优化。从用户输入到数据查询的完整链路，确保筛选功能在所有层级保持一致性和高性能。
@@ -106,7 +106,6 @@ globs:
 - [ ] 在 `apps/server/src/business/{domain}/{module}/*.controller.ts` 中添加筛选接口
 - [ ] 使用 `@Query()` 装饰器绑定筛选参数
 - [ ] 实现参数验证管道和DTO转换
-- [ ] 返回统一的 PageResponseDto 或 ListResponseDto
 
 ##### Desktop环境 - IPC接口适配
 - [ ] 在 `apps/desktop/src/main/ipc-handlers.ts` 中添加筛选相关的IPC处理器

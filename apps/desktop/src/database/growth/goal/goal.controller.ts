@@ -49,12 +49,12 @@ export class GoalController {
   async page(@Query() query?: GoalPageFiltersVo) {
     const goalPageFilterDto = new GoalPageFilterDto();
     goalPageFilterDto.importPageVo(query);
-    const res = await goalService.page(goalPageFilterDto);
+    const { list, total, pageNum, pageSize } = await goalService.page(goalPageFilterDto);
     return GoalMapper.dtoToPageVo(
-      res.list,
-      res.total,
-      goalPageFilterDto.pageNum,
-      goalPageFilterDto.pageSize
+      list,
+      total,
+      pageNum,
+      pageSize
     );
   }
 
@@ -62,7 +62,7 @@ export class GoalController {
   async list(@Query() query?: GoalListFiltersVo) {
     const goalListFilterDto = new GoalListFilterDto();
     goalListFilterDto.importListVo(query);
-    const list = await goalService.findAll(goalListFilterDto);
+    const list = await goalService.list(goalListFilterDto);
     return GoalMapper.dtoToListVo(list);
   }
 
@@ -93,15 +93,11 @@ export class GoalController {
 
   @Post("/abandon/:id")
   async abandon(@Param("id") id: string) {
-    return GoalMapper.dtoToVo(
-      await goalService.update(id, { status: GoalStatus.ABANDONED })
-    );
+    return await goalService.abandon(id);
   }
 
   @Post("/restore/:id")
   async restore(@Param("id") id: string) {
-    return GoalMapper.dtoToVo(
-      await goalService.update(id, { status: GoalStatus.TODO })
-    );
+    return await goalService.restore(id);
   }
 }
