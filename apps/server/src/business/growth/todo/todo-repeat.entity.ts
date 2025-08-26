@@ -1,5 +1,5 @@
 import { Entity, OneToMany } from "typeorm";
-import { Todo } from "./todo.entity";
+import { Todo } from "@life-toolkit/business-server";
 import { Repeat } from "@life-toolkit/components-repeat/server";
 
 @Entity("todo_repeat")

@@ -1,7 +1,7 @@
 import { Inject, Injectable, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, TreeRepository, In } from "typeorm";
-import { Task } from "./task.entity";
+import { Task } from "@life-toolkit/business-server";
 import { TodoService } from "../todo/todo.service";
 @Injectable()
 export class TaskTreeService {

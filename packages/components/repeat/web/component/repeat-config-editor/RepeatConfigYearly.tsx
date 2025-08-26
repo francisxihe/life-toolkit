@@ -3,9 +3,9 @@ import {
   YearlyType,
   MonthlyType,
   WeekDay,
-} from "../../types";
+} from "../../../types";
 import { Radio } from "@arco-design/web-react";
-import { OrdinalWeek } from "../../types";
+import { OrdinalWeek } from "../../../types";
 import RepeatConfigMonthly from "./RepeatConfigMonthly";
 import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
 

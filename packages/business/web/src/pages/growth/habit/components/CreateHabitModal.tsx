@@ -57,7 +57,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
       }
 
       setLoading(true);
-      console.log('values', values);
 
       const habitData: CreateHabitVo = {
         name: values.name,

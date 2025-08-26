@@ -9,13 +9,13 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
   UpdateTodoDto,
   TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
+  Todo,
 } from "@life-toolkit/business-server";
 import dayjs from "dayjs";
 import { TodoStatus } from "@life-toolkit/enum";

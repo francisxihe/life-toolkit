@@ -1,10 +1,8 @@
 import { RepeatProvider, RepeatContextProps } from "./context";
 import { LocaleProvider } from "./useLocale";
 import { RepeatSelectorMain } from "./RepeatMain";
-import { RepeatModeForm, RepeatEndModeForm } from "../types";
+import { RepeatModeForm, RepeatEndModeForm } from "../../types";
 
-export * from "./mapping";
-export { default as webMapping } from "./mapping";
 
 export function RepeatSelector(props: {
   lang: "en-US" | "zh-CN";

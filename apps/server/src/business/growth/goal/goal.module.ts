@@ -4,7 +4,7 @@ import { GoalService } from "./goal.service";
 import { GoalController } from "./goal.controller";
 import { GoalRepository } from "./goal.repository";
 import { GoalTreeRepository } from "./goal-tree.repository";
-import { Task } from "../task";
+import { Task } from "@life-toolkit/business-server";
 import { TrackTime } from "../track-time/entity";
 import { Habit, Goal } from "@life-toolkit/business-server";
 

@@ -11,7 +11,6 @@ import {
   IsNull,
   Not,
 } from "typeorm";
-import { Task } from "./task.entity";
 import { TrackTime } from "../track-time";
 import {
   TaskMapper,
@@ -21,6 +20,7 @@ import {
   TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
+  Task,
 } from "@life-toolkit/business-server";
 import { TaskStatus } from "@life-toolkit/enum";
 

@@ -11,11 +11,12 @@ import {
   RepeatConfig,
   TimeUnit,
   YearlyType,
-} from "../types";
+  OrdinalDay,
+  OrdinalDayType,
+} from "../../types";
 import { createInjectState } from "@life-toolkit/common-web-utils/src/createInjectState";
 import { useRef, useState } from "react";
 import { useLocaleContext } from "./useLocale";
-import { OrdinalDay, OrdinalDayType } from "../types";
 
 export type RepeatContextProps = {
   value?: RepeatModeForm & RepeatEndModeForm;

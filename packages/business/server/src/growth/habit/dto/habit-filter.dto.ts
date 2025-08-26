@@ -9,6 +9,7 @@ import {
   HabitListFiltersVo,
   HabitPageFiltersVo,
 } from "@life-toolkit/vo/growth/habit";
+import { Importance } from "@life-toolkit/enum";
 
 export class HabitListFiltersDto extends PartialType(
   PickType(HabitDto, ["status", "difficulty", "tags", "importance"] as const)
@@ -60,8 +61,9 @@ function importListVo(
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.difficulty !== undefined)
     filterDto.difficulty = filterVo.difficulty;
-  if (filterVo.importance !== undefined)
-    filterDto.importance = filterVo.importance;
+  if (filterVo.importance !== undefined) {
+    filterDto.importance = filterVo.importance as Importance;
+  }
   if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
   if (filterVo.startDateStart)
     filterDto.startDateStart = new Date(filterVo.startDateStart);
@@ -69,6 +71,5 @@ function importListVo(
     filterDto.startDateEnd = new Date(filterVo.startDateEnd);
   if (filterVo.endDataStart)
     filterDto.endDataStart = new Date(filterVo.endDataStart);
-  if (filterVo.endDataEnd)
-    filterDto.endDataEnd = new Date(filterVo.endDataEnd);
+  if (filterVo.endDataEnd) filterDto.endDataEnd = new Date(filterVo.endDataEnd);
 }

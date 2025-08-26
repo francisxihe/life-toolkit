@@ -33,6 +33,7 @@ export default function HabitListFilter() {
             }))}
             value={filters.status}
             onChange={(value) => setFilters({ ...filters, status: value })}
+            allowClear
           />
         </Col>
       </Row>

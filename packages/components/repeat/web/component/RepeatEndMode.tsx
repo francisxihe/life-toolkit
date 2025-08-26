@@ -1,4 +1,4 @@
-import { RepeatEndMode } from "../types";
+import { RepeatEndMode } from "../../types";
 import { DatePicker, InputNumber, Select } from "@arco-design/web-react";
 import dayjs from "dayjs";
 import { useRepeatContext } from "./context";

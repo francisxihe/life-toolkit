@@ -1,8 +1,8 @@
 ---
 trigger: model_decision
 description: AI 字段流转结构（系统全链路）
-globs:
 ---
+
 # 字段流转结构（Monorepo 全链路）
 
 以下是系统字段在整个技术栈中的完整流转结构，用于指导任何字段相关变更的实施路径。从数据库实体到前端展示的完整链路，确保字段变更在所有层级保持一致性。
@@ -61,6 +61,7 @@ globs:
 - [ ] 设置 `@Column` 装饰器，指定类型、长度、默认值等
 - [ ] 如需索引，添加 `@Index()` 装饰器
 - [ ] 如为枚举字段，引用 `packages/business/enum/{domain}/` 中的枚举
+- [ ] 如果没有特别说明，字段默认非必填，且没有默认值
 
 #### 2) DTO层修改
 - [ ] 在 `packages/business/server/src/{domain}/{module}/dto/` 中添加字段

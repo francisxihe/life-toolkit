@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Entity, Column, ManyToMany, JoinTable, OneToMany } from "typeorm";
-import { Difficulty, HabitStatus } from "@life-toolkit/enum";
+import { Difficulty, HabitStatus, Importance } from "@life-toolkit/enum";
 import { BaseEntity } from "../../base/base.entity";
 import { Goal } from "../goal";
 import { Todo } from "../todo";
@@ -22,9 +22,13 @@ export class HabitModel extends BaseEntity {
   @Column("text", { nullable: true })
   description?: string;
 
-  /** 习惯重要程度 (1-5) */
-  @Column("int", { default: 3 })
-  importance?: number = 3;
+  /** 习惯重要程度 */
+  @Column({
+    type: "simple-enum",
+    enum: Importance,
+    default: Importance.Core,
+  })
+  importance?: Importance;
 
   /** 习惯标签 */
   @Column("simple-array", { nullable: true })
@@ -36,7 +40,7 @@ export class HabitModel extends BaseEntity {
     enum: Difficulty,
     default: Difficulty.Skilled,
   })
-  difficulty: Difficulty = Difficulty.Skilled;
+  difficulty!: Difficulty;
 
   /** 习惯开始日期 */
   @Column("date")
@@ -74,3 +78,4 @@ export class Habit extends HabitModel {
   @OneToMany(() => Todo, (todo) => todo.habit, { cascade: true })
   todos!: Todo[];
 }
+

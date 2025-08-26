@@ -1,6 +1,6 @@
 import { Select } from "@arco-design/web-react";
 import RepeatEndModeForm from "./RepeatEndMode";
-import { RepeatMode } from "../types";
+import { RepeatMode } from "../../types";
 import { useRepeatContext } from "./context";
 import {
   RepeatConfigCustom,

@@ -15,8 +15,8 @@ import {
 import { HabitController } from '@life-toolkit/api';
 import { CreateHabitVo, GoalVo } from '@life-toolkit/vo/growth';
 import { Difficulty } from '@life-toolkit/enum';
-import { HABIT_DIFFICULTY_OPTIONS } from '../constants';
 import dayjs from 'dayjs';
+import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -54,7 +54,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
       }
 
       setLoading(true);
-      console.log('values', values);
 
       const habitData: CreateHabitVo = {
         name: values.name,
@@ -162,12 +161,14 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         {/* 属性设置 */}
         <div className="grid grid-cols-2 gap-4">
           <Form.Item label="重要程度" field="importance" initialValue={3}>
-            <InputNumber
-              min={1}
-              max={5}
-              placeholder="1-5级"
-              style={{ width: '100%' }}
-            />
+            <Select
+              placeholder="选择重要程度"
+              options={[...IMPORTANCE_MAP.entries()].map(([value, option]) => ({
+                value,
+                label: option.label,
+                color: option.color,
+              }))}
+            ></Select>
           </Form.Item>
 
           <Form.Item
@@ -175,16 +176,14 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
             field="difficulty"
             initialValue={Difficulty.Challenger}
           >
-            <Select placeholder="选择难度等级">
-              {HABIT_DIFFICULTY_OPTIONS.map((option) => (
-                <Option key={option.value} value={option.value}>
-                  <Space>
-                    <span style={{ color: option.color }}>●</span>
-                    {option.label}
-                  </Space>
-                </Option>
-              ))}
-            </Select>
+            <Select
+              placeholder="选择难度等级"
+              options={[...DIFFICULTY_MAP.entries()].map(([value, option]) => ({
+                value,
+                label: option.label,
+                color: option.color,
+              }))}
+            ></Select>
           </Form.Item>
         </div>
 

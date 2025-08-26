@@ -15,8 +15,8 @@ import type {
   HabitListFiltersVo,
   HabitPageFiltersVo,
 } from "@life-toolkit/vo";
-import { HabitMapper } from "@life-toolkit/business-server";
 import {
+  HabitMapper,
   HabitListFiltersDto,
   HabitPageFiltersDto,
 } from "@life-toolkit/business-server";
@@ -124,9 +124,9 @@ export class HabitController {
   }
 
   @Post("/restore/:id")
-  async restore(@Param("id") id: string) {
+  async restore(@Param("id") id: string) { 
     return HabitMapper.dtoToVo(
-      await habitService.update(id, { status: HabitStatus.ACTIVE })
+      await habitService.update(id, { status: HabitStatus.ACTIVE }) 
     );
   }
 

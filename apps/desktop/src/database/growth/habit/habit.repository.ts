@@ -48,6 +48,7 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
+    // 重要程度（单值）
     if (filter.importance !== undefined) {
       qb = qb.andWhere("habit.importance = :importance", {
         importance: filter.importance,
@@ -130,10 +131,10 @@ export class HabitRepository implements BusinessHabitRepository {
   }
 
   async page(
-    filter: HabitPageFiltersDto
+    habitPageFiltersDto: HabitPageFiltersDto
   ): Promise<{ list: HabitDto[]; total: number }> {
-    const { pageNum = 1, pageSize = 10 } = filter;
-    const qb = this.buildQuery(filter);
+    const { pageNum = 1, pageSize = 10 } = habitPageFiltersDto;
+    const qb = this.buildQuery(habitPageFiltersDto);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)

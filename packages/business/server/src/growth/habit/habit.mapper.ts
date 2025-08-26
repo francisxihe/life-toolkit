@@ -1,7 +1,7 @@
 import type { Habit as HabitVO } from "@life-toolkit/vo";
 import { CreateHabitDto, UpdateHabitDto, HabitDto, HabitModelDto } from "./dto";
 import { Habit } from "./habit.entity";
-import { HabitStatus } from "@life-toolkit/enum";
+import { HabitStatus, Importance } from "@life-toolkit/enum";
 import { BaseMapper } from "../../base/base.mapper";
 import dayjs from "dayjs";
 
@@ -33,7 +33,7 @@ export class HabitMapper {
       name: dto.name || "",
       status: dto.status || HabitStatus.ACTIVE,
       description: dto.description,
-      importance: dto.importance ?? 3,
+      importance: dto.importance ?? Importance.Core,
       tags: dto.tags || [],
       difficulty: dto.difficulty,
       startAt: dto.startDate
@@ -144,7 +144,7 @@ export class HabitMapper {
       name: dto.name || "",
       status: dto.status || HabitStatus.ACTIVE,
       description: dto.description,
-      importance: dto.importance ?? 3,
+      importance: dto.importance ?? Importance.Core,
       tags: dto.tags || [],
       difficulty: dto.difficulty,
       startAt: dto.startDate

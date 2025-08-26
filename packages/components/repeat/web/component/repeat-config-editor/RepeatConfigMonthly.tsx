@@ -1,9 +1,9 @@
 import { Radio, Calendar } from '@arco-design/web-react';
-import { RepeatFormMonthly, MonthlyType, WeekDay } from "../../types";
+import { RepeatFormMonthly, MonthlyType, WeekDay } from "../../../types";
 import OrdinalDaySelector from "../ordinal-selector/OrdinalDaySelector";
 import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
 import dayjs from "dayjs";
-import { OrdinalWeek, OrdinalDay, OrdinalDayType } from "../../types";
+import { OrdinalWeek, OrdinalDay, OrdinalDayType } from "../../../types";
 
 export default function RepeatConfigMonthly(props: {
   repeatConfig: RepeatFormMonthly["repeatConfig"];

@@ -1,5 +1,5 @@
 import { Select, InputNumber } from "@arco-design/web-react";
-import { RepeatFormCustom, TimeUnit } from "../../types";
+import { RepeatFormCustom, TimeUnit } from "../../../types";
 import RepeatConfigMonthly from "./RepeatConfigMonthly";
 import RepeatConfigYearly from "./RepeatConfigYearly";
 import RepeatConfigWeekly from "./RepeatConfigWeekly";

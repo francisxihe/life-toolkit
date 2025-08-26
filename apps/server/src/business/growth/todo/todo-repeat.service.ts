@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Todo } from "./todo.entity";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
 import { RepeatService } from "@life-toolkit/components-repeat/server";
 import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
-import { CreateTodoDto, TodoDto } from "@life-toolkit/business-server";
+import { CreateTodoDto, TodoDto, Todo } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
 import { TodoRepeat } from "./todo-repeat.entity";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";

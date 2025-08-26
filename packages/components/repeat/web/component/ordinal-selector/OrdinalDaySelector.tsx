@@ -1,6 +1,6 @@
 import { Select } from "@arco-design/web-react";
 import { useLocaleContext } from "../useLocale";
-import { OrdinalDayType, OrdinalDay } from "../../types";
+import { OrdinalDayType, OrdinalDay } from "../../../types";
 
 export const OrdinalDayTypeMap = new Map<OrdinalDayType, string>([
   [OrdinalDayType.DAY, "day"],

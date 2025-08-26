@@ -289,6 +289,13 @@ export class HabitRepository implements _HabitRepository {
       });
     }
 
+    // 重要程度（单值）
+    if ((filter as any).importance !== undefined) {
+      query = query.andWhere("habit.importance = :importance", {
+        importance: (filter as any).importance,
+      });
+    }
+
     // 关键词搜索
     if (filter.keyword) {
       query = query.andWhere(

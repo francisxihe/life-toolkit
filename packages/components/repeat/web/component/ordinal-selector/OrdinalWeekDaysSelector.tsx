@@ -1,7 +1,7 @@
 import { Select } from "@arco-design/web-react";
 import { useLocaleContext } from "../useLocale";
 import { WeekDayMap } from "../constants";
-import { WeekDay, OrdinalWeek } from "../../types";
+import { WeekDay, OrdinalWeek } from "../../../types";
 
 export const OrdinalMap = new Map<OrdinalWeek, string>([
   [OrdinalWeek.FIRST, "first"],

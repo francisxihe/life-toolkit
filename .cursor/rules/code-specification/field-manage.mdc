@@ -61,6 +61,8 @@ alwaysApply: false
 - [ ] 设置 `@Column` 装饰器，指定类型、长度、默认值等
 - [ ] 如需索引，添加 `@Index()` 装饰器
 - [ ] 如为枚举字段，引用 `packages/business/enum/{domain}/` 中的枚举
+- [ ] 如果没有特别说明，字段默认非必填，且没有默认值
+
 
 #### 2) DTO层修改
 - [ ] 在 `packages/business/server/src/{domain}/{module}/dto/` 中添加字段
