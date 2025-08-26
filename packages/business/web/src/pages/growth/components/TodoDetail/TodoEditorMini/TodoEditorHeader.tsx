@@ -3,7 +3,7 @@ import { FlexibleContainer } from 'francis-component-react';
 import DateTimeTool from '../DateTimeTool';
 import { useTodoDetailContext } from '../context';
 import IconSelector from '../../IconSelector';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../../service/todo.constants';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../../constants';
 
 export default function TodoEditorHeader() {
   const { todoFormData, setTodoFormData, onSubmit } = useTodoDetailContext();

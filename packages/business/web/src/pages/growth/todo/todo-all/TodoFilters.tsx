@@ -2,7 +2,7 @@
 
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service/todo.constants';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { useTodoAllContext } from './context';
 import { TodoPageFiltersVo } from '@life-toolkit/vo/growth';

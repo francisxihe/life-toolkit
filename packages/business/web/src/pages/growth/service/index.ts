@@ -10,7 +10,6 @@ export * from './task.mapping';
 export { default as TodoService } from './todo.service';
 export { default as TodoMapping } from './todo.mapping';
 export * from './todo.types';
-export * from './todo.constants';
 
 import HabitService from './habit.service';
 
