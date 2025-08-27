@@ -1,2 +1,3 @@
-export { default as TodoRepeatService } from './todo-repeat.service';
-export { default } from './todo-repeat.service';
+export { TodoRepeatService, todoRepeatService } from './todo-repeat.service';
+export { TodoRepeatRepository } from './todo-repeat.repository';
+export { TodoRepeatController } from './todo-repeat.controller';

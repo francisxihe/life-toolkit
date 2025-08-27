@@ -32,8 +32,3 @@ export interface TodoRepository {
   updateRepeatId(id: string, repeatId: string): Promise<void>;
   softDeleteByTaskIds(taskIds: string[]): Promise<void>;
 }
-
-export interface TodoRepeatService {
-  create(dto: any): Promise<any>;
-  update(id: string, dto: any): Promise<any>;
-}

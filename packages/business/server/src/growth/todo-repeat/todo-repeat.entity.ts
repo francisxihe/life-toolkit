@@ -1,12 +1,61 @@
 import { Entity, OneToMany, Column } from "typeorm";
 import { Todo } from "../todo/todo.entity";
-import { Repeat } from "@life-toolkit/components-repeat/server";
+import {
+  RepeatMode,
+  RepeatConfig,
+  RepeatEndMode,
+} from "@life-toolkit/components-repeat";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import {
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from "class-validator";
 import { Type } from "class-transformer";
+import { BaseEntity } from "../../base/base.entity";
 
-@Entity("todo_repeat")
-export class TodoRepeat extends Repeat {
+export class TodoRepeatModel extends BaseEntity {
+  /** 重复模式 */
+  @Column({
+    type: "varchar",
+    length: 20,
+  })
+  repeatMode!: RepeatMode;
+
+  /** 重复配置 */
+  @Column({ type: "text", nullable: true })
+  repeatConfig?: RepeatConfig;
+
+  /** 重复结束模式 */
+  @Column({
+    type: "varchar",
+    length: 20,
+  })
+  repeatEndMode!: RepeatEndMode;
+
+  /** 重复结束日期 */
+  @Column({
+    type: "date",
+    nullable: true,
+  })
+  repeatEndDate?: string;
+
+  /** 重复次数 */
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  repeatTimes?: number;
+
+  /** 已创建的重复次数 */
+  @Column({
+    type: "int",
+    nullable: true,
+  })
+  repeatedTimes?: number;
+
   /** 模板名称 */
   @Column("varchar", { nullable: true })
   @IsString()
@@ -66,7 +115,10 @@ export class TodoRepeat extends Repeat {
   /** 放弃时间 */
   @Column("datetime", { nullable: true })
   abandonedAt?: Date;
+}
 
+@Entity("todo_repeat")
+export class TodoRepeat extends TodoRepeatModel {
   /** 关联的待办列表 */
   @OneToMany(() => Todo, (todo) => todo.repeat, { nullable: true })
   todos?: Todo[];
