@@ -1,0 +1,279 @@
+---
+trigger: model_decision
+description: Repository 模式代码生成规范总览
+globs:
+---
+
+# Repository 规范
+
+## 📋 概述
+
+Repository 模式是数据访问层的核心设计模式，Life Toolkit 项目采用分层架构：
+
+- **Business Layer** (`packages/business/server/`): 定义 Repository Interface
+- **Server Layer** (`apps/server/`): 实现 Repository Interface，处理复杂业务逻辑
+- **Desktop Layer** (`apps/desktop/`): 实现 Repository Interface，适配桌面端数据访问
+
+## 🏗️ 架构模式
+
+### 三层 Repository 架构
+```
+┌─────────────────────────────────────┐
+│           Business Layer            │
+│  ┌─────────────────────────────────┐ │
+│  │        Interface 定义          │ │
+│  │  - 数据访问契约规范            │ │
+│  │  - DTO/VO 类型约束             │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+                │
+        ┌───────┼───────┐
+        │       │       │
+┌───────▼───────┴───────▼─────────────┐
+│           Server Layer              │
+│  ┌─────────────────────────────────┐ │
+│  │      TypeORM 实现               │ │
+│  │  - 复杂查询构建                 │ │
+│  │  - 关联关系处理                 │ │
+│  │  - 事务管理                     │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+        │
+        │  (数据同步)
+        │
+┌───────▼─────────────────────────────┐
+│          Desktop Layer              │
+│  ┌─────────────────────────────────┐ │
+│  │      SQLite 实现                │ │
+│  │  - 本地数据存储                 │ │
+│  │  - 离线数据同步                 │ │
+│  │  - 轻量级查询优化               │ │
+│  └─────────────────────────────────┘ │
+└─────────────────────────────────────┘
+```
+
+## 文件结构规范
+
+### Business Layer Module Repository Interface
+```
+packages/business/server/src/{module}/
+└── {module}.repository.ts     # Repository Interface 定义
+```
+
+### Server Layer Module Repository Implementation
+```
+apps/server/src/business/{module}/
+└── {module}.repository.ts     # TypeORM Repository 实现
+```
+
+### Desktop Layer Module Repository Implementation
+```
+apps/desktop/src/database/{module}/
+└── {module}.repository.ts     # SQLite Repository 实现
+```
+
+## 设计原则
+
+### 1. Interface 优先原则
+- **Business Layer** 负责定义数据访问契约
+- **Server/Desktop Layer** 负责实现具体数据访问逻辑
+- 确保跨平台数据访问的一致性
+
+### 2. 平台适配原则
+- **Server**: 支持复杂查询、关联关系、事务管理
+- **Desktop**: 支持离线访问、轻量级查询、本地存储优化
+
+### 3. 数据一致性原则
+- 统一的 DTO/VO 类型定义
+- 跨平台的数据映射逻辑
+- 业务规则的一致性保证
+
+## 数据流向
+
+### 创建操作
+```mermaid
+graph TD
+    A[Client Requests] --> B[Controller]
+    B --> C[Service]
+    C --> D[Repository Interface]
+    D --> E[Server Module Repository]
+    D --> F[Desktop Repository]
+    E --> G[(MySQL)]
+    F --> H[(SQLite)]
+```
+
+### 查询操作
+```mermaid
+graph TD
+    A[Client Requests] --> B[Controller]
+    B --> C[Service]
+    C --> D[Repository Interface]
+    D --> E[Server Module Repository]
+    D --> F[Desktop Repository]
+    E --> G[(MySQL)]
+    F --> H[(SQLite)]
+    G --> I[DTO Mapping]
+    H --> I
+    I --> J[Return Data]
+```
+
+## 核心接口规范
+
+### 基础 CRUD 接口
+```typescript
+export interface BaseRepository<TDto, TCreateModuleDto, TUpdateModuleDto, TFilterDto> {
+  // 创建
+  create(createDto: TCreateModuleDto): Promise<TDto>;
+  createWithExtras(createDto: TCreateModuleDto, extras: Partial<any>): Promise<TDto>;
+
+  // 查询
+  findAll(filterModuleListFilterDto): Promise<TDto[]>;
+  page(filterModuleListFilterDto & PageFilter): Promise<PageModuleDto>>;
+  findById(id: string, relations?: string[]): Promise<TDto>;
+  findOneBy(condition: any): Promise<TDto | null>;
+
+  // 更新
+  update(id: string, updateDto: TUpdateModuleDto): Promise<TDto>;
+  batchUpdate(idList: string[], updateDto: TUpdateModuleDto): Promise<TDto[]>;
+
+  // 删除
+  delete(id: string): Promise<boolean>;
+  deleteByFilter(filterModuleListFilterDto): Promise<void>;
+  softDelete(id: string): Promise<void>;
+  batchSoftDelete(idList: string[]): Promise<void>;
+}
+```
+
+### 分页查询接口
+```typescript
+export interface PageResult<T> {
+  list: T[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+}
+
+export interface PageFilter {
+  pageNum?: number;
+  pageSize?: number;
+  orderBy?: string;
+  sortOrder?: 'ASC' | 'DESC';
+}
+```
+
+## 实现策略
+
+### Server Layer 实现策略
+- 使用 TypeORM Repository 模式
+- 支持复杂查询构建器
+- 处理实体关联关系
+- 实现事务管理
+- 优化数据库查询性能
+
+### Desktop Layer 实现策略
+- 使用 TypeORM Repository 适配 SQLite
+- 实现本地数据缓存
+- 支持离线数据操作
+- 优化轻量级查询
+- 处理数据同步逻辑
+
+### Business Layer 实现策略
+- 定义清晰的数据访问契约
+- 统一 DTO/VO 类型规范
+- 提供跨平台兼容的接口
+- 确保业务规则一致性
+
+## 数据映射规范
+
+### Entity → DTO 映射
+```typescript
+// 推荐使用 Mapper 模式
+export class EntityMapper {
+  static entityToDto(entity: Entity): Dto {
+    return {
+      id: entity.id,
+      name: entity.name,
+      // ... 其他字段映射
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    };
+  }
+
+  static dtoToEntity(dto: Dto): Entity {
+    return {
+      id: dto.id,
+      name: dto.name,
+      // ... 其他字段映射
+    };
+  }
+}
+```
+
+## 查询构建规范
+
+### 动态查询条件
+```typescript
+// 支持灵活的查询条件构建
+private buildWhere(filter: FilterDto): FindOptionsWhere<Entity> {
+  const where: FindOptionsWhere<Entity> = {};
+
+  // 字符串条件
+  if (filter.keyword) {
+    where.name = Like(`%${filter.keyword}%`);
+  }
+
+  // 日期范围条件
+  if (filter.startDate && filter.endDate) {
+    where.createdAt = Between(filter.startDate, filter.endDate);
+  }
+
+  // 枚举条件
+  if (filter.status) {
+    where.status = filter.status;
+  }
+
+  return where;
+}
+```
+
+## 性能优化
+## 🚀 性能优化
+
+### 索引策略
+- 常用查询字段添加索引
+- 复合索引优化多条件查询
+- 唯一索引保证数据约束
+
+### 查询优化
+- 避免 N+1 查询问题
+- 使用分页查询限制数据量
+- 选择性加载关联数据
+- 缓存频繁查询的数据
+
+## ✅ 质量保证
+
+### 代码规范检查
+- [ ] Repository Interface 定义完整
+- [ ] CRUD 方法实现齐全
+- [ ] 错误处理机制完善
+- [ ] 类型定义准确无误
+- [ ] 命名规范统一
+
+### 性能检查
+- [ ] 查询语句优化
+- [ ] 索引使用合理
+- [ ] 关联查询优化
+- [ ] 分页查询实现
+
+### 一致性检查
+- [ ] 跨平台接口一致
+- [ ] 数据映射正确
+- [ ] 业务规则统一
+- [ ] 错误处理统一
+
+## 📝 相关规范
+
+- [Entity 规范](./entity.mdc) - 数据实体定义规范
+- [Service 规范](./service.mdc) - 业务服务层规范
+- [DTO 规范](./dto.mdc) - 数据传输对象规范
+- [Controller 规范](./controller.mdc) - 控制器层规范

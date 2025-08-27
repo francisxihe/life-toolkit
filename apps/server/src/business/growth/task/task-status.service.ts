@@ -16,8 +16,8 @@ export class TaskStatusService {
     id: string,
     status: TaskStatus,
     dateField: keyof Task
-  ): Promise<boolean> {
-    return this.taskRepository.updateStatus(id, status, dateField);
+  ): Promise<void> {
+    await this.taskRepository.updateStatus(id, status, dateField);
   }
 
   async batchDone(
@@ -30,11 +30,11 @@ export class TaskStatusService {
     };
   }
 
-  async abandon(id: string): Promise<boolean> {
-    return this.updateStatus(id, TaskStatus.ABANDONED, "abandonedAt");
+  async abandon(id: string): Promise<void> {
+    await this.updateStatus(id, TaskStatus.ABANDONED, "abandonedAt");
   }
 
-  async restore(id: string): Promise<boolean> {
-    return this.updateStatus(id, TaskStatus.TODO, "updatedAt");
+  async restore(id: string): Promise<void> {
+    await this.updateStatus(id, TaskStatus.TODO, "updatedAt");
   }
 }

@@ -41,15 +41,15 @@ export class TaskController {
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.taskStatusService.abandon(id);
-    return { result };
+    await this.taskStatusService.abandon(id);
+    return { result: true };
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.taskStatusService.restore(id);
-    return { result };
+    await this.taskStatusService.restore(id);
+    return { result: true };
   }
 
   @Get("task-with-track-time/:id")

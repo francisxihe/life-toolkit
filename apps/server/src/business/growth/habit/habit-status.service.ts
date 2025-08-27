@@ -17,7 +17,7 @@ export class HabitStatusService {
     } as any);
   }
 
-  async done(id: string): Promise<boolean> {
+  async done(id: string): Promise<void> {
     const habit = await this.habitRepository.findById(id);
     
     // 业务规则验证
@@ -28,11 +28,9 @@ export class HabitStatusService {
     await this.habitRepository.updateStatus(id, HabitStatus.COMPLETED, {
       completedCount: habit.completedCount + 1,
     });
-    
-    return true;
   }
 
-  async abandon(id: string): Promise<boolean> {
+  async abandon(id: string): Promise<void> {
     const habit = await this.habitRepository.findById(id);
     
     // 业务规则验证
@@ -41,11 +39,9 @@ export class HabitStatusService {
     }
     
     await this.habitRepository.updateStatus(id, HabitStatus.ABANDONED);
-    
-    return true;
   }
 
-  async restore(id: string): Promise<boolean> {
+  async restore(id: string): Promise<void> {
     const habit = await this.habitRepository.findById(id);
     
     // 业务规则验证
@@ -54,11 +50,9 @@ export class HabitStatusService {
     }
     
     await this.habitRepository.updateStatus(id, HabitStatus.ACTIVE);
-    
-    return true;
   }
 
-  async pause(id: string): Promise<boolean> {
+  async pause(id: string): Promise<void> {
     const habit = await this.habitRepository.findById(id);
     
     // 业务规则验证
@@ -67,11 +61,9 @@ export class HabitStatusService {
     }
     
     await this.habitRepository.updateStatus(id, HabitStatus.PAUSED);
-    
-    return true;
   }
 
-  async resume(id: string): Promise<boolean> {
+  async resume(id: string): Promise<void> {
     const habit = await this.habitRepository.findById(id);
     
     // 业务规则验证
@@ -80,8 +72,6 @@ export class HabitStatusService {
     }
     
     await this.habitRepository.updateStatus(id, HabitStatus.ACTIVE);
-    
-    return true;
   }
   private canMarkAsDone(habit: HabitDto): boolean {
     return habit.status === HabitStatus.ACTIVE || habit.status === HabitStatus.PAUSED;

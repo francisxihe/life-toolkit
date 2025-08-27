@@ -7,7 +7,7 @@ import { RepeatService } from "@life-toolkit/components-repeat/server";
 import { RepeatEndMode } from "@life-toolkit/components-repeat/types";
 import { CreateTodoDto, TodoDto, Todo } from "@life-toolkit/business-server";
 import { TodoRepository } from "./todo.repository";
-import { TodoRepeat } from "./todo-repeat.entity";
+import { TodoRepeat } from "@life-toolkit/business-server";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 // 添加dayjs插件
@@ -77,16 +77,23 @@ export class TodoRepeatService extends RepeatService {
       return;
     }
 
-    // 创建下一个待办
+    // 创建下一个待办（优先使用模板字段）
+    const planStartFromRepeat = repeat.startAt
+      ? dayjs(repeat.startAt).format("HH:mm:ss")
+      : undefined;
+    const planEndFromRepeat = repeat.endAt
+      ? dayjs(repeat.endAt).format("HH:mm:ss")
+      : undefined;
+
     const createTodoDto: CreateTodoDto = Object.assign(new CreateTodoDto(), {
-      name: todoWithRepeat.name,
-      description: todoWithRepeat.description,
-      tags: todoWithRepeat.tags,
-      importance: todoWithRepeat.importance,
-      urgency: todoWithRepeat.urgency,
+      name: repeat.name ?? todoWithRepeat.name,
+      description: repeat.description ?? todoWithRepeat.description,
+      tags: repeat.tags ?? todoWithRepeat.tags,
+      importance: repeat.importance ?? todoWithRepeat.importance,
+      urgency: repeat.urgency ?? todoWithRepeat.urgency,
       planDate: nextDate.toDate(),
-      planStartAt: todoWithRepeat.planStartAt,
-      planEndAt: todoWithRepeat.planEndAt,
+      planStartAt: planStartFromRepeat ?? todoWithRepeat.planStartAt,
+      planEndAt: planEndFromRepeat ?? todoWithRepeat.planEndAt,
       status: TodoStatus.TODO,
       taskId: todoWithRepeat.taskId,
     });

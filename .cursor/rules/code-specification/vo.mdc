@@ -1,7 +1,6 @@
 ---
-trigger: model_decision
 description: 编写VO代码时
-globs: 
+alwaysApply: false
 ---
 # VO 规范
 ## 📋 概述
@@ -17,7 +16,6 @@ packages/vo/
 │   ├── model.vo.ts         # 基础模型VO
 │   ├── operation.vo.ts     # 操作相关VO
 │   ├── response.vo.ts      # 响应VO
-│   ├── page.vo.ts          # 分页VO
 │   ├── without-self.ts     # 工具类型
 │   └── index.ts            # 导出文件
 ├── [domain]/               # 业务域目录
@@ -32,10 +30,10 @@ packages/vo/
 
 ### 示例结构
 ```
-packages/vo/growth/goal/
-├── goal-model.vo.ts        # 目标模型VO
-├── goal-filter.vo.ts       # 目标过滤VO
-├── goal-form.vo.ts         # 目标表单VO
+packages/vo/example/module/
+├── module-model.vo.ts      # 模块模型VO
+├── module-filter.vo.ts     # 模块过滤VO
+├── module-form.vo.ts       # 模块表单VO
 └── index.ts                # 导出文件
 ```
 
@@ -48,7 +46,7 @@ packages/vo/growth/goal/
 - **导出文件**: `index.ts`
 
 ### 类型命名格式
-- **枚举**: `[Module][Property]` (如: `GoalStatus`, `TodoType`)
+- **枚举**: `[Module][Property]` (如: `ItemStatus`, `ItemType`)
 - **基础模型**: `[Module]ModelVo`
 - **项目模型**: `[Module]ItemVo` (继承BaseModelVo)
 - **完整模型**: `[Module]Vo` (包含关联数据)
@@ -79,25 +77,23 @@ export enum ModuleStatus {
   CANCELLED = "cancelled",
 }
 
-export enum ModulePriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  URGENT = "urgent",
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
 }
 
 // 2. 基础模型VO
 export type ModuleModelVo = {
-  name: string;
-  description?: string;
-  status: ModuleStatus;
-  priority: ModulePriority;
-  importance: number;
-  isActive: boolean;
-  startDate: string;
-  endDate?: string;
-  tags?: string[];
-  // 其他业务字段...
+  title: string;           // 字符串类型
+  description?: string;    // 可选字符串
+  importance?: number;     // 数字类型
+  status: ModuleStatus;    // 枚举类型
+  tags: string[];          // 数组类型
+  planDate: string;        // 日期类型
+  doneAt?: string;         // 可选日期时间
+  relatedId?: string;      // 关联字段
 };
 
 // 3. 项目VO (包含基础字段)
@@ -106,55 +102,48 @@ export type ModuleItemVo = BaseModelVo & ModuleModelVo;
 // 4. 完整VO (包含关联数据)
 export type ModuleVo = ModuleItemVo & {
   // 关联数据
-  children?: ModuleVo[];
-  parent?: ModuleVo;
-  relatedItems?: RelatedItemVo[];
-  user?: UserItemVo;
+  related?: RelatedItemVo;
 };
 ```
 
 #### 完整示例
 ```typescript
-// goal-model.vo.ts
+// module-model.vo.ts
 import { BaseModelVo } from "../../base";
 
 // 枚举定义
-export enum GoalStatus {
+export enum ModuleStatus {
   ACTIVE = "active",
+  INACTIVE = "inactive",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
 }
 
-export enum GoalPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
 }
 
 // 基础模型VO
-export type GoalModelVo = {
-  title: string;
-  description?: string;
-  status: GoalStatus;
-  priority: GoalPriority;
-  importance: number;
-  isPublic: boolean;
-  startDate: string;
-  targetDate?: string;
-  completedAt?: string;
-  tags?: string[];
-  userId: string;
+export type ModuleModelVo = {
+  title: string;           // 字符串类型
+  description?: string;    // 可选字符串
+  importance?: number;     // 数字类型
+  status: ModuleStatus;    // 枚举类型
+  tags: string[];          // 数组类型
+  planDate: string;        // 日期类型
+  doneAt?: string;         // 可选日期时间
+  relatedId?: string;      // 关联字段
 };
 
 // 项目VO (包含基础字段)
-export type GoalItemVo = BaseModelVo & GoalModelVo;
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
 
 // 完整VO (包含关联数据)
-export type GoalVo = GoalItemVo & {
-  tasks?: TaskItemVo[];
-  user?: UserItemVo;
-  parent?: GoalItemVo;
-  children?: GoalItemVo[];
+export type ModuleVo = ModuleItemVo & {
+  related?: RelatedItemVo;
 };
 ```
 
@@ -165,10 +154,9 @@ export type GoalVo = GoalItemVo & {
 // 创建表单VO
 export type CreateModuleVo = Omit<
   ModuleModelVo,
-  "status" | "computedFields"
+  "doneAt"
 > & {
-  parentId?: string;
-  relationIds?: string[];
+  relatedId?: string;
 };
 
 // 更新表单VO
@@ -177,24 +165,23 @@ export type UpdateModuleVo = Partial<CreateModuleVo>;
 
 #### 完整示例
 ```typescript
-// goal-form.vo.ts
-import { GoalModelVo, GoalStatus } from "./goal-model.vo";
+// module-form.vo.ts
+import { ModuleModelVo, ModuleStatus } from "./module-model.vo";
 
 // 创建表单VO
-export type CreateGoalVo = Omit<
-  GoalModelVo,
-  "status" | "completedAt"
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "doneAt"
 > & {
-  parentId?: string;
-  taskIds?: string[];
+  relatedId?: string;
 };
 
 // 更新表单VO
-export type UpdateGoalVo = Partial<CreateGoalVo>;
+export type UpdateModuleVo = Partial<CreateModuleVo>;
 
 // 状态操作VO
-export type GoalStatusUpdateVo = {
-  status: GoalStatus;
+export type ModuleStatusUpdateVo = {
+  status: ModuleStatus;
   reason?: string;
 };
 ```
@@ -205,15 +192,13 @@ export type GoalStatusUpdateVo = {
 ```typescript
 // 列表过滤VO
 export type ModuleListFiltersVo = Partial<
-  Pick<ModuleVo, "status" | "priority" | "type"> & {
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
     keyword?: string;
-    dateStart?: string;
-    dateEnd?: string;
-    parentId?: string;
-    userId?: string;
+    planDateStart?: string;
+    planDateEnd?: string;
     withoutSelf?: boolean;
     statusList?: ModuleStatus[];
-    priorityList?: ModulePriority[];
+    relatedIds?: string[];
   }
 >;
 
@@ -241,40 +226,35 @@ export type ModulePageVo = {
 
 #### 完整示例
 ```typescript
-// goal-filter.vo.ts
-import { GoalVo, GoalItemVo, GoalStatus, GoalPriority } from "./goal-model.vo";
+// module-filter.vo.ts
+import { ModuleVo, ModuleItemVo, ModuleStatus, ModuleType } from "./module-model.vo";
 
 // 列表过滤VO
-export type GoalListFiltersVo = Partial<
-  Pick<GoalVo, "status" | "priority" | "userId"> & {
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
     keyword?: string;
-    dateStart?: string;
-    dateEnd?: string;
-    parentId?: string;
+    planDateStart?: string;
+    planDateEnd?: string;
     withoutSelf?: boolean;
-    statusList?: GoalStatus[];
-    priorityList?: GoalPriority[];
-    importanceMin?: number;
-    importanceMax?: number;
-    isPublic?: boolean;
-    hasTargetDate?: boolean;
+    statusList?: ModuleStatus[];
+    relatedIds?: string[];
   }
 >;
 
 // 分页过滤VO
-export type GoalPageFiltersVo = GoalListFiltersVo & {
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
   pageNum?: number;
   pageSize?: number;
 };
 
 // 列表结果VO
-export type GoalListVo = {
-  list: GoalItemVo[];
+export type ModuleListVo = {
+  list: ModuleItemVo[];
 };
 
 // 分页结果VO
-export type GoalPageVo = {
-  list: GoalItemVo[];
+export type ModulePageVo = {
+  list: ModuleItemVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -283,7 +263,7 @@ export type GoalPageVo = {
 };
 
 // 统计VO
-export type GoalStatsVo = {
+export type ModuleStatsVo = {
   total: number;
   active: number;
   completed: number;
@@ -297,31 +277,31 @@ export type GoalStatsVo = {
 ### 1. 模块导出 (index.ts)
 ```typescript
 // 重新导出模型VO
-export * from "./goal-model.vo";
+export * from "./module-model.vo";
 
 // 重新导出过滤VO
-export * from "./goal-filter.vo";
+export * from "./module-filter.vo";
 
 // 重新导出表单VO
-export * from "./goal-form.vo";
+export * from "./module-form.vo";
 ```
 
 ### 2. 域导出
 ```typescript
-// growth/index.ts
-export * from "./goal";
-export * from "./todo";
-export * from "./task";
-export * from "./habit";
+// example/index.ts
+export * from "./module";
+export * from "./related";
+export * from "./category";
+export * from "./user";
 ```
 
 ### 3. 总导出
 ```typescript
 // packages/vo/index.ts
 export * from "./base";
-export * from "./growth";
-export * from "./expense";
-export * from "./user";
+export * from "./example";
+export * from "./system";
+export * from "./common";
 ```
 
 ## 📊 数据类型规范
@@ -385,7 +365,7 @@ export type ArrayFields = {
   tags: string[];           // 标签数组
   items: ItemVo[];          // 项目数组
   children: ChildVo[];      // 子项数组
-  relatedGoals: GoalVo[];   // 关联目标数组
+  relatedItems: ItemVo[];   // 关联项目数组
 };
 ```
 
@@ -424,17 +404,17 @@ export type UpdateVo = Partial<CreateVo>;
 ### 2. 可维护性
 ```typescript
 // 单一职责：每个VO文件只负责一个业务实体
-// goal-model.vo.ts - 只定义目标相关的VO
+// item-model.vo.ts - 只定义项目相关的VO
 
 // 清晰命名：类型名称要能清楚表达用途
-export type GoalCreateFormVo = { /* 目标创建表单 */ };
-export type GoalListFilterVo = { /* 目标列表过滤 */ };
+export type ItemCreateFormVo = { /* 项目创建表单 */ };
+export type ItemListFilterVo = { /* 项目列表过滤 */ };
 
 // 适当注释：复杂业务逻辑需要添加注释
-export type GoalVo = {
-  /** 目标标题 - 必填，最大100字符 */
+export type ItemVo = {
+  /** 项目标题 - 必填，最大100字符 */
   title: string;
-  
+
   /** 重要性评分 - 1-5，默认3 */
   importance: number;
 };
@@ -443,10 +423,10 @@ export type GoalVo = {
 ### 3. 复用性
 ```typescript
 // 继承BaseModelVo获得基础字段
-export type GoalItemVo = BaseModelVo & GoalModelVo;
+export type ItemItemVo = BaseModelVo & ItemModelVo;
 
 // 使用工具类型避免重复定义
-export type CreateGoalVo = Omit<GoalModelVo, "status" | "completedAt">;
+export type CreateItemVo = Omit<ItemModelVo, "status" | "completedAt">;
 
 // 合理抽象公共类型
 export type BaseFilterVo = {
@@ -455,16 +435,16 @@ export type BaseFilterVo = {
   dateEnd?: string;
 };
 
-export type GoalFilterVo = BaseFilterVo & {
-  status?: GoalStatus;
-  priority?: GoalPriority;
+export type ItemFilterVo = BaseFilterVo & {
+  status?: ItemStatus;
+  priority?: ItemPriority;
 };
 ```
 
 ### 4. 向后兼容
 ```typescript
 // 新增字段使用可选类型
-export type GoalVo = {
+export type ItemVo = {
   id: string;
   title: string;
   // 新增字段
@@ -473,11 +453,89 @@ export type GoalVo = {
 };
 
 // 使用版本化处理重大变更
-export namespace GoalVoV2 {
-  export type GoalVo = {
+export namespace ItemVoV2 {
+  export type ItemVo = {
     // 重大变更的类型定义
   };
 }
+```
+
+## 🎛️ 特殊类型定义
+
+### 1. 操作相关VO
+```typescript
+// 批量操作结果VO
+export interface BatchOperationResultVo {
+  id: string;
+  result: boolean;
+}
+
+// 操作结果VO
+export interface OperationResultVo {
+  result: boolean;
+}
+
+// 按ID列表操作VO
+export type OperationByIdListVo = {
+  idList: string[];
+};
+
+// 工具类型 - 排除自身
+export type self = {
+  withoutSelf: boolean;
+  id?: string;
+};
+```
+
+### 2. 响应VO
+```typescript
+// 基础响应VO
+export interface ResponseVo<T> {
+  code: number;
+  message: string;
+}
+
+// 分页响应VO
+export interface PageResponseVo<T> extends ResponseVo<T> {
+  data: {
+    list: T[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+// 列表响应VO
+export interface ListResponseVo<T> extends ResponseVo<T> {
+  data: {
+    list: T[];
+  };
+}
+```
+
+### 3. 统计VO
+```typescript
+// 基础统计VO
+export type BaseStatsVo = {
+  total: number;
+  active: number;
+  completed: number;
+  cancelled: number;
+  completionRate: number;
+};
+
+// 详细统计VO
+export type DetailedStatsVo = BaseStatsVo & {
+  createdThisWeek: number;
+  createdThisMonth: number;
+  completedThisWeek: number;
+  completedThisMonth: number;
+  averageCompletionTime: number; // 平均完成时间（天）
+  bestStreak: number;            // 最佳连续完成天数
+  currentStreak: number;         // 当前连续完成天数
+};
 ```
 
 ## 🚫 禁止事项
@@ -499,6 +557,7 @@ export namespace GoalVoV2 {
 - [ ] 类型命名符合规范 (`[Module][Type]Vo`)
 - [ ] 继承了BaseModelVo (如适用)
 - [ ] 使用了合适的工具类型
+- [ ] 包含了基础的枚举定义
 
 ### 类型定义
 - [ ] 使用了明确的类型定义
@@ -506,12 +565,21 @@ export namespace GoalVoV2 {
 - [ ] 正确标记了可选字段 (`?:`)
 - [ ] 日期字段使用string类型
 - [ ] 枚举值使用小写字符串
+- [ ] 定义了完整的VO层次结构
 
 ### 字段设计
 - [ ] 字段命名语义清晰
 - [ ] 数组字段使用复数命名
 - [ ] 关联字段处理合理
 - [ ] 添加了必要的注释
+- [ ] 数值字段有明确的取值范围
+
+### 特殊类型
+- [ ] 定义了表单VO (Create/Update)
+- [ ] 定义了过滤VO (List/Page)
+- [ ] 定义了结果VO (List/Page)
+- [ ] 定义了操作相关的VO
+- [ ] 定义了统计VO (如适用)
 
 ### 导出管理
 - [ ] 添加了必要的导出语句
@@ -528,104 +596,91 @@ export namespace GoalVoV2 {
 ## 📝 完整示例
 
 ```typescript
-// goal-model.vo.ts
+// module-model.vo.ts
 import { BaseModelVo } from "../../base";
 
 // 枚举定义
-export enum GoalStatus {
+export enum ModuleStatus {
   ACTIVE = "active",
+  INACTIVE = "inactive",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
 }
 
-export enum GoalPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
 }
 
 // 基础模型VO
-export type GoalModelVo = {
-  /** 目标标题 */
+export type ModuleModelVo = {
+  /** 模块标题 - 字符串类型 */
   title: string;
-  
-  /** 目标描述 */
+
+  /** 模块描述 - 可选字符串 */
   description?: string;
-  
-  /** 目标状态 */
-  status: GoalStatus;
-  
-  /** 优先级 */
-  priority: GoalPriority;
-  
-  /** 重要性评分 (1-5) */
-  importance: number;
-  
-  /** 是否公开 */
-  isPublic: boolean;
-  
-  /** 开始日期 */
-  startDate: string;
-  
-  /** 目标日期 */
-  targetDate?: string;
-  
-  /** 完成时间 */
-  completedAt?: string;
-  
-  /** 标签 */
-  tags?: string[];
-  
-  /** 用户ID */
-  userId: string;
+
+  /** 重要程度 - 数字类型 */
+  importance?: number;
+
+  /** 模块状态 - 枚举类型 */
+  status: ModuleStatus;
+
+  /** 标签 - 数组类型 */
+  tags: string[];
+
+  /** 计划日期 - 日期类型 */
+  planDate: string;
+
+  /** 完成时间 - 可选日期时间 */
+  doneAt?: string;
+
+  /** 关联ID - 关联字段 */
+  relatedId?: string;
 };
 
 // 项目VO
-export type GoalItemVo = BaseModelVo & GoalModelVo;
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
 
 // 完整VO
-export type GoalVo = GoalItemVo & {
-  tasks?: TaskItemVo[];
-  user?: UserItemVo;
-  parent?: GoalItemVo;
-  children?: GoalItemVo[];
+export type ModuleVo = ModuleItemVo & {
+  related?: RelatedItemVo;
 };
 
-// goal-form.vo.ts
-import { GoalModelVo, GoalStatus } from "./goal-model.vo";
+// module-form.vo.ts
+import { ModuleModelVo, ModuleStatus } from "./module-model.vo";
 
-export type CreateGoalVo = Omit<
-  GoalModelVo,
-  "status" | "completedAt"
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "doneAt"
 > & {
-  parentId?: string;
-  taskIds?: string[];
+  relatedId?: string;
 };
 
-export type UpdateGoalVo = Partial<CreateGoalVo>;
+export type UpdateModuleVo = Partial<CreateModuleVo>;
 
-// goal-filter.vo.ts
-import { GoalVo, GoalItemVo, GoalStatus, GoalPriority } from "./goal-model.vo";
+// module-filter.vo.ts
+import { ModuleVo, ModuleItemVo, ModuleStatus, ModuleType } from "./module-model.vo";
 
-export type GoalListFiltersVo = Partial<
-  Pick<GoalVo, "status" | "priority" | "userId"> & {
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
     keyword?: string;
-    dateStart?: string;
-    dateEnd?: string;
-    statusList?: GoalStatus[];
-    priorityList?: GoalPriority[];
-    importanceMin?: number;
-    importanceMax?: number;
+    planDateStart?: string;
+    planDateEnd?: string;
+    statusList?: ModuleStatus[];
+    relatedIds?: string[];
   }
 >;
 
-export type GoalPageFiltersVo = GoalListFiltersVo & {
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
   pageNum?: number;
   pageSize?: number;
 };
 
-export type GoalPageVo = {
-  list: GoalItemVo[];
+export type ModulePageVo = {
+  list: ModuleItemVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -634,7 +689,7 @@ export type GoalPageVo = {
 };
 
 // index.ts
-export * from "./goal-model.vo";
-export * from "./goal-filter.vo";
-export * from "./goal-form.vo";
+export * from "./module-model.vo";
+export * from "./module-filter.vo";
+export * from "./module-form.vo";
 ```

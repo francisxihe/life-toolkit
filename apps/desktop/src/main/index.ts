@@ -68,7 +68,7 @@ if (isDev) {
   if (process.env.ELECTRON_RENDERER_URL) {
     DEFAULT_URL = process.env.ELECTRON_RENDERER_URL;
   } else {
-    DEFAULT_URL = "http://localhost:5173/";
+    DEFAULT_URL = "http://localhost:8100/";
   }
 } else {
   DEFAULT_URL = `file://${path.join(__dirname, "../renderer/index.html")}`;

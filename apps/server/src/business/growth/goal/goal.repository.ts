@@ -51,7 +51,7 @@ export class GoalRepository {
 
   async page(
     filter: GoalPageFilterDto
-  ): Promise<{ list: GoalDto[]; total: number }> {
+  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
 
@@ -64,6 +64,8 @@ export class GoalRepository {
     return {
       list: entities.map((entity) => GoalMapper.entityToDto(entity)),
       total,
+      pageNum,
+      pageSize,
     };
   }
 

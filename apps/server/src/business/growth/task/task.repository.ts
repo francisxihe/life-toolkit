@@ -84,7 +84,7 @@ export class TaskRepository {
 
   async page(
     filter: TaskPageFiltersDto
-  ): Promise<{ list: TaskDto[]; total: number }> {
+  ): Promise<{ list: TaskDto[]; total: number; pageNum: number; pageSize: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
     const [list, total] = await this.taskRepository.findAndCount({
@@ -92,7 +92,7 @@ export class TaskRepository {
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
-    return { list: list.map((t) => TaskMapper.entityToDto(t)), total };
+    return { list: list.map((t) => TaskMapper.entityToDto(t)), total, pageNum, pageSize };
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
@@ -121,7 +121,7 @@ export class TaskRepository {
     id: string,
     status: TaskStatus,
     dateField: keyof Task
-  ): Promise<boolean> {
+  ): Promise<void> {
     const task = await this.taskRepository.findOneBy({ id });
     if (!task) {
       throw new NotFoundException("Task not found");
@@ -130,7 +130,6 @@ export class TaskRepository {
       status,
       [dateField]: new Date(),
     });
-    return true;
   }
 
   async batchDone(ids: string[]): Promise<void> {

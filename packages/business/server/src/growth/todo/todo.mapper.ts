@@ -43,27 +43,41 @@ export class TodoMapper {
   // =======
 
   static dtoToVo(dto: TodoDto): TodoVO.TodoVo {
+    const repeat = dto.repeat as any;
+    const repeatPlanStart = repeat?.startAt
+      ? dayjs(repeat.startAt).format("HH:mm:ss")
+      : undefined;
+    const repeatPlanEnd = repeat?.endAt
+      ? dayjs(repeat.endAt).format("HH:mm:ss")
+      : undefined;
+
     const vo: TodoVO.TodoVo = {
       ...BaseMapper.dtoToVo(dto),
-      name: dto.name || "",
-      description: dto.description,
-      status: dto.status || TodoStatus.TODO,
-      tags: dto.tags,
-      importance: dto.importance,
-      urgency: dto.urgency,
+      name: (repeat?.name ?? dto.name) || "",
+      description: repeat?.description ?? dto.description,
+      status: repeat?.status ?? dto.status ?? TodoStatus.TODO,
+      tags: repeat?.tags ?? dto.tags,
+      importance: repeat?.importance ?? dto.importance,
+      urgency: repeat?.urgency ?? dto.urgency,
       planDate: dayjs(dto.planDate).format("YYYY-MM-DD"),
-      planStartAt: dto.planStartAt
-        ? dayjs(dto.planStartAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      planEndAt: dto.planEndAt
-        ? dayjs(dto.planEndAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
+      planStartAt:
+        repeatPlanStart ??
+        (dto.planStartAt
+          ? dayjs(dto.planStartAt).format("YYYY-MM-DD HH:mm:ss")
+          : undefined),
+      planEndAt:
+        repeatPlanEnd ??
+        (dto.planEndAt
+          ? dayjs(dto.planEndAt).format("YYYY-MM-DD HH:mm:ss")
+          : undefined),
       repeat: dto.repeat,
-      doneAt: dto.doneAt
-        ? dayjs(dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
+      doneAt: (repeat?.doneAt ?? dto.doneAt)
+        ? dayjs(repeat?.doneAt ?? dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
-      abandonedAt: dto.abandonedAt
-        ? dayjs(dto.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
+      abandonedAt: (repeat?.abandonedAt ?? dto.abandonedAt)
+        ? dayjs(repeat?.abandonedAt ?? dto.abandonedAt).format(
+            "YYYY-MM-DD HH:mm:ss"
+          )
         : undefined,
       task: dto.task ? TaskMapper.dtoToVo(dto.task) : undefined,
     };

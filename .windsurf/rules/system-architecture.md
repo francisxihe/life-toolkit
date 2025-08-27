@@ -1,7 +1,8 @@
 ---
 trigger: always_on
+description: 
+globs: 
 ---
-
 # Life Toolkit 系统架构规则
 
 ## 🏗️ 项目概述
@@ -190,7 +191,6 @@ Entity → DTO → VO
     ↓
 Client Response
 ```
-
 
 ## 🛠️ 开发工具链
 

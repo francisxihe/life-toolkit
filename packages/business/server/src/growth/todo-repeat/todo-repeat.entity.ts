@@ -1,5 +1,5 @@
 import { Entity, OneToMany, Column } from "typeorm";
-import { Todo } from "@life-toolkit/business-server";
+import { Todo } from "../todo/todo.entity";
 import { Repeat } from "@life-toolkit/components-repeat/server";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
@@ -66,7 +66,8 @@ export class TodoRepeat extends Repeat {
   /** 放弃时间 */
   @Column("datetime", { nullable: true })
   abandonedAt?: Date;
+
   /** 关联的待办列表 */
-  @OneToMany(() => Todo, (todo: Todo) => (todo as any).repeat, { nullable: true })
+  @OneToMany(() => Todo, (todo) => todo.repeat, { nullable: true })
   todos?: Todo[];
 }

@@ -9,6 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
+import { TodoStatusService } from "./todo-status.service";
 import {
   TodoMapper,
   TodoPageFiltersDto,
@@ -24,12 +25,15 @@ import { OperationMapper } from "@/common/operation";
 
 @Controller("todo")
 export class TodoController {
-  constructor(private readonly todoService: TodoService) {}
+  constructor(
+    private readonly todoService: TodoService,
+    private readonly todoStatusService: TodoStatusService
+  ) {}
 
   @Put("batch-done")
   @Response()
   async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.todoService.batchDone(
+    return await this.todoStatusService.batchDone(
       OperationMapper.voToOperationByIdListDto(idList)
     );
   }
@@ -37,22 +41,22 @@ export class TodoController {
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.todoService.abandon(id);
-    return { result };
+    await this.todoStatusService.abandon(id);
+    return { result: true };
   }
 
   @Put("done/:id")
   @Response()
   async done(@Param("id") id: string) {
-    const result = await this.todoService.done(id);
-    return { result };
+    await this.todoStatusService.done(id);
+    return { result: true };
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.todoService.restore(id);
-    return { result };
+    await this.todoStatusService.restore(id);
+    return { result: true };
   }
 
   @Post("create")

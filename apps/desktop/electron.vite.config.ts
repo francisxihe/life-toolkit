@@ -82,6 +82,9 @@ export default defineConfig({
     },
   },
   renderer: {
+    server: {
+      port: 8100,
+    },
     // 渲染进程配置
     root: path.resolve(currentDirPath, "src/render"),
     plugins: [

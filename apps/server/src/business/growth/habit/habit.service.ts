@@ -14,24 +14,24 @@ export class HabitService extends HabitServiceBase {
   }
 
   // 状态操作（委托给状态服务）
-  async done(id: string): Promise<boolean> {
-    return await this.habitStatusService.done(id);
+  async done(id: string): Promise<void> {
+    await this.habitStatusService.done(id);
   }
 
-  async abandon(id: string): Promise<boolean> {
-    return await this.habitStatusService.abandon(id);
+  async abandon(id: string): Promise<void> {
+    await this.habitStatusService.abandon(id);
   }
 
-  async restore(id: string): Promise<boolean> {
-    return await this.habitStatusService.restore(id);
+  async restore(id: string): Promise<void> {
+    await this.habitStatusService.restore(id);
   }
 
-  async pause(id: string): Promise<boolean> {
-    return await this.habitStatusService.pause(id);
+  async pause(id: string): Promise<void> {
+    await this.habitStatusService.pause(id);
   }
 
-  async resume(id: string): Promise<boolean> {
-    return await this.habitStatusService.resume(id);
+  async resume(id: string): Promise<void> {
+    await this.habitStatusService.resume(id);
   }
 
   // 批量操作

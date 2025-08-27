@@ -33,29 +33,29 @@ export class HabitController {
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.habitService.abandon(id);
-    return { result };
+    await this.habitService.abandon(id);
+    return { result: true };
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.habitService.restore(id);
-    return { result };
+    await this.habitService.restore(id);
+    return { result: true };
   }
 
   @Put("pause/:id")
   @Response()
   async pause(@Param("id") id: string) {
-    const result = await this.habitService.pause(id);
-    return { result };
+    await this.habitService.pause(id);
+    return { result: true };
   }
 
   @Put("resume/:id")
   @Response()
   async resume(@Param("id") id: string) {
-    const result = await this.habitService.resume(id);
-    return { result };
+    await this.habitService.resume(id);
+    return { result: true };
   }
 
   @Post("create")

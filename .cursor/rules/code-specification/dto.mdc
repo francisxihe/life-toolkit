@@ -1,0 +1,1206 @@
+---
+description: 编写server DTO代码时
+alwaysApply: false
+---
+需要生成或修改DTO时
+
+# DTO 规范
+
+## 📋 概述
+
+DTO (Data Transfer Object) 是用于数据传输的对象，主要用于控制器层的数据验证、转换和传输。本规范定义了DTO模块的标准结构、命名约定和最佳实践。
+
+## 🏗️ 目录结构规范
+
+### 基础结构
+
+```
+apps/server/src/business/{domain}/{module}/dto/
+├── {module}-model.dto.ts      # 基础模型DTO
+├── {module}-form.dto.ts       # 表单操作DTO
+├── {module}-filter.dto.ts     # 过滤查询DTO
+└── index.ts                   # 导出文件
+```
+
+### 实际项目结构示例
+
+```
+packages/business/server/src/growth/todo/dto/
+├── todo-model.dto.ts          # 基础模型DTO
+├── todo-form.dto.ts           # 表单操作DTO
+├── todo-filter.dto.ts         # 过滤查询DTO
+└── index.ts                   # 导出文件
+```
+
+## 📝 文件命名规范
+
+### 文件命名格式
+
+- **模型DTO**: `{module}-model.dto.ts`
+- **表单DTO**: `{module}-form.dto.ts`
+- **过滤DTO**: `{module}-filter.dto.ts`
+- **导出文件**: `index.ts`
+
+### 类命名格式
+
+- **基础模型**: `{Module}Dto` (包含所有字段)
+- **简化模型**: `{Module}ModelDto` (排除关联字段)
+- **创建表单**: `Create{Module}Dto`
+- **更新表单**: `Update{Module}Dto`
+- **列表过滤**: `{Module}ListFilterDto`
+- **分页过滤**: `{Module}PageFilterDto`
+
+## 🎯 标准DTO类型定义
+
+### 1. 模型DTO文件 ({module}-model.dto.ts)
+
+#### 基础模板
+
+```typescript
+import { BaseModelDto } from "../../../base/base-model.dto";
+import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
+import { {Entity} } from "../{entity}.entity";
+
+// 基础DTO - 包含所有字段
+export class {Module}Dto extends IntersectionType(
+  BaseModelDto,
+  OmitType({Entity}, ["relationField1", "relationField2"] as const)
+) {
+  // 手动添加关联字段（可选）
+  relationField1?: RelatedDto;
+  relationField2?: RelatedDto[];
+}
+
+// 模型DTO - 排除关联字段，用于简单数据传输
+export class {Module}ModelDto extends OmitType({Module}Dto, [
+  "relationField1",
+  "relationField2",
+] as const) {}
+```
+
+#### 完整示例（抽象化）
+
+```typescript
+// module-model.dto.ts
+import { BaseModelDto } from "../../../base/base-model.dto";
+import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
+import { Module } from "../module.entity";
+import { RelatedDto } from "../../related/dto";
+
+// 基础DTO - 包含所有字段
+export class ModuleDto extends IntersectionType(
+  BaseModelDto,
+  OmitType(Module, ["related"] as const)
+) {
+  // 关联字段
+  related?: RelatedDto;
+}
+
+// 模型DTO - 排除关联字段
+export class ModuleModelDto extends OmitType(ModuleDto, [
+  "related",
+] as const) {}
+```
+
+#### 实际项目示例（基于现有代码）
+
+```typescript
+// module-model.dto.ts
+import { BaseModelDto } from "../../../base/base-model.dto";
+import { IntersectionType, OmitType } from "@life-toolkit/mapped-types";
+import { Module } from "../module.entity";
+import { RelatedDto } from "../../related";
+
+export class ModuleDto extends IntersectionType(
+  BaseModelDto,
+  OmitType(Module, ["related"] as const)
+) {
+  related?: RelatedDto;
+}
+
+export class ModuleModelDto extends OmitType(ModuleDto, [
+  "related",
+] as const) {}
+```
+
+### 2. 表单DTO文件 ({module}-form.dto.ts)
+
+#### 基础模板
+
+```typescript
+import { PartialType, IntersectionType, PickType, OmitType } from "@life-toolkit/mapped-types";
+import { IsOptional, IsArray, IsString, IsEnum } from "class-validator";
+import { {Module}Dto } from "./{module}-model.dto";
+import { {Entity} } from "../{entity}.entity";
+
+// 创建DTO - 选择需要的字段
+export class Create{Module}Dto extends PickType({Module}Dto, [
+  "name",
+  "description",
+  "status",
+  "priority",
+  // ... 其他需要的字段
+] as const) {
+  /** 关联实体ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+
+  /** 应用到实体的辅助方法（可选） */
+  applyToCreateEntity(entity: {Entity}) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.status !== undefined) entity.status = this.status;
+    // ... 其他字段映射
+  }
+}
+
+// 更新DTO - 基于创建DTO的部分字段 + 实体ID
+export class Update{Module}Dto extends IntersectionType(
+  PartialType(OmitType(Create{Module}Dto, ["relationIds"] as const)),
+  PickType({Entity}, ["id"] as const),
+  PickType({Module}Dto, ["completedAt", "cancelledAt"] as const)
+) {
+  /** 应用到实体的辅助方法（可选） */
+  applyToUpdateEntity(entity: {Entity}) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    // ... 其他字段映射
+  }
+}
+```
+
+#### 完整示例（抽象化）
+
+```typescript
+// module-form.dto.ts
+import {
+  PartialType,
+  PickType,
+  IntersectionType,
+  OmitType,
+} from "@life-toolkit/mapped-types";
+import {
+  IsOptional,
+  IsArray,
+  IsString,
+  IsNumber,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { ModuleDto } from "./module-model.dto";
+import { Module } from "../module.entity";
+import { ModuleStatus } from "../module.entity";
+
+// 创建DTO
+export class CreateModuleDto extends PickType(ModuleDto, [
+  "title",
+  "description",
+  "importance",
+  "status",
+  "tags",
+  "planDate",
+] as const) {
+  /** 关联实体ID */
+  @IsString()
+  @IsOptional()
+  relatedId?: string;
+
+  applyToCreateEntity(entity: Module) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.relatedId !== undefined) entity.relatedId = this.relatedId;
+  }
+}
+
+// 更新DTO
+export class UpdateModuleDto extends IntersectionType(
+  PartialType(OmitType(CreateModuleDto, ["relatedId"] as const)),
+  PickType(Module, ["id"] as const),
+  PickType(ModuleDto, ["doneAt"] as const)
+) {
+  applyToUpdateEntity(entity: Module) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.doneAt !== undefined) entity.doneAt = this.doneAt;
+  }
+}
+```
+
+#### 实际项目示例（基于现有代码）
+
+```typescript
+// module-form.dto.ts
+import { ModuleDto } from "./module-model.dto";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+  OmitType,
+} from "@life-toolkit/mapped-types";
+import { Module } from "../module.entity";
+
+export class CreateModuleDto extends PickType(ModuleDto, [
+  "title",
+  "description",
+  "importance",
+  "status",
+  "tags",
+  "planDate",
+] as const) {
+  relatedId?: string;
+
+  applyToCreateEntity(entity: Module) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.relatedId !== undefined) entity.relatedId = this.relatedId;
+  }
+}
+
+export class UpdateModuleDto extends IntersectionType(
+  PartialType(CreateModuleDto),
+  PickType(Module, ["id"] as const),
+  PickType(ModuleDto, ["doneAt"] as const)
+) {
+  applyToUpdateEntity(entity: Module) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.planDate !== undefined) entity.planDate = this.planDate;
+    if (this.doneAt !== undefined) entity.doneAt = this.doneAt;
+    if (this.relatedId !== undefined) entity.relatedId = this.relatedId;
+  }
+}
+```
+
+### 3. 过滤DTO文件 ({module}-filter.dto.ts)
+
+#### 基础模板
+
+```typescript
+import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { PageFilterDto } from "../../../common/filter";
+import { {Module}Dto } from "./{module}-model.dto";
+import { PickType, IntersectionType, PartialType } from "@life-toolkit/mapped-types";
+import { {Module}ListFiltersVo, {Module}PageFiltersVo } from "@life-toolkit/vo";
+
+// 列表过滤DTO - 选择可过滤的字段
+export class {Module}ListFilterDto extends PartialType(
+  PickType({Module}Dto, ["status", "priority", "relationId"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+
+  /** 完成时间范围过滤 */
+  @IsString()
+  @IsOptional()
+  completedDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  completedDateEnd?: string;
+
+  /** 关联ID数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+
+  /** 从VO导入数据的辅助方法（可选） */
+  importListVo(filterVo: {Module}ListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+// 分页过滤DTO - 继承列表过滤 + 分页
+export class {Module}PageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  {Module}ListFilterDto
+) {
+  /** 从VO导入数据的辅助方法（可选） */
+  importPageVo(filterVo: {Module}PageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+// 导入辅助函数
+function importListVo(
+  filterVo: {Module}ListFiltersVo,
+  filterDto: {Module}ListFilterDto
+) {
+  filterDto.keyword = filterVo.keyword;
+  filterDto.dateStart = filterVo.dateStart;
+  filterDto.dateEnd = filterVo.dateEnd;
+  filterDto.relationIds = filterVo.relationIds;
+  // ... 其他字段映射
+}
+```
+
+#### 完整示例（抽象化）
+
+```typescript
+// module-filter.dto.ts
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsNumber,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { PageFilterDto } from "../../../common/filter";
+import { ModuleDto } from "./module-model.dto";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+} from "@life-toolkit/mapped-types";
+import { ModuleListFiltersVo, ModulePageFiltersVo } from "@life-toolkit/vo";
+import { ModuleStatus, ModuleType } from "../module.entity";
+
+// 列表过滤DTO
+export class ModuleListFilterDto extends PartialType(
+  PickType(ModuleDto, ["status", "importance", "relatedId"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 计划日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  planDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  planDateEnd?: string;
+
+  /** 关联ID数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relatedIds?: string[];
+
+  /** 状态数组过滤 */
+  @IsArray()
+  @IsEnum(ModuleStatus, { each: true })
+  @IsOptional()
+  statusList?: ModuleStatus[];
+
+  importListVo(filterVo: ModuleListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+// 分页过滤DTO
+export class ModulePageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  ModuleListFilterDto
+) {
+  importPageVo(filterVo: ModulePageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+// 导入辅助函数
+function importListVo(
+  filterVo: ModuleListFiltersVo,
+  filterDto: ModuleListFilterDto
+) {
+  filterDto.keyword = filterVo.keyword;
+  filterDto.planDateStart = filterVo.planDateStart;
+  filterDto.planDateEnd = filterVo.planDateEnd;
+  filterDto.importance = filterVo.importance;
+  filterDto.status = filterVo.status;
+  filterDto.relatedIds = filterVo.relatedIds;
+  filterDto.statusList = filterVo.statusList;
+}
+```
+
+#### 实际项目示例（基于现有代码）
+
+```typescript
+// module-filter.dto.ts
+import { PageFilterDto } from "../../../common/filter";
+import { ModuleDto } from "./module-model.dto";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+} from "@life-toolkit/mapped-types";
+import { ModuleListFiltersVo, ModulePageFiltersVo } from "@life-toolkit/vo";
+
+export class ModuleListFilterDto extends PartialType(
+  PickType(ModuleDto, ["importance", "status", "relatedId"] as const)
+) {
+  keyword?: string;
+  planDateStart?: string;
+  planDateEnd?: string;
+  relatedIds?: string[];
+
+  importListVo(filterVo: ModuleListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+export class ModulePageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  ModuleListFilterDto
+) {
+  importPageVo(filterVo: ModulePageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+function importListVo(
+  filterVo: ModuleListFiltersVo,
+  filterDto: ModuleListFilterDto
+) {
+  filterDto.importance = filterVo.importance;
+  filterDto.status = filterVo.status;
+  filterDto.planDateStart = filterVo.planDateStart;
+  filterDto.planDateEnd = filterVo.planDateEnd;
+  filterDto.relatedIds = filterVo.relatedIds;
+}
+```
+
+### 4. 导出文件 (index.ts)
+
+```typescript
+// 重新导出所有DTO
+export * from "./module-model.dto";
+export * from "./module-form.dto";
+export * from "./module-filter.dto";
+```
+
+#### 实际项目示例（基于现有代码）
+
+```typescript
+// index.ts
+export * from "./module-filter.dto";
+export * from "./module-form.dto";
+export * from "./module-model.dto";
+```
+
+## 🔧 Mapped Types 使用规范
+
+### 1. 工具类型导入
+
+```typescript
+import {
+  PickType, // 选择特定字段
+  OmitType, // 排除特定字段
+  PartialType, // 所有字段变为可选
+  IntersectionType, // 合并多个类型
+} from "@life-toolkit/mapped-types";
+```
+
+### 2. 类型组合策略
+
+#### 继承链设计
+
+```typescript
+// 基础继承链
+BaseModelDto → {Module}Dto → {Module}ModelDto
+                          → Create{Module}Dto → Update{Module}Dto
+
+// 过滤继承链
+PageFilterDto → {Module}PageFiltersDto
+{Module}Dto → {Module}ListFilterDto → {Module}PageFiltersDto
+```
+
+#### 组合模式
+
+```typescript
+// 选择字段 - 创建时需要的字段
+export class CreateDto extends PickType(BaseDto, [
+  "name",
+  "description",
+  "status",
+]) {}
+
+// 排除字段 - 移除关联字段的简化版本
+export class ModelDto extends OmitType(BaseDto, [
+  "relationField",
+  "complexField",
+]) {}
+
+// 部分字段 - 更新时所有字段可选
+export class UpdateDto extends PartialType(CreateDto) {}
+
+// 合并类型 - 分页过滤 = 分页参数 + 过滤条件
+export class PageFilterDto extends IntersectionType(
+  PageFilterDto,
+  ListFilterDto
+) {}
+
+// 复杂组合 - 更新DTO = 部分创建字段 + 实体ID + 完成时间字段
+export class UpdateDto extends IntersectionType(
+  PartialType(OmitType(CreateDto, ["relationIds"])),
+  PickType(Entity, ["id"]),
+  PickType(BaseDto, ["completedAt", "cancelledAt"])
+) {}
+```
+
+### 3. 验证装饰器规范
+
+#### 基础验证装饰器
+
+```typescript
+import {
+  IsString, // 字符串验证
+  IsNumber, // 数字验证
+  IsBoolean, // 布尔值验证
+  IsEnum, // 枚举验证
+  IsArray, // 数组验证
+  IsOptional, // 可选字段标记
+  IsISO8601, // ISO8601日期格式验证
+  IsInt, // 整数验证
+  IsEmail, // 邮箱验证
+  IsUrl, // URL验证
+  Min, // 最小值验证
+  Max, // 最大值验证
+  Length, // 长度验证
+  IsDateString, // 日期字符串验证
+} from "class-validator";
+
+import { Type } from "class-transformer";
+```
+
+#### 字段类型验证映射表
+
+```typescript
+const VALIDATION_MAPPING = {
+  // 基础类型
+  string: "@IsString()",
+  number: "@IsNumber() @Type(() => Number)",
+  boolean: "@IsBoolean() @Type(() => Boolean)",
+
+  // 日期类型
+  date: "@IsISO8601() @Type(() => Date)",
+  dateString: "@IsDateString()",
+
+  // 枚举和数组
+  enum: "@IsEnum(EnumType)",
+  array: "@IsArray() @IsString({ each: true })",
+
+  // 特殊格式
+  email: "@IsEmail() @IsString()",
+  url: "@IsUrl() @IsString()",
+
+  // 可选标记
+  optional: "@IsOptional()",
+
+  // 数值范围
+  int: "@IsInt() @Type(() => Number)",
+  minMax: "@Min(min) @Max(max) @Type(() => Number)",
+  length: "@Length(min, max)",
+};
+```
+
+#### 验证示例
+
+```typescript
+export class CreateProductDto {
+  /** 产品名称 - 必填字符串 */
+  @IsString()
+  @Length(1, 100)
+  name: string;
+
+  /** 产品描述 - 可选字符串 */
+  @IsString()
+  @IsOptional()
+  @Length(0, 1000)
+  description?: string;
+
+  /** 价格 - 必填数字 */
+  @IsNumber()
+  @Type(() => Number)
+  @Min(0)
+  price: number;
+
+  /** 库存数量 - 可选整数 */
+  @IsInt()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(0)
+  stockQuantity?: number;
+
+  /** 产品状态 - 可选枚举 */
+  @IsEnum(ProductStatus)
+  @IsOptional()
+  status?: ProductStatus;
+
+  /** 标签 - 可选字符串数组 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 创建时间 - 日期字符串 */
+  @IsDateString()
+  @IsOptional()
+  createdAt?: string;
+
+  /** 分类ID - 可选字符串 */
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 职责分离原则
+
+- **Model DTO**: 数据结构定义，包含所有字段，用于内部传输和API响应
+- **Form DTO**: 表单操作验证，包含创建和更新所需的字段
+- **Filter DTO**: 查询条件验证，包含列表和分页的过滤参数
+
+### 2. 类型安全优先
+
+```typescript
+// ✅ 推荐：使用 Mapped Types 复用类型定义
+export class UpdateDto extends PartialType(CreateDto) {}
+
+// ❌ 避免：手动重复定义字段
+export class UpdateDto {
+  title?: string;
+  description?: string;
+  status?: StatusEnum;
+  // ... 重复字段定义
+}
+```
+
+### 3. 验证一致性
+
+```typescript
+// 保持 Entity 和 DTO 的验证规则一致
+// Entity 中的验证规则
+@Column()
+@IsString()
+@Length(1, 100)
+title: string;
+
+// DTO 中的验证（通过 PickType 继承）
+export class CreateDto extends PickType(Entity, ["title"]) {}
+
+// 或手动添加验证
+export class CreateDto extends PickType(BaseDto, ["title"]) {
+  @IsString()
+  @Length(1, 100)
+  title: string;
+}
+```
+
+### 4. 性能优化策略
+
+```typescript
+// 使用继承减少重复代码
+export class BaseFilterDto {
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+}
+
+// 继承基础过滤器
+export class ProductListFilterDto extends IntersectionType(
+  BaseFilterDto,
+  PartialType(PickType(ProductDto, ["status", "categoryId"]))
+) {}
+```
+
+### 5. 关联数据处理
+
+```typescript
+// 创建时处理关联关系
+export class CreateOrderDto extends PickType(OrderDto, ["items", "userId"]) {
+  /** 订单项ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  itemIds?: string[];
+
+  applyToCreateEntity(entity: Order) {
+    // 映射基本字段
+    if (this.userId !== undefined) entity.userId = this.userId;
+
+    // 处理关联项映射
+    if (this.itemIds?.length) {
+      // 关联逻辑在 Service 层处理
+    }
+  }
+}
+```
+
+### 6. 错误处理和验证反馈
+
+```typescript
+// 使用自定义验证装饰器
+export class CreateUserDto extends PickType(UserDto, ["email", "password"]) {
+  @IsEmail(
+    {},
+    {
+      message: "请输入有效的邮箱地址",
+    }
+  )
+  email: string;
+
+  @IsString()
+  @Length(8, 20, {
+    message: "密码长度必须在8-20个字符之间",
+  })
+  password: string;
+}
+```
+
+## 🔄 常见模式
+
+### 1. 基础CRUD模式
+
+```typescript
+// 1. 创建DTO - 选择创建时需要的字段
+export class CreateProductDto extends PickType(ProductDto, [
+  "name",
+  "description",
+  "price",
+  "categoryId",
+  "tags",
+]) {
+  /** 关联图片ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  imageIds?: string[];
+}
+
+// 2. 更新DTO - 创建DTO的部分字段 + 实体ID + 完成状态字段
+export class UpdateProductDto extends IntersectionType(
+  PartialType(OmitType(CreateProductDto, ["imageIds"])),
+  PickType(Product, ["id"]),
+  PickType(ProductDto, ["status", "updatedAt"])
+) {}
+
+// 3. 列表过滤DTO - 基础过滤条件
+export class ProductListFilterDto extends PartialType(
+  PickType(ProductDto, ["status", "categoryId", "price"])
+) {
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  @IsString()
+  @IsOptional()
+  createdDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  createdDateEnd?: string;
+}
+
+// 4. 分页过滤DTO - 列表过滤 + 分页参数
+export class ProductPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  ProductListFilterDto
+) {}
+```
+
+### 2. 关联数据处理模式
+
+```typescript
+// 处理多对多关联
+export class CreateArticleDto extends PickType(ArticleDto, [
+  "title",
+  "content",
+  "authorId",
+]) {
+  /** 标签ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tagIds?: string[];
+
+  /** 分类ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  categoryIds?: string[];
+
+  applyToCreateEntity(entity: Article) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.content !== undefined) entity.content = this.content;
+    if (this.authorId !== undefined) entity.authorId = this.authorId;
+    // 关联关系在Service层处理
+  }
+}
+
+// 处理一对多关联
+export class CreateOrderDto extends PickType(OrderDto, [
+  "userId",
+  "totalAmount",
+]) {
+  /** 订单项列表 */
+  @IsArray()
+  @IsOptional()
+  items?: CreateOrderItemDto[];
+
+  /** 收货地址信息 */
+  @IsOptional()
+  shippingAddress?: CreateAddressDto;
+}
+```
+
+### 3. 复杂过滤模式
+
+```typescript
+// 高级过滤器 - 继承基础过滤器并添加复杂条件
+export class ProductAdvancedFilterDto extends ProductListFilterDto {
+  /** 价格范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  priceMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  priceMax?: number;
+
+  /** 库存范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  stockMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  stockMax?: number;
+
+  /** 多状态过滤 */
+  @IsArray()
+  @IsEnum(ProductStatus, { each: true })
+  @IsOptional()
+  statusList?: ProductStatus[];
+
+  /** 标签过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 评分范围 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(1)
+  @Max(5)
+  ratingMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(1)
+  @Max(5)
+  ratingMax?: number;
+}
+```
+
+### 4. 嵌套DTO模式
+
+```typescript
+// 父子结构DTO
+export class CreateCategoryDto extends PickType(CategoryDto, [
+  "name",
+  "description",
+]) {
+  /** 子分类 */
+  @IsOptional()
+  @Type(() => CreateCategoryDto)
+  children?: CreateCategoryDto[];
+}
+
+// 树形结构响应DTO
+export class CategoryTreeDto extends CategoryDto {
+  /** 子分类列表 */
+  children?: CategoryTreeDto[];
+
+  /** 层级深度 */
+  @IsNumber()
+  @IsOptional()
+  depth?: number;
+}
+```
+
+## 🚫 禁止事项
+
+1. **不要在DTO中包含业务逻辑** - DTO仅用于数据传输和验证，复杂逻辑应在Service层
+2. **不要使用 `any` 类型** - 应明确定义具体类型，避免类型安全问题
+3. **不要忽略验证装饰器** - 所有字段都应有适当的验证规则
+4. **不要重复定义相同的字段** - 使用 Mapped Types 复用类型定义
+5. **不要在DTO中直接操作数据库** - 数据操作应在 Service/Repository 层
+6. **不要创建循环依赖** - DTO之间应避免相互引用
+7. **不要过度设计** - 只定义实际需要的字段和验证规则
+
+## ✅ 检查清单
+
+在创建或修改DTO时，请确认以下事项：
+
+### 基础结构
+
+- [ ] 文件命名符合规范 (`{module}-{type}.dto.ts`)
+- [ ] 类命名符合规范 (`{Module}{Type}Dto`)
+- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 导入了必要的验证装饰器
+
+### 继承关系
+
+- [ ] 正确继承自 `BaseModelDto`
+- [ ] 使用了合适的工具类型 (PickType, OmitType, PartialType等)
+- [ ] 避免了重复的字段定义
+- [ ] 继承链清晰合理
+
+### 验证规则
+
+- [ ] 所有字段都有适当的验证装饰器
+- [ ] 可选字段使用了 `@IsOptional()`
+- [ ] 数字字段使用了 `@Type(() => Number)`
+- [ ] 日期字段使用了 `@IsISO8601()` 或 `@IsDateString()`
+- [ ] 枚举字段使用了 `@IsEnum()`
+- [ ] 数组字段使用了 `@IsArray()`
+- [ ] 字符串数组使用了 `@IsString({ each: true })`
+
+### 字段设计
+
+- [ ] 字段类型定义正确
+- [ ] 关联字段处理合理（使用ID列表或嵌套DTO）
+- [ ] 过滤条件完整且实用
+- [ ] 默认值设置合理
+
+### 代码质量
+
+- [ ] 导入了必要的依赖
+- [ ] 避免了循环依赖
+- [ ] 注释清晰准确
+- [ ] 遵循了项目的编码规范
+
+## 📝 完整示例（基于实际项目）
+
+```typescript
+// product-model.dto.ts
+import { BaseModelDto } from "../../../base/base-model.dto";
+import { IntersectionType, OmitType } from "@life-toolkit/mapped-types";
+import { Product } from "../product.entity";
+import { CategoryDto } from "../../category/dto";
+
+export class ProductDto extends IntersectionType(
+  BaseModelDto,
+  OmitType(Product, ["category", "reviews", "images"] as const)
+) {
+  // 关联字段
+  category?: CategoryDto;
+  reviews?: ReviewDto[];
+  images?: ImageDto[];
+}
+
+export class ProductModelDto extends OmitType(ProductDto, [
+  "category",
+  "reviews",
+  "images",
+] as const) {}
+
+// product-form.dto.ts
+import {
+  PartialType,
+  PickType,
+  IntersectionType,
+  OmitType,
+} from "@life-toolkit/mapped-types";
+import {
+  IsOptional,
+  IsArray,
+  IsString,
+  IsNumber,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { ProductDto } from "./product-model.dto";
+import { Product } from "../product.entity";
+import { ProductStatus } from "../product.entity";
+
+export class CreateProductDto extends PickType(ProductDto, [
+  "name",
+  "description",
+  "price",
+  "categoryId",
+  "tags",
+] as const) {
+  /** 图片ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  imageIds?: string[];
+
+  applyToCreateEntity(entity: Product) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.price !== undefined) entity.price = this.price;
+    if (this.categoryId !== undefined) entity.categoryId = this.categoryId;
+    if (this.tags !== undefined) entity.tags = this.tags;
+  }
+}
+
+export class UpdateProductDto extends IntersectionType(
+  PartialType(OmitType(CreateProductDto, ["imageIds"])),
+  PickType(Product, ["id"]),
+  PickType(ProductDto, ["status", "updatedAt"])
+) {
+  applyToUpdateEntity(entity: Product) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.price !== undefined) entity.price = this.price;
+    if (this.status !== undefined) entity.status = this.status;
+  }
+}
+
+// product-filter.dto.ts
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsNumber,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { PageFilterDto } from "../../../common/filter";
+import { ProductDto } from "./product-model.dto";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+} from "@life-toolkit/mapped-types";
+import { ProductListFiltersVo, ProductPageFiltersVo } from "@life-toolkit/vo";
+import { ProductStatus } from "../product.entity";
+
+export class ProductListFilterDto extends PartialType(
+  PickType(ProductDto, ["status", "categoryId", "price"])
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 创建时间范围过滤 */
+  @IsString()
+  @IsOptional()
+  createdDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  createdDateEnd?: string;
+
+  /** 价格范围过滤 */
+  @IsOptional()
+  @Type(() => Number)
+  priceMin?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  priceMax?: number;
+
+  /** 分类ID数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  categoryIds?: string[];
+
+  /** 状态数组过滤 */
+  @IsArray()
+  @IsEnum(ProductStatus, { each: true })
+  @IsOptional()
+  statusList?: ProductStatus[];
+
+  /** 标签过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  importListVo(filterVo: ProductListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+export class ProductPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  ProductListFilterDto
+) {
+  importPageVo(filterVo: ProductPageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+// 导入辅助函数
+function importListVo(
+  filterVo: ProductListFiltersVo,
+  filterDto: ProductListFilterDto
+) {
+  filterDto.keyword = filterVo.keyword;
+  filterDto.createdDateStart = filterVo.createdDateStart;
+  filterDto.createdDateEnd = filterVo.createdDateEnd;
+  filterDto.priceMin = filterVo.priceMin;
+  filterDto.priceMax = filterVo.priceMax;
+  filterDto.categoryIds = filterVo.categoryIds;
+  filterDto.statusList = filterVo.statusList;
+  filterDto.tags = filterVo.tags;
+}
+
+// index.ts
+export * from "./product-model.dto";
+export * from "./product-form.dto";
+export * from "./product-filter.dto";
+```

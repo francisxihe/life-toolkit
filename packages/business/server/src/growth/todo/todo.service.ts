@@ -26,6 +26,12 @@ export class TodoService {
     if ((createTodoDto as any).repeat) {
       const todoRepeat = await this.todoRepeatService.create({
         ...(createTodoDto as any).repeat,
+        // 模板业务字段
+        name: (createTodoDto as any).name,
+        description: (createTodoDto as any).description,
+        tags: (createTodoDto as any).tags,
+        importance: (createTodoDto as any).importance,
+        urgency: (createTodoDto as any).urgency,
       });
       await this.todoRepository.updateRepeatId(
         (todo as any).id,
@@ -56,10 +62,15 @@ export class TodoService {
     const todo = await this.todoRepository.update(id, updateTodoDto);
 
     if ((updateTodoDto as any).repeat) {
-      await this.todoRepeatService.update(
-        (todo as any).id,
-        (updateTodoDto as any).repeat
-      );
+      await this.todoRepeatService.update((todo as any).id, {
+        ...(updateTodoDto as any).repeat,
+        // 同步模板业务字段（按需）
+        name: (updateTodoDto as any).name,
+        description: (updateTodoDto as any).description,
+        tags: (updateTodoDto as any).tags,
+        importance: (updateTodoDto as any).importance,
+        urgency: (updateTodoDto as any).urgency,
+      });
     }
 
     return await this.todoRepository.findById(id);

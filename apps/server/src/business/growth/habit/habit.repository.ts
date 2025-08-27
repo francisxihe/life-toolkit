@@ -69,7 +69,7 @@ export class HabitRepository implements _HabitRepository {
 
   async page(
     filter: HabitPageFiltersDto
-  ): Promise<{ list: HabitDto[]; total: number }> {
+  ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
 
@@ -82,6 +82,8 @@ export class HabitRepository implements _HabitRepository {
     return {
       list: habits.map((habit) => HabitMapper.entityToDto(habit)),
       total,
+      pageNum,
+      pageSize,
     };
   }
 

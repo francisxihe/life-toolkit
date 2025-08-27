@@ -1,7 +1,7 @@
 ---
+trigger: model_decision
 description: 编写server Entity代码时
-globs: 
-alwaysApply: false
+globs:
 ---
 # Entity 规范
 
@@ -19,6 +19,19 @@ import { BaseEntity } from "@/base/base.entity";
 @Entity("table_name")
 export class BusinessEntity extends BaseEntity {
   // 业务字段定义
+}
+```
+
+### 模型分离模式 (推荐)
+```typescript
+// 对于复杂 Entity，建议使用模型分离模式
+export class BusinessModel extends BaseEntity {
+  // 基础业务字段定义
+}
+
+@Entity("business_table")
+export class Business extends BusinessModel {
+  // 关联关系和特殊字段定义
 }
 ```
 
@@ -48,50 +61,30 @@ export class BaseEntity {
 
 ### 2. 导入顺序
 ```typescript
-// 1. TypeORM 装饰器
-import { 
-  Entity, 
-  Column, 
-  OneToMany, 
-  ManyToOne, 
-  ManyToMany,
-  OneToOne,
-  JoinColumn,
-  JoinTable,
-  Index,
-  Tree,
-  TreeParent,
-  TreeChildren
-} from "typeorm";
+// 1. 基础类
+import { BaseEntity } from "../../base/base.entity";
 
-// 2. 验证装饰器
+// 2. 枚举和类型
+import { ModuleStatus, ModuleType } from "@life-toolkit/enum";
+
+// 3. 关联实体
+import { RelatedEntity } from "../related";
+
+// 4. TypeORM 装饰器
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
+
+// 5. 验证装饰器
 import {
   IsString,
   IsOptional,
   IsEnum,
   IsArray,
   IsNumber,
-  IsBoolean,
-  IsInt,
-  IsEmail,
-  IsUrl,
-  Min,
-  Max,
-  Length,
   IsISO8601,
 } from "class-validator";
 
-// 3. 转换装饰器
+// 6. 转换装饰器
 import { Type } from "class-transformer";
-
-// 4. 基础类和枚举
-import { BaseEntity } from "@/base/base.entity";
-
-// 5. 本模块枚举
-import { ModuleStatus, ModuleType } from "./module.enum";
-
-// 6. 关联实体
-import { RelatedEntity } from "../related/entities";
 ```
 
 ### 3. Entity 装饰器规范
@@ -133,50 +126,56 @@ fieldName: FieldType;
 const FIELD_TYPE_MAPPING = {
   // 基础类型
   string: {
-    column: "@Column()",
+    column: "@Column('varchar')",
     validator: "@IsString()",
     transform: null,
     tsType: "string"
   },
   text: {
-    column: "@Column('text')",
-    validator: "@IsString()",
+    column: "@Column('text', { nullable: true })",
+    validator: "@IsString() @IsOptional()",
     transform: null,
     tsType: "string"
   },
   number: {
-    column: "@Column('int')",
-    validator: "@IsNumber()",
+    column: "@Column('int', { nullable: true })",
+    validator: "@IsNumber() @IsOptional()",
     transform: "@Type(() => Number)",
     tsType: "number"
   },
   decimal: {
-    column: "@Column('decimal', { precision: 10, scale: 2 })",
-    validator: "@IsNumber()",
+    column: "@Column('decimal', { precision: 10, scale: 2, nullable: true })",
+    validator: "@IsNumber() @IsOptional()",
     transform: "@Type(() => Number)",
     tsType: "number"
   },
   boolean: {
-    column: "@Column('boolean')",
-    validator: "@IsBoolean()",
+    column: "@Column('boolean', { nullable: true })",
+    validator: "@IsBoolean() @IsOptional()",
     transform: "@Type(() => Boolean)",
     tsType: "boolean"
   },
   date: {
     column: "@Column('date')",
     validator: "@IsISO8601()",
-    transform: "@Type(() => Date)",
+    transform: null,
     tsType: "Date"
   },
   datetime: {
-    column: "@Column('datetime')",
-    validator: "@IsISO8601()",
-    transform: "@Type(() => Date)",
+    column: "@Column('datetime', { nullable: true })",
+    validator: "@IsOptional()",
+    transform: null,
     tsType: "Date"
   },
+  time: {
+    column: "@Column('time', { nullable: true })",
+    validator: null,
+    transform: null,
+    tsType: "string"
+  },
   enum: {
-    column: "@Column({ type: 'enum', enum: EnumType })",
-    validator: "@IsEnum(EnumType)",
+    column: "@Column({ type: 'varchar', length: 20, nullable: true })",
+    validator: "@IsEnum(EnumType) @IsOptional()",
     transform: null,
     tsType: "EnumType"
   },
@@ -187,7 +186,7 @@ const FIELD_TYPE_MAPPING = {
     tsType: "string[]"
   },
   json: {
-    column: "@Column('json')",
+    column: "@Column('json', { nullable: true })",
     validator: "@IsOptional()",
     transform: null,
     tsType: "any"
@@ -199,58 +198,38 @@ const FIELD_TYPE_MAPPING = {
 
 #### 字符串字段
 ```typescript
-/** 名称 - 必填字符串 */
-@Column()
+/** 标题 - 必填字符串 */
+@Column("varchar")
 @IsString()
-@Length(1, 100)
-name: string;
+title!: string;
 
 /** 描述 - 可选字符串 */
-@Column({ nullable: true })
-@IsString()
-@IsOptional()
-@Length(0, 500)
-description?: string;
-
-/** 长文本内容 */
 @Column("text", { nullable: true })
 @IsString()
 @IsOptional()
-content?: string;
+description?: string;
 
 /** 唯一标识符 */
 @Column({ unique: true })
 @IsString()
-@Length(3, 50)
 code: string;
 ```
 
 #### 数字字段
 ```typescript
-/** 整数字段 */
-@Column({ default: 0 })
-@IsNumber()
-@Type(() => Number)
-@IsInt()
-@Min(0)
-count: number = 0;
-
-/** 评分字段 (1-5) */
-@Column({ default: 3 })
+/** 重要程度 */
+@Column("int", { nullable: true })
 @IsNumber()
 @IsOptional()
 @Type(() => Number)
-@IsInt()
-@Min(1)
-@Max(5)
-rating?: number = 3;
+importance?: number;
 
-/** 金额字段 */
-@Column("decimal", { precision: 10, scale: 2, default: 0 })
+/** 紧急程度 */
+@Column("int", { nullable: true })
 @IsNumber()
+@IsOptional()
 @Type(() => Number)
-@Min(0)
-amount: number = 0;
+urgency?: number;
 ```
 
 #### 布尔字段
@@ -270,46 +249,51 @@ isCompleted: boolean = false;
 
 #### 枚举字段
 ```typescript
-/** 状态枚举 - 必填 */
+/** 状态 - 必填 */
 @Column({
-  type: "enum",
-  enum: ModuleStatus,
-  default: ModuleStatus.ACTIVE,
-})
-@IsEnum(ModuleStatus)
-status: ModuleStatus = ModuleStatus.ACTIVE;
-
-/** 类型枚举 - 可选 */
-@Column({
-  type: "enum",
-  enum: ModuleType,
+  type: "varchar",
+  length: 20,
   nullable: true,
 })
-@IsEnum(ModuleType)
+@IsEnum(ModuleStatus)
+status!: ModuleStatus;
+
+/** 来源 - 可选 */
+@Column({
+  type: "varchar",
+  length: 20,
+  nullable: true,
+})
 @IsOptional()
-type?: ModuleType;
+source?: ModuleType;
 ```
 
 #### 日期时间字段
 ```typescript
-/** 开始日期 */
+/** 计划日期 */
 @Column("date")
 @IsISO8601()
-@Type(() => Date)
-startDate: Date = new Date();
-
-/** 结束日期 - 可选 */
-@Column("date", { nullable: true })
-@IsISO8601()
-@IsOptional()
-@Type(() => Date)
-endDate?: Date;
+planDate: Date = new Date();
 
 /** 完成时间 - 可选 */
-@Column("datetime", { nullable: true })
-@IsOptional()
-@Type(() => Date)
-completedAt?: Date;
+@Column("datetime", {
+  nullable: true,
+})
+doneAt?: Date;
+
+/** 放弃时间 - 可选 */
+@Column("datetime", {
+  nullable: true,
+})
+abandonedAt?: Date;
+
+/** 计划开始时间 - 可选 */
+@Column("time", { nullable: true })
+planStartAt?: string;
+
+/** 计划结束时间 - 可选 */
+@Column("time", { nullable: true })
+planEndAt?: string;
 ```
 
 #### 数组字段
@@ -353,24 +337,23 @@ settings?: Record<string, any>;
 
 ### 1. 一对多关系 (OneToMany/ManyToOne)
 ```typescript
-// 父实体 (一对多)
-@OneToMany(() => ChildEntity, (child) => child.parent, { 
-  cascade: true,
-  eager: false 
-})
-children: ChildEntity[];
-
-// 子实体 (多对一)
-@ManyToOne(() => ParentEntity, (parent) => parent.children, {
-  onDelete: "CASCADE"
-})
+// 子实体 (多对一) - 关联对象
+@ManyToOne(() => ParentEntity, (parent) => parent.children, { nullable: true })
 @JoinColumn({ name: "parent_id" })
 parent?: ParentEntity;
 
-@Column({ nullable: true })
+// 子实体 (多对一) - 关联ID
+@Column("varchar", { nullable: true })
 @IsString()
 @IsOptional()
 parentId?: string;
+
+// 父实体 (一对多)
+@OneToMany(() => ChildEntity, (child) => child.parent, {
+  cascade: true,
+  eager: false
+})
+children: ChildEntity[];
 ```
 
 ### 2. 多对多关系 (ManyToMany)
@@ -524,10 +507,12 @@ status: ModuleStatus = ModuleStatus.ACTIVE;
 - **枚举值**: snake_case (如: `active`, `inactive`)
 
 ### 2. 字段设计原则
-- **必填字段**: 不使用 `nullable: true`，提供合理默认值
-- **可选字段**: 使用 `nullable: true` 和 `@IsOptional()`
-- **关联字段**: 提供对应的 ID 字段便于查询
-- **时间字段**: 统一使用 Date 类型，格式化在 Mapper 层处理
+- **必填字段**: 使用非空断言操作符 `!` 明确标识
+- **可选字段**: 使用 `?` 可选标记，结合 `nullable: true` 和 `@IsOptional()`
+- **关联字段**: 同时提供关联对象和关联 ID 字段便于查询
+- **枚举字段**: 使用 `varchar` 类型存储，便于扩展和查询
+- **时间字段**: 日期使用 `date` 类型，日期时间使用 `datetime` 类型
+- **数字字段**: 可选数字字段使用 `nullable: true` 和 `@Type(() => Number)`
 
 ### 3. 性能优化
 ```typescript
@@ -578,12 +563,13 @@ user: User;
 - [ ] 导入顺序正确
 
 ### 字段定义
-- [ ] 所有字段都有适当的 `@Column()` 装饰器
-- [ ] 所有字段都有验证装饰器
-- [ ] 可选字段使用 `@IsOptional()`
-- [ ] 数字字段使用 `@Type(() => Number)`
-- [ ] 布尔字段使用 `@Type(() => Boolean)`
-- [ ] 日期字段使用 `@Type(() => Date)`
+- [ ] 所有必填字段使用非空断言操作符 `!`
+- [ ] 所有可选字段使用 `?` 标记和 `@IsOptional()`
+- [ ] 字符串字段使用 `@Column("varchar")`
+- [ ] 可选数字字段使用 `nullable: true` 和 `@Type(() => Number)`
+- [ ] 可选布尔字段使用 `nullable: true` 和 `@Type(() => Boolean)`
+- [ ] 枚举字段使用 `varchar` 类型和 `@IsEnum()`
+- [ ] 数组字段使用 `@Column("simple-array")` 和 `@IsArray() @IsString({ each: true })`
 
 ### 关联关系
 - [ ] 关联关系定义正确
@@ -610,111 +596,91 @@ user: User;
 ## 📝 完整示例
 
 ```typescript
-// goal.enum.ts
-export enum GoalStatus {
+// module.enum.ts
+export enum ModuleStatus {
   ACTIVE = "active",
+  INACTIVE = "inactive",
   COMPLETED = "completed",
-  CANCELLED = "cancelled",
 }
 
-export enum GoalPriority {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
 }
 
-// goal.entity.ts
-import { Entity, Column, OneToMany, ManyToOne, JoinColumn, Index } from "typeorm";
-import { IsString, IsOptional, IsEnum, IsNumber, IsBoolean, IsISO8601, Type, Min, Max, Length } from "class-validator";
-import { BaseEntity } from "@/base/base.entity";
-import { GoalStatus, GoalPriority } from "./goal.enum";
-import { Task } from "../task/task.entity";
-import { User } from "../user/user.entity";
+// module.entity.ts
+import { BaseEntity } from "../../base/base.entity";
+import { ModuleStatus, ModuleType } from "@life-toolkit/enum";
+import { RelatedEntity } from "../related";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsArray,
+  IsNumber,
+  IsISO8601,
+} from "class-validator";
+import { Type } from "class-transformer";
 
-@Entity("goal")
-@Index(["status", "priority"])
-@Index(["userId", "status"])
-export class Goal extends BaseEntity {
-  /** 目标标题 */
-  @Column()
+export class ModuleModel extends BaseEntity {
+  /** 标题 - 字符串类型 */
+  @Column("varchar")
   @IsString()
-  @Length(1, 100)
-  title: string;
+  title!: string;
 
-  /** 目标描述 */
+  /** 描述 - 可选字符串 */
   @Column("text", { nullable: true })
   @IsString()
   @IsOptional()
-  @Length(0, 1000)
   description?: string;
 
-  /** 目标状态 */
-  @Column({
-    type: "enum",
-    enum: GoalStatus,
-    default: GoalStatus.ACTIVE,
-  })
-  @IsEnum(GoalStatus)
-  status: GoalStatus = GoalStatus.ACTIVE;
-
-  /** 优先级 */
-  @Column({
-    type: "enum",
-    enum: GoalPriority,
-    default: GoalPriority.MEDIUM,
-  })
-  @IsEnum(GoalPriority)
-  priority: GoalPriority = GoalPriority.MEDIUM;
-
-  /** 重要性评分 (1-5) */
-  @Column({ default: 3 })
+  /** 重要程度 - 数字类型 */
+  @Column("int", { nullable: true })
   @IsNumber()
+  @IsOptional()
   @Type(() => Number)
-  @Min(1)
-  @Max(5)
-  importance: number = 3;
+  importance?: number;
 
-  /** 是否公开 */
-  @Column({ default: false })
-  @IsBoolean()
-  @Type(() => Boolean)
-  isPublic: boolean = false;
+  /** 状态 - 枚举类型 */
+  @Column({
+    type: "varchar",
+    length: 20,
+    nullable: true,
+  })
+  @IsEnum(ModuleStatus)
+  status!: ModuleStatus;
 
-  /** 开始日期 */
+  /** 标签 - 数组类型 */
+  @Column("simple-array")
+  @IsArray()
+  @IsString({ each: true })
+  tags!: string[];
+
+  /** 计划日期 - 日期类型 */
   @Column("date")
   @IsISO8601()
-  @Type(() => Date)
-  startDate: Date = new Date();
+  planDate: Date = new Date();
 
-  /** 目标日期 */
-  @Column("date", { nullable: true })
-  @IsISO8601()
-  @IsOptional()
-  @Type(() => Date)
-  targetDate?: Date;
+  /** 完成时间 - 可选日期时间 */
+  @Column("datetime", {
+    nullable: true,
+  })
+  doneAt?: Date;
+}
 
-  /** 完成时间 */
-  @Column("datetime", { nullable: true })
-  @IsOptional()
-  @Type(() => Date)
-  completedAt?: Date;
+@Entity("module")
+export class Module extends ModuleModel {
+  /** 关联对象 - 关联关系 */
+  @ManyToOne(() => RelatedEntity, (related) => related.modules, { nullable: true })
+  @JoinColumn({ name: "related_id" })
+  related?: RelatedEntity;
 
-  /** 标签 */
-  @Column("simple-array", { nullable: true })
-  @IsOptional()
-  tags?: string[] = [];
-
-  /** 关联用户 */
-  @ManyToOne(() => User, (user) => user.goals, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "user_id" })
-  user: User;
-
-  @Column()
+  /** 关联ID - 关联字段 */
+  @Column("varchar", { nullable: true })
   @IsString()
-  userId: string;
-
-  /** 关联任务 */
-  @OneToMany(() => Task, (task) => task.goal, { cascade: true })
-  tasks: Task[];
+  @IsOptional()
+  relatedId?: string;
 }
 ```

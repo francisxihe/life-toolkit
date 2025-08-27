@@ -1,6 +1,5 @@
 ---
 description: AI 筛选流转结构（系统全链路）
-globs:
 alwaysApply: false
 ---
 # 筛选流转结构（Monorepo 全链路）

@@ -19,26 +19,19 @@ export class TodoStatusService {
     id: string,
     status: TodoStatus,
     dateField: keyof Todo
-  ): Promise<boolean> {
-    return await this.dataSource.transaction(async (manager) => {
+  ): Promise<void> {
+    await this.dataSource.transaction(async (manager) => {
       const todo = await manager.findOneBy(Todo, { id });
       if (!todo) {
         throw new Error("Todo not found");
       }
 
-      // 如果是重复待办，需要在事务中处理
+      // 如果是重复待办：不再解绑重复配置，仅更新状态与时间，并创建下一条
       if (todo.repeatId) {
-        const repeatId = todo.repeatId;
-
-        // 先将当前待办转为普通待办，清除重复配置关联
         await manager.update(Todo, id, {
           status,
           [dateField]: new Date(),
-          originalRepeatId: repeatId, // 保存原始重复配置ID
-          repeatId: undefined, // 移除重复配置关联
         });
-
-        // 然后创建下一个重复待办
         await this.todoRepeatService.createNextTodo(todo);
       } else {
         await manager.update(Todo, id, {
@@ -47,7 +40,6 @@ export class TodoStatusService {
         });
       }
 
-      return true;
     });
   }
 
@@ -64,15 +56,15 @@ export class TodoStatusService {
     };
   }
 
-  async abandon(id: string): Promise<boolean> {
-    return this.updateStatus(id, TodoStatus.ABANDONED, "abandonedAt");
+  async abandon(id: string): Promise<void> {
+    await this.updateStatus(id, TodoStatus.ABANDONED, "abandonedAt");
   }
 
-  async done(id: string): Promise<boolean> {
-    return this.updateStatus(id, TodoStatus.DONE, "doneAt");
+  async done(id: string): Promise<void> {
+    await this.updateStatus(id, TodoStatus.DONE, "doneAt");
   }
 
-  async restore(id: string): Promise<boolean> {
-    return this.updateStatus(id, TodoStatus.TODO, "updatedAt");
+  async restore(id: string): Promise<void> {
+    await this.updateStatus(id, TodoStatus.TODO, "updatedAt");
   }
 }
