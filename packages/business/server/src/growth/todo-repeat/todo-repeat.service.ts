@@ -15,9 +15,12 @@ export class TodoRepeatService {
     this.todoRepeatRepository = todoRepeatRepository;
   }
 
-  async create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
-    const todoRepeat = await this.todoRepeatRepository.create(createTodoRepeatDto);
-    return await this.todoRepeatRepository.findById((todoRepeat as any).id);
+  async create(
+    createTodoRepeatDto: CreateTodoRepeatDto
+  ): Promise<TodoRepeatDto> {
+    const todoRepeat =
+      await this.todoRepeatRepository.create(createTodoRepeatDto);
+    return await this.todoRepeatRepository.findById(todoRepeat.id);
   }
 
   async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
@@ -31,14 +34,25 @@ export class TodoRepeatService {
 
   async page(
     filter: TodoRepeatPageFiltersDto
-  ): Promise<{ list: TodoRepeatDto[]; total: number; pageNum: number; pageSize: number }> {
+  ): Promise<{
+    list: TodoRepeatDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const { list, total, pageNum, pageSize } =
       await this.todoRepeatRepository.page(filter);
     return { list, total, pageNum, pageSize };
   }
 
-  async update(id: string, updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
-    const todoRepeat = await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
+  async update(
+    id: string,
+    updateTodoRepeatDto: UpdateTodoRepeatDto
+  ): Promise<TodoRepeatDto> {
+    const todoRepeat = await this.todoRepeatRepository.update(
+      id,
+      updateTodoRepeatDto
+    );
     return await this.todoRepeatRepository.findById(id);
   }
 
@@ -54,7 +68,10 @@ export class TodoRepeatService {
     idList: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto[]> {
-    return await this.todoRepeatRepository.batchUpdate(idList, updateTodoRepeatDto);
+    return await this.todoRepeatRepository.batchUpdate(
+      idList,
+      updateTodoRepeatDto
+    );
   }
 
   async softDelete(id: string): Promise<void> {
@@ -82,8 +99,8 @@ export class TodoRepeatService {
   async restore(id: string): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.TODO;
-    updateTodoRepeatDto.doneAt = null as any;
-    updateTodoRepeatDto.abandonedAt = null as any;
+    updateTodoRepeatDto.doneAt = undefined;
+    updateTodoRepeatDto.abandonedAt = undefined;
     await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
   }
 
