@@ -53,9 +53,9 @@ export default class GoalService {
     }
   }
 
-  static async addGoal(goal: CreateGoalVo) {
+  static async createGoal(goal: CreateGoalVo) {
     try {
-      const res = await GoalController.addGoal(goal);
+      const res = await GoalController.createGoal(goal);
       Message.success('操作成功');
       return res;
     } catch (error) {

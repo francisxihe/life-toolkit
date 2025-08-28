@@ -64,7 +64,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   });
 
   async function handleCreate() {
-    await GoalService.addGoal(GoalMapping.formDataToCreateVo(goalFormData));
+    await GoalService.createGoal(GoalMapping.formDataToCreateVo(goalFormData));
     setGoalFormData(defaultFormData);
   }
 

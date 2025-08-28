@@ -60,7 +60,7 @@ export class TodoRepeatModel extends BaseEntity {
   @Column("varchar", { nullable: true })
   @IsString()
   @IsOptional()
-  name?: string;
+  name!: string;
 
   /** 模板描述 */
   @Column("text", { nullable: true })

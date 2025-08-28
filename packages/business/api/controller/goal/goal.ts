@@ -10,23 +10,9 @@ import {
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class GoalController {
-  static async getDetail(goalId: string) {
-    return request<GoalVo>({ method: "get" })(`/goal/findById/${goalId}`);
-  }
+  // ---------基础 CURD---------
 
-  static async batchDoneGoal(params: OperationByIdListVo) {
-    return request<GoalVo[]>({ method: "put" })("/goal/batchDone", params);
-  }
-
-  static async restoreGoal(id: string) {
-    return request<GoalVo>({ method: "put" })(`/goal/restore/${id}`);
-  }
-
-  static async abandonGoal(id: string) {
-    return request({ method: "put" })(`/goal/abandon/${id}`);
-  }
-
-  static async addGoal(goal: CreateGoalVo) {
+  static async createGoal(goal: CreateGoalVo) {
     return request<GoalVo>({ method: "post" })("/goal/create", goal);
   }
 
@@ -36,6 +22,10 @@ export default class GoalController {
 
   static async updateGoal(id: string, goal: Partial<CreateGoalVo>) {
     return request({ method: "put" })(`/goal/update/${id}`, goal);
+  }
+
+  static async getDetail(goalId: string) {
+    return request<GoalVo>({ method: "get" })(`/goal/detail/${goalId}`);
   }
 
   static async getGoalList(params: GoalListFiltersVo = {}) {
@@ -48,5 +38,19 @@ export default class GoalController {
 
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
     return request<GoalPageVo>({ method: "get" })("/goal/page", params);
+  }
+
+  // --------- 业务操作 ---------
+
+  static async batchDoneGoal(params: OperationByIdListVo) {
+    return request<GoalVo[]>({ method: "put" })("/goal/batchDone", params);
+  }
+
+  static async restoreGoal(id: string) {
+    return request<GoalVo>({ method: "put" })(`/goal/restore/${id}`);
+  }
+
+  static async abandonGoal(id: string) {
+    return request({ method: "put" })(`/goal/abandon/${id}`);
   }
 }

@@ -40,19 +40,12 @@ export class TodoService {
     return await this.todoRepository.findById(id);
   }
 
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    return await this.todoRepository.findAll(filter);
+  async findById(id: string): Promise<TodoDto> {
+    return await this.todoRepository.findById(id);
   }
 
-  async page(filter: TodoPageFiltersDto): Promise<{
-    list: TodoDto[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
-    const { list, total, pageNum, pageSize } =
-      await this.todoRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+    return await this.todoRepository.findAll(filter);
   }
 
   // ====== 业务逻辑编排 ======
@@ -83,8 +76,15 @@ export class TodoService {
     );
   }
 
-  async findById(id: string): Promise<TodoDto> {
-    return await this.todoRepository.findById(id);
+  async page(filter: TodoPageFiltersDto): Promise<{
+    list: TodoDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
+    const { list, total, pageNum, pageSize } =
+      await this.todoRepository.page(filter);
+    return { list, total, pageNum, pageSize };
   }
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {

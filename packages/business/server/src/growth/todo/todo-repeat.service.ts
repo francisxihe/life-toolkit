@@ -132,7 +132,6 @@ export class TodoRepeatService {
     const rangeEnd = filter.planDateEnd ? dayjs(filter.planDateEnd) : undefined;
 
     const repeatFilter = new TodoRepeatListFilterDto();
-    // 使用新的筛选字段：currentDateStart/currentDateEnd
     repeatFilter.currentDateStart = filter.planDateStart as any;
     repeatFilter.currentDateEnd = filter.planDateEnd as any;
 
@@ -186,28 +185,7 @@ export class TodoRepeatService {
         if (next.isBefore(rangeStart, "day")) continue;
         if (next.isAfter(rangeEnd, "day")) break;
 
-        // 当日若已存在具体待办，则直接使用；否则生成内存 TodoDto
-        // const existed = await this.todoRepo.findOneByRepeatAndDate(
-        //   repeat.id,
-        //   next.toDate()
-        // );
-        // if (existed) {
-        //   // 补充 repeat 信息，方便前端合并显示
-        //   (existed as any).repeat = repeat as any;
-        //   results.push(existed);
-        //   continue;
-        // }
-
-        const dto = new CreateTodoDto();
-        dto.name = repeat.name || "待办";
-        dto.description = repeat.description;
-        dto.tags = repeat.tags || [];
-        dto.importance = repeat.importance;
-        dto.urgency = repeat.urgency;
-        dto.planDate = next.toDate();
-
         const temp: Partial<Todo> = {
-          repeatId: repeat.id,
           originalRepeatId: repeat.id,
           source: TodoSource.REPEAT,
           status: repeat.status ?? TodoStatus.TODO,
@@ -216,13 +194,13 @@ export class TodoRepeatService {
         // 不落库，构造一个 TodoDto 形态的数据
         const fake: any = {
           ...temp,
-          id: undefined,
-          name: dto.name,
-          description: dto.description,
-          tags: dto.tags,
-          importance: dto.importance,
-          urgency: dto.urgency,
-          planDate: dto.planDate,
+          id: repeat.id,
+          name: repeat.name,
+          description: repeat.description,
+          tags: repeat.tags,
+          importance: repeat.importance,
+          urgency: repeat.urgency,
+          planDate: next.toDate(),
           planStartAt: undefined,
           planEndAt: undefined,
           createdAt: new Date(),
@@ -230,6 +208,8 @@ export class TodoRepeatService {
           repeat: repeat,
         };
         const todoDto = new TodoDto();
+        todoDto.id = repeat.id;
+        todoDto.name = repeat.name;
         todoDto.importEntity(fake);
         results.push(todoDto);
       }

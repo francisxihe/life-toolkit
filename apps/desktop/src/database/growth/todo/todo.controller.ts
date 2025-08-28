@@ -19,14 +19,15 @@ export class TodoController {
   constructor() {
     this.controller = new _TodoController(todoService, todoRepeatService);
   }
+
   @Post("/create")
   async create(@Body() payload: TodoVO.CreateTodoVo) {
     return this.controller.create(payload);
   }
 
-  @Get("/findById/:id")
-  async findById(@Param("id") id: string) {
-    return this.controller.findById(id);
+  @Delete("/delete/:id")
+  async delete(@Param("id") id: string) {
+    return this.controller.delete(id);
   }
 
   @Put("/update/:id")
@@ -37,9 +38,9 @@ export class TodoController {
     return this.controller.update(id, payload);
   }
 
-  @Delete("/delete/:id")
-  async remove(@Param("id") id: string) {
-    return this.controller.remove(id);
+  @Get("/detail/:id")
+  async findById(@Param("id") id: string) {
+    return this.controller.findById(id);
   }
 
   @Get("/page")

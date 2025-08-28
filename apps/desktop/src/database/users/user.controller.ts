@@ -14,7 +14,7 @@ export function registerUserIpcHandlers(): void {
     return await userService.findAll();
   });
 
-  ipcMain.handle('/user/findById', async (_, id) => {
+  ipcMain.handle('/user/detail', async (_, id) => {
     return await userService.findById(id);
   });
 

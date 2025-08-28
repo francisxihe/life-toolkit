@@ -64,7 +64,7 @@ export default function TodoToday() {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodo(id);
+    const todo = await TodoService.getTodoDetail(id);
     setCurrentTodo(todo);
   }
 

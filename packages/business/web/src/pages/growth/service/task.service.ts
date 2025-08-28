@@ -10,9 +10,9 @@ import type {
 import { OperationByIdListVo } from '@life-toolkit/vo';
 import { useState, useEffect } from 'react';
 export default class TaskService {
-  static async getTaskWithTrackTime(taskId: string) {
+  static async getTaskDetail(taskId: string) {
     try {
-      return TaskController.getTaskWithTrackTime(taskId);
+      return TaskController.getTaskDetail(taskId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -48,9 +48,9 @@ export default class TaskService {
     }
   }
 
-  static async addTask(task: CreateTaskVo) {
+  static async createTask(task: CreateTaskVo) {
     try {
-      const res = await TaskController.addTask(task);
+      const res = await TaskController.createTask(task);
       Message.success('操作成功');
       return res;
     } catch (error) {

@@ -11,8 +11,14 @@ import type { OperationByIdListVo } from '@life-toolkit/vo';
 import { request } from '@life-toolkit/share-request';
 
 export default class HabitController {
+  // ---------基础 CURD---------
+
   static async createHabit(habit: CreateHabitVo) {
     return request<HabitVo>({ method: "post" })("/habit/create", habit);
+  }
+
+  static async deleteHabit(id: string) {
+    return request({ method: "remove" })(`/habit/delete/${id}`);
   }
 
   static async updateHabit(id: string, habit: Partial<CreateHabitVo>) {
@@ -20,7 +26,7 @@ export default class HabitController {
   }
 
   static async getHabitDetail(habitId: string) {
-    return request<HabitVo>({ method: "get" })(`/habit/findById/${habitId}`);
+    return request<HabitVo>({ method: "get" })(`/habit/detail/${habitId}`);
   }
 
   static async getHabitList(params: HabitListFiltersVo = {}) {
@@ -31,9 +37,7 @@ export default class HabitController {
     return request<HabitPageVo>({ method: "get" })("/habit/page", params);
   }
 
-  static async deleteHabit(id: string) {
-    return request({ method: "remove" })(`/habit/delete/${id}`);
-  }
+  // --------- 业务操作 ---------
 
   static async batchDoneHabit(params: OperationByIdListVo) {
     return request({ method: "put" })("/habit/batchDone", params);

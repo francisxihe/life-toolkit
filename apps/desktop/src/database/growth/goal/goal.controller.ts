@@ -32,7 +32,7 @@ export class GoalController {
     return this.controller.create(payload);
   }
 
-  @Get("/findById/:id")
+  @Get("/detail/:id")
   async findById(@Param("id") id: string) {
     return this.controller.findById(id);
   }

@@ -26,6 +26,21 @@ export class CreateTodoRepeatDto extends IntersectionType(
     "status",
   ] as const)
 ) {
+  importCreateVo(vo: TodoVO.CreateTodoVo & { repeat: CreateRepeatVo }) {
+    this.name = vo.name;
+    this.description = vo.description;
+    this.importance = vo.importance;
+    this.urgency = vo.urgency;
+    this.tags = vo.tags;
+    this.repeatStartDate = vo.repeat.repeatStartDate;
+    this.currentDate = vo.repeat.currentDate;
+    this.repeatMode = vo.repeat.repeatMode;
+    this.repeatConfig = vo.repeat.repeatConfig;
+    this.repeatEndMode = vo.repeat.repeatEndMode;
+    this.repeatEndDate = vo.repeat.repeatEndDate;
+    this.repeatTimes = vo.repeat.repeatTimes;
+  }
+
   exportCreateEntity() {
     const todoRepeat = new TodoRepeat();
     // 重复配置相关字段（来自 CreateRepeatDto）
@@ -53,21 +68,6 @@ export class CreateTodoRepeatDto extends IntersectionType(
     if (this.repeatedTimes !== undefined)
       todoRepeat.repeatedTimes = this.repeatedTimes;
     return todoRepeat;
-  }
-
-  voToCreateDto(vo: TodoVO.CreateTodoVo & { repeat: CreateRepeatVo }) {
-    this.name = vo.name;
-    this.description = vo.description;
-    this.importance = vo.importance;
-    this.urgency = vo.urgency;
-    this.tags = vo.tags;
-    this.repeatStartDate = vo.repeat.repeatStartDate;
-    this.currentDate = vo.repeat.currentDate;
-    this.repeatMode = vo.repeat.repeatMode;
-    this.repeatConfig = vo.repeat.repeatConfig;
-    this.repeatEndMode = vo.repeat.repeatEndMode;
-    this.repeatEndDate = vo.repeat.repeatEndDate;
-    this.repeatTimes = vo.repeat.repeatTimes;
   }
 }
 
@@ -109,6 +109,20 @@ export class UpdateTodoRepeatDto extends IntersectionType(
       this.abandonedAt = todoRepeat.abandonedAt;
   }
 
+  importUpdateVo(vo: TodoVO.UpdateTodoVo & { repeat: UpdateRepeatVo }) {
+    this.name = vo.name;
+    this.description = vo.description;
+    this.importance = vo.importance;
+    this.urgency = vo.urgency;
+    this.tags = vo.tags;
+    this.repeatStartDate = vo.repeat.repeatStartDate;
+    this.repeatMode = vo.repeat.repeatMode;
+    this.repeatConfig = vo.repeat.repeatConfig;
+    this.repeatEndMode = vo.repeat.repeatEndMode;
+    this.repeatEndDate = vo.repeat.repeatEndDate;
+    this.repeatTimes = vo.repeat.repeatTimes;
+  }
+
   exportUpdateEntity() {
     const todoRepeat = new TodoRepeat();
     todoRepeat.id = this.id;
@@ -138,19 +152,5 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     if (this.abandonedAt !== undefined)
       todoRepeat.abandonedAt = this.abandonedAt;
     return todoRepeat;
-  }
-
-  voToUpdateDto(vo: TodoVO.UpdateTodoVo & { repeat: UpdateRepeatVo }) {
-    this.name = vo.name;
-    this.description = vo.description;
-    this.importance = vo.importance;
-    this.urgency = vo.urgency;
-    this.tags = vo.tags;
-    this.repeatStartDate = vo.repeat.repeatStartDate;
-    this.repeatMode = vo.repeat.repeatMode;
-    this.repeatConfig = vo.repeat.repeatConfig;
-    this.repeatEndMode = vo.repeat.repeatEndMode;
-    this.repeatEndDate = vo.repeat.repeatEndDate;
-    this.repeatTimes = vo.repeat.repeatTimes;
   }
 }

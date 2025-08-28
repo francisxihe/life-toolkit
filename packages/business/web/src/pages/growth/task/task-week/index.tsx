@@ -67,7 +67,7 @@ export default function TaskWeek() {
     flushSync(() => {
       setCurrentTask(null);
     });
-    const todo = await TaskService.getTaskWithTrackTime(id);
+    const todo = await TaskService.getTaskDetail(id);
     setCurrentTask(todo);
   }
 

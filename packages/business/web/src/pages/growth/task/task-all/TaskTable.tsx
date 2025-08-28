@@ -129,7 +129,7 @@ export default function TaskTable() {
       return;
     }
     setSubTaskLoadingStatus((prev) => ({ ...prev, [record.id]: 'loading' }));
-    const todoNode = await TaskService.getTaskWithTrackTime(record.id);
+    const todoNode = await TaskService.getTaskDetail(record.id);
     setExpandedData((prev) => ({
       ...prev,
       [record.id]: todoNode,

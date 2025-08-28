@@ -11,23 +11,9 @@ import {
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
 export default class TodoController {
-  static async getTodo(todoId: string) {
-    return request<TodoVo>({ method: "get" })(`/todo/findById/${todoId}`);
-  }
+  // -------- 基础CRUD --------
 
-  static async batchDoneTodo(params: OperationByIdListVo) {
-    return request<TodoVo[]>({ method: "put" })(`/todo/batchDone`, params);
-  }
-
-  static async restoreTodo(id: string) {
-    return request({ method: "put" })(`/todo/restore/${id}`);
-  }
-
-  static async abandonTodo(id: string) {
-    return request({ method: "put" })(`/todo/abandon/${id}`);
-  }
-
-  static async addTodo(todo: CreateTodoVo) {
+  static async createTodo(todo: CreateTodoVo) {
     return request<TodoVo>({ method: "post" })("/todo/create", todo);
   }
 
@@ -39,11 +25,29 @@ export default class TodoController {
     return request<UpdateTodoVo>({ method: "put" })(`/todo/update/${id}`, todo);
   }
 
+  static async getTodoDetail(todoId: string) {
+    return request<TodoVo>({ method: "get" })(`/todo/detail/${todoId}`);
+  }
+
   static async getTodoList(params: TodoListFiltersVo = {}) {
     return request<TodoListVo>({ method: "get" })("/todo/list", params);
   }
 
   static async getTodoPage(params: TodoPageFiltersVo) {
     return request<TodoPageVo>({ method: "get" })("/todo/page", params);
+  }
+
+  // -------- 批量操作 --------
+
+  static async batchDoneTodo(params: OperationByIdListVo) {
+    return request<TodoVo[]>({ method: "put" })(`/todo/batchDone`, params);
+  }
+
+  static async restoreTodo(id: string) {
+    return request({ method: "put" })(`/todo/restore/${id}`);
+  }
+
+  static async abandonTodo(id: string) {
+    return request({ method: "put" })(`/todo/abandon/${id}`);
   }
 }

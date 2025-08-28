@@ -67,7 +67,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   };
 
   const refreshTaskDetail = async (id: string) => {
-    const task = await TaskService.getTaskWithTrackTime(id);
+    const task = await TaskService.getTaskDetail(id);
     setCurrentTask(task);
     setTaskFormData(TaskMapping.voToFormData(task));
   };
@@ -91,7 +91,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     if (!taskFormData.name) {
       return;
     }
-    await TaskService.addTask(createTaskVo);
+    await TaskService.createTask(createTaskVo);
     setTaskFormData(defaultFormData);
   }
 

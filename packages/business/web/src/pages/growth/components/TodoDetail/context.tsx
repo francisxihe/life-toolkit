@@ -55,7 +55,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   const todoFormDataRef = useRef<TodoFormData>(todoFormData);
 
   const refreshTodoDetail = async (id: string) => {
-    const todo = await TodoService.getTodo(id);
+    const todo = await TodoService.getTodoDetail(id);
     setCurrentTodo(todo);
     todoFormDataRef.current = TodoMapping.voToFormData(todo);
     setTodoFormData(todoFormDataRef.current);
@@ -90,7 +90,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
       };
     }
     try {
-      await TodoService.addTodo({
+      await TodoService.createTodo({
         name: form.name,
         planDate: form.planDate,
         planStartAt: form.planTimeRange?.[0] || undefined,

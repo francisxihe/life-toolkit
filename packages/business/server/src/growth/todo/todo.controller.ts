@@ -2,7 +2,10 @@ import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { TodoListFilterDto, TodoPageFiltersDto } from "./dto";
 import { TodoService } from "./todo.service";
 import { TodoRepeatService } from "./todo-repeat.service";
-import { CreateTodoRepeatDto } from "./dto/todo-repeat-form.dto";
+import {
+  CreateTodoRepeatDto,
+  UpdateTodoRepeatDto,
+} from "./dto/todo-repeat-form.dto";
 import { CreateTodoDto, UpdateTodoDto } from "./dto";
 
 export class TodoController {
@@ -14,7 +17,7 @@ export class TodoController {
   async create(createTodoVo: TodoVO.CreateTodoVo) {
     if (createTodoVo.repeat) {
       const createTodoRepeatDto = new CreateTodoRepeatDto();
-      createTodoRepeatDto.voToCreateDto({
+      createTodoRepeatDto.importCreateVo({
         ...createTodoVo,
         repeat: createTodoVo.repeat,
       });
@@ -33,13 +36,22 @@ export class TodoController {
   }
 
   async update(id: string, updateVo: TodoVO.UpdateTodoVo) {
+    if (updateVo.repeat) {
+      const updateTodoRepeatDto = new UpdateTodoRepeatDto();
+      updateTodoRepeatDto.importUpdateVo({
+        ...updateVo,
+        repeat: updateVo.repeat,
+      });
+      const dto = await this.todoRepeatService.update(id, updateTodoRepeatDto);
+      return dto.exportVo();
+    }
     const updateDto = new UpdateTodoDto();
     updateDto.importUpdateVo(updateVo);
     const dto = await this.todoService.update(id, updateDto);
     return dto.exportVo();
   }
 
-  async remove(id: string) {
+  async delete(id: string) {
     return await this.todoService.delete(id);
   }
 
