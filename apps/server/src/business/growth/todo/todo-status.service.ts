@@ -6,14 +6,10 @@ import {
   OperationByIdListDto,
   OperationByIdListResultDto,
 } from "@/common/operation";
-import { TodoRepeatService } from "./todo-repeat.service";
 
 @Injectable()
 export class TodoStatusService {
-  constructor(
-    private readonly todoRepeatService: TodoRepeatService,
-    private readonly dataSource: DataSource
-  ) {}
+  constructor(private readonly dataSource: DataSource) {}
 
   private async updateStatus(
     id: string,
@@ -27,19 +23,6 @@ export class TodoStatusService {
       }
 
       // 如果是重复待办：不再解绑重复配置，仅更新状态与时间，并创建下一条
-      if (todo.repeatId) {
-        await manager.update(Todo, id, {
-          status,
-          [dateField]: new Date(),
-        });
-        await this.todoRepeatService.createNextTodo(todo);
-      } else {
-        await manager.update(Todo, id, {
-          status,
-          [dateField]: new Date(),
-        });
-      }
-
     });
   }
 

@@ -168,7 +168,7 @@ export class GoalRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 
-    updateGoalDto.applyToUpdateEntity(entity);
+    updateGoalDto.appendToUpdateEntity(entity);
 
     const saved = await this.repo.save(entity);
     return GoalMapper.entityToDto(saved);

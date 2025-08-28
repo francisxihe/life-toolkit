@@ -5,7 +5,7 @@ import {
   RepeatConfig,
   RepeatEndMode,
 } from "@life-toolkit/components-repeat";
-import { TodoStatus, TodoSource } from "@life-toolkit/enum";
+import { TodoStatus } from "@life-toolkit/enum";
 import {
   IsArray,
   IsEnum,
@@ -89,28 +89,19 @@ export class TodoRepeatModel extends BaseEntity {
   @IsOptional()
   tags?: string[];
 
-  /** 来源 */
-  @Column({ type: "varchar", length: 20, nullable: true })
-  @IsOptional()
-  source?: TodoSource;
+  /** 重复开始日期 */
+  @Column("date", { nullable: true })
+  repeatStartDate?: string;
 
-  /** 开始时间（日期时间） */
-  @Column("datetime", { nullable: true })
-  startAt?: Date;
-
-  /** 结束时间（日期时间） */
-  @Column("datetime", { nullable: true })
-  endAt?: Date;
+  /** 当前执行到的重复日期 */
+  @Column("date", { nullable: true })
+  currentDate?: string;
 
   /** 状态（模板整体状态） */
   @Column({ type: "varchar", length: 20, nullable: true })
   @IsEnum(TodoStatus)
   @IsOptional()
-  status?: TodoStatus;
-
-  /** 完成时间 */
-  @Column("datetime", { nullable: true })
-  doneAt?: Date;
+  status!: TodoStatus;
 
   /** 放弃时间 */
   @Column("datetime", { nullable: true })

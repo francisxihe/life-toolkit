@@ -105,7 +105,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    updateTaskDto.applyToUpdateEntity(entity);
+    updateTaskDto.appendToUpdateEntity(entity);
     await this.repo.save(entity);
   }
 

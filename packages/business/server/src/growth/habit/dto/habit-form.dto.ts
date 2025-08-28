@@ -17,7 +17,7 @@ export class CreateHabitDto extends PickType(HabitDto, [
 ] as const) {
   goalIds?: string[];
 
-  applyToCreateEntity(entity: Habit) {
+  appendToCreateEntity(entity: Habit) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -39,7 +39,7 @@ export class UpdateHabitDto extends IntersectionType(
     ] as const)
   )
 ) {
-  applyToUpdateEntity(entity: Habit) {
+  appendToUpdateEntity(entity: Habit) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;

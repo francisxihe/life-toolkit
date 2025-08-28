@@ -8,21 +8,13 @@ import {
 // import { TodoRepeatListFiltersVo, TodoRepeatPageFiltersVo } from "@life-toolkit/vo";
 
 export class TodoRepeatListFilterDto extends PartialType(
-  PickType(TodoRepeatDto, ["importance", "urgency", "status", "source"] as const)
+  PickType(TodoRepeatDto, ["importance", "urgency", "status"] as const)
 ) {
   keyword?: string;
 
-  startDateStart?: string;
+  currentDateStart?: string;
 
-  startDateEnd?: string;
-
-  endDateStart?: string;
-
-  endDateEnd?: string;
-
-  doneDateStart?: string;
-
-  doneDateEnd?: string;
+  currentDateEnd?: string;
 
   abandonedDateStart?: string;
 
@@ -51,14 +43,9 @@ function importListVo(
   filterDto.importance = filterVo.importance;
   filterDto.urgency = filterVo.urgency;
   filterDto.status = filterVo.status;
-  filterDto.source = filterVo.source;
   filterDto.keyword = filterVo.keyword;
-  filterDto.startDateStart = filterVo.startDateStart;
-  filterDto.startDateEnd = filterVo.startDateEnd;
-  filterDto.endDateStart = filterVo.endDateStart;
-  filterDto.endDateEnd = filterVo.endDateEnd;
-  filterDto.doneDateStart = filterVo.doneDateStart;
-  filterDto.doneDateEnd = filterVo.doneDateEnd;
+  filterDto.currentDateStart = filterVo.currentDateStart;
+  filterDto.currentDateEnd = filterVo.currentDateEnd;
   filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
 }

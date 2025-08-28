@@ -2,6 +2,7 @@ import { BaseModelVo } from "../../base/model.vo";
 import { TaskVo } from "../task/task-model.vo";
 import { RepeatVo } from "@life-toolkit/components-repeat/vo";
 import { TodoStatus } from "@life-toolkit/enum";
+import { RepeatMode, RepeatConfig, RepeatEndMode } from "@life-toolkit/components-repeat";
 
 export type TodoModelVo = {
   name: string;

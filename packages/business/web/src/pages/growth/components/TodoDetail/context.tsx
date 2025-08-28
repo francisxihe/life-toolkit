@@ -3,9 +3,11 @@
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { TodoFormData, TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { TodoStatus, TodoVo, TodoItemVo } from '@life-toolkit/vo/growth';
+import { TodoVo, TodoItemVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
+import { TodoStatus } from '@life-toolkit/enum';
+import { RepeatVo } from '@life-toolkit/components-repeat/types';
 
 export type TodoDetailProviderProps = {
   children: React.ReactNode;
@@ -73,22 +75,38 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   }, [props.mode, initTodoFormData]);
 
   async function handleCreate() {
-    if (!todoFormDataRef.current.name) {
+    const form = todoFormDataRef.current;
+    if (!form.name) return;
+    let repeat: RepeatVo | undefined;
+    if (form.repeat) {
+      repeat = {
+        currentDate: dayjs(form.planDate).format('YYYY-MM-DD'),
+        repeatStartDate: dayjs(form.planDate).format('YYYY-MM-DD'),
+        repeatMode: form.repeat.repeatMode,
+        repeatConfig: form.repeat.repeatConfig,
+        repeatEndMode: form.repeat.repeatEndMode,
+        repeatTimes: form.repeat.repeatTimes,
+        repeatEndDate: form.repeat.repeatEndDate,
+      };
+    }
+    try {
+      await TodoService.addTodo({
+        name: form.name,
+        planDate: form.planDate,
+        planStartAt: form.planTimeRange?.[0] || undefined,
+        planEndAt: form.planTimeRange?.[1] || undefined,
+        importance: form.importance,
+        urgency: form.urgency,
+        tags: form.tags,
+        description: form.description,
+        repeat,
+      });
+      todoFormDataRef.current = defaultFormData;
+      setTodoFormData(todoFormDataRef.current);
+    } catch (error) {
+      console.error(error);
       return;
     }
-    await TodoService.addTodo({
-      name: todoFormDataRef.current.name,
-      planDate: todoFormDataRef.current.planDate,
-      planStartAt: todoFormDataRef.current.planTimeRange?.[0] || undefined,
-      planEndAt: todoFormDataRef.current.planTimeRange?.[1] || undefined,
-      repeat: todoFormDataRef.current.repeat,
-      importance: todoFormDataRef.current.importance,
-      urgency: todoFormDataRef.current.urgency,
-      tags: todoFormDataRef.current.tags,
-      description: todoFormDataRef.current.description,
-    });
-    todoFormDataRef.current = defaultFormData;
-    setTodoFormData(todoFormDataRef.current);
   }
 
   async function handleUpdate() {

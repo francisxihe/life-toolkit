@@ -147,7 +147,7 @@ export class ModuleRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error("Resource not found");
 
-    updateDto.applyToUpdateEntity(entity);
+    updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleMapper.entityToDto(saved);
   }
@@ -579,7 +579,7 @@ export class ModuleRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error("Resource not found");
 
-    updateDto.applyToUpdateEntity(entity);
+    updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleMapper.entityToDto(saved);
   }

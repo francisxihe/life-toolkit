@@ -11,12 +11,13 @@ import {
 import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { TodoController as _TodoController } from "@life-toolkit/business-server";
 import { todoService } from "./todo.service";
+import { todoRepeatService } from "./todo-repeat.service";
 
 @Controller("/todo")
 export class TodoController {
   private readonly controller: _TodoController;
   constructor() {
-    this.controller = new _TodoController(todoService);
+    this.controller = new _TodoController(todoService, todoRepeatService);
   }
   @Post("/create")
   async create(@Body() payload: TodoVO.CreateTodoVo) {

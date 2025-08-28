@@ -16,7 +16,7 @@ export class CreateGoalDto extends PickType(GoalDto, [
   // 额外字段
   parentId?: string;
 
-  applyToCreateEntity(entity: Goal) {
+  appendToCreateEntity(entity: Goal) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.type !== undefined) entity.type = this.type;
     if (this.startAt !== undefined) entity.startAt = this.startAt;
@@ -34,7 +34,7 @@ export class UpdateGoalDto extends PartialType(CreateGoalDto) {
   doneAt?: Date;
   abandonedAt?: Date;
 
-  applyToUpdateEntity(entity: Goal) {
+  appendToUpdateEntity(entity: Goal) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.type !== undefined) entity.type = this.type;
     if (this.startAt !== undefined) entity.startAt = this.startAt;

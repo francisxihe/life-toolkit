@@ -51,19 +51,7 @@ export class TodoRepository {
   }
 
   async create(createDto: CreateTodoDto): Promise<TodoDto> {
-    const entity = this.repo.create({
-      name: createDto.name,
-      description: createDto.description,
-      status: createDto.status ?? TodoStatus.TODO,
-      importance: createDto.importance,
-      urgency: createDto.urgency,
-      tags: createDto.tags,
-      planDate: createDto.planDate,
-      planStartAt: createDto.planStartAt,
-      planEndAt: createDto.planEndAt,
-      taskId: createDto.taskId,
-      source: TodoSource.MANUAL,
-    });
+    const entity = createDto.toCreateEntity();
     const saved = await this.repo.save(entity);
     return TodoMapper.entityToDto(saved);
   }
@@ -121,8 +109,8 @@ export class TodoRepository {
   async update(id: string, updateDto: UpdateTodoDto): Promise<TodoDto> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`待办不存在，ID: ${id}`);
-    updateDto.applyToUpdateEntity(entity);
-    const saved = await this.repo.save(entity);
+    updateDto.importUpdateEntity(entity);
+    const saved = await this.repo.save(updateDto.toUpdateEntity());
     return TodoMapper.entityToDto(saved);
   }
 

@@ -1,7 +1,7 @@
 import { BaseEntity } from "../../base/base.entity";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import { Task } from "../task";
-import { TodoRepeat } from "../todo-repeat";
+import { TodoRepeat } from "./todo-repeat.entity";
 import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import {
   IsString,

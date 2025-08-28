@@ -9,10 +9,10 @@ import {
   TodoRepeatMapper,
   TodoRepeat,
 } from "@life-toolkit/business-server";
-import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 
 export class TodoRepeatRepository {
-  private repo: Repository<TodoRepeat> = AppDataSource.getRepository(TodoRepeat);
+  private repo: Repository<TodoRepeat> =
+    AppDataSource.getRepository(TodoRepeat);
 
   private buildQuery(filter: TodoRepeatListFilterDto) {
     const qb = this.repo
@@ -25,34 +25,23 @@ export class TodoRepeatRepository {
     if (filter.importance !== undefined) {
       qb.andWhere("todoRepeat.importance = :importance", {
         importance: filter.importance,
-      }); 
+      });
     }
     if (filter.urgency !== undefined) {
       qb.andWhere("todoRepeat.urgency = :urgency", { urgency: filter.urgency });
     }
-    if (filter.source !== undefined) {
-      qb.andWhere("todoRepeat.source = :source", { source: filter.source });
-    }
     if (filter.keyword) {
       qb.andWhere("todoRepeat.name LIKE :kw", { kw: `%${filter.keyword}%` });
     }
-    if (filter.startDateStart) {
-      qb.andWhere("todoRepeat.startAt >= :sds", { sds: filter.startDateStart });
+    if (filter.currentDateStart) {
+      qb.andWhere("todoRepeat.currentDate >= :cds", {
+        cds: filter.currentDateStart,
+      });
     }
-    if (filter.startDateEnd) {
-      qb.andWhere("todoRepeat.startAt <= :sde", { sde: filter.startDateEnd });
-    }
-    if (filter.endDateStart) {
-      qb.andWhere("todoRepeat.endAt >= :eds", { eds: filter.endDateStart });
-    }
-    if (filter.endDateEnd) {
-      qb.andWhere("todoRepeat.endAt <= :ede", { ede: filter.endDateEnd });
-    }
-    if (filter.doneDateStart) {
-      qb.andWhere("todoRepeat.doneAt >= :dds", { dds: filter.doneDateStart });
-    }
-    if (filter.doneDateEnd) {
-      qb.andWhere("todoRepeat.doneAt <= :dde", { dde: filter.doneDateEnd });
+    if (filter.currentDateEnd) {
+      qb.andWhere("todoRepeat.currentDate <= :cde", {
+        cde: filter.currentDateEnd,
+      });
     }
     if (filter.abandonedDateStart) {
       qb.andWhere("todoRepeat.abandonedAt >= :ads", {
@@ -60,7 +49,9 @@ export class TodoRepeatRepository {
       });
     }
     if (filter.abandonedDateEnd) {
-      qb.andWhere("todoRepeat.abandonedAt <= :ade", { ade: filter.abandonedDateEnd });
+      qb.andWhere("todoRepeat.abandonedAt <= :ade", {
+        ade: filter.abandonedDateEnd,
+      });
     }
 
     return qb;
@@ -68,18 +59,7 @@ export class TodoRepeatRepository {
 
   async create(createDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
     const entity = this.repo.create();
-    createDto.applyToCreateEntity(entity);
-    const saved = await this.repo.save(entity);
-    return TodoRepeatMapper.entityToDto(saved);
-  }
-
-  async createWithExtras(
-    createDto: CreateTodoRepeatDto,
-    extras: Partial<TodoRepeat>
-  ): Promise<TodoRepeatDto> {
-    const entity = this.repo.create();
-    createDto.applyToCreateEntity(entity);
-    Object.assign(entity, extras);
+    createDto.appendToCreateEntity(entity);
     const saved = await this.repo.save(entity);
     return TodoRepeatMapper.entityToDto(saved);
   }
@@ -113,11 +93,14 @@ export class TodoRepeatRepository {
     };
   }
 
-  async update(id: string, updateDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
+  async update(
+    id: string,
+    updateDto: UpdateTodoRepeatDto
+  ): Promise<TodoRepeatDto> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error("TodoRepeat not found");
 
-    updateDto.applyToUpdateEntity(entity);
+    updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return TodoRepeatMapper.entityToDto(saved);
   }
@@ -127,11 +110,11 @@ export class TodoRepeatRepository {
     updateDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto[]> {
     const entities = await this.repo.find({ where: { id: In(idList) } });
-    
-    entities.forEach(entity => {
-      updateDto.applyToUpdateEntity(entity);
+
+    entities.forEach((entity) => {
+      updateDto.appendToUpdateEntity(entity);
     });
-    
+
     const saved = await this.repo.save(entities);
     return saved.map((item) => TodoRepeatMapper.entityToDto(item));
   }
@@ -143,15 +126,12 @@ export class TodoRepeatRepository {
 
   async deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void> {
     const qb = this.repo.createQueryBuilder("todoRepeat");
-    
+
     // 根据过滤条件构建删除查询
     if (filter.status !== undefined) {
       qb.andWhere("todoRepeat.status = :status", { status: filter.status });
     }
-    if (filter.source !== undefined) {
-      qb.andWhere("todoRepeat.source = :source", { source: filter.source });
-    }
-    
+
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }

@@ -154,7 +154,7 @@ export class HabitRepository implements BusinessHabitRepository {
     });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
 
-    updateHabitDto.applyToUpdateEntity(entity);
+    updateHabitDto.appendToUpdateEntity(entity);
 
     const goalIds = updateHabitDto.goalIds as string[] | undefined;
     if (goalIds) {

@@ -5,7 +5,6 @@ import { Todo } from "./todo.entity";
 import dayjs from "dayjs";
 import { BaseMapper } from "../../base/base.mapper";
 import { TaskMapper } from "../task/task.mapper";
-import { RepeatMapper } from "@life-toolkit/components-repeat/server";
 
 export class TodoMapper {
   /**
@@ -40,8 +39,6 @@ export class TodoMapper {
     return dto;
   }
 
-  // =======
-
   static dtoToVo(dto: TodoDto): TodoVO.TodoVo {
     const repeat = dto.repeat as any;
     const repeatPlanStart = repeat?.startAt
@@ -71,14 +68,16 @@ export class TodoMapper {
           ? dayjs(dto.planEndAt).format("YYYY-MM-DD HH:mm:ss")
           : undefined),
       repeat: dto.repeat,
-      doneAt: (repeat?.doneAt ?? dto.doneAt)
-        ? dayjs(repeat?.doneAt ?? dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      abandonedAt: (repeat?.abandonedAt ?? dto.abandonedAt)
-        ? dayjs(repeat?.abandonedAt ?? dto.abandonedAt).format(
-            "YYYY-MM-DD HH:mm:ss"
-          )
-        : undefined,
+      doneAt:
+        (repeat?.doneAt ?? dto.doneAt)
+          ? dayjs(repeat?.doneAt ?? dto.doneAt).format("YYYY-MM-DD HH:mm:ss")
+          : undefined,
+      abandonedAt:
+        (repeat?.abandonedAt ?? dto.abandonedAt)
+          ? dayjs(repeat?.abandonedAt ?? dto.abandonedAt).format(
+              "YYYY-MM-DD HH:mm:ss"
+            )
+          : undefined,
       task: dto.task ? TaskMapper.dtoToVo(dto.task) : undefined,
     };
     return vo;
@@ -110,8 +109,6 @@ export class TodoMapper {
     return vo;
   }
 
-  // =======
-
   static voToCreateDto(vo: TodoVO.CreateTodoVo): CreateTodoDto {
     const dto = new CreateTodoDto();
     dto.name = vo.name;
@@ -120,7 +117,13 @@ export class TodoMapper {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
-    dto.repeat = vo.repeat ? RepeatMapper.voToCreateDto(vo.repeat) : undefined;
+    // planStartAt/planEndAt 为 time 字段（string），保持 HH:mm:ss 格式
+    dto.planStartAt = vo.planStartAt
+      ? dayjs(vo.planStartAt).format("HH:mm:ss")
+      : undefined;
+    dto.planEndAt = vo.planEndAt
+      ? dayjs(vo.planEndAt).format("HH:mm:ss")
+      : undefined;
     dto.taskId = vo.taskId;
     return dto;
   }
@@ -133,7 +136,6 @@ export class TodoMapper {
     dto.importance = vo.importance;
     dto.urgency = vo.urgency;
     dto.planDate = dayjs(vo.planDate).toDate();
-    dto.repeat = vo.repeat ? RepeatMapper.voToUpdateDto(vo.repeat) : undefined;
     dto.taskId = vo.taskId;
     return dto;
   }

@@ -10,61 +10,32 @@ import {
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
 import { TodoStatusService } from "./todo-status.service";
-import {
-  TodoMapper,
-  TodoPageFiltersDto,
-  TodoListFilterDto,
-} from "@life-toolkit/business-server";
+import { TodoMapper } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
   OperationByIdListVo,
   TodoListFiltersVo,
+  TodoPageFiltersVo,
 } from "@life-toolkit/vo";
 import { OperationMapper } from "@/common/operation";
+import { TodoController as _TodoController } from "@life-toolkit/business-server";
 
 @Controller("todo")
 export class TodoController {
+  controller: _TodoController;
+
   constructor(
     private readonly todoService: TodoService,
     private readonly todoStatusService: TodoStatusService
-  ) {}
-
-  @Put("batch-done")
-  @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.todoStatusService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
-    );
-  }
-
-  @Put("abandon/:id")
-  @Response()
-  async abandon(@Param("id") id: string) {
-    await this.todoStatusService.abandon(id);
-    return { result: true };
-  }
-
-  @Put("done/:id")
-  @Response()
-  async done(@Param("id") id: string) {
-    await this.todoStatusService.done(id);
-    return { result: true };
-  }
-
-  @Put("restore/:id")
-  @Response()
-  async restore(@Param("id") id: string) {
-    await this.todoStatusService.restore(id);
-    return { result: true };
+  ) {
+    this.controller = new _TodoController(todoService);
   }
 
   @Post("create")
   @Response()
   async create(@Body() createTodoVo: Todo.CreateTodoVo) {
-    const createdDto = TodoMapper.voToCreateDto(createTodoVo);
-    const dto = await this.todoService.create(createdDto);
-    return TodoMapper.dtoToVo(dto);
+    return this.controller.create(createTodoVo);
   }
 
   @Delete("delete/:id")
@@ -86,39 +57,43 @@ export class TodoController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TodoPageFiltersDto) {
-    const { list, total } = await this.todoService.page(filter);
-    return TodoMapper.dtoToPageVo(
-      list,
-      total,
-      filter.pageNum || 1,
-      filter.pageSize || 10
-    );
+  async page(@Query() filter: TodoPageFiltersVo) {
+    return this.controller.page(filter);
   }
 
   @Get("list")
   @Response()
   async list(@Query() filter: TodoListFiltersVo) {
-    const todoListFilterDto = new TodoListFilterDto();
-
-    todoListFilterDto.importance = filter.importance;
-    todoListFilterDto.urgency = filter.urgency;
-    todoListFilterDto.status = filter.status;
-    todoListFilterDto.planDateStart = filter.planDateStart;
-    todoListFilterDto.planDateEnd = filter.planDateEnd;
-    todoListFilterDto.doneDateStart = filter.doneDateStart;
-    todoListFilterDto.doneDateEnd = filter.doneDateEnd;
-    todoListFilterDto.abandonedDateStart = filter.abandonedDateStart;
-    todoListFilterDto.abandonedDateEnd = filter.abandonedDateEnd;
-
-    const todoList = await this.todoService.findAll(todoListFilterDto);
-    return TodoMapper.dtoToListVo(todoList);
+    return this.controller.list(filter);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
-    const todo = await this.todoService.findById(id);
-    return TodoMapper.dtoToVo(todo);
+    return this.controller.findById(id);
+  }
+
+  @Put("batch-done")
+  @Response()
+  async batchDone(@Body() idList: OperationByIdListVo) {
+    return this.controller.batchDone(idList);
+  }
+
+  @Put("abandon/:id")
+  @Response()
+  async abandon(@Param("id") id: string) {
+    return this.controller.abandon(id);
+  }
+
+  @Put("done/:id")
+  @Response()
+  async done(@Param("id") id: string) {
+    return this.controller.done(id);
+  }
+
+  @Put("restore/:id")
+  @Response()
+  async restore(@Param("id") id: string) {
+    return this.controller.restore(id);
   }
 }

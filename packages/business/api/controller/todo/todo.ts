@@ -4,8 +4,9 @@ import {
   CreateTodoVo,
   TodoPageVo,
   TodoListVo,
-  TodoPageFiltersVo,
   TodoListFiltersVo,
+  UpdateTodoVo,
+  TodoPageFiltersVo,
 } from "@life-toolkit/vo/growth";
 import { OperationByIdListVo } from "@life-toolkit/vo";
 
@@ -34,15 +35,15 @@ export default class TodoController {
     return request({ method: "remove" })(`/todo/delete/${id}`);
   }
 
-  static async updateTodo(id: string, todo: Partial<TodoVo>) {
-    return request<TodoVo>({ method: "put" })(`/todo/update/${id}`, todo);
+  static async updateTodo(id: string, todo: UpdateTodoVo) {
+    return request<UpdateTodoVo>({ method: "put" })(`/todo/update/${id}`, todo);
   }
 
   static async getTodoList(params: TodoListFiltersVo = {}) {
     return request<TodoListVo>({ method: "get" })("/todo/list", params);
   }
 
-  static async getTodoPage(params: any) {
+  static async getTodoPage(params: TodoPageFiltersVo) {
     return request<TodoPageVo>({ method: "get" })("/todo/page", params);
   }
 }

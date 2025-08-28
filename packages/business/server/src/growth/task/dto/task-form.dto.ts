@@ -22,7 +22,7 @@ export class CreateTaskDto extends PickType(TaskDto, [
   parentId?: string;
   trackTimeIds?: string[];
 
-  applyToCreateEntity(entity: Task) {
+  appendToCreateEntity(entity: Task) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.tags !== undefined) entity.tags = this.tags;
@@ -42,7 +42,7 @@ export class UpdateTaskDto extends IntersectionType(
   PartialType(CreateTaskDto),
   PickType(TaskDto, ["status"] as const)
 ) {
-  applyToUpdateEntity(entity: Task) {
+  appendToUpdateEntity(entity: Task) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.tags !== undefined) entity.tags = this.tags;

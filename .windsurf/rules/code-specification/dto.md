@@ -149,7 +149,7 @@ export class Create{Module}Dto extends PickType({Module}Dto, [
   relationIds?: string[];
 
   /** 应用到实体的辅助方法（可选） */
-  applyToCreateEntity(entity: {Entity}) {
+  appendToCreateEntity(entity: {Entity}) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.status !== undefined) entity.status = this.status;
@@ -164,7 +164,7 @@ export class Update{Module}Dto extends IntersectionType(
   PickType({Module}Dto, ["completedAt", "cancelledAt"] as const)
 ) {
   /** 应用到实体的辅助方法（可选） */
-  applyToUpdateEntity(entity: {Entity}) {
+  appendToUpdateEntity(entity: {Entity}) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     // ... 其他字段映射
@@ -208,7 +208,7 @@ export class CreateModuleDto extends PickType(ModuleDto, [
   @IsOptional()
   relatedId?: string;
 
-  applyToCreateEntity(entity: Module) {
+  appendToCreateEntity(entity: Module) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -225,7 +225,7 @@ export class UpdateModuleDto extends IntersectionType(
   PickType(Module, ["id"] as const),
   PickType(ModuleDto, ["doneAt"] as const)
 ) {
-  applyToUpdateEntity(entity: Module) {
+  appendToUpdateEntity(entity: Module) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -260,7 +260,7 @@ export class CreateModuleDto extends PickType(ModuleDto, [
 ] as const) {
   relatedId?: string;
 
-  applyToCreateEntity(entity: Module) {
+  appendToCreateEntity(entity: Module) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -276,7 +276,7 @@ export class UpdateModuleDto extends IntersectionType(
   PickType(Module, ["id"] as const),
   PickType(ModuleDto, ["doneAt"] as const)
 ) {
-  applyToUpdateEntity(entity: Module) {
+  appendToUpdateEntity(entity: Module) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -764,7 +764,7 @@ export class CreateOrderDto extends PickType(OrderDto, ["items", "userId"]) {
   @IsOptional()
   itemIds?: string[];
 
-  applyToCreateEntity(entity: Order) {
+  appendToCreateEntity(entity: Order) {
     // 映射基本字段
     if (this.userId !== undefined) entity.userId = this.userId;
 
@@ -869,7 +869,7 @@ export class CreateArticleDto extends PickType(ArticleDto, [
   @IsOptional()
   categoryIds?: string[];
 
-  applyToCreateEntity(entity: Article) {
+  appendToCreateEntity(entity: Article) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.content !== undefined) entity.content = this.content;
     if (this.authorId !== undefined) entity.authorId = this.authorId;
@@ -1084,7 +1084,7 @@ export class CreateProductDto extends PickType(ProductDto, [
   @IsOptional()
   imageIds?: string[];
 
-  applyToCreateEntity(entity: Product) {
+  appendToCreateEntity(entity: Product) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.price !== undefined) entity.price = this.price;
@@ -1098,7 +1098,7 @@ export class UpdateProductDto extends IntersectionType(
   PickType(Product, ["id"]),
   PickType(ProductDto, ["status", "updatedAt"])
 ) {
-  applyToUpdateEntity(entity: Product) {
+  appendToUpdateEntity(entity: Product) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.price !== undefined) entity.price = this.price;

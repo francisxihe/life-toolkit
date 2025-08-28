@@ -134,7 +134,7 @@ export default class TodoService {
    * @param params 任务分页过滤条件
    * @returns 任务分页列表
    */
-  static async getTodoPage(params: TodoPageFiltersVo = {}) {
+  static async getTodoPage(params: TodoPageFiltersVo) {
     try {
       return TodoController.getTodoPage(params);
     } catch (error) {
