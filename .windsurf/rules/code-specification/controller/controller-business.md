@@ -29,8 +29,7 @@ Business Controller 是核心业务逻辑层，负责实现业务规则、数据
 packages/business/server/src/{module}/
 ├── {module}.controller.ts         # 核心业务控制器
 ├── {module}.service.ts           # 业务服务
-├── dto/                          # 数据传输对象
-├── mappers/                      # 数据映射器
+├── dto/                          # DTO 类包含内置映射方法
 └── {module}.repository.ts        # 数据仓储
 ```
 
@@ -40,7 +39,6 @@ packages/business/server/src/{module}/
 ```typescript
 import type { {Module} as {Module}VO } from "@life-toolkit/vo";
 import { {Module}Service } from "./{module}.service";
-import { {Module}Mapper } from "./mappers/{module}.mapper";
 import {
   Create{Module}Dto,
   Update{Module}Dto,
@@ -59,9 +57,9 @@ export class {Module}Controller {
    * 创建{资源名称}
    */
   async create(createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
-    const createDto = {Module}Mapper.voToCreateDto(createVo);
+    const createDto = Create{Module}Dto.importVo(createVo);
     const dto = await this.{module}Service.create(createDto);
-    return {Module}Mapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 
   /**
@@ -69,7 +67,7 @@ export class {Module}Controller {
    */
   async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
     const { list, total } = await this.{module}Service.page(filter);
-    return {Module}Mapper.dtoToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
+    return {Module}Dto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
 
   /**
@@ -77,7 +75,7 @@ export class {Module}Controller {
    */
   async list(filter: {Module}ListFilterDto): Promise<{Module}VO.{Module}ListVo> {
     const list = await this.{module}Service.findAll(filter);
-    return {Module}Mapper.dtoToListVo(list);
+    return {Module}Dto.dtoListToListVo(list);
   }
 
   /**
@@ -85,16 +83,16 @@ export class {Module}Controller {
    */
   async findDetail(id: string): Promise<{Module}VO.{Module}Vo> {
     const dto = await this.{module}Service.findDetail(id);
-    return {Module}Mapper.dtoToVo(dto);
+    return dto.exportVo();
   }
 
   /**
    * 更新{资源名称}
    */
   async update(id: string, updateVo: {Module}VO.Update{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
-    const updateDto = {Module}Mapper.voToUpdateDto(updateVo);
+    const updateDto = Update{Module}Dto.importVo(updateVo);
     const dto = await this.{module}Service.update(id, updateDto);
-    return {Module}Mapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 
   /**
@@ -142,7 +140,6 @@ export class {Module}Controller {
 ```typescript
 // 相对路径导入 - Business层使用相对路径
 import { {Module}Service } from "./{module}.service";
-import { {Module}Mapper } from "./mappers/{module}.mapper";
 import {
   Create{Module}Dto,
   Update{Module}Dto,
@@ -158,16 +155,16 @@ import {
  */
 async export(filter: {Module}ExportFilterDto): Promise<{Module}VO.ExportResultVo> {
   const result = await this.{module}Service.export(filter);
-  return {Module}Mapper.exportResultToVo(result);
+  return result.exportVo();
 }
 
 /**
  * 导入{资源名称}
  */
 async import(data: {Module}VO.ImportDataVo): Promise<{Module}VO.ImportResultVo> {
-  const importDto = {Module}Mapper.voToImportDto(data);
+  const importDto = Import{Module}Dto.importVo(data);
   const result = await this.{module}Service.import(importDto);
-  return {Module}Mapper.importResultToVo(result);
+  return result.exportVo();
 }
 
 /**
@@ -175,7 +172,7 @@ async import(data: {Module}VO.ImportDataVo): Promise<{Module}VO.ImportResultVo> 
  */
 async statistics(filter: {Module}StatisticsFilterDto): Promise<{Module}VO.StatisticsVo> {
   const result = await this.{module}Service.getStatistics(filter);
-  return {Module}Mapper.statisticsToVo(result);
+  return result.exportVo();
 }
 ```
 
@@ -187,13 +184,13 @@ async statistics(filter: {Module}StatisticsFilterDto): Promise<{Module}VO.Statis
 export class TodoController {
   async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
     // 1. 数据转换
-    const createDto = TodoMapper.voToCreateDto(createVo);
+    const createDto = CreateTodoDto.importVo(createVo);
 
     // 2. 业务处理
     const dto = await this.todoService.create(createDto);
 
     // 3. 数据转换
-    return TodoMapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 }
 
@@ -214,9 +211,9 @@ export class TodoController {
 export class TodoController {
   async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
     try {
-      const createDto = TodoMapper.voToCreateDto(createVo);
+      const createDto = CreateTodoDto.importVo(createVo);
       const dto = await this.todoService.create(createDto); // Service会抛出业务异常
-      return TodoMapper.dtoToVo(dto);
+      return dto.exportVo();
     } catch (error) {
       // 可以在这里添加业务特定的异常转换逻辑
       throw error; // 重新抛出，让上层处理
@@ -231,13 +228,13 @@ export class TodoController {
 export class TodoController {
   async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
     // 1. VO转DTO
-    const createDto = TodoMapper.voToCreateDto(createVo);
+    const createDto = CreateTodoDto.importVo(createVo);
 
     // 2. 调用Service
     const dto = await this.todoService.create(createDto);
 
     // 3. DTO转VO
-    return TodoMapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 }
 ```

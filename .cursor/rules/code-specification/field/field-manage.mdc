@@ -18,9 +18,9 @@ alwaysApply: false
 
 ### 字段流转链路
 ```
-数据库层 → 实体层 → DTO层 → 映射层 → 服务层 → 控制器层 → API类型层 → 前端展示层
-   ↓         ↓        ↓        ↓        ↓        ↓           ↓            ↓
-  MySQL     Entity    DTO    Mapper   Service Controller   Types        UI
+数据库层 → 实体层 → DTO层 →  服务层 → 控制器层 → API类型层 → 前端展示层
+   ↓         ↓        ↓        ↓        ↓           ↓            ↓
+  MySQL     Entity    DTO     Service Controller   Types        UI
 ```
 
 ### 各层级职责与路径

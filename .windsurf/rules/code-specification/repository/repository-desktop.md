@@ -89,7 +89,7 @@ export class ModuleRepository {
       relatedId: createDto.relatedId,
     });
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async createWithExtras(
@@ -111,13 +111,13 @@ export class ModuleRepository {
       ...extras,
     });
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async findAll(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
-    return list.map((item) => ModuleMapper.entityToDto(item));
+    return list.map((item) => ModuleDto.importEntity(item));
   }
 
   async page(filter: ModulePageFiltersDto): Promise<{
@@ -136,7 +136,7 @@ export class ModuleRepository {
       .getManyAndCount();
 
     return {
-      list: list.map((item) => ModuleMapper.entityToDto(item)),
+      list: list.map((item) => ModuleDto.importEntity(item)),
       total,
       pageNum,
       pageSize,
@@ -149,7 +149,7 @@ export class ModuleRepository {
 
     updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async batchUpdate(
@@ -166,7 +166,7 @@ export class ModuleRepository {
       .where("resource.id IN (:...ids)", { ids: idList })
       .getMany();
 
-    return list.map((item) => ModuleMapper.entityToDto(item));
+    return list.map((item) => ModuleDto.importEntity(item));
   }
 
   async delete(id: string): Promise<boolean> {
@@ -189,7 +189,7 @@ export class ModuleRepository {
       relations: relations ?? ["relatedEntity", "anotherEntity"],
     });
     if (!resource) throw new Error("Resource not found");
-    return ModuleMapper.entityToDto(resource);
+    return ModuleDto.importEntity(resource);
   }
 
   async updateRepeatId(id: string, repeatId: string): Promise<void> {
@@ -209,7 +209,7 @@ export class ModuleRepository {
     const resource = await this.repo.findOne({
       where: { repeatId, planDate: date },
     });
-    return resource ? ModuleMapper.entityToDto(resource) : null;
+    return resource ? ModuleDto.importEntity(resource) : null;
   }
 }
 ```
@@ -291,7 +291,7 @@ async create(createDto: CreateModuleDto): Promise<ResourceDto> {
   const saved = await this.repo.save(entity);
 
   // 3. 转换为 DTO 返回
-  return ModuleMapper.entityToDto(saved);
+  return ModuleDto.importEntity(saved);
 }
 ```
 
@@ -317,7 +317,7 @@ async page(filter: ModulePageFiltersDto): Promise<{
 
   // 3. 转换为 DTO 返回
   return {
-    list: list.map((item) => ModuleMapper.entityToDto(item)),
+    list: list.map((item) => ModuleDto.importEntity(item)),
     total,
     pageNum,
     pageSize,
@@ -344,7 +344,7 @@ async batchUpdate(
     .getMany();
 
   // 3. 转换为 DTO 返回
-  return list.map((item) => ModuleMapper.entityToDto(item));
+  return list.map((item) => ModuleDto.importEntity(item));
 }
 ```
 
@@ -363,7 +363,7 @@ async findById(id: string, relations?: string[]): Promise<ResourceDto> {
     throw new Error("Resource not found");
   }
 
-  return ModuleMapper.entityToDto(resource);
+  return ModuleDto.importEntity(resource);
 }
 ```
 
@@ -431,7 +431,7 @@ for (let i = 0; i < idList.length; i += batchSize) {
 - [ ] 正确处理批量操作
 
 ### 数据映射
-- [ ] 使用 Mapper 进行 Entity/DTO 转换
+- [ ] 在 DTO 中进行 Entity/DTO 转换
 - [ ] 正确处理关联关系
 - [ ] 实现软删除逻辑
 
@@ -521,7 +521,7 @@ export class ModuleRepository {
       type: ResourceType.MANUAL,
     });
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async createWithExtras(
@@ -543,13 +543,13 @@ export class ModuleRepository {
       ...extras,
     });
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async findAll(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
-    return list.map((item) => ModuleMapper.entityToDto(item));
+    return list.map((item) => ModuleDto.importEntity(item));
   }
 
   async page(filter: ModulePageFiltersDto): Promise<{
@@ -568,7 +568,7 @@ export class ModuleRepository {
       .getManyAndCount();
 
     return {
-      list: list.map((item) => ModuleMapper.entityToDto(item)),
+      list: list.map((item) => ModuleDto.importEntity(item)),
       total,
       pageNum,
       pageSize,
@@ -581,7 +581,7 @@ export class ModuleRepository {
 
     updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async batchUpdate(
@@ -598,7 +598,7 @@ export class ModuleRepository {
       .where("resource.id IN (:...ids)", { ids: idList })
       .getMany();
 
-    return list.map((item) => ModuleMapper.entityToDto(item));
+    return list.map((item) => ModuleDto.importEntity(item));
   }
 
   async delete(id: string): Promise<boolean> {
@@ -621,7 +621,7 @@ export class ModuleRepository {
       relations: relations ?? ["relatedEntity", "anotherEntity"],
     });
     if (!resource) throw new Error("Resource not found");
-    return ModuleMapper.entityToDto(resource);
+    return ModuleDto.importEntity(resource);
   }
 
   async updateRepeatId(id: string, repeatId: string): Promise<void> {
@@ -641,7 +641,7 @@ export class ModuleRepository {
     const resource = await this.repo.findOne({
       where: { repeatId, planDate: date },
     });
-    return resource ? ModuleMapper.entityToDto(resource) : null;
+    return resource ? ModuleDto.importEntity(resource) : null;
   }
 }
 ```

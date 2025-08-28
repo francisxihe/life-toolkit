@@ -186,22 +186,28 @@ export interface PageFilter {
 
 ### Entity → DTO 映射
 ```typescript
-// 推荐使用 Mapper 模式
-export class EntityMapper {
-  static entityToDto(entity: Entity): Dto {
-    return {
-      id: entity.id,
-      name: entity.name,
-      // ... 其他字段映射
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
-    };
+// 使用 DTO 内置方法进行映射
+class ModuleDto {
+  // 实例方法：从实体导入数据
+  importEntity(entity: Module): ModuleDto {
+    this.id = entity.id;
+    this.name = entity.name;
+    // ... 其他字段映射
+    this.createdAt = entity.createdAt;
+    this.updatedAt = entity.updatedAt;
+    return this;
   }
 
-  static dtoToEntity(dto: Dto): Entity {
+  // 静态方法：创建新实例并导入数据
+  static importEntity(entity: Module): ModuleDto {
+    return new ModuleDto().importEntity(entity);
+  }
+
+  // 导出为 VO
+  exportVo(): ModuleVo {
     return {
-      id: dto.id,
-      name: dto.name,
+      id: this.id,
+      name: this.name,
       // ... 其他字段映射
     };
   }

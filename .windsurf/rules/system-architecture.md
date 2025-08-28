@@ -162,8 +162,7 @@ packages/
 ```
 {module}/
 ├── entities/              # 数据实体 (TypeORM)
-├── dto/                   # 数据传输对象
-├── mappers/               # 对象映射器
+├── dto/                   # DTO 类包含内置映射方法
 ├── {module}.repository.ts # 仓储
 └── {module}.service.ts    # 业务服务
 ```

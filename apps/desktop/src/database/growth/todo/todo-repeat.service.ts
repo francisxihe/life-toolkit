@@ -7,5 +7,6 @@ export class TodoRepeatService extends _TodoRepeatService {
     super(todoRepeatRepository);
   }
 }
-
+ 
 export const todoRepeatService = new TodoRepeatService();
+ 

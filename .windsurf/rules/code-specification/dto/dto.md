@@ -146,9 +146,9 @@ export class UpdateEntityDto {
 }
 ```
 
-## 🧭 映射逻辑合并至 DTO（取代 Mapper）
+## 🧭 映射逻辑合并至 DTO
 
-- 将 Entity→DTO、DTO→VO、VO→DTO 的转换统一放入对应 DTO 文件中，无需再创建独立的 Mapper 层
+- 将 Entity→DTO、DTO→VO、VO→DTO 的转换统一放入对应 DTO 文件中
 - 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`
 - 列表/分页导出可提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`
 - 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用

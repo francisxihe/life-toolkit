@@ -9,10 +9,6 @@ import {
 
 export interface TodoRepeatRepository {
   create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto>;
-  createWithExtras(
-    createTodoRepeatDto: CreateTodoRepeatDto,
-    extras: Partial<TodoRepeat>
-  ): Promise<TodoRepeatDto>;
   findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]>;
   page(filter: TodoRepeatPageFiltersDto): Promise<{
     list: TodoRepeatDto[];

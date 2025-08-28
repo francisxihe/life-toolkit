@@ -62,14 +62,14 @@ export class EntityModelDto extends OmitType(EntityDto, [
 ] as const) {}
 ```
 
-## 🧭 映射逻辑合并至 DTO（取代 Mapper）
+## 🧭 DTO 内置映射方法
 
 ### 映射规则
 
-- 将 Entity→DTO、DTO→VO、VO→DTO 的转换统一放入对应 DTO 文件中，无需再创建独立的 Mapper 层。
-- 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`。
-- 列表/分页导出可提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`。
-- 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用。
+- DTO 类包含内置的数据转换方法，实现 Entity↔DTO↔VO 的双向转换
+- 在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`
+- 列表/分页导出提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`
+- 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用
 - DTO 内部字段的日期保持为 Date；导出 VO 时统一用 dayjs 格式化为字符串。
 - 说明：此处的数据"映射/转换"不属于业务逻辑范畴。
 
@@ -79,7 +79,6 @@ export class EntityModelDto extends OmitType(EntityDto, [
 import { BaseModelDto } from "../../../base/base-model.dto";
 import { IntersectionType, OmitType } from "@life-toolkit/mapped-types";
 import dayjs from "dayjs";
-import { BaseMapper } from "../../../base/base.mapper";
 import type { Entity as EntityVO } from "@life-toolkit/vo";
 import { Entity } from "../entity.entity";
 
@@ -90,22 +89,31 @@ export class EntityDto extends IntersectionType(
   related?: any;
 
   // Entity → DTO
-  importEntity(entity: Entity) {
-    Object.assign(this, BaseMapper.entityToDto(entity));
-    // 映射基础字段（保持 Date 类型）
-    // this.name = entity.name;
-    // this.status = entity.status;
+  importEntity(entity: Entity): EntityDto {
+    this.id = entity.id;
+    this.name = entity.name;
+    this.status = entity.status;
+    this.createdAt = entity.createdAt;
+    this.updatedAt = entity.updatedAt;
     // 关联（浅拷贝 / 调用其他 DTO 的导出）
     this.related = entity.related as any;
+    return this;
+  }
+
+  // 静态方法：创建新实例并导入数据
+  static importEntity(entity: Entity): EntityDto {
+    return new EntityDto().importEntity(entity);
   }
 
   // DTO → 业务完整 VO
   exportVo(): EntityVO.EntityVo {
     return {
-      ...BaseMapper.dtoToVo(this),
+      id: this.id,
+      name: this.name,
+      status: this.status,
       // 日期统一格式化
-      // planDate: this.planDate ? dayjs(this.planDate).format("YYYY-MM-DD") : undefined,
-      // completedAt: this.completedAt ? dayjs(this.completedAt).format("YYYY-MM-DD HH:mm:ss") : undefined,
+      createdAt: dayjs(this.createdAt).toISOString(),
+      updatedAt: dayjs(this.updatedAt).toISOString(),
       // 关联对象可按需转换/简化
       related: this.related,
     } as EntityVO.EntityVo;
@@ -114,8 +122,9 @@ export class EntityDto extends IntersectionType(
   // DTO → 列表项 VO（简化）
   exportModelVo(): EntityVO.EntityItemVo {
     return {
-      ...BaseMapper.dtoToVo(this),
-      // planDate: this.planDate ? dayjs(this.planDate).format("YYYY-MM-DD") : undefined,
+      id: this.id,
+      name: this.name,
+      status: this.status,
     } as EntityVO.EntityItemVo;
   }
 
@@ -180,7 +189,11 @@ export class EntityDto extends IntersectionType(
   items?: ItemDto[];
 
   importEntity(entity: Entity) {
-    Object.assign(this, BaseMapper.entityToDto(entity));
+    this.id = entity.id;
+    this.name = entity.name;
+    this.status = entity.status;
+    this.createdAt = entity.createdAt;
+    this.updatedAt = entity.updatedAt;
     
     // 关联对象映射
     if (entity.category) {

@@ -35,20 +35,20 @@ alwaysApply: false
 └─────────────────────────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────┐
 │                   数据层 (Data Layer)                         │
-│  ┌─────────────────┬─────────────────┬─────────────────┐   │
-│  │     Entity      │     Mapper      │      VO/DTO      │   │
-│  │   (数据模型)    │   (数据转换)    │   (数据传输)     │   │
-│  └─────────────────┴─────────────────┴─────────────────┘   │
+│  ┌─────────────────┬─────────────────────────────────────┐   │
+│  │     Entity      │           VO/DTO                    │   │
+│  │   (数据模型)    │   (数据传输 + 内置映射方法)         │   │
+│  └─────────────────┴─────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### 开发流程总览
 
 ```
-1. 数据格式定义 → 2. 数据转换 → 3. 业务逻辑 → 4. 控制器 → 5. 字段控制
-    ↓                    ↓                ↓            ↓            ↓
-  Entity规范          Mapper规范      Repository    Controller   Field Manage
-  DTO/VO规范          Service规范     Service规范   Service规范  Filter规范
+1. 数据格式定义 → 2. 业务逻辑 → 3. 控制器 → 4. 字段控制
+    ↓                ↓            ↓            ↓
+  Entity规范      Repository    Controller   Field Manage
+  DTO/VO规范      Service规范   Service规范  Filter规范
 ```
 
 ## 🔄 完整开发流程
@@ -201,50 +201,32 @@ export namespace ModuleVO {
 }
 ```
 
-### 第二阶段：数据转换
+### 第二阶段：业务逻辑实现
 
-#### 2.1 Mapper 定义（数据映射器）
-**位置**: `packages/business/server/src/{domain}/{module}/*.mapper.ts`
+#### 2.1 Repository 定义（数据访问层）
+**位置**: `packages/business/server/src/{domain}/{module}/*.repository.ts`
 
 **核心原则**:
-- 实现 Entity ↔ DTO 双向转换
-- 处理日期、枚举等特殊类型转换
-- 确保数据完整性和类型安全
+- 实现数据访问接口
+- 使用 DTO 内置方法进行 Entity ↔ DTO 转换
+- 处理复杂查询和关联关系
 
 **示例代码**:
 ```typescript
-// packages/business/server/src/{domain}/{module}/{module}.mapper.ts
-import { Module } from "./{module}.entity";
+// packages/business/server/src/{domain}/{module}/{module}.repository.ts
+import { Module } from "./entities/{module}.entity";
 import { ModuleDto, CreateModuleDto, UpdateModuleDto } from "./dto";
-import dayjs from "dayjs";
 
-export class ModuleMapper {
-  static entityToDto(entity: Module): ModuleDto {
-    return {
-      id: entity.id,
-      name: entity.name,
-      description: entity.description,
-      status: entity.status,
-      priority: entity.priority,
-      planDate: entity.planDate ? dayjs(entity.planDate).format("YYYY-MM-DD") : undefined,
-      processedAt: entity.processedAt ? dayjs(entity.processedAt).toISOString() : undefined,
-      parentId: entity.parentId,
-      createdAt: dayjs(entity.createdAt).toISOString(),
-      updatedAt: dayjs(entity.updatedAt).toISOString(),
-    };
+export abstract class ModuleRepository {
+  async create(createDto: CreateModuleDto): Promise<ModuleDto> {
+    const entity = this.repo.create(createDto);
+    const saved = await this.repo.save(entity);
+    return ModuleDto.importEntity(saved);
   }
 
-  static dtoToEntity(dto: ModuleDto): Partial<Module> {
-    return {
-      id: dto.id,
-      name: dto.name,
-      description: dto.description,
-      status: dto.status,
-      priority: dto.priority,
-      planDate: dto.planDate ? new Date(dto.planDate) : undefined,
-      processedAt: dto.processedAt ? new Date(dto.processedAt) : undefined,
-      parentId: dto.parentId,
-    };
+  async findById(id: string): Promise<ModuleDto | null> {
+    const entity = await this.repo.findOne({ where: { id } });
+    return entity ? ModuleDto.importEntity(entity) : null;
   }
 
   static createDtoToEntity(createDto: CreateModuleDto): Partial<Module> {
@@ -421,7 +403,7 @@ export class ModuleRepository {
     });
 
     const saved = await this.repo.save(entity);
-    return ModuleMapper.entityToDto(saved);
+    return ModuleDto.importEntity(saved);
   }
 
   async page(filter: ModulePageFiltersDto): Promise<{
@@ -440,7 +422,7 @@ export class ModuleRepository {
       .getManyAndCount();
 
     return {
-      list: list.map((item) => ModuleMapper.entityToDto(item)),
+      list: list.map((item) => ModuleDto.importEntity(item)),
       total,
       pageNum,
       pageSize,
@@ -537,24 +519,24 @@ export class ModuleController {
 
   async create(createVo: ModuleVO.CreateModuleVo): Promise<ModuleVO.ModuleItemVo> {
     // VO → DTO 转换
-    const createDto = ModuleMapper.voToCreateDto(createVo);
+    const createDto = CreateModuleDto.importVo(createVo);
 
     // 调用业务服务
     const dto = await this.moduleService.create(createDto);
 
     // DTO → VO 转换
-    return ModuleMapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 
   async list(filter: ModuleVO.ModuleListFilterVo): Promise<ModuleVO.ModuleItemVo[]> {
     // VO → DTO 转换
-    const filterDto = ModuleMapper.voToListFilterDto(filter);
+    const filterDto = ModuleListFilterDto.importVo(filter);
 
     // 调用业务服务
     const dtos = await this.moduleService.findAll(filterDto);
 
     // DTO → VO 转换
-    return dtos.map(dto => ModuleMapper.dtoToItemVo(dto));
+    return dtos.map(dto => dto.exportVo());
   }
 
   async process(id: string): Promise<ModuleVO.ModuleItemVo> {
@@ -562,7 +544,7 @@ export class ModuleController {
     const dto = await this.moduleService.process(id);
 
     // DTO → VO 转换
-    return ModuleMapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 }
 ```
@@ -689,7 +671,7 @@ export function registerModuleIpcHandlers(moduleController: ModuleDesktopControl
 - [ ] 枚举值在各层级保持一致
 
 #### 2. 数据转换验证
-- [ ] Mapper 实现 Entity ↔ DTO 双向转换
+- [ ] DTO 内置方法实现 Entity ↔ DTO 双向转换
 - [ ] 日期格式正确处理
 - [ ] 枚举值正确映射
 - [ ] 关联关系正确处理
@@ -715,7 +697,7 @@ export function registerModuleIpcHandlers(moduleController: ModuleDesktopControl
 ## 📊 架构优势
 
 ### 1. 分层清晰
-- **数据层**: Entity/DTO/VO/Mapper 专注于数据定义和转换
+- **数据层**: Entity/DTO/VO 专注于数据定义和转换
 - **业务层**: Repository/Service 专注于业务逻辑实现
 - **控制层**: Controller 专注于接口适配和请求处理
 
@@ -739,7 +721,6 @@ export function registerModuleIpcHandlers(moduleController: ModuleDesktopControl
 - **[`entity.mdc`](./entity.mdc)** - Entity 规范（数据模型定义）
 - **[`dto.mdc`](./dto.mdc)** - DTO 规范（数据传输对象）
 - **[`vo.mdc`](./vo.mdc)** - VO 规范（值对象）
-- **[`mapper.mdc`](./mapper.mdc)** - Mapper 规范（数据映射器）
 - **[`repository.mdc`](./repository.mdc)** - Repository 规范总览
 - **[`service.mdc`](./service.mdc)** - Service 规范（业务服务）
 - **[`controller.mdc`](./controller.mdc)** - Controller 规范总览
@@ -749,7 +730,7 @@ export function registerModuleIpcHandlers(moduleController: ModuleDesktopControl
 ## 🎯 最佳实践
 
 ### 1. 开发顺序
-1. **数据格式定义** - Entity/DTO/VO/Mapper
+1. **数据格式定义** - Entity/DTO/VO
 2. **业务逻辑实现** - Repository/Service
 3. **控制器开发** - Business/Server/Desktop Controller
 4. **字段控制** - 字段管理和筛选功能

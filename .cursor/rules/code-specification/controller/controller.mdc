@@ -89,8 +89,7 @@ Client Response
 packages/business/server/src/{module}/
 ├── {module}.controller.ts         # 核心业务控制器
 ├── {module}.service.ts           # 业务服务
-├── dto/                          # 数据传输对象
-├── mappers/                      # 数据映射器
+├── dto/                          # DTO 类包含内置映射方法
 └── {module}.repository.ts        # 数据仓储
 
 apps/server/src/business/{module}/
@@ -122,9 +121,9 @@ apps/desktop/src/database/growth/
 export class TodoController {
   async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
     // 核心业务逻辑
-    const createDto = TodoMapper.voToCreateDto(createVo);
+    const createDto = CreateTodoDto.importVo(createVo);
     const dto = await this.todoService.create(createDto);
-    return TodoMapper.dtoToItemVo(dto);
+    return dto.exportVo();
   }
 }
 ```

@@ -130,12 +130,12 @@ export class TodoRepeatService {
       ? dayjs(filter.planDateStart)
       : undefined;
     const rangeEnd = filter.planDateEnd ? dayjs(filter.planDateEnd) : undefined;
-    
+
     const repeatFilter = new TodoRepeatListFilterDto();
     // 使用新的筛选字段：currentDateStart/currentDateEnd
     repeatFilter.currentDateStart = filter.planDateStart as any;
     repeatFilter.currentDateEnd = filter.planDateEnd as any;
-    
+
     const repeatList = await this.todoRepeatRepository.findAll(repeatFilter);
     const results: TodoDto[] = [];
 
@@ -155,7 +155,9 @@ export class TodoRepeatService {
       } as RepeatConfig;
 
       const baseDate = repeat.currentDate ?? repeat.repeatStartDate;
-      let cursor = baseDate ? dayjs(baseDate).subtract(1, "day") : dayjs(rangeStart).subtract(1, "day");
+      let cursor = baseDate
+        ? dayjs(baseDate).subtract(1, "day")
+        : dayjs(rangeStart).subtract(1, "day");
       let timesCount = alreadyTimes;
 
       while (true) {
@@ -227,7 +229,9 @@ export class TodoRepeatService {
           updatedAt: new Date(),
           repeat: repeat,
         };
-        results.push(fake as TodoDto);
+        const todoDto = new TodoDto();
+        todoDto.importEntity(fake);
+        results.push(todoDto);
       }
     }
 

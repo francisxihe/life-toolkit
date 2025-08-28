@@ -72,8 +72,8 @@ export class ModuleRepository {
         : undefined,
     });
 
-    await this.moduleRepository.save(module);
-    return this.findById(module.id);
+    const saved = await this.moduleRepository.save(module);
+    return ModuleDto.importEntity(saved);
   }
 
   async findOneByRepeatAndDate(
@@ -89,7 +89,7 @@ export class ModuleRepository {
         planDate: Between(start, end),
       },
     });
-    return (existed as unknown as ModuleDto) || null;
+    return existed ? ModuleDto.importEntity(existed) : null;
   }
 
   async createWithExtras(
@@ -627,7 +627,7 @@ export class ModuleRepository {
         planDate: Between(start, end),
       },
     });
-    return (existed as unknown as ModuleDto) || null;
+    return existed ? ModuleDto.importEntity(existed) : null;
   }
 
   async createWithExtras(
