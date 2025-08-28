@@ -26,28 +26,33 @@ export class CreateTodoRepeatDto extends IntersectionType(
     "status",
   ] as const)
 ) {
-  appendToCreateEntity(entity: TodoRepeat) {
+  exportCreateEntity() {
+    const todoRepeat = new TodoRepeat();
     // 重复配置相关字段（来自 CreateRepeatDto）
-    if (this.name !== undefined) entity.name = this.name;
-    if (this.description !== undefined) entity.description = this.description;
-    if (this.importance !== undefined) entity.importance = this.importance;
-    if (this.urgency !== undefined) entity.urgency = this.urgency;
-    if (this.tags !== undefined) entity.tags = this.tags;
-    if (this.status !== undefined) entity.status = this.status;
+    if (this.name !== undefined) todoRepeat.name = this.name;
+    if (this.description !== undefined)
+      todoRepeat.description = this.description;
+    if (this.importance !== undefined) todoRepeat.importance = this.importance;
+    if (this.urgency !== undefined) todoRepeat.urgency = this.urgency;
+    if (this.tags !== undefined) todoRepeat.tags = this.tags;
+    if (this.status !== undefined) todoRepeat.status = this.status;
 
     if (this.repeatStartDate !== undefined)
-      entity.repeatStartDate = this.repeatStartDate;
-    if (this.currentDate !== undefined) entity.currentDate = this.currentDate;
-    if (this.repeatMode !== undefined) entity.repeatMode = this.repeatMode;
+      todoRepeat.repeatStartDate = this.repeatStartDate;
+    if (this.currentDate !== undefined)
+      todoRepeat.currentDate = this.currentDate;
+    if (this.repeatMode !== undefined) todoRepeat.repeatMode = this.repeatMode;
     if (this.repeatConfig !== undefined)
-      entity.repeatConfig = this.repeatConfig;
+      todoRepeat.repeatConfig = this.repeatConfig;
     if (this.repeatEndMode !== undefined)
-      entity.repeatEndMode = this.repeatEndMode;
+      todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined)
-      entity.repeatEndDate = this.repeatEndDate;
-    if (this.repeatTimes !== undefined) entity.repeatTimes = this.repeatTimes;
+      todoRepeat.repeatEndDate = this.repeatEndDate;
+    if (this.repeatTimes !== undefined)
+      todoRepeat.repeatTimes = this.repeatTimes;
     if (this.repeatedTimes !== undefined)
-      entity.repeatedTimes = this.repeatedTimes;
+      todoRepeat.repeatedTimes = this.repeatedTimes;
+    return todoRepeat;
   }
 
   voToCreateDto(vo: TodoVO.CreateTodoVo & { repeat: CreateRepeatVo }) {
@@ -71,28 +76,68 @@ export class UpdateTodoRepeatDto extends IntersectionType(
   PickType(TodoRepeat, ["id"] as const),
   PickType(TodoRepeatDto, ["abandonedAt"] as const)
 ) {
-  appendToUpdateEntity(entity: TodoRepeat) {
+  importUpdateEntity(todoRepeat: TodoRepeat) {
+    if (this.id === undefined) {
+      this.id = todoRepeat.id;
+    } else if (this.id !== todoRepeat.id) {
+      throw new Error("ID不匹配");
+    }
+
+    if (this.name === undefined) this.name = todoRepeat.name;
+    if (this.description === undefined)
+      this.description = todoRepeat.description;
+    if (this.importance === undefined) this.importance = todoRepeat.importance;
+    if (this.urgency === undefined) this.urgency = todoRepeat.urgency;
+    if (this.tags === undefined) this.tags = todoRepeat.tags;
+    if (this.repeatStartDate === undefined)
+      this.repeatStartDate = todoRepeat.repeatStartDate;
+    if (this.currentDate === undefined)
+      this.currentDate = todoRepeat.currentDate;
+    if (this.repeatMode === undefined) this.repeatMode = todoRepeat.repeatMode;
+    if (this.repeatConfig === undefined)
+      this.repeatConfig = todoRepeat.repeatConfig;
+    if (this.repeatEndMode === undefined)
+      this.repeatEndMode = todoRepeat.repeatEndMode;
+    if (this.repeatEndDate === undefined)
+      this.repeatEndDate = todoRepeat.repeatEndDate;
+    if (this.repeatTimes === undefined)
+      this.repeatTimes = todoRepeat.repeatTimes;
+    if (this.repeatedTimes === undefined)
+      this.repeatedTimes = todoRepeat.repeatedTimes;
+    if (this.status === undefined) this.status = todoRepeat.status;
+    if (this.abandonedAt === undefined)
+      this.abandonedAt = todoRepeat.abandonedAt;
+  }
+
+  exportUpdateEntity() {
+    const todoRepeat = new TodoRepeat();
+    todoRepeat.id = this.id;
     // 重复配置相关字段（来自 UpdateRepeatDto）
-    if (this.repeatMode !== undefined) entity.repeatMode = this.repeatMode;
+    if (this.repeatMode !== undefined) todoRepeat.repeatMode = this.repeatMode;
     if (this.repeatConfig !== undefined)
-      entity.repeatConfig = this.repeatConfig;
+      todoRepeat.repeatConfig = this.repeatConfig;
     if (this.repeatEndMode !== undefined)
-      entity.repeatEndMode = this.repeatEndMode;
+      todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined)
-      entity.repeatEndDate = this.repeatEndDate;
-    if (this.repeatTimes !== undefined) entity.repeatTimes = this.repeatTimes;
+      todoRepeat.repeatEndDate = this.repeatEndDate;
+    if (this.repeatTimes !== undefined)
+      todoRepeat.repeatTimes = this.repeatTimes;
     if (this.repeatedTimes !== undefined)
-      entity.repeatedTimes = this.repeatedTimes;
-    if (this.name !== undefined) entity.name = this.name;
-    if (this.description !== undefined) entity.description = this.description;
-    if (this.importance !== undefined) entity.importance = this.importance;
-    if (this.urgency !== undefined) entity.urgency = this.urgency;
-    if (this.tags !== undefined) entity.tags = this.tags;
+      todoRepeat.repeatedTimes = this.repeatedTimes;
+    if (this.name !== undefined) todoRepeat.name = this.name;
+    if (this.description !== undefined)
+      todoRepeat.description = this.description;
+    if (this.importance !== undefined) todoRepeat.importance = this.importance;
+    if (this.urgency !== undefined) todoRepeat.urgency = this.urgency;
+    if (this.tags !== undefined) todoRepeat.tags = this.tags;
     if (this.repeatStartDate !== undefined)
-      entity.repeatStartDate = this.repeatStartDate;
-    if (this.currentDate !== undefined) entity.currentDate = this.currentDate;
-    if (this.status !== undefined) entity.status = this.status;
-    if (this.abandonedAt !== undefined) entity.abandonedAt = this.abandonedAt;
+      todoRepeat.repeatStartDate = this.repeatStartDate;
+    if (this.currentDate !== undefined)
+      todoRepeat.currentDate = this.currentDate;
+    if (this.status !== undefined) todoRepeat.status = this.status;
+    if (this.abandonedAt !== undefined)
+      todoRepeat.abandonedAt = this.abandonedAt;
+    return todoRepeat;
   }
 
   voToUpdateDto(vo: TodoVO.UpdateTodoVo & { repeat: UpdateRepeatVo }) {

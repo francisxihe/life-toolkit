@@ -1,10 +1,9 @@
 import type { Todo as TodoVO } from "@life-toolkit/vo";
-import { TodoMapper } from "./todo.mapper";
 import { TodoListFilterDto, TodoPageFiltersDto } from "./dto";
 import { TodoService } from "./todo.service";
 import { TodoRepeatService } from "./todo-repeat.service";
-import { TodoRepeatMapper } from "./todo-repeat.mapper";
 import { CreateTodoRepeatDto } from "./dto/todo-repeat-form.dto";
+import { CreateTodoDto, UpdateTodoDto } from "./dto";
 
 export class TodoController {
   constructor(
@@ -21,27 +20,23 @@ export class TodoController {
       });
       const todoRepeatDto =
         await this.todoRepeatService.create(createTodoRepeatDto);
-      return TodoRepeatMapper.dtoToVo(todoRepeatDto);
+      return todoRepeatDto.exportVo();
     }
-    const createTodoDto = TodoMapper.voToCreateDto(createTodoVo);
+    const createTodoDto = new CreateTodoDto();
+    createTodoDto.importCreateVo(createTodoVo);
     const todoDto = await this.todoService.create(createTodoDto);
-    return TodoMapper.dtoToVo(todoDto);
+    return todoDto.exportVo();
   }
 
   async findById(id: string) {
-    return TodoMapper.dtoToVo(await this.todoService.findById(id));
+    return (await this.todoService.findById(id)).exportVo();
   }
 
-  async update(
-    id: string,
-    payload: { updateVo?: TodoVO.UpdateTodoVo } & TodoVO.UpdateTodoVo
-  ) {
-    const updateVo = (payload?.updateVo ?? payload) as TodoVO.UpdateTodoVo;
-    const dto = await this.todoService.update(
-      id,
-      TodoMapper.voToUpdateDto(updateVo)
-    );
-    return TodoMapper.dtoToVo(dto);
+  async update(id: string, updateVo: TodoVO.UpdateTodoVo) {
+    const updateDto = new UpdateTodoDto();
+    updateDto.importUpdateVo(updateVo);
+    const dto = await this.todoService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   async remove(id: string) {
@@ -53,14 +48,21 @@ export class TodoController {
     if (q) filter.importPageVo(q);
     const { list, total, pageNum, pageSize } =
       await this.todoService.page(filter);
-    return TodoMapper.dtoToPageVo(list, total, pageNum, pageSize);
+    return {
+      list: list.map((todo) => todo.exportVo()),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
   async list(query?: TodoVO.TodoListFiltersVo) {
     const filter = new TodoListFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.list(filter);
-    return TodoMapper.dtoToListVo(list);
+    return {
+      list: list.map((todo) => todo.exportVo()),
+    };
   }
 
   async batchDone(body?: { idList?: string[] }) {

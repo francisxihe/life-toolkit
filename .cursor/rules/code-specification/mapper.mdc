@@ -1,8 +1,18 @@
 ---
-description: 编写server Mapper代码时
+description: [DEPRECATED] 本规则已废弃，请改用 DTO 内聚映射规范（参见 dto.mdc）
 alwaysApply: false
 ---
-# Mapper 开发规范
+# （已废弃）Mapper 规则（请使用 DTO 中的映射规范）
+
+> 本文档已废弃，不再建议在规则层面维护独立的 Mapper 层。请将 Entity↔DTO↔VO 的转换职责合并进对应的 DTO 文件中。
+>
+> - 参见：`.cursor/rules/code-specification/dto.mdc` 中的“映射逻辑合并至 DTO（取代 Mapper）”章节。
+> - 建议在 DTO 中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`；必要时提供列表/分页静态辅助方法。
+> - 参考实现：`packages/business/server/src/growth/todo/dto/TodoDto`、`TodoRepeatDto` 已在 DTO 内完成实体导入与 VO 导出。
+
+---
+ 
+下文为历史内容，仅供参考，不再维护与适配当前规则：
 
 ## 📋 概述
 

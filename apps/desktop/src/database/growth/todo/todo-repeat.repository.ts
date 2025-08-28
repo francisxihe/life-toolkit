@@ -6,7 +6,6 @@ import {
   TodoRepeatPageFiltersDto,
   TodoRepeatListFilterDto,
   TodoRepeatDto,
-  TodoRepeatMapper,
   TodoRepeat,
 } from "@life-toolkit/business-server";
 
@@ -58,16 +57,22 @@ export class TodoRepeatRepository {
   }
 
   async create(createDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
-    const entity = this.repo.create();
-    createDto.appendToCreateEntity(entity);
+    const entity = createDto.exportCreateEntity();
     const saved = await this.repo.save(entity);
-    return TodoRepeatMapper.entityToDto(saved);
+
+    const dto = new TodoRepeatDto();
+    dto.importEntity(saved);
+    return dto;
   }
 
   async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("todoRepeat.createdAt", "DESC").getMany();
-    return list.map((item) => TodoRepeatMapper.entityToDto(item));
+    return list.map((item) => {
+      const dto = new TodoRepeatDto();
+      dto.importEntity(item);
+      return dto;
+    });
   }
 
   async page(filter: TodoRepeatPageFiltersDto): Promise<{
@@ -86,7 +91,11 @@ export class TodoRepeatRepository {
       .getManyAndCount();
 
     return {
-      list: list.map((item) => TodoRepeatMapper.entityToDto(item)),
+      list: list.map((item) => {
+        const dto = new TodoRepeatDto();
+        dto.importEntity(item);
+        return dto;
+      }),
       total,
       pageNum,
       pageSize,
@@ -100,9 +109,12 @@ export class TodoRepeatRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error("TodoRepeat not found");
 
-    updateDto.appendToUpdateEntity(entity);
+    updateDto.importUpdateEntity(entity);
+    updateDto.exportUpdateEntity();
     const saved = await this.repo.save(entity);
-    return TodoRepeatMapper.entityToDto(saved);
+    const dto = new TodoRepeatDto();
+    dto.importEntity(saved);
+    return dto;
   }
 
   async batchUpdate(
@@ -112,11 +124,15 @@ export class TodoRepeatRepository {
     const entities = await this.repo.find({ where: { id: In(idList) } });
 
     entities.forEach((entity) => {
-      updateDto.appendToUpdateEntity(entity);
+      updateDto.exportUpdateEntity();
     });
 
     const saved = await this.repo.save(entities);
-    return saved.map((item) => TodoRepeatMapper.entityToDto(item));
+    return saved.map((item) => {
+      const dto = new TodoRepeatDto();
+      dto.importEntity(item);
+      return dto;
+    });
   }
 
   async delete(id: string): Promise<boolean> {
@@ -156,11 +172,16 @@ export class TodoRepeatRepository {
       relations: relations ?? ["todos"],
     });
     if (!todoRepeat) throw new Error("TodoRepeat not found");
-    return TodoRepeatMapper.entityToDto(todoRepeat);
+    const dto = new TodoRepeatDto();
+    dto.importEntity(todoRepeat);
+    return dto;
   }
 
   async findOneBy(condition: any): Promise<TodoRepeatDto | null> {
     const todoRepeat = await this.repo.findOne({ where: condition });
-    return todoRepeat ? TodoRepeatMapper.entityToDto(todoRepeat) : null;
+    if (!todoRepeat) return null;
+    const dto = new TodoRepeatDto();
+    dto.importEntity(todoRepeat);
+    return dto;
   }
 }

@@ -1,0 +1,507 @@
+---
+trigger: model_decision
+description: 编写server DTO Form代码时
+globs:
+---
+需要生成或修改DTO表单时
+
+# DTO Form 规范
+
+## 📋 概述
+
+DTO Form 是用于表单操作的对象，主要包含创建DTO和更新DTO。本规范定义了Form DTO的标准结构、验证规则和数据映射。
+
+## 🎯 标准DTO表单类型定义
+
+### 1. 表单DTO文件 ({module}-form.dto.ts)
+
+#### 基础模板
+
+```typescript
+import { PartialType, IntersectionType, PickType, OmitType } from "@life-toolkit/mapped-types";
+import { IsOptional, IsArray, IsString, IsEnum } from "class-validator";
+import { {Module}Dto } from "./{module}-model.dto";
+import { {Entity} } from "../{entity}.entity";
+
+// 创建DTO - 选择需要的字段
+export class Create{Module}Dto extends PickType({Module}Dto, [
+  "name",
+  "description",
+  "status",
+  "priority",
+  // ... 其他需要的字段
+] as const) {
+  /** 关联实体ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+
+  /** 应用到实体的辅助方法（可选） */
+  appendToCreateEntity(entity: {Entity}) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.status !== undefined) entity.status = this.status;
+    // ... 其他字段映射
+  }
+}
+
+// 更新DTO - 基于创建DTO的部分字段 + 实体ID
+export class Update{Module}Dto extends IntersectionType(
+  PartialType(OmitType(Create{Module}Dto, ["relationIds"] as const)),
+  PickType({Entity}, ["id"] as const),
+  PickType({Module}Dto, ["completedAt", "cancelledAt"] as const)
+) {
+  /** 应用到实体的辅助方法（可选） */
+  appendToUpdateEntity(entity: {Entity}) {
+    if (this.name !== undefined) entity.name = this.name;
+    if (this.description !== undefined) entity.description = this.description;
+    // ... 其他字段映射
+  }
+}
+```
+
+#### 完整示例（抽象化）
+
+```typescript
+// entity-form.dto.ts
+import {
+  PartialType,
+  PickType,
+  IntersectionType,
+  OmitType,
+} from "@life-toolkit/mapped-types";
+import {
+  IsOptional,
+  IsArray,
+  IsString,
+  IsNumber,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { EntityDto } from "./entity-model.dto";
+import { Entity } from "../entity.entity";
+import { EntityStatus } from "../entity.entity";
+
+// 创建DTO
+export class CreateEntityDto extends PickType(EntityDto, [
+  "title",
+  "description",
+  "importance",
+  "status",
+  "tags",
+  "scheduledDate",
+] as const) {
+  /** 关联实体ID */
+  @IsString()
+  @IsOptional()
+  relatedId?: string;
+
+  appendToCreateEntity(entity: Entity) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.scheduledDate !== undefined) entity.scheduledDate = this.scheduledDate;
+    if (this.relatedId !== undefined) entity.relatedId = this.relatedId;
+  }
+}
+
+// 更新DTO
+export class UpdateEntityDto extends IntersectionType(
+  PartialType(OmitType(CreateEntityDto, ["relatedId"] as const)),
+  PickType(Entity, ["id"] as const),
+  PickType(EntityDto, ["completedAt"] as const)
+) {
+  appendToUpdateEntity(entity: Entity) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.description !== undefined) entity.description = this.description;
+    if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.status !== undefined) entity.status = this.status;
+    if (this.tags !== undefined) entity.tags = this.tags;
+    if (this.scheduledDate !== undefined) entity.scheduledDate = this.scheduledDate;
+    if (this.completedAt !== undefined) entity.completedAt = this.completedAt;
+  }
+}
+```
+
+## 🔧 Mapped Types 使用规范
+
+### 1. 工具类型导入
+
+```typescript
+import {
+  PickType, // 选择特定字段
+  OmitType, // 排除特定字段
+  PartialType, // 所有字段变为可选
+  IntersectionType, // 合并多个类型
+} from "@life-toolkit/mapped-types";
+```
+
+### 2. 类型组合策略
+
+#### 继承链设计
+
+```typescript
+// 表单继承链
+BaseModelDto → {Module}Dto → Create{Module}Dto → Update{Module}Dto
+
+// 组合模式
+Create{Module}Dto = PickType({Module}Dto, [requiredFields])
+Update{Module}Dto = PartialType(Create{Module}Dto) + PickType(Entity, ["id"]) + CompletionFields
+```
+
+#### 组合模式示例
+
+```typescript
+// 选择字段 - 创建时需要的字段
+export class CreateEntityDto extends PickType(EntityDto, [
+  "name",
+  "description",
+  "status",
+]) {}
+
+// 部分字段 - 更新时所有字段可选
+export class UpdateEntityDto extends PartialType(CreateEntityDto) {}
+
+// 复杂组合 - 更新DTO = 部分创建字段 + 实体ID + 完成时间字段
+export class UpdateEntityDto extends IntersectionType(
+  PartialType(OmitType(CreateEntityDto, ["relationIds"])),
+  PickType(Entity, ["id"]),
+  PickType(EntityDto, ["completedAt", "cancelledAt"])
+) {}
+```
+
+### 3. 验证装饰器规范
+
+#### 基础验证装饰器
+
+```typescript
+import {
+  IsString, // 字符串验证
+  IsNumber, // 数字验证
+  IsBoolean, // 布尔值验证
+  IsEnum, // 枚举验证
+  IsArray, // 数组验证
+  IsOptional, // 可选字段标记
+  IsISO8601, // ISO8601日期格式验证
+  IsInt, // 整数验证
+  IsEmail, // 邮箱验证
+  IsUrl, // URL验证
+  Min, // 最小值验证
+  Max, // 最大值验证
+  Length, // 长度验证
+  IsDateString, // 日期字符串验证
+} from "class-validator";
+
+import { Type } from "class-transformer";
+```
+
+#### 字段类型验证映射表
+
+```typescript
+const VALIDATION_MAPPING = {
+  // 基础类型
+  string: "@IsString()",
+  number: "@IsNumber() @Type(() => Number)",
+  boolean: "@IsBoolean() @Type(() => Boolean)",
+
+  // 日期类型
+  date: "@IsISO8601() @Type(() => Date)",
+  dateString: "@IsDateString()",
+
+  // 枚举和数组
+  enum: "@IsEnum(EnumType)",
+  array: "@IsArray() @IsString({ each: true })",
+
+  // 特殊格式
+  email: "@IsEmail() @IsString()",
+  url: "@IsUrl() @IsString()",
+
+  // 可选标记
+  optional: "@IsOptional()",
+
+  // 数值范围
+  int: "@IsInt() @Type(() => Number)",
+  minMax: "@Min(min) @Max(max) @Type(() => Number)",
+  length: "@Length(min, max)",
+};
+```
+
+#### 验证示例
+
+```typescript
+export class CreateItemDto {
+  /** 项目名称 - 必填字符串 */
+  @IsString()
+  @Length(1, 100)
+  name: string;
+
+  /** 项目描述 - 可选字符串 */
+  @IsString()
+  @IsOptional()
+  @Length(0, 1000)
+  description?: string;
+
+  /** 优先级 - 必填数字 */
+  @IsNumber()
+  @Type(() => Number)
+  @Min(1)
+  @Max(5)
+  priority: number;
+
+  /** 数量 - 可选整数 */
+  @IsInt()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(0)
+  quantity?: number;
+
+  /** 状态 - 可选枚举 */
+  @IsEnum(ItemStatus)
+  @IsOptional()
+  status?: ItemStatus;
+
+  /** 标签 - 可选字符串数组 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 创建时间 - 日期字符串 */
+  @IsDateString()
+  @IsOptional()
+  createdAt?: string;
+
+  /** 分类ID - 可选字符串 */
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+}
+```
+
+## 🔄 常见模式
+
+### 1. 基础CRUD模式
+
+```typescript
+// 1. 创建DTO - 选择创建时需要的字段
+export class CreateItemDto extends PickType(ItemDto, [
+  "name",
+  "description",
+  "priority",
+  "categoryId",
+  "tags",
+]) {
+  /** 关联文件ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  fileIds?: string[];
+}
+
+// 2. 更新DTO - 创建DTO的部分字段 + 实体ID + 完成状态字段
+export class UpdateItemDto extends IntersectionType(
+  PartialType(OmitType(CreateItemDto, ["fileIds"])),
+  PickType(Item, ["id"]),
+  PickType(ItemDto, ["status", "updatedAt"])
+) {}
+```
+
+### 2. 关联数据处理模式
+
+```typescript
+// 处理多对多关联
+export class CreateArticleDto extends PickType(ArticleDto, [
+  "title",
+  "content",
+  "authorId",
+]) {
+  /** 标签ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tagIds?: string[];
+
+  /** 分类ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  categoryIds?: string[];
+
+  appendToCreateEntity(entity: Article) {
+    if (this.title !== undefined) entity.title = this.title;
+    if (this.content !== undefined) entity.content = this.content;
+    if (this.authorId !== undefined) entity.authorId = this.authorId;
+    // 关联关系在Service层处理
+  }
+}
+
+// 处理一对多关联
+export class CreateOrderDto extends PickType(OrderDto, [
+  "userId",
+  "totalAmount",
+]) {
+  /** 订单项列表 */
+  @IsArray()
+  @IsOptional()
+  items?: CreateOrderItemDto[];
+
+  /** 收货地址信息 */
+  @IsOptional()
+  shippingAddress?: CreateAddressDto;
+}
+```
+
+### 3. 嵌套DTO模式
+
+```typescript
+// 父子结构DTO
+export class CreateCategoryDto extends PickType(CategoryDto, [
+  "name",
+  "description",
+]) {
+  /** 子分类 */
+  @IsOptional()
+  @Type(() => CreateCategoryDto)
+  children?: CreateCategoryDto[];
+}
+
+// 复杂表单DTO
+export class CreateProjectDto extends PickType(ProjectDto, [
+  "name",
+  "description",
+  "startDate",
+  "endDate",
+]) {
+  /** 项目成员 */
+  @IsArray()
+  @IsOptional()
+  @Type(() => CreateProjectMemberDto)
+  members?: CreateProjectMemberDto[];
+
+  /** 项目里程碑 */
+  @IsArray()
+  @IsOptional()
+  @Type(() => CreateMilestoneDto)
+  milestones?: CreateMilestoneDto[];
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 职责分离原则
+
+- **Form DTO**: 表单操作验证，包含创建和更新所需的字段
+- **验证优先**: 所有字段都应有适当的验证规则
+- **类型安全**: 使用 Mapped Types 复用类型定义
+
+### 2. 验证一致性
+
+```typescript
+// 保持 Entity 和 DTO 的验证规则一致
+// Entity 中的验证规则
+@Column()
+@IsString()
+@Length(1, 100)
+title: string;
+
+// DTO 中的验证（通过 PickType 继承）
+export class CreateEntityDto extends PickType(Entity, ["title"]) {}
+
+// 或手动添加验证
+export class CreateEntityDto extends PickType(EntityDto, ["title"]) {
+  @IsString()
+  @Length(1, 100)
+  title: string;
+}
+```
+
+### 3. 关联数据处理
+
+```typescript
+// 创建时处理关联关系
+export class CreateOrderDto extends PickType(OrderDto, ["items", "userId"]) {
+  /** 订单项ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  itemIds?: string[];
+
+  appendToCreateEntity(entity: Order) {
+    // 映射基本字段
+    if (this.userId !== undefined) entity.userId = this.userId;
+
+    // 处理关联项映射
+    if (this.itemIds?.length) {
+      // 关联逻辑在 Service 层处理
+    }
+  }
+}
+```
+
+### 4. 错误处理和验证反馈
+
+```typescript
+// 使用自定义验证装饰器
+export class CreateUserDto extends PickType(UserDto, ["email", "password"]) {
+  @IsEmail(
+    {},
+    {
+      message: "请输入有效的邮箱地址",
+    }
+  )
+  email: string;
+
+  @IsString()
+  @Length(8, 20, {
+    message: "密码长度必须在8-20个字符之间",
+  })
+  password: string;
+}
+```
+
+## 🚫 禁止事项
+
+1. **不要在DTO中包含业务逻辑** - DTO仅用于数据传输和验证，复杂逻辑应在Service层
+2. **不要使用 `any` 类型** - 应明确定义具体类型，避免类型安全问题
+3. **不要忽略验证装饰器** - 所有字段都应有适当的验证规则
+4. **不要重复定义相同的字段** - 使用 Mapped Types 复用类型定义
+5. **不要在DTO中直接操作数据库** - 数据操作应在 Service/Repository 层
+6. **不要创建循环依赖** - DTO之间应避免相互引用
+7. **不要过度设计** - 只定义实际需要的字段和验证规则
+
+## ✅ 检查清单
+
+### 基础结构
+- [ ] 文件命名符合规范 (`{module}-form.dto.ts`)
+- [ ] 类命名符合规范 (`Create{Module}Dto`, `Update{Module}Dto`)
+- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 导入了必要的验证装饰器
+
+### 继承关系
+- [ ] 使用了合适的工具类型 (PickType, OmitType, PartialType等)
+- [ ] 避免了重复的字段定义
+- [ ] 继承链清晰合理
+
+### 验证规则
+- [ ] 所有字段都有适当的验证装饰器
+- [ ] 可选字段使用了 `@IsOptional()`
+- [ ] 数字字段使用了 `@Type(() => Number)`
+- [ ] 日期字段使用了 `@IsISO8601()` 或 `@IsDateString()`
+- [ ] 枚举字段使用了 `@IsEnum()`
+- [ ] 数组字段使用了 `@IsArray()`
+- [ ] 字符串数组使用了 `@IsString({ each: true })`
+
+### 字段设计
+- [ ] 字段类型定义正确
+- [ ] 关联字段处理合理（使用ID列表或嵌套DTO）
+- [ ] 默认值设置合理
+- [ ] 实现了 `appendToCreateEntity()` 和 `appendToUpdateEntity()` 方法
+
+### 代码质量
+- [ ] 导入了必要的依赖
+- [ ] 避免了循环依赖
+- [ ] 注释清晰准确
+- [ ] 遵循了项目的编码规范

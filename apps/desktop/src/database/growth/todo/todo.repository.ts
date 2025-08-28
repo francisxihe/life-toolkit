@@ -6,7 +6,6 @@ import {
   TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
-  TodoMapper,
   Todo,
 } from "@life-toolkit/business-server";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
@@ -51,9 +50,11 @@ export class TodoRepository {
   }
 
   async create(createDto: CreateTodoDto): Promise<TodoDto> {
-    const entity = createDto.toCreateEntity();
+    const entity = createDto.exportCreateEntity();
     const saved = await this.repo.save(entity);
-    return TodoMapper.entityToDto(saved);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(saved);
+    return todoDto;
   }
 
   async createWithExtras(
@@ -75,13 +76,19 @@ export class TodoRepository {
       ...extras,
     });
     const saved = await this.repo.save(entity);
-    return TodoMapper.entityToDto(saved);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(saved);
+    return todoDto;
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("todo.createdAt", "DESC").getMany();
-    return list.map((it) => TodoMapper.entityToDto(it));
+    return list.map((it) => {
+      const todoDto = new TodoDto();
+      todoDto.importEntity(it);
+      return todoDto;
+    });
   }
 
   async page(filter: TodoPageFiltersDto): Promise<{
@@ -99,7 +106,11 @@ export class TodoRepository {
       .orderBy("todo.createdAt", "DESC")
       .getManyAndCount();
     return {
-      list: list.map((it) => TodoMapper.entityToDto(it)),
+      list: list.map((it) => {
+        const todoDto = new TodoDto();
+        todoDto.importEntity(it);
+        return todoDto;
+      }),
       total,
       pageNum,
       pageSize,
@@ -110,8 +121,10 @@ export class TodoRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`待办不存在，ID: ${id}`);
     updateDto.importUpdateEntity(entity);
-    const saved = await this.repo.save(updateDto.toUpdateEntity());
-    return TodoMapper.entityToDto(saved);
+    const saved = await this.repo.save(updateDto.exportUpdateEntity());
+    const todoDto = new TodoDto();
+    todoDto.importEntity(saved);
+    return todoDto;
   }
 
   async batchUpdate(
@@ -127,7 +140,11 @@ export class TodoRepository {
       .where("todo.id IN (:...ids)", { ids: idList })
       .getMany();
 
-    return list.map((it) => TodoMapper.entityToDto(it));
+    return list.map((it) => {
+      const todoDto = new TodoDto();
+      todoDto.importEntity(it);
+      return todoDto;
+    });
   }
 
   async delete(id: string): Promise<boolean> {
@@ -150,7 +167,9 @@ export class TodoRepository {
       relations: relations ?? ["task", "habit"],
     });
     if (!todo) throw new Error(`待办不存在，ID: ${id}`);
-    return TodoMapper.entityToDto(todo);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(todo);
+    return todoDto;
   }
 
   async updateRepeatId(id: string, repeatId: string): Promise<void> {
@@ -170,6 +189,9 @@ export class TodoRepository {
     const todo = await this.repo.findOne({
       where: { repeatId, planDate: date },
     });
-    return todo ? TodoMapper.entityToDto(todo) : null;
+    if (!todo) return null;
+    const todoDto = new TodoDto();
+    todoDto.importEntity(todo);
+    return todoDto;
   }
 }

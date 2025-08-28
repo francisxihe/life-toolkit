@@ -9,8 +9,7 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { TodoStatusService } from "./todo-status.service";
-import { TodoMapper } from "@life-toolkit/business-server";
+import { UpdateTodoDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
@@ -18,8 +17,8 @@ import type {
   TodoListFiltersVo,
   TodoPageFiltersVo,
 } from "@life-toolkit/vo";
-import { OperationMapper } from "@/common/operation";
 import { TodoController as _TodoController } from "@life-toolkit/business-server";
+import { TodoRepeatService } from "./todo-repeat.service";
 
 @Controller("todo")
 export class TodoController {
@@ -27,9 +26,9 @@ export class TodoController {
 
   constructor(
     private readonly todoService: TodoService,
-    private readonly todoStatusService: TodoStatusService
+    private readonly todoRepeatService: TodoRepeatService
   ) {
-    this.controller = new _TodoController(todoService);
+    this.controller = new _TodoController(todoService, todoRepeatService);
   }
 
   @Post("create")
@@ -50,9 +49,10 @@ export class TodoController {
     @Param("id") id: string,
     @Body() updateTodoVo: Todo.UpdateTodoVo
   ) {
-    const updatedDto = TodoMapper.voToUpdateDto(updateTodoVo);
-    const dto = await this.todoService.update(id, updatedDto);
-    return TodoMapper.dtoToVo(dto);
+    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.importUpdateVo(updateTodoVo);
+    const todoDto = await this.todoService.update(id, updateTodoDto);
+    return todoDto.exportVo();
   }
 
   @Get("page")

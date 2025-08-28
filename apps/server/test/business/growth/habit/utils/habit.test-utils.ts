@@ -70,7 +70,7 @@ export class HabitTestUtils {
   static createMockMapper() {
     return {
       toEntity: jest.fn(),
-      toUpdateEntity: jest.fn(),
+      exportUpdateEntity: jest.fn(),
       toVo: jest.fn(),
       voToDtoFromVo: jest.fn(),
       voToUpdateDtoFromVo: jest.fn(),
@@ -147,7 +147,7 @@ export class HabitTestUtils {
     mapper: HabitMapper,
     mockData: {
       toEntity?: any;
-      toUpdateEntity?: any;
+      exportUpdateEntity?: any;
       toVo?: any;
       voToDtoFromVo?: any;
       voToUpdateDtoFromVo?: any;
@@ -156,9 +156,9 @@ export class HabitTestUtils {
     if (mockData.toEntity !== undefined) {
       (mapper.toEntity as jest.Mock).mockReturnValue(mockData.toEntity);
     }
-    if (mockData.toUpdateEntity !== undefined) {
-      (mapper.toUpdateEntity as jest.Mock).mockReturnValue(
-        mockData.toUpdateEntity
+    if (mockData.exportUpdateEntity !== undefined) {
+      (mapper.exportUpdateEntity as jest.Mock).mockReturnValue(
+        mockData.exportUpdateEntity
       );
     }
     if (mockData.toVo !== undefined) {

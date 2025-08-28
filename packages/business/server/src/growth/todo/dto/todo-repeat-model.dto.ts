@@ -11,10 +11,8 @@ export class TodoRepeatDto extends IntersectionType(
   OmitType(TodoRepeat, ["todos"] as const)
 ) {
   todos?: Todo[];
-  /**
-   * 实体转模型DTO（仅基础字段，不含关联，Date 保持为 Date）
-   */
-  entityToModelDto(entity: TodoRepeat) {
+
+  importEntity(entity: TodoRepeat) {
     Object.assign(this, BaseMapper.entityToDto(entity));
     // 重复配置相关字段
     this.repeatMode = entity.repeatMode;
@@ -32,68 +30,44 @@ export class TodoRepeatDto extends IntersectionType(
     this.currentDate = entity.currentDate;
     this.status = entity.status;
     this.abandonedAt = entity.abandonedAt;
-  }
-
-  entityToDto(entity: TodoRepeat) {
-    Object.assign(this, this.entityToModelDto(entity));
     // 关联属性（浅拷贝，避免递归）
     this.todos = entity.todos;
   }
 
-  dtoToVo(dto: TodoRepeatDto): TodoVO.TodoVo {
-    return {
-      id: dto.id,
-      // 重复配置相关字段
-      name: dto.name || "",
-      description: dto.description || "",
-      importance: dto.importance,
-      urgency: dto.urgency,
-      tags: dto.tags || [],
-      status: dto.status,
-      abandonedAt: dto.abandonedAt
-        ? dayjs(dto.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      createdAt: dayjs(dto.createdAt).format("YYYY-MM-DD HH:mm:ss"),
-      updatedAt: dayjs(dto.updatedAt).format("YYYY-MM-DD HH:mm:ss"),
+  exportVo(): TodoVO.TodoVo {
+    return this.exportModelVo();
+  }
 
-      planDate: dayjs(dto.currentDate).format("YYYY-MM-DD"),
+  exportModelVo(): TodoVO.TodoItemVo {
+    return {
+      id: this.id,
+      // 重复配置相关字段
+      name: this.name || "",
+      description: this.description || "",
+      importance: this.importance,
+      urgency: this.urgency,
+      tags: this.tags || [],
+      status: this.status,
+      abandonedAt: this.abandonedAt
+        ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
+        : undefined,
+      createdAt: dayjs(this.createdAt).format("YYYY-MM-DD HH:mm:ss"),
+      updatedAt: dayjs(this.updatedAt).format("YYYY-MM-DD HH:mm:ss"),
+
+      planDate: dayjs(this.currentDate).format("YYYY-MM-DD"),
 
       repeat: {
-        repeatStartDate: dto.repeatStartDate
-          ? dayjs(dto.repeatStartDate).format("YYYY-MM-DD")
+        repeatStartDate: this.repeatStartDate
+          ? dayjs(this.repeatStartDate).format("YYYY-MM-DD")
           : undefined,
-        currentDate: dayjs(dto.currentDate).format("YYYY-MM-DD"),
-        repeatMode: dto.repeatMode,
-        repeatConfig: dto.repeatConfig,
-        repeatEndMode: dto.repeatEndMode,
-        repeatEndDate: dto.repeatEndDate,
-        repeatTimes: dto.repeatTimes,
-        repeatedTimes: dto.repeatedTimes,
+        currentDate: dayjs(this.currentDate).format("YYYY-MM-DD"),
+        repeatMode: this.repeatMode,
+        repeatConfig: this.repeatConfig,
+        repeatEndMode: this.repeatEndMode,
+        repeatEndDate: this.repeatEndDate,
+        repeatTimes: this.repeatTimes,
+        repeatedTimes: this.repeatedTimes,
       },
-    };
-  }
-
-  dtoToItemVo(dto: TodoRepeatDto): TodoVO.TodoItemVo {
-    return this.dtoToVo(dto);
-  }
-
-  dtoToListVo(dtoList: TodoRepeatDto[]): TodoVO.TodoListVo {
-    return {
-      list: dtoList.map((dto) => this.dtoToItemVo(dto)),
-    };
-  }
-
-  dtoToPageVo(
-    dtoList: TodoRepeatDto[],
-    total: number,
-    pageNum: number,
-    pageSize: number
-  ): TodoVO.TodoPageVo {
-    return {
-      list: dtoList.map((dto) => this.dtoToItemVo(dto)),
-      total,
-      pageNum,
-      pageSize,
     };
   }
 }

@@ -12,7 +12,6 @@ import { BaseMapper } from "../../base/base.mapper";
 import dayjs from "dayjs";
 import { TrackTimeMapper } from "../track-time";
 import { GoalMapper } from "../goal";
-import { TodoMapper } from "../todo";
 
 class TaskMapperEntity {
   /**
@@ -88,7 +87,7 @@ class TaskMapperDto extends TaskMapperEntity {
       trackTimeList: dto.trackTimeList?.map((trackTime) =>
         TrackTimeMapper.dtoToVo(trackTime)
       ),
-      todoList: dto.todoList?.map((todo) => TodoMapper.dtoToVo(todo)),
+      todoList: dto.todoList?.map((todo) => todo.exportVo()),
     };
   }
 

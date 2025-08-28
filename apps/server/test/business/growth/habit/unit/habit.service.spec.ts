@@ -40,7 +40,7 @@ describe("HabitService", () => {
 
   const mockHabitMapper = {
     toEntity: jest.fn(),
-    toUpdateEntity: jest.fn(),
+    exportUpdateEntity: jest.fn(),
   };
 
   beforeEach(async () => {
