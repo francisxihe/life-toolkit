@@ -14,7 +14,6 @@ import type {
   GoalPageFiltersVo,
 } from "@life-toolkit/vo";
 import {
-  GoalMapper,
   GoalListFiltersDto,
   GoalPageFiltersDto,
   GoalController as _GoalController,

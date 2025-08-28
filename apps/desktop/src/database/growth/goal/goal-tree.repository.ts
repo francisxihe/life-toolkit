@@ -5,7 +5,6 @@ import {
   UpdateGoalDto,
   GoalDto,
   Goal,
-  GoalMapper,
 } from "@life-toolkit/business-server";
 
 export class GoalTreeRepository {
@@ -158,7 +157,7 @@ export class GoalTreeRepository {
       }
 
       const saved = await treeRepository.save(current);
-      return GoalMapper.entityToDto(saved);
+      return GoalDto.importEntity(saved);
     });
   }
 
@@ -184,7 +183,7 @@ export class GoalTreeRepository {
       }
 
       const saved = await treeRepository.save(current);
-      return GoalMapper.entityToDto(saved);
+      return GoalDto.importEntity(saved);
     });
   }
 
@@ -205,7 +204,7 @@ export class GoalTreeRepository {
       const trees: GoalDto[] = [];
       for (const r of roots) {
         const full = await this.buildTree(r);
-        trees.push(GoalMapper.entityToDto(full));
+        trees.push(GoalDto.importEntity(full));
       }
       return trees;
     }
@@ -219,7 +218,7 @@ export class GoalTreeRepository {
       if (includeIds.has(r.id)) {
         const full = await this.buildTree(r);
         const filtered = this.filterTreeNodes(full, includeIds);
-        if (filtered) trees.push(GoalMapper.entityToDto(filtered));
+        if (filtered) trees.push(GoalDto.importEntity(filtered));
       }
     }
     return trees;
@@ -271,6 +270,6 @@ export class GoalTreeRepository {
       (withChildren as any).taskList = (withRelations as any).taskList;
     }
 
-    return GoalMapper.entityToDto(withChildren);
+    return GoalDto.importEntity(withChildren);
   }
 }

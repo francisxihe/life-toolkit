@@ -16,6 +16,7 @@ import {
 } from "class-validator";
 import { Type } from "class-transformer";
 import { TaskStatus } from "@life-toolkit/enum";
+import type { Task as TaskVO } from "@life-toolkit/vo";
 
 export class CreateTaskDto extends PickType(TaskDto, [
   "name",
@@ -39,6 +40,27 @@ export class CreateTaskDto extends PickType(TaskDto, [
   @IsOptional()
   trackTimeIds?: string[];
 
+  // VO → DTO
+  importVo(vo: TaskVO.CreateTaskVo) {
+    if (vo.name !== undefined) this.name = vo.name;
+    if (vo.description !== undefined) this.description = vo.description;
+    if (vo.tags !== undefined) this.tags = vo.tags;
+    if (vo.estimateTime !== undefined) this.estimateTime = vo.estimateTime;
+    if (vo.importance !== undefined) this.importance = vo.importance;
+    if (vo.urgency !== undefined) this.urgency = vo.urgency;
+    if (vo.goalId !== undefined) this.goalId = vo.goalId;
+    if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
+    if (vo.endAt !== undefined) this.endAt = new Date(vo.endAt);
+    if (vo.parentId !== undefined) this.parentId = vo.parentId;
+  }
+
+  // VO → DTO (静态方法)
+  static importVo(vo: TaskVO.CreateTaskVo): CreateTaskDto {
+    const dto = new CreateTaskDto();
+    dto.importVo(vo);
+    return dto;
+  }
+
   appendToCreateEntity(entity: Task) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
@@ -54,10 +76,31 @@ export class CreateTaskDto extends PickType(TaskDto, [
 }
 
 export class UpdateTaskDto extends IntersectionType(
-  PartialType(OmitType(CreateTaskDto, ["trackTimeIds"] as const)),
+  PartialType(OmitType(CreateTaskDto, ["trackTimeIds", "importVo"] as const)),
   PickType(Task, ["id"] as const),
   PickType(TaskDto, ["status", "doneAt", "abandonedAt"] as const)
 ) {
+  // VO → DTO
+  importVo(vo: TaskVO.UpdateTaskVo) {
+    if (vo.name !== undefined) this.name = vo.name;
+    if (vo.description !== undefined) this.description = vo.description;
+    if (vo.tags !== undefined) this.tags = vo.tags;
+    if (vo.estimateTime !== undefined) this.estimateTime = vo.estimateTime;
+    if (vo.importance !== undefined) this.importance = vo.importance;
+    if (vo.urgency !== undefined) this.urgency = vo.urgency;
+    if (vo.goalId !== undefined) this.goalId = vo.goalId;
+    if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
+    if (vo.endAt !== undefined) this.endAt = new Date(vo.endAt);
+    if (vo.parentId !== undefined) this.parentId = vo.parentId;
+  }
+
+  // VO → DTO (静态方法)
+  static importVo(vo: TaskVO.UpdateTaskVo): UpdateTaskDto {
+    const dto = new UpdateTaskDto();
+    dto.importVo(vo);
+    return dto;
+  }
+
   appendToUpdateEntity(entity: Task) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;

@@ -18,14 +18,22 @@ export class TaskDto extends IntersectionType(
   trackTimeList?: TrackTimeDto[];
   todoList?: TodoDto[];
 
-  // Entity → DTO
+  // Entity → DTO (实例方法)
   importEntity(entity: Task) {
     Object.assign(this, BaseMapper.entityToDto(entity));
     // 关联对象映射（浅拷贝，避免循环引用）
-    this.parent = entity.parent as any;
-    this.children = entity.children as any;
-    this.goal = entity.goal as any;
-    this.todoList = entity.todoList as any;
+    if (entity.parent) this.parent = entity.parent as any;
+    if (entity.children) this.children = entity.children as any;
+    if (entity.goal) this.goal = entity.goal as any;
+    if (entity.todoList) this.todoList = entity.todoList as any;
+    // trackTimeList 通过关联查询获得，不直接从 entity 映射
+  }
+
+  // Entity → DTO (静态方法)
+  static importEntity(entity: Task): TaskDto {
+    const dto = new TaskDto();
+    dto.importEntity(entity);
+    return dto;
   }
 
   // DTO → 业务完整 VO
@@ -71,6 +79,29 @@ export class TaskDto extends IntersectionType(
       abandonedAt: this.abandonedAt
         ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
+      estimateTime: this.estimateTime,
+      importance: this.importance,
+      urgency: this.urgency,
+      tags: this.tags,
+    };
+  }
+
+  // 列表/分页辅助
+  static dtoListToListVo(list: TaskDto[]): TaskVO.TaskListVo {
+    return { list: list.map((d) => d.exportModelVo()) };
+  }
+  
+  static dtoListToPageVo(
+    list: TaskDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): TaskVO.TaskPageVo {
+    return {
+      list: list.map((d) => d.exportModelVo()),
+      total,
+      pageNum,
+      pageSize,
     };
   }
 }

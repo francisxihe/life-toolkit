@@ -4,9 +4,11 @@ import type {
   GoalPageFiltersVo,
 } from "@life-toolkit/vo";
 import {
-  GoalMapper,
   GoalListFiltersDto,
   GoalPageFiltersDto,
+  CreateGoalDto,
+  UpdateGoalDto,
+  GoalDto,
 } from "@life-toolkit/business-server";
 import { GoalService } from "./goal.service";
 
@@ -14,22 +16,20 @@ export class GoalController {
   constructor(private readonly goalService: GoalService) {}
 
   async create(createGoalVo: GoalVO.CreateGoalVo) {
-    const dto = await this.goalService.create(
-      GoalMapper.voToCreateDto(createGoalVo)
-    );
-    return GoalMapper.dtoToItemVo(dto);
+    const createDto = CreateGoalDto.importVo(createGoalVo);
+    const dto = await this.goalService.create(createDto);
+    return dto.exportModelVo();
   }
 
   async findById(id: string) {
-    return GoalMapper.dtoToVo(await this.goalService.findById(id));
+    const dto = await this.goalService.findById(id);
+    return dto.exportVo();
   }
 
   async update(id: string, updateGoalVo: GoalVO.UpdateGoalVo) {
-    const dto = await this.goalService.update(
-      id,
-      GoalMapper.voToUpdateDto(updateGoalVo)
-    );
-    return GoalMapper.dtoToVo(dto);
+    const updateDto = UpdateGoalDto.importVo(updateGoalVo);
+    const dto = await this.goalService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   async remove(id: string) {
@@ -41,31 +41,32 @@ export class GoalController {
     goalPageFilterDto.importPageVo(goalPageFiltersVo ?? {});
     const { list, total, pageNum, pageSize } =
       await this.goalService.page(goalPageFilterDto);
-    return GoalMapper.dtoToPageVo(list, total, pageNum, pageSize);
+    return GoalDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
   async list(goalListFiltersVo?: GoalListFiltersVo) {
     const goalListFiltersDto = new GoalListFiltersDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.list(goalListFiltersDto);
-    return GoalMapper.dtoToListVo(list);
+    return GoalDto.dtoListToListVo(list);
   }
 
   async tree(goalListFiltersVo?: GoalListFiltersVo) {
     const goalListFiltersDto = new GoalListFiltersDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.getTree(goalListFiltersDto);
-    return list.map((dto) => GoalMapper.dtoToVo(dto));
+    return list.map((dto) => dto.exportVo());
   }
 
   async findRoots() {
     return (await this.goalService.findRoots()).map((dto) =>
-      GoalMapper.dtoToVo(dto)
+      dto.exportVo()
     );
   }
 
   async findDetail(id: string) {
-    return GoalMapper.dtoToVo(await this.goalService.findDetail(id));
+    const dto = await this.goalService.findDetail(id);
+    return dto.exportVo();
   }
 
   async batchDone(body?: { idList?: string[] }) {

@@ -13,7 +13,6 @@ import {
 } from "typeorm";
 import { TrackTime } from "../track-time";
 import {
-  TaskMapper,
   CreateTaskDto,
   UpdateTaskDto,
   TaskPageFiltersDto,
@@ -46,10 +45,8 @@ export class TaskRepository {
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
     const exists = await this.taskRepository.findOne({ where: { id } });
     if (!exists) throw new NotFoundException(`Task not found: ${id}`);
-    await this.taskRepository.update(
-      id,
-      TaskMapper.updateDtoToEntity(updateTaskDto, exists)
-    );
+    updateTaskDto.appendToUpdateEntity(exists);
+    await this.taskRepository.save(exists);
   }
 
   async removeByIds(ids: string[]): Promise<void> {
@@ -63,7 +60,7 @@ export class TaskRepository {
       relations: relations || ["children", "parent", "goal", "todoList"],
     });
     if (!entity) throw new NotFoundException("Task not found");
-    return TaskMapper.entityToDto(entity);
+    return TaskDto.importEntity(entity);
   }
 
   async findAll(
@@ -79,7 +76,7 @@ export class TaskRepository {
     });
     return entities
       .filter((t) => !t.parent)
-      .map((t) => TaskMapper.entityToDto(t));
+      .map((t) => TaskDto.importEntity(t));
   }
 
   async page(
@@ -92,7 +89,7 @@ export class TaskRepository {
       skip: (pageNum - 1) * pageSize,
       take: pageSize,
     });
-    return { list: list.map((t) => TaskMapper.entityToDto(t)), total, pageNum, pageSize };
+    return { list: list.map((t) => TaskDto.importEntity(t)), total, pageNum, pageSize };
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
@@ -102,13 +99,19 @@ export class TaskRepository {
     });
     if (!task) throw new NotFoundException("Task not found");
 
+    const dto = new TaskWithTrackTimeDto();
+    dto.importEntity(task);
+    
     if (task.trackTimeIds?.length) {
       const trackTimes = await this.trackTimeRepository.findBy({
         id: In(task.trackTimeIds),
       });
-      return { ...task, trackTimeList: trackTimes } as TaskWithTrackTimeDto;
+      dto.trackTimeList = trackTimes as any;
+    } else {
+      dto.trackTimeList = [];
     }
-    return { ...task, trackTimeList: [] } as TaskWithTrackTimeDto;
+    
+    return dto;
   }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {

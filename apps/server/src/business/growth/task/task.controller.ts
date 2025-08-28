@@ -17,9 +17,11 @@ import type {
   TaskListFiltersVo,
 } from "@life-toolkit/vo";
 import {
-  TaskMapper,
   TaskPageFiltersDto,
   TaskListFiltersDto,
+  CreateTaskDto,
+  UpdateTaskDto,
+  TaskDto,
 } from "@life-toolkit/business-server";
 import { OperationMapper } from "@/common/operation";
 
@@ -56,15 +58,16 @@ export class TaskController {
   @Response()
   async taskWithTrackTime(@Param("id") id: string) {
     const dto = await this.taskService.taskWithTrackTime(id);
-    return TaskMapper.dtoToWithTrackTimeVo(dto);
+    return dto.exportVo();
   }
 
   @Post("create")
   @Response()
   async create(@Body() createTaskVo: Task.CreateTaskVo) {
-    const createdDto = TaskMapper.voToCreateDto(createTaskVo);
-    const dto = await this.taskService.create(createdDto);
-    return TaskMapper.dtoToVo(dto);
+    const createDto = new CreateTaskDto();
+    createDto.importVo(createTaskVo);
+    const dto = await this.taskService.create(createDto);
+    return dto.exportVo();
   }
 
   @Delete("delete/:id")
@@ -77,18 +80,19 @@ export class TaskController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateTaskVo: Task.CreateTaskVo
+    @Body() updateTaskVo: Task.UpdateTaskVo
   ) {
-    const updatedDto = TaskMapper.voToUpdateDto(updateTaskVo);
-    const dto = await this.taskService.update(id, updatedDto);
-    return TaskMapper.dtoToVo(dto);
+    const updateDto = new UpdateTaskDto();
+    updateDto.importVo(updateTaskVo);
+    const dto = await this.taskService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   @Get("page")
   @Response()
   async page(@Query() filter: TaskPageFiltersDto) {
     const { list, total } = await this.taskService.page(filter);
-    return TaskMapper.dtoToPageVo(
+    return TaskDto.dtoListToPageVo(
       list,
       total,
       filter.pageNum || 1,
@@ -102,13 +106,13 @@ export class TaskController {
     const taskListFilterDto = new TaskListFiltersDto();
     taskListFilterDto.importListVo(filter);
     const taskList = await this.taskService.findAll(taskListFilterDto);
-    return TaskMapper.dtoToListVo(taskList);
+    return TaskDto.dtoListToListVo(taskList);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
     const task = await this.taskService.findById(id);
-    return TaskMapper.dtoToVo(task);
+    return task.exportVo();
   }
 }

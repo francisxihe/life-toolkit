@@ -7,7 +7,6 @@ import {
   GoalListFiltersDto,
   GoalDto,
   Goal,
-  GoalMapper,
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
@@ -132,19 +131,19 @@ export class GoalRepository {
     });
 
     const saved = await this.repo.save(entity);
-    return GoalMapper.entityToDto(saved);
+    return GoalDto.importEntity(saved);
   }
 
   async findById(id: string, relations?: string[]): Promise<GoalDto> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return GoalMapper.entityToDto(entity);
+    return GoalDto.importEntity(entity);
   }
 
   async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => GoalMapper.entityToDto(e));
+    return list.map((e) => GoalDto.importEntity(e));
   }
 
   async page(
@@ -157,7 +156,7 @@ export class GoalRepository {
       .take(pageSize)
       .getManyAndCount();
     return {
-      list: entities.map((e) => GoalMapper.entityToDto(e)),
+      list: entities.map((e) => GoalDto.importEntity(e)),
       total,
       pageNum,
       pageSize,
@@ -171,7 +170,7 @@ export class GoalRepository {
     updateGoalDto.appendToUpdateEntity(entity);
 
     const saved = await this.repo.save(entity);
-    return GoalMapper.entityToDto(saved);
+    return GoalDto.importEntity(saved);
   }
 
   async remove(id: string): Promise<void> {
@@ -194,7 +193,7 @@ export class GoalRepository {
       relations: ["parent", "children", "taskList"],
     });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return GoalMapper.entityToDto(entity);
+    return GoalDto.importEntity(entity);
   }
 
   async updateStatus(

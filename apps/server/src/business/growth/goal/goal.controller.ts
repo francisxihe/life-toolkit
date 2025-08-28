@@ -11,9 +11,11 @@ import {
 import { GoalService } from "./goal.service";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import {
-  GoalMapper,
   GoalPageFiltersDto,
   GoalListFiltersDto,
+  CreateGoalDto,
+  UpdateGoalDto,
+  GoalDto,
 } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
 
@@ -29,9 +31,9 @@ export class GoalController {
   async create(
     @Body() createVo: GoalVO.CreateGoalVo
   ): Promise<GoalVO.GoalItemVo> {
-    const createDto = GoalMapper.voToCreateDto(createVo);
+    const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
-    return GoalMapper.dtoToItemVo(dto);
+    return dto.exportModelVo();
   }
 
   /**
@@ -41,7 +43,7 @@ export class GoalController {
   @Response()
   async page(@Query() filter: GoalPageFiltersDto): Promise<GoalVO.GoalPageVo> {
     const { list, total } = await this.goalService.page(filter);
-    return GoalMapper.dtoToPageVo(
+    return GoalDto.dtoListToPageVo(
       list,
       total,
       filter.pageNum || 1,
@@ -56,7 +58,7 @@ export class GoalController {
   @Response()
   async list(@Query() filter: GoalListFiltersDto): Promise<GoalVO.GoalListVo> {
     const goalList = await this.goalService.findAll(filter);
-    return GoalMapper.dtoToListVo(goalList);
+    return GoalDto.dtoListToListVo(goalList);
   }
 
   /**
@@ -66,7 +68,7 @@ export class GoalController {
   @Response()
   async getTree(@Query() filter: GoalListFiltersDto): Promise<GoalVO.GoalVo[]> {
     const goalTree = await this.goalService.getTree(filter);
-    return goalTree.map((goal) => GoalMapper.dtoToVo(goal));
+    return goalTree.map((goal) => goal.exportVo());
   }
 
   /**
@@ -76,7 +78,7 @@ export class GoalController {
   @Response()
   async findDetail(@Param("id") id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findDetail(id);
-    return GoalMapper.dtoToVo(dto);
+    return dto.exportVo();
   }
 
   /**
@@ -88,9 +90,9 @@ export class GoalController {
     @Param("id") id: string,
     @Body() updateVo: GoalVO.UpdateGoalVo
   ): Promise<GoalVO.GoalItemVo> {
-    const updateDto = GoalMapper.voToUpdateDto(updateVo);
+    const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
-    return GoalMapper.dtoToItemVo(dto);
+    return dto.exportModelVo();
   }
 
   /**
@@ -135,6 +137,6 @@ export class GoalController {
   @Response()
   async findById(@Param("id") id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findById(id);
-    return GoalMapper.dtoToVo(dto);
+    return dto.exportVo();
   }
 }

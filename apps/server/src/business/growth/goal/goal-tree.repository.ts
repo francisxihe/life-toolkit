@@ -8,7 +8,6 @@ import {
   Like,
 } from "typeorm";
 import {
-  GoalMapper,
   CreateGoalDto,
   UpdateGoalDto,
   GoalDto,
@@ -176,7 +175,7 @@ export class GoalTreeRepository {
       }
 
       const savedEntity = await treeRepository.save(entity);
-      return GoalMapper.entityToDto(savedEntity);
+      return GoalDto.importEntity(savedEntity);
     });
   }
 
@@ -202,7 +201,7 @@ export class GoalTreeRepository {
       }
 
       const savedEntity = await treeRepository.save(currentGoal);
-      return GoalMapper.entityToDto(savedEntity);
+      return GoalDto.importEntity(savedEntity);
     });
   }
 
@@ -229,7 +228,7 @@ export class GoalTreeRepository {
       const trees: GoalDto[] = [];
       for (const root of rootNodes) {
         const tree = await this.buildTree(root);
-        trees.push(GoalMapper.entityToDto(tree));
+        trees.push(GoalDto.importEntity(tree));
       }
       return trees;
     }
@@ -250,7 +249,7 @@ export class GoalTreeRepository {
         const fullTree = await this.buildTree(root);
         const filteredTree = this.filterTreeNodes(fullTree, nodeIdsToInclude);
         if (filteredTree) {
-          trees.push(GoalMapper.entityToDto(filteredTree));
+          trees.push(GoalDto.importEntity(filteredTree));
         }
       }
     }
@@ -313,6 +312,6 @@ export class GoalTreeRepository {
       treeWithChildren.taskList = entityWithRelations.taskList;
     }
 
-    return GoalMapper.entityToDto(treeWithChildren);
+    return GoalDto.importEntity(treeWithChildren);
   }
 }

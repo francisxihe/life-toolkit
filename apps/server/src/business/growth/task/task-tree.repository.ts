@@ -5,7 +5,6 @@ import {
   CreateTaskDto,
   UpdateTaskDto,
   TaskDto,
-  TaskMapper,
   Task,
 } from "@life-toolkit/business-server";
 
@@ -101,7 +100,7 @@ export class TaskTreeRepository {
           await treeRepo.save(parent);
         }
         const saved = (await treeRepo.save(entity)) as unknown as Task;
-        return TaskMapper.entityToDto(saved);
+        return TaskDto.importEntity(saved);
       }
     );
   }
@@ -123,7 +122,7 @@ export class TaskTreeRepository {
           await treeRepo.save(entity);
         }
         const saved = (await treeRepo.save(entity)) as unknown as Task;
-        return TaskMapper.entityToDto(saved);
+        return TaskDto.importEntity(saved);
       }
     );
   }

@@ -6,7 +6,6 @@ import { BaseMapper } from "../../../base/base.mapper";
 import { Todo as TodoVO } from "@life-toolkit/vo";
 import dayjs from "dayjs";
 import { TodoStatus } from "@life-toolkit/enum";
-import { TaskMapper } from "../../task/task.mapper";
 
 export class TodoDto extends IntersectionType(
   BaseModelDto,
@@ -32,7 +31,7 @@ export class TodoDto extends IntersectionType(
     this.planStartAt = entity.planStartAt;
     this.planEndAt = entity.planEndAt;
     // 关联属性（浅拷贝，避免递归）
-    this.task = entity.task ? TaskMapper.entityToDto(entity.task) : undefined;
+    this.task = entity.task ? TaskDto.importEntity(entity.task) : undefined;
   }
 
   exportModelVo(): TodoVO.TodoVo {
@@ -57,7 +56,7 @@ export class TodoDto extends IntersectionType(
       abandonedAt: this.abandonedAt
         ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
-      task: this.task ? TaskMapper.dtoToVo(this.task) : undefined,
+      task: this.task ? this.task.exportVo() : undefined,
     };
   }
 

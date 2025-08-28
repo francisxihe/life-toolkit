@@ -8,7 +8,6 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
-  TaskMapper,
 } from "@life-toolkit/business-server";
 
 export class TaskRepository /* implements import("@life-toolkit/business-server").TaskRepository */ {
@@ -120,13 +119,13 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       relations: relations ?? ["parent", "children", "goal", "todoList"],
     });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    return TaskMapper.entityToDto(entity);
+    return TaskDto.importEntity(entity);
   }
 
   async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => TaskMapper.entityToDto(e));
+    return list.map((e) => TaskDto.importEntity(e));
   }
 
   async page(filter: TaskPageFiltersDto): Promise<{
@@ -144,7 +143,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       .getManyAndCount();
 
     return {
-      list: entities.map((e) => TaskMapper.entityToDto(e)),
+      list: entities.map((e) => TaskDto.importEntity(e)),
       total,
       pageNum,
       pageSize,
@@ -153,7 +152,9 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
     const base = await this.findById(taskId);
-    const result: TaskWithTrackTimeDto = { ...base, trackTimeList: [] };
+    const result = new TaskWithTrackTimeDto();
+    Object.assign(result, base);
+    result.trackTimeList = [];
     return result;
   }
 

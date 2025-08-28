@@ -15,13 +15,20 @@ export class GoalDto extends IntersectionType(
   parent?: GoalDto;
   taskList?: TaskDto[];
 
-  // Entity → DTO
+  // Entity → DTO (实例方法)
   importEntity(entity: Goal) {
     Object.assign(this, BaseMapper.entityToDto(entity));
     // 关联对象映射（浅拷贝，避免循环引用）
-    this.parent = entity.parent as any;
-    this.children = entity.children as any;
-    this.taskList = entity.taskList as any;
+    if (entity.parent) this.parent = entity.parent as any;
+    if (entity.children) this.children = entity.children as any;
+    if (entity.taskList) this.taskList = entity.taskList as any;
+  }
+
+  // Entity → DTO (静态方法)
+  static importEntity(entity: Goal): GoalDto {
+    const dto = new GoalDto();
+    dto.importEntity(entity);
+    return dto;
   }
 
   // DTO → 列表项 VO（简化）
@@ -52,6 +59,25 @@ export class GoalDto extends IntersectionType(
       children: this.children?.map((child) => child.exportVo()) || [],
       parent: this.parent?.exportVo(),
       taskList: this.taskList?.map((task) => task.exportVo()),
+    };
+  }
+
+  // 列表/分页辅助
+  static dtoListToListVo(list: GoalDto[]): GoalVO.GoalListVo {
+    return { list: list.map((d) => d.exportModelVo()) };
+  }
+  
+  static dtoListToPageVo(
+    list: GoalDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): GoalVO.GoalPageVo {
+    return {
+      list: list.map((d) => d.exportModelVo()),
+      total,
+      pageNum,
+      pageSize,
     };
   }
 }

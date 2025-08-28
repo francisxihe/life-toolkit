@@ -3,8 +3,7 @@ import type {
   TaskListFiltersVo,
   TaskPageFiltersVo,
 } from "@life-toolkit/vo";
-import { TaskMapper } from "./task.mapper";
-import { TaskListFiltersDto, TaskPageFiltersDto, UpdateTaskDto } from "./dto";
+import { TaskListFiltersDto, TaskPageFiltersDto, UpdateTaskDto, CreateTaskDto, TaskDto } from "./dto";
 import { TaskService } from "./task.service";
 import { TaskStatus } from "@life-toolkit/enum";
 
@@ -12,22 +11,22 @@ export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   async create(createTaskVo: TaskVO.CreateTaskVo) {
-    const dto = await this.taskService.create(
-      TaskMapper.voToCreateDto(createTaskVo)
-    );
-    return TaskMapper.dtoToVo(dto);
+    const createDto = new CreateTaskDto();
+    createDto.importVo(createTaskVo);
+    const dto = await this.taskService.create(createDto);
+    return dto.exportVo();
   }
 
   async findById(id: string) {
-    return TaskMapper.dtoToVo(await this.taskService.findById(id));
+    const dto = await this.taskService.findById(id);
+    return dto.exportVo();
   }
 
-  async update(id: string, vo: TaskVO.CreateTaskVo) {
-    const dto = await this.taskService.update(
-      id,
-      TaskMapper.voToUpdateDto(vo)
-    );
-    return TaskMapper.dtoToVo(dto);
+  async update(id: string, vo: TaskVO.UpdateTaskVo) {
+    const updateDto = new UpdateTaskDto();
+    updateDto.importVo(vo);
+    const dto = await this.taskService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   async remove(id: string) {
@@ -40,19 +39,19 @@ export class TaskController {
     const { list, total, pageNum, pageSize } = await this.taskService.page(
       filter
     );
-    return TaskMapper.dtoToPageVo(list, total, pageNum, pageSize);
+    return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
   async list(taskListFiltersVo?: TaskListFiltersVo) {
     const filter = new TaskListFiltersDto();
     if (taskListFiltersVo) filter.importListVo(taskListFiltersVo);
     const list = await this.taskService.list(filter);
-    return TaskMapper.dtoToListVo(list);
+    return TaskDto.dtoListToListVo(list);
   }
 
   async taskWithTrackTime(id: string) {
     const dto = await this.taskService.taskWithTrackTime(id);
-    return TaskMapper.dtoToWithTrackTimeVo(dto);
+    return dto.exportVo(); // TaskWithTrackTimeDto 继承自 TaskDto
   }
 
   async batchDone(body?: { idList?: string[] }) {
@@ -65,7 +64,7 @@ export class TaskController {
         return await this.taskService.update(id, updateDto);
       })
     );
-    return results.map((dto) => TaskMapper.dtoToVo(dto));
+    return results.map((dto) => dto.exportVo());
   }
 
   async abandon(id: string) {
