@@ -15,8 +15,8 @@ import type {
 } from "@life-toolkit/vo";
 import {
   GoalMapper,
-  GoalListFilterDto,
-  GoalPageFilterDto,
+  GoalListFiltersDto,
+  GoalPageFiltersDto,
   GoalController as _GoalController,
 } from "@life-toolkit/business-server";
 import { goalService } from "./goal.service";

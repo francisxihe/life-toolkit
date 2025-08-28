@@ -1,6 +1,7 @@
 import { BaseModelVo } from "../../base/model.vo";
 import { GoalVo } from "../goal/goal-model.vo";
 import { HabitStatus, Difficulty, Importance } from "@life-toolkit/enum";
+import { TodoVo } from "../todo/todo-model.vo";
 
 export enum HabitCompletionScore {
   NOT_COMPLETED = 0,
@@ -29,6 +30,8 @@ export type HabitItemVo = BaseModelVo & HabitModelVo;
 export type HabitVo = HabitItemVo & {
   /** 关联的目标 */
   goals?: GoalVo[];
+  /** 关联的待办事项 */
+  todos?: TodoVo[];
   /** 最近的日志记录 */
   recentLogs?: HabitLogVo[];
   /** 统计信息 */

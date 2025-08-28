@@ -8,8 +8,8 @@ import { Repository, In, FindOptionsWhere } from "typeorm";
 import {
   CreateGoalDto,
   UpdateGoalDto,
-  GoalPageFilterDto,
-  GoalListFilterDto,
+  GoalPageFiltersDto,
+  GoalListFiltersDto,
   GoalDto,
 } from "@life-toolkit/business-server";
 import { GoalMapper, Goal } from "@life-toolkit/business-server";
@@ -43,14 +43,14 @@ export class GoalRepository {
     return GoalMapper.entityToDto(entity);
   }
 
-  async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
+  async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     const query = this.buildQuery(filter);
     const entities = await query.getMany();
     return entities.map((entity) => GoalMapper.entityToDto(entity));
   }
 
   async page(
-    filter: GoalPageFilterDto
+    filter: GoalPageFiltersDto
   ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
@@ -133,7 +133,7 @@ export class GoalRepository {
   }
 
   // 构建查询条件的私有方法
-  private buildQuery(filter: GoalListFilterDto) {
+  private buildQuery(filter: GoalListFiltersDto) {
     let query = this.goalRepository
       .createQueryBuilder("goal")
       .leftJoinAndSelect("goal.parent", "parent");

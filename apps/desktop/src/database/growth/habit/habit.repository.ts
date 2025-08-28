@@ -10,7 +10,6 @@ import {
   Goal,
   Todo,
   Habit,
-  HabitMapper,
 } from "@life-toolkit/business-server";
 import { HabitStatus, Difficulty, TodoStatus } from "@life-toolkit/enum";
 
@@ -115,19 +114,19 @@ export class HabitRepository implements BusinessHabitRepository {
     }
 
     const saved = await this.repo.save(entity);
-    return HabitMapper.entityToDto(saved);
+    return HabitDto.importEntity(saved);
   }
 
   async findById(id: string, relations?: string[]): Promise<HabitDto> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    return HabitMapper.entityToDto(entity);
+    return HabitDto.importEntity(entity);
   }
 
   async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
-    return list.map((e) => HabitMapper.entityToDto(e));
+    return list.map((e) => HabitDto.importEntity(e));
   }
 
   async page(
@@ -140,7 +139,7 @@ export class HabitRepository implements BusinessHabitRepository {
       .take(pageSize)
       .getManyAndCount();
     return {
-      list: entities.map((e) => HabitMapper.entityToDto(e)),
+      list: entities.map((e) => HabitDto.importEntity(e)),
       total,
       pageNum,
       pageSize,
@@ -167,7 +166,7 @@ export class HabitRepository implements BusinessHabitRepository {
 
     const saved = await this.repo.save(entity);
 
-    return HabitMapper.entityToDto(saved);
+    return HabitDto.importEntity(saved);
   }
 
   async delete(id: string): Promise<void> {
@@ -211,7 +210,7 @@ export class HabitRepository implements BusinessHabitRepository {
       entity.currentStreak = 0;
     }
     const saved = await this.repo.save(entity);
-    return HabitMapper.entityToDto(saved);
+    return HabitDto.importEntity(saved);
   }
 
   async getHabitTodos(habitId: string): Promise<{

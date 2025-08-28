@@ -332,13 +332,6 @@ export class HabitDto extends IntersectionType(
   completionRecords?: HabitCompletionDto[];
 }
 
-// 模型DTO - 排除关联字段
-export class HabitModelDto extends OmitType(HabitDto, [
-  "user",
-  "goalRelations",
-  "completionRecords",
-] as const) {}
-
 // habit-form.dto.ts
 import { PartialType, PickType } from "@nestjs/mapped-types";
 import {
@@ -1201,14 +1194,6 @@ ai_instructions:
         context:
           service_name: "GoalProgressService"
           purpose: "目标进度同步计算"
-
-      - task: "生成HabitMapper映射器"
-        template: "mapper_template"
-        output_path: "apps/server/src/business/growth/habit/mappers/habit.mapper.ts"
-        dependencies: []
-        context:
-          mapper_name: "HabitMapper"
-          mappings: ["Entity->VO", "DTO->Entity"]
 
     frontend:
       - task: "生成习惯列表页面"

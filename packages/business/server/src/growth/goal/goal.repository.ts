@@ -4,8 +4,8 @@ import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import {
   CreateGoalDto,
   UpdateGoalDto,
-  GoalPageFilterDto,
-  GoalListFilterDto,
+  GoalPageFiltersDto,
+  GoalListFiltersDto,
   GoalDto,
 } from "./dto";
 
@@ -15,9 +15,9 @@ export interface GoalRepository {
 
   findById(id: string, relations?: string[]): Promise<GoalDto>;
 
-  findAll(filter: GoalListFilterDto): Promise<GoalDto[]>;
+  findAll(filter: GoalListFiltersDto): Promise<GoalDto[]>;
 
-  page(filter: GoalPageFilterDto): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }>;
+  page(filter: GoalPageFiltersDto): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }>;
 
   update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto>;
 

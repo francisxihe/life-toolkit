@@ -3,7 +3,7 @@ import type {
   HabitListFiltersVo,
   HabitPageFiltersVo,
 } from "@life-toolkit/vo";
-import { HabitMapper } from "./habit.mapper";
+import { CreateHabitDto, UpdateHabitDto, HabitDto } from "./dto";
 import { HabitListFiltersDto, HabitPageFiltersDto } from "./dto";
 import { HabitService } from "./habit.service";
 
@@ -11,14 +11,15 @@ export class HabitController {
   constructor(private readonly habitService: HabitService) {}
 
   async create(createHabitVo: HabitVO.CreateHabitVo) {
-    const dto = await this.habitService.create(
-      HabitMapper.voToCreateDto(createHabitVo)
-    );
-    return HabitMapper.dtoToVo(dto);
+    const createDto = new CreateHabitDto();
+    createDto.importVo(createHabitVo);
+    const dto = await this.habitService.create(createDto);
+    return dto.exportVo();
   }
 
   async findById(id: string) {
-    return HabitMapper.dtoToVo(await this.habitService.findById(id));
+    const dto = await this.habitService.findById(id);
+    return dto.exportVo();
   }
 
   async updateStreak(id: string, body?: { completed?: boolean }) {
@@ -38,11 +39,10 @@ export class HabitController {
   }
 
   async update(id: string, updateHabitVo: HabitVO.UpdateHabitVo) {
-    const dto = await this.habitService.update(
-      id,
-      HabitMapper.voToUpdateDto(updateHabitVo)
-    );
-    return HabitMapper.dtoToVo(dto);
+    const updateDto = new UpdateHabitDto();
+    updateDto.importVo(updateHabitVo);
+    const dto = await this.habitService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   async remove(id: string) {
@@ -55,14 +55,14 @@ export class HabitController {
     const { list, total, pageNum, pageSize } = await this.habitService.page(
       filter
     );
-    return HabitMapper.dtoToPageVo(list, total, pageNum, pageSize);
+    return HabitDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
   async list(habitListFiltersVo?: HabitListFiltersVo) {
     const filter = new HabitListFiltersDto();
     if (habitListFiltersVo) filter.importListVo(habitListFiltersVo);
     const list = await this.habitService.list(filter);
-    return HabitMapper.dtoToListVo(list);
+    return HabitDto.dtoListToListVo(list);
   }
 
   async getHabitTodos(id: string) {

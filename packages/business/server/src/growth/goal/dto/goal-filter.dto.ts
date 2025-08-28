@@ -6,51 +6,89 @@ import {
   PartialType,
 } from "@life-toolkit/mapped-types";
 import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsDateString,
+  IsBoolean,
+} from "class-validator";
+import { Type } from "class-transformer";
+import {
   GoalListFiltersVo,
   GoalPageFiltersVo,
 } from "@life-toolkit/vo/growth/goal";
+import {
+  GoalType,
+  GoalStatus,
+  Importance,
+  Difficulty,
+} from "@life-toolkit/enum";
 
 // 列表过滤DTO - 选择可过滤的字段
-export class GoalListFilterDto extends PartialType(
-  PickType(GoalDto, ["type", "importance"] as const)
+export class GoalListFiltersDto extends PartialType(
+  PickType(GoalDto, ["type", "importance", "status"] as const)
 ) {
-  status?: GoalDto["status"];
-
   /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
   keyword?: string;
 
-  /** 计划开始日期 */
-  planDateStart?: Date;
+  /** 开始日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  startDateStart?: string;
 
-  /** 计划结束日期 */
-  planDateEnd?: Date;
+  /** 开始日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  startDateEnd?: string;
+
+  /** 结束日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  endDateStart?: string;
+
+  /** 结束日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  endDateEnd?: string;
 
   /** 完成开始日期 */
-  doneDateStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  doneDateStart?: string;
 
   /** 完成结束日期 */
-  doneDateEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  doneDateEnd?: string;
 
   /** 放弃开始日期 */
-  abandonedDateStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  abandonedDateStart?: string;
 
   /** 放弃结束日期 */
-  abandonedDateEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  abandonedDateEnd?: string;
 
   /** 排除自身 */
+  @IsBoolean()
+  @Type(() => Boolean)
+  @IsOptional()
   withoutSelf?: boolean;
 
   /** 目标ID */
+  @IsString()
+  @IsOptional()
   id?: string;
 
   /** 父目标ID */
+  @IsString()
+  @IsOptional()
   parentId?: string;
-
-  /** 开始时间过滤 */
-  startAt?: Date;
-
-  /** 结束时间过滤 */
-  endAt?: Date;
 
   importListVo(filterVo: GoalListFiltersVo) {
     importListVo(filterVo, this);
@@ -58,9 +96,9 @@ export class GoalListFilterDto extends PartialType(
 }
 
 // 分页过滤DTO - 继承列表过滤 + 分页
-export class GoalPageFilterDto extends IntersectionType(
+export class GoalPageFiltersDto extends IntersectionType(
   PageFilterDto,
-  GoalListFilterDto
+  GoalListFiltersDto
 ) {
   importPageVo(filterVo: GoalPageFiltersVo) {
     importListVo(filterVo, this);
@@ -71,7 +109,7 @@ export class GoalPageFilterDto extends IntersectionType(
 
 function importListVo(
   filterVo: GoalListFiltersVo,
-  filterDto: GoalListFilterDto
+  filterDto: GoalListFiltersDto
 ) {
   if (filterVo.id) filterDto.id = filterVo.id;
   if (filterVo.withoutSelf !== undefined)
@@ -81,15 +119,16 @@ function importListVo(
   if (filterVo.importance !== undefined)
     filterDto.importance = filterVo.importance;
   if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
-  if (filterVo.startAt) filterDto.startAt = new Date(filterVo.startAt);
-  if (filterVo.endAt) filterDto.endAt = new Date(filterVo.endAt);
-  if (filterVo.doneDateStart)
-    filterDto.doneDateStart = new Date(filterVo.doneDateStart);
-  if (filterVo.doneDateEnd)
-    filterDto.doneDateEnd = new Date(filterVo.doneDateEnd);
+  // if (filterVo.startDateStart)
+  //   filterDto.startDateStart = filterVo.startDateStart;
+  // if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
+  // if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
+  // if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
+  if (filterVo.doneDateStart) filterDto.doneDateStart = filterVo.doneDateStart;
+  if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
   if (filterVo.abandonedDateStart)
-    filterDto.abandonedDateStart = new Date(filterVo.abandonedDateStart);
+    filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   if (filterVo.abandonedDateEnd)
-    filterDto.abandonedDateEnd = new Date(filterVo.abandonedDateEnd);
+    filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
   if (filterVo.parentId) filterDto.parentId = filterVo.parentId;
 }

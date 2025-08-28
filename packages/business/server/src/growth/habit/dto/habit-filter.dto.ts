@@ -6,36 +6,62 @@ import {
   PartialType,
 } from "@life-toolkit/mapped-types";
 import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsDateString,
+  IsBoolean,
+} from "class-validator";
+import { Type } from "class-transformer";
+import {
   HabitListFiltersVo,
   HabitPageFiltersVo,
 } from "@life-toolkit/vo/growth/habit";
-import { Importance } from "@life-toolkit/enum";
+import { HabitStatus, Importance, Difficulty } from "@life-toolkit/enum";
 
 export class HabitListFiltersDto extends PartialType(
   PickType(HabitDto, ["status", "difficulty", "tags", "importance"] as const)
 ) {
   /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
   keyword?: string;
 
   /** 开始日期范围 - 开始 */
-  startDateStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  startDateStart?: string;
 
   /** 开始日期范围 - 结束 */
-  startDateEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  startDateEnd?: string;
 
   /** 目标日期范围 - 开始 */
-  endDataStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  endDateStart?: string;
 
   /** 目标日期范围 - 结束 */
-  endDataEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  endDateEnd?: string;
 
   /** 不包含自身 */
+  @IsBoolean()
+  @Type(() => Boolean)
+  @IsOptional()
   withoutSelf?: boolean;
 
   /** 习惯ID */
+  @IsString()
+  @IsOptional()
   id?: string;
 
   /** 目标ID */
+  @IsString()
+  @IsOptional()
   goalId?: string;
 
   importListVo(filterVo: HabitListFiltersVo) {
@@ -59,17 +85,15 @@ function importListVo(
   filterDto: HabitListFiltersDto
 ) {
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
-  if (filterVo.difficulty !== undefined)
-    filterDto.difficulty = filterVo.difficulty;
-  if (filterVo.importance !== undefined) {
-    filterDto.importance = filterVo.importance as Importance;
-  }
+  if (filterVo.difficulty !== undefined) filterDto.difficulty = filterVo.difficulty;
+  if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance as Importance;
+  if (filterVo.tags) filterDto.tags = filterVo.tags;
   if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
-  if (filterVo.startDateStart)
-    filterDto.startDateStart = new Date(filterVo.startDateStart);
-  if (filterVo.startDateEnd)
-    filterDto.startDateEnd = new Date(filterVo.startDateEnd);
-  if (filterVo.endDataStart)
-    filterDto.endDataStart = new Date(filterVo.endDataStart);
-  if (filterVo.endDataEnd) filterDto.endDataEnd = new Date(filterVo.endDataEnd);
+  if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
+  if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
+  // if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
+  // if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
+  if (filterVo.withoutSelf !== undefined) filterDto.withoutSelf = filterVo.withoutSelf;
+  if (filterVo.id) filterDto.id = filterVo.id;
+  // if (filterVo.goalId) filterDto.goalId = filterVo.goalId;
 }

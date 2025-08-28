@@ -1,6 +1,14 @@
 import { Goal } from "../goal.entity";
-import { PartialType, PickType } from "@life-toolkit/mapped-types";
+import { PartialType, PickType, IntersectionType, OmitType } from "@life-toolkit/mapped-types";
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsDateString,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { GoalDto } from "./goal-model.dto";
+import { GoalType, GoalStatus, Importance, Difficulty } from "@life-toolkit/enum";
 
 // 创建DTO - 选择需要的字段
 export class CreateGoalDto extends PickType(GoalDto, [
@@ -13,7 +21,9 @@ export class CreateGoalDto extends PickType(GoalDto, [
   "difficulty",
   "status",
 ] as const) {
-  // 额外字段
+  /** 父目标ID */
+  @IsString()
+  @IsOptional()
   parentId?: string;
 
   appendToCreateEntity(entity: Goal) {
@@ -28,11 +38,12 @@ export class CreateGoalDto extends PickType(GoalDto, [
   }
 }
 
-// 更新DTO - 基于创建DTO的部分字段 + 状态字段
-export class UpdateGoalDto extends PartialType(CreateGoalDto) {
-  // 状态相关字段
-  doneAt?: Date;
-  abandonedAt?: Date;
+// 更新DTO - 基于创建DTO的部分字段 + 实体ID + 状态字段
+export class UpdateGoalDto extends IntersectionType(
+  PartialType(OmitType(CreateGoalDto, ["parentId"] as const)),
+  PickType(Goal, ["id"] as const),
+  PickType(GoalDto, ["doneAt", "abandonedAt"] as const)
+) {
 
   appendToUpdateEntity(entity: Goal) {
     if (this.name !== undefined) entity.name = this.name;

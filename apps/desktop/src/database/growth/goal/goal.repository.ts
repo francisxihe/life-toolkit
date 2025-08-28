@@ -3,15 +3,15 @@ import { AppDataSource } from "../../database.config";
 import {
   CreateGoalDto,
   UpdateGoalDto,
-  GoalPageFilterDto,
-  GoalListFilterDto,
+  GoalPageFiltersDto,
+  GoalListFiltersDto,
   GoalDto,
   Goal,
   GoalMapper,
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
-type GoalListFilterExt = GoalListFilterDto & {
+type GoalListFilterExt = GoalListFiltersDto & {
   includeIds?: string[];
   excludeIds?: string[];
 };
@@ -141,14 +141,14 @@ export class GoalRepository {
     return GoalMapper.entityToDto(entity);
   }
 
-  async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
+  async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.getMany();
     return list.map((e) => GoalMapper.entityToDto(e));
   }
 
   async page(
-    filter: GoalPageFilterDto
+    filter: GoalPageFiltersDto
   ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const qb = this.buildQuery(filter);

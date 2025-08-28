@@ -7,7 +7,6 @@ import {
   HabitListFiltersDto,
   HabitPageFiltersDto,
   HabitDto,
-  HabitMapper,
   Habit,
   Goal,
   Todo,
@@ -47,7 +46,9 @@ export class HabitRepository implements _HabitRepository {
     }
 
     const savedHabit = await this.habitRepository.save(habit);
-    return HabitMapper.entityToDto(savedHabit);
+    const dto = new HabitDto();
+    dto.importEntity(savedHabit);
+    return dto;
   }
 
   async findById(id: string, relations?: string[]): Promise<HabitDto> {
@@ -58,13 +59,19 @@ export class HabitRepository implements _HabitRepository {
     if (!habit) {
       throw new NotFoundException(`习惯记录不存在，ID: ${id}`);
     }
-    return HabitMapper.entityToDto(habit);
+    const dto = new HabitDto();
+    dto.importEntity(habit);
+    return dto;
   }
 
   async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
     const query = this.buildQuery(filter);
     const habits = await query.getMany();
-    return habits.map((habit) => HabitMapper.entityToDto(habit));
+    return habits.map((habit) => {
+      const dto = new HabitDto();
+      dto.importEntity(habit);
+      return dto;
+    });
   }
 
   async page(
@@ -80,7 +87,11 @@ export class HabitRepository implements _HabitRepository {
       .getManyAndCount();
 
     return {
-      list: habits.map((habit) => HabitMapper.entityToDto(habit)),
+      list: habits.map((habit) => {
+        const dto = new HabitDto();
+        dto.importEntity(habit);
+        return dto;
+      }),
       total,
       pageNum,
       pageSize,
@@ -141,7 +152,9 @@ export class HabitRepository implements _HabitRepository {
     }
 
     const savedHabit = await this.habitRepository.save(habit);
-    return HabitMapper.entityToDto(savedHabit);
+    const dto = new HabitDto();
+    dto.importEntity(savedHabit);
+    return dto;
   }
 
   async delete(id: string): Promise<void> {
@@ -191,7 +204,9 @@ export class HabitRepository implements _HabitRepository {
     }
 
     const savedHabit = await this.habitRepository.save(habit);
-    return HabitMapper.entityToDto(savedHabit);
+    const dto = new HabitDto();
+    dto.importEntity(savedHabit);
+    return dto;
   }
 
   /**

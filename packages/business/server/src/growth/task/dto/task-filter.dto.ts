@@ -5,7 +5,18 @@ import {
   IntersectionType,
   PartialType,
 } from "@life-toolkit/mapped-types";
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsBoolean,
+} from "class-validator";
+import { Type } from "class-transformer";
 import { TaskListFiltersVo, TaskPageFiltersVo } from "@life-toolkit/vo/growth/task";
+import { TaskStatus } from "@life-toolkit/enum";
 
 export class TaskListFiltersDto extends PartialType(
   PickType(TaskDto, [
@@ -15,35 +26,65 @@ export class TaskListFiltersDto extends PartialType(
   ] as const)
 ) {
   /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
   keyword?: string;
 
-  startDateStart?: Date;
+  /** 开始日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  startDateStart?: string;
 
-  startDateEnd?: Date;
+  /** 开始日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  startDateEnd?: string;
 
-  endDateStart?: Date;
+  /** 结束日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  endDateStart?: string;
 
-  endDateEnd?: Date;
+  /** 结束日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  endDateEnd?: string;
 
   /** 完成开始日期 */
-  doneDateStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  doneDateStart?: string;
 
   /** 完成结束日期 */
-  doneDateEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  doneDateEnd?: string;
 
   /** 放弃开始日期 */
-  abandonedDateStart?: Date;
+  @IsDateString()
+  @IsOptional()
+  abandonedDateStart?: string;
 
   /** 放弃结束日期 */
-  abandonedDateEnd?: Date;
+  @IsDateString()
+  @IsOptional()
+  abandonedDateEnd?: string;
 
-  /** 目标ID */
+  /** 目标ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
   goalIds?: string[];
 
   /** 不包含自身 */
+  @IsBoolean()
+  @Type(() => Boolean)
+  @IsOptional()
   withoutSelf?: boolean;
 
   /** 任务ID */
+  @IsString()
+  @IsOptional()
   id?: string;
 
   importListVo(filterVo: TaskListFiltersVo) {
@@ -67,23 +108,18 @@ function importListVo(
   filterDto: TaskListFiltersDto
 ) {
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
-  if (filterVo.importance !== undefined)
-    filterDto.importance = filterVo.importance;
+  if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance;
+  if (filterVo.urgency !== undefined) filterDto.urgency = filterVo.urgency;
   if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
-  if (filterVo.startDateStart)
-    filterDto.startDateStart = new Date(filterVo.startDateStart);
-  if (filterVo.startDateEnd)
-    filterDto.startDateEnd = new Date(filterVo.startDateEnd);
-  if (filterVo.endDateStart)
-    filterDto.endDateStart = new Date(filterVo.endDateStart);
-  if (filterVo.endDateEnd)
-    filterDto.endDateEnd = new Date(filterVo.endDateEnd);
-  if (filterVo.doneDateStart)
-    filterDto.doneDateStart = new Date(filterVo.doneDateStart);
-  if (filterVo.doneDateEnd)
-    filterDto.doneDateEnd = new Date(filterVo.doneDateEnd);
-  if (filterVo.abandonedDateStart)
-    filterDto.abandonedDateStart = new Date(filterVo.abandonedDateStart);
-  if (filterVo.abandonedDateEnd)
-    filterDto.abandonedDateEnd = new Date(filterVo.abandonedDateEnd);
+  if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
+  if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
+  if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
+  if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
+  if (filterVo.doneDateStart) filterDto.doneDateStart = filterVo.doneDateStart;
+  if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
+  if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;
+  if (filterVo.abandonedDateEnd) filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
+  // if (filterVo.goalIds) filterDto.goalIds = filterVo.goalIds;
+  if (filterVo.withoutSelf !== undefined) filterDto.withoutSelf = filterVo.withoutSelf;
+  if (filterVo.id) filterDto.id = filterVo.id;
 }

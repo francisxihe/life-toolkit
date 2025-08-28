@@ -29,8 +29,6 @@ export type TaskModelVo = {
 
   parentId?: string;
 
-  children: TaskModelVo[];
-
   tags?: string[];
 };
 
