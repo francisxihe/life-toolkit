@@ -9,14 +9,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./server": {
-      "import": "./dist/server-index.js",
-      "require": "./dist/server-index.js"
-    },
-    "./server/entity": "./dist/server/entity.js",
-    "./server/service": "./dist/server/service.js",
-    "./server/mapper": "./dist/server/mapper.js",
-    "./server/dto": "./dist/server/dto.js",
     "./web": "./web/index.ts",
     "./types": "./dist/types/index.js",
     "./types/repeat-end": "./dist/types/repeat-end.js",
@@ -28,7 +20,6 @@
     "vo",
     "web",
     "types",
-    "server",
     "common"
   ],
   "scripts": {

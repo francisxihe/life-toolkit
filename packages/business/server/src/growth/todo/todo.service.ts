@@ -87,6 +87,38 @@ export class TodoService {
     return { list, total, pageNum, pageSize };
   }
 
+  async listWithRepeat(filter: TodoListFilterDto): Promise<TodoDto[]> {
+    const [normalList, repeatList] = await Promise.all([
+      this.todoRepository.findAll(filter),
+      this.todoRepeatService.generateTodosInRange(filter),
+    ]);
+
+    // 合并并去重：优先保留普通待办；重复键使用 id 或 repeatId+planDate
+    const map = new Map<string, TodoDto>();
+    const makeKey = (t: TodoDto) => {
+      if ((t as any).id) return `id::${(t as any).id}`;
+      const rid = (t as any).repeatId || (t as any).repeat?.id;
+      const dateStr = new Date(t.planDate).toISOString().slice(0, 10); // YYYY-MM-DD
+      return `repeat::${rid}::${dateStr}`;
+    };
+
+    for (const t of normalList) map.set(makeKey(t), t);
+    for (const t of repeatList) {
+      const key = makeKey(t);
+      if (!map.has(key)) map.set(key, t);
+    }
+
+    return Array.from(map.values()).sort(
+      (a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime()
+    );
+  }
+
+  async detailWithRepeat(id: string): Promise<TodoDto> {
+    const todo = await this.todoRepository.findById(id);
+
+    return todo;
+  }
+
   async deleteByTaskIds(taskIds: string[]): Promise<void> {
     if (!taskIds || taskIds.length === 0) return;
     await this.todoRepository.softDeleteByTaskIds(taskIds);

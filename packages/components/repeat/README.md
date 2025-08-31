@@ -90,7 +90,6 @@ Repeat 组件提供了完整的服务端支持，包括：
 - 实体类定义 (entity.ts)
 - 数据传输对象 (dto.ts)
 - 服务类实现 (service.ts)
-- 数据映射工具 (mapper.ts)
 
 可以轻松集成到 NestJS 应用中使用。
 

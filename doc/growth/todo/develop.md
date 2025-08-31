@@ -215,11 +215,6 @@ interface TodoModuleStructure {
       "dto/todo-model.dto.ts",
       "dto/index.ts"
     ];
-    mappers: [
-      "mappers/todo.mapper.ts",
-      "mappers/todo-repeat.mapper.ts",
-      "mappers/index.ts"
-    ];
     controllers: ["todo.controller.ts"];
     services: [
       "todo.service.ts",

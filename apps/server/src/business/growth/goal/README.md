@@ -35,9 +35,6 @@ goal/
 │   ├── goal-form.dto.ts      # 表单DTO
 │   ├── goal-filter.dto.ts    # 过滤DTO
 │   └── index.ts              # 导出文件
-├── mappers/                  # 对象映射器
-│   ├── goal.mapper.ts        # 目标映射器
-│   └── index.ts              # 导出文件
 ├── goal.controller.ts        # 控制器
 ├── goal.service.ts           # 业务服务
 ├── goal.repository.ts        # 数据仓库
