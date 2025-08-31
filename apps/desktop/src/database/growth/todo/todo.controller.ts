@@ -10,8 +10,7 @@ import {
 } from "@life-toolkit/electron-ipc-router";
 import type { Todo as TodoVO } from "@life-toolkit/vo";
 import { TodoController as _TodoController } from "@life-toolkit/business-server";
-import { todoService } from "./todo.service";
-import { todoRepeatService } from "./todo-repeat.service";
+import { todoService, todoRepeatService } from "./todo.service";
 
 @Controller("/todo")
 export class TodoController {

@@ -3,10 +3,8 @@ import { TodoRepeatRepository } from "./todo-repeat.repository";
 
 export class TodoRepeatService extends _TodoRepeatService {
   constructor() {
-    const todoRepeatRepository = new TodoRepeatRepository();
-    super(todoRepeatRepository);
+    super(new TodoRepeatRepository());
   }
 }
- 
+
 export const todoRepeatService = new TodoRepeatService();
- 

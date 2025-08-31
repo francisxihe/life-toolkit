@@ -21,7 +21,7 @@ import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import dayjs from "dayjs";
 
 export class TodoRepeatService {
-  protected todoRepeatRepository: TodoRepeatRepository;
+  todoRepeatRepository: TodoRepeatRepository;
 
   constructor(todoRepeatRepository: TodoRepeatRepository) {
     this.todoRepeatRepository = todoRepeatRepository;

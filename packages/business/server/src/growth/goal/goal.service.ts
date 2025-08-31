@@ -1,3 +1,4 @@
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import { GoalRepository, GoalTreeRepository } from "./goal.repository";
 import {
   CreateGoalDto,
@@ -6,7 +7,6 @@ import {
   GoalListFiltersDto,
   GoalDto,
 } from "./dto";
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 export class GoalService {
   goalRepository: GoalRepository;
@@ -75,9 +75,12 @@ export class GoalService {
     });
   }
 
-  async page(
-    filter: GoalPageFiltersDto
-  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
+  async page(filter: GoalPageFiltersDto): Promise<{
+    list: GoalDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const { list, total, pageNum, pageSize } =
       await this.goalRepository.page(filter);
     return { list, total, pageNum, pageSize };
@@ -140,7 +143,8 @@ export class GoalService {
   }
 
   async findRoots(): Promise<GoalDto[]> {
-    return await this.goalTreeRepository.findRoots();
+    const roots = await this.goalTreeRepository.findRoots();
+    return roots.map((r) => GoalDto.importEntity(r));
   }
 
   private canMarkAsDone(entity: GoalDto): boolean {

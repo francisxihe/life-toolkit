@@ -9,7 +9,6 @@ import {
   Query,
 } from "@nestjs/common";
 import { TodoService } from "./todo.service";
-import { UpdateTodoDto } from "./dto";
 import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
@@ -17,7 +16,10 @@ import type {
   TodoListFiltersVo,
   TodoPageFiltersVo,
 } from "@life-toolkit/vo";
-import { TodoController as _TodoController } from "@life-toolkit/business-server";
+import {
+  TodoController as _TodoController,
+  UpdateTodoDto,
+} from "@life-toolkit/business-server";
 import { TodoRepeatService } from "./todo-repeat.service";
 
 @Controller("todo")

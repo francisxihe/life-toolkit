@@ -10,11 +10,6 @@ import {
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
 
-type GoalListFilterExt = GoalListFiltersDto & {
-  includeIds?: string[];
-  excludeIds?: string[];
-};
-
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
   private repo: Repository<Goal>;
@@ -23,13 +18,12 @@ export class GoalRepository {
     this.repo = AppDataSource.getRepository(Goal);
   }
 
-  private buildQuery(filter: GoalListFilterExt) {
+  private buildQuery(filter: GoalListFiltersDto) {
     let qb = this.repo
       .createQueryBuilder("goal")
       .leftJoinAndSelect("goal.parent", "parent")
       .andWhere("goal.deletedAt IS NULL");
 
-    // includeIds / excludeIds
     const includeIds = filter.includeIds;
     const excludeIds = filter.excludeIds;
     if (includeIds && includeIds.length > 0) {
@@ -67,16 +61,15 @@ export class GoalRepository {
     }
 
     // 计划时间范围（desktop 字段：startDate/targetDate）
-    const planDateStart = filter.planDateStart;
-    const planDateEnd = filter.planDateEnd;
-    if (planDateStart) {
-      qb = qb.andWhere("goal.startAt >= :planDateStart", {
-        planDateStart: new Date(`${planDateStart}T00:00:00`),
+    const { startDateStart, endDateEnd } = filter;
+    if (startDateStart) {
+      qb = qb.andWhere("goal.startAt >= :startDateStart", {
+        startDateStart: new Date(`${startDateStart}T00:00:00`),
       });
     }
-    if (planDateEnd) {
-      qb = qb.andWhere("goal.endAt <= :planDateEnd", {
-        planDateEnd: new Date(`${planDateEnd}T23:59:59`),
+    if (endDateEnd) {
+      qb = qb.andWhere("goal.endAt <= :endDateEnd", {
+        endDateEnd: new Date(`${endDateEnd}T23:59:59`),
       });
     }
 
@@ -146,9 +139,12 @@ export class GoalRepository {
     return list.map((e) => GoalDto.importEntity(e));
   }
 
-  async page(
-    filter: GoalPageFiltersDto
-  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
+  async page(filter: GoalPageFiltersDto): Promise<{
+    list: GoalDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const qb = this.buildQuery(filter);
     const [entities, total] = await qb

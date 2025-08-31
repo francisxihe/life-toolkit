@@ -1,29 +1,16 @@
-import { PageFilterDto } from "../../../common/filter";
-import { GoalDto } from "./goal-model.dto";
+import { IsOptional, IsString, IsDateString, IsBoolean } from "class-validator";
+import { Type } from "class-transformer";
 import {
   PickType,
   IntersectionType,
   PartialType,
 } from "@life-toolkit/mapped-types";
 import {
-  IsOptional,
-  IsString,
-  IsArray,
-  IsEnum,
-  IsDateString,
-  IsBoolean,
-} from "class-validator";
-import { Type } from "class-transformer";
-import {
   GoalListFiltersVo,
   GoalPageFiltersVo,
 } from "@life-toolkit/vo/growth/goal";
-import {
-  GoalType,
-  GoalStatus,
-  Importance,
-  Difficulty,
-} from "@life-toolkit/enum";
+import { GoalDto } from "./goal-model.dto";
+import { PageFilterDto } from "../../../common/filter";
 
 // 列表过滤DTO - 选择可过滤的字段
 export class GoalListFiltersDto extends PartialType(
@@ -89,6 +76,12 @@ export class GoalListFiltersDto extends PartialType(
   @IsString()
   @IsOptional()
   parentId?: string;
+
+  /** 包含ID */
+  includeIds?: string[];
+
+  /** 排除ID */
+  excludeIds?: string[];
 
   importListVo(filterVo: GoalListFiltersVo) {
     importListVo(filterVo, this);
