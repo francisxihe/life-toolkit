@@ -25,12 +25,17 @@ export default class TodoController {
     return request<UpdateTodoVo>({ method: "put" })(`/todo/update/${id}`, todo);
   }
 
-  static async getTodoDetail(todoId: string) {
-    return request<TodoVo>({ method: "get" })(`/todo/detail/${todoId}`);
+  static async getTodoDetailWithRepeat(todoId: string) {
+    return request<TodoVo>({ method: "get" })(
+      `/todo/detailWithRepeat/${todoId}`
+    );
   }
 
-  static async getTodoList(params: TodoListFiltersVo = {}) {
-    return request<TodoListVo>({ method: "get" })("/todo/list", params);
+  static async getTodoListWithRepeat(params: TodoListFiltersVo = {}) {
+    return request<TodoListVo>({ method: "get" })(
+      "/todo/listWithRepeat",
+      params
+    );
   }
 
   static async getTodoPage(params: TodoPageFiltersVo) {

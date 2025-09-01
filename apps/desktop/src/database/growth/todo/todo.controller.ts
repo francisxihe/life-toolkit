@@ -71,4 +71,14 @@ export class TodoController {
   async done(@Param("id") id: string) {
     return this.controller.done(id);
   }
+
+  @Get("/listWithRepeat")
+  async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
+    return this.controller.listWithRepeat(query);
+  }
+
+  @Get("/detailWithRepeat/:id")
+  async detailWithRepeat(@Param("id") id: string) {
+    return this.controller.detailWithRepeat(id);
+  }
 }

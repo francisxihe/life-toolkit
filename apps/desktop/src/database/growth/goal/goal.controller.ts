@@ -10,14 +10,8 @@ import {
 } from "@life-toolkit/electron-ipc-router";
 import type {
   Goal as GoalVO,
-  GoalListFiltersVo,
-  GoalPageFiltersVo,
 } from "@life-toolkit/vo";
-import {
-  GoalListFiltersDto,
-  GoalPageFiltersDto,
-  GoalController as _GoalController,
-} from "@life-toolkit/business-server";
+import { GoalController as _GoalController } from "@life-toolkit/business-server";
 import { goalService } from "./goal.service";
 
 @Controller("/goal")
@@ -48,17 +42,17 @@ export class GoalController {
   }
 
   @Get("/page")
-  async page(@Query() query?: GoalPageFiltersVo) {
+  async page(@Query() query?: GoalVO.GoalPageFiltersVo) {
     return this.controller.page(query);
   }
 
   @Get("/list")
-  async list(@Query() query?: GoalListFiltersVo) {
+  async list(@Query() query?: GoalVO.GoalListFiltersVo) {
     return this.controller.list(query);
   }
 
   @Get("/tree")
-  async tree(@Query() query?: GoalListFiltersVo) {
+  async tree(@Query() query?: GoalVO.GoalListFiltersVo) {
     return this.controller.tree(query);
   }
 

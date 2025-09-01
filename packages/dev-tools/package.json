@@ -1,0 +1,15 @@
+{
+  "name": "@life-toolkit/dev-tools",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Life Toolkit 开发辅助工具",
+  "main": "src/watch-controllers.js",
+  "scripts": {
+    "watch:controllers": "node src/watch-controllers.js",
+    "sync:controllers": "node src/watch-controllers.js --once"
+  },
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "fast-glob": "^3.3.2"
+  }
+}

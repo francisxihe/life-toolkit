@@ -59,8 +59,6 @@ export class TodoRepeatService {
     return await this.todoRepeatRepository.findAll(filter);
   }
 
-  // ====== 业务逻辑编排 ======
-
   async list(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
     const list = await this.todoRepeatRepository.findAll(filter);
     return list;
@@ -76,6 +74,8 @@ export class TodoRepeatService {
       await this.todoRepeatRepository.page(filter);
     return { list, total, pageNum, pageSize };
   }
+
+  // ====== 业务逻辑编排 ======
 
   async batchUpdate(
     idList: string[],
@@ -185,36 +185,35 @@ export class TodoRepeatService {
         if (next.isBefore(rangeStart, "day")) continue;
         if (next.isAfter(rangeEnd, "day")) break;
 
-        const temp: Partial<Todo> = {
-          originalRepeatId: repeat.id,
-          source: TodoSource.REPEAT,
-          status: repeat.status ?? TodoStatus.TODO,
-        };
-
-        // 不落库，构造一个 TodoDto 形态的数据
-        const fake: any = {
-          ...temp,
-          id: repeat.id,
-          name: repeat.name,
-          description: repeat.description,
-          tags: repeat.tags,
-          importance: repeat.importance,
-          urgency: repeat.urgency,
-          planDate: next.toDate(),
-          planStartAt: undefined,
-          planEndAt: undefined,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          repeat: repeat,
-        };
-        const todoDto = new TodoDto();
-        todoDto.id = repeat.id;
-        todoDto.name = repeat.name;
-        todoDto.importEntity(fake);
+        const todoDto = this.generateTodo(repeat);
         results.push(todoDto);
       }
     }
 
     return results;
+  }
+
+  generateTodo(todoRepeat: TodoRepeatDto) {
+    const todoDto = new TodoDto();
+    todoDto.id = todoRepeat.id;
+    todoDto.name = todoRepeat.name;
+    todoDto.importEntity({
+      id: todoRepeat.id,
+      name: todoRepeat.name,
+      description: todoRepeat.description,
+      tags: todoRepeat.tags || [],
+      importance: todoRepeat.importance,
+      urgency: todoRepeat.urgency,
+      planDate: dayjs(todoRepeat.currentDate).toDate(),
+      planStartAt: undefined,
+      planEndAt: undefined,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      repeat: todoRepeat,
+      originalRepeatId: todoRepeat.id,
+      source: TodoSource.REPEAT,
+      status: todoRepeat.status ?? TodoStatus.TODO,
+    });
+    return todoDto;
   }
 }

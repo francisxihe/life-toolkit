@@ -91,11 +91,11 @@ export class TodoRepeatModel extends BaseEntity {
 
   /** 重复开始日期 */
   @Column("date", { nullable: true })
-  repeatStartDate?: string;
+  repeatStartDate!: string;
 
   /** 当前执行到的重复日期 */
   @Column("date", { nullable: true })
-  currentDate?: string;
+  currentDate!: string;
 
   /** 状态（模板整体状态） */
   @Column({ type: "varchar", length: 20, nullable: true })

@@ -14,7 +14,9 @@ export class TodoController {
     private readonly todoRepeatService: TodoRepeatService
   ) {}
 
-  async create(createTodoVo: TodoVO.CreateTodoVo) {
+  // ==============CURD==================
+
+  async create(createTodoVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoVo> {
     if (createTodoVo.repeat) {
       const createTodoRepeatDto = new CreateTodoRepeatDto();
       createTodoRepeatDto.importCreateVo({
@@ -31,11 +33,14 @@ export class TodoController {
     return todoDto.exportVo();
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<TodoVO.TodoVo> {
     return (await this.todoService.findById(id)).exportVo();
   }
 
-  async update(id: string, updateVo: TodoVO.UpdateTodoVo) {
+  async update(
+    id: string,
+    updateVo: TodoVO.UpdateTodoVo
+  ): Promise<TodoVO.TodoVo> {
     if (updateVo.repeat) {
       const updateTodoRepeatDto = new UpdateTodoRepeatDto();
       updateTodoRepeatDto.importUpdateVo({
@@ -51,13 +56,13 @@ export class TodoController {
     return dto.exportVo();
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<boolean> {
     return await this.todoService.delete(id);
   }
 
-  async page(q?: TodoVO.TodoPageFiltersVo) {
+  async page(query?: TodoVO.TodoPageFiltersVo): Promise<TodoVO.TodoPageVo> {
     const filter = new TodoPageFiltersDto();
-    if (q) filter.importPageVo(q);
+    if (query) filter.importPageVo(query);
     const { list, total, pageNum, pageSize } =
       await this.todoService.page(filter);
     return {
@@ -68,7 +73,7 @@ export class TodoController {
     };
   }
 
-  async list(query?: TodoVO.TodoListFiltersVo) {
+  async list(query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
     const filter = new TodoListFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.list(filter);
@@ -76,6 +81,8 @@ export class TodoController {
       list: list.map((todo) => todo.exportVo()),
     };
   }
+
+  // ==============业务操作==================
 
   async batchDone(body?: { idList?: string[] }) {
     return await this.todoService.batchDone({ idList: body?.idList ?? [] });
@@ -91,5 +98,20 @@ export class TodoController {
 
   async done(id: string) {
     return await this.todoService.done(id);
+  }
+
+  async listWithRepeat(
+    query?: TodoVO.TodoListFiltersVo
+  ): Promise<TodoVO.TodoListVo> {
+    const filter = new TodoListFilterDto();
+    if (query) filter.importListVo(query);
+    const list = await this.todoService.listWithRepeat(filter);
+    return {
+      list: list.map((todo) => todo.exportVo()),
+    };
+  }
+
+  async detailWithRepeat(id: string): Promise<TodoVO.TodoVo> {
+    return (await this.todoService.detailWithRepeat(id)).exportVo();
   }
 }

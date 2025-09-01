@@ -9,6 +9,7 @@ import {
 } from "./dto";
 import { TodoStatus } from "@life-toolkit/enum";
 import { TodoRepeatService } from "./todo-repeat.service";
+import dayjs from "dayjs";
 
 export class TodoService {
   protected todoRepository: TodoRepository;
@@ -48,32 +49,9 @@ export class TodoService {
     return await this.todoRepository.findAll(filter);
   }
 
-  // ====== 业务逻辑编排 ======
-
   async list(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const [normalList, repeatList] = await Promise.all([
-      this.todoRepository.findAll(filter),
-      this.todoRepeatService.generateTodosInRange(filter),
-    ]);
-
-    // 合并并去重：优先保留普通待办；重复键使用 id 或 repeatId+planDate
-    const map = new Map<string, TodoDto>();
-    const makeKey = (t: TodoDto) => {
-      if ((t as any).id) return `id::${(t as any).id}`;
-      const rid = (t as any).repeatId || (t as any).repeat?.id;
-      const dateStr = new Date(t.planDate).toISOString().slice(0, 10); // YYYY-MM-DD
-      return `repeat::${rid}::${dateStr}`;
-    };
-
-    for (const t of normalList) map.set(makeKey(t), t);
-    for (const t of repeatList) {
-      const key = makeKey(t);
-      if (!map.has(key)) map.set(key, t);
-    }
-
-    return Array.from(map.values()).sort(
-      (a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime()
-    );
+    const list = await this.todoRepository.findAll(filter);
+    return list;
   }
 
   async page(filter: TodoPageFiltersDto): Promise<{
@@ -87,26 +65,19 @@ export class TodoService {
     return { list, total, pageNum, pageSize };
   }
 
+  // ====== 业务逻辑编排 ======
+
   async listWithRepeat(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const [normalList, repeatList] = await Promise.all([
-      this.todoRepository.findAll(filter),
-      this.todoRepeatService.generateTodosInRange(filter),
-    ]);
+    const todoDtoList = await this.todoRepository.findAll(filter);
+    const todoRepeatDtoList =
+      await this.todoRepeatService.generateTodosInRange(filter);
 
     // 合并并去重：优先保留普通待办；重复键使用 id 或 repeatId+planDate
     const map = new Map<string, TodoDto>();
-    const makeKey = (t: TodoDto) => {
-      if ((t as any).id) return `id::${(t as any).id}`;
-      const rid = (t as any).repeatId || (t as any).repeat?.id;
-      const dateStr = new Date(t.planDate).toISOString().slice(0, 10); // YYYY-MM-DD
-      return `repeat::${rid}::${dateStr}`;
-    };
-
-    for (const t of normalList) map.set(makeKey(t), t);
-    for (const t of repeatList) {
-      const key = makeKey(t);
-      if (!map.has(key)) map.set(key, t);
-    }
+    todoDtoList.forEach((todoDto) => map.set(todoDto.id, todoDto));
+    todoRepeatDtoList.forEach((todoRepeatDto) => {
+      if (!map.has(todoRepeatDto.id)) map.set(todoRepeatDto.id, todoRepeatDto);
+    });
 
     return Array.from(map.values()).sort(
       (a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime()
@@ -114,9 +85,18 @@ export class TodoService {
   }
 
   async detailWithRepeat(id: string): Promise<TodoDto> {
-    const todo = await this.todoRepository.findById(id);
+    try {
+      const todo = await this.todoRepository.findById(id);
+      if (todo) return todo;
+    } catch (error) {
+      console.error(error);
+    }
+    const repeatTodo = await this.todoRepeatService.findById(id);
 
-    return todo;
+    if (repeatTodo) {
+      return this.todoRepeatService.generateTodo(repeatTodo);
+    }
+    throw new Error("未找到待办");
   }
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {

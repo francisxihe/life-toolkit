@@ -55,7 +55,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   const todoFormDataRef = useRef<TodoFormData>(todoFormData);
 
   const refreshTodoDetail = async (id: string) => {
-    const todo = await TodoService.getTodoDetail(id);
+    const todo = await TodoService.getTodoDetailWithRepeat(id);
     setCurrentTodo(todo);
     todoFormDataRef.current = TodoMapping.voToFormData(todo);
     setTodoFormData(todoFormDataRef.current);

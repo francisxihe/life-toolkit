@@ -14,9 +14,9 @@ export default class TodoService {
    * @param todoId 任务ID
    * @returns 任务详情
    */
-  static async getTodoDetail(todoId: string) {
+  static async getTodoDetailWithRepeat(todoId: string) {
     try {
-      return TodoController.getTodoDetail(todoId);
+      return TodoController.getTodoDetailWithRepeat(todoId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -121,9 +121,9 @@ export default class TodoService {
    * @param params 任务列表过滤条件
    * @returns 任务列表
    */
-  static async getTodoList(params: TodoListFiltersVo = {}) {
+  static async getTodoListWithRepeat(params: TodoListFiltersVo = {}) {
     try {
-      return TodoController.getTodoList(params);
+      return TodoController.getTodoListWithRepeat(params);
     } catch (error) {
       Message.error(error.message);
     }
