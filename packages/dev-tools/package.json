@@ -3,13 +3,15 @@
   "private": true,
   "version": "0.1.0",
   "description": "Life Toolkit 开发辅助工具",
-  "main": "src/watch-controllers.js",
+  "main": "src/watch-controllers.ts",
   "scripts": {
-    "watch:controllers": "node src/watch-controllers.js",
-    "sync:controllers": "node src/watch-controllers.js --once"
+    "watch:controllers": "tsx ./src/watch-controllers.ts",
+    "sync:controllers": "tsx ./src/watch-controllers.ts --once"
   },
   "dependencies": {
     "chokidar": "^3.6.0",
-    "fast-glob": "^3.3.2"
+    "fast-glob": "^3.3.2",
+    "ts-morph": "^26.0.0",
+    "tsx": "^4.16.2"
   }
 }
