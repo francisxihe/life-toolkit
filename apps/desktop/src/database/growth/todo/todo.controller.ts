@@ -19,7 +19,6 @@ export class TodoController {
     this.controller = new _TodoController(todoService, todoRepeatService);
   }
 
-
   @Post("/create")
   async create(@Body() body: TodoVO.CreateTodoVo) {
     return this.controller.create(body);
@@ -29,7 +28,6 @@ export class TodoController {
   async findById(@Param("id") id: string) {
     return this.controller.findById(id);
   }
-
 
   @Delete("/delete/:id")
   async delete(@Param("id") id: string) {

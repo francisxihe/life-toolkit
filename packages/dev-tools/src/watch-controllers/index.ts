@@ -20,9 +20,9 @@ import {
   getRelServerPath,
   getDesktopControllerPathFromServer,
 } from "./utils";
-import { parseClassName, parseConstructorServiceTypes } from "./parser-ast";
-import { syncMissingMethods, ensureConstructorArgs } from "./sync-database";
-import { syncApiMethods } from "./sync-api";
+import { parseClassName, parseConstructorServiceTypes } from "./parser/parser-ast";
+import { syncMissingMethods, ensureConstructorArgs } from "./sync/sync-database";
+import { syncApiMethods } from "./sync/sync-api";
 
 function logLocal(...args: any[]) {
   // eslint-disable-next-line no-console

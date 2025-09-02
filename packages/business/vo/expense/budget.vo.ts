@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../base/model.vo";
+import { BaseModelVo } from "../common/model.vo";
 
 export interface BudgetModelVo {
   category: string;

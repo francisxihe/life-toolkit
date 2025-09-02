@@ -1,6 +1,6 @@
 export * from "./goal-model.vo";
 import { GoalVo, GoalItemVo } from "./goal-model.vo";
-import { self } from "../../base";
+import { self } from "../../common";
 
 export type GoalListFiltersVo = Partial<
   Pick<GoalVo, "startAt" | "endAt" | "importance" | "status" | "type"> & {

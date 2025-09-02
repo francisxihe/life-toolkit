@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../../base/model.vo";
+import { BaseModelVo } from "../../common/model.vo";
 import { TaskVo } from "../task/task-model.vo";
 import { GoalType, GoalStatus } from "@life-toolkit/enum";
 

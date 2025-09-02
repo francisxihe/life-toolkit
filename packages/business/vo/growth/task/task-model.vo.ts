@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../../base/model.vo";
+import { BaseModelVo } from "../../common/model.vo";
 import { TrackTimeVo } from "../track-time/track-time.vo";
 import { GoalVo } from "../goal/goal-model.vo";
 import { TodoVo } from "../todo/todo-model.vo";

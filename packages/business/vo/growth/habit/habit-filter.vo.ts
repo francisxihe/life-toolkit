@@ -1,6 +1,6 @@
 export * from "./habit-model.vo";
 import { HabitVo, HabitItemVo, HabitCompletionScore } from "./habit-model.vo";
-import { self } from "../../base";
+import { self } from "../../common";
 import { HabitStatus, Difficulty, Importance } from "@life-toolkit/enum";
 
 export type HabitListFiltersVo = Partial<

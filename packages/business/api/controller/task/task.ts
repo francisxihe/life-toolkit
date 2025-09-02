@@ -50,4 +50,8 @@ export default class TaskController {
   static async abandonTask(id: string) {
     return request<TaskVo>({ method: "put" })(`/task/abandon/${id}`);
   }
+
+  static async getTaskTaskWithTrackTime(id: string) {
+    return request<TaskVO.TaskVo>({ method: "get" })(`/task/task-with-track-time/${id}`);
+  }
 }

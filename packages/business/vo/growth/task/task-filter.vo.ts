@@ -1,6 +1,6 @@
 export * from "./task-model.vo";
 import { TaskVo, TaskItemVo } from "./task-model.vo";
-import { self } from "../../base";
+import { self } from "../../common";
 
 export type TaskPageVo = {
   list: TaskItemVo[];

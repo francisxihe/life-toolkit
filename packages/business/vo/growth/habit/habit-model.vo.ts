@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../../base/model.vo";
+import { BaseModelVo } from "../../common/model.vo";
 import { GoalVo } from "../goal/goal-model.vo";
 import { HabitStatus, Difficulty, Importance } from "@life-toolkit/enum";
 import { TodoVo } from "../todo/todo-model.vo";

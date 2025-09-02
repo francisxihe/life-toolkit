@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseModelVo } from "../base/model.vo";
+import { BaseModelVo } from "../common/model.vo";
 
 export type TransactionType = "income" | "expense";
 
