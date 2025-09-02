@@ -75,10 +75,10 @@ export class TodoController {
     return this.controller.findById(id);
   }
 
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() includeIds: OperationByIdListVo) {
-    return this.controller.batchDone(includeIds);
+  async doneBatch(@Body() includeIds: OperationByIdListVo) {
+    return this.controller.doneBatch(includeIds);
   }
 
   @Put("abandon/:id")

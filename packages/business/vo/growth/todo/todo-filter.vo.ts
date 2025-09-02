@@ -1,7 +1,7 @@
-import { TodoVo, TodoItemVo } from "./todo-model.vo";
+import { TodoVo, TodoModelVo } from "./todo-model.vo";
 
 export type TodoPageVo = {
-  list: TodoItemVo[];
+  list: TodoModelVo[];
 
   total: number;
 
@@ -11,7 +11,7 @@ export type TodoPageVo = {
 };
 
 export type TodoListVo = {
-  list: TodoItemVo[];
+  list: TodoModelVo[];
 };
 
 export type TodoListFiltersVo = {

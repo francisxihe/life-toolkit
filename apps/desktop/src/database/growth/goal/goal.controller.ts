@@ -56,9 +56,9 @@ export class GoalController {
     return this.controller.findRoots();
   }
 
-  @Get("/findDetail/:id")
+  @Get("/detail/:id")
   async findDetail(@Param("id") id: string) {
-    return this.controller.findDetail(id);
+    return this.controller.detail(id);
   }
 
   @Put("/abandon/:id")

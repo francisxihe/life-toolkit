@@ -1,8 +1,8 @@
 export * from "./task-model.vo";
-import { TaskVo, TaskItemVo } from "./task-model.vo";
+import { TaskVo, TaskModelVo } from "./task-model.vo";
 
 export type TaskPageVo = {
-  list: TaskItemVo[];
+  list: TaskModelVo[];
 
   total: number;
 
@@ -12,7 +12,7 @@ export type TaskPageVo = {
 };
 
 export type TaskListVo = {
-  list: TaskItemVo[];
+  list: TaskModelVo[];
 };
 
 export type TaskListFiltersVo = Partial<

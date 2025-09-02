@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import { GoalVo, GoalItemVo } from '@life-toolkit/vo/growth';
+import { GoalVo, GoalModelVo } from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus, Importance } from '@life-toolkit/enum';
@@ -20,7 +20,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   ContextType: {
     currentGoal: GoalVo;
     goalFormData: GoalFormData;
-    goalList: GoalItemVo[];
+    goalList: GoalModelVo[];
     size: 'small' | 'default';
     setGoalFormData: Dispatch<React.SetStateAction<GoalFormData>>;
     onSubmit: () => Promise<void>;

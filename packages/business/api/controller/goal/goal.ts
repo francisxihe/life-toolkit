@@ -1,68 +1,48 @@
 import { request } from "@life-toolkit/share-request";
-import {
-  GoalVo,
-  CreateGoalVo,
-  GoalPageVo,
-  GoalListVo,
-  GoalPageFiltersVo,
-  GoalListFiltersVo,
-} from "@life-toolkit/vo/growth";
-import { OperationByIdListVo } from "@life-toolkit/vo";
+import { Goal as GoalVO } from "@life-toolkit/vo/growth";
 
 export default class GoalController {
-  // ---------基础 CURD---------
-
-  static async createGoal(goal: CreateGoalVo) {
-    return request<GoalVo>({ method: "post" })("/goal/create", goal);
+  static async create(body: GoalVO.CreateGoalVo) {
+    return request({ method: "post" })(`/goal/create`, body);
   }
 
-  static async deleteGoal(id: string) {
-    return request<GoalVo>({ method: "remove" })(`/goal/delete/${id}`);
-  }
-
-  static async updateGoal(id: string, goal: Partial<CreateGoalVo>) {
-    return request({ method: "put" })(`/goal/update/${id}`, goal);
-  }
-
-  static async getDetail(goalId: string) {
-    return request<GoalVo>({ method: "get" })(`/goal/detail/${goalId}`);
-  }
-
-  static async getGoalList(params: GoalListFiltersVo = {}) {
-    return request<GoalListVo>({ method: "get" })("/goal/list", params);
-  }
-
-  static async getGoalTree(params: GoalListFiltersVo = {}) {
-    return request<GoalVo[]>({ method: "get" })("/goal/tree", params);
-  }
-
-  static async getGoalPage(params: GoalPageFiltersVo = {}) {
-    return request<GoalPageVo>({ method: "get" })("/goal/page", params);
-  }
-
-  // --------- 业务操作 ---------
-
-  static async batchDoneGoal(params: OperationByIdListVo) {
-    return request<GoalVo[]>({ method: "put" })("/goal/batchDone", params);
-  }
-
-  static async restoreGoal(id: string) {
-    return request<GoalVo>({ method: "put" })(`/goal/restore/${id}`);
-  }
-
-  static async abandonGoal(id: string) {
-    return request({ method: "put" })(`/goal/abandon/${id}`);
-  }
-
-  static async getGoalDetail(id: string) {
+  static async findById(id: string) {
     return request({ method: "get" })(`/goal/detail/${id}`);
   }
 
-  static async getGoalFindRoots() {
+  static async update(id: string, body: GoalVO.UpdateGoalVo) {
+    return request({ method: "put" })(`/goal/update/${id}`, body);
+  }
+
+  static async remove(id: string) {
+    return request({ method: "remove" })(`/goal/delete/${id}`);
+  }
+
+  static async page(body: GoalVO.GoalPageFiltersVo) {
+    return request({ method: "get" })(`/goal/page`, body);
+  }
+
+  static async list(body: GoalVO.GoalListFiltersVo) {
+    return request({ method: "get" })(`/goal/list`, body);
+  }
+
+  static async tree(body: GoalVO.GoalListFiltersVo) {
+    return request({ method: "get" })(`/goal/tree`, body);
+  }
+
+  static async findRoots() {
     return request({ method: "get" })(`/goal/findRoots`);
   }
 
-  static async getGoalFindDetail(id: string) {
-    return request({ method: "get" })(`/goal/findDetail/${id}`);
+  static async detail(id: string) {
+    return request({ method: "get" })(`/goal/detail/${id}`);
+  }
+
+  static async abandon(id: string) {
+    return request({ method: "put" })(`/goal/abandon/${id}`);
+  }
+
+  static async restore(id: string) {
+    return request({ method: "put" })(`/goal/restore/${id}`);
   }
 }

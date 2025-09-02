@@ -19,14 +19,14 @@ import {
   IconDelete,
   IconEdit,
 } from '@arco-design/web-react/icon';
-import { HabitItemVo } from '@life-toolkit/vo/growth/habit';
+import { HabitModelVo } from '@life-toolkit/vo/growth/habit';
 import { HabitStatus } from '@life-toolkit/enum';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 
 const { Text, Paragraph } = Typography;
 
 interface HabitCardProps {
-  habit: HabitItemVo;
+  habit: HabitModelVo;
   onComplete?: () => void;
   onPause?: () => void;
   onResume?: () => void;

@@ -122,7 +122,7 @@ export class GoalRepository {
     await this.goalRepository.save(entity);
   }
 
-  async batchDone(ids: string[]): Promise<void> {
+  async doneBatch(ids: string[]): Promise<void> {
     await this.goalRepository.update(
       { id: In(ids) },
       {

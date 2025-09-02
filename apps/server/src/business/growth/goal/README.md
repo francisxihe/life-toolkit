@@ -130,7 +130,7 @@ const goal = await goalController.findById("goal-id");
 await goalController.done("goal-id");
 
 // 批量完成
-await goalController.batchDone({ includeIds: ["id1", "id2"] });
+await goalController.doneBatch({ includeIds: ["id1", "id2"] });
 ```
 
 ## 🔍 API 接口

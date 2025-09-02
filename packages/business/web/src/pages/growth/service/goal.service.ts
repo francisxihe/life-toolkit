@@ -5,7 +5,7 @@ import type {
   GoalPageFiltersVo,
   GoalListFiltersVo,
   UpdateGoalVo,
-  GoalItemVo,
+  GoalModelVo,
   GoalVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
@@ -107,7 +107,7 @@ export default class GoalService {
   }
 
   static useGoalList = (params: GoalListFiltersVo = {}) => {
-    const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
+    const [goalList, setGoalList] = useState<GoalModelVo[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchGoalList = async () => {

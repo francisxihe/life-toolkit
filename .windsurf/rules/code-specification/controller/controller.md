@@ -120,7 +120,7 @@ apps/desktop/src/database/growth/
 ```typescript
 // 推荐：先开发核心业务逻辑
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 核心业务逻辑
     const createDto = CreateTodoDto.importVo(createVo);
     const dto = await this.todoService.create(createDto);
@@ -135,7 +135,7 @@ export class TodoController {
 @Controller("todo")
 export class TodoServerController {
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 直接调用核心业务控制器
     return await this.todoController.create(createVo);
   }

@@ -1,86 +1,60 @@
-import type {
-  CreateHabitVo,
-  UpdateHabitVo,
-  HabitVo,
-  HabitListFiltersVo,
-  HabitListVo,
-  HabitPageFiltersVo,
-  HabitPageVo,
-} from '@life-toolkit/vo/growth';
-import type { OperationByIdListVo } from '@life-toolkit/vo';
+import type { Habit as HabitVO } from '@life-toolkit/vo/growth';
 import { request } from '@life-toolkit/share-request';
 
 export default class HabitController {
-  // ---------基础 CURD---------
-
-  static async createHabit(habit: CreateHabitVo) {
-    return request<HabitVo>({ method: "post" })("/habit/create", habit);
+  static async create(body: HabitVO.CreateHabitVo) {
+    return request({ method: 'post' })(`/habit/create`, body);
   }
 
-  static async deleteHabit(id: string) {
-    return request({ method: "remove" })(`/habit/delete/${id}`);
+  static async findById(id: string) {
+    return request({ method: 'get' })(`/habit/detail/${id}`);
   }
 
-  static async updateHabit(id: string, habit: Partial<CreateHabitVo>) {
-    return request<HabitVo>({ method: "put" })(`/habit/update/${id}`, habit);
+  static async updateStreak(id: string, body: { completed?: boolean }) {
+    return request({ method: 'put' })(`/habit/update-streak/${id}`, body);
   }
 
-  static async getHabitDetail(habitId: string) {
-    return request<HabitVo>({ method: "get" })(`/habit/detail/${habitId}`);
+  static async update(id: string, body: HabitVO.UpdateHabitVo) {
+    return request({ method: 'put' })(`/habit/update/${id}`, body);
   }
 
-  static async getHabitList(params: HabitListFiltersVo = {}) {
-    return request<HabitListVo>({ method: "get" })("/habit/list", params);
+  static async delete(id: string) {
+    return request({ method: 'remove' })(`/habit/delete/${id}`);
   }
 
-  static async getHabitPage(params: HabitPageFiltersVo = {}) {
-    return request<HabitPageVo>({ method: "get" })("/habit/page", params);
+  static async page(body: HabitVO.HabitPageFiltersVo) {
+    return request({ method: 'get' })(`/habit/page`, body);
   }
 
-  // --------- 业务操作 ---------
-
-  static async batchDoneHabit(params: OperationByIdListVo) {
-    return request({ method: "put" })("/habit/batchDone", params);
-  }
-
-  static async abandonHabit(id: string) {
-    return request({ method: "put" })(`/habit/abandon/${id}`);
-  }
-
-  static async restoreHabit(id: string) {
-    return request({ method: "put" })(`/habit/restore/${id}`);
-  }
-
-  static async pauseHabit(id: string) {
-    return request({ method: "put" })(`/habit/pause/${id}`);
-  }
-
-  static async resumeHabit(id: string) {
-    return request({ method: "put" })(`/habit/resume/${id}`);
+  static async list(body: HabitVO.HabitListFiltersVo) {
+    return request({ method: 'get' })(`/habit/list`, body);
   }
 
   static async getHabitTodos(id: string) {
-    return request<{
-      activeTodos: any[];
-      completedTodos: any[];
-      abandonedTodos: any[];
-      totalCount: number;
-    }>({ method: "get" })(`/habit/getHabitTodos/${id}`);
+    return request({ method: 'get' })(`/habit/todos/${id}`);
   }
 
   static async getHabitAnalytics(id: string) {
-    return request<{
-      totalTodos: number;
-      completedTodos: number;
-      abandonedTodos: number;
-      completionRate: number;
-      currentStreak: number;
-      longestStreak: number;
-      recentTodos: any[];
-    }>({ method: "get" })(`/habit/getHabitAnalytics/${id}`);
+    return request({ method: 'get' })(`/habit/analytics/${id}`);
   }
 
-  static async updateStreakHabit(id: string, payload: { completed?: boolean }) {
-    return request({ method: "put" })(`/update-streak/${id}`, payload);
+  static async doneBatch(body: { includeIds?: string[] }) {
+    return request({ method: 'put' })(`/habit/done/batch`, body);
+  }
+
+  static async abandon(id: string) {
+    return request({ method: 'put' })(`/habit/abandon/${id}`);
+  }
+
+  static async restore(id: string) {
+    return request({ method: 'put' })(`/habit/restore/${id}`);
+  }
+
+  static async pauseHabit(id: string) {
+    return request({ method: 'put' })(`/habit/pause/${id}`);
+  }
+
+  static async resumeHabit(id: string) {
+    return request({ method: 'put' })(`/habit/resume/${id}`);
   }
 }

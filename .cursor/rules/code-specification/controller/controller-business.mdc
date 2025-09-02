@@ -55,7 +55,7 @@ export class {Module}Controller {
   /**
    * 创建{资源名称}
    */
-  async create(createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
+  async create(createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ModelVo> {
     const createDto = Create{Module}Dto.importVo(createVo);
     const dto = await this.{module}Service.create(createDto);
     return dto.exportVo();
@@ -88,7 +88,7 @@ export class {Module}Controller {
   /**
    * 更新{资源名称}
    */
-  async update(id: string, updateVo: {Module}VO.Update{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
+  async update(id: string, updateVo: {Module}VO.Update{Module}Vo): Promise<{Module}VO.{Module}ModelVo> {
     const updateDto = Update{Module}Dto.importVo(updateVo);
     const dto = await this.{module}Service.update(id, updateDto);
     return dto.exportVo();
@@ -118,8 +118,8 @@ export class {Module}Controller {
   }
 
   // 批量操作
-  async batchDone(includeIds: string[]): Promise<void> {
-    await this.{module}Service.batchDone(includeIds);
+  async doneBatch(includeIds: string[]): Promise<void> {
+    await this.{module}Service.doneBatch(includeIds);
   }
 
   async batchDelete(includeIds: string[]): Promise<void> {
@@ -181,7 +181,7 @@ async statistics(filter: {Module}StatisticsFilterDto): Promise<{Module}VO.Statis
 ```typescript
 // ✅ 推荐做法 - 只关注业务逻辑
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 1. 数据转换
     const createDto = CreateTodoDto.importVo(createVo);
 
@@ -196,7 +196,7 @@ export class TodoController {
 // ❌ 避免的做法 - 包含HTTP相关逻辑
 export class TodoController {
   @Post("create") // ❌ 不应该有HTTP装饰器
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // ❌ HTTP相关逻辑不应该出现在Business层
     return await this.todoService.create(createVo);
   }
@@ -208,7 +208,7 @@ export class TodoController {
 // 让Service层抛出具体的业务异常
 // Business Controller层只负责数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     try {
       const createDto = CreateTodoDto.importVo(createVo);
       const dto = await this.todoService.create(createDto); // Service会抛出业务异常
@@ -225,7 +225,7 @@ export class TodoController {
 ```typescript
 // 使用专门的Mapper进行数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 1. VO转DTO
     const createDto = CreateTodoDto.importVo(createVo);
 

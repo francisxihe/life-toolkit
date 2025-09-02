@@ -35,7 +35,7 @@ export class HabitService extends HabitServiceBase {
   }
 
   // 批量操作
-  async batchDone(params: OperationByIdListDto): Promise<void> {
-    await this.habitStatusService.batchDone(params);
+  async doneBatch(params: OperationByIdListDto): Promise<void> {
+    await this.habitStatusService.doneBatch(params);
   }
 }

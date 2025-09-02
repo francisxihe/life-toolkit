@@ -42,7 +42,7 @@ export interface GoalRepository {
     extra: Partial<Goal>
   ): Promise<void>;
 
-  batchDone(ids: string[]): Promise<void>;
+  doneBatch(ids: string[]): Promise<void>;
 }
 
 export interface GoalTreeRepository {

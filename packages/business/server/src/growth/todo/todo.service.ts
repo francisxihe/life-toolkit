@@ -104,7 +104,7 @@ export class TodoService {
     await this.todoRepository.softDeleteByTaskIds(taskIds);
   }
 
-  async batchDone(params: { includeIds: string[] }): Promise<any> {
+  async doneBatch(params: { includeIds: string[] }): Promise<any> {
     if (!params?.includeIds?.length) return;
     const updateTodoDto = new UpdateTodoDto();
     updateTodoDto.status = TodoStatus.DONE;

@@ -1,57 +1,40 @@
-import { request } from "@life-toolkit/share-request";
-import {
-  Task as TaskVO,
-  TaskVo,
-  CreateTaskVo,
-  TaskPageVo,
-  TaskListVo,
-  TaskPageFiltersVo,
-  TaskListFiltersVo,
-} from "@life-toolkit/vo/growth";
-import { OperationByIdListVo } from "@life-toolkit/vo";
+import { request } from '@life-toolkit/share-request';
+import { Task as TaskVO } from '@life-toolkit/vo/growth';
 
 export default class TaskController {
-  // ---------基础 CURD---------
-
-  static async createTask(task: CreateTaskVo) {
-    return request<TaskVo>({ method: "post" })(`/task/create`, task);
+  static async create(body: TaskVO.CreateTaskVo) {
+    return request<TaskVO.TaskVo>({ method: 'post' })(`/task/create`, body);
   }
 
-  static async deleteTask(id: string) {
-    return request({ method: "remove" })(`/task/delete/${id}`);
+  static async findById(id: string) {
+    return request<TaskVO.TaskVo>({ method: 'get' })(`/task/detail/${id}`);
   }
 
-  static async updateTask(id: string, task: Partial<CreateTaskVo>) {
-    return request<TaskVo>({ method: "put" })(`/task/update/${id}`, task);
+  static async update(id: string, body: TaskVO.UpdateTaskVo) {
+    return request<TaskVO.TaskVo>({ method: 'put' })(`/task/update/${id}`, body);
   }
 
-  static async getTaskDetail(taskId: string) {
-    return request<TaskVo>({ method: "get" })(`/task/detail/${taskId}`);
+  static async delete(id: string) {
+    return request<boolean>({ method: 'remove' })(`/task/delete/${id}`);
   }
 
-  static async getTaskList(params: TaskListFiltersVo = {}) {
-    return request<TaskListVo>({ method: "get" })("/task/list", params);
+  static async page(body: TaskVO.TaskPageFiltersVo) {
+    return request<TaskVO.TaskPageVo>({ method: 'get' })(`/task/page`, body);
   }
 
-  static async getTaskPage(params: TaskPageFiltersVo = {}) {
-    return request<TaskPageVo>({ method: "get" })("/task/page", params);
+  static async list(body: TaskVO.TaskListFiltersVo) {
+    return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/list`, body);
   }
 
-  // --------- 业务操作 ---------
-
-  static async batchDoneTask(params: OperationByIdListVo) {
-    return request<TaskVo[]>({ method: "put" })(`/task/batchDone`, params);
+  static async taskWithTrackTime(id: string) {
+    return request<TaskVO.TaskVo>({ method: 'get' })(`/task/task-with-track-time/${id}`);
   }
 
-  static async restoreTask(id: string) {
-    return request<TaskVo>({ method: "put" })(`/task/restore/${id}`);
+  static async abandon(id: string) {
+    return request<boolean>({ method: 'put' })(`/task/abandon/${id}`);
   }
 
-  static async abandonTask(id: string) {
-    return request<TaskVo>({ method: "put" })(`/task/abandon/${id}`);
-  }
-
-  static async getTaskTaskWithTrackTime(id: string) {
-    return request<TaskVO.TaskVo>({ method: "get" })(`/task/task-with-track-time/${id}`);
+  static async restore(id: string) {
+    return request<boolean>({ method: 'put' })(`/task/restore/${id}`);
   }
 }

@@ -16,7 +16,7 @@ import {
 import { HabitController } from '@life-toolkit/api/controller/habit';
 import { GoalController } from '@life-toolkit/api/controller/goal';
 import {
-  HabitItemVo,
+  HabitModelVo,
   HabitPageFiltersVo,
   HabitStatus,
   GoalVo,
@@ -28,7 +28,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
     children: ReactNode;
   };
   ContextType: {
-    habits: HabitItemVo[];
+    habits: HabitModelVo[];
     goals: GoalVo[];
     loading: boolean;
     pagination: {
@@ -46,7 +46,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const { refreshHabits } = useHabitContext();
 
   // 状态管理
-  const [habits, setHabits] = useState<HabitItemVo[]>([]);
+  const [habits, setHabits] = useState<HabitModelVo[]>([]);
   const [goals, setGoals] = useState<GoalVo[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({

@@ -3,7 +3,7 @@
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { TodoFormData, TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { TodoVo, TodoItemVo } from '@life-toolkit/vo/growth';
+import { TodoVo, TodoModelVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
 import { TodoStatus } from '@life-toolkit/enum';
@@ -11,7 +11,7 @@ import { RepeatVo } from '@life-toolkit/components-repeat/types';
 
 export type TodoDetailProviderProps = {
   children: React.ReactNode;
-  todo?: TodoVo | TodoItemVo;
+  todo?: TodoVo | TodoModelVo;
   initialFormData?: Partial<TodoFormData>;
   mode: 'editor' | 'creator';
   size?: 'small' | 'default';

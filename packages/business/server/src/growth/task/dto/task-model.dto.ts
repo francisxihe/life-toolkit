@@ -62,7 +62,7 @@ export class TaskDto extends IntersectionType(
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): TaskVO.TaskItemVo {
+  exportModelVo(): TaskVO.TaskModelVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,

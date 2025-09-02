@@ -4,7 +4,7 @@ import type {
   CreateTaskVo,
   TaskPageFiltersVo,
   TaskListFiltersVo,
-  TaskItemVo,
+  TaskModelVo,
   UpdateTaskVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
@@ -89,7 +89,7 @@ export default class TaskService {
   }
 
   static useTaskList = (params: TaskListFiltersVo = {}) => {
-    const [taskList, setTaskList] = useState<TaskItemVo[]>([]);
+    const [taskList, setTaskList] = useState<TaskModelVo[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchTaskList = async () => {

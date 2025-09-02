@@ -10,7 +10,7 @@ import {
 } from 'react';
 import {
   TaskVo,
-  TaskItemVo,
+  TaskModelVo,
   TaskPageFiltersVo,
 } from '@life-toolkit/vo/growth';
 import { TaskService } from '../../service';
@@ -37,14 +37,14 @@ function useSyncState<T>(
 
 export const [TaskAllProvider, useTaskAllContext] = createInjectState<{
   ContextType: {
-    taskList: TaskItemVo[];
+    taskList: TaskModelVo[];
     getTaskPage: () => Promise<void>;
     filters: TaskPageFiltersVo;
     setFilters: Dispatch<SetStateAction<TaskPageFiltersVo>>;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
-  const [taskList, setTaskList] = useState<TaskItemVo[]>([]);
+  const [taskList, setTaskList] = useState<TaskModelVo[]>([]);
 
   const [filters, setFilters, filtersRef] = useSyncState<TaskPageFiltersVo>({
     keyword: '',

@@ -90,7 +90,7 @@ export function requiresBodyParam(metadata: ControllerMethodMetadata): boolean {
     metadata.httpMethod === "POST" ||
     metadata.httpMethod === "PUT" ||
     metadata.httpMethod === "PATCH" ||
-    ["create", "update", "batchDone"].includes(metadata.methodName)
+    ["create", "update", "doneBatch"].includes(metadata.methodName)
   );
 }
 

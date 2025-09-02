@@ -64,9 +64,9 @@ export class HabitController {
     return this.controller.getHabitAnalytics(id);
   }
 
-  @Put("/batch-done")
-  async batchDone(@Body() body: HabitVO.HabitListFiltersVo) {
-    return this.controller.batchDone(body);
+  @Put("/done/batch")
+  async doneBatch(@Body() body: HabitVO.HabitListFiltersVo) {
+    return this.controller.doneBatch(body);
   }
 
   @Put("/abandon/:id")

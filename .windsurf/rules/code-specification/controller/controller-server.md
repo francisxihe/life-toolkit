@@ -55,7 +55,7 @@ export class {Module}ServerController {
    * 创建{资源名称}
    */
   @Post("create")
-  async create(@Body() createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
+  async create(@Body() createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ModelVo> {
     return await this.{module}Controller.create(createVo);
   }
 
@@ -90,7 +90,7 @@ export class {Module}ServerController {
   async update(
     @Param("id") id: string,
     @Body() updateVo: {Module}VO.Update{Module}Vo
-  ): Promise<{Module}VO.{Module}ItemVo> {
+  ): Promise<{Module}VO.{Module}ModelVo> {
     return await this.{module}Controller.update(id, updateVo);
   }
 
@@ -119,9 +119,9 @@ export class {Module}ServerController {
   }
 
   // 批量操作路由
-  @Put("batch-done")
-  async batchDone(@Body() params: { includeIds: string[] }): Promise<void> {
-    await this.{module}Controller.batchDone(params.includeIds);
+  @Put("done/batch")
+  async doneBatch(@Body() params: { includeIds: string[] }): Promise<void> {
+    await this.{module}Controller.doneBatch(params.includeIds);
   }
 
   @Put("batch-delete")
@@ -184,7 +184,7 @@ export class {Module}ServerController {
   @Put("done/:id")       // 完成资源
 
   // 批量操作
-  @Put("batch-done")     // 批量完成
+  @Put("done/batch")     // 批量完成
   @Put("batch-delete")   // 批量删除
 }
 ```
@@ -199,7 +199,7 @@ export class TodoServerController {
   constructor(private readonly todoController: TodoController) {}
 
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 直接调用核心业务控制器
     return await this.todoController.create(createVo);
   }
@@ -209,7 +209,7 @@ export class TodoServerController {
 @Controller("todo")
 export class TodoServerController {
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // ❌ 不应该在适配层做参数验证
     if (!createVo.title) {
       throw new BadRequestException("标题不能为空");
@@ -252,7 +252,7 @@ import { Body, Param, Query, BadRequestException } from "@nestjs/common";
 @Controller("todo")
 export class TodoServerController {
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // HTTP参数验证可以在这里进行
     return await this.todoController.create(createVo);
   }

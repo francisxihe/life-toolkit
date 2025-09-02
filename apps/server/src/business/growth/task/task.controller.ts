@@ -13,7 +13,6 @@ import { Response } from "@/decorators/response.decorator";
 import { TaskStatusService } from "./task-status.service";
 import type {
   Task,
-  OperationByIdListVo,
   TaskListFiltersVo,
   TaskPageFiltersVo,
 } from "@life-toolkit/vo";
@@ -33,10 +32,10 @@ export class TaskController {
     this.businessController = new BusinessTaskController(taskService);
   }
 
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() body: { includeIds?: string[] }) {
-    return await this.businessController.batchDone(body);
+  async doneBatch(@Body() body: { includeIds?: string[] }) {
+    return await this.businessController.doneBatch(body);
   }
 
   @Put("abandon/:id")

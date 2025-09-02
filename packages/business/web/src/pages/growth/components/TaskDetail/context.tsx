@@ -4,8 +4,8 @@ import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import type {
   TaskVo,
   UpdateTaskVo,
-  GoalItemVo,
-  TaskItemVo,
+  GoalModelVo,
+  TaskModelVo,
   CreateTaskVo,
 } from '@life-toolkit/vo/growth';
 import {
@@ -18,7 +18,7 @@ import { createInjectState } from '@/utils/createInjectState';
 
 export type TaskDetailContextProps = {
   children: React.ReactNode;
-  task?: TaskVo | TaskItemVo;
+  task?: TaskVo | TaskModelVo;
   initialFormData?: Partial<TaskFormData>;
   mode: 'editor' | 'creator';
   size?: 'small' | 'default';
@@ -30,8 +30,8 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   ContextType: {
     currentTask: TaskVo;
     taskFormData: TaskFormData;
-    goalList: GoalItemVo[];
-    taskList: TaskItemVo[];
+    goalList: GoalModelVo[];
+    taskList: TaskModelVo[];
     loading: boolean;
     size: 'small' | 'default';
     setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;

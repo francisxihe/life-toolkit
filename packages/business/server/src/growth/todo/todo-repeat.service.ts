@@ -116,7 +116,7 @@ export class TodoRepeatService {
     await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
   }
 
-  batchDone(includeIds: string[]): Promise<any> {
+  doneBatch(includeIds: string[]): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.DONE;
     return this.todoRepeatRepository.batchUpdate(

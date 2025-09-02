@@ -51,7 +51,7 @@ export class {Module}DesktopController {
   /**
    * 创建{资源名称}
    */
-  async create(createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
+  async create(createVo: {Module}VO.Create{Module}Vo): Promise<{Module}VO.{Module}ModelVo> {
     return await this.{module}Controller.create(createVo);
   }
 
@@ -79,7 +79,7 @@ export class {Module}DesktopController {
   /**
    * 更新{资源名称}
    */
-  async update(id: string, updateVo: {Module}VO.Update{Module}Vo): Promise<{Module}VO.{Module}ItemVo> {
+  async update(id: string, updateVo: {Module}VO.Update{Module}Vo): Promise<{Module}VO.{Module}ModelVo> {
     return await this.{module}Controller.update(id, updateVo);
   }
 
@@ -104,8 +104,8 @@ export class {Module}DesktopController {
   }
 
   // 批量操作方法
-  async batchDone(includeIds: string[]): Promise<void> {
-    await this.{module}Controller.batchDone(includeIds);
+  async doneBatch(includeIds: string[]): Promise<void> {
+    await this.{module}Controller.doneBatch(includeIds);
   }
 
   async batchDelete(includeIds: string[]): Promise<void> {
@@ -124,7 +124,7 @@ export const {module}IpcHandlers = {
   'abandon': (id: string) => new {Module}DesktopController().abandon(id),
   'restore': (id: string) => new {Module}DesktopController().restore(id),
   'done': (id: string) => new {Module}DesktopController().done(id),
-  'batchDone': (includeIds: string[]) => new {Module}DesktopController().batchDone(includeIds),
+  'doneBatch': (includeIds: string[]) => new {Module}DesktopController().doneBatch(includeIds),
   'batchDelete': (includeIds: string[]) => new {Module}DesktopController().batchDelete(includeIds),
 };
 ```
@@ -198,7 +198,7 @@ ipcMain.handle('todo:delete', deleteHandler);
 ```typescript
 // ✅ 推荐做法 - 充分利用异步特性
 export class TodoDesktopController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoItemVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
     // 直接返回Promise，让Electron处理异步
     return await this.todoController.create(createVo);
   }
@@ -206,7 +206,7 @@ export class TodoDesktopController {
 
 // ❌ 避免的做法 - 阻塞主进程
 export class TodoDesktopController {
-  create(createVo: TodoVO.CreateTodoVo): TodoVO.TodoItemVo {
+  create(createVo: TodoVO.CreateTodoVo): TodoVO.TodoModelVo {
     // ❌ 同步处理会阻塞主进程
     return this.todoController.createSync(createVo);
   }

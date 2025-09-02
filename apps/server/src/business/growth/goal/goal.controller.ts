@@ -30,7 +30,7 @@ export class GoalController {
   @Response()
   async create(
     @Body() createVo: GoalVO.CreateGoalVo
-  ): Promise<GoalVO.GoalItemVo> {
+  ): Promise<GoalVO.GoalModelVo> {
     const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
     return dto.exportModelVo();
@@ -89,7 +89,7 @@ export class GoalController {
   async update(
     @Param("id") id: string,
     @Body() updateVo: GoalVO.UpdateGoalVo
-  ): Promise<GoalVO.GoalItemVo> {
+  ): Promise<GoalVO.GoalModelVo> {
     const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
     return dto.exportModelVo();
@@ -107,10 +107,10 @@ export class GoalController {
   /**
    * 批量完成目标
    */
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() params: { includeIds: string[] }): Promise<void> {
-    await this.goalService.batchDone(params.includeIds);
+  async doneBatch(@Body() params: { includeIds: string[] }): Promise<void> {
+    await this.goalService.doneBatch(params.includeIds);
   }
 
   /**

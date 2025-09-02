@@ -7,7 +7,7 @@ import {
   Progress,
   Table,
 } from '@arco-design/web-react';
-import { HabitItemVo } from '@life-toolkit/vo/growth';
+import { HabitModelVo } from '@life-toolkit/vo/growth';
 import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 import { useHabitContext } from '../context';
@@ -32,7 +32,7 @@ export default function HabitListTable() {
       dataIndex: 'name',
       key: 'name',
       width: 200,
-      render: (name: string, record: HabitItemVo) => (
+      render: (name: string, record: HabitModelVo) => (
         <div>
           <div className="font-medium">{name}</div>
           {record.description && (
@@ -76,7 +76,7 @@ export default function HabitListTable() {
       dataIndex: 'completionRate',
       key: 'completionRate',
       width: 150,
-      render: (_: any, record: HabitItemVo) => {
+      render: (_: any, record: HabitModelVo) => {
         const completionRate =
           record.completedCount && record.currentStreak
             ? Math.round(
@@ -123,7 +123,7 @@ export default function HabitListTable() {
       title: '操作',
       key: 'actions',
       width: 150,
-      render: (_: any, record: HabitItemVo) => (
+      render: (_: any, record: HabitModelVo) => (
         <Space>
           {record.status === HabitStatus.ACTIVE && (
             <Button

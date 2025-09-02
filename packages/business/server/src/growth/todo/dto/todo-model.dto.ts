@@ -60,7 +60,7 @@ export class TodoDto extends IntersectionType(
     };
   }
 
-  exportVo(): TodoVO.TodoItemVo {
+  exportVo(): TodoVO.TodoModelVo {
     return this.exportModelVo();
   }
 }

@@ -38,7 +38,7 @@ export class TodoRepeatDto extends IntersectionType(
     return this.exportModelVo();
   }
 
-  exportModelVo(): TodoVO.TodoItemVo {
+  exportModelVo(): TodoVO.TodoModelVo {
     return {
       id: this.id,
       // 重复配置相关字段

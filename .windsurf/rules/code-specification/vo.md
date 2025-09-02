@@ -49,7 +49,7 @@ packages/vo/example/module/
 ### 类型命名格式
 - **枚举**: `[Module][Property]` (如: `ItemStatus`, `ItemType`)
 - **基础模型**: `[Module]ModelVo`
-- **项目模型**: `[Module]ItemVo` (继承BaseModelVo)
+- **项目模型**: `[Module]ModelVo` (继承BaseModelVo)
 - **完整模型**: `[Module]Vo` (包含关联数据)
 - **表单VO**: `Create[Module]Vo`, `Update[Module]Vo`
 - **过滤VO**: `[Module]ListFiltersVo`, `[Module]PageFiltersVo`
@@ -364,9 +364,9 @@ export type OptionalFields = {
 ```typescript
 export type ArrayFields = {
   tags: string[];           // 标签数组
-  items: ItemVo[];          // 项目数组
+  items: ModelVo[];          // 项目数组
   children: ChildVo[];      // 子项数组
-  relatedItems: ItemVo[];   // 关联项目数组
+  relatedItems: ModelVo[];   // 关联项目数组
 };
 ```
 
@@ -412,7 +412,7 @@ export type ItemCreateFormVo = { /* 项目创建表单 */ };
 export type ItemListFilterVo = { /* 项目列表过滤 */ };
 
 // 适当注释：复杂业务逻辑需要添加注释
-export type ItemVo = {
+export type ModelVo = {
   /** 项目标题 - 必填，最大100字符 */
   title: string;
 
@@ -445,7 +445,7 @@ export type ItemFilterVo = BaseFilterVo & {
 ### 4. 向后兼容
 ```typescript
 // 新增字段使用可选类型
-export type ItemVo = {
+export type ModelVo = {
   id: string;
   title: string;
   // 新增字段
@@ -455,7 +455,7 @@ export type ItemVo = {
 
 // 使用版本化处理重大变更
 export namespace ItemVoV2 {
-  export type ItemVo = {
+  export type ModelVo = {
     // 重大变更的类型定义
   };
 }

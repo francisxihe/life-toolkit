@@ -32,7 +32,7 @@ export class GoalDto extends IntersectionType(
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): GoalVO.GoalItemVo {
+  exportModelVo(): GoalVO.GoalModelVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
@@ -49,7 +49,7 @@ export class GoalDto extends IntersectionType(
       abandonedAt: this.abandonedAt
         ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
         : undefined,
-    } as GoalVO.GoalItemVo;
+    } as GoalVO.GoalModelVo;
   }
 
   // DTO → 业务完整 VO

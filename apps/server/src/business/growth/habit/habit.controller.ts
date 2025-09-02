@@ -17,19 +17,16 @@ import {
   HabitDto,
 } from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
-import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
-import { OperationMapper } from "@/common/operation";
+import type { Habit as HabitVO } from "@life-toolkit/vo";
 
 @Controller("habit")
 export class HabitController {
   constructor(private readonly habitService: HabitService) {}
 
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() includeIds: OperationByIdListVo) {
-    return await this.habitService.batchDone(
-      OperationMapper.voToOperationByIdListDto(includeIds)
-    );
+  async doneBatch(@Body() body: HabitVO.HabitListFiltersVo) {
+    return await this.habitService.doneBatch(body.includeIds);
   }
 
   @Put("abandon/:id")

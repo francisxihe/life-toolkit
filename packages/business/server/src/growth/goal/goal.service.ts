@@ -1,21 +1,12 @@
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
-import { GoalRepository, GoalTreeRepository } from "./goal.repository";
-import {
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalPageFiltersDto,
-  GoalListFiltersDto,
-  GoalDto,
-} from "./dto";
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
+import { GoalRepository, GoalTreeRepository } from './goal.repository';
+import { CreateGoalDto, UpdateGoalDto, GoalPageFiltersDto, GoalListFiltersDto, GoalDto } from './dto';
 
 export class GoalService {
   goalRepository: GoalRepository;
   goalTreeRepository: GoalTreeRepository;
 
-  constructor(
-    goalRepository: GoalRepository,
-    goalTreeRepository: GoalTreeRepository
-  ) {
+  constructor(goalRepository: GoalRepository, goalTreeRepository: GoalTreeRepository) {
     this.goalRepository = goalRepository;
     this.goalTreeRepository = goalTreeRepository;
   }
@@ -80,12 +71,11 @@ export class GoalService {
     pageNum: number;
     pageSize: number;
   }> {
-    const { list, total, pageNum, pageSize } =
-      await this.goalRepository.page(filter);
+    const { list, total, pageNum, pageSize } = await this.goalRepository.page(filter);
     return { list, total, pageNum, pageSize };
   }
 
-  async findDetail(id: string) {
+  async getDetail(id: string) {
     return await this.goalTreeRepository.findDetail(id);
   }
 
@@ -93,7 +83,7 @@ export class GoalService {
   async done(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
     if (!this.canMarkAsDone(entity)) {
-      throw new Error("当前状态不允许标记为完成");
+      throw new Error('当前状态不允许标记为完成');
     }
     await this.goalRepository.update(
       id,
@@ -108,7 +98,7 @@ export class GoalService {
   async abandon(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
     if (!this.canAbandon(entity)) {
-      throw new Error("当前状态不允许放弃");
+      throw new Error('当前状态不允许放弃');
     }
     await this.goalRepository.update(
       id,
@@ -123,7 +113,7 @@ export class GoalService {
   async restore(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
     if (!this.canRestore(entity)) {
-      throw new Error("当前状态不允许恢复");
+      throw new Error('当前状态不允许恢复');
     }
     await this.goalRepository.update(
       id,
@@ -134,10 +124,10 @@ export class GoalService {
     return true;
   }
 
-  async batchDone(includeIds: string[]): Promise<void> {
-    const updateGoalDto=new UpdateGoalDto();
-    updateGoalDto.status=GoalStatus.DONE;
-    updateGoalDto.doneAt=new Date();
+  async doneBatch(includeIds: string[]): Promise<void> {
+    const updateGoalDto = new UpdateGoalDto();
+    updateGoalDto.status = GoalStatus.DONE;
+    updateGoalDto.doneAt = new Date();
     await this.goalRepository.batchUpdate(includeIds, updateGoalDto);
   }
 
@@ -147,10 +137,7 @@ export class GoalService {
   }
 
   private canMarkAsDone(entity: GoalDto): boolean {
-    return (
-      entity.status === GoalStatus.TODO ||
-      entity.status === GoalStatus.IN_PROGRESS
-    );
+    return entity.status === GoalStatus.TODO || entity.status === GoalStatus.IN_PROGRESS;
   }
 
   private canAbandon(entity: GoalDto): boolean {

@@ -20,10 +20,10 @@ export class TaskStatusService {
     await this.taskRepository.updateStatus(id, status, dateField);
   }
 
-  async batchDone(
+  async doneBatch(
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
-    await this.taskRepository.batchDone(params.includeIds);
+    await this.taskRepository.doneBatch(params.includeIds);
 
     return {
       result: true,

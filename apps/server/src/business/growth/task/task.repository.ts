@@ -135,7 +135,7 @@ export class TaskRepository {
     });
   }
 
-  async batchDone(ids: string[]): Promise<void> {
+  async doneBatch(ids: string[]): Promise<void> {
     if (!ids.length) return;
     await this.taskRepository.update(
       { id: In(ids) },

@@ -209,7 +209,7 @@ export class GoalRepository {
     await this.repo.save(entity);
   }
 
-  async batchDone(includeIds: string[]): Promise<void> {
+  async doneBatch(includeIds: string[]): Promise<void> {
     await this.repo.update(
       { id: In(includeIds) },
       {

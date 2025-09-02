@@ -43,7 +43,7 @@ GET    /task/task-with-track-time/:id  # 获取任务及时间跟踪信息
 
 ### 状态操作
 ```http
-PUT /task/batch-done          # 批量完成任务
+PUT /task/done/batch          # 批量完成任务
 PUT /task/abandon/:id         # 放弃任务
 PUT /task/restore/:id         # 恢复任务
 ```

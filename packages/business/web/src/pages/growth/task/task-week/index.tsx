@@ -6,7 +6,7 @@ import { Collapse, Divider, Button } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TaskItemVo } from '@life-toolkit/vo/growth';
+import { TaskModelVo } from '@life-toolkit/vo/growth';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useTaskDetail, TaskEditor } from '../../components';
 import { TaskStatus } from '@life-toolkit/enum';
@@ -17,11 +17,11 @@ const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
 
 export default function TaskWeek() {
-  const [weekTaskList, setWeekTaskList] = useState<TaskItemVo[]>([]);
-  const [weekDoneTaskList, setWeekDoneTaskList] = useState<TaskItemVo[]>([]);
-  const [expiredTaskList, setExpiredTaskList] = useState<TaskItemVo[]>([]);
+  const [weekTaskList, setWeekTaskList] = useState<TaskModelVo[]>([]);
+  const [weekDoneTaskList, setWeekDoneTaskList] = useState<TaskModelVo[]>([]);
+  const [expiredTaskList, setExpiredTaskList] = useState<TaskModelVo[]>([]);
   const [weekAbandonedTaskList, setWeekAbandonedTaskList] = useState<
-    TaskItemVo[]
+    TaskModelVo[]
   >([]);
 
   async function refreshData() {
@@ -61,7 +61,7 @@ export default function TaskWeek() {
     refreshData();
   }, []);
 
-  const [currentTask, setCurrentTask] = useState<TaskItemVo | null>(null);
+  const [currentTask, setCurrentTask] = useState<TaskModelVo | null>(null);
 
   async function showTaskDetail(id: string) {
     flushSync(() => {

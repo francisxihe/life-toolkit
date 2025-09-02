@@ -740,9 +740,9 @@ interface TodoAPISpecification {
       ];
     };
     
-    batchDone: {
+    doneBatch: {
       method: "PUT";
-      path: "/batch-done";
+      path: "/done/batch";
       description: "批量标记待办事项为完成";
       request_body: "OperationByIdListVo";
       response: "void";
@@ -896,10 +896,10 @@ interface TodoServiceImplementation {
       delegation: "TodoStatusService.restore";
     };
     
-    batchDone: {
-      signature: "async batchDone(params: OperationByIdListDto): Promise<void>";
+    doneBatch: {
+      signature: "async doneBatch(params: OperationByIdListDto): Promise<void>";
       description: "批量标记待办为完成";
-      delegation: "TodoStatusService.batchDone";
+      delegation: "TodoStatusService.doneBatch";
     };
   };
 }

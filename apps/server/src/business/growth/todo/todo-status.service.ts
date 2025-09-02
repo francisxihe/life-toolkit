@@ -26,7 +26,7 @@ export class TodoStatusService {
     });
   }
 
-  async batchDone(
+  async doneBatch(
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
     // 批量完成需要逐个处理，因为可能涉及重复待办的处理

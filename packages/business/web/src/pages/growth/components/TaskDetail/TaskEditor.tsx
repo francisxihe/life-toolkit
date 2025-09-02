@@ -1,5 +1,5 @@
 import { FlexibleContainer } from 'francis-component-react';
-import type { TaskVo, TaskItemVo } from '@life-toolkit/vo/growth';
+import type { TaskVo, TaskModelVo } from '@life-toolkit/vo/growth';
 import { TaskDetailProvider } from './context';
 import TaskForm from './TaskForm';
 import TaskChildren from './TaskChildren';

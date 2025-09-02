@@ -10,7 +10,7 @@ export class HabitStatusService {
     private readonly habitRepository: HabitRepository,
   ) {}
 
-  async batchDone(params: OperationByIdListDto): Promise<void> {
+  async doneBatch(params: OperationByIdListDto): Promise<void> {
     await this.habitRepository.batchUpdate(params.includeIds, {
       status: HabitStatus.COMPLETED,
       completedCount: () => "completed_count + 1",

@@ -1,5 +1,5 @@
 export * from "./goal-model.vo";
-import { GoalVo, GoalItemVo } from "./goal-model.vo";
+import { GoalVo, GoalModelVo } from "./goal-model.vo";
 
 export type GoalListFiltersVo = Partial<
   Pick<GoalVo, "startAt" | "endAt" | "importance" | "status" | "type"> & {
@@ -19,11 +19,11 @@ export type GoalPageFiltersVo = GoalListFiltersVo & {
 };
 
 export type GoalListVo = {
-  list: GoalItemVo[];
+  list: GoalModelVo[];
 };
 
 export type GoalPageVo = {
-  list: GoalItemVo[];
+  list: GoalModelVo[];
   total: number;
   pageNum: number;
   pageSize: number;

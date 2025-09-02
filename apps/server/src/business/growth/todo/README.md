@@ -42,7 +42,7 @@ GET    /todo/detail/:id       # 获取待办事项详情
 
 ### 状态操作
 ```http
-PUT /todo/batch-done          # 批量完成待办事项
+PUT /todo/done/batch          # 批量完成待办事项
 PUT /todo/abandon/:id         # 放弃待办事项
 PUT /todo/restore/:id         # 恢复待办事项
 ```
@@ -388,7 +388,7 @@ if (todo.repeatId) {
 
 - `PUT /todo/done/:id` - 完成待办
 - `PUT /todo/abandon/:id` - 放弃待办
-- `PUT /todo/batch-done` - 批量完成待办
+- `PUT /todo/done/batch` - 批量完成待办
 
 ## 数据流程
 
