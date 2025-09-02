@@ -46,27 +46,21 @@ export class TypeScriptASTParser {
     });
   }
 
-  /**
-   * 解析TypeScript文件内容，返回AST
-   */
+  // 解析TypeScript文件内容，返回AST
   parseContent(content: string, filePath: string = "temp.ts"): SourceFile {
     return this.project.createSourceFile(filePath, content, {
       overwrite: true,
     });
   }
 
-  /**
-   * 获取类名
-   */
+  // 获取类名
   parseClassName(content: string): string | null {
     const sourceFile = this.parseContent(content);
     const classDeclaration = sourceFile.getClasses()[0];
     return classDeclaration?.getName() || null;
   }
 
-  /**
-   * 获取构造函数的服务类型
-   */
+  // 获取构造函数的服务类型
   parseConstructorServiceTypes(content: string): string[] {
     const sourceFile = this.parseContent(content);
     const classDeclaration = sourceFile.getClasses()[0];
@@ -81,9 +75,7 @@ export class TypeScriptASTParser {
     });
   }
 
-  /**
-   * 获取类的所有方法名
-   */
+  // 获取类的所有方法名
   parseMethodNames(content: string, className?: string): string[] {
     const sourceFile = this.parseContent(content);
     const classDeclaration = className
@@ -95,9 +87,7 @@ export class TypeScriptASTParser {
     return classDeclaration.getMethods().map((method) => method.getName());
   }
 
-  /**
-   * 解析控制器信息（包含类装饰器和方法装饰器）
-   */
+  // 解析控制器信息（包含类装饰器和方法装饰器）
   parseControllerInfo(
     content: string,
     className?: string
@@ -128,9 +118,7 @@ export class TypeScriptASTParser {
     };
   }
 
-  /**
-   * 解析方法装饰器信息（保持向后兼容）
-   */
+  // 解析方法装饰器信息（保持向后兼容）
   parseMethodDecorators(
     content: string,
     className?: string
@@ -139,33 +127,7 @@ export class TypeScriptASTParser {
     return controllerInfo?.methods || new Map();
   }
 
-  /**
-   * 解析Controller装饰器
-   */
-  private parseControllerDecorator(
-    classDeclaration: ClassDeclaration
-  ): string | undefined {
-    const decorators = classDeclaration.getDecorators();
-    const controllerDecorator = decorators.find(
-      (decorator) => decorator.getName() === "Controller"
-    );
-
-    if (!controllerDecorator) return undefined;
-
-    const args = controllerDecorator.getArguments();
-    if (args.length === 0) return undefined;
-
-    const firstArg = args[0];
-    if (firstArg.getKind() === SyntaxKind.StringLiteral) {
-      return (firstArg as StringLiteral).getLiteralValue();
-    }
-
-    return undefined;
-  }
-
-  /**
-   * 解析单个方法的装饰器信息
-   */
+  // 解析方法装饰器信息
   private parseMethodDecorator(
     method: MethodDeclaration
   ): ASTMethodDecoratorInfo | null {
@@ -201,9 +163,29 @@ export class TypeScriptASTParser {
     };
   }
 
-  /**
-   * 解析装饰器参数
-   */
+  // 解析Controller装饰器
+  private parseControllerDecorator(
+    classDeclaration: ClassDeclaration
+  ): string | undefined {
+    const decorators = classDeclaration.getDecorators();
+    const controllerDecorator = decorators.find(
+      (decorator) => decorator.getName() === "Controller"
+    );
+
+    if (!controllerDecorator) return undefined;
+
+    const args = controllerDecorator.getArguments();
+    if (args.length === 0) return undefined;
+
+    const firstArg = args[0];
+    if (firstArg.getKind() === SyntaxKind.StringLiteral) {
+      return (firstArg as StringLiteral).getLiteralValue();
+    }
+
+    return undefined;
+  }
+
+  // 解析装饰器参数
   private parseDecoratorArguments(decorator: Decorator): {
     path?: string;
     description?: string;
@@ -241,9 +223,7 @@ export class TypeScriptASTParser {
     return { path, description };
   }
 
-  /**
-   * 提取方法返回类型
-   */
+  // 提取方法返回类型
   private extractReturnType(method: MethodDeclaration): string | undefined {
     const returnTypeNode = method.getReturnTypeNode();
     if (!returnTypeNode) return undefined;
@@ -255,9 +235,7 @@ export class TypeScriptASTParser {
     return promiseMatch ? promiseMatch[1] : returnTypeText;
   }
 
-  /**
-   * 分析参数样式和类型
-   */
+  // 分析参数样式和类型
   private analyzeParameters(
     parameters: any[],
     path: string
@@ -270,8 +248,7 @@ export class TypeScriptASTParser {
     }
 
     const hasIdParam = path.includes("/:id");
-    const types: { idType?: string; bodyType?: string; queryType?: string } =
-      {};
+    const types: { idType?: string; bodyType?: string; queryType?: string } = {};
 
     // 分析参数类型
     parameters.forEach((param) => {
@@ -303,9 +280,7 @@ export class TypeScriptASTParser {
     }
   }
 
-  /**
-   * 获取类体范围（用于兼容现有API）
-   */
+  // 获取类体范围（用于兼容现有API）
   getClassBodyRange(
     content: string,
     className: string
@@ -328,9 +303,7 @@ export class TypeScriptASTParser {
     return { start, end };
   }
 
-  /**
-   * 清理项目缓存
-   */
+  // 清理项目缓存
   dispose() {
     // ts-morph会自动管理内存，但可以显式清理
     this.project.getSourceFiles().forEach((file) => file.delete());

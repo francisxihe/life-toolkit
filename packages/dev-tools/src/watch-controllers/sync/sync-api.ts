@@ -3,9 +3,10 @@ import {
   parseApiMethodNames,
   getApiClassBodyRange,
   getMethodOccurrences,
-  type MethodDecoratorInfo,
-} from "../parser/parser";
-import { getServerMethodDecorators, parseControllerInfo } from "../parser/parser-ast";
+  getServerMethodDecorators,
+  parseControllerInfo,
+} from "../parser";
+import { MethodDecoratorInfo } from "../types";
 
 // 生成 API 方法
 export function genApiMethodWrapper(
@@ -91,7 +92,7 @@ function getDefaultBodyType(methodName: string, entityCap: string): string {
     case "update":
       return `${entityCap}Vo.Update${entityCap}Vo`;
     case "batchDone":
-      return "{ idList?: string[] }";
+      return "{ includeIds?: string[] }";
     default:
       return "any";
   }

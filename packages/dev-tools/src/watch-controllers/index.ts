@@ -20,7 +20,7 @@ import {
   getRelServerPath,
   getDesktopControllerPathFromServer,
 } from "./utils";
-import { parseClassName, parseConstructorServiceTypes } from "./parser/parser-ast";
+import { parseClassName, parseConstructorServiceTypes } from "./parser";
 import { syncMissingMethods, ensureConstructorArgs } from "./sync/sync-database";
 import { syncApiMethods } from "./sync/sync-api";
 

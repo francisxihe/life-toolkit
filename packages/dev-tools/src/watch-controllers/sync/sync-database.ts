@@ -4,12 +4,10 @@ import {
   getMethodOccurrences,
   parseDesktopMethodNames,
   getClassBodyRange,
-  type MethodDecoratorInfo,
-} from "../parser/parser";
-import {
   getServerMethodDecorators,
   parseServerMethodNames,
-} from "../parser/parser-ast";
+} from "../parser";
+import { MethodDecoratorInfo } from "../types";
 
 export function ensureConstructorArgs(
   content: string,

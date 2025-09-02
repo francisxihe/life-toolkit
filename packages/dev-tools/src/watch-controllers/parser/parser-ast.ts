@@ -2,8 +2,8 @@ import {
   astParser,
   ASTMethodDecoratorInfo,
   ASTControllerInfo,
-} from "./ast-parser";
-import { MethodDecoratorInfo } from "./parser";
+} from "./core/ast";
+import { MethodDecoratorInfo } from "../types";
 
 /**
  * AST解析器适配层 - 提供与现有parser.ts相同的接口

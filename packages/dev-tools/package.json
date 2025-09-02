@@ -5,8 +5,8 @@
   "description": "Life Toolkit 开发辅助工具",
   "main": "src/watch-controllers.ts",
   "scripts": {
-    "watch:controllers": "tsx ./src/watch-controllers.ts",
-    "sync:controllers": "tsx ./src/watch-controllers.ts --once"
+    "watch:controllers": "tsx ./src/watch-controllers/index.ts",
+    "sync:controllers": "tsx ./src/watch-controllers/index.ts --once"
   },
   "dependencies": {
     "chokidar": "^3.6.0",
