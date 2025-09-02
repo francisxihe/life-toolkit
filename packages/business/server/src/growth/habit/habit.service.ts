@@ -17,8 +17,8 @@ export class HabitService {
 
   // ====== 基础 CRUD ======
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    const result = await this.habitRepository.create(createHabitDto);
-    return result;
+    const entity = await this.habitRepository.create(createHabitDto);
+    return HabitDto.importEntity(entity);
   }
 
   async delete(id: string): Promise<void> {
@@ -26,21 +26,23 @@ export class HabitService {
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    const result = await this.habitRepository.update(id, updateHabitDto);
-    return result;
+    const entity = await this.habitRepository.update(id, updateHabitDto);
+    return HabitDto.importEntity(entity);
   }
 
   async findById(id: string): Promise<HabitDto> {
-    return await this.habitRepository.findById(id);
+    const entity = await this.habitRepository.findById(id);
+    return HabitDto.importEntity(entity);
   }
 
   async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
-    return await this.habitRepository.findAll(filter);
+    const entities = await this.habitRepository.findAll(filter);
+    return entities.map(entity => HabitDto.importEntity(entity));
   }
 
   async list(filter: HabitListFiltersDto): Promise<HabitDto[]> {
-    const list = await this.habitRepository.findAll(filter);
-    return list;
+    const entities = await this.habitRepository.findAll(filter);
+    return entities.map(entity => HabitDto.importEntity(entity));
   }
 
   async page(
@@ -48,12 +50,18 @@ export class HabitService {
   ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
     const { list, total, pageNum, pageSize } =
       await this.habitRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+    return { 
+      list: list.map(entity => HabitDto.importEntity(entity)), 
+      total, 
+      pageNum, 
+      pageSize 
+    };
   }
 
   //  ====== 业务逻辑编排 ======
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
-    return await this.habitRepository.updateStreak(id, increment);
+    const entity = await this.habitRepository.updateStreak(id, increment);
+    return HabitDto.importEntity(entity);
   }
 
   async getHabitTodos(habitId: string): Promise<{
@@ -74,7 +82,8 @@ export class HabitService {
     longestStreak: number;
     recentTodos: any[];
   }> {
-    const habit = await this.habitRepository.findById(habitId);
+    const habitEntity = await this.habitRepository.findById(habitId);
+    const habit = HabitDto.importEntity(habitEntity);
     const { totalTodos, completedTodos, abandonedTodos, recentTodos } =
       await this.habitRepository.getHabitAnalyticsData(habitId);
 

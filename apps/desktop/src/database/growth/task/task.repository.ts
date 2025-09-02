@@ -113,23 +113,22 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     await this.repo.softDelete({ id: In(includeIds) });
   }
 
-  async findById(id: string, relations?: string[]): Promise<TaskDto> {
+  async findById(id: string, relations?: string[]): Promise<Task> {
     const entity = await this.repo.findOne({
       where: { id },
       relations: relations ?? ["parent", "children", "goal", "todoList"],
     });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    return TaskDto.importEntity(entity);
+    return entity;
   }
 
-  async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
+  async findAll(filter: TaskListFiltersDto): Promise<Task[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.getMany();
-    return list.map((e) => TaskDto.importEntity(e));
+    return await qb.getMany();
   }
 
   async page(filter: TaskPageFiltersDto): Promise<{
-    list: TaskDto[];
+    list: Task[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -143,7 +142,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
       .getManyAndCount();
 
     return {
-      list: entities.map((e) => TaskDto.importEntity(e)),
+      list: entities,
       total,
       pageNum,
       pageSize,
@@ -151,7 +150,8 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
-    const base = await this.findById(taskId);
+    const entity = await this.findById(taskId);
+    const base = TaskDto.importEntity(entity);
     const result = new TaskWithTrackTimeDto();
     Object.assign(result, base);
     result.trackTimeList = [];

@@ -1,5 +1,6 @@
 import { UpdateResult } from "typeorm";
 import { HabitStatus } from "@life-toolkit/enum";
+import { Habit } from "./habit.entity";
 import {
   CreateHabitDto,
   UpdateHabitDto,
@@ -10,16 +11,16 @@ import {
 
 export interface HabitRepository {
   // 基础 CRUD
-  create(createHabitDto: CreateHabitDto): Promise<HabitDto>;
-  findById(id: string, relations?: string[]): Promise<HabitDto>;
-  findAll(filter: HabitListFiltersDto): Promise<HabitDto[]>;
+  create(createHabitDto: CreateHabitDto): Promise<Habit>;
+  findById(id: string, relations?: string[]): Promise<Habit>;
+  findAll(filter: HabitListFiltersDto): Promise<Habit[]>;
   page(filter: HabitPageFiltersDto): Promise<{
-    list: HabitDto[];
+    list: Habit[];
     total: number;
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto>;
+  update(id: string, updateHabitDto: UpdateHabitDto): Promise<Habit>;
   delete(id: string): Promise<void>;
   softDelete(id: string): Promise<void>;
   batchUpdate(
@@ -33,7 +34,7 @@ export interface HabitRepository {
     status: HabitStatus,
     additionalData?: Record<string, any>
   ): Promise<void>;
-  updateStreak(id: string, increment: boolean): Promise<HabitDto>;
+  updateStreak(id: string, increment: boolean): Promise<Habit>;
 
   // 聚合查询
   getHabitTodos(habitId: string): Promise<{

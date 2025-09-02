@@ -1,5 +1,5 @@
-import { In, Repository, UpdateResult } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { In, Repository, UpdateResult } from 'typeorm';
+import { AppDataSource } from '../../database.config';
 import {
   HabitRepository as _HabitRepository,
   CreateHabitDto,
@@ -10,53 +10,47 @@ import {
   Goal,
   Todo,
   Habit,
-} from "@life-toolkit/business-server";
-import { HabitStatus, Difficulty, TodoStatus } from "@life-toolkit/enum";
+} from '@life-toolkit/business-server';
+import { HabitStatus, Difficulty, TodoStatus } from '@life-toolkit/enum';
 
 export class HabitRepository implements _HabitRepository {
-  private repo: Repository<Habit>;
-  private goalRepo: Repository<Goal>;
-  private todoRepo: Repository<Todo>;
-
-  constructor() {
-    this.repo = AppDataSource.getRepository(Habit);
-    this.goalRepo = AppDataSource.getRepository(Goal);
-    this.todoRepo = AppDataSource.getRepository(Todo);
-  }
+  repo: Repository<Habit> = AppDataSource.getRepository(Habit);
+  goalRepo: Repository<Goal> = AppDataSource.getRepository(Goal);
+  todoRepo: Repository<Todo> = AppDataSource.getRepository(Todo);
 
   private buildQuery(filter: HabitListFiltersDto) {
     let qb = this.repo
-      .createQueryBuilder("habit")
-      .leftJoinAndSelect("habit.goals", "goal")
-      .andWhere("habit.deletedAt IS NULL");
+      .createQueryBuilder('habit')
+      .leftJoinAndSelect('habit.goals', 'goal')
+      .andWhere('habit.deletedAt IS NULL');
 
     // 过滤条件
     if (filter.id) {
-      qb = qb.andWhere("habit.id = :id", { id: filter.id });
+      qb = qb.andWhere('habit.id = :id', { id: filter.id });
     }
 
     if (filter.status) {
-      qb = qb.andWhere("habit.status = :status", {
+      qb = qb.andWhere('habit.status = :status', {
         status: filter.status as HabitStatus,
       });
     }
 
     if (filter.difficulty) {
-      qb = qb.andWhere("habit.difficulty = :difficulty", {
+      qb = qb.andWhere('habit.difficulty = :difficulty', {
         difficulty: filter.difficulty as Difficulty,
       });
     }
 
     // 重要程度（单值）
     if (filter.importance !== undefined) {
-      qb = qb.andWhere("habit.importance = :importance", {
+      qb = qb.andWhere('habit.importance = :importance', {
         importance: filter.importance,
       });
     }
 
     const keyword = filter.keyword;
     if (keyword) {
-      qb = qb.andWhere("(habit.name LIKE :kw OR habit.description LIKE :kw)", {
+      qb = qb.andWhere('(habit.name LIKE :kw OR habit.description LIKE :kw)', {
         kw: `%${keyword}%`,
       });
     }
@@ -64,12 +58,12 @@ export class HabitRepository implements _HabitRepository {
     const startDateStart = filter.startDateStart;
     const startDateEnd = filter.startDateEnd;
     if (startDateStart) {
-      qb = qb.andWhere("habit.startDate >= :sds", {
+      qb = qb.andWhere('habit.startDate >= :sds', {
         sds: new Date(`${startDateStart}T00:00:00`),
       });
     }
     if (startDateEnd) {
-      qb = qb.andWhere("habit.startDate <= :sde", {
+      qb = qb.andWhere('habit.startDate <= :sde', {
         sde: new Date(`${startDateEnd}T23:59:59`),
       });
     }
@@ -77,25 +71,25 @@ export class HabitRepository implements _HabitRepository {
     const endDateStart = filter.endDateStart;
     const endDateEnd = filter.endDateEnd;
     if (endDateStart) {
-      qb = qb.andWhere("habit.targetDate >= :tds", {
+      qb = qb.andWhere('habit.targetDate >= :tds', {
         tds: new Date(`${endDateStart}T00:00:00`),
       });
     }
     if (endDateEnd) {
-      qb = qb.andWhere("habit.targetDate <= :tde", {
+      qb = qb.andWhere('habit.targetDate <= :tde', {
         tde: new Date(`${endDateEnd}T23:59:59`),
       });
     }
 
     const goalId = filter.goalId;
     if (goalId) {
-      qb = qb.andWhere("goal.id = :goalId", { goalId });
+      qb = qb.andWhere('goal.id = :goalId', { goalId });
     }
 
-    return qb.orderBy("habit.updatedAt", "DESC");
+    return qb.orderBy('habit.updatedAt', 'DESC');
   }
 
-  async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
+  async create(createHabitDto: CreateHabitDto): Promise<Habit> {
     const entity = this.repo.create({
       name: createHabitDto.name,
       description: createHabitDto.description,
@@ -113,26 +107,22 @@ export class HabitRepository implements _HabitRepository {
       entity.goals = goals;
     }
 
-    const saved = await this.repo.save(entity);
-    return HabitDto.importEntity(saved);
+    return await this.repo.save(entity);
   }
 
-  async findById(id: string, relations?: string[]): Promise<HabitDto> {
+  async findById(id: string, relations?: string[]): Promise<Habit> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    return HabitDto.importEntity(entity);
+    return entity;
   }
 
-  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitListFiltersDto): Promise<Habit[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.getMany();
-    return list.map((e) => HabitDto.importEntity(e));
+    return await qb.getMany();
   }
 
-  async page(
-    habitPageFiltersDto: HabitPageFiltersDto
-  ): Promise<{
-    list: HabitDto[];
+  async page(habitPageFiltersDto: HabitPageFiltersDto): Promise<{
+    list: Habit[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -144,17 +134,17 @@ export class HabitRepository implements _HabitRepository {
       .take(pageSize)
       .getManyAndCount();
     return {
-      list: entities.map((e) => HabitDto.importEntity(e)),
+      list: entities,
       total,
       pageNum,
       pageSize,
     };
   }
 
-  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
+  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<Habit> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ["goals"],
+      relations: ['goals'],
     });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
 
@@ -162,16 +152,11 @@ export class HabitRepository implements _HabitRepository {
 
     const goalIds = updateHabitDto.goalIds as string[] | undefined;
     if (goalIds) {
-      const goals =
-        goalIds.length > 0
-          ? await this.goalRepo.findBy({ id: In(goalIds) })
-          : [];
+      const goals = goalIds.length > 0 ? await this.goalRepo.findBy({ id: In(goalIds) }) : [];
       entity.goals = goals;
     }
 
-    const saved = await this.repo.save(entity);
-
-    return HabitDto.importEntity(saved);
+    return await this.repo.save(entity);
   }
 
   async delete(id: string): Promise<void> {
@@ -184,18 +169,11 @@ export class HabitRepository implements _HabitRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateHabitDto: UpdateHabitDto
-  ): Promise<UpdateResult> {
+  async batchUpdate(includeIds: string[], updateHabitDto: UpdateHabitDto): Promise<UpdateResult> {
     return this.repo.update({ id: In(includeIds) }, updateHabitDto);
   }
 
-  async updateStatus(
-    id: string,
-    status: HabitStatus,
-    additionalData: Record<string, any> = {}
-  ): Promise<void> {
+  async updateStatus(id: string, status: HabitStatus, additionalData: Record<string, any> = {}): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
     Object.assign(entity, {
@@ -205,7 +183,7 @@ export class HabitRepository implements _HabitRepository {
     await this.repo.save(entity);
   }
 
-  async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
+  async updateStreak(id: string, increment: boolean): Promise<Habit> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
     if (increment) {
@@ -217,8 +195,7 @@ export class HabitRepository implements _HabitRepository {
     } else {
       entity.currentStreak = 0;
     }
-    const saved = await this.repo.save(entity);
-    return HabitDto.importEntity(saved);
+    return await this.repo.save(entity);
   }
 
   async getHabitTodos(habitId: string): Promise<{
@@ -239,8 +216,7 @@ export class HabitRepository implements _HabitRepository {
       habitId,
       status: TodoStatus.ABANDONED,
     });
-    const totalCount =
-      activeTodos.length + completedTodos.length + abandonedTodos.length;
+    const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
     return { activeTodos, completedTodos, abandonedTodos, totalCount };
   }
 
@@ -259,7 +235,7 @@ export class HabitRepository implements _HabitRepository {
       }),
       this.todoRepo.find({
         where: { habitId },
-        order: { updatedAt: "DESC" },
+        order: { updatedAt: 'DESC' },
         take: 10,
       }),
     ]);

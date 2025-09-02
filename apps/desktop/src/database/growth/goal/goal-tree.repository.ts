@@ -1,70 +1,51 @@
-import { In, TreeRepository, FindOptionsWhere } from "typeorm";
-import { AppDataSource } from "../../database.config";
-import {
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalDto,
-  Goal,
-} from "@life-toolkit/business-server";
+import { In, TreeRepository, FindOptionsWhere } from 'typeorm';
+import { AppDataSource } from '../../database.config';
+import { CreateGoalDto, UpdateGoalDto, GoalDto, Goal } from '@life-toolkit/business-server';
 
 export class GoalTreeRepository {
-  getTreeRepository(): TreeRepository<Goal> {
-    return AppDataSource.getTreeRepository(Goal);
-  }
+  repo: TreeRepository<Goal> = AppDataSource.getTreeRepository(Goal);
 
-  async findOne(
-    where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]
-  ): Promise<Goal | null> {
-    const repo = AppDataSource.getTreeRepository(Goal);
-    return await repo.findOne({
+  async findOne(where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]): Promise<Goal | null> {
+    return await this.repo.findOne({
       where,
-      relations: ["children"],
+      relations: ['children'],
     });
   }
 
   async remove(entity: Goal): Promise<void> {
-    await AppDataSource.getTreeRepository(Goal).remove(entity);
+    await this.repo.remove(entity);
   }
 
   async save(entity: Goal): Promise<Goal> {
-    return await AppDataSource.getTreeRepository(Goal).save(entity);
+    return await this.repo.save(entity);
   }
 
   async findRoots(): Promise<Goal[]> {
-    return await AppDataSource.getTreeRepository(Goal).findRoots();
+    return await this.repo.findRoots();
   }
 
   async findDescendants(entity: Goal): Promise<Goal[]> {
-    return await AppDataSource.getTreeRepository(Goal).findDescendants(entity);
+    return await this.repo.findDescendants(entity);
   }
 
   async findAncestors(entity: Goal): Promise<Goal[]> {
-    return await AppDataSource.getTreeRepository(Goal).findAncestors(entity);
+    return await this.repo.findAncestors(entity);
   }
 
   async findDescendantsTree(entity: Goal): Promise<Goal> {
-    return await AppDataSource.getTreeRepository(Goal).findDescendantsTree(
-      entity
-    );
+    return await this.repo.findDescendantsTree(entity);
   }
 
-  async updateParent(
-    currentGoal: Goal,
-    parentId: string,
-    treeRepo?: TreeRepository<Goal>
-  ): Promise<void> {
-    const repo = treeRepo ?? AppDataSource.getTreeRepository(Goal);
+  async updateParent(currentGoal: Goal, parentId: string, treeRepo?: TreeRepository<Goal>): Promise<void> {
+    const repo = treeRepo ?? this.repo;
     const parent = await repo.findOne({ where: { id: parentId } });
     if (!parent) throw new Error(`父目标不存在，ID: ${parentId}`);
     currentGoal.parent = parent;
     await repo.save(currentGoal);
   }
 
-  async deleteDescendants(
-    target: Goal | Goal[],
-    treeRepo?: TreeRepository<Goal>
-  ): Promise<void> {
-    const repo = treeRepo ?? AppDataSource.getTreeRepository(Goal);
+  async deleteDescendants(target: Goal | Goal[], treeRepo?: TreeRepository<Goal>): Promise<void> {
+    const repo = treeRepo ?? this.repo;
     const allIds: string[] = [];
 
     if (Array.isArray(target)) {
@@ -81,7 +62,7 @@ export class GoalTreeRepository {
   }
 
   async buildTree(node: Goal): Promise<Goal> {
-    const repo = AppDataSource.getTreeRepository(Goal);
+    const repo = this.repo;
     const tree = await repo.findDescendantsTree(node);
     // 过滤软删除
     const filterDeleted = (n: Goal): Goal | null => {
@@ -109,11 +90,11 @@ export class GoalTreeRepository {
   }
 
   async collectIdsByFilter(filter: {
-    status?: Goal["status"];
+    status?: Goal['status'];
     keyword?: string;
     importance?: number;
   }): Promise<Set<string>> {
-    const treeRepo = AppDataSource.getTreeRepository(Goal);
+    const treeRepo = this.repo;
     const roots = await treeRepo.findRoots();
     const res = new Set<string>();
     for (const r of roots) {
@@ -121,9 +102,7 @@ export class GoalTreeRepository {
       const traverse = (n: Goal) => {
         if (
           (!filter.status || n.status === filter.status) &&
-          (!filter.keyword ||
-            n.name.includes(filter.keyword) ||
-            (n.description || "").includes(filter.keyword)) &&
+          (!filter.keyword || n.name.includes(filter.keyword) || (n.description || '').includes(filter.keyword)) &&
           (!filter.importance || n.importance === filter.importance)
         ) {
           res.add(n.id);
@@ -174,9 +153,9 @@ export class GoalTreeRepository {
       if (dto.startAt !== undefined) current.startAt = dto.startAt;
       if (dto.endAt !== undefined) current.endAt = dto.endAt;
 
-      if ("parentId" in dto && dto.parentId) {
+      if ('parentId' in dto && dto.parentId) {
         await this.updateParent(current, dto.parentId, treeRepository);
-      } else if ("parentId" in dto && dto.parentId === null) {
+      } else if ('parentId' in dto && dto.parentId === null) {
         current.parent = undefined;
         await treeRepository.save(current);
       }
@@ -191,12 +170,8 @@ export class GoalTreeRepository {
     await this.remove(goal);
   }
 
-  async getFilteredTree(filter: {
-    status?: Goal["status"];
-    keyword?: string;
-    importance?: number;
-  }): Promise<Goal[]> {
-    const treeRepo = AppDataSource.getTreeRepository(Goal);
+  async getFilteredTree(filter: { status?: Goal['status']; keyword?: string; importance?: number }): Promise<Goal[]> {
+    const treeRepo = this.repo;
     if (!filter.status && !filter.keyword && !filter.importance) {
       const roots = await treeRepo.findRoots();
       const trees: Goal[] = [];
@@ -226,7 +201,7 @@ export class GoalTreeRepository {
     excludeIds?: string[];
     parentId?: string;
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }> {
-    const treeRepo = AppDataSource.getTreeRepository(Goal);
+    const treeRepo = this.repo;
     let includeIds: string[] = [];
     let excludeIds: string[] = [];
 
@@ -252,14 +227,14 @@ export class GoalTreeRepository {
   }
 
   async findDetail(id: string): Promise<Goal> {
-    const treeRepo = AppDataSource.getTreeRepository(Goal);
+    const treeRepo = this.repo;
     const entity = await treeRepo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 
     const withChildren = await treeRepo.findDescendantsTree(entity);
     const withRelations = await treeRepo.findOne({
       where: { id },
-      relations: ["parent", "taskList"],
+      relations: ['parent', 'taskList'],
     });
     if (withRelations) {
       withChildren.parent = withRelations.parent;

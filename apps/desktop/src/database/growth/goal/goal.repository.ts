@@ -12,11 +12,7 @@ import { AppDataSource } from '../../database.config';
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
-  private repo: Repository<Goal>;
-
-  constructor() {
-    this.repo = AppDataSource.getRepository(Goal);
-  }
+  repo: Repository<Goal> = AppDataSource.getRepository(Goal);
 
   private buildQuery(filter: GoalListFiltersDto) {
     let qb = this.repo

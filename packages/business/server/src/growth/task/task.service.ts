@@ -37,7 +37,8 @@ export class TaskService {
         parentId: createTaskDto.parentId,
       });
     }
-    return await this.taskRepository.findById(entity.id);
+    const resultEntity = await this.taskRepository.findById(entity.id);
+    return TaskDto.importEntity(resultEntity);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -55,9 +56,9 @@ export class TaskService {
   }
 
   async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
-    const taskList = await this.findAll(filter);
-    if (!taskList.length) return;
-    const toDeleteIds = taskList.map((t) => t.id);
+    const entities = await this.taskRepository.findAll(filter);
+    if (!entities.length) return;
+    const toDeleteIds = entities.map((t) => t.id);
 
     const treeTargets: Task[] = [] as Task[];
     for (const id of toDeleteIds) {
@@ -77,21 +78,21 @@ export class TaskService {
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
     // 处理父子关系及基本字段更新（委托给树仓储）
-    const dto = await this.taskTreeRepository.updateWithParent(
+    const entity = await this.taskTreeRepository.updateWithParent(
       id,
       updateTaskDto
     );
-    return dto;
+    return TaskDto.importEntity(entity);
   }
 
   async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
-    const taskList = await this.taskRepository.findAll(filter);
-    return taskList;
+    const entities = await this.taskRepository.findAll(filter);
+    return entities.map(entity => TaskDto.importEntity(entity));
   }
 
   async list(filter: TaskListFiltersDto): Promise<TaskDto[]> {
-    const list = await this.findAll(filter);
-    return list;
+    const entities = await this.taskRepository.findAll(filter);
+    return entities.map(entity => TaskDto.importEntity(entity));
   }
 
   async page(filter: TaskPageFiltersDto): Promise<{
@@ -102,11 +103,17 @@ export class TaskService {
   }> {
     const { list, total, pageNum, pageSize } =
       await this.taskRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+    return { 
+      list: list.map(entity => TaskDto.importEntity(entity)), 
+      total, 
+      pageNum, 
+      pageSize 
+    };
   }
 
   async findById(id: string): Promise<TaskDto> {
-    return await this.taskRepository.findById(id);
+    const entity = await this.taskRepository.findById(id);
+    return TaskDto.importEntity(entity);
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {

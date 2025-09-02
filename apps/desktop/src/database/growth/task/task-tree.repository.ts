@@ -19,7 +19,7 @@ export class TaskTreeRepository {
     return await repo.findOne({ where });
   }
 
-  async createWithParent(dto: CreateTaskDto): Promise<TaskDto> {
+  async createWithParent(dto: CreateTaskDto): Promise<Task> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Task);
       const current = treeRepository.create({
@@ -38,12 +38,11 @@ export class TaskTreeRepository {
         current.parent = parent;
       }
 
-      const saved = await treeRepository.save(current);
-      return TaskDto.importEntity(saved);
+      return await treeRepository.save(current);
     });
   }
 
-  async updateWithParent(id: string, dto: UpdateTaskDto): Promise<TaskDto> {
+  async updateWithParent(id: string, dto: UpdateTaskDto): Promise<Task> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Task);
       const current = await treeRepository.findOne({ where: { id } });
@@ -67,8 +66,7 @@ export class TaskTreeRepository {
         await treeRepository.save(current);
       }
 
-      const saved = await treeRepository.save(current);
-      return TaskDto.importEntity(saved);
+      return await treeRepository.save(current);
     });
   }
 
