@@ -91,7 +91,7 @@ export function removeExtraGeneratedMethods(
   if (!range) return desktopContent;
   let body = desktopContent.slice(range.start, range.end);
   const head = desktopContent.slice(0, range.start);
-  const tail = desktopContent.slice(range.end);
+  const tail = desktopContent.slice(range.end + 1);
 
   const nameSet = collectAllMethodNames(body);
   try {
@@ -170,7 +170,7 @@ export function syncMissingMethods(
   const range = getClassBodyRange(next, className);
   if (!range) return next;
   const before = next.slice(0, range.end);
-  const after = next.slice(range.end);
+  const after = next.slice(range.end + 1);
 
   const newMethods = missing
     .map((name) => {
@@ -183,7 +183,7 @@ export function syncMissingMethods(
   if (newMethods.length === 0) return next;
 
   const insertion = "\n" + newMethods.join("\n\n") + "\n";
-  return before + insertion + after;
+  return before + insertion + "}" + after;
 }
 
 // 使用AST解析器的方法清理函数
@@ -196,7 +196,7 @@ function removeExtraGeneratedMethodsAST(
   if (!range) return desktopContent;
   let body = desktopContent.slice(range.start, range.end);
   const head = desktopContent.slice(0, range.start);
-  const tail = desktopContent.slice(range.end);
+  const tail = desktopContent.slice(range.end + 1);
 
   // 使用传统方法获取desktop文件中的所有方法名（因为AST解析器主要针对server文件）
   const nameSet = collectAllMethodNames(body);
