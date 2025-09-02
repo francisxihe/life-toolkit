@@ -88,10 +88,12 @@ export function genApiMethodWrapper(
 function getDefaultBodyType(methodName: string, entityCap: string): string {
   switch (methodName) {
     case "create":
-      return `${entityCap}Vo.Create${entityCap}Vo`;
+      return `${entityCap}VO.Create${entityCap}Vo`;
     case "update":
-      return `${entityCap}Vo.Update${entityCap}Vo`;
-    case "batchDone":
+      return `${entityCap}VO.Update${entityCap}Vo`;
+    case "doneBatch":
+      return `${entityCap}VO.${entityCap}ListFiltersVo`;
+    case "doneBatch":
       return "{ includeIds?: string[] }";
     default:
       return "any";
@@ -102,9 +104,9 @@ function getDefaultBodyType(methodName: string, entityCap: string): string {
 function getDefaultQueryType(methodName: string, entityCap: string): string {
   switch (methodName) {
     case "page":
-      return `${entityCap}PageFiltersVo`;
+      return `${entityCap}VO.${entityCap}PageFiltersVo`;
     case "list":
-      return `${entityCap}ListFiltersVo`;
+      return `${entityCap}VO.${entityCap}ListFiltersVo`;
     default:
       return "any";
   }
@@ -117,63 +119,8 @@ function generateApiMethodName(
   verb: string,
   path: string
 ): string {
-  const entityCap = entityName.charAt(0).toUpperCase() + entityName.slice(1);
-  const verbLower = verb.toLowerCase();
-
-  // 从路径中提取操作类型，处理带连字符的路径
-  const pathParts = path
-    .split("/")
-    .filter((part) => part && !part.startsWith(":"));
-  const operation = pathParts[pathParts.length - 1] || "";
-
-  // 将连字符转换为驼峰命名
-  const toCamelCase = (str: string) => {
-    return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-  };
-
-  switch (verbLower) {
-    case "post":
-      if (operation === "create" || path.endsWith("/create")) {
-        return `create${entityCap}`;
-      }
-      if (operation) {
-        const camelOperation = toCamelCase(operation);
-        return `${camelOperation}${entityCap}`;
-      }
-      return `${serverMethodName}${entityCap}`;
-
-    case "get":
-      if (path.includes("/:id") && !operation) {
-        return `get${entityCap}Detail`;
-      }
-      if (operation === "page") {
-        return `get${entityCap}Page`;
-      }
-      if (operation === "list") {
-        return `get${entityCap}List`;
-      }
-      if (operation) {
-        const camelOperation = toCamelCase(operation);
-        return `get${entityCap}${camelOperation.charAt(0).toUpperCase() + camelOperation.slice(1)}`;
-      }
-      return `get${entityCap}${serverMethodName.charAt(0).toUpperCase() + serverMethodName.slice(1)}`;
-
-    case "put":
-      if (path.includes("/:id") && !operation) {
-        return `update${entityCap}`;
-      }
-      if (operation) {
-        const camelOperation = toCamelCase(operation);
-        return `${camelOperation}${entityCap}`;
-      }
-      return `${serverMethodName}${entityCap}`;
-
-    case "delete":
-      return `delete${entityCap}`;
-
-    default:
-      return `${serverMethodName}${entityCap}`;
-  }
+  // 直接沿用服务端 Controller 的方法名
+  return serverMethodName;
 }
 
 // 删除过时的API方法

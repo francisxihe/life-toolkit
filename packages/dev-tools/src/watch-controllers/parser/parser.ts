@@ -141,8 +141,10 @@ export function getMethodOccurrences(
 ): Array<{ start: number; end: number }> {
   const occurrences: Array<{ start: number; end: number }> = [];
   // 更新正则表达式以支持复杂的装饰器参数，包括对象字面量
+  // 同时支持可选的访问修饰符、static、async 关键字
   const nameRe = new RegExp(
-    `(^|\\n)\\s*(?:@[A-Za-z_][A-Za-z0-9_]*\\([^)]*(?:\\{[^}]*\\}[^)]*)?\\)\\s*[\\r\\n\\s]*)*(?:public|private|protected)?\\s*(?:async\\s+)?${name}\\s*\\(`,
+    `(^|\\n)\\s*(?:@[A-Za-z_][A-Za-z0-9_]*\\([^)]*(?:\\{[^}]*\\}[^)]*)?\\)\\s*[\\r\\n\\s]*)*` +
+      `(?:public|private|protected)?\\s*(?:static\\s+)?(?:async\\s+)?${name}\\s*\\(`,
     "g"
   );
   let m: RegExpExecArray | null;
