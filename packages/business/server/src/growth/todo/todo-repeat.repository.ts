@@ -1,4 +1,5 @@
 import { FindOptionsWhere, UpdateResult } from "typeorm";
+import { TodoRepeat } from "./todo-repeat.entity";
 import {
   CreateTodoRepeatDto,
   UpdateTodoRepeatDto,
@@ -8,10 +9,10 @@ import {
 } from "./dto";
 
 export interface TodoRepeatRepository {
-  create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto>;
-  findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]>;
+  create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeat>;
+  findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeat[]>;
   page(filter: TodoRepeatPageFiltersDto): Promise<{
-    list: TodoRepeatDto[];
+    list: TodoRepeat[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -19,7 +20,7 @@ export interface TodoRepeatRepository {
   update(
     id: string,
     updateTodoRepeatDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto>;
+  ): Promise<TodoRepeat>;
   batchUpdate(
     includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
@@ -28,6 +29,8 @@ export interface TodoRepeatRepository {
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;
   softDelete(id: string): Promise<void>;
   batchSoftDelete(includeIds: string[]): Promise<void>;
-  findById(id: string, relations?: string[]): Promise<TodoRepeatDto>;
-  findOneBy(condition: any): Promise<TodoRepeatDto | null>;
+  findById(id: string, relations?: string[]): Promise<TodoRepeat>;
+  findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]>;
+  softDeleteByTaskIds(taskIds: string[]): Promise<void>;
+  findOneBy(condition: any): Promise<TodoRepeat | null>;
 }

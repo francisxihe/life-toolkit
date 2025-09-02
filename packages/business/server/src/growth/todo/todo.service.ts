@@ -28,8 +28,10 @@ export class TodoService {
   // ====== 基础 CRUD ======
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
-    const todo = await this.todoRepository.create(createTodoDto);
-    return await this.todoRepository.findById(todo.id);
+    const entity = await this.todoRepository.create(createTodoDto);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(entity);
+    return todoDto;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -37,21 +39,35 @@ export class TodoService {
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    await this.todoRepository.update(id, updateTodoDto);
-    return await this.todoRepository.findById(id);
+    const entity = await this.todoRepository.update(id, updateTodoDto);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(entity);
+    return todoDto;
   }
 
-  async findById(id: string): Promise<TodoDto> {
-    return await this.todoRepository.findById(id);
+  async findById(id: string, relations?: string[]): Promise<TodoDto> {
+    const entity = await this.todoRepository.findById(id, relations);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(entity);
+    return todoDto;
   }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    return await this.todoRepository.findAll(filter);
+    const entities = await this.todoRepository.findAll(filter);
+    return entities.map((entity) => {
+      const todoDto = new TodoDto();
+      todoDto.importEntity(entity);
+      return todoDto;
+    });
   }
 
   async list(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const list = await this.todoRepository.findAll(filter);
-    return list;
+    const entities = await this.todoRepository.findAll(filter);
+    return entities.map((entity) => {
+      const todoDto = new TodoDto();
+      todoDto.importEntity(entity);
+      return todoDto;
+    });
   }
 
   async page(filter: TodoPageFiltersDto): Promise<{
@@ -60,15 +76,26 @@ export class TodoService {
     pageNum: number;
     pageSize: number;
   }> {
-    const { list, total, pageNum, pageSize } =
-      await this.todoRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+    const result = await this.todoRepository.page(filter);
+    return {
+      ...result,
+      list: result.list.map((entity) => {
+        const todoDto = new TodoDto();
+        todoDto.importEntity(entity);
+        return todoDto;
+      }),
+    };
   }
 
   // ====== 业务逻辑编排 ======
 
   async listWithRepeat(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const todoDtoList = await this.todoRepository.findAll(filter);
+    const todoEntities = await this.todoRepository.findAll(filter);
+    const todoDtoList = todoEntities.map((entity) => {
+      const todoDto = new TodoDto();
+      todoDto.importEntity(entity);
+      return todoDto;
+    });
     const todoRepeatDtoList =
       await this.todoRepeatService.generateTodosInRange(filter);
 
@@ -86,8 +113,12 @@ export class TodoService {
 
   async detailWithRepeat(id: string): Promise<TodoDto> {
     try {
-      const todo = await this.todoRepository.findById(id);
-      if (todo) return todo;
+      const entity = await this.todoRepository.findById(id);
+      if (entity) {
+        const todoDto = new TodoDto();
+        todoDto.importEntity(entity);
+        return todoDto;
+      }
     } catch (error) {
       console.error(error);
     }

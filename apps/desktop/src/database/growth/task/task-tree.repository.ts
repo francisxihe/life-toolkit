@@ -1,21 +1,12 @@
-import { In, TreeRepository, FindOptionsWhere } from "typeorm";
-import { AppDataSource } from "../../database.config";
-import {
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskDto,
-  Task,
-} from "@life-toolkit/business-server";
+import { In, TreeRepository, FindOptionsWhere } from 'typeorm';
+import { AppDataSource } from '../../database.config';
+import { CreateTaskDto, UpdateTaskDto, TaskDto, Task } from '@life-toolkit/business-server';
 
 export class TaskTreeRepository {
-  getTreeRepository(): TreeRepository<Task> {
-    return AppDataSource.getTreeRepository(Task);
-  }
+  repo: TreeRepository<Task> = AppDataSource.getTreeRepository(Task);
 
-  async findOne(
-    where: FindOptionsWhere<Task> | FindOptionsWhere<Task>[]
-  ): Promise<Task | null> {
-    const repo = AppDataSource.getTreeRepository(Task);
+  async findOne(where: FindOptionsWhere<Task> | FindOptionsWhere<Task>[]): Promise<Task | null> {
+    const repo = this.repo;
     return await repo.findOne({ where });
   }
 
@@ -55,13 +46,13 @@ export class TaskTreeRepository {
       if (dto.goalId !== undefined) current.goalId = dto.goalId;
       // status 不在 UpdateTaskDto 范畴，由业务服务单独处理
 
-      if ("parentId" in dto && dto.parentId) {
+      if ('parentId' in dto && dto.parentId) {
         const parent = await treeRepository.findOne({
           where: { id: dto.parentId },
         });
         if (!parent) throw new Error(`父任务不存在，ID: ${dto.parentId}`);
         current.parent = parent;
-      } else if ("parentId" in dto && dto.parentId === null) {
+      } else if ('parentId' in dto && dto.parentId === null) {
         current.parent = undefined;
         await treeRepository.save(current);
       }
@@ -70,13 +61,8 @@ export class TaskTreeRepository {
     });
   }
 
-  async updateParent(
-    params: { task: Task; parentId: string },
-    treeRepo?: unknown
-  ): Promise<void> {
-    const repo =
-      (treeRepo as TreeRepository<Task>) ??
-      AppDataSource.getTreeRepository(Task);
+  async updateParent(params: { task: Task; parentId: string }, treeRepo?: unknown): Promise<void> {
+    const repo = (treeRepo as TreeRepository<Task>) ?? this.repo;
     const parent = await repo.findOne({ where: { id: params.parentId } });
     if (!parent) throw new Error(`父任务不存在，ID: ${params.parentId}`);
     params.task.parent = parent;
@@ -84,7 +70,7 @@ export class TaskTreeRepository {
   }
 
   async computeDescendantIds(target: Task | Task[]): Promise<string[]> {
-    const repo = AppDataSource.getTreeRepository(Task);
+    const repo = this.repo;
     const collect = async (t: Task): Promise<string[]> => {
       const descendants = await repo.findDescendants(t);
       return descendants.map((n) => n.id);
@@ -103,7 +89,7 @@ export class TaskTreeRepository {
 
   async deleteByIds(includeIds: string[]): Promise<void> {
     if (!includeIds || includeIds.length === 0) return;
-    const repo = AppDataSource.getTreeRepository(Task);
+    const repo = this.repo;
     await repo.softDelete({ id: In(includeIds) });
   }
 }

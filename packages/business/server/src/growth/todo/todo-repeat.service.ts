@@ -32,9 +32,11 @@ export class TodoRepeatService {
   async create(
     createTodoRepeatDto: CreateTodoRepeatDto
   ): Promise<TodoRepeatDto> {
-    const todoRepeat =
-      await this.todoRepeatRepository.create(createTodoRepeatDto);
-    return await this.todoRepeatRepository.findById(todoRepeat.id);
+    const entity = await this.todoRepeatRepository.create(createTodoRepeatDto);
+    const foundEntity = await this.todoRepeatRepository.findById(entity.id);
+    const todoRepeatDto = new TodoRepeatDto();
+    todoRepeatDto.importEntity(foundEntity);
+    return todoRepeatDto;
   }
 
   async delete(id: string): Promise<boolean> {
@@ -44,24 +46,36 @@ export class TodoRepeatService {
     id: string,
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto> {
-    const todoRepeat = await this.todoRepeatRepository.update(
-      id,
-      updateTodoRepeatDto
-    );
-    return await this.todoRepeatRepository.findById(id);
+    await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
+    const entity = await this.todoRepeatRepository.findById(id);
+    const todoRepeatDto = new TodoRepeatDto();
+    todoRepeatDto.importEntity(entity);
+    return todoRepeatDto;
   }
 
   async findById(id: string): Promise<TodoRepeatDto> {
-    return await this.todoRepeatRepository.findById(id);
+    const entity = await this.todoRepeatRepository.findById(id);
+    const todoRepeatDto = new TodoRepeatDto();
+    todoRepeatDto.importEntity(entity);
+    return todoRepeatDto;
   }
 
   async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
-    return await this.todoRepeatRepository.findAll(filter);
+    const entities = await this.todoRepeatRepository.findAll(filter);
+    return entities.map((entity) => {
+      const todoRepeatDto = new TodoRepeatDto();
+      todoRepeatDto.importEntity(entity);
+      return todoRepeatDto;
+    });
   }
 
   async list(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
-    const list = await this.todoRepeatRepository.findAll(filter);
-    return list;
+    const entities = await this.todoRepeatRepository.findAll(filter);
+    return entities.map((entity) => {
+      const todoRepeatDto = new TodoRepeatDto();
+      todoRepeatDto.importEntity(entity);
+      return todoRepeatDto;
+    });
   }
 
   async page(filter: TodoRepeatPageFiltersDto): Promise<{
@@ -70,9 +84,15 @@ export class TodoRepeatService {
     pageNum: number;
     pageSize: number;
   }> {
-    const { list, total, pageNum, pageSize } =
-      await this.todoRepeatRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+    const result = await this.todoRepeatRepository.page(filter);
+    return {
+      ...result,
+      list: result.list.map((entity) => {
+        const todoRepeatDto = new TodoRepeatDto();
+        todoRepeatDto.importEntity(entity);
+        return todoRepeatDto;
+      }),
+    };
   }
 
   // ====== 业务逻辑编排 ======
@@ -139,10 +159,12 @@ export class TodoRepeatService {
     repeatFilter.currentDateStart = filter.planDateStart as any;
     repeatFilter.currentDateEnd = filter.planDateEnd as any;
 
-    const repeatList = await this.todoRepeatRepository.findAll(repeatFilter);
+    const repeatEntities = await this.todoRepeatRepository.findAll(repeatFilter);
     const results: TodoDto[] = [];
 
-    for (const repeat of repeatList) {
+    for (const repeatEntity of repeatEntities) {
+      const repeat = new TodoRepeatDto();
+      repeat.importEntity(repeatEntity);
       // 结束条件预处理
       const endMode = repeat.repeatEndMode as RepeatEndMode | undefined;
       const endDate = repeat.repeatEndDate

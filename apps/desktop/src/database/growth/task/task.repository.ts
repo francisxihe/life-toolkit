@@ -1,5 +1,5 @@
-import { In, Repository, DeepPartial } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { In, Repository, DeepPartial } from 'typeorm';
+import { AppDataSource } from '../../database.config';
 import {
   CreateTaskDto,
   UpdateTaskDto,
@@ -8,14 +8,10 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
-} from "@life-toolkit/business-server";
+} from '@life-toolkit/business-server';
 
 export class TaskRepository /* implements import("@life-toolkit/business-server").TaskRepository */ {
-  private repo: Repository<Task>;
-
-  constructor() {
-    this.repo = AppDataSource.getRepository(Task);
-  }
+  private repo: Repository<Task> = AppDataSource.getRepository(Task);
 
   private buildQuery(
     filter: TaskListFiltersDto & {
@@ -23,70 +19,68 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     }
   ) {
     let qb = this.repo
-      .createQueryBuilder("task")
-      .leftJoinAndSelect("task.parent", "parent")
-      .leftJoinAndSelect("task.children", "children")
-      .andWhere("task.deletedAt IS NULL");
+      .createQueryBuilder('task')
+      .leftJoinAndSelect('task.parent', 'parent')
+      .leftJoinAndSelect('task.children', 'children')
+      .andWhere('task.deletedAt IS NULL');
 
     const { excludeIds } = filter;
-    if (excludeIds && excludeIds.length)
-      qb = qb.andWhere("task.id NOT IN (:...excludeIds)", { excludeIds });
+    if (excludeIds && excludeIds.length) qb = qb.andWhere('task.id NOT IN (:...excludeIds)', { excludeIds });
 
     const { keyword } = filter;
     if (keyword)
-      qb = qb.andWhere("(task.name LIKE :kw OR task.description LIKE :kw)", {
+      qb = qb.andWhere('(task.name LIKE :kw OR task.description LIKE :kw)', {
         kw: `%${keyword}%`,
       });
 
     const { status } = filter;
     if (status)
-      qb = qb.andWhere("task.status = :status", {
+      qb = qb.andWhere('task.status = :status', {
         status,
       });
 
     const { startDateStart, startDateEnd } = filter;
     if (startDateStart)
-      qb = qb.andWhere("task.startAt >= :startDateStart", {
+      qb = qb.andWhere('task.startAt >= :startDateStart', {
         startDateStart: new Date(`${startDateStart}T00:00:00`),
       });
     if (startDateEnd)
-      qb = qb.andWhere("task.startAt <= :startDateEnd", {
+      qb = qb.andWhere('task.startAt <= :startDateEnd', {
         startDateEnd: new Date(`${startDateEnd}T23:59:59`),
       });
 
     const { endDateStart, endDateEnd } = filter;
     if (endDateStart)
-      qb = qb.andWhere("task.endAt >= :endDateStart", {
+      qb = qb.andWhere('task.endAt >= :endDateStart', {
         endDateStart: new Date(`${endDateStart}T00:00:00`),
       });
     if (endDateEnd)
-      qb = qb.andWhere("task.endAt <= :endDateEnd", {
+      qb = qb.andWhere('task.endAt <= :endDateEnd', {
         endDateEnd: new Date(`${endDateEnd}T23:59:59`),
       });
 
     // 完成时间范围：doneDateStart/doneDateEnd -> completedAt
     const { doneDateStart, doneDateEnd } = filter;
     if (doneDateStart && doneDateEnd) {
-      qb = qb.andWhere("task.completedAt BETWEEN :ds AND :de", {
+      qb = qb.andWhere('task.completedAt BETWEEN :ds AND :de', {
         ds: new Date(`${doneDateStart}T00:00:00`),
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     } else if (doneDateStart) {
-      qb = qb.andWhere("task.completedAt >= :ds", {
+      qb = qb.andWhere('task.completedAt >= :ds', {
         ds: new Date(`${doneDateStart}T00:00:00`),
       });
     } else if (doneDateEnd) {
-      qb = qb.andWhere("task.completedAt <= :de", {
+      qb = qb.andWhere('task.completedAt <= :de', {
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     }
 
     // goalIds 过滤
     const { goalIds } = filter;
-    if (goalIds && goalIds.length)
-      qb = qb.andWhere("task.goalId IN (:...goalIds)", { goalIds });
+    if (goalIds && goalIds.length) qb = qb.andWhere('task.goalId IN (:...goalIds)', { goalIds });
 
-    return qb.orderBy("task.updatedAt", "DESC");
+    return qb.orderBy('task.updatedAt', 'DESC');
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
@@ -116,7 +110,7 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
   async findById(id: string, relations?: string[]): Promise<Task> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ["parent", "children", "goal", "todoList"],
+      relations: relations ?? ['parent', 'children', 'goal', 'todoList'],
     });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
     return entity;

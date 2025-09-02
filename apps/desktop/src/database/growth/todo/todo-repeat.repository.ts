@@ -1,5 +1,5 @@
-import { Repository, In, UpdateResult } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { Repository, In, UpdateResult } from 'typeorm';
+import { AppDataSource } from '../../database.config';
 import {
   CreateTodoRepeatDto,
   UpdateTodoRepeatDto,
@@ -7,48 +7,45 @@ import {
   TodoRepeatListFilterDto,
   TodoRepeatDto,
   TodoRepeat,
-} from "@life-toolkit/business-server";
+} from '@life-toolkit/business-server';
 
 export class TodoRepeatRepository {
-  private repo: Repository<TodoRepeat> =
-    AppDataSource.getRepository(TodoRepeat);
+  repo: Repository<TodoRepeat> = AppDataSource.getRepository(TodoRepeat);
 
   private buildQuery(filter: TodoRepeatListFilterDto) {
-    const qb = this.repo
-      .createQueryBuilder("todoRepeat")
-      .leftJoinAndSelect("todoRepeat.todos", "todos");
+    const qb = this.repo.createQueryBuilder('todoRepeat').leftJoinAndSelect('todoRepeat.todos', 'todos');
 
     if (filter.status !== undefined) {
-      qb.andWhere("todoRepeat.status = :status", { status: filter.status });
+      qb.andWhere('todoRepeat.status = :status', { status: filter.status });
     }
     if (filter.importance !== undefined) {
-      qb.andWhere("todoRepeat.importance = :importance", {
+      qb.andWhere('todoRepeat.importance = :importance', {
         importance: filter.importance,
       });
     }
     if (filter.urgency !== undefined) {
-      qb.andWhere("todoRepeat.urgency = :urgency", { urgency: filter.urgency });
+      qb.andWhere('todoRepeat.urgency = :urgency', { urgency: filter.urgency });
     }
     if (filter.keyword) {
-      qb.andWhere("todoRepeat.name LIKE :kw", { kw: `%${filter.keyword}%` });
+      qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` });
     }
     if (filter.currentDateStart) {
-      qb.andWhere("todoRepeat.currentDate >= :cds", {
+      qb.andWhere('todoRepeat.currentDate >= :cds', {
         cds: filter.currentDateStart,
       });
     }
     if (filter.currentDateEnd) {
-      qb.andWhere("todoRepeat.currentDate <= :cde", {
+      qb.andWhere('todoRepeat.currentDate <= :cde', {
         cde: filter.currentDateEnd,
       });
     }
     if (filter.abandonedDateStart) {
-      qb.andWhere("todoRepeat.abandonedAt >= :ads", {
+      qb.andWhere('todoRepeat.abandonedAt >= :ads', {
         ads: filter.abandonedDateStart,
       });
     }
     if (filter.abandonedDateEnd) {
-      qb.andWhere("todoRepeat.abandonedAt <= :ade", {
+      qb.andWhere('todoRepeat.abandonedAt <= :ade', {
         ade: filter.abandonedDateEnd,
       });
     }
@@ -56,27 +53,20 @@ export class TodoRepeatRepository {
     return qb;
   }
 
-  async create(createDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
+  async create(createDto: CreateTodoRepeatDto): Promise<TodoRepeat> {
     const entity = createDto.exportCreateEntity();
     const saved = await this.repo.save(entity);
-
-    const dto = new TodoRepeatDto();
-    dto.importEntity(saved);
-    return dto;
+    return saved;
   }
 
-  async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
+  async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeat[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.orderBy("todoRepeat.createdAt", "DESC").getMany();
-    return list.map((item) => {
-      const dto = new TodoRepeatDto();
-      dto.importEntity(item);
-      return dto;
-    });
+    const list = await qb.orderBy('todoRepeat.createdAt', 'DESC').getMany();
+    return list;
   }
 
   async page(filter: TodoRepeatPageFiltersDto): Promise<{
-    list: TodoRepeatDto[];
+    list: TodoRepeat[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -87,40 +77,28 @@ export class TodoRepeatRepository {
     const [list, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
-      .orderBy("todoRepeat.createdAt", "DESC")
+      .orderBy('todoRepeat.createdAt', 'DESC')
       .getManyAndCount();
 
     return {
-      list: list.map((item) => {
-        const dto = new TodoRepeatDto();
-        dto.importEntity(item);
-        return dto;
-      }),
+      list,
       total,
       pageNum,
       pageSize,
     };
   }
 
-  async update(
-    id: string,
-    updateDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto> {
+  async update(id: string, updateDto: UpdateTodoRepeatDto): Promise<TodoRepeat> {
     const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error("TodoRepeat not found");
+    if (!entity) throw new Error('TodoRepeat not found');
 
     updateDto.importUpdateEntity(entity);
     updateDto.exportUpdateEntity();
     const saved = await this.repo.save(entity);
-    const dto = new TodoRepeatDto();
-    dto.importEntity(saved);
-    return dto;
+    return saved;
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateTodoRepeatDto: UpdateTodoRepeatDto
-  ): Promise<UpdateResult> {
+  async batchUpdate(includeIds: string[], updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<UpdateResult> {
     return this.repo.update({ id: In(includeIds) }, updateTodoRepeatDto);
   }
 
@@ -130,11 +108,11 @@ export class TodoRepeatRepository {
   }
 
   async deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder("todoRepeat");
+    const qb = this.repo.createQueryBuilder('todoRepeat');
 
     // 根据过滤条件构建删除查询
     if (filter.status !== undefined) {
-      qb.andWhere("todoRepeat.status = :status", { status: filter.status });
+      qb.andWhere('todoRepeat.status = :status', { status: filter.status });
     }
 
     const list = await qb.getMany();
@@ -155,22 +133,39 @@ export class TodoRepeatRepository {
     }
   }
 
-  async findById(id: string, relations?: string[]): Promise<TodoRepeatDto> {
+  async findById(id: string, relations?: string[]): Promise<TodoRepeat> {
     const todoRepeat = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ["todos"],
+      relations: relations ?? ['todos'],
     });
-    if (!todoRepeat) throw new Error("TodoRepeat not found");
-    const dto = new TodoRepeatDto();
-    dto.importEntity(todoRepeat);
-    return dto;
+    if (!todoRepeat) throw new Error('TodoRepeat not found');
+    return todoRepeat;
   }
 
-  async findOneBy(condition: any): Promise<TodoRepeatDto | null> {
+  async findOneBy(condition: any): Promise<TodoRepeat | null> {
     const todoRepeat = await this.repo.findOne({ where: condition });
     if (!todoRepeat) return null;
-    const dto = new TodoRepeatDto();
-    dto.importEntity(todoRepeat);
-    return dto;
+    return todoRepeat;
+  }
+
+  async findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]> {
+    if (!taskIds || taskIds.length === 0) return [];
+    // 通过关联的todos查找TodoRepeat
+    return this.repo
+      .createQueryBuilder('todoRepeat')
+      .innerJoin('todoRepeat.todos', 'todo')
+      .where('todo.taskId IN (:...taskIds)', { taskIds })
+      .getMany();
+  }
+
+  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
+    if (!taskIds || taskIds.length === 0) return;
+    // 通过关联的todos查找TodoRepeat
+    const items = await this.repo
+      .createQueryBuilder('todoRepeat')
+      .innerJoin('todoRepeat.todos', 'todo')
+      .where('todo.taskId IN (:...taskIds)', { taskIds })
+      .getMany();
+    if (items.length) await this.repo.softRemove(items);
   }
 }
