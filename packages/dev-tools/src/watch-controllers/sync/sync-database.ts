@@ -138,7 +138,7 @@ export function removeExtraGeneratedMethods(
     }
   }
 
-  return head + body + tail;
+  return head + body + "}" + tail;
 }
 
 export function syncMissingMethods(
@@ -246,5 +246,5 @@ function removeExtraGeneratedMethodsAST(
     }
   }
 
-  return head + body + tail;
+  return head + body + "}" + tail;
 }

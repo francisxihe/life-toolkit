@@ -1,4 +1,4 @@
-import { Repository, In, UpdateResult } from "typeorm";
+import { Repository, In, UpdateResult } from 'typeorm';
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -6,9 +6,9 @@ import {
   GoalListFiltersDto,
   GoalDto,
   Goal,
-} from "@life-toolkit/business-server";
-import { GoalStatus, GoalType } from "@life-toolkit/enum";
-import { AppDataSource } from "../../database.config";
+} from '@life-toolkit/business-server';
+import { GoalStatus, GoalType } from '@life-toolkit/enum';
+import { AppDataSource } from '../../database.config';
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
@@ -20,42 +20,42 @@ export class GoalRepository {
 
   private buildQuery(filter: GoalListFiltersDto) {
     let qb = this.repo
-      .createQueryBuilder("goal")
-      .leftJoinAndSelect("goal.parent", "parent")
-      .andWhere("goal.deletedAt IS NULL");
+      .createQueryBuilder('goal')
+      .leftJoinAndSelect('goal.parent', 'parent')
+      .andWhere('goal.deletedAt IS NULL');
 
     const includeIds = filter.includeIds;
     const excludeIds = filter.excludeIds;
     if (includeIds && includeIds.length > 0) {
-      qb = qb.andWhere("goal.id IN (:...includeIds)", { includeIds });
+      qb = qb.andWhere('goal.id IN (:...includeIds)', { includeIds });
     }
     if (excludeIds && excludeIds.length > 0) {
-      qb = qb.andWhere("goal.id NOT IN (:...excludeIds)", { excludeIds });
+      qb = qb.andWhere('goal.id NOT IN (:...excludeIds)', { excludeIds });
     }
 
     if (filter.parentId) {
-      qb = qb.andWhere("parent.id = :parentId", { parentId: filter.parentId });
+      qb = qb.andWhere('parent.id = :parentId', { parentId: filter.parentId });
     }
 
     if (filter.status) {
-      qb = qb.andWhere("goal.status = :status", {
+      qb = qb.andWhere('goal.status = :status', {
         status: filter.status,
       });
     }
 
     if (filter.type) {
-      qb = qb.andWhere("goal.type = :type", { type: filter.type });
+      qb = qb.andWhere('goal.type = :type', { type: filter.type });
     }
 
     if (filter.importance) {
-      qb = qb.andWhere("goal.importance = :importance", {
+      qb = qb.andWhere('goal.importance = :importance', {
         importance: filter.importance,
       });
     }
 
     const keyword = filter.keyword;
     if (keyword) {
-      qb = qb.andWhere("(goal.name LIKE :kw OR goal.description LIKE :kw)", {
+      qb = qb.andWhere('(goal.name LIKE :kw OR goal.description LIKE :kw)', {
         kw: `%${keyword}%`,
       });
     }
@@ -63,12 +63,12 @@ export class GoalRepository {
     // 计划时间范围（desktop 字段：startDate/targetDate）
     const { startDateStart, endDateEnd } = filter;
     if (startDateStart) {
-      qb = qb.andWhere("goal.startAt >= :startDateStart", {
+      qb = qb.andWhere('goal.startAt >= :startDateStart', {
         startDateStart: new Date(`${startDateStart}T00:00:00`),
       });
     }
     if (endDateEnd) {
-      qb = qb.andWhere("goal.endAt <= :endDateEnd", {
+      qb = qb.andWhere('goal.endAt <= :endDateEnd', {
         endDateEnd: new Date(`${endDateEnd}T23:59:59`),
       });
     }
@@ -77,16 +77,16 @@ export class GoalRepository {
     const doneDateStart = filter.doneDateStart;
     const doneDateEnd = filter.doneDateEnd;
     if (doneDateStart && doneDateEnd) {
-      qb = qb.andWhere("goal.doneAt BETWEEN :ds AND :de", {
+      qb = qb.andWhere('goal.doneAt BETWEEN :ds AND :de', {
         ds: new Date(`${doneDateStart}T00:00:00`),
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     } else if (doneDateStart) {
-      qb = qb.andWhere("goal.doneAt >= :ds", {
+      qb = qb.andWhere('goal.doneAt >= :ds', {
         ds: new Date(`${doneDateStart}T00:00:00`),
       });
     } else if (doneDateEnd) {
-      qb = qb.andWhere("goal.doneAt <= :de", {
+      qb = qb.andWhere('goal.doneAt <= :de', {
         de: new Date(`${doneDateEnd}T23:59:59`),
       });
     }
@@ -95,24 +95,24 @@ export class GoalRepository {
     const abandonedDateStart = filter.abandonedDateStart;
     const abandonedDateEnd = filter.abandonedDateEnd;
     if (abandonedDateStart && abandonedDateEnd) {
-      qb = qb.andWhere("goal.abandonedAt BETWEEN :ads AND :ade", {
+      qb = qb.andWhere('goal.abandonedAt BETWEEN :ads AND :ade', {
         ads: new Date(`${abandonedDateStart}T00:00:00`),
         ade: new Date(`${abandonedDateEnd}T23:59:59`),
       });
     } else if (abandonedDateStart) {
-      qb = qb.andWhere("goal.abandonedAt >= :ads", {
+      qb = qb.andWhere('goal.abandonedAt >= :ads', {
         ads: new Date(`${abandonedDateStart}T00:00:00`),
       });
     } else if (abandonedDateEnd) {
-      qb = qb.andWhere("goal.abandonedAt <= :ade", {
+      qb = qb.andWhere('goal.abandonedAt <= :ade', {
         ade: new Date(`${abandonedDateEnd}T23:59:59`),
       });
     }
 
-    return qb.orderBy("goal.updatedAt", "DESC");
+    return qb.orderBy('goal.updatedAt', 'DESC');
   }
 
-  async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
+  async create(createGoalDto: CreateGoalDto): Promise<Goal> {
     const entity = this.repo.create({
       name: createGoalDto.name,
       description: createGoalDto.description,
@@ -123,24 +123,22 @@ export class GoalRepository {
       endAt: createGoalDto.endAt,
     });
 
-    const saved = await this.repo.save(entity);
-    return GoalDto.importEntity(saved);
+    return await this.repo.save(entity);
   }
 
-  async findById(id: string, relations?: string[]): Promise<GoalDto> {
+  async findById(id: string, relations?: string[]): Promise<Goal> {
     const entity = await this.repo.findOne({ where: { id }, relations });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return GoalDto.importEntity(entity);
+    return entity;
   }
 
-  async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
+  async findAll(filter: GoalListFiltersDto): Promise<Goal[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.getMany();
-    return list.map((e) => GoalDto.importEntity(e));
+    return await qb.getMany();
   }
 
   async page(filter: GoalPageFiltersDto): Promise<{
-    list: GoalDto[];
+    list: Goal[];
     total: number;
     pageNum: number;
     pageSize: number;
@@ -152,21 +150,20 @@ export class GoalRepository {
       .take(pageSize)
       .getManyAndCount();
     return {
-      list: entities.map((e) => GoalDto.importEntity(e)),
+      list: entities,
       total,
       pageNum,
       pageSize,
     };
   }
 
-  async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
+  async update(id: string, updateGoalDto: UpdateGoalDto): Promise<Goal> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
 
     updateGoalDto.appendToUpdateEntity(entity);
 
-    const saved = await this.repo.save(entity);
-    return GoalDto.importEntity(saved);
+    return await this.repo.save(entity);
   }
 
   async remove(id: string): Promise<void> {
@@ -179,27 +176,20 @@ export class GoalRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateGoalDto: UpdateGoalDto
-  ): Promise<UpdateResult> {
+  async batchUpdate(includeIds: string[], updateGoalDto: UpdateGoalDto): Promise<UpdateResult> {
     return this.repo.update({ id: In(includeIds) }, updateGoalDto);
   }
 
-  async findDetail(id: string): Promise<GoalDto> {
+  async findDetail(id: string): Promise<Goal> {
     const entity = await this.repo.findOne({
       where: { id },
-      relations: ["parent", "children", "taskList"],
+      relations: ['parent', 'children', 'taskList'],
     });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    return GoalDto.importEntity(entity);
+    return entity;
   }
 
-  async updateStatus(
-    id: string,
-    status: GoalStatus,
-    extra: Partial<Goal> = {}
-  ): Promise<void> {
+  async updateStatus(id: string, status: GoalStatus, extra: Partial<Goal> = {}): Promise<void> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     Object.assign(entity, {

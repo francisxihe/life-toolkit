@@ -51,10 +51,24 @@ export const initializeDatabase = async (): Promise<void> => {
 export const closeDatabase = async (): Promise<void> => {
   try {
     if (AppDataSource.isInitialized) {
-      await AppDataSource.destroy();
+      // 添加超时保护，避免长时间等待
+      const closePromise = AppDataSource.destroy();
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('数据库关闭超时')), 5000);
+      });
+      
+      await Promise.race([closePromise, timeoutPromise]);
       console.log("数据库连接已关闭");
     }
   } catch (error) {
     console.error("关闭数据库连接失败:", error);
+    // 强制标记为未初始化状态
+    if (AppDataSource.isInitialized) {
+      try {
+        (AppDataSource as any).isInitialized = false;
+      } catch (e) {
+        // 忽略设置状态时的错误
+      }
+    }
   }
 };

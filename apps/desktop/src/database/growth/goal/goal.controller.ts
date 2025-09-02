@@ -22,8 +22,8 @@ export class GoalController {
   }
 
   @Get("/detail/:id")
-  async findById(@Param("id") id: string) {
-    return this.controller.findById(id);
+  async detail(@Param("id") id: string) {
+    return this.controller.detail(id);
   }
 
   @Put("/update/:id")
@@ -54,11 +54,6 @@ export class GoalController {
   @Get("/findRoots")
   async findRoots() {
     return this.controller.findRoots();
-  }
-
-  @Get("/detail/:id")
-  async findDetail(@Param("id") id: string) {
-    return this.controller.detail(id);
   }
 
   @Put("/abandon/:id")

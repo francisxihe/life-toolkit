@@ -135,7 +135,7 @@ export class GoalTreeRepository {
     return res;
   }
 
-  async createWithParent(dto: CreateGoalDto): Promise<GoalDto> {
+  async createWithParent(dto: CreateGoalDto): Promise<Goal> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Goal);
       const current = treeRepository.create({
@@ -156,12 +156,11 @@ export class GoalTreeRepository {
         current.parent = parent;
       }
 
-      const saved = await treeRepository.save(current);
-      return GoalDto.importEntity(saved);
+      return await treeRepository.save(current);
     });
   }
 
-  async updateWithParent(id: string, dto: UpdateGoalDto): Promise<GoalDto> {
+  async updateWithParent(id: string, dto: UpdateGoalDto): Promise<Goal> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Goal);
       const current = await treeRepository.findOne({ where: { id } });
@@ -182,8 +181,7 @@ export class GoalTreeRepository {
         await treeRepository.save(current);
       }
 
-      const saved = await treeRepository.save(current);
-      return GoalDto.importEntity(saved);
+      return await treeRepository.save(current);
     });
   }
 
@@ -197,14 +195,14 @@ export class GoalTreeRepository {
     status?: Goal["status"];
     keyword?: string;
     importance?: number;
-  }): Promise<GoalDto[]> {
+  }): Promise<Goal[]> {
     const treeRepo = AppDataSource.getTreeRepository(Goal);
     if (!filter.status && !filter.keyword && !filter.importance) {
       const roots = await treeRepo.findRoots();
-      const trees: GoalDto[] = [];
+      const trees: Goal[] = [];
       for (const r of roots) {
         const full = await this.buildTree(r);
-        trees.push(GoalDto.importEntity(full));
+        trees.push(full);
       }
       return trees;
     }
@@ -213,12 +211,12 @@ export class GoalTreeRepository {
     if (includeIds.size === 0) return [];
 
     const roots = await treeRepo.findRoots();
-    const trees: GoalDto[] = [];
+    const trees: Goal[] = [];
     for (const r of roots) {
       if (includeIds.has(r.id)) {
         const full = await this.buildTree(r);
         const filtered = this.filterTreeNodes(full, includeIds);
-        if (filtered) trees.push(GoalDto.importEntity(filtered));
+        if (filtered) trees.push(filtered);
       }
     }
     return trees;
@@ -253,7 +251,7 @@ export class GoalTreeRepository {
     return { includeIds, excludeIds };
   }
 
-  async findDetail(id: string): Promise<GoalDto> {
+  async findDetail(id: string): Promise<Goal> {
     const treeRepo = AppDataSource.getTreeRepository(Goal);
     const entity = await treeRepo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
@@ -269,6 +267,6 @@ export class GoalTreeRepository {
       (withChildren as any).taskList = (withRelations as any).taskList;
     }
 
-    return GoalDto.importEntity(withChildren);
+    return withChildren;
   }
 }

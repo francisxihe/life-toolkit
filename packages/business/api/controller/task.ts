@@ -24,11 +24,7 @@ export default class TaskController {
 
   static async list(body: TaskVO.TaskListFiltersVo) {
     return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/list`, body);
-  }
 
-  static async taskWithTrackTime(id: string) {
-    return request<TaskVO.TaskVo>({ method: 'get' })(`/task/task-with-track-time/${id}`);
-  }
 
   static async abandon(id: string) {
     return request<boolean>({ method: 'put' })(`/task/abandon/${id}`);

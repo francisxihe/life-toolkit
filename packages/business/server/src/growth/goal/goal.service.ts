@@ -13,11 +13,12 @@ export class GoalService {
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
     if (createGoalDto.parentId) {
-      return await this.goalTreeRepository.createWithParent(createGoalDto);
+      const entity = await this.goalTreeRepository.createWithParent(createGoalDto);
+      return GoalDto.importEntity(entity);
     }
 
-    const result = await this.goalRepository.create(createGoalDto);
-    return result;
+    const entity = await this.goalRepository.create(createGoalDto);
+    return GoalDto.importEntity(entity);
   }
 
   async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
@@ -31,7 +32,8 @@ export class GoalService {
       ...treeFilters,
     };
 
-    return await this.goalRepository.findAll(processedFilter as any);
+    const entities = await this.goalRepository.findAll(processedFilter as any);
+    return entities.map((entity) => GoalDto.importEntity(entity));
   }
 
   async list(filter: GoalListFiltersDto): Promise<GoalDto[]> {
@@ -41,11 +43,12 @@ export class GoalService {
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
     if (updateGoalDto.parentId !== undefined) {
-      return await this.goalTreeRepository.updateWithParent(id, updateGoalDto);
+      const entity = await this.goalTreeRepository.updateWithParent(id, updateGoalDto);
+      return GoalDto.importEntity(entity);
     }
 
-    const result = await this.goalRepository.update(id, updateGoalDto);
-    return result;
+    const entity = await this.goalRepository.update(id, updateGoalDto);
+    return GoalDto.importEntity(entity);
   }
 
   async delete(id: string): Promise<void> {
@@ -53,16 +56,18 @@ export class GoalService {
   }
 
   async findById(id: string): Promise<GoalDto> {
-    return await this.goalRepository.findById(id);
+    const entity = await this.goalRepository.findById(id);
+    return GoalDto.importEntity(entity);
   }
 
   async getTree(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     // 交由仓储层处理树形构建与过滤
-    return await this.goalTreeRepository.getFilteredTree({
+    const entities = await this.goalTreeRepository.getFilteredTree({
       status: filter.status,
       keyword: filter.keyword,
       importance: filter.importance,
     });
+    return entities.map((entity) => GoalDto.importEntity(entity));
   }
 
   async page(filter: GoalPageFiltersDto): Promise<{
@@ -72,17 +77,24 @@ export class GoalService {
     pageSize: number;
   }> {
     const { list, total, pageNum, pageSize } = await this.goalRepository.page(filter);
-    return { list, total, pageNum, pageSize };
+    return {
+      list: list.map((entity) => GoalDto.importEntity(entity)),
+      total,
+      pageNum,
+      pageSize,
+    };
   }
 
-  async getDetail(id: string) {
-    return await this.goalTreeRepository.findDetail(id);
+  async getDetail(id: string): Promise<GoalDto> {
+    const entity = await this.goalTreeRepository.findDetail(id);
+    return GoalDto.importEntity(entity);
   }
 
   // 状态操作（业务逻辑）
   async done(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
-    if (!this.canMarkAsDone(entity)) {
+    const dto = GoalDto.importEntity(entity);
+    if (dto.status === GoalStatus.TODO || dto.status === GoalStatus.IN_PROGRESS) {
       throw new Error('当前状态不允许标记为完成');
     }
     await this.goalRepository.update(
@@ -97,7 +109,8 @@ export class GoalService {
 
   async abandon(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
-    if (!this.canAbandon(entity)) {
+    const dto = GoalDto.importEntity(entity);
+    if (dto.status === GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许放弃');
     }
     await this.goalRepository.update(
@@ -112,7 +125,8 @@ export class GoalService {
 
   async restore(id: string): Promise<boolean> {
     const entity = await this.goalRepository.findById(id);
-    if (!this.canRestore(entity)) {
+    const dto = GoalDto.importEntity(entity);
+    if (dto.status !== GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许恢复');
     }
     await this.goalRepository.update(
@@ -132,19 +146,7 @@ export class GoalService {
   }
 
   async findRoots(): Promise<GoalDto[]> {
-    const roots = await this.goalTreeRepository.findRoots();
-    return roots.map((r) => GoalDto.importEntity(r));
-  }
-
-  private canMarkAsDone(entity: GoalDto): boolean {
-    return entity.status === GoalStatus.TODO || entity.status === GoalStatus.IN_PROGRESS;
-  }
-
-  private canAbandon(entity: GoalDto): boolean {
-    return entity.status !== GoalStatus.ABANDONED;
-  }
-
-  private canRestore(entity: GoalDto): boolean {
-    return entity.status === GoalStatus.ABANDONED;
+    const entities = await this.goalTreeRepository.findRoots();
+    return entities.map((entity) => GoalDto.importEntity(entity));
   }
 }
