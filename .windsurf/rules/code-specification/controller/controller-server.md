@@ -120,13 +120,13 @@ export class {Module}ServerController {
 
   // 批量操作路由
   @Put("batch-done")
-  async batchDone(@Body() params: { idList: string[] }): Promise<void> {
-    await this.{module}Controller.batchDone(params.idList);
+  async batchDone(@Body() params: { includeIds: string[] }): Promise<void> {
+    await this.{module}Controller.batchDone(params.includeIds);
   }
 
   @Put("batch-delete")
-  async batchDelete(@Body() params: { idList: string[] }): Promise<void> {
-    await this.{module}Controller.batchDelete(params.idList);
+  async batchDelete(@Body() params: { includeIds: string[] }): Promise<void> {
+    await this.{module}Controller.batchDelete(params.includeIds);
   }
 }
 ```

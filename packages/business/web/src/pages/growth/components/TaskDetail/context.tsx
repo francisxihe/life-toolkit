@@ -56,8 +56,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     useState<TaskFormData>(defaultFormData);
 
   const { taskList } = TaskService.useTaskList({
-    withoutSelf: true,
-    id: props.task?.id,
+    excludeIds: [props.task?.id],
   });
 
   const { goalList } = GoalService.useGoalList();

@@ -93,8 +93,7 @@ export interface GoalTreeRepository {
   }): Promise<GoalDto[]>;
 
   processTreeFilter(filter: {
-    withoutSelf?: boolean;
-    id?: string;
+    excludeIds?: string[];
     parentId?: string;
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }>;
 

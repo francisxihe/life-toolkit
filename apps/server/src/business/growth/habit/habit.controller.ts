@@ -26,9 +26,9 @@ export class HabitController {
 
   @Put("batch-done")
   @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
+  async batchDone(@Body() includeIds: OperationByIdListVo) {
     return await this.habitService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
+      OperationMapper.voToOperationByIdListDto(includeIds)
     );
   }
 

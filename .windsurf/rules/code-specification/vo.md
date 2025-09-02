@@ -478,7 +478,7 @@ export interface OperationResultVo {
 
 // 按ID列表操作VO
 export type OperationByIdListVo = {
-  idList: string[];
+  includeIds: string[];
 };
 
 // 工具类型 - 排除自身

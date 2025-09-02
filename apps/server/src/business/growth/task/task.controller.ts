@@ -35,7 +35,7 @@ export class TaskController {
 
   @Put("batch-done")
   @Response()
-  async batchDone(@Body() body: { idList?: string[] }) {
+  async batchDone(@Body() body: { includeIds?: string[] }) {
     return await this.businessController.batchDone(body);
   }
 

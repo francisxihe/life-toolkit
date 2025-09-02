@@ -8,5 +8,5 @@ export interface OperationResultVo {
 }
 
 export type OperationByIdListVo = {
-  idList: string[];
+  includeIds: string[];
 };

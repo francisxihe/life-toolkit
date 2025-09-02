@@ -134,13 +134,13 @@ export interface BaseRepository<TDto, TCreateModuleDto, TUpdateModuleDto, TFilte
 
   // 更新
   update(id: string, updateDto: TUpdateModuleDto): Promise<TDto>;
-  batchUpdate(idList: string[], updateDto: TUpdateModuleDto): Promise<TDto[]>;
+  batchUpdate(includeIds: string[], updateDto: TUpdateModuleDto): Promise<TDto[]>;
 
   // 删除
   delete(id: string): Promise<boolean>;
   deleteByFilter(filterModuleListFilterDto): Promise<void>;
   softDelete(id: string): Promise<void>;
-  batchSoftDelete(idList: string[]): Promise<void>;
+  batchSoftDelete(includeIds: string[]): Promise<void>;
 }
 ```
 

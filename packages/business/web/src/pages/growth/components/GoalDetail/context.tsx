@@ -59,8 +59,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   );
 
   const { goalList } = GoalService.useGoalList({
-    withoutSelf: true,
-    id: props.goalId,
+    excludeIds: [props.goalId],
   });
 
   async function handleCreate() {

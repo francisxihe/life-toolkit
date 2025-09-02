@@ -24,7 +24,7 @@ export interface TodoRepository {
   }>;
   update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto>;
   batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoDto: UpdateTodoDto
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;

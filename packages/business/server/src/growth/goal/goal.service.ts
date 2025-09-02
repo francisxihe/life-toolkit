@@ -31,8 +31,7 @@ export class GoalService {
 
   async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     const treeFilters = await this.goalTreeRepository.processTreeFilter({
-      withoutSelf: filter.withoutSelf,
-      id: filter.id,
+      excludeIds: filter.excludeIds,
       parentId: filter.parentId,
     });
 
@@ -135,11 +134,11 @@ export class GoalService {
     return true;
   }
 
-  async batchDone(idList: string[]): Promise<void> {
-    await this.goalRepository.batchUpdate(idList, {
-      status: GoalStatus.DONE,
-      doneAt: new Date(),
-    });
+  async batchDone(includeIds: string[]): Promise<void> {
+    const updateGoalDto=new UpdateGoalDto();
+    updateGoalDto.status=GoalStatus.DONE;
+    updateGoalDto.doneAt=new Date();
+    await this.goalRepository.batchUpdate(includeIds, updateGoalDto);
   }
 
   async findRoots(): Promise<GoalDto[]> {

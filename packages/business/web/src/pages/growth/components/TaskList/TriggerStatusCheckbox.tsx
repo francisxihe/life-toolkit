@@ -35,7 +35,7 @@ export default function TriggerStatusCheckbox(props: {
 
           if (todoSubTaskList.length === 0) {
             await TaskService.batchDoneTask({
-              idList: [todo.id],
+              includeIds: [todo.id],
             });
             await props.onChange();
             return;
@@ -46,7 +46,7 @@ export default function TriggerStatusCheckbox(props: {
             content: `完成任务后，将自动完成其所有子任务。`,
             onOk: async () => {
               await TaskService.batchDoneTask({
-                idList: [
+                includeIds: [
                   todo.id,
                   ...todoSubTaskList.map((subTask) => subTask.id),
                 ],

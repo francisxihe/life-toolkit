@@ -11,7 +11,7 @@ export class HabitStatusService {
   ) {}
 
   async batchDone(params: OperationByIdListDto): Promise<void> {
-    await this.habitRepository.batchUpdate(params.idList, {
+    await this.habitRepository.batchUpdate(params.includeIds, {
       status: HabitStatus.COMPLETED,
       completedCount: () => "completed_count + 1",
     } as any);

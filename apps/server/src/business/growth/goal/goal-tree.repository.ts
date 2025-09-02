@@ -259,24 +259,14 @@ export class GoalTreeRepository {
 
   // 树形过滤逻辑处理（用于 findAll）
   async processTreeFilter(filter: {
-    withoutSelf?: boolean;
     id?: string;
     parentId?: string;
+    excludeIds?: string[];
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }> {
-    let excludeIds: string[] = [];
+    let excludeIds: string[] = filter.excludeIds || [];
     let includeIds: string[] = [];
 
     const treeRepo = this.getTreeRepository();
-
-    // 处理排除自身逻辑
-    if (filter.withoutSelf && filter.id) {
-      const entity = await treeRepo.findOne({ where: { id: filter.id } });
-      if (entity) {
-        const flatChildren = await treeRepo.findDescendants(entity);
-        excludeIds = flatChildren.map((child) => child.id);
-        excludeIds.push(filter.id);
-      }
-    }
 
     // 处理父级过滤逻辑
     if (filter.parentId) {

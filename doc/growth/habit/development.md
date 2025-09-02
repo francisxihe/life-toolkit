@@ -427,10 +427,11 @@ export class HabitListFiltersDto extends PartialType(
   @IsOptional()
   goalId?: string;
 
-  /** 排除自身 */
+  /** 排除ID列表 */
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  @Type(() => Boolean)
-  withoutSelf?: boolean;
+  excludeIds?: string[];
 
   /** 状态数组过滤 */
   @IsArray()
@@ -549,7 +550,7 @@ export type HabitListFiltersVo = Partial<
     dateStart?: string;
     dateEnd?: string;
     goalId?: string;
-    withoutSelf?: boolean;
+    excludeIds?: string[];
     statusList?: HabitStatus[];
     tags?: string[];
     sortBy?: "createdAt" | "importance" | "currentStreak";

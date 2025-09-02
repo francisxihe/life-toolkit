@@ -274,7 +274,7 @@ export interface ModuleRepository {
 
   // 更新操作
   update(id: string, updateModuleDto: UpdateModuleDto): Promise<ModuleDto>;
-  batchUpdate(idList: string[], updateModuleDto: UpdateModuleDto): Promise<ModuleDto[]>;
+  batchUpdate(includeIds: string[], updateModuleDto: UpdateModuleDto): Promise<ModuleDto[]>;
 
   // 删除操作
   delete(id: string): Promise<boolean>;

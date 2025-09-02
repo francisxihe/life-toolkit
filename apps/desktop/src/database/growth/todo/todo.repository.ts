@@ -128,10 +128,10 @@ export class TodoRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoDto: UpdateTodoDto
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: In(idList) }, updateTodoDto);
+    return this.repo.update({ id: In(includeIds) }, updateTodoDto);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -142,7 +142,7 @@ export class TodoRepository {
   async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
     const qb = this.repo.createQueryBuilder("todo");
     if (filter.taskIds && filter.taskIds.length > 0) {
-      qb.where("todo.taskId IN (:...idList)", { idList: filter.taskIds });
+      qb.where("todo.taskId IN (:...includeIds)", { includeIds: filter.taskIds });
     }
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));

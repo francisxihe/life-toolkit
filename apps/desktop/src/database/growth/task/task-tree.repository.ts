@@ -57,7 +57,9 @@ export class TaskTreeRepository {
       // status 不在 UpdateTaskDto 范畴，由业务服务单独处理
 
       if ("parentId" in dto && dto.parentId) {
-        const parent = await treeRepository.findOne({ where: { id: dto.parentId } });
+        const parent = await treeRepository.findOne({
+          where: { id: dto.parentId },
+        });
         if (!parent) throw new Error(`父任务不存在，ID: ${dto.parentId}`);
         current.parent = parent;
       } else if ("parentId" in dto && dto.parentId === null) {
@@ -74,7 +76,9 @@ export class TaskTreeRepository {
     params: { task: Task; parentId: string },
     treeRepo?: unknown
   ): Promise<void> {
-    const repo = (treeRepo as TreeRepository<Task>) ?? AppDataSource.getTreeRepository(Task);
+    const repo =
+      (treeRepo as TreeRepository<Task>) ??
+      AppDataSource.getTreeRepository(Task);
     const parent = await repo.findOne({ where: { id: params.parentId } });
     if (!parent) throw new Error(`父任务不存在，ID: ${params.parentId}`);
     params.task.parent = parent;
@@ -91,17 +95,17 @@ export class TaskTreeRepository {
     if (Array.isArray(target)) {
       const all: string[] = [];
       for (const t of target) {
-        const idList = await collect(t);
-        all.push(...idList);
+        const includeIds = await collect(t);
+        all.push(...includeIds);
       }
       return Array.from(new Set(all));
     }
     return await collect(target);
   }
 
-  async deleteByIds(idList: string[]): Promise<void> {
-    if (!idList || idList.length === 0) return;
+  async deleteByIds(includeIds: string[]): Promise<void> {
+    if (!includeIds || includeIds.length === 0) return;
     const repo = AppDataSource.getTreeRepository(Task);
-    await repo.softDelete({ id: In(idList) });
+    await repo.softDelete({ id: In(includeIds) });
   }
 }

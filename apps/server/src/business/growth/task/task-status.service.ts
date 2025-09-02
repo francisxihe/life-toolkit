@@ -23,7 +23,7 @@ export class TaskStatusService {
   async batchDone(
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
-    await this.taskRepository.batchDone(params.idList);
+    await this.taskRepository.batchDone(params.includeIds);
 
     return {
       result: true,

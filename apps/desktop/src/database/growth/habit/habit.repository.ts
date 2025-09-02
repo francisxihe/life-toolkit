@@ -185,10 +185,10 @@ export class HabitRepository implements _HabitRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateHabitDto: UpdateHabitDto
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: In(idList) }, updateHabitDto);
+    return this.repo.update({ id: In(includeIds) }, updateHabitDto);
   }
 
   async updateStatus(

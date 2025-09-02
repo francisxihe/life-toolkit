@@ -14,10 +14,7 @@ import { todoService, todoRepeatService } from "./todo.service";
 
 @Controller("/todo")
 export class TodoController {
-  private readonly controller: _TodoController;
-  constructor() {
-    this.controller = new _TodoController(todoService, todoRepeatService);
-  }
+  private readonly controller = new _TodoController(todoService, todoRepeatService);
 
   @Post("/create")
   async create(@Body() body: TodoVO.CreateTodoVo) {
@@ -27,6 +24,11 @@ export class TodoController {
   @Get("/detail/:id")
   async findById(@Param("id") id: string) {
     return this.controller.findById(id);
+  }
+
+  @Put("/update/:id")
+  async update(@Param("id") id: string, @Body() body: TodoVO.UpdateTodoVo) {
+    return this.controller.update(id, body);
   }
 
   @Delete("/delete/:id")
@@ -64,18 +66,13 @@ export class TodoController {
     return this.controller.done(id);
   }
 
-  @Get("/detailWithRepeat/:id")
-  async detailWithRepeat(@Param("id") id: string) {
-    return this.controller.detailWithRepeat(id);
-  }
-
-  @Put("/update/:id")
-  async update(@Param("id") id: string, @Body() body: TodoVO.UpdateTodoVo) {
-    return this.controller.update(id, body);
-  }
-
   @Get("/listWithRepeat")
   async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
     return this.controller.listWithRepeat(query);
+  }
+
+  @Get("/detailWithRepeat/:id")
+  async detailWithRepeat(@Param("id") id: string) {
+    return this.controller.detailWithRepeat(id);
   }
 }

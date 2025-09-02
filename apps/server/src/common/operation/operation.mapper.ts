@@ -5,6 +5,6 @@ export class OperationMapper {
   static voToOperationByIdListDto(
     vo: OperationByIdListVo
   ): OperationByIdListDto {
-    return { idList: vo.idList };
+    return { includeIds: vo.includeIds };
   }
 }

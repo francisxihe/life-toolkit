@@ -85,20 +85,7 @@ export class TaskService {
   }
 
   async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
-    let excludeIds: string[] = [];
-    if (filter.withoutSelf && filter.id) {
-      const node = await this.taskTreeRepository.findOne({
-        id: filter.id,
-      } as Partial<Task>);
-      if (node) {
-        const ids = await this.taskTreeRepository.computeDescendantIds(node);
-        excludeIds = ids.concat(filter.id);
-      }
-    }
-    const taskList = await this.taskRepository.findAll({
-      ...(filter as any),
-      excludeIds,
-    });
+    const taskList = await this.taskRepository.findAll(filter);
     return taskList;
   }
 

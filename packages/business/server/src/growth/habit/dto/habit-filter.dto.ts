@@ -48,11 +48,7 @@ export class HabitListFiltersDto extends PartialType(
   @IsOptional()
   endDateEnd?: string;
 
-  /** 不包含自身 */
-  @IsBoolean()
-  @Type(() => Boolean)
-  @IsOptional()
-  withoutSelf?: boolean;
+  excludeIds?: string[];
 
   /** 习惯ID */
   @IsString()
@@ -85,15 +81,16 @@ function importListVo(
   filterDto: HabitListFiltersDto
 ) {
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
-  if (filterVo.difficulty !== undefined) filterDto.difficulty = filterVo.difficulty;
-  if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance as Importance;
+  if (filterVo.difficulty !== undefined)
+    filterDto.difficulty = filterVo.difficulty;
+  if (filterVo.importance !== undefined)
+    filterDto.importance = filterVo.importance as Importance;
   if (filterVo.tags) filterDto.tags = filterVo.tags;
   if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
-  if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
+  if (filterVo.startDateStart)
+    filterDto.startDateStart = filterVo.startDateStart;
   if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
   // if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
   // if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
-  if (filterVo.withoutSelf !== undefined) filterDto.withoutSelf = filterVo.withoutSelf;
-  if (filterVo.id) filterDto.id = filterVo.id;
-  // if (filterVo.goalId) filterDto.goalId = filterVo.goalId;
+  if (filterVo.excludeIds) filterDto.excludeIds = filterVo.excludeIds;
 }

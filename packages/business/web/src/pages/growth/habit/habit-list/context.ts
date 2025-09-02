@@ -86,11 +86,13 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const fetchGoals = useCallback(async () => {
     try {
       const response = await GoalController.getGoalList({});
-      setGoals(response.list.map(goal => ({
-        ...goal,
-        children: [],
-        taskList: []
-      })));
+      setGoals(
+        response.list.map((goal) => ({
+          ...goal,
+          children: [],
+          taskList: [],
+        })),
+      );
     } catch (error) {
       console.error('获取目标列表失败:', error);
     }
@@ -115,7 +117,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const handleHabitComplete = useCallback(
     async (habitId: string) => {
       try {
-        await HabitController.batchDoneHabit({ idList: [habitId] });
+        await HabitController.batchDoneHabit({ includeIds: [habitId] });
         Message.success('习惯已完成');
         fetchHabits();
         refreshHabits();

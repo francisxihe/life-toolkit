@@ -129,13 +129,13 @@ export class TodoRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoDto: UpdateTodoDto
   ): Promise<TodoDto[]> {
-    if (!idList || idList.length === 0) return [];
+    if (!includeIds || includeIds.length === 0) return [];
 
     await this.todoRepository.update(
-      { id: In(idList) },
+      { id: In(includeIds) },
       {
         ...updateTodoDto,
         planDate: updateTodoDto.planDate
@@ -145,7 +145,7 @@ export class TodoRepository {
     );
 
     const updated = await this.todoRepository.find({
-      where: { id: In(idList) },
+      where: { id: In(includeIds) },
     });
     return (updated as unknown as TodoDto[]) || [];
   }

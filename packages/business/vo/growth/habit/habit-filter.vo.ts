@@ -1,6 +1,5 @@
 export * from "./habit-model.vo";
 import { HabitVo, HabitItemVo, HabitCompletionScore } from "./habit-model.vo";
-import { self } from "../../common";
 import { HabitStatus, Difficulty, Importance } from "@life-toolkit/enum";
 
 export type HabitListFiltersVo = Partial<
@@ -13,7 +12,8 @@ export type HabitListFiltersVo = Partial<
     endDataStart?: string;
     endDataEnd?: string;
     goalIds?: string[];
-  } & self
+    excludeIds?: string[];
+  }
 >;
 
 export type HabitPageFiltersVo = HabitListFiltersVo & {
@@ -41,18 +41,17 @@ export type HabitPageVo = {
   pageSize: number;
 };
 
-export type HabitLogListFiltersVo = Partial<
-  {
-    habitId?: string;
-    habitIds?: string[];
-    logDateFrom?: string;
-    logDateTo?: string;
-    completionScoreList?: HabitCompletionScore[];
-    moodMin?: number;
-    moodMax?: number;
-    hasNote?: boolean;
-  } & self
->;
+export type HabitLogListFiltersVo = Partial<{
+  habitId?: string;
+  habitIds?: string[];
+  logDateFrom?: string;
+  logDateTo?: string;
+  completionScoreList?: HabitCompletionScore[];
+  moodMin?: number;
+  moodMax?: number;
+  hasNote?: boolean;
+  excludeIds?: string[];
+}>;
 
 export type HabitLogPageFiltersVo = HabitLogListFiltersVo & {
   pageNum?: number;

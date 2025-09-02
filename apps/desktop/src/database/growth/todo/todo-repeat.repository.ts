@@ -118,10 +118,10 @@ export class TodoRepeatRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: In(idList) }, updateTodoRepeatDto);
+    return this.repo.update({ id: In(includeIds) }, updateTodoRepeatDto);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -148,8 +148,8 @@ export class TodoRepeatRepository {
     }
   }
 
-  async batchSoftDelete(idList: string[]): Promise<void> {
-    const entities = await this.repo.find({ where: { id: In(idList) } });
+  async batchSoftDelete(includeIds: string[]): Promise<void> {
+    const entities = await this.repo.find({ where: { id: In(includeIds) } });
     if (entities.length) {
       await this.repo.softRemove(entities);
     }

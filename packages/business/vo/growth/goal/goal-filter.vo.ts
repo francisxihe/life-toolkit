@@ -1,6 +1,5 @@
 export * from "./goal-model.vo";
 import { GoalVo, GoalItemVo } from "./goal-model.vo";
-import { self } from "../../common";
 
 export type GoalListFiltersVo = Partial<
   Pick<GoalVo, "startAt" | "endAt" | "importance" | "status" | "type"> & {
@@ -10,7 +9,8 @@ export type GoalListFiltersVo = Partial<
     abandonedDateStart?: GoalVo["abandonedAt"];
     abandonedDateEnd?: GoalVo["abandonedAt"];
     parentId?: GoalVo["id"];
-  } & self
+    excludeIds?: string[];
+  }
 >;
 
 export type GoalPageFiltersVo = GoalListFiltersVo & {

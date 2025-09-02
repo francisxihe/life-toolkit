@@ -78,21 +78,22 @@ export class TodoRepeatService {
   // ====== 业务逻辑编排 ======
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto[]> {
-    return await this.todoRepeatRepository.batchUpdate(
-      idList,
+    const result = await this.todoRepeatRepository.batchUpdate(
+      includeIds,
       updateTodoRepeatDto
     );
+    return result as any;
   }
 
   async softDelete(id: string): Promise<void> {
     await this.todoRepeatRepository.softDelete(id);
   }
 
-  async batchSoftDelete(idList: string[]): Promise<void> {
-    await this.todoRepeatRepository.batchSoftDelete(idList);
+  async batchSoftDelete(includeIds: string[]): Promise<void> {
+    await this.todoRepeatRepository.batchSoftDelete(includeIds);
   }
 
   async done(id: string): Promise<any> {
@@ -115,10 +116,13 @@ export class TodoRepeatService {
     await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
   }
 
-  batchDone(idList: string[]): Promise<any> {
+  batchDone(includeIds: string[]): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.DONE;
-    return this.todoRepeatRepository.batchUpdate(idList, updateTodoRepeatDto);
+    return this.todoRepeatRepository.batchUpdate(
+      includeIds,
+      updateTodoRepeatDto
+    );
   }
 
   /**

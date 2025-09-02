@@ -156,13 +156,13 @@ export class ModuleRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ModuleDto[]> {
-    if (!idList || idList.length === 0) return [];
+    if (!includeIds || includeIds.length === 0) return [];
 
     await this.moduleRepository.update(
-      { id: In(idList) },
+      { id: In(includeIds) },
       {
         ...updateDto,
         planDate: updateDto.planDate
@@ -172,7 +172,7 @@ export class ModuleRepository {
     );
 
     const updated = await this.moduleRepository.find({
-      where: { id: In(idList) },
+      where: { id: In(includeIds) },
     });
     return (updated as unknown as ModuleDto[]) || [];
   }
@@ -694,13 +694,13 @@ export class ModuleRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ModuleDto[]> {
-    if (!idList || idList.length === 0) return [];
+    if (!includeIds || includeIds.length === 0) return [];
 
     await this.moduleRepository.update(
-      { id: In(idList) },
+      { id: In(includeIds) },
       {
         ...updateDto,
         planDate: updateDto.planDate
@@ -710,7 +710,7 @@ export class ModuleRepository {
     );
 
     const updated = await this.moduleRepository.find({
-      where: { id: In(idList) },
+      where: { id: In(includeIds) },
     });
     return (updated as unknown as ModuleDto[]) || [];
   }

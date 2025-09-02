@@ -30,7 +30,7 @@ export class TodoStatusService {
     params: OperationByIdListDto
   ): Promise<OperationByIdListResultDto> {
     // 批量完成需要逐个处理，因为可能涉及重复待办的处理
-    for (const id of params.idList) {
+    for (const id of params.includeIds) {
       await this.updateStatus(id, TodoStatus.DONE, "doneAt");
     }
 

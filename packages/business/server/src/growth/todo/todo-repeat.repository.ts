@@ -21,13 +21,13 @@ export interface TodoRepeatRepository {
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto>;
   batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;
   softDelete(id: string): Promise<void>;
-  batchSoftDelete(idList: string[]): Promise<void>;
+  batchSoftDelete(includeIds: string[]): Promise<void>;
   findById(id: string, relations?: string[]): Promise<TodoRepeatDto>;
   findOneBy(condition: any): Promise<TodoRepeatDto | null>;
 }

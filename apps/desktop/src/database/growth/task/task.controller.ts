@@ -14,12 +14,7 @@ import { taskService } from "./task.service";
 
 @Controller("/task")
 export class TaskController {
-  private readonly controller: _TaskController;
-
-  constructor() {
-    this.controller = new _TaskController(taskService);
-  }
-
+  private readonly controller = new _TaskController(taskService);
 
   @Post("/create")
   async create(@Body() body: TaskVO.CreateTaskVo) {
@@ -41,6 +36,16 @@ export class TaskController {
     return this.controller.delete(id);
   }
 
+  @Get("/page")
+  async page(@Body() body: TaskVO.TaskPageFiltersVo) {
+    return this.controller.page(body);
+  }
+
+  @Get("/list")
+  async list(@Body() body: TaskVO.TaskListFiltersVo) {
+    return this.controller.list(body);
+  }
+
   @Get("/task-with-track-time/:id")
   async taskWithTrackTime(@Param("id") id: string) {
     return this.controller.taskWithTrackTime(id);
@@ -54,15 +59,5 @@ export class TaskController {
   @Put("/restore/:id")
   async restore(@Param("id") id: string) {
     return this.controller.restore(id);
-  }
-
-  @Get("/page")
-  async page(@Query() query?: TaskVO.TaskPageFiltersVo) {
-    return this.controller.page(query);
-  }
-
-  @Get("/list")
-  async list(@Query() query?: TaskVO.TaskListFiltersVo) {
-    return this.controller.list(query);
   }
 }

@@ -180,10 +180,10 @@ export class GoalRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateGoalDto: UpdateGoalDto
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: In(idList) }, updateGoalDto);
+    return this.repo.update({ id: In(includeIds) }, updateGoalDto);
   }
 
   async findDetail(id: string): Promise<GoalDto> {
@@ -209,9 +209,9 @@ export class GoalRepository {
     await this.repo.save(entity);
   }
 
-  async batchDone(idList: string[]): Promise<void> {
+  async batchDone(includeIds: string[]): Promise<void> {
     await this.repo.update(
-      { id: In(idList) },
+      { id: In(includeIds) },
       {
         status: GoalStatus.DONE,
         doneAt: new Date(),

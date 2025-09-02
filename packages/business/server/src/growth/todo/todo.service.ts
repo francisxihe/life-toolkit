@@ -104,13 +104,13 @@ export class TodoService {
     await this.todoRepository.softDeleteByTaskIds(taskIds);
   }
 
-  async batchDone(params: { idList: string[] }): Promise<any> {
-    if (!params?.idList?.length) return;
+  async batchDone(params: { includeIds: string[] }): Promise<any> {
+    if (!params?.includeIds?.length) return;
     const updateTodoDto = new UpdateTodoDto();
     updateTodoDto.status = TodoStatus.DONE;
     updateTodoDto.doneAt = new Date();
     const result = await this.todoRepository.batchUpdate(
-      params.idList,
+      params.includeIds,
       updateTodoDto
     );
     console.log(result);

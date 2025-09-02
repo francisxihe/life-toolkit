@@ -1,6 +1,5 @@
 export * from "./task-model.vo";
 import { TaskVo, TaskItemVo } from "./task-model.vo";
-import { self } from "../../common";
 
 export type TaskPageVo = {
   list: TaskItemVo[];
@@ -28,7 +27,8 @@ export type TaskListFiltersVo = Partial<
     startDateEnd?: TaskVo["startAt"];
     endDateStart?: TaskVo["endAt"];
     endDateEnd?: TaskVo["endAt"];
-  } & self
+    excludeIds?: string[];
+  }
 >;
 
 export type TaskPageFiltersVo = TaskListFiltersVo & {

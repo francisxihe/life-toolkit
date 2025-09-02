@@ -225,20 +225,19 @@ export class GoalTreeRepository {
   }
 
   async processTreeFilter(filter: {
-    withoutSelf?: boolean;
-    id?: string;
+    excludeIds?: string[];
     parentId?: string;
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }> {
     const treeRepo = AppDataSource.getTreeRepository(Goal);
     let includeIds: string[] = [];
     let excludeIds: string[] = [];
 
-    if (filter.withoutSelf && filter.id) {
-      const node = await treeRepo.findOne({ where: { id: filter.id } });
-      if (node) {
+    if (filter.excludeIds) {
+      const nodes = await treeRepo.find({ where: { id: In(filter.excludeIds) } });
+      for (const node of nodes) {
         const all = await treeRepo.findDescendants(node);
         excludeIds = all.map((n) => n.id);
-        excludeIds.push(filter.id);
+        excludeIds.push(node.id);
       }
     }
 

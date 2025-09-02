@@ -76,11 +76,7 @@ export class TaskListFiltersDto extends PartialType(
   @IsOptional()
   goalIds?: string[];
 
-  /** 不包含自身 */
-  @IsBoolean()
-  @Type(() => Boolean)
-  @IsOptional()
-  withoutSelf?: boolean;
+  excludeIds?: string[];
 
   /** 任务ID */
   @IsString()
@@ -119,7 +115,5 @@ function importListVo(
   if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
   if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   if (filterVo.abandonedDateEnd) filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
-  // if (filterVo.goalIds) filterDto.goalIds = filterVo.goalIds;
-  if (filterVo.withoutSelf !== undefined) filterDto.withoutSelf = filterVo.withoutSelf;
-  if (filterVo.id) filterDto.id = filterVo.id;
+  if (filterVo.excludeIds) filterDto.excludeIds = filterVo.excludeIds;
 }

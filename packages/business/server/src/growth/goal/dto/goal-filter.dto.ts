@@ -61,12 +61,6 @@ export class GoalListFiltersDto extends PartialType(
   @IsOptional()
   abandonedDateEnd?: string;
 
-  /** 排除自身 */
-  @IsBoolean()
-  @Type(() => Boolean)
-  @IsOptional()
-  withoutSelf?: boolean;
-
   /** 目标ID */
   @IsString()
   @IsOptional()
@@ -105,8 +99,6 @@ function importListVo(
   filterDto: GoalListFiltersDto
 ) {
   if (filterVo.id) filterDto.id = filterVo.id;
-  if (filterVo.withoutSelf !== undefined)
-    filterDto.withoutSelf = filterVo.withoutSelf;
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.type !== undefined) filterDto.type = filterVo.type;
   if (filterVo.importance !== undefined)

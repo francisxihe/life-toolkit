@@ -156,5 +156,44 @@ export function Controller(path?: string) {
   };
 }
 
+/**
+ * 请求体参数装饰器
+ * 用于标记方法参数来自请求体
+ */
+export function Body() {
+  return function (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) {
+    // 存储参数元数据
+    const existingBodyParams = Reflect.getMetadata('method:bodyParams', target, propertyKey!) || [];
+    existingBodyParams.push(parameterIndex);
+    Reflect.defineMetadata('method:bodyParams', existingBodyParams, target, propertyKey!);
+  };
+}
+
+/**
+ * 路径参数装饰器
+ * 用于标记方法参数来自URL路径
+ */
+export function Param(name?: string) {
+  return function (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) {
+    // 存储参数元数据
+    const existingPathParams = Reflect.getMetadata('method:pathParams', target, propertyKey!) || [];
+    existingPathParams.push({ index: parameterIndex, name });
+    Reflect.defineMetadata('method:pathParams', existingPathParams, target, propertyKey!);
+  };
+}
+
+/**
+ * 查询参数装饰器
+ * 用于标记方法参数来自查询字符串
+ */
+export function Query(name?: string) {
+  return function (target: any, propertyKey: string | symbol | undefined, parameterIndex: number) {
+    // 存储参数元数据
+    const existingQueryParams = Reflect.getMetadata('method:queryParams', target, propertyKey!) || [];
+    existingQueryParams.push({ index: parameterIndex, name });
+    Reflect.defineMetadata('method:queryParams', existingQueryParams, target, propertyKey!);
+  };
+}
+
 // 导出适配器辅助工具
 export * from "./adapter-helper";

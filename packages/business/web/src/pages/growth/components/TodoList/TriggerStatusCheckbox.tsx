@@ -30,7 +30,7 @@ export default function TriggerStatusCheckbox(props: {
             return;
           }
           await TodoService.batchDoneTodo({
-            idList: [todo.id],
+            includeIds: [todo.id],
           });
           await props.onChange();
         }}

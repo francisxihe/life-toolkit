@@ -95,13 +95,13 @@ interface TrackRecord {
 ### 查询过滤器
 ```typescript
 interface TaskListFiltersVo {
-  withoutSelf?: boolean;     // 排除自身
   id?: string;              // 任务ID
   importance?: string;      // 重要性
   urgency?: string;         // 紧急性
   status?: string;          // 状态
   startAt?: string;         // 开始时间
   endAt?: string;           // 结束时间
+  excludeIds?: string[];    // 排除ID列表
 }
 ```
 

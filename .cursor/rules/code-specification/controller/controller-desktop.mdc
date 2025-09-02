@@ -104,12 +104,12 @@ export class {Module}DesktopController {
   }
 
   // 批量操作方法
-  async batchDone(idList: string[]): Promise<void> {
-    await this.{module}Controller.batchDone(idList);
+  async batchDone(includeIds: string[]): Promise<void> {
+    await this.{module}Controller.batchDone(includeIds);
   }
 
-  async batchDelete(idList: string[]): Promise<void> {
-    await this.{module}Controller.batchDelete(idList);
+  async batchDelete(includeIds: string[]): Promise<void> {
+    await this.{module}Controller.batchDelete(includeIds);
   }
 }
 
@@ -124,8 +124,8 @@ export const {module}IpcHandlers = {
   'abandon': (id: string) => new {Module}DesktopController().abandon(id),
   'restore': (id: string) => new {Module}DesktopController().restore(id),
   'done': (id: string) => new {Module}DesktopController().done(id),
-  'batchDone': (idList: string[]) => new {Module}DesktopController().batchDone(idList),
-  'batchDelete': (idList: string[]) => new {Module}DesktopController().batchDelete(idList),
+  'batchDone': (includeIds: string[]) => new {Module}DesktopController().batchDone(includeIds),
+  'batchDelete': (includeIds: string[]) => new {Module}DesktopController().batchDelete(includeIds),
 };
 ```
 

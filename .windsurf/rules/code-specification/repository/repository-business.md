@@ -59,7 +59,7 @@ export interface ModuleRepository {
   // 更新操作
   update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto>;
   batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ModuleDto[]>;
 
@@ -144,7 +144,7 @@ update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto>;
 
 // 批量更新
 batchUpdate(
-  idList: string[],
+  includeIds: string[],
   updateDto: UpdateModuleDto
 ): Promise<ModuleDto[]>;
 ```
@@ -341,7 +341,7 @@ export interface ModuleRepository {
   // 更新操作
   update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto>;
   batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ModuleDto[]>;
 

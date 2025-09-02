@@ -118,12 +118,12 @@ export class {Module}Controller {
   }
 
   // 批量操作
-  async batchDone(idList: string[]): Promise<void> {
-    await this.{module}Service.batchDone(idList);
+  async batchDone(includeIds: string[]): Promise<void> {
+    await this.{module}Service.batchDone(includeIds);
   }
 
-  async batchDelete(idList: string[]): Promise<void> {
-    await this.{module}Service.batchDelete(idList);
+  async batchDelete(includeIds: string[]): Promise<void> {
+    await this.{module}Service.batchDelete(includeIds);
   }
 }
 ```

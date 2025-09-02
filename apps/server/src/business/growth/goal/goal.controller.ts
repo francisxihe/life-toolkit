@@ -109,8 +109,8 @@ export class GoalController {
    */
   @Put("batch-done")
   @Response()
-  async batchDone(@Body() params: { idList: string[] }): Promise<void> {
-    await this.goalService.batchDone(params.idList);
+  async batchDone(@Body() params: { includeIds: string[] }): Promise<void> {
+    await this.goalService.batchDone(params.includeIds);
   }
 
   /**

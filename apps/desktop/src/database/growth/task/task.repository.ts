@@ -108,9 +108,9 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     await this.repo.save(entity);
   }
 
-  async removeByIds(idList: string[]): Promise<void> {
-    if (!idList || !idList.length) return;
-    await this.repo.softDelete({ id: In(idList) });
+  async removeByIds(includeIds: string[]): Promise<void> {
+    if (!includeIds || !includeIds.length) return;
+    await this.repo.softDelete({ id: In(includeIds) });
   }
 
   async findById(id: string, relations?: string[]): Promise<TaskDto> {

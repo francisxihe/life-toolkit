@@ -161,13 +161,13 @@ async restore(id: string): Promise<any> {
 
 #### 批量状态变更
 ```typescript
-async batchChangeStatus(params: { idList: string[]; status: ModuleStatus }): Promise<any> {
-  if (!params?.idList?.length) return;
+async batchChangeStatus(params: { includeIds: string[]; status: ModuleStatus }): Promise<any> {
+  if (!params?.includeIds?.length) return;
 
   const updateDto = new UpdateModuleDto();
   updateDto.status = params.status;
   updateDto.statusChangedAt = new Date();
-  await this.moduleRepository.batchUpdate(params.idList, updateDto);
+  await this.moduleRepository.batchUpdate(params.includeIds, updateDto);
 }
 ```
 
@@ -352,12 +352,12 @@ export class ModuleService {
     await this.moduleRepository.softDeleteByRelatedIds(relatedIds);
   }
 
-  async batchMarkDone(params: { idList: string[] }): Promise<any> {
-    if (!params?.idList?.length) return;
+  async batchMarkDone(params: { includeIds: string[] }): Promise<any> {
+    if (!params?.includeIds?.length) return;
     const updateDto = new UpdateModuleDto();
     updateDto.status = ModuleStatus.DONE;
     updateDto.doneAt = new Date();
-    await this.moduleRepository.batchUpdate(params.idList, updateDto);
+    await this.moduleRepository.batchUpdate(params.includeIds, updateDto);
   }
 
   async markDone(id: string): Promise<any> {

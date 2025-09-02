@@ -153,17 +153,17 @@ export class ModuleRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ResourceDto[]> {
-    await this.repo.update(idList, updateDto);
+    await this.repo.update(includeIds, updateDto);
     const qb = this.repo
       .createQueryBuilder("resource")
       .leftJoinAndSelect("resource.relatedEntity", "relatedEntity")
       .leftJoinAndSelect("resource.anotherEntity", "anotherEntity");
 
     const list = await qb
-      .where("resource.id IN (:...ids)", { ids: idList })
+      .where("resource.id IN (:...ids)", { ids: includeIds })
       .getMany();
 
     return list.map((item) => ModuleDto.importEntity(item));
@@ -328,11 +328,11 @@ async page(filter: ModulePageFiltersDto): Promise<{
 ### 批量更新实现
 ```typescript
 async batchUpdate(
-  idList: string[],
+  includeIds: string[],
   updateDto: UpdateModuleDto
 ): Promise<ResourceDto[]> {
   // 1. 批量更新
-  await this.repo.update(idList, updateDto);
+  await this.repo.update(includeIds, updateDto);
 
   // 2. 重新查询更新后的数据
   const qb = this.repo
@@ -340,7 +340,7 @@ async batchUpdate(
     .leftJoinAndSelect("resource.relatedEntity", "relatedEntity");
 
   const list = await qb
-    .where("resource.id IN (:...ids)", { ids: idList })
+    .where("resource.id IN (:...ids)", { ids: includeIds })
     .getMany();
 
   // 3. 转换为 DTO 返回
@@ -400,7 +400,7 @@ const qb = this.repo
 ```typescript
 // 使用事务确保数据一致性
 await this.repo.manager.transaction(async (manager) => {
-  await manager.update(Resource, idList, updateDto);
+  await manager.update(Resource, includeIds, updateDto);
   await manager.delete(Resource, { relatedId: null });
 });
 ```
@@ -409,8 +409,8 @@ await this.repo.manager.transaction(async (manager) => {
 ```typescript
 // 分批处理大数据集
 const batchSize = 100;
-for (let i = 0; i < idList.length; i += batchSize) {
-  const batch = idList.slice(i, i + batchSize);
+for (let i = 0; i < includeIds.length; i += batchSize) {
+  const batch = includeIds.slice(i, i + batchSize);
   await this.repo.update(batch, updateDto);
 }
 ```
@@ -585,17 +585,17 @@ export class ModuleRepository {
   }
 
   async batchUpdate(
-    idList: string[],
+    includeIds: string[],
     updateDto: UpdateModuleDto
   ): Promise<ResourceDto[]> {
-    await this.repo.update(idList, updateDto);
+    await this.repo.update(includeIds, updateDto);
     const qb = this.repo
       .createQueryBuilder("resource")
       .leftJoinAndSelect("resource.relatedEntity", "relatedEntity")
       .leftJoinAndSelect("resource.anotherEntity", "anotherEntity");
 
     const list = await qb
-      .where("resource.id IN (:...ids)", { ids: idList })
+      .where("resource.id IN (:...ids)", { ids: includeIds })
       .getMany();
 
     return list.map((item) => ModuleDto.importEntity(item));

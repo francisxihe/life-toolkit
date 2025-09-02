@@ -53,4 +53,16 @@ export default class GoalController {
   static async abandonGoal(id: string) {
     return request({ method: "put" })(`/goal/abandon/${id}`);
   }
+
+  static async getGoalDetail(id: string) {
+    return request({ method: "get" })(`/goal/detail/${id}`);
+  }
+
+  static async getGoalFindRoots() {
+    return request({ method: "get" })(`/goal/findRoots`);
+  }
+
+  static async getGoalFindDetail(id: string) {
+    return request({ method: "get" })(`/goal/findDetail/${id}`);
+  }
 }
