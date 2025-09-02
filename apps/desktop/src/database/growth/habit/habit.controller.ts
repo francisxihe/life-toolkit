@@ -18,12 +18,11 @@ import { habitService } from "./habit.service";
 
 @Controller("/habit")
 export class HabitController {
-  private readonly controller: _HabitController;
-  constructor() {
-    this.controller = new _HabitController(habitService);
-  }
+  controller = new _HabitController(habitService);
+
+
   @Post("/create")
-  async create(@Body() payload: HabitVO.CreateHabitVo) {
+  async create(@Body() payload: any) {
     return this.controller.create(payload);
   }
 
@@ -32,84 +31,63 @@ export class HabitController {
     return this.controller.findById(id);
   }
 
-  @Post("/updateStreak/:id")
-  async updateStreak(
-    @Param("id") id: string,
-    @Body() body?: { completed?: boolean }
-  ) {
-    return this.controller.updateStreak(id, body);
-  }
-
-  @Post("/pauseHabit")
-  async pauseHabit(@Body() body?: { id?: string }) {
-    return this.controller.pauseHabit(body);
-  }
-
-  @Post("/resumeHabit")
-  async resumeHabit(@Body() body?: { id?: string }) {
-    return this.controller.resumeHabit(body);
-  }
-
-  @Post("/completeHabit")
-  async completeHabit(@Body() body?: { id?: string }) {
-    return this.controller.completeHabit(body);
+  @Put("/update-streak/:id")
+  async updateStreak(@Param("id") id: string, @Body() payload: any) {
+    return this.controller.updateStreak(id, payload);
   }
 
   @Put("/update/:id")
-  async update(
-    @Param("id") id: string,
-    @Body() payload: HabitVO.UpdateHabitVo
-  ) {
+  async update(@Param("id") id: string, @Body() payload: any) {
     return this.controller.update(id, payload);
   }
 
   @Delete("/delete/:id")
-  async remove(@Param("id") id: string) {
-    return this.controller.remove(id);
+  async delete(@Param("id") id: string) {
+    return this.controller.delete(id);
   }
 
   @Get("/page")
-  async page(@Query() query?: HabitPageFiltersVo) {
+  async page(@Query() query?: any) {
     return this.controller.page(query);
   }
 
   @Get("/list")
-  async list(@Query() query?: HabitListFiltersVo) {
+  async list(@Query() query?: any) {
     return this.controller.list(query);
   }
 
-  @Get("/getHabitTodos/:id")
+  @Get("/todos/:id")
   async getHabitTodos(@Param("id") id: string) {
     return this.controller.getHabitTodos(id);
   }
 
-  @Get("/getHabitAnalytics/:id")
+  @Get("/analytics/:id")
   async getHabitAnalytics(@Param("id") id: string) {
     return this.controller.getHabitAnalytics(id);
   }
 
-  @Post("/batchDone")
-  async batchDone(@Body() body?: { idList?: string[] }) {
-    return this.controller.batchDone(body);
+  @Put("/batch-done")
+  async batchDone(@Body() payload: any) {
+    return this.controller.batchDone(payload);
   }
 
-  @Post("/abandon/:id")
+  @Put("/abandon/:id")
   async abandon(@Param("id") id: string) {
     return this.controller.abandon(id);
   }
 
-  @Post("/restore/:id")
-  async restore(@Param("id") id: string) { 
+  @Put("/restore/:id")
+  async restore(@Param("id") id: string) {
     return this.controller.restore(id);
   }
 
-  @Post("/pause")
-  async pause(@Body() body?: { id?: string }) {
-    return this.controller.pause(body);
+  @Put("/pause/:id")
+  async pauseHabit(@Param("id") id: string) {
+    return this.controller.pauseHabit(id);
   }
 
-  @Post("/resume")
-  async resume(@Body() body?: { id?: string }) {
-    return this.controller.resume(body);
+  @Put("/resume/:id")
+  async resumeHabit(@Param("id") id: string) {
+    return this.controller.resumeHabit(id);
   }
 }

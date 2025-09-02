@@ -1,7 +1,7 @@
-import { In, Repository } from "typeorm";
+import { In, Repository, UpdateResult } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import {
-  HabitRepository as BusinessHabitRepository,
+  HabitRepository as _HabitRepository,
   CreateHabitDto,
   UpdateHabitDto,
   HabitListFiltersDto,
@@ -13,7 +13,7 @@ import {
 } from "@life-toolkit/business-server";
 import { HabitStatus, Difficulty, TodoStatus } from "@life-toolkit/enum";
 
-export class HabitRepository implements BusinessHabitRepository {
+export class HabitRepository implements _HabitRepository {
   private repo: Repository<Habit>;
   private goalRepo: Repository<Goal>;
   private todoRepo: Repository<Todo>;
@@ -74,16 +74,16 @@ export class HabitRepository implements BusinessHabitRepository {
       });
     }
 
-    const endDataStart = filter.endDataStart;
-    const endDataEnd = filter.endDataEnd;
-    if (endDataStart) {
+    const endDateStart = filter.endDateStart;
+    const endDateEnd = filter.endDateEnd;
+    if (endDateStart) {
       qb = qb.andWhere("habit.targetDate >= :tds", {
-        tds: new Date(`${endDataStart}T00:00:00`),
+        tds: new Date(`${endDateStart}T00:00:00`),
       });
     }
-    if (endDataEnd) {
+    if (endDateEnd) {
       qb = qb.andWhere("habit.targetDate <= :tde", {
-        tde: new Date(`${endDataEnd}T23:59:59`),
+        tde: new Date(`${endDateEnd}T23:59:59`),
       });
     }
 
@@ -131,7 +131,12 @@ export class HabitRepository implements BusinessHabitRepository {
 
   async page(
     habitPageFiltersDto: HabitPageFiltersDto
-  ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
+  ): Promise<{
+    list: HabitDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const { pageNum = 1, pageSize = 10 } = habitPageFiltersDto;
     const qb = this.buildQuery(habitPageFiltersDto);
     const [entities, total] = await qb
@@ -179,8 +184,11 @@ export class HabitRepository implements BusinessHabitRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(ids: string[], updateData: Partial<Habit>): Promise<void> {
-    await this.repo.update({ id: In(ids) }, updateData);
+  async batchUpdate(
+    idList: string[],
+    updateHabitDto: UpdateHabitDto
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id: In(idList) }, updateHabitDto);
   }
 
   async updateStatus(

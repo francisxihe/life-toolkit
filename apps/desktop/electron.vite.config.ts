@@ -12,6 +12,13 @@ const currentDirPath = path.dirname(currentFilePath);
 
 export default defineConfig({
   main: {
+    resolve: {
+      alias: {
+        "@business": path.resolve(currentDirPath, "../../packages/business/server/src"),
+        "@database": path.resolve(currentDirPath, "src/database"),
+        "@": path.resolve(currentDirPath, "src/main"),
+      },
+    },
     build: {
       outDir: "dist/main",
       rollupOptions: {

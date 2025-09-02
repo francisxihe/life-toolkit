@@ -1,4 +1,4 @@
-import { TodoRepeat } from "./todo-repeat.entity";
+import { FindOptionsWhere, UpdateResult } from "typeorm";
 import {
   CreateTodoRepeatDto,
   UpdateTodoRepeatDto,
@@ -16,11 +16,14 @@ export interface TodoRepeatRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto>;
+  update(
+    id: string,
+    updateTodoRepeatDto: UpdateTodoRepeatDto
+  ): Promise<TodoRepeatDto>;
   batchUpdate(
     idList: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto[]>;
+  ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;
   softDelete(id: string): Promise<void>;

@@ -1,3 +1,4 @@
+import { UpdateResult } from "typeorm";
 import { Todo } from "./todo.entity";
 import {
   CreateTodoDto,
@@ -25,7 +26,7 @@ export interface TodoRepository {
   batchUpdate(
     idList: string[],
     updateTodoDto: UpdateTodoDto
-  ): Promise<TodoDto[]>;
+  ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoPageFiltersDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<TodoDto>;

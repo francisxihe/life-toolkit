@@ -1,4 +1,4 @@
-import { Repository, In } from "typeorm";
+import { Repository, In, UpdateResult } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import {
   CreateTodoRepeatDto,
@@ -119,20 +119,9 @@ export class TodoRepeatRepository {
 
   async batchUpdate(
     idList: string[],
-    updateDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto[]> {
-    const entities = await this.repo.find({ where: { id: In(idList) } });
-
-    entities.forEach((entity) => {
-      updateDto.exportUpdateEntity();
-    });
-
-    const saved = await this.repo.save(entities);
-    return saved.map((item) => {
-      const dto = new TodoRepeatDto();
-      dto.importEntity(item);
-      return dto;
-    });
+    updateTodoRepeatDto: UpdateTodoRepeatDto
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id: In(idList) }, updateTodoRepeatDto);
   }
 
   async delete(id: string): Promise<boolean> {

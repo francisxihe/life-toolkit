@@ -26,6 +26,8 @@ export class TodoListFilterDto extends PartialType(
 
   taskIds?: string[];
 
+  idList?: string[];
+
   importListVo(filterVo: TodoListFiltersVo) {
     importListVo(filterVo, this);
   }
@@ -55,4 +57,5 @@ function importListVo(
   filterDto.doneDateEnd = filterVo.doneDateEnd;
   filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
+  filterDto.idList = filterVo.idList;
 }

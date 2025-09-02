@@ -1,5 +1,4 @@
-import { Repository, In } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { Repository, In, UpdateResult } from "typeorm";
 import {
   CreateGoalDto,
   UpdateGoalDto,
@@ -9,6 +8,7 @@ import {
   Goal,
 } from "@life-toolkit/business-server";
 import { GoalStatus, GoalType } from "@life-toolkit/enum";
+import { AppDataSource } from "../../database.config";
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
 export class GoalRepository {
@@ -179,8 +179,11 @@ export class GoalRepository {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(ids: string[], updateData: Partial<Goal>): Promise<void> {
-    await this.repo.update({ id: In(ids) }, updateData);
+  async batchUpdate(
+    idList: string[],
+    updateGoalDto: UpdateGoalDto
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id: In(idList) }, updateGoalDto);
   }
 
   async findDetail(id: string): Promise<GoalDto> {
@@ -206,9 +209,9 @@ export class GoalRepository {
     await this.repo.save(entity);
   }
 
-  async batchDone(ids: string[]): Promise<void> {
+  async batchDone(idList: string[]): Promise<void> {
     await this.repo.update(
-      { id: In(ids) },
+      { id: In(idList) },
       {
         status: GoalStatus.DONE,
         doneAt: new Date(),

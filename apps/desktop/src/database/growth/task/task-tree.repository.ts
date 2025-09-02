@@ -91,17 +91,17 @@ export class TaskTreeRepository {
     if (Array.isArray(target)) {
       const all: string[] = [];
       for (const t of target) {
-        const ids = await collect(t);
-        all.push(...ids);
+        const idList = await collect(t);
+        all.push(...idList);
       }
       return Array.from(new Set(all));
     }
     return await collect(target);
   }
 
-  async deleteByIds(ids: string[]): Promise<void> {
-    if (!ids || ids.length === 0) return;
+  async deleteByIds(idList: string[]): Promise<void> {
+    if (!idList || idList.length === 0) return;
     const repo = AppDataSource.getTreeRepository(Task);
-    await repo.softDelete({ id: In(ids) });
+    await repo.softDelete({ id: In(idList) });
   }
 }

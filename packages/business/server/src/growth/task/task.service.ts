@@ -40,15 +40,18 @@ export class TaskService {
     return await this.taskRepository.findById(entity.id);
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<boolean> {
     const taskToDelete = await this.taskTreeRepository.findOne({
       id,
     } as Partial<Task>);
-    if (!taskToDelete) throw new Error("Task not found");
+    if (!taskToDelete) {
+      throw new Error("Task not found");
+    }
     const allIds =
       await this.taskTreeRepository.computeDescendantIds(taskToDelete);
     await this.todoCleanup.deleteByTaskIds(allIds);
     await this.taskTreeRepository.deleteByIds(allIds);
+    return true;
   }
 
   async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
@@ -104,9 +107,12 @@ export class TaskService {
     return list;
   }
 
-  async page(
-    filter: TaskPageFiltersDto
-  ): Promise<{ list: TaskDto[]; total: number; pageNum: number; pageSize: number }> {
+  async page(filter: TaskPageFiltersDto): Promise<{
+    list: TaskDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }> {
     const { list, total, pageNum, pageSize } =
       await this.taskRepository.page(filter);
     return { list, total, pageNum, pageSize };
@@ -124,17 +130,19 @@ export class TaskService {
     return await this.taskRepository.findByGoalIds(goalIds);
   }
 
-  async abandon(id: string): Promise<void> {
+  async abandon(id: string): Promise<boolean> {
     await this.update(
       id,
       Object.assign(new UpdateTaskDto(), { status: TaskStatus.ABANDONED })
     );
+    return true;
   }
 
-  async restore(id: string): Promise<void> {
+  async restore(id: string): Promise<boolean> {
     await this.update(
       id,
       Object.assign(new UpdateTaskDto(), { status: TaskStatus.TODO })
     );
+    return true;
   }
 }

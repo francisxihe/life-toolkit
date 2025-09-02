@@ -25,6 +25,7 @@ export type TodoListFiltersVo = {
   doneDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
+  idList?: string[];
 };
 
 export type TodoPageFiltersVo = TodoListFiltersVo & {

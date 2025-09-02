@@ -1,4 +1,4 @@
-import { FindOptionsWhere } from "typeorm";
+import { FindOptionsWhere, UpdateResult } from "typeorm";
 import { Goal } from "./goal.entity";
 import { GoalType, GoalStatus } from "@life-toolkit/enum";
 import {
@@ -17,7 +17,14 @@ export interface GoalRepository {
 
   findAll(filter: GoalListFiltersDto): Promise<GoalDto[]>;
 
-  page(filter: GoalPageFiltersDto): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }>;
+  page(
+    filter: GoalPageFiltersDto
+  ): Promise<{
+    list: GoalDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }>;
 
   update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto>;
 
@@ -25,7 +32,7 @@ export interface GoalRepository {
 
   softDelete(id: string): Promise<void>;
 
-  batchUpdate(ids: string[], updateData: Partial<Goal>): Promise<void>;
+  batchUpdate(ids: string[], updateGoalDto: UpdateGoalDto): Promise<UpdateResult>;
   // 细化方法
   findDetail(id: string): Promise<GoalDto>;
 
@@ -61,10 +68,7 @@ export interface GoalTreeRepository {
     treeRepo?: unknown
   ): Promise<void>;
 
-  deleteDescendants(
-    target: Goal | Goal[],
-    treeRepo?: unknown
-  ): Promise<void>;
+  deleteDescendants(target: Goal | Goal[], treeRepo?: unknown): Promise<void>;
 
   buildTree(node: Goal): Promise<Goal>;
 

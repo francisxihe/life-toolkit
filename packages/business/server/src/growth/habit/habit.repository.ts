@@ -1,3 +1,4 @@
+import { UpdateResult } from "typeorm";
 import { HabitStatus } from "@life-toolkit/enum";
 import {
   CreateHabitDto,
@@ -12,11 +13,19 @@ export interface HabitRepository {
   create(createHabitDto: CreateHabitDto): Promise<HabitDto>;
   findById(id: string, relations?: string[]): Promise<HabitDto>;
   findAll(filter: HabitListFiltersDto): Promise<HabitDto[]>;
-  page(filter: HabitPageFiltersDto): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }>;
+  page(filter: HabitPageFiltersDto): Promise<{
+    list: HabitDto[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+  }>;
   update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto>;
   delete(id: string): Promise<void>;
   softDelete(id: string): Promise<void>;
-  batchUpdate(ids: string[], updateData: Partial<any>): Promise<void>;
+  batchUpdate(
+    ids: string[],
+    updateHabitDto: UpdateHabitDto
+  ): Promise<UpdateResult>;
 
   // 状态与细化方法
   updateStatus(
@@ -27,18 +36,14 @@ export interface HabitRepository {
   updateStreak(id: string, increment: boolean): Promise<HabitDto>;
 
   // 聚合查询
-  getHabitTodos(
-    habitId: string
-  ): Promise<{
+  getHabitTodos(habitId: string): Promise<{
     activeTodos: any[];
     completedTodos: any[];
     abandonedTodos: any[];
     totalCount: number;
   }>;
 
-  getHabitAnalyticsData(
-    habitId: string
-  ): Promise<{
+  getHabitAnalyticsData(habitId: string): Promise<{
     totalTodos: number;
     completedTodos: number;
     abandonedTodos: number;

@@ -13,8 +13,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/common/*": ["common/*"],
-      "@/base/*": ["base/*"]
+      "@business/*": ["src/*"],
     },
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,

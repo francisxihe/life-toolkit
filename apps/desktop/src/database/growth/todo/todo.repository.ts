@@ -1,4 +1,4 @@
-import { Repository, In } from "typeorm";
+import { Repository, In, UpdateResult } from "typeorm";
 import { AppDataSource } from "../../database.config";
 import {
   CreateTodoDto,
@@ -129,33 +129,20 @@ export class TodoRepository {
 
   async batchUpdate(
     idList: string[],
-    updateDto: UpdateTodoDto
-  ): Promise<TodoDto[]> {
-    await this.repo.update(idList, updateDto);
-    const qb = this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit");
-    const list = await qb
-      .where("todo.id IN (:...ids)", { ids: idList })
-      .getMany();
-
-    return list.map((it) => {
-      const todoDto = new TodoDto();
-      todoDto.importEntity(it);
-      return todoDto;
-    });
+    updateTodoDto: UpdateTodoDto
+  ): Promise<UpdateResult> {
+    return this.repo.update({ id: In(idList) }, updateTodoDto);
   }
 
   async delete(id: string): Promise<boolean> {
     await this.repo.delete(id);
     return true;
-  }
+  } 
 
   async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
     const qb = this.repo.createQueryBuilder("todo");
     if (filter.taskIds && filter.taskIds.length > 0) {
-      qb.where("todo.taskId IN (:...ids)", { ids: filter.taskIds });
+      qb.where("todo.taskId IN (:...idList)", { idList: filter.taskIds });
     }
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));

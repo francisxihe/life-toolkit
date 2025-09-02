@@ -19,22 +19,10 @@ export class TodoController {
     this.controller = new _TodoController(todoService, todoRepeatService);
   }
 
+
   @Post("/create")
-  async create(@Body() payload: TodoVO.CreateTodoVo) {
-    return this.controller.create(payload);
-  }
-
-  @Delete("/delete/:id")
-  async delete(@Param("id") id: string) {
-    return this.controller.delete(id);
-  }
-
-  @Put("/update/:id")
-  async update(
-    @Param("id") id: string,
-    @Body() payload: { updateVo?: TodoVO.UpdateTodoVo } & TodoVO.UpdateTodoVo
-  ) {
-    return this.controller.update(id, payload);
+  async create(@Body() body: TodoVO.CreateTodoVo) {
+    return this.controller.create(body);
   }
 
   @Get("/detail/:id")
@@ -42,19 +30,25 @@ export class TodoController {
     return this.controller.findById(id);
   }
 
+
+  @Delete("/delete/:id")
+  async delete(@Param("id") id: string) {
+    return this.controller.delete(id);
+  }
+
   @Get("/page")
-  async page(@Query() q?: TodoVO.TodoPageFiltersVo) {
-    return this.controller.page(q);
+  async page(@Query() query?: TodoVO.TodoPageFiltersVo) {
+    return this.controller.page(query);
   }
 
   @Get("/list")
-  async list(@Query() query: TodoVO.TodoListFiltersVo) {
+  async list(@Query() query?: TodoVO.TodoListFiltersVo) {
     return this.controller.list(query);
   }
 
-  @Put("/batchDone")
-  async batchDone(@Body() body?: { idList?: string[] }) {
-    return this.controller.batchDone(body);
+  @Put("/done/batch")
+  async doneBatch(@Body() body: TodoVO.TodoListFiltersVo) {
+    return this.controller.doneBatch(body);
   }
 
   @Put("/abandon/:id")
@@ -72,13 +66,18 @@ export class TodoController {
     return this.controller.done(id);
   }
 
-  @Get("/listWithRepeat")
-  async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
-    return this.controller.listWithRepeat(query);
-  }
-
   @Get("/detailWithRepeat/:id")
   async detailWithRepeat(@Param("id") id: string) {
     return this.controller.detailWithRepeat(id);
+  }
+
+  @Put("/update/:id")
+  async update(@Param("id") id: string, @Body() body: TodoVO.UpdateTodoVo) {
+    return this.controller.update(id, body);
+  }
+
+  @Get("/listWithRepeat")
+  async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
+    return this.controller.listWithRepeat(query);
   }
 }

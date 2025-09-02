@@ -6,10 +6,10 @@ import {
   TodoPageFiltersDto,
   TodoListFilterDto,
   TodoDto,
+  UpdateTodoRepeatDto,
 } from "./dto";
 import { TodoStatus } from "@life-toolkit/enum";
 import { TodoRepeatService } from "./todo-repeat.service";
-import dayjs from "dayjs";
 
 export class TodoService {
   protected todoRepository: TodoRepository;
@@ -72,7 +72,7 @@ export class TodoService {
     const todoRepeatDtoList =
       await this.todoRepeatService.generateTodosInRange(filter);
 
-    // 合并并去重：优先保留普通待办；重复键使用 id 或 repeatId+planDate
+    // 合并并去重：优先保留普通待办；
     const map = new Map<string, TodoDto>();
     todoDtoList.forEach((todoDto) => map.set(todoDto.id, todoDto));
     todoRepeatDtoList.forEach((todoRepeatDto) => {
@@ -109,7 +109,12 @@ export class TodoService {
     const updateTodoDto = new UpdateTodoDto();
     updateTodoDto.status = TodoStatus.DONE;
     updateTodoDto.doneAt = new Date();
-    await this.todoRepository.batchUpdate(params.idList, updateTodoDto);
+    const result = await this.todoRepository.batchUpdate(
+      params.idList,
+      updateTodoDto
+    );
+    console.log(result);
+    return result;
   }
 
   async done(id: string): Promise<any> {

@@ -11,7 +11,9 @@ import {
   GoalDto,
 } from "@life-toolkit/business-server";
 import { GoalService } from "./goal.service";
+import { Controller } from "@business/decorators";
 
+@Controller("/goal")
 export class GoalController {
   constructor(private readonly goalService: GoalService) {}
 
@@ -59,18 +61,12 @@ export class GoalController {
   }
 
   async findRoots() {
-    return (await this.goalService.findRoots()).map((dto) =>
-      dto.exportVo()
-    );
+    return (await this.goalService.findRoots()).map((dto) => dto.exportVo());
   }
 
   async findDetail(id: string) {
     const dto = await this.goalService.findDetail(id);
     return dto.exportVo();
-  }
-
-  async batchDone(body?: { idList?: string[] }) {
-    await this.goalService.batchDone(body?.idList ?? []);
   }
 
   async abandon(id: string) {

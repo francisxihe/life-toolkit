@@ -79,4 +79,8 @@ export default class HabitController {
       recentTodos: any[];
     }>({ method: "get" })(`/habit/getHabitAnalytics/${id}`);
   }
+
+  static async updateStreakHabit(id: string, payload: { completed?: boolean }) {
+    return request({ method: "put" })(`/update-streak/${id}`, payload);
+  }
 }

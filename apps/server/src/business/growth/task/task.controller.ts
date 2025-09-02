@@ -15,65 +15,58 @@ import type {
   Task,
   OperationByIdListVo,
   TaskListFiltersVo,
+  TaskPageFiltersVo,
 } from "@life-toolkit/vo";
 import {
-  TaskPageFiltersDto,
-  TaskListFiltersDto,
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskDto,
+  TaskController as BusinessTaskController,
 } from "@life-toolkit/business-server";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("task")
 export class TaskController {
+  private readonly businessController: BusinessTaskController;
+
   constructor(
     private readonly taskService: TaskService,
     private readonly taskStatusService: TaskStatusService
-  ) {}
+  ) {
+    this.businessController = new BusinessTaskController(taskService);
+  }
 
   @Put("batch-done")
   @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.taskStatusService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
-    );
+  async batchDone(@Body() body: { idList?: string[] }) {
+    return await this.businessController.batchDone(body);
   }
 
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    await this.taskStatusService.abandon(id);
-    return { result: true };
+    return await this.businessController.abandon(id);
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    await this.taskStatusService.restore(id);
-    return { result: true };
+    return await this.businessController.restore(id);
   }
 
   @Get("task-with-track-time/:id")
   @Response()
   async taskWithTrackTime(@Param("id") id: string) {
-    const dto = await this.taskService.taskWithTrackTime(id);
-    return dto.exportVo();
+    return await this.businessController.taskWithTrackTime(id);
   }
 
   @Post("create")
   @Response()
   async create(@Body() createTaskVo: Task.CreateTaskVo) {
-    const createDto = new CreateTaskDto();
-    createDto.importVo(createTaskVo);
-    const dto = await this.taskService.create(createDto);
-    return dto.exportVo();
+    return await this.businessController.create(createTaskVo);
   }
 
   @Delete("delete/:id")
   @Response()
   async delete(@Param("id") id: string) {
-    return this.taskService.delete(id);
+    return await this.businessController.remove(id);
   }
 
   @Put("update/:id")
@@ -82,37 +75,24 @@ export class TaskController {
     @Param("id") id: string,
     @Body() updateTaskVo: Task.UpdateTaskVo
   ) {
-    const updateDto = new UpdateTaskDto();
-    updateDto.importVo(updateTaskVo);
-    const dto = await this.taskService.update(id, updateDto);
-    return dto.exportVo();
+    return await this.businessController.update(id, updateTaskVo);
   }
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TaskPageFiltersDto) {
-    const { list, total } = await this.taskService.page(filter);
-    return TaskDto.dtoListToPageVo(
-      list,
-      total,
-      filter.pageNum || 1,
-      filter.pageSize || 10
-    );
+  async page(@Query() filter: TaskPageFiltersVo) {
+    return await this.businessController.page(filter);
   }
 
   @Get("list")
   @Response()
   async list(@Query() filter: TaskListFiltersVo) {
-    const taskListFilterDto = new TaskListFiltersDto();
-    taskListFilterDto.importListVo(filter);
-    const taskList = await this.taskService.findAll(taskListFilterDto);
-    return TaskDto.dtoListToListVo(taskList);
+    return await this.businessController.list(filter);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
-    const task = await this.taskService.findById(id);
-    return task.exportVo();
+    return await this.businessController.findById(id);
   }
 }
