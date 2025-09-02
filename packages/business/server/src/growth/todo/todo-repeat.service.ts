@@ -6,17 +6,18 @@ import {
   TodoRepeatListFilterDto,
   TodoRepeatDto,
 } from "./dto";
-import {
-  RepeatEndMode,
-  Repeat as RepeatConfig,
-} from "@life-toolkit/components-repeat/types";
-import { calculateNextDate } from "@life-toolkit/components-repeat/common";
+import { TodoRepository } from "./todo.repository";
 import {
   CreateTodoDto,
-  TodoDto,
-  Todo,
+  UpdateTodoDto,
+  TodoPageFiltersDto,
   TodoListFilterDto,
-} from "@life-toolkit/business-server";
+  TodoDto,
+} from "./dto";
+import { Todo } from "./todo.entity";
+import { TodoRepeat } from "./todo-repeat.entity";
+import { RepeatEndMode, Repeat as RepeatConfig } from "@life-toolkit/components-repeat/types";
+import { calculateNextDate } from "@life-toolkit/components-repeat/common";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import dayjs from "dayjs";
 
@@ -32,7 +33,23 @@ export class TodoRepeatService {
   async create(
     createTodoRepeatDto: CreateTodoRepeatDto
   ): Promise<TodoRepeatDto> {
-    const entity = await this.todoRepeatRepository.create(createTodoRepeatDto);
+    const todoRepeatEntity: Partial<TodoRepeat> = {
+      name: createTodoRepeatDto.name,
+      description: createTodoRepeatDto.description,
+      importance: createTodoRepeatDto.importance,
+      urgency: createTodoRepeatDto.urgency,
+      tags: createTodoRepeatDto.tags,
+      status: createTodoRepeatDto.status,
+      repeatStartDate: createTodoRepeatDto.repeatStartDate,
+      currentDate: createTodoRepeatDto.currentDate,
+      repeatMode: createTodoRepeatDto.repeatMode,
+      repeatConfig: createTodoRepeatDto.repeatConfig,
+      repeatEndMode: createTodoRepeatDto.repeatEndMode,
+      repeatEndDate: createTodoRepeatDto.repeatEndDate,
+      repeatTimes: createTodoRepeatDto.repeatTimes,
+      repeatedTimes: createTodoRepeatDto.repeatedTimes,
+    };
+    const entity = await this.todoRepeatRepository.create(todoRepeatEntity);
     const foundEntity = await this.todoRepeatRepository.findById(entity.id);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(foundEntity);
@@ -46,8 +63,24 @@ export class TodoRepeatService {
     id: string,
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto> {
-    await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
-    const entity = await this.todoRepeatRepository.findById(id);
+    const todoRepeatUpdate: Partial<TodoRepeat> = {};
+    if (updateTodoRepeatDto.name !== undefined) todoRepeatUpdate.name = updateTodoRepeatDto.name;
+    if (updateTodoRepeatDto.description !== undefined) todoRepeatUpdate.description = updateTodoRepeatDto.description;
+    if (updateTodoRepeatDto.importance !== undefined) todoRepeatUpdate.importance = updateTodoRepeatDto.importance;
+    if (updateTodoRepeatDto.urgency !== undefined) todoRepeatUpdate.urgency = updateTodoRepeatDto.urgency;
+    if (updateTodoRepeatDto.tags !== undefined) todoRepeatUpdate.tags = updateTodoRepeatDto.tags;
+    if (updateTodoRepeatDto.status !== undefined) todoRepeatUpdate.status = updateTodoRepeatDto.status;
+    if (updateTodoRepeatDto.repeatStartDate !== undefined) todoRepeatUpdate.repeatStartDate = updateTodoRepeatDto.repeatStartDate;
+    if (updateTodoRepeatDto.currentDate !== undefined) todoRepeatUpdate.currentDate = updateTodoRepeatDto.currentDate;
+    if (updateTodoRepeatDto.repeatMode !== undefined) todoRepeatUpdate.repeatMode = updateTodoRepeatDto.repeatMode;
+    if (updateTodoRepeatDto.repeatConfig !== undefined) todoRepeatUpdate.repeatConfig = updateTodoRepeatDto.repeatConfig;
+    if (updateTodoRepeatDto.repeatEndMode !== undefined) todoRepeatUpdate.repeatEndMode = updateTodoRepeatDto.repeatEndMode;
+    if (updateTodoRepeatDto.repeatEndDate !== undefined) todoRepeatUpdate.repeatEndDate = updateTodoRepeatDto.repeatEndDate;
+    if (updateTodoRepeatDto.repeatTimes !== undefined) todoRepeatUpdate.repeatTimes = updateTodoRepeatDto.repeatTimes;
+    if (updateTodoRepeatDto.repeatedTimes !== undefined) todoRepeatUpdate.repeatedTimes = updateTodoRepeatDto.repeatedTimes;
+    if (updateTodoRepeatDto.abandonedAt !== undefined) todoRepeatUpdate.abandonedAt = updateTodoRepeatDto.abandonedAt;
+    
+    const entity = await this.todoRepeatRepository.update(id, todoRepeatUpdate);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
     return todoRepeatDto;

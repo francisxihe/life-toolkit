@@ -1,17 +1,15 @@
 import { Repository, In, UpdateResult } from 'typeorm';
 import {
-  CreateGoalDto,
-  UpdateGoalDto,
   GoalPageFiltersDto,
   GoalListFiltersDto,
-  GoalDto,
   Goal,
+  GoalRepository as _GoalRepository,
 } from '@life-toolkit/business-server';
-import { GoalStatus, GoalType } from '@life-toolkit/enum';
+import { GoalStatus } from '@life-toolkit/enum';
 import { AppDataSource } from '../../database.config';
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）
-export class GoalRepository {
+export class GoalRepository implements _GoalRepository {
   repo: Repository<Goal> = AppDataSource.getRepository(Goal);
 
   private buildQuery(filter: GoalListFiltersDto) {
@@ -108,18 +106,9 @@ export class GoalRepository {
     return qb.orderBy('goal.updatedAt', 'DESC');
   }
 
-  async create(createGoalDto: CreateGoalDto): Promise<Goal> {
-    const entity = this.repo.create({
-      name: createGoalDto.name,
-      description: createGoalDto.description,
-      type: createGoalDto.type ?? GoalType.OBJECTIVE,
-      status: createGoalDto.status ?? GoalStatus.TODO,
-      importance: createGoalDto.importance ?? 1,
-      startAt: createGoalDto.startAt,
-      endAt: createGoalDto.endAt,
-    });
-
-    return await this.repo.save(entity);
+  async create(goal: Goal): Promise<Goal> {
+    const saved = await this.repo.save(goal);
+    return saved;
   }
 
   async findById(id: string, relations?: string[]): Promise<Goal> {
@@ -153,13 +142,17 @@ export class GoalRepository {
     };
   }
 
-  async update(id: string, updateGoalDto: UpdateGoalDto): Promise<Goal> {
+  async update(id: string, goalUpdate: Goal): Promise<Goal> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
+    Object.assign(entity, goalUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
+  }
 
-    updateGoalDto.appendToUpdateEntity(entity);
-
-    return await this.repo.save(entity);
+  async delete(id: string): Promise<boolean> {
+    await this.repo.delete(id);
+    return true;
   }
 
   async remove(id: string): Promise<void> {
@@ -168,12 +161,17 @@ export class GoalRepository {
     await this.repo.remove(entity);
   }
 
+  async deleteByFilter(filter: GoalPageFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    await qb.delete();
+  }
+
   async softDelete(id: string): Promise<void> {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(includeIds: string[], updateGoalDto: UpdateGoalDto): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, updateGoalDto);
+  async batchUpdate(includeIds: string[], goalUpdate: Goal): Promise<UpdateResult> {
+    return this.repo.update({ id: In(includeIds) }, goalUpdate);
   }
 
   async findDetail(id: string): Promise<Goal> {
@@ -183,16 +181,6 @@ export class GoalRepository {
     });
     if (!entity) throw new Error(`目标不存在，ID: ${id}`);
     return entity;
-  }
-
-  async updateStatus(id: string, status: GoalStatus, extra: Partial<Goal> = {}): Promise<void> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    Object.assign(entity, {
-      status: status,
-      ...extra,
-    });
-    await this.repo.save(entity);
   }
 
   async doneBatch(includeIds: string[]): Promise<void> {

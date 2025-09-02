@@ -53,8 +53,8 @@ export class TodoRepeatRepository {
     return qb;
   }
 
-  async create(createDto: CreateTodoRepeatDto): Promise<TodoRepeat> {
-    const entity = createDto.exportCreateEntity();
+  async create(todoRepeat: Partial<TodoRepeat>): Promise<TodoRepeat> {
+    const entity = this.repo.create(todoRepeat);
     const saved = await this.repo.save(entity);
     return saved;
   }
@@ -88,18 +88,17 @@ export class TodoRepeatRepository {
     };
   }
 
-  async update(id: string, updateDto: UpdateTodoRepeatDto): Promise<TodoRepeat> {
+  async update(id: string, todoRepeatUpdate: Partial<TodoRepeat>): Promise<TodoRepeat> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error('TodoRepeat not found');
 
-    updateDto.importUpdateEntity(entity);
-    updateDto.exportUpdateEntity();
+    Object.assign(entity, todoRepeatUpdate);
     const saved = await this.repo.save(entity);
     return saved;
   }
 
-  async batchUpdate(includeIds: string[], updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, updateTodoRepeatDto);
+  async batchUpdate(includeIds: string[], todoRepeatUpdate: Partial<TodoRepeat>): Promise<UpdateResult> {
+    return this.repo.update({ id: In(includeIds) }, todoRepeatUpdate);
   }
 
   async delete(id: string): Promise<boolean> {

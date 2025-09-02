@@ -13,12 +13,10 @@ import {
   Progress,
   Table,
 } from '@arco-design/web-react';
-import { HabitController } from '@life-toolkit/api/controller/habit';
-import { GoalController } from '@life-toolkit/api/controller/goal';
+import { HabitController, GoalController } from '@life-toolkit/api';
 import {
   HabitModelVo,
   HabitPageFiltersVo,
-  HabitStatus,
   GoalVo,
 } from '@life-toolkit/vo/growth';
 import { useHabitContext } from '../context';

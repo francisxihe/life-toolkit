@@ -9,8 +9,8 @@ import {
 } from "./dto";
 
 export interface TaskRepository {
-  create(createTaskDto: CreateTaskDto): Promise<Task>;
-  update(id: string, updateTaskDto: UpdateTaskDto): Promise<void>;
+  create(task: Partial<Task>): Promise<Task>;
+  update(id: string, taskUpdate: Partial<Task>): Promise<Task>;
   removeByIds(ids: string[]): Promise<void>;
   findById(id: string, relations?: string[]): Promise<Task>;
   findAll(filter: TaskListFiltersDto & { excludeIds?: string[] }): Promise<Task[]>;
@@ -21,8 +21,8 @@ export interface TaskRepository {
 
 export interface TaskTreeRepository {
   findOne(where: any): Promise<Task | null>;
-  createWithParent(dto: CreateTaskDto): Promise<Task>;
-  updateWithParent(id: string, dto: UpdateTaskDto): Promise<Task>;
+  createWithParent(task: Partial<Task>): Promise<Task>;
+  updateWithParent(id: string, taskUpdate: Partial<Task>): Promise<Task>;
   updateParent(params: { task: Task; parentId: string }, treeRepo?: unknown): Promise<void>;
   computeDescendantIds(target: Task | Task[]): Promise<string[]>;
   deleteByIds(ids: string[]): Promise<void>;

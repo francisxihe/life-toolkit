@@ -49,28 +49,18 @@ export class TodoRepository {
     return qb;
   }
 
-  async create(createDto: CreateTodoDto): Promise<Todo> {
-    const entity = createDto.exportCreateEntity();
+  async create(todo: Partial<Todo>): Promise<Todo> {
+    const entity = this.repo.create(todo);
     const saved = await this.repo.save(entity);
     return saved;
   }
 
   async createWithExtras(
-    createDto: CreateTodoDto,
+    todo: Partial<Todo>,
     extras: Partial<Todo>
   ): Promise<Todo> {
     const entity = this.repo.create({
-      name: createDto.name,
-      description: createDto.description,
-      status: createDto.status ?? TodoStatus.TODO,
-      importance: createDto.importance,
-      urgency: createDto.urgency,
-      tags: createDto.tags,
-      planDate: createDto.planDate,
-      planStartAt: createDto.planStartAt,
-      planEndAt: createDto.planEndAt,
-      taskId: createDto.taskId,
-      source: TodoSource.MANUAL,
+      ...todo,
       ...extras,
     });
     const saved = await this.repo.save(entity);
@@ -105,19 +95,19 @@ export class TodoRepository {
     };
   }
 
-  async update(id: string, updateDto: UpdateTodoDto): Promise<Todo> {
+  async update(id: string, todoUpdate: Partial<Todo>): Promise<Todo> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`待办不存在，ID: ${id}`);
-    updateDto.importUpdateEntity(entity);
-    const saved = await this.repo.save(updateDto.exportUpdateEntity());
+    Object.assign(entity, todoUpdate);
+    const saved = await this.repo.save(entity);
     return saved;
   }
 
   async batchUpdate(
     includeIds: string[],
-    updateTodoDto: UpdateTodoDto
+    todoUpdate: Partial<Todo>
   ): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, updateTodoDto);
+    return this.repo.update({ id: In(includeIds) }, todoUpdate);
   }
 
   async delete(id: string): Promise<boolean> {

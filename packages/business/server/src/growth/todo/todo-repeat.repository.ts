@@ -9,7 +9,7 @@ import {
 } from "./dto";
 
 export interface TodoRepeatRepository {
-  create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeat>;
+  create(todoRepeat: Partial<TodoRepeat>): Promise<TodoRepeat>;
   findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeat[]>;
   page(filter: TodoRepeatPageFiltersDto): Promise<{
     list: TodoRepeat[];
@@ -19,11 +19,11 @@ export interface TodoRepeatRepository {
   }>;
   update(
     id: string,
-    updateTodoRepeatDto: UpdateTodoRepeatDto
+    todoRepeatUpdate: Partial<TodoRepeat>
   ): Promise<TodoRepeat>;
   batchUpdate(
     includeIds: string[],
-    updateTodoRepeatDto: UpdateTodoRepeatDto
+    todoRepeatUpdate: Partial<TodoRepeat>
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;

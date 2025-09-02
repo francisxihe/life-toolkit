@@ -1,55 +1,34 @@
-import { FindOptionsWhere, UpdateResult } from "typeorm";
-import { Goal } from "./goal.entity";
-import { GoalType, GoalStatus } from "@life-toolkit/enum";
-import {
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalPageFiltersDto,
-  GoalListFiltersDto,
-  GoalDto,
-} from "./dto";
+import { FindOptionsWhere, UpdateResult } from 'typeorm';
+import { Goal } from './goal.entity';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
+import { CreateGoalDto, UpdateGoalDto, GoalPageFiltersDto, GoalListFiltersDto, GoalDto } from './dto';
 
 export interface GoalRepository {
   // 基础 CRUD 操作
-  create(createGoalDto: CreateGoalDto): Promise<Goal>;
-
-  findById(id: string, relations?: string[]): Promise<Goal>;
-
+  create(goal: Partial<Goal>): Promise<Goal>;
   findAll(filter: GoalListFiltersDto): Promise<Goal[]>;
-
-  page(
-    filter: GoalPageFiltersDto
-  ): Promise<{
+  page(filter: GoalPageFiltersDto): Promise<{
     list: Goal[];
     total: number;
     pageNum: number;
     pageSize: number;
   }>;
+  update(id: string, goalUpdate: Partial<Goal>): Promise<Goal>;
+  batchUpdate(includeIds: string[], goalUpdate: Partial<Goal>): Promise<UpdateResult>;
+  delete(id: string): Promise<boolean>;
+  deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
+  findById(id: string, relations?: string[]): Promise<Goal>;
+  softDeleteByTaskIds(taskIds: string[]): Promise<void>;
 
-  update(id: string, updateGoalDto: UpdateGoalDto): Promise<Goal>;
-
-  remove(id: string): Promise<void>;
-
-  softDelete(id: string): Promise<void>;
-
-  batchUpdate(ids: string[], updateGoalDto: UpdateGoalDto): Promise<UpdateResult>;
   // 细化方法
   findDetail(id: string): Promise<Goal>;
-
-  updateStatus(
-    id: string,
-    status: GoalStatus,
-    extra: Partial<Goal>
-  ): Promise<void>;
 
   doneBatch(ids: string[]): Promise<void>;
 }
 
 export interface GoalTreeRepository {
   // 基础查询
-  findOne(
-    where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]
-  ): Promise<Goal | null>;
+  findOne(where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]): Promise<Goal | null>;
 
   remove(entity: Goal): Promise<void>;
 
@@ -62,11 +41,7 @@ export interface GoalTreeRepository {
 
   findDescendantsTree(entity: Goal): Promise<Goal>;
 
-  updateParent(
-    currentGoal: Goal,
-    parentId: string,
-    treeRepo?: unknown
-  ): Promise<void>;
+  updateParent(currentGoal: Goal, parentId: string, treeRepo?: unknown): Promise<void>;
 
   deleteDescendants(target: Goal | Goal[], treeRepo?: unknown): Promise<void>;
 
@@ -74,23 +49,15 @@ export interface GoalTreeRepository {
 
   filterTreeNodes(node: Goal, nodeIdsToInclude: Set<string>): Goal | null;
 
-  collectIdsByFilter(filter: {
-    status?: string;
-    keyword?: string;
-    importance?: number;
-  }): Promise<Set<string>>;
+  collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number }): Promise<Set<string>>;
 
-  createWithParent(dto: CreateGoalDto): Promise<Goal>;
+  createWithParent(goal: Partial<Goal>): Promise<Goal>;
 
-  updateWithParent(id: string, dto: UpdateGoalDto): Promise<Goal>;
+  updateWithParent(id: string, goalUpdate: Partial<Goal>): Promise<Goal>;
 
   deleteWithTree(id: string): Promise<void>;
 
-  getFilteredTree(filter: {
-    status?: string;
-    keyword?: string;
-    importance?: number;
-  }): Promise<Goal[]>;
+  getFilteredTree(filter: { status?: string; keyword?: string; importance?: number }): Promise<Goal[]>;
 
   processTreeFilter(filter: {
     excludeIds?: string[];

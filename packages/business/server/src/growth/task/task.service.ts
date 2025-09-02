@@ -30,7 +30,22 @@ export class TaskService {
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
-    const entity = await this.taskRepository.create(createTaskDto);
+    const taskEntity: Partial<Task> = {
+      name: createTaskDto.name,
+      description: createTaskDto.description,
+      tags: createTaskDto.tags,
+      estimateTime: createTaskDto.estimateTime,
+      importance: createTaskDto.importance,
+      urgency: createTaskDto.urgency,
+      goalId: createTaskDto.goalId,
+      startAt: createTaskDto.startAt,
+      endAt: createTaskDto.endAt,
+    };
+    // 处理父任务关系
+    if (createTaskDto.parentId) {
+      taskEntity.parent = { id: createTaskDto.parentId } as Task;
+    }
+    const entity = await this.taskRepository.create(taskEntity);
     if (createTaskDto.parentId) {
       await this.taskTreeRepository.updateParent({
         task: entity as Task,
@@ -77,10 +92,27 @@ export class TaskService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
+    const taskUpdate: Partial<Task> = {};
+    if (updateTaskDto.name !== undefined) taskUpdate.name = updateTaskDto.name;
+    if (updateTaskDto.description !== undefined) taskUpdate.description = updateTaskDto.description;
+    if (updateTaskDto.tags !== undefined) taskUpdate.tags = updateTaskDto.tags;
+    if (updateTaskDto.estimateTime !== undefined) taskUpdate.estimateTime = updateTaskDto.estimateTime;
+    if (updateTaskDto.importance !== undefined) taskUpdate.importance = updateTaskDto.importance;
+    if (updateTaskDto.urgency !== undefined) taskUpdate.urgency = updateTaskDto.urgency;
+    if (updateTaskDto.goalId !== undefined) taskUpdate.goalId = updateTaskDto.goalId;
+    if (updateTaskDto.startAt !== undefined) taskUpdate.startAt = updateTaskDto.startAt;
+    if (updateTaskDto.endAt !== undefined) taskUpdate.endAt = updateTaskDto.endAt;
+    if (updateTaskDto.status !== undefined) taskUpdate.status = updateTaskDto.status;
+    if (updateTaskDto.doneAt !== undefined) taskUpdate.doneAt = updateTaskDto.doneAt;
+    if (updateTaskDto.abandonedAt !== undefined) taskUpdate.abandonedAt = updateTaskDto.abandonedAt;
+    // 处理父任务关系
+    if (updateTaskDto.parentId !== undefined) {
+      taskUpdate.parent = updateTaskDto.parentId ? { id: updateTaskDto.parentId } as Task : undefined;
+    }
     // 处理父子关系及基本字段更新（委托给树仓储）
     const entity = await this.taskTreeRepository.updateWithParent(
       id,
-      updateTaskDto
+      taskUpdate
     );
     return TaskDto.importEntity(entity);
   }

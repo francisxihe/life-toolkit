@@ -61,6 +61,12 @@ export class GoalTreeRepository {
     await repo.delete({ id: In(allIds) });
   }
 
+  async createWithParent(goal: Partial<Goal>): Promise<Goal> {
+    const entity = this.repo.create(goal);
+    const saved = await this.repo.save(entity);
+    return saved;
+  }
+
   async buildTree(node: Goal): Promise<Goal> {
     const repo = this.repo;
     const tree = await repo.findDescendantsTree(node);
@@ -114,54 +120,12 @@ export class GoalTreeRepository {
     return res;
   }
 
-  async createWithParent(dto: CreateGoalDto): Promise<Goal> {
-    return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Goal);
-      const current = treeRepository.create({
-        name: dto.name,
-        description: dto.description,
-        type: dto.type,
-        status: dto.status,
-        importance: dto.importance,
-        startAt: dto.startAt,
-        endAt: dto.endAt,
-      });
-
-      if (dto.parentId) {
-        const parent = await treeRepository.findOne({
-          where: { id: dto.parentId },
-        });
-        if (!parent) throw new Error(`父目标不存在，ID: ${dto.parentId}`);
-        current.parent = parent;
-      }
-
-      return await treeRepository.save(current);
-    });
-  }
-
-  async updateWithParent(id: string, dto: UpdateGoalDto): Promise<Goal> {
-    return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Goal);
-      const current = await treeRepository.findOne({ where: { id } });
-      if (!current) throw new Error(`目标不存在，ID: ${id}`);
-
-      if (dto.name !== undefined) current.name = dto.name;
-      if (dto.description !== undefined) current.description = dto.description;
-      if (dto.type !== undefined) current.type = dto.type;
-      if (dto.importance !== undefined) current.importance = dto.importance;
-      if (dto.status !== undefined) current.status = dto.status;
-      if (dto.startAt !== undefined) current.startAt = dto.startAt;
-      if (dto.endAt !== undefined) current.endAt = dto.endAt;
-
-      if ('parentId' in dto && dto.parentId) {
-        await this.updateParent(current, dto.parentId, treeRepository);
-      } else if ('parentId' in dto && dto.parentId === null) {
-        current.parent = undefined;
-        await treeRepository.save(current);
-      }
-
-      return await treeRepository.save(current);
-    });
+  async updateWithParent(id: string, goalUpdate: Partial<Goal>): Promise<Goal> {
+    const entity = await this.repo.findOne({ where: { id } });
+    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
+    Object.assign(entity, goalUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
   }
 
   async deleteWithTree(id: string): Promise<void> {
@@ -189,7 +153,7 @@ export class GoalTreeRepository {
     const trees: Goal[] = [];
     for (const r of roots) {
       if (includeIds.has(r.id)) {
-        const full = await this.buildTree(r);
+        const full = await treeRepo.findDescendantsTree(r);
         const filtered = this.filterTreeNodes(full, includeIds);
         if (filtered) trees.push(filtered);
       }

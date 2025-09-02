@@ -9,10 +9,10 @@ import {
 } from "./dto";
 
 export interface TodoRepository {
-  create(createTodoDto: CreateTodoDto): Promise<Todo>;
+  create(todo: Partial<Todo>): Promise<Todo>;
   findOneByRepeatAndDate(repeatId: string, date: Date): Promise<Todo | null>;
   createWithExtras(
-    createTodoDto: CreateTodoDto,
+    todo: Partial<Todo>,
     extras: Partial<Todo>
   ): Promise<Todo>;
   findAll(filter: TodoListFilterDto): Promise<Todo[]>;
@@ -22,10 +22,10 @@ export interface TodoRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo>;
+  update(id: string, todoUpdate: Partial<Todo>): Promise<Todo>;
   batchUpdate(
     includeIds: string[],
-    updateTodoDto: UpdateTodoDto
+    todoUpdate: Partial<Todo>
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoPageFiltersDto): Promise<void>;

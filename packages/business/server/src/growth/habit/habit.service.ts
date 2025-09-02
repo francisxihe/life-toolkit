@@ -6,6 +6,7 @@ import {
   HabitPageFiltersDto,
   HabitDto,
 } from "./dto";
+import { Habit } from "./habit.entity";
 import { HabitStatus } from "@life-toolkit/enum";
 
 export class HabitService {
@@ -17,7 +18,16 @@ export class HabitService {
 
   // ====== 基础 CRUD ======
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    const entity = await this.habitRepository.create(createHabitDto);
+    const habitEntity: Partial<Habit> = {
+      name: createHabitDto.name,
+      description: createHabitDto.description,
+      importance: createHabitDto.importance,
+      tags: createHabitDto.tags,
+      difficulty: createHabitDto.difficulty,
+      startDate: createHabitDto.startDate,
+      targetDate: createHabitDto.targetDate,
+    };
+    const entity = await this.habitRepository.create(habitEntity);
     return HabitDto.importEntity(entity);
   }
 
@@ -26,7 +36,20 @@ export class HabitService {
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    const entity = await this.habitRepository.update(id, updateHabitDto);
+    const habitUpdate: Partial<Habit> = {};
+    if (updateHabitDto.name !== undefined) habitUpdate.name = updateHabitDto.name;
+    if (updateHabitDto.description !== undefined) habitUpdate.description = updateHabitDto.description;
+    if (updateHabitDto.status !== undefined) habitUpdate.status = updateHabitDto.status;
+    if (updateHabitDto.importance !== undefined) habitUpdate.importance = updateHabitDto.importance;
+    if (updateHabitDto.tags !== undefined) habitUpdate.tags = updateHabitDto.tags;
+    if (updateHabitDto.difficulty !== undefined) habitUpdate.difficulty = updateHabitDto.difficulty;
+    if (updateHabitDto.startDate !== undefined) habitUpdate.startDate = updateHabitDto.startDate;
+    if (updateHabitDto.targetDate !== undefined) habitUpdate.targetDate = updateHabitDto.targetDate;
+    if (updateHabitDto.currentStreak !== undefined) habitUpdate.currentStreak = updateHabitDto.currentStreak;
+    if (updateHabitDto.longestStreak !== undefined) habitUpdate.longestStreak = updateHabitDto.longestStreak;
+    if (updateHabitDto.completedCount !== undefined) habitUpdate.completedCount = updateHabitDto.completedCount;
+    
+    const entity = await this.habitRepository.update(id, habitUpdate);
     return HabitDto.importEntity(entity);
   }
 

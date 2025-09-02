@@ -83,23 +83,18 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     return qb.orderBy('task.updatedAt', 'DESC');
   }
 
-  async create(createTaskDto: CreateTaskDto): Promise<Task> {
-    const entity = this.repo.create({
-      name: createTaskDto.name,
-      description: createTaskDto.description,
-      tags: createTaskDto.tags,
-      goalId: createTaskDto.goalId,
-      endAt: createTaskDto.endAt,
-    });
+  async create(task: Partial<Task>): Promise<Task> {
+    const entity = this.repo.create(task);
     const saved = await this.repo.save(entity);
     return saved;
   }
 
-  async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
+  async update(id: string, taskUpdate: Partial<Task>): Promise<Task> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
-    updateTaskDto.appendToUpdateEntity(entity);
-    await this.repo.save(entity);
+    Object.assign(entity, taskUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
   }
 
   async removeByIds(includeIds: string[]): Promise<void> {

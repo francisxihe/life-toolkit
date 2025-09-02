@@ -8,7 +8,8 @@ import {
   TodoDto,
   UpdateTodoRepeatDto,
 } from "./dto";
-import { TodoStatus } from "@life-toolkit/enum";
+import { Todo } from "./todo.entity";
+import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import { TodoRepeatService } from "./todo-repeat.service";
 
 export class TodoService {
@@ -28,7 +29,20 @@ export class TodoService {
   // ====== 基础 CRUD ======
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
-    const entity = await this.todoRepository.create(createTodoDto);
+    const todoEntity: Partial<Todo> = {
+      name: createTodoDto.name,
+      description: createTodoDto.description,
+      status: createTodoDto.status ?? TodoStatus.TODO,
+      importance: createTodoDto.importance,
+      urgency: createTodoDto.urgency,
+      tags: createTodoDto.tags,
+      planDate: createTodoDto.planDate,
+      planStartAt: createTodoDto.planStartAt,
+      planEndAt: createTodoDto.planEndAt,
+      taskId: createTodoDto.taskId,
+      source: TodoSource.MANUAL,
+    };
+    const entity = await this.todoRepository.create(todoEntity);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -39,7 +53,21 @@ export class TodoService {
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    const entity = await this.todoRepository.update(id, updateTodoDto);
+    const todoUpdate: Partial<Todo> = {};
+    if (updateTodoDto.name !== undefined) todoUpdate.name = updateTodoDto.name;
+    if (updateTodoDto.description !== undefined) todoUpdate.description = updateTodoDto.description;
+    if (updateTodoDto.status !== undefined) todoUpdate.status = updateTodoDto.status;
+    if (updateTodoDto.planDate !== undefined) todoUpdate.planDate = updateTodoDto.planDate;
+    if (updateTodoDto.planStartAt !== undefined) todoUpdate.planStartAt = updateTodoDto.planStartAt;
+    if (updateTodoDto.planEndAt !== undefined) todoUpdate.planEndAt = updateTodoDto.planEndAt;
+    if (updateTodoDto.importance !== undefined) todoUpdate.importance = updateTodoDto.importance;
+    if (updateTodoDto.urgency !== undefined) todoUpdate.urgency = updateTodoDto.urgency;
+    if (updateTodoDto.tags !== undefined) todoUpdate.tags = updateTodoDto.tags;
+    if (updateTodoDto.doneAt !== undefined) todoUpdate.doneAt = updateTodoDto.doneAt;
+    if (updateTodoDto.abandonedAt !== undefined) todoUpdate.abandonedAt = updateTodoDto.abandonedAt;
+    if (updateTodoDto.taskId !== undefined) todoUpdate.taskId = updateTodoDto.taskId;
+    
+    const entity = await this.todoRepository.update(id, todoUpdate);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;

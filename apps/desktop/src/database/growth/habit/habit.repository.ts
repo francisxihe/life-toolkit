@@ -2,11 +2,8 @@ import { In, Repository, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
   HabitRepository as _HabitRepository,
-  CreateHabitDto,
-  UpdateHabitDto,
   HabitListFiltersDto,
   HabitPageFiltersDto,
-  HabitDto,
   Goal,
   Todo,
   Habit,
@@ -89,25 +86,10 @@ export class HabitRepository implements _HabitRepository {
     return qb.orderBy('habit.updatedAt', 'DESC');
   }
 
-  async create(createHabitDto: CreateHabitDto): Promise<Habit> {
-    const entity = this.repo.create({
-      name: createHabitDto.name,
-      description: createHabitDto.description,
-      importance: createHabitDto.importance,
-      tags: createHabitDto.tags,
-      difficulty: createHabitDto.difficulty,
-      startDate: createHabitDto.startDate ?? new Date(),
-      targetDate: createHabitDto.targetDate,
-      status: HabitStatus.ACTIVE,
-    });
-
-    const goalIds = createHabitDto.goalIds as string[] | undefined;
-    if (goalIds && goalIds.length > 0) {
-      const goals = await this.goalRepo.findBy({ id: In(goalIds) });
-      entity.goals = goals;
-    }
-
-    return await this.repo.save(entity);
+  async create(habit: Partial<Habit>): Promise<Habit> {
+    const entity = this.repo.create(habit);
+    const saved = await this.repo.save(entity);
+    return saved;
   }
 
   async findById(id: string, relations?: string[]): Promise<Habit> {
@@ -121,14 +103,14 @@ export class HabitRepository implements _HabitRepository {
     return await qb.getMany();
   }
 
-  async page(habitPageFiltersDto: HabitPageFiltersDto): Promise<{
+  async page(filter: HabitPageFiltersDto): Promise<{
     list: Habit[];
     total: number;
     pageNum: number;
     pageSize: number;
   }> {
-    const { pageNum = 1, pageSize = 10 } = habitPageFiltersDto;
-    const qb = this.buildQuery(habitPageFiltersDto);
+    const { pageNum = 1, pageSize = 10 } = filter;
+    const qb = this.buildQuery(filter);
     const [entities, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
@@ -141,46 +123,47 @@ export class HabitRepository implements _HabitRepository {
     };
   }
 
-  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<Habit> {
-    const entity = await this.repo.findOne({
-      where: { id },
-      relations: ['goals'],
-    });
+  async update(id: string, habitUpdate: Partial<Habit>): Promise<Habit> {
+    const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-
-    updateHabitDto.appendToUpdateEntity(entity);
-
-    const goalIds = updateHabitDto.goalIds as string[] | undefined;
-    if (goalIds) {
-      const goals = goalIds.length > 0 ? await this.goalRepo.findBy({ id: In(goalIds) }) : [];
-      entity.goals = goals;
-    }
-
-    return await this.repo.save(entity);
+    Object.assign(entity, habitUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<boolean> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
     await this.repo.remove(entity);
+    return true;
+  }
+
+  async deleteByFilter(filter: HabitPageFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const entities = await qb.getMany();
+    if (entities.length > 0) {
+      await this.repo.remove(entities);
+    }
   }
 
   async softDelete(id: string): Promise<void> {
     await this.repo.softDelete(id);
   }
 
-  async batchUpdate(includeIds: string[], updateHabitDto: UpdateHabitDto): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, updateHabitDto);
+  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
+    // 通过todos关系查找相关的习惯
+    const qb = this.repo
+      .createQueryBuilder('habit')
+      .leftJoin('habit.todos', 'todo')
+      .where('todo.id IN (:...taskIds)', { taskIds });
+    const habits = await qb.getMany();
+    if (habits.length > 0) {
+      await this.repo.softDelete(habits.map((h) => h.id));
+    }
   }
 
-  async updateStatus(id: string, status: HabitStatus, additionalData: Record<string, any> = {}): Promise<void> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    Object.assign(entity, {
-      status: status,
-      ...additionalData,
-    });
-    await this.repo.save(entity);
+  async batchUpdate(includeIds: string[], habitUpdate: Partial<Habit>): Promise<UpdateResult> {
+    return this.repo.update({ id: In(includeIds) }, habitUpdate);
   }
 
   async updateStreak(id: string, increment: boolean): Promise<Habit> {

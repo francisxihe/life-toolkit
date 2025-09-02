@@ -24,7 +24,7 @@ export default class TaskController {
 
   static async list(body: TaskVO.TaskListFiltersVo) {
     return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/list`, body);
-
+  }
 
   static async abandon(id: string) {
     return request<boolean>({ method: 'put' })(`/task/abandon/${id}`);
