@@ -19,15 +19,15 @@ export default class TodoController {
     return request<TodoVO.TodoVo>({ method: "get" })(`/todo/find/${id}`);
   }
 
-  static async findAll(params: TodoVO.TodoListFiltersVo) {
+  static async findAll(params: TodoVO.TodoFilterVo) {
     return request<TodoVO.TodoListVo>({ method: "get" })(`/todo/find-all`, params);
   }
 
-  static async page(params: TodoVO.TodoPageFiltersVo) {
+  static async page(params: TodoVO.TodoPageFilterVo) {
     return request<TodoVO.TodoPageVo>({ method: "get" })(`/todo/page`, params);
   }
 
-  static async doneBatch(body: TodoVO.TodoListFiltersVo) {
+  static async doneBatch(body: TodoVO.TodoFilterVo) {
     return request<any>({ method: "put" })(`/todo/done-batch`, body);
   }
 
@@ -43,7 +43,7 @@ export default class TodoController {
     return request<boolean>({ method: "put" })(`/todo/done/${id}`);
   }
 
-  static async listWithRepeat(params: TodoVO.TodoListFiltersVo) {
+  static async listWithRepeat(params: TodoVO.TodoFilterVo) {
     return request<TodoVO.TodoListVo>({ method: "get" })(`/todo/list-with-repeat`, params);
   }
 

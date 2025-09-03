@@ -1,15 +1,14 @@
-import { Goal } from "../goal.entity";
-import { BaseModelDto } from "../../../base/base-model.dto";
-import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
-import dayjs from "dayjs";
-import { BaseMapper } from "../../../base/base.mapper";
-import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { TaskDto } from "../../task";
+import { Goal } from '../goal.entity';
+import { BaseModelDto, BaseMapper } from '@business/common';
+import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import dayjs from 'dayjs';
+import type { Goal as GoalVO } from '@life-toolkit/vo';
+import { TaskDto } from '../../task';
 
 // 基础DTO - 包含所有字段
 export class GoalDto extends IntersectionType(
   BaseModelDto,
-  OmitType(Goal, ["children", "parent", "taskList"] as const)
+  OmitType(Goal, ['children', 'parent', 'taskList'] as const)
 ) {
   children?: GoalDto[];
   parent?: GoalDto;
@@ -37,18 +36,10 @@ export class GoalDto extends IntersectionType(
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startAt: this.startAt
-        ? dayjs(this.startAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      endAt: this.endAt
-        ? dayjs(this.endAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      doneAt: this.doneAt
-        ? dayjs(this.doneAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      abandonedAt: this.abandonedAt
-        ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
+      startAt: this.startAt ? dayjs(this.startAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      endAt: this.endAt ? dayjs(this.endAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
     } as GoalVO.GoalModelVo;
   }
 
@@ -66,13 +57,8 @@ export class GoalDto extends IntersectionType(
   static dtoListToListVo(list: GoalDto[]): GoalVO.GoalListVo {
     return { list: list.map((d) => d.exportModelVo()) };
   }
-  
-  static dtoListToPageVo(
-    list: GoalDto[],
-    total: number,
-    pageNum: number,
-    pageSize: number
-  ): GoalVO.GoalPageVo {
+
+  static dtoListToPageVo(list: GoalDto[], total: number, pageNum: number, pageSize: number): GoalVO.GoalPageVo {
     return {
       list: list.map((d) => d.exportModelVo()),
       total,
@@ -83,8 +69,4 @@ export class GoalDto extends IntersectionType(
 }
 
 // 模型DTO - 排除关联字段
-export class GoalModelDto extends OmitType(GoalDto, [
-  "children",
-  "parent",
-  "taskList",
-] as const) {}
+export class GoalModelDto extends OmitType(GoalDto, ['children', 'parent', 'taskList'] as const) {}

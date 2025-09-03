@@ -132,7 +132,7 @@ function App() {
 
 ```javascript
 // 在 context.tsx 中的数据加载逻辑
-async function loadTodoList(params?: TodoListFiltersVo) {
+async function loadTodoList(params?: TodoFilterVo) {
   try {
     setLoading(true);
     const res = await TodoService.getTodoListWithRepeat(params);

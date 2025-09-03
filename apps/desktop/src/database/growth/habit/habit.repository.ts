@@ -2,8 +2,8 @@ import { In, Repository, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
   HabitRepository as _HabitRepository,
-  HabitListFiltersDto,
-  HabitPageFiltersDto,
+  HabitFilterDto,
+  HabitPageFilterDto,
   Goal,
   Todo,
   Habit,
@@ -15,7 +15,7 @@ export class HabitRepository implements _HabitRepository {
   goalRepo: Repository<Goal> = AppDataSource.getRepository(Goal);
   todoRepo: Repository<Todo> = AppDataSource.getRepository(Todo);
 
-  private buildQuery(filter: HabitListFiltersDto) {
+  private buildQuery(filter: HabitFilterDto) {
     let qb = this.repo
       .createQueryBuilder('habit')
       .leftJoinAndSelect('habit.goals', 'goal')
@@ -99,7 +99,7 @@ export class HabitRepository implements _HabitRepository {
     return true;
   }
 
-  async deleteByFilter(filter: HabitPageFiltersDto): Promise<void> {
+  async deleteByFilter(filter: HabitPageFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     await qb.delete().execute();
   }
@@ -108,7 +108,7 @@ export class HabitRepository implements _HabitRepository {
     await this.repo.softDelete(id);
   }
 
-  async softDeleteByFilter(filter: HabitListFiltersDto): Promise<void> {
+  async softDeleteByFilter(filter: HabitFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     const habits = await qb.getMany();
     if (habits.length > 0) {
@@ -125,7 +125,7 @@ export class HabitRepository implements _HabitRepository {
     return saved;
   }
 
-  async updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult> {
+  async updateByFilter(filter: HabitFilterDto, habitUpdate: Habit): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(habitUpdate).execute();
   }
@@ -146,12 +146,12 @@ export class HabitRepository implements _HabitRepository {
     return entity;
   }
 
-  async findAll(filter: HabitListFiltersDto): Promise<Habit[]> {
+  async findAll(filter: HabitFilterDto): Promise<Habit[]> {
     const qb = this.buildQuery(filter);
     return await qb.getMany();
   }
 
-  async page(filter: HabitPageFiltersDto): Promise<{
+  async page(filter: HabitPageFilterDto): Promise<{
     list: Habit[];
     total: number;
     pageNum: number;

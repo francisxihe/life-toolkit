@@ -12,8 +12,8 @@ import {
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFiltersDto,
-  TodoListFilterDto,
+  TodoPageFilterDto,
+  TodoFilterDto,
   TodoDto,
   Todo,
 } from "@life-toolkit/business-server";
@@ -43,7 +43,7 @@ export class TodoRepository {
   }
 
 
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  async findAll(filter: TodoFilterDto): Promise<TodoDto[]> {
     const todoList = await this.todoRepository.find({
       where: this.buildWhere(filter),
     });
@@ -51,7 +51,7 @@ export class TodoRepository {
     return todoList as TodoDto[];
   }
 
-  async page(filter: TodoPageFiltersDto): Promise<{
+  async page(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -117,7 +117,7 @@ export class TodoRepository {
     return (result.affected ?? 0) > 0;
   }
 
-  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
+  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
     await this.todoRepository.delete(this.buildWhere(filter));
   }
 
@@ -152,7 +152,7 @@ export class TodoRepository {
 
 
   private buildWhere(
-    filter: TodoPageFiltersDto | TodoListFilterDto
+    filter: TodoPageFilterDto | TodoFilterDto
   ): FindOptionsWhere<Todo> {
     const where: FindOptionsWhere<Todo> = {};
     if (filter.planDateStart && filter.planDateEnd) {

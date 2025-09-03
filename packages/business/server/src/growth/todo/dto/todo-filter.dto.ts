@@ -1,10 +1,10 @@
-import { PageFilterDto } from '../../../common/filter';
+import { PageFilterDto } from '../../../common';
 import { TodoDto } from './todo-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
-import { TodoListFiltersVo, TodoPageFiltersVo } from '@life-toolkit/vo';
-import { BaseFilterDto, importBaseVo } from '@business/common/filter';
+import { TodoFilterVo, TodoPageFilterVo } from '@life-toolkit/vo';
+import { BaseFilterDto, importBaseVo } from '@business/common';
 
-export class TodoListFilterDto extends IntersectionType(
+export class TodoFilterDto extends IntersectionType(
   BaseFilterDto,
   PartialType(PickType(TodoDto, ['importance', 'urgency', 'status', 'taskId'] as const))
 ) {
@@ -22,20 +22,20 @@ export class TodoListFilterDto extends IntersectionType(
 
   taskIds?: string[];
 
-  importListVo(filterVo: TodoListFiltersVo) {
+  importListVo(filterVo: TodoFilterVo) {
     importVo(filterVo, this);
   }
 }
 
-export class TodoPageFiltersDto extends IntersectionType(PageFilterDto, TodoListFilterDto) {
-  importPageVo(filterVo: TodoPageFiltersVo) {
+export class TodoPageFilterDto extends IntersectionType(PageFilterDto, TodoFilterDto) {
+  importPageVo(filterVo: TodoPageFilterVo) {
     importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
 }
 
-function importVo(filterVo: TodoListFiltersVo, filterDto: TodoListFilterDto) {
+function importVo(filterVo: TodoFilterVo, filterDto: TodoFilterDto) {
   importBaseVo(filterVo, filterDto);
   filterDto.importance = filterVo.importance;
   filterDto.urgency = filterVo.urgency;

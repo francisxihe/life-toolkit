@@ -1,27 +1,8 @@
-import { FindOptionsWhere, UpdateResult } from 'typeorm';
 import { Goal } from './goal.entity';
-import { GoalType, GoalStatus } from '@life-toolkit/enum';
-import { CreateGoalDto, UpdateGoalDto, GoalPageFiltersDto, GoalListFiltersDto, GoalDto } from './dto';
+import { GoalFilterDto } from './dto';
+import { BaseRepository } from '@business/common';
 
-export interface GoalRepository {
-  // 基础 CRUD 操作
-  create(goal: Goal): Promise<Goal>;
-  update(goalUpdate: Goal): Promise<Goal>;
-  updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult>;
-  delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
-  softDelete(id: string): Promise<void>;
-  softDeleteByFilter(filter: GoalListFiltersDto): Promise<void>;
-  find(id: string): Promise<Goal>;
-  findWithRelations(id: string, relations?: string[]): Promise<Goal>;
-  findAll(filter: GoalListFiltersDto): Promise<Goal[]>;
-  page(filter: GoalPageFiltersDto): Promise<{
-    list: Goal[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }>;
-}
+export interface GoalRepository extends BaseRepository<Goal, GoalFilterDto> {}
 
 export interface GoalTreeRepository {
   // 树形相关操作
@@ -37,9 +18,9 @@ export interface GoalTreeRepository {
 
   filterTreeNodes(node: Goal, nodeIdsToInclude: Set<string>): Goal | null;
 
-  collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number }): Promise<Set<string>>;
+  collectIdsByFilter(filter: { status?: Goal['status']; keyword?: string; importance?: number }): Promise<Set<string>>;
 
-  getFilteredTree(filter: { status?: string; keyword?: string; importance?: number }): Promise<Goal[]>;
+  getFilteredTree(filter: { status?: Goal['status']; keyword?: string; importance?: number }): Promise<Goal[]>;
 
   processTreeFilter(filter: {
     excludeIds?: string[];

@@ -1,34 +1,25 @@
-export * from "./habit-model.vo";
-import { HabitVo, HabitModelVo, HabitCompletionScore } from "./habit-model.vo";
-import { HabitStatus, Difficulty, Importance } from "@life-toolkit/enum";
+import { HabitVo, HabitModelVo, HabitCompletionScore } from './habit-model.vo';
+import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
+import { BaseFilterVo } from '../../common';
 
-export type HabitListFiltersVo = Partial<
-  Pick<HabitVo, "status" | "difficulty" | "importance" | "tags"> & {
-    keyword?: string;
-    statusList?: HabitStatus[];
-    difficultyList?: Difficulty[];
-    startDateStart?: string;
-    startDateEnd?: string;
-    endDataStart?: string;
-    endDataEnd?: string;
-    goalIds?: string[];
-    excludeIds?: string[];
-    includeIds?: string[];
-  }
->;
+export type HabitFilterVo = BaseFilterVo &
+  Partial<
+    Pick<HabitVo, 'status' | 'difficulty' | 'importance' | 'tags'> & {
+      statusList?: HabitStatus[];
+      difficultyList?: Difficulty[];
+      startDateStart?: string;
+      startDateEnd?: string;
+      endDataStart?: string;
+      endDataEnd?: string;
+      goalIds?: string[];
+    }
+  >;
 
-export type HabitPageFiltersVo = HabitListFiltersVo & {
+export type HabitPageFilterVo = HabitFilterVo & {
   pageNum?: number;
   pageSize?: number;
-  sortBy?:
-    | "createdAt"
-    | "updatedAt"
-    | "name"
-    | "importance"
-    | "currentStreak"
-    | "longestStreak"
-    | "completedCount";
-  sortOrder?: "ASC" | "DESC";
+  sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'importance' | 'currentStreak' | 'longestStreak' | 'completedCount';
+  sortOrder?: 'ASC' | 'DESC';
 };
 
 export type HabitListVo = {
@@ -57,8 +48,8 @@ export type HabitLogListFiltersVo = Partial<{
 export type HabitLogPageFiltersVo = HabitLogListFiltersVo & {
   pageNum?: number;
   pageSize?: number;
-  sortBy?: "logDate" | "completionScore" | "mood" | "createdAt";
-  sortOrder?: "ASC" | "DESC";
+  sortBy?: 'logDate' | 'completionScore' | 'mood' | 'createdAt';
+  sortOrder?: 'ASC' | 'DESC';
 };
 
 export type HabitLogListVo = {

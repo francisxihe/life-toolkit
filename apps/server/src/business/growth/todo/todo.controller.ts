@@ -13,8 +13,8 @@ import { Response } from "@/decorators/response.decorator";
 import type {
   Todo,
   OperationByIdListVo,
-  TodoListFiltersVo,
-  TodoPageFiltersVo,
+  TodoFilterVo,
+  TodoPageFilterVo,
 } from "@life-toolkit/vo";
 import {
   TodoController as _TodoController,
@@ -59,13 +59,13 @@ export class TodoController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TodoPageFiltersVo) {
+  async page(@Query() filter: TodoPageFilterVo) {
     return this.controller.page(filter);
   }
 
   @Get("list")
   @Response()
-  async list(@Query() filter: TodoListFiltersVo) {
+  async list(@Query() filter: TodoFilterVo) {
     return this.controller.list(filter);
   }
 

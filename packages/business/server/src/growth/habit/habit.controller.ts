@@ -1,5 +1,5 @@
 import type { Habit as HabitVO } from '@life-toolkit/vo';
-import { CreateHabitDto, UpdateHabitDto, HabitDto, HabitListFiltersDto, HabitPageFiltersDto } from './dto';
+import { CreateHabitDto, UpdateHabitDto, HabitDto, HabitFilterDto, HabitPageFilterDto } from './dto';
 import { HabitService } from './habit.service';
 import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@business/decorators';
 
@@ -35,16 +35,16 @@ export class HabitController {
   }
 
   @Get('/find-all', { description: '查询习惯列表' })
-  async findAll(@Query() habitListFiltersVo?: HabitVO.HabitListFiltersVo): Promise<HabitVO.HabitListVo> {
-    const filter = new HabitListFiltersDto();
+  async findAll(@Query() habitListFiltersVo?: HabitVO.HabitFilterVo): Promise<HabitVO.HabitListVo> {
+    const filter = new HabitFilterDto();
     if (habitListFiltersVo) filter.importListVo(habitListFiltersVo);
     const list = await this.habitService.findAll(filter);
     return HabitDto.dtoListToListVo(list);
   }
 
   @Get('/page', { description: '分页查询习惯列表' })
-  async page(@Query() habitPageFiltersVo?: HabitVO.HabitPageFiltersVo): Promise<HabitVO.HabitPageVo> {
-    const filter = new HabitPageFiltersDto();
+  async page(@Query() habitPageFiltersVo?: HabitVO.HabitPageFilterVo): Promise<HabitVO.HabitPageVo> {
+    const filter = new HabitPageFilterDto();
     if (habitPageFiltersVo) filter.importPageVo(habitPageFiltersVo);
     const { list, total, pageNum, pageSize } = await this.habitService.page(filter);
     return HabitDto.dtoListToPageVo(list, total, pageNum, pageSize);

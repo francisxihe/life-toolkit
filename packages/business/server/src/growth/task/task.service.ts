@@ -2,8 +2,8 @@ import { TaskRepository, TaskTreeRepository } from './task.repository';
 import {
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFiltersDto,
-  TaskListFiltersDto,
+  TaskPageFilterDto,
+  TaskFilterDto,
   TaskDto,
   TaskWithTrackTimeDto,
 } from './dto';
@@ -68,7 +68,7 @@ export class TaskService {
     return true;
   }
 
-  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+  async deleteByFilter(filter: TaskFilterDto): Promise<void> {
     const entities = await this.taskRepository.findAll(filter);
     if (!entities.length) return;
     const toDeleteIds = entities.map((t) => t.id);
@@ -118,12 +118,12 @@ export class TaskService {
     return TaskDto.importEntity(entity);
   }
 
-  async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
+  async findAll(filter: TaskFilterDto): Promise<TaskDto[]> {
     const entities = await this.taskRepository.findAll(filter);
     return entities.map((entity) => TaskDto.importEntity(entity));
   }
 
-  async page(filter: TaskPageFiltersDto): Promise<{
+  async page(filter: TaskPageFilterDto): Promise<{
     list: TaskDto[];
     total: number;
     pageNum: number;
@@ -153,7 +153,7 @@ export class TaskService {
   }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
-    const filter = new TaskListFiltersDto();
+    const filter = new TaskFilterDto();
     filter.goalIds = goalIds;
     return await this.taskRepository.findAll(filter);
   }

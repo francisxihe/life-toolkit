@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { BaseEntity } from "../../base/base.entity";
+import { BaseEntity } from "@business/common";
 import {
   GoalType,
   GoalStatus,

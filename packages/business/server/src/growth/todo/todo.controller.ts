@@ -1,5 +1,5 @@
 import type { Todo as TodoVO } from '@life-toolkit/vo';
-import { TodoListFilterDto, TodoPageFiltersDto } from './dto';
+import { TodoFilterDto, TodoPageFilterDto } from './dto';
 import { TodoService } from './todo.service';
 import { TodoRepeatService } from './todo-repeat.service';
 import { CreateTodoRepeatDto, UpdateTodoRepeatDto } from './dto/todo-repeat-form.dto';
@@ -60,8 +60,8 @@ export class TodoController {
   }
 
   @Get('/find-all', { description: '列表查询待办' })
-  async findAll(@Query() query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
-    const filter = new TodoListFilterDto();
+  async findAll(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
+    const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.findAll(filter);
     return {
@@ -70,8 +70,8 @@ export class TodoController {
   }
 
   @Get('/page', { description: '分页查询待办' })
-  async page(@Query() query?: TodoVO.TodoPageFiltersVo): Promise<TodoVO.TodoPageVo> {
-    const filter = new TodoPageFiltersDto();
+  async page(@Query() query?: TodoVO.TodoPageFilterVo): Promise<TodoVO.TodoPageVo> {
+    const filter = new TodoPageFilterDto();
     if (query) filter.importPageVo(query);
     const { list, total, pageNum, pageSize } = await this.todoService.page(filter);
     return {
@@ -85,7 +85,7 @@ export class TodoController {
   // ==============业务操作==================
 
   @Put('/done-batch', { description: '批量完成待办' })
-  async doneBatch(@Body() body?: TodoVO.TodoListFiltersVo): Promise<any> {
+  async doneBatch(@Body() body?: TodoVO.TodoFilterVo): Promise<any> {
     return await this.todoService.doneBatch({ includeIds: body?.includeIds ?? [] });
   }
 
@@ -105,8 +105,8 @@ export class TodoController {
   }
 
   @Get('/list-with-repeat', { description: '列表查询待办及其重复信息' })
-  async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
-    const filter = new TodoListFilterDto();
+  async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
+    const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.listWithRepeat(filter);
     return {

@@ -1,7 +1,7 @@
 import type { Task as TaskVO } from '@life-toolkit/vo';
 import { TaskService } from './task.service';
 import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@business/decorators';
-import { TaskListFiltersDto, TaskPageFiltersDto, UpdateTaskDto, CreateTaskDto, TaskDto } from './dto';
+import { TaskFilterDto, TaskPageFilterDto, UpdateTaskDto, CreateTaskDto, TaskDto } from './dto';
 @Controller('/task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
@@ -34,16 +34,16 @@ export class TaskController {
   }
 
   @Get('/find-all', { description: '查询任务列表' })
-  async findAll(@Query() taskListFiltersVo?: TaskVO.TaskListFiltersVo): Promise<TaskVO.TaskListVo> {
-    const filter = new TaskListFiltersDto();
+  async findAll(@Query() taskListFiltersVo?: TaskVO.TaskFilterVo): Promise<TaskVO.TaskListVo> {
+    const filter = new TaskFilterDto();
     if (taskListFiltersVo) filter.importListVo(taskListFiltersVo);
     const list = await this.taskService.findAll(filter);
     return TaskDto.dtoListToListVo(list);
   }
 
   @Get('/page', { description: '分页查询任务列表' })
-  async page(@Query() taskPageFiltersVo?: TaskVO.TaskPageFiltersVo): Promise<TaskVO.TaskPageVo> {
-    const filter = new TaskPageFiltersDto();
+  async page(@Query() taskPageFiltersVo?: TaskVO.TaskPageFilterVo): Promise<TaskVO.TaskPageVo> {
+    const filter = new TaskPageFilterDto();
     if (taskPageFiltersVo) filter.importPageVo(taskPageFiltersVo);
     const { list, total, pageNum, pageSize } = await this.taskService.page(filter);
     return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);

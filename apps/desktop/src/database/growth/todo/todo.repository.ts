@@ -1,8 +1,8 @@
 import { Repository, In, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
-  TodoPageFiltersDto,
-  TodoListFilterDto,
+  TodoPageFilterDto,
+  TodoFilterDto,
   Todo,
   TodoRepository as _TodoRepository,
 } from '@life-toolkit/business-server';
@@ -10,7 +10,7 @@ import {
 export class TodoRepository implements _TodoRepository {
   private repo: Repository<Todo> = AppDataSource.getRepository(Todo);
 
-  private buildQuery(filter: TodoListFilterDto) {
+  private buildQuery(filter: TodoFilterDto) {
     const qb = this.repo
       .createQueryBuilder('todo')
       .leftJoinAndSelect('todo.task', 'task')
@@ -43,13 +43,13 @@ export class TodoRepository implements _TodoRepository {
     return saved;
   }
 
-  async findAll(filter: TodoListFilterDto): Promise<Todo[]> {
+  async findAll(filter: TodoFilterDto): Promise<Todo[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy('todo.createdAt', 'DESC').getMany();
     return list;
   }
 
-  async page(filter: TodoPageFiltersDto): Promise<{
+  async page(filter: TodoPageFilterDto): Promise<{
     list: Todo[];
     total: number;
     pageNum: number;
@@ -75,7 +75,7 @@ export class TodoRepository implements _TodoRepository {
     return true;
   }
 
-  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
+  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
     const qb = this.repo.createQueryBuilder('todo');
     if (filter.taskIds && filter.taskIds.length > 0) {
       qb.where('todo.taskId IN (:...includeIds)', { includeIds: filter.taskIds });
@@ -88,7 +88,7 @@ export class TodoRepository implements _TodoRepository {
     await this.repo.softDelete(id);
   }
 
-  async softDeleteByFilter(filter: TodoListFilterDto): Promise<void> {
+  async softDeleteByFilter(filter: TodoFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     const todos = await qb.getMany();
     if (todos.length > 0) {
@@ -106,7 +106,7 @@ export class TodoRepository implements _TodoRepository {
     return saved;
   }
 
-  async updateByFilter(filter: TodoListFilterDto, todoUpdate: Todo): Promise<UpdateResult> {
+  async updateByFilter(filter: TodoFilterDto, todoUpdate: Todo): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(todoUpdate).execute();
   }

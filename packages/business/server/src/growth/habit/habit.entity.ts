@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { Entity, Column, ManyToMany, JoinTable, OneToMany } from "typeorm";
 import { Difficulty, HabitStatus, Importance } from "@life-toolkit/enum";
-import { BaseEntity } from "../../base/base.entity";
+import { BaseEntity } from "@business/common";
 import { Goal } from "../goal";
 import { Todo } from "../todo";
 

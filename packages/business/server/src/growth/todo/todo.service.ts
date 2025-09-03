@@ -3,8 +3,8 @@ import { TodoRepeatRepository } from "./todo-repeat.repository";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFiltersDto,
-  TodoListFilterDto,
+  TodoPageFilterDto,
+  TodoFilterDto,
   TodoDto,
   UpdateTodoRepeatDto,
 } from "./dto";
@@ -88,7 +88,7 @@ export class TodoService {
     return todoDto;
   }
 
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  async findAll(filter: TodoFilterDto): Promise<TodoDto[]> {
     const entities = await this.todoRepository.findAll(filter);
     return entities.map((entity) => {
       const todoDto = new TodoDto();
@@ -98,7 +98,7 @@ export class TodoService {
   }
 
 
-  async page(filter: TodoPageFiltersDto): Promise<{
+  async page(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -117,7 +117,7 @@ export class TodoService {
 
   // ====== 业务逻辑编排 ======
 
-  async listWithRepeat(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  async listWithRepeat(filter: TodoFilterDto): Promise<TodoDto[]> {
     const todoEntities = await this.todoRepository.findAll(filter);
     const todoDtoList = todoEntities.map((entity) => {
       const todoDto = new TodoDto();
@@ -160,14 +160,14 @@ export class TodoService {
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {
     if (!taskIds || taskIds.length === 0) return;
-    const filter = new TodoListFilterDto();
+    const filter = new TodoFilterDto();
     filter.taskIds = taskIds;
     await this.todoRepository.softDeleteByFilter(filter);
   }
 
   async doneBatch(params: { includeIds: string[] }): Promise<any> {
     if (!params?.includeIds?.length) return;
-    const filter = new TodoListFilterDto();
+    const filter = new TodoFilterDto();
     filter.importListVo({ includeIds: params.includeIds });
     const todoUpdate = new Todo();
     todoUpdate.status = TodoStatus.DONE;

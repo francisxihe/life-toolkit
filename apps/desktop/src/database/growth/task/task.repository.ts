@@ -1,8 +1,8 @@
 import { In, Repository, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
-  TaskPageFiltersDto,
-  TaskListFiltersDto,
+  TaskPageFilterDto,
+  TaskFilterDto,
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
@@ -13,7 +13,7 @@ export class TaskRepository implements _TaskRepository {
   private repo: Repository<Task> = AppDataSource.getRepository(Task);
 
   private buildQuery(
-    filter: TaskListFiltersDto & {
+    filter: TaskFilterDto & {
       excludeIds?: string[];
     }
   ) {
@@ -93,7 +93,7 @@ export class TaskRepository implements _TaskRepository {
     return true;
   }
 
-  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+  async deleteByFilter(filter: TaskFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     const tasks = await qb.getMany();
     if (tasks.length > 0) {
@@ -106,7 +106,7 @@ export class TaskRepository implements _TaskRepository {
     await this.repo.softDelete(id);
   }
 
-  async softDeleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+  async softDeleteByFilter(filter: TaskFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     const tasks = await qb.getMany();
     if (tasks.length > 0) {
@@ -133,7 +133,7 @@ export class TaskRepository implements _TaskRepository {
     return saved;
   }
 
-  async updateByFilter(filter: TaskListFiltersDto, taskUpdate: Task): Promise<UpdateResult> {
+  async updateByFilter(filter: TaskFilterDto, taskUpdate: Task): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(taskUpdate).execute();
   }
@@ -154,12 +154,12 @@ export class TaskRepository implements _TaskRepository {
     return entity;
   }
 
-  async findAll(filter: TaskListFiltersDto): Promise<Task[]> {
+  async findAll(filter: TaskFilterDto): Promise<Task[]> {
     const qb = this.buildQuery(filter);
     return await qb.getMany();
   }
 
-  async page(filter: TaskPageFiltersDto): Promise<{
+  async page(filter: TaskPageFilterDto): Promise<{
     list: Task[];
     total: number;
     pageNum: number;

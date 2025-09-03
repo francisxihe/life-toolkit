@@ -11,8 +11,8 @@ import {
 import { GoalService } from "./goal.service";
 import type { Goal as GoalVO } from "@life-toolkit/vo";
 import {
-  GoalPageFiltersDto,
-  GoalListFiltersDto,
+  GoalPageFilterDto,
+  GoalFilterDto,
   CreateGoalDto,
   UpdateGoalDto,
   GoalDto,
@@ -41,7 +41,7 @@ export class GoalController {
    */
   @Get("page")
   @Response()
-  async page(@Query() filter: GoalPageFiltersDto): Promise<GoalVO.GoalPageVo> {
+  async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
     const { list, total } = await this.goalService.page(filter);
     return GoalDto.dtoListToPageVo(
       list,
@@ -56,7 +56,7 @@ export class GoalController {
    */
   @Get("list")
   @Response()
-  async list(@Query() filter: GoalListFiltersDto): Promise<GoalVO.GoalListVo> {
+  async list(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalListVo> {
     const goalList = await this.goalService.findAll(filter);
     return GoalDto.dtoListToListVo(goalList);
   }
@@ -66,7 +66,7 @@ export class GoalController {
    */
   @Get("tree")
   @Response()
-  async getTree(@Query() filter: GoalListFiltersDto): Promise<GoalVO.GoalVo[]> {
+  async getTree(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalVo[]> {
     const goalTree = await this.goalService.getTree(filter);
     return goalTree.map((goal) => goal.exportVo());
   }

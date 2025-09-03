@@ -2,8 +2,8 @@ import { Message } from '@arco-design/web-react';
 import { TodoController } from '@life-toolkit/api';
 import type {
   CreateTodoVo,
-  TodoPageFiltersVo,
-  TodoListFiltersVo,
+  TodoPageFilterVo,
+  TodoFilterVo,
   UpdateTodoVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
@@ -121,7 +121,7 @@ export default class TodoService {
    * @param params 任务列表过滤条件
    * @returns 任务列表
    */
-  static async getTodoListWithRepeat(params: TodoListFiltersVo = {}) {
+  static async getTodoListWithRepeat(params: TodoFilterVo = {}) {
     try {
       return TodoController.listWithRepeat(params);
     } catch (error) {
@@ -134,7 +134,7 @@ export default class TodoService {
    * @param params 任务分页过滤条件
    * @returns 任务分页列表
    */
-  static async getTodoPage(params: TodoPageFiltersVo) {
+  static async getTodoPage(params: TodoPageFilterVo) {
     try {
       return TodoController.page(params);
     } catch (error) {

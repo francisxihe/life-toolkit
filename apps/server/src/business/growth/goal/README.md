@@ -111,7 +111,7 @@ const result = await goalController.create(createVo);
 ### 查询目标
 ```typescript
 // 分页查询
-const filter: GoalPageFiltersDto = {
+const filter: GoalPageFilterDto = {
   pageNum: 1,
   pageSize: 10,
   status: GoalStatus.ACTIVE,

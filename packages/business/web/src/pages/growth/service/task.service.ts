@@ -2,8 +2,8 @@ import { Message } from '@arco-design/web-react';
 import { TaskController } from '@life-toolkit/api';
 import type {
   CreateTaskVo,
-  TaskPageFiltersVo,
-  TaskListFiltersVo,
+  TaskPageFilterVo,
+  TaskFilterVo,
   TaskModelVo,
   UpdateTaskVo,
 } from '@life-toolkit/vo/growth';
@@ -83,7 +83,7 @@ export default class TaskService {
     }
   }
 
-  static async getTaskList(params: TaskListFiltersVo = {}) {
+  static async getTaskList(params: TaskFilterVo = {}) {
     try {
       return TaskController.findAll(params);
     } catch (error) {
@@ -91,7 +91,7 @@ export default class TaskService {
     }
   }
 
-  static useTaskList = (params: TaskListFiltersVo = {}) => {
+  static useTaskList = (params: TaskFilterVo = {}) => {
     const [taskList, setTaskList] = useState<TaskModelVo[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -109,7 +109,7 @@ export default class TaskService {
     return { taskList, loading };
   };
 
-  static async getTaskPage(params: TaskPageFiltersVo = {}) {
+  static async getTaskPage(params: TaskPageFilterVo = {}) {
     try {
       return TaskController.page(params);
     } catch (error) {

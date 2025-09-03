@@ -10,8 +10,8 @@ import { TodoRepository } from "./todo.repository";
 import {
   CreateTodoDto,
   UpdateTodoDto,
-  TodoPageFiltersDto,
-  TodoListFilterDto,
+  TodoPageFilterDto,
+  TodoFilterDto,
   TodoDto,
 } from "./dto";
 import { Todo } from "./todo.entity";
@@ -137,8 +137,10 @@ export class TodoRepeatService {
     includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto[]> {
+    const filterDto = new TodoRepeatListFilterDto();
+    filterDto.includeIds = includeIds;
     const result = await this.todoRepeatRepository.updateByFilter(
-      { id: { $in: includeIds } },
+      filterDto,
       updateTodoRepeatDto as any
     );
     return result as any;
@@ -171,8 +173,10 @@ export class TodoRepeatService {
   doneBatch(includeIds: string[]): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.DONE;
+    const filterDto = new TodoRepeatListFilterDto();
+    filterDto.includeIds = includeIds;
     return this.todoRepeatRepository.updateByFilter(
-      { id: { $in: includeIds } },
+      filterDto,
       updateTodoRepeatDto as any
     );
   }
@@ -181,7 +185,7 @@ export class TodoRepeatService {
    * 基于 TodoListFilter 的日期范围，展开符合条件的重复待办为 TodoDto 列表
    * 不会落库，仅在内存中生成；若当日已有具体待办，则使用已存在的待办（并补充 repeat 信息）
    */
-  async generateTodosInRange(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  async generateTodosInRange(filter: TodoFilterDto): Promise<TodoDto[]> {
     const rangeStart = filter.planDateStart
       ? dayjs(filter.planDateStart)
       : undefined;

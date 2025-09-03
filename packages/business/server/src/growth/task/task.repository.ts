@@ -1,24 +1,8 @@
-import { Task } from "./task.entity";
-import {
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskPageFiltersDto,
-  TaskListFiltersDto,
-  TaskDto,
-  TaskWithTrackTimeDto,
-} from "./dto";
+import { Task } from './task.entity';
+import { TaskFilterDto } from './dto';
+import { BaseRepository } from '@business/common';
 
-export interface TaskRepository {
-  create(task: Task): Promise<Task>;
-  update(taskUpdate: Task): Promise<Task>;
-  delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: TaskListFiltersDto): Promise<void>;
-  softDelete(id: string): Promise<void>;
-  softDeleteByFilter(filter: TaskListFiltersDto): Promise<void>;
-  find(id: string): Promise<Task>;
-  findWithRelations(id: string, relations?: string[]): Promise<Task>;
-  findAll(filter: TaskListFiltersDto & { excludeIds?: string[] }): Promise<Task[]>;
-  page(filter: TaskPageFiltersDto): Promise<{ list: Task[]; total: number; pageNum: number; pageSize: number }>;
+export interface TaskRepository extends BaseRepository<Task, TaskFilterDto> {
 }
 
 export interface TaskTreeRepository {

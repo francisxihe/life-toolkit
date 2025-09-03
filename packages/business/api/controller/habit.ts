@@ -19,11 +19,11 @@ export default class HabitController {
     return request<HabitVO.HabitVo>({ method: "get" })(`/habit/find/${id}`);
   }
 
-  static async findAll(body: HabitVO.HabitListFiltersVo) {
+  static async findAll(body: HabitVO.HabitFilterVo) {
     return request<HabitVO.HabitListVo>({ method: "get" })(`/habit/find-all`, body);
   }
 
-  static async page(body: HabitVO.HabitPageFiltersVo) {
+  static async page(body: HabitVO.HabitPageFilterVo) {
     return request<HabitVO.HabitPageVo>({ method: "get" })(`/habit/page`, body);
   }
 

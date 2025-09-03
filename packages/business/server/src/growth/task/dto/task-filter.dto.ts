@@ -1,11 +1,11 @@
-import { PageFilterDto } from '../../../common/filter';
+import { PageFilterDto } from '../../../common';
 import { TaskDto } from './task-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
-import { TaskListFiltersVo, TaskPageFiltersVo } from '@life-toolkit/vo/growth/task';
-import { BaseFilterDto, importBaseVo } from '@business/common/filter';
+import { TaskFilterVo, TaskPageFilterVo } from '@life-toolkit/vo/growth/task';
+import { BaseFilterDto, importBaseVo } from '@business/common';
 
-export class TaskListFiltersDto extends IntersectionType(
+export class TaskFilterDto extends IntersectionType(
   BaseFilterDto,
   PartialType(PickType(TaskDto, ['importance', 'urgency', 'status']))
 ) {
@@ -60,20 +60,20 @@ export class TaskListFiltersDto extends IntersectionType(
   @IsOptional()
   id?: string;
 
-  importListVo(filterVo: TaskListFiltersVo) {
+  importListVo(filterVo: TaskFilterVo) {
     importVo(filterVo, this);
   }
 }
 
-export class TaskPageFiltersDto extends IntersectionType(PageFilterDto, TaskListFiltersDto) {
-  importPageVo(filterVo: TaskPageFiltersVo) {
+export class TaskPageFilterDto extends IntersectionType(PageFilterDto, TaskFilterDto) {
+  importPageVo(filterVo: TaskPageFilterVo) {
     importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
 }
 
-function importVo(filterVo: TaskListFiltersVo, filterDto: TaskListFiltersDto) {
+function importVo(filterVo: TaskFilterVo, filterDto: TaskFilterDto) {
   importBaseVo(filterVo, filterDto);
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance;

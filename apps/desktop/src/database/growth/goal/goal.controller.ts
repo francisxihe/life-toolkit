@@ -33,17 +33,17 @@ export class GoalController {
   }
 
   @Get('/find-all')
-  async findAll(@Body() body: GoalVO.GoalListFiltersVo) {
+  async findAll(@Body() body: GoalVO.GoalFilterVo) {
     return this.controller.findAll(body);
   }
 
   @Get('/page')
-  async page(@Body() body: GoalVO.GoalPageFiltersVo) {
+  async page(@Body() body: GoalVO.GoalPageFilterVo) {
     return this.controller.page(body);
   }
 
   @Get('/tree')
-  async tree(@Body() body: GoalVO.GoalListFiltersVo) {
+  async tree(@Body() body: GoalVO.GoalFilterVo) {
     return this.controller.tree(body);
   }
 

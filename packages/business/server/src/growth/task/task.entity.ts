@@ -1,34 +1,20 @@
-import { BaseEntity } from "../../base/base.entity";
-import { TaskStatus } from "@life-toolkit/enum";
-import { Goal } from "../goal/goal.entity";
-import { Todo } from "../todo/todo.entity";
-import {
-  Entity,
-  Column,
-  TreeChildren,
-  TreeParent,
-  Tree,
-  ManyToOne,
-  OneToMany,
-} from "typeorm";
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-  IsNumber,
-  IsArray,
-} from "class-validator";
-import { Type } from "class-transformer";
+import { BaseEntity } from '@business/common';
+import { TaskStatus } from '@life-toolkit/enum';
+import { Goal } from '../goal/goal.entity';
+import { Todo } from '../todo/todo.entity';
+import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne, OneToMany } from 'typeorm';
+import { IsEnum, IsOptional, IsString, IsNumber, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class TaskModel extends BaseEntity {
   /** 任务名称 */
-  @Column("varchar")
+  @Column('varchar')
   @IsString()
   name!: string;
 
   /** 任务事项状态 */
   @Column({
-    type: "varchar",
+    type: 'varchar',
     enum: TaskStatus,
     nullable: true,
   })
@@ -36,13 +22,13 @@ export class TaskModel extends BaseEntity {
   status!: TaskStatus;
 
   /** 任务预估时间 */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   estimateTime?: string;
 
   /** 任务跟踪时间ID列表 */
-  @Column("simple-array", {
+  @Column('simple-array', {
     nullable: true,
   })
   @IsArray()
@@ -51,58 +37,58 @@ export class TaskModel extends BaseEntity {
   trackTimeIds!: string[];
 
   /** 任务描述 */
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   @IsString()
   @IsOptional()
   description?: string;
 
   /** 任务重要程度 */
-  @Column("int", { nullable: true })
+  @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   importance?: number;
 
   /** 任务紧急程度 */
-  @Column("int", { nullable: true })
+  @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   urgency?: number;
 
   /** 任务标签 */
-  @Column("simple-array")
+  @Column('simple-array')
   @IsArray()
   @IsString({ each: true })
   tags!: string[];
 
   /** 任务完成时间 */
-  @Column("datetime", {
+  @Column('datetime', {
     nullable: true,
   })
   doneAt?: Date;
 
   /** 放弃任务时间 */
-  @Column("datetime", {
+  @Column('datetime', {
     nullable: true,
   })
   abandonedAt?: Date;
 
   /** 计划任务开始时间 */
-  @Column("datetime", { nullable: true })
+  @Column('datetime', { nullable: true })
   startAt?: Date;
 
   /** 计划任务结束时间 */
-  @Column("datetime", { nullable: true })
+  @Column('datetime', { nullable: true })
   endAt?: Date;
 }
 
-@Entity("task")
-@Tree("closure-table")
+@Entity('task')
+@Tree('closure-table')
 export class Task extends TaskModel {
   /** 父任务 */
   @TreeParent({
-    onDelete: "CASCADE",
+    onDelete: 'CASCADE',
   })
   @IsOptional()
   parent?: Task;
@@ -123,7 +109,7 @@ export class Task extends TaskModel {
   goal?: Goal;
 
   /** 目标ID */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   goalId?: string;

@@ -11,7 +11,7 @@ import {
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TagSelector } from '../../../../components/TagSelector';
-import { TaskPageFiltersVo,  } from '@life-toolkit/vo/growth';
+import { TaskPageFilterVo,  } from '@life-toolkit/vo/growth';
 import { useTaskAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
 import { TaskStatus } from '@life-toolkit/enum';
@@ -39,7 +39,7 @@ export function TaskFilters() {
             placeholder="关键字"
             value={filters.keyword}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 keyword: value,
               }));
@@ -52,7 +52,7 @@ export function TaskFilters() {
             value={[filters.planDateStart, filters.planDateEnd]}
             className="w-full"
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 planDateStart: value[0],
                 planDateEnd: value[1],
@@ -64,7 +64,7 @@ export function TaskFilters() {
           <Select
             value={filters.importance}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 importance: value,
               }));
@@ -85,7 +85,7 @@ export function TaskFilters() {
           <Select
             value={filters.urgency}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 urgency: value,
               }));
@@ -104,7 +104,7 @@ export function TaskFilters() {
           <Select
             value={filters.status}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 status: value,
               }));
@@ -122,7 +122,7 @@ export function TaskFilters() {
             multiple={true}
             value={filters.tags}
             onChange={(value) => {
-              setFilters((prev: TaskPageFiltersVo) => ({
+              setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
                 tags: value,
               }));

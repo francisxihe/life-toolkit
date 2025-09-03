@@ -10,8 +10,8 @@ import {
 } from "@nestjs/common";
 import { HabitService } from "./habit.service";
 import {
-  HabitPageFiltersDto,
-  HabitListFiltersDto,
+  HabitPageFilterDto,
+  HabitFilterDto,
   CreateHabitDto,
   UpdateHabitDto,
   HabitDto,
@@ -25,7 +25,7 @@ export class HabitController {
 
   @Put("done/batch")
   @Response()
-  async doneBatch(@Body() body: HabitVO.HabitListFiltersVo) {
+  async doneBatch(@Body() body: HabitVO.HabitFilterVo) {
     return await this.habitService.doneBatch(body.includeIds);
   }
 
@@ -86,7 +86,7 @@ export class HabitController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: HabitPageFiltersDto) {
+  async page(@Query() filter: HabitPageFilterDto) {
     const { list, total } = await this.habitService.page(filter);
     return HabitDto.dtoListToPageVo(
       list,
@@ -98,7 +98,7 @@ export class HabitController {
 
   @Get("list")
   @Response()
-  async list(@Query() filter: HabitListFiltersDto) {
+  async list(@Query() filter: HabitFilterDto) {
     const habits = await this.habitService.findAll(filter);
     return HabitDto.dtoListToListVo(habits);
   }

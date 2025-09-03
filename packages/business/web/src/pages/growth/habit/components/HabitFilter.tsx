@@ -10,7 +10,7 @@ import {
   Grid,
 } from '@arco-design/web-react';
 import { IconSearch, IconRefresh } from '@arco-design/web-react/icon';
-import { HabitPageFiltersVo, GoalVo } from '@life-toolkit/vo/growth';
+import { HabitPageFilterVo, GoalVo } from '@life-toolkit/vo/growth';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 
 const { Option } = Select;
@@ -18,9 +18,9 @@ const { RangePicker } = DatePicker;
 const { Row, Col } = Grid;
 
 interface HabitFilterProps {
-  filters: HabitPageFiltersVo;
+  filters: HabitPageFilterVo;
   goals: GoalVo[];
-  onChange: (filters: HabitPageFiltersVo) => void;
+  onChange: (filters: HabitPageFilterVo) => void;
   onReset: () => void;
 }
 

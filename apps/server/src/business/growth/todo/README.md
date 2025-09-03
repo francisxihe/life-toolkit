@@ -89,7 +89,7 @@ interface UpdateTodoVo {
 
 ### 查询过滤器
 ```typescript
-interface TodoListFiltersVo {
+interface TodoFilterVo {
   importance?: string;        // 重要性
   urgency?: string;          // 紧急性
   status?: string;           // 状态

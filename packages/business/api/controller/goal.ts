@@ -23,15 +23,15 @@ export default class GoalController {
     return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find-with-relations/${id}`);
   }
 
-  static async findAll(body: GoalVO.GoalListFiltersVo) {
+  static async findAll(body: GoalVO.GoalFilterVo) {
     return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/find-all`, body);
   }
 
-  static async page(body: GoalVO.GoalPageFiltersVo) {
+  static async page(body: GoalVO.GoalPageFilterVo) {
     return request<GoalVO.GoalPageVo>({ method: "get" })(`/goal/page`, body);
   }
 
-  static async getTree(body: GoalVO.GoalListFiltersVo) {
+  static async getTree(body: GoalVO.GoalFilterVo) {
     return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/get-tree`, body);
   }
 

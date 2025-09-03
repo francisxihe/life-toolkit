@@ -16,7 +16,7 @@ import {
 import { HabitController, GoalController } from '@life-toolkit/api';
 import {
   HabitModelVo,
-  HabitPageFiltersVo,
+  HabitPageFilterVo,
   GoalVo,
 } from '@life-toolkit/vo/growth';
 import { useHabitContext } from '../context';
@@ -34,7 +34,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
       pageSize: number;
       total: number;
     };
-    filters: HabitPageFiltersVo;
+    filters: HabitPageFilterVo;
     handlePageChange: (page: number, pageSize: number) => void;
     handleHabitComplete: (habitId: string) => void;
     handleHabitDelete: (habitId: string) => void;
@@ -54,7 +54,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   });
 
   // 筛选条件
-  const [filters, setFilters] = useState<HabitPageFiltersVo>({
+  const [filters, setFilters] = useState<HabitPageFilterVo>({
     pageNum: 1,
     pageSize: 12,
     sortBy: 'createdAt',

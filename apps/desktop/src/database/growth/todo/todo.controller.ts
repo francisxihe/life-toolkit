@@ -28,17 +28,17 @@ export class TodoController {
   }
 
   @Get('/find-all')
-  async findAll(@Query() query?: TodoVO.TodoListFiltersVo) {
+  async findAll(@Query() query?: TodoVO.TodoFilterVo) {
     return this.controller.findAll(query);
   }
 
   @Get('/page')
-  async page(@Query() query?: TodoVO.TodoPageFiltersVo) {
+  async page(@Query() query?: TodoVO.TodoPageFilterVo) {
     return this.controller.page(query);
   }
 
   @Put('/done-batch')
-  async doneBatch(@Body() body: TodoVO.TodoListFiltersVo) {
+  async doneBatch(@Body() body: TodoVO.TodoFilterVo) {
     return this.controller.doneBatch(body);
   }
 
@@ -58,7 +58,7 @@ export class TodoController {
   }
 
   @Get('/list-with-repeat')
-  async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
+  async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo) {
     return this.controller.listWithRepeat(query);
   }
 

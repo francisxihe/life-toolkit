@@ -4,8 +4,8 @@ import { Repository, In } from "typeorm";
 import {
   CreateHabitDto,
   UpdateHabitDto,
-  HabitListFiltersDto,
-  HabitPageFiltersDto,
+  HabitFilterDto,
+  HabitPageFilterDto,
   HabitDto,
   Habit,
   Goal,
@@ -64,7 +64,7 @@ export class HabitRepository implements _HabitRepository {
     return dto;
   }
 
-  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
     const query = this.buildQuery(filter);
     const habits = await query.getMany();
     return habits.map((habit) => {
@@ -75,7 +75,7 @@ export class HabitRepository implements _HabitRepository {
   }
 
   async page(
-    filter: HabitPageFiltersDto
+    filter: HabitPageFilterDto
   ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
@@ -271,7 +271,7 @@ export class HabitRepository implements _HabitRepository {
   }
 
   // 构建查询条件的私有方法
-  private buildQuery(filter: HabitListFiltersDto) {
+  private buildQuery(filter: HabitFilterDto) {
     let query = this.habitRepository.createQueryBuilder("habit");
 
     // 软删除过滤（与 Goal 仓储保持一致）

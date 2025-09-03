@@ -1,6 +1,6 @@
 import { Select, Grid } from '@arco-design/web-react';
 import { TableFilter } from '@/components/Layout/TableFilter';
-import { HabitPageFiltersVo } from '@life-toolkit/vo/growth/habit';
+import { HabitPageFilterVo } from '@life-toolkit/vo/growth/habit';
 import { useState } from 'react';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { useHabitListContext } from './context';
@@ -9,7 +9,7 @@ const { Row, Col } = Grid;
 
 export default function HabitListFilter() {
   const { handleRefresh } = useHabitListContext();
-  const [filters, setFilters] = useState<HabitPageFiltersVo>({
+  const [filters, setFilters] = useState<HabitPageFilterVo>({
     pageNum: 1,
     pageSize: 12,
   });

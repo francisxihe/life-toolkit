@@ -94,7 +94,7 @@ interface TrackRecord {
 
 ### 查询过滤器
 ```typescript
-interface TaskListFiltersVo {
+interface TaskFilterVo {
   id?: string;              // 任务ID
   importance?: string;      // 重要性
   urgency?: string;         // 紧急性

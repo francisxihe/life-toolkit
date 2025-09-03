@@ -1,7 +1,7 @@
 import { Repository, In, UpdateResult } from 'typeorm';
 import {
-  GoalPageFiltersDto,
-  GoalListFiltersDto,
+  GoalPageFilterDto,
+  GoalFilterDto,
   Goal,
   GoalRepository as _GoalRepository,
 } from '@life-toolkit/business-server';
@@ -11,7 +11,7 @@ import { AppDataSource } from '../../database.config';
 export class GoalRepository implements _GoalRepository {
   repo: Repository<Goal> = AppDataSource.getRepository(Goal);
 
-  private buildQuery(filter: GoalListFiltersDto) {
+  private buildQuery(filter: GoalFilterDto) {
     let qb = this.repo
       .createQueryBuilder('goal')
       .leftJoinAndSelect('goal.parent', 'parent')
@@ -115,7 +115,7 @@ export class GoalRepository implements _GoalRepository {
     return true;
   }
 
-  async deleteByFilter(filter: GoalPageFiltersDto): Promise<void> {
+  async deleteByFilter(filter: GoalPageFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     await qb.delete().execute();
   }
@@ -124,7 +124,7 @@ export class GoalRepository implements _GoalRepository {
     await this.repo.softDelete(id);
   }
 
-  async softDeleteByFilter(filter: GoalListFiltersDto): Promise<void> {
+  async softDeleteByFilter(filter: GoalFilterDto): Promise<void> {
     const qb = this.buildQuery(filter);
     const goals = await qb.getMany();
     if (goals.length > 0) {
@@ -141,7 +141,7 @@ export class GoalRepository implements _GoalRepository {
     return saved;
   }
 
-  async updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult> {
+  async updateByFilter(filter: GoalFilterDto, goalUpdate: Goal): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(goalUpdate).execute();
   }
@@ -162,12 +162,12 @@ export class GoalRepository implements _GoalRepository {
     return entity;
   }
 
-  async findAll(filter: GoalListFiltersDto): Promise<Goal[]> {
+  async findAll(filter: GoalFilterDto): Promise<Goal[]> {
     const qb = this.buildQuery(filter);
     return await qb.getMany();
   }
 
-  async page(filter: GoalPageFiltersDto): Promise<{
+  async page(filter: GoalPageFilterDto): Promise<{
     list: Goal[];
     total: number;
     pageNum: number;

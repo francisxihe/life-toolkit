@@ -1,27 +1,20 @@
-import { BaseEntity } from "../../base/base.entity";
-import { TodoStatus, TodoSource } from "@life-toolkit/enum";
-import { Task } from "../task";
-import { TodoRepeat } from "./todo-repeat.entity";
-import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
-import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsArray,
-  IsNumber,
-  IsISO8601,
-} from "class-validator";
-import { Type } from "class-transformer";
+import { BaseEntity } from '@business/common';
+import { TodoStatus, TodoSource } from '@life-toolkit/enum';
+import { Task } from '../task';
+import { TodoRepeat } from './todo-repeat.entity';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsISO8601 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class TodoModel extends BaseEntity {
   /** 待办名称 */
-  @Column("varchar")
+  @Column('varchar')
   @IsString()
   name!: string;
 
   /** 待办事项状态 */
   @Column({
-    type: "varchar",
+    type: 'varchar',
     length: 20,
     nullable: true,
   })
@@ -29,59 +22,59 @@ export class TodoModel extends BaseEntity {
   status!: TodoStatus;
 
   /** 待办描述 */
-  @Column("text", { nullable: true })
+  @Column('text', { nullable: true })
   @IsString()
   @IsOptional()
   description?: string;
 
   /** 待办重要程度 */
-  @Column("int", { nullable: true })
+  @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   importance?: number;
 
   /** 待办紧急程度 */
-  @Column("int", { nullable: true })
+  @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
   @Type(() => Number)
   urgency?: number;
 
   /** 待办标签 */
-  @Column("simple-array")
+  @Column('simple-array')
   @IsArray()
   @IsString({ each: true })
   tags!: string[];
 
   /** 待办完成时间 */
-  @Column("datetime", {
+  @Column('datetime', {
     nullable: true,
   })
   doneAt?: Date;
 
   /** 放弃待办时间 */
-  @Column("datetime", {
+  @Column('datetime', {
     nullable: true,
   })
   abandonedAt?: Date;
 
   /** 计划待办开始时间 */
-  @Column("time", { nullable: true })
+  @Column('time', { nullable: true })
   planStartAt?: string;
 
   /** 计划待办结束时间 */
-  @Column("time", { nullable: true })
+  @Column('time', { nullable: true })
   planEndAt?: string;
 
   /** 计划待办日期 */
-  @Column("date")
+  @Column('date')
   @IsISO8601()
   planDate: Date = new Date();
 
   /** 来源 */
   @Column({
-    type: "varchar",
+    type: 'varchar',
     length: 20,
     nullable: true,
   })
@@ -89,42 +82,42 @@ export class TodoModel extends BaseEntity {
   source?: TodoSource;
 }
 
-@Entity("todo")
+@Entity('todo')
 export class Todo extends TodoModel {
   /** 关联的任务 */
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
 
   /** 任务ID */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   taskId?: string;
 
   /** 重复配置 */
   @ManyToOne(() => TodoRepeat, (repeat) => repeat.todos, { nullable: true })
-  @JoinColumn({ name: "repeat_id" })
+  @JoinColumn({ name: 'repeat_id' })
   repeat?: TodoRepeat;
 
   /** 重复配置ID */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   repeatId?: string;
 
   /** 原始重复配置ID（用于保留关联记录） */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   originalRepeatId?: string;
 
   /** 关联的习惯 */
-  @ManyToOne("Habit", "todos", { nullable: true })
-  @JoinColumn({ name: "habit_id" })
+  @ManyToOne('Habit', 'todos', { nullable: true })
+  @JoinColumn({ name: 'habit_id' })
   habit?: any;
 
   /** 习惯ID */
-  @Column("varchar", { nullable: true })
+  @Column('varchar', { nullable: true })
   @IsString()
   @IsOptional()
   habitId?: string;

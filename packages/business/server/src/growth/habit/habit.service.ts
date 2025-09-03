@@ -3,8 +3,8 @@ import { TodoRepository } from "../todo/todo.repository";
 import {
   CreateHabitDto,
   UpdateHabitDto,
-  HabitListFiltersDto,
-  HabitPageFiltersDto,
+  HabitFilterDto,
+  HabitPageFilterDto,
   HabitDto,
 } from "./dto";
 import { Habit } from "./habit.entity";
@@ -62,14 +62,14 @@ export class HabitService {
     return HabitDto.importEntity(entity);
   }
 
-  async findAll(filter: HabitListFiltersDto): Promise<HabitDto[]> {
+  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
     const entities = await this.habitRepository.findAll(filter);
     return entities.map(entity => HabitDto.importEntity(entity));
   }
 
 
   async page(
-    filter: HabitPageFiltersDto
+    filter: HabitPageFilterDto
   ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
     const { list, total, pageNum, pageSize } =
       await this.habitRepository.page(filter);

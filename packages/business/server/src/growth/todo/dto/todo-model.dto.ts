@@ -1,16 +1,12 @@
-import { BaseModelDto } from "../../../base/base-model.dto";
-import { IntersectionType, OmitType } from "@life-toolkit/mapped-types";
-import { Todo } from "../todo.entity";
-import { TaskDto } from "../../task";
-import { BaseMapper } from "../../../base/base.mapper";
-import { Todo as TodoVO } from "@life-toolkit/vo";
-import dayjs from "dayjs";
-import { TodoStatus } from "@life-toolkit/enum";
+import { BaseModelDto, BaseMapper } from '@business/common';
+import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
+import { Todo } from '../todo.entity';
+import { TaskDto } from '../../task';
+import { Todo as TodoVO } from '@life-toolkit/vo';
+import dayjs from 'dayjs';
+import { TodoStatus } from '@life-toolkit/enum';
 
-export class TodoDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Todo, ["task", "repeat", "habit"] as const)
-) {
+export class TodoDto extends IntersectionType(BaseModelDto, OmitType(Todo, ['task', 'repeat', 'habit'] as const)) {
   task?: TaskDto;
   habit?: any;
 
@@ -37,25 +33,17 @@ export class TodoDto extends IntersectionType(
   exportModelVo(): TodoVO.TodoVo {
     return {
       ...BaseMapper.dtoToVo(this),
-      name: this.name || "",
+      name: this.name || '',
       description: this.description,
       status: this.status ?? TodoStatus.TODO,
       tags: this.tags,
       importance: this.importance,
       urgency: this.urgency,
-      planDate: dayjs(this.planDate).format("YYYY-MM-DD"),
-      planStartAt: this.planStartAt
-        ? dayjs(this.planStartAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      planEndAt: this.planEndAt
-        ? dayjs(this.planEndAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      doneAt: this.doneAt
-        ? dayjs(this.doneAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      abandonedAt: this.abandonedAt
-        ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
+      planDate: dayjs(this.planDate).format('YYYY-MM-DD'),
+      planStartAt: this.planStartAt ? dayjs(this.planStartAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      planEndAt: this.planEndAt ? dayjs(this.planEndAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       task: this.task ? this.task.exportVo() : undefined,
     };
   }

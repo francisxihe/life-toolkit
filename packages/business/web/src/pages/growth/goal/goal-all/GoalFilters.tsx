@@ -3,7 +3,7 @@
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP } from '../../constants';
-import { GoalPageFiltersVo } from '@life-toolkit/vo/growth';
+import { GoalPageFilterVo } from '@life-toolkit/vo/growth';
 import { useGoalAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
@@ -31,7 +31,7 @@ export function GoalFilters() {
             placeholder="关键字"
             value={filters.keyword}
             onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
+              setFilters((prev: GoalPageFilterVo) => ({
                 ...prev,
                 keyword: value,
               }));
@@ -45,7 +45,7 @@ export function GoalFilters() {
             format="YYYY-MM-DD"
             value={[filters.startAt, filters.endAt]}
             onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
+              setFilters((prev: GoalPageFilterVo) => ({
                 ...prev,
                 startAt: value[0],
                 endAt: value[1],
@@ -57,7 +57,7 @@ export function GoalFilters() {
           <Select
             value={filters.type}
             onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
+              setFilters((prev: GoalPageFilterVo) => ({
                 ...prev,
                 type: value,
               }));
@@ -80,7 +80,7 @@ export function GoalFilters() {
           <Select
             value={filters.status}
             onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
+              setFilters((prev: GoalPageFilterVo) => ({
                 ...prev,
                 status: value,
               }));
@@ -111,7 +111,7 @@ export function GoalFilters() {
           <Select
             value={filters.importance}
             onChange={(value) => {
-              setFilters((prev: GoalPageFiltersVo) => ({
+              setFilters((prev: GoalPageFilterVo) => ({
                 ...prev,
                 importance: value,
               }));

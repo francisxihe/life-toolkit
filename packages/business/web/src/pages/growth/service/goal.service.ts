@@ -2,8 +2,8 @@ import { Message } from '@arco-design/web-react';
 import { GoalController } from '@life-toolkit/api';
 import type {
   CreateGoalVo,
-  GoalPageFiltersVo,
-  GoalListFiltersVo,
+  GoalPageFilterVo,
+  GoalFilterVo,
   UpdateGoalVo,
   GoalModelVo,
   GoalVo,
@@ -88,7 +88,7 @@ export default class GoalService {
     }
   }
 
-  static async getGoalList(params: GoalListFiltersVo = {}) {
+  static async getGoalList(params: GoalFilterVo = {}) {
     try {
       return GoalController.findAll(params);
     } catch (error) {
@@ -97,7 +97,7 @@ export default class GoalService {
     }
   }
 
-  static async getGoalTree(params: GoalListFiltersVo = {}) {
+  static async getGoalTree(params: GoalFilterVo = {}) {
     try {
       return GoalController.getTree(params);
     } catch (error) {
@@ -106,7 +106,7 @@ export default class GoalService {
     }
   }
 
-  static useGoalList = (params: GoalListFiltersVo = {}) => {
+  static useGoalList = (params: GoalFilterVo = {}) => {
     const [goalList, setGoalList] = useState<GoalModelVo[]>([]);
     const [loading, setLoading] = useState(false);
 
@@ -124,7 +124,7 @@ export default class GoalService {
     return { goalList, loading };
   };
 
-  static async getGoalPage(params: GoalPageFiltersVo = {}) {
+  static async getGoalPage(params: GoalPageFilterVo = {}) {
     try {
       return GoalController.page(params);
     } catch (error) {

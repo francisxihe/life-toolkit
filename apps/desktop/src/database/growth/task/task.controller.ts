@@ -28,12 +28,12 @@ export class TaskController {
   }
 
   @Get('/find-all')
-  async findAll(@Body() body: TaskVO.TaskListFiltersVo) {
+  async findAll(@Body() body: TaskVO.TaskFilterVo) {
     return this.controller.findAll(body);
   }
 
   @Get('/page')
-  async page(@Body() body: TaskVO.TaskPageFiltersVo) {
+  async page(@Body() body: TaskVO.TaskPageFilterVo) {
     return this.controller.page(body);
   }
 

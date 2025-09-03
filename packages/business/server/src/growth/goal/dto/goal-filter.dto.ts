@@ -1,12 +1,12 @@
 import { IsOptional, IsString, IsDateString, IsBoolean } from 'class-validator';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
-import { GoalListFiltersVo, GoalPageFiltersVo } from '@life-toolkit/vo/growth/goal';
+import { GoalFilterVo, GoalPageFilterVo } from '@life-toolkit/vo/growth/goal';
 import { GoalDto } from './goal-model.dto';
-import { PageFilterDto } from '../../../common/filter';
-import { BaseFilterDto, importBaseVo } from '@business/common/filter';
+import { PageFilterDto } from '../../../common';
+import { BaseFilterDto, importBaseVo } from '@business/common';
 
 // 列表过滤DTO - 选择可过滤的字段
-export class GoalListFiltersDto extends IntersectionType(
+export class GoalFilterDto extends IntersectionType(
   BaseFilterDto,
   PartialType(PickType(GoalDto, ['type', 'importance', 'status'] as const))
 ) {
@@ -60,21 +60,21 @@ export class GoalListFiltersDto extends IntersectionType(
   @IsOptional()
   parentId?: string;
 
-  importListVo(filterVo: GoalListFiltersVo) {
+  importListVo(filterVo: GoalFilterVo) {
     importVo(filterVo, this);
   }
 }
 
 // 分页过滤DTO - 继承列表过滤 + 分页
-export class GoalPageFiltersDto extends IntersectionType(PageFilterDto, GoalListFiltersDto) {
-  importPageVo(filterVo: GoalPageFiltersVo) {
+export class GoalPageFilterDto extends IntersectionType(PageFilterDto, GoalFilterDto) {
+  importPageVo(filterVo: GoalPageFilterVo) {
     importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
 }
 
-function importVo(filterVo: GoalListFiltersVo, filterDto: GoalListFiltersDto) {
+function importVo(filterVo: GoalFilterVo, filterDto: GoalFilterDto) {
   importBaseVo(filterVo, filterDto);
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.type !== undefined) filterDto.type = filterVo.type;

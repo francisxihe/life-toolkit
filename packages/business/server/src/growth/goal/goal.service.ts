@@ -1,4 +1,4 @@
-import { GoalDto, CreateGoalDto, UpdateGoalDto, GoalListFiltersDto, GoalPageFiltersDto } from './dto';
+import { GoalDto, CreateGoalDto, UpdateGoalDto, GoalFilterDto, GoalPageFilterDto } from './dto';
 import { GoalRepository, GoalTreeRepository } from './goal.repository';
 import { Goal } from './goal.entity';
 import { GoalStatus } from '@life-toolkit/enum';
@@ -32,7 +32,7 @@ export class GoalService {
     return goalDto;
   }
 
-  async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
+  async findAll(filter: GoalFilterDto): Promise<GoalDto[]> {
     const treeFilters = await this.goalTreeRepository.processTreeFilter({
       excludeIds: filter.excludeIds,
       parentId: filter.parentId,
@@ -88,7 +88,7 @@ export class GoalService {
     return goalDto;
   }
 
-  async getTree(filter: GoalListFiltersDto): Promise<GoalDto[]> {
+  async getTree(filter: GoalFilterDto): Promise<GoalDto[]> {
     // 交由仓储层处理树形构建与过滤
     const entities = await this.goalTreeRepository.getFilteredTree({
       status: filter.status,
@@ -103,7 +103,7 @@ export class GoalService {
   }
 
   async page(
-    filter: GoalPageFiltersDto
+    filter: GoalPageFilterDto
   ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { list, total, pageNum, pageSize } = await this.goalRepository.page(filter);
     return {
@@ -171,7 +171,7 @@ export class GoalService {
     const goalUpdate = new Goal();
     goalUpdate.status = GoalStatus.DONE;
     goalUpdate.doneAt = new Date();
-    const filter = new GoalListFiltersDto();
+    const filter = new GoalFilterDto();
     filter.includeIds = params.includeIds;
     const result = await this.goalRepository.updateByFilter(filter, goalUpdate);
     return result;

@@ -1,11 +1,11 @@
 import { Task, TaskModel } from "../task.entity";
-import { BaseModelDto } from "../../../base/base-model.dto";
+import { BaseModelDto } from "@business/common/base-model.dto";
 import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
 import { GoalDto } from "../../goal/dto";
 import { TrackTimeDto } from "../../track-time/dto";
 import { TodoDto } from "../../todo/dto";
 import dayjs from "dayjs";
-import { BaseMapper } from "../../../base/base.mapper";
+import { BaseMapper } from "@business/common/base.mapper";
 import type { Task as TaskVO } from "@life-toolkit/vo";
 
 export class TaskDto extends IntersectionType(

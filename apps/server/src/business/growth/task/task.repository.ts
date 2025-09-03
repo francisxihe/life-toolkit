@@ -15,8 +15,8 @@ import { TrackTime } from "../track-time";
 import {
   CreateTaskDto,
   UpdateTaskDto,
-  TaskPageFiltersDto,
-  TaskListFiltersDto,
+  TaskPageFilterDto,
+  TaskFilterDto,
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
@@ -64,7 +64,7 @@ export class TaskRepository {
   }
 
   async findAll(
-    filter: TaskListFiltersDto & { excludeIds?: string[] }
+    filter: TaskFilterDto & { excludeIds?: string[] }
   ): Promise<TaskDto[]> {
     const where: FindOptionsWhere<Task> = this.buildWhere(filter as any);
     if (filter.excludeIds && filter.excludeIds.length) {
@@ -80,7 +80,7 @@ export class TaskRepository {
   }
 
   async page(
-    filter: TaskPageFiltersDto
+    filter: TaskPageFilterDto
   ): Promise<{ list: TaskDto[]; total: number; pageNum: number; pageSize: number }> {
     const pageNum = filter.pageNum || 1;
     const pageSize = filter.pageSize || 10;
@@ -142,7 +142,7 @@ export class TaskRepository {
   }
 
   // where 构建
-  private buildWhere(filter: TaskPageFiltersDto): FindOptionsWhere<Task> {
+  private buildWhere(filter: TaskPageFilterDto): FindOptionsWhere<Task> {
     const where: FindOptionsWhere<Task> = {};
 
     if (filter.doneDateStart && filter.doneDateEnd) {

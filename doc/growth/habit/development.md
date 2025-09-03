@@ -405,7 +405,7 @@ import { HabitStatus } from "../entities";
 import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 // 列表过滤DTO
-export class HabitListFiltersDto extends PartialType(
+export class HabitFilterDto extends PartialType(
   PickType(HabitDto, ["status", "importance", "userId"] as const)
 ) {
   /** 搜索关键词 */
@@ -457,9 +457,9 @@ export class HabitListFiltersDto extends PartialType(
 }
 
 // 分页过滤DTO
-export class HabitPageFiltersDto extends IntersectionType(
+export class HabitPageFilterDto extends IntersectionType(
   PageDto,
-  HabitListFiltersDto
+  HabitFilterDto
 ) {}
 
 // 标记完成DTO
@@ -544,7 +544,7 @@ export type HabitVo = HabitModelVo & {
 import { HabitVo, HabitModelVo, HabitStatus } from "./habit-model.vo";
 
 // 列表过滤VO
-export type HabitListFiltersVo = Partial<
+export type HabitFilterVo = Partial<
   Pick<HabitVo, "status" | "importance" | "userId"> & {
     keyword?: string;
     dateStart?: string;
@@ -559,7 +559,7 @@ export type HabitListFiltersVo = Partial<
 >;
 
 // 分页过滤VO
-export type HabitPageFiltersVo = HabitListFiltersVo & {
+export type HabitPageFilterVo = HabitFilterVo & {
   pageNum?: number;
   pageSize?: number;
 };
@@ -853,7 +853,7 @@ interface HabitApiDesign {
       method: "GET";
       summary: "查询习惯列表";
       description: "分页查询用户的习惯列表";
-      parameters: HabitPageFiltersDto;
+      parameters: HabitPageFilterDto;
       responses: [
         { status_code: 200; schema: "HabitPageVo"; description: "查询成功" },
       ];
@@ -1005,7 +1005,7 @@ interface HabitPageDesign {
         { name: "loading"; type: "boolean"; description: "加载状态" },
         {
           name: "filters";
-          type: "HabitPageFiltersVo";
+          type: "HabitPageFilterVo";
           description: "筛选条件";
         },
       ];
@@ -1114,7 +1114,7 @@ interface HabitPageDesign {
       props: [
         {
           name: "filters";
-          type: "HabitListFiltersVo";
+          type: "HabitFilterVo";
           required: true;
           description: "筛选条件";
         },

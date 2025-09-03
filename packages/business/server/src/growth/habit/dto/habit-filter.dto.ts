@@ -1,12 +1,12 @@
-import { PageFilterDto } from '../../../common/filter';
+import { PageFilterDto } from '../../../common';
 import { HabitDto } from './habit-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsDateString, IsBoolean } from 'class-validator';
-import { HabitListFiltersVo, HabitPageFiltersVo } from '@life-toolkit/vo/growth/habit';
+import { HabitFilterVo, HabitPageFilterVo } from '@life-toolkit/vo/growth/habit';
 import { HabitStatus, Importance, Difficulty } from '@life-toolkit/enum';
-import { BaseFilterDto, importBaseVo } from '@business/common/filter';
+import { BaseFilterDto, importBaseVo } from '@business/common';
 
-export class HabitListFiltersDto extends IntersectionType(
+export class HabitFilterDto extends IntersectionType(
   BaseFilterDto,
   PartialType(PickType(HabitDto, ['status', 'difficulty', 'tags', 'importance'] as const))
 ) {
@@ -42,20 +42,20 @@ export class HabitListFiltersDto extends IntersectionType(
   @IsOptional()
   goalId?: string;
 
-  importListVo(filterVo: HabitListFiltersVo) {
+  importListVo(filterVo: HabitFilterVo) {
     importVo(filterVo, this);
   }
 }
 
-export class HabitPageFiltersDto extends IntersectionType(PageFilterDto, HabitListFiltersDto) {
-  importPageVo(filterVo: HabitPageFiltersVo) {
+export class HabitPageFilterDto extends IntersectionType(PageFilterDto, HabitFilterDto) {
+  importPageVo(filterVo: HabitPageFilterVo) {
     importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
 }
 
-function importVo(filterVo: HabitListFiltersVo, filterDto: HabitListFiltersDto) {
+function importVo(filterVo: HabitFilterVo, filterDto: HabitFilterDto) {
   importBaseVo(filterVo, filterDto);
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.difficulty !== undefined) filterDto.difficulty = filterVo.difficulty;

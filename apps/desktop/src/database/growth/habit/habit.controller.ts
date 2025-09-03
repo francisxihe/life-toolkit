@@ -28,12 +28,12 @@ export class HabitController {
   }
 
   @Get('/find-all')
-  async findAll(@Body() body: HabitVO.HabitListFiltersVo) {
+  async findAll(@Body() body: HabitVO.HabitFilterVo) {
     return this.controller.findAll(body);
   }
 
   @Get('/page')
-  async page(@Body() body: HabitVO.HabitPageFiltersVo) {
+  async page(@Body() body: HabitVO.HabitPageFilterVo) {
     return this.controller.page(body);
   }
 

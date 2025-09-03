@@ -13,8 +13,8 @@ import { Response } from "@/decorators/response.decorator";
 import { TaskStatusService } from "./task-status.service";
 import type {
   Task,
-  TaskListFiltersVo,
-  TaskPageFiltersVo,
+  TaskFilterVo,
+  TaskPageFilterVo,
 } from "@life-toolkit/vo";
 import {
   TaskController as BusinessTaskController,
@@ -79,13 +79,13 @@ export class TaskController {
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TaskPageFiltersVo) {
+  async page(@Query() filter: TaskPageFilterVo) {
     return await this.businessController.page(filter);
   }
 
   @Get("list")
   @Response()
-  async list(@Query() filter: TaskListFiltersVo) {
+  async list(@Query() filter: TaskFilterVo) {
     return await this.businessController.list(filter);
   }
 
