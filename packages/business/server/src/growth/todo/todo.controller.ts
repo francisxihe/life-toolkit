@@ -85,7 +85,7 @@ export class TodoController {
   // ==============业务操作==================
 
   @Put('/done-batch', { description: '批量完成待办' })
-  async doneBatch(@Body() body?: TodoVO.TodoListFiltersVo) {
+  async doneBatch(@Body() body?: TodoVO.TodoListFiltersVo): Promise<any> {
     return await this.todoService.doneBatch({ includeIds: body?.includeIds ?? [] });
   }
 

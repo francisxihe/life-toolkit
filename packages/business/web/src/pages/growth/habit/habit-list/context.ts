@@ -65,7 +65,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const fetchHabits = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await HabitController.getHabitPage(filters);
+      const response = await HabitController.page(filters);
       setHabits(response.list);
       setPagination({
         current: response.pageNum,

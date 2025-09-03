@@ -13,73 +13,73 @@ import { GoalService } from './goal.service';
 export class GoalController {
   constructor(private readonly goalService: GoalService) {}
 
-  @Post('/create')
+  @Post('/create', { description: '创建目标' })
   async create(@Body() body: GoalVO.CreateGoalVo): Promise<GoalVO.GoalVo> {
     const createDto = CreateGoalDto.importVo(body);
     const dto = await this.goalService.create(createDto);
     return dto.exportVo();
   }
 
-  @Delete('/delete/:id')
-  async delete(@Param('id') id: string) {
+  @Delete('/delete/:id', { description: '删除目标' })
+  async delete(@Param('id') id: string): Promise<void> {
     return await this.goalService.delete(id);
   }
 
-  @Put('/update/:id')
-  async update(@Param('id') id: string, @Body() updateGoalVo: GoalVO.UpdateGoalVo) {
+  @Put('/update/:id', { description: '更新目标' })
+  async update(@Param('id') id: string, @Body() updateGoalVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalVo> {
     const updateDto = UpdateGoalDto.importVo(updateGoalVo);
     const dto = await this.goalService.update(id, updateDto);
     return dto.exportVo();
   }
 
-  @Get('/find/:id')
-  async find(@Param('id') id: string) {
+  @Get('/find/:id', { description: '根据ID查询目标详情' })
+  async find(@Param('id') id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.find(id);
     return dto.exportVo();
   }
 
-  @Get('/find-with-relations/:id')
-  async findWithRelations(@Param('id') id: string) {
+  @Get('/find-with-relations/:id', { description: '根据ID查询目标及关联信息' })
+  async findWithRelations(@Param('id') id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findWithRelations(id);
     return dto.exportVo();
   }
 
-  @Get('/find-all')
-  async findAll(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo) {
+  @Get('/find-all', { description: '查询目标列表' })
+  async findAll(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo): Promise<GoalVO.GoalListVo> {
     const goalListFiltersDto = new GoalListFiltersDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.findAll(goalListFiltersDto);
     return GoalDto.dtoListToListVo(list);
   }
 
-  @Get('/page')
-  async page(@Query() goalPageFiltersVo?: GoalVO.GoalPageFiltersVo) {
+  @Get('/page', { description: '分页查询目标列表' })
+  async page(@Query() goalPageFiltersVo?: GoalVO.GoalPageFiltersVo): Promise<GoalVO.GoalPageVo> {
     const goalPageFilterDto = new GoalPageFiltersDto();
     goalPageFilterDto.importPageVo(goalPageFiltersVo ?? {});
     const { list, total, pageNum, pageSize } = await this.goalService.page(goalPageFilterDto);
     return GoalDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Get('/tree')
-  async tree(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo) {
+  @Get('/tree', { description: '查询目标树形结构' })
+  async tree(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo): Promise<GoalVO.GoalListVo> {
     const goalListFiltersDto = new GoalListFiltersDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.getTree(goalListFiltersDto);
     return GoalDto.dtoListToListVo(list);
   }
 
-  @Get('/find-roots')
-  async findRoots() {
+  @Get('/find-roots', { description: '查询根目标列表' })
+  async findRoots(): Promise<GoalVO.GoalVo[]> {
     return (await this.goalService.findRoots()).map((dto) => dto.exportVo());
   }
 
-  @Put('/abandon/:id')
-  async abandon(@Param('id') id: string) {
+  @Put('/abandon/:id', { description: '废弃目标' })
+  async abandon(@Param('id') id: string): Promise<boolean> {
     return await this.goalService.abandon(id);
   }
 
-  @Put('/restore/:id')
-  async restore(@Param('id') id: string) {
+  @Put('/restore/:id', { description: '恢复目标' })
+  async restore(@Param('id') id: string): Promise<boolean> {
     return await this.goalService.restore(id);
   }
 }

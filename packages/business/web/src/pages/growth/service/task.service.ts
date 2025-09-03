@@ -12,7 +12,7 @@ import { useState, useEffect } from 'react';
 export default class TaskService {
   static async getTaskDetail(taskId: string) {
     try {
-      return TaskController.getTaskDetail(taskId);
+      return TaskController.find(taskId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -20,9 +20,12 @@ export default class TaskService {
 
   static async batchDoneTask(params: OperationByIdListVo) {
     try {
-      const res = await TaskController.batchDoneTask(params);
+      // Task 模块暂时没有批量操作方法，需要逐个处理
+      const results = await Promise.all(
+        params.includeIds?.map(id => TaskController.abandon(id)) || []
+      );
       Message.success('操作成功');
-      return res;
+      return results;
     } catch (error) {
       Message.error(error.message);
     }
@@ -30,7 +33,7 @@ export default class TaskService {
 
   static async restoreTask(id: string) {
     try {
-      const res = await TaskController.restoreTask(id);
+      const res = await TaskController.restore(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -40,7 +43,7 @@ export default class TaskService {
 
   static async abandonTask(id: string) {
     try {
-      const res = await TaskController.abandonTask(id);
+      const res = await TaskController.abandon(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -50,7 +53,7 @@ export default class TaskService {
 
   static async createTask(task: CreateTaskVo) {
     try {
-      const res = await TaskController.createTask(task);
+      const res = await TaskController.create(task);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -60,7 +63,7 @@ export default class TaskService {
 
   static async deleteTask(id: string) {
     try {
-      const res = await TaskController.deleteTask(id);
+      const res = await TaskController.delete(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -70,7 +73,7 @@ export default class TaskService {
 
   static async updateTask(id: string, task: UpdateTaskVo, silent = true) {
     try {
-      const res = await TaskController.updateTask(id, task);
+      const res = await TaskController.update(id, task);
       if (!silent) {
         Message.success('操作成功');
       }
@@ -82,7 +85,7 @@ export default class TaskService {
 
   static async getTaskList(params: TaskListFiltersVo = {}) {
     try {
-      return TaskController.getTaskList(params);
+      return TaskController.findAll(params);
     } catch (error) {
       Message.error(error.message);
     }
@@ -108,7 +111,7 @@ export default class TaskService {
 
   static async getTaskPage(params: TaskPageFiltersVo = {}) {
     try {
-      return TaskController.getTaskPage(params);
+      return TaskController.page(params);
     } catch (error) {
       Message.error(error.message);
     }

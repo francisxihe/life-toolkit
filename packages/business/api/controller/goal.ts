@@ -8,42 +8,42 @@ export default class GoalController {
   }
 
   static async delete(id: string) {
-    return request({ method: "remove" })(`/goal/delete/${id}`);
+    return request<void>({ method: "remove" })(`/goal/delete/${id}`);
   }
 
   static async update(id: string, body: GoalVO.UpdateGoalVo) {
-    return request({ method: "put" })(`/goal/update/${id}`, body);
+    return request<GoalVO.GoalVo>({ method: "put" })(`/goal/update/${id}`, body);
   }
 
   static async find(id: string) {
-    return request({ method: "get" })(`/goal/find/${id}`);
+    return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find/${id}`);
   }
 
   static async findWithRelations(id: string) {
-    return request({ method: "get" })(`/goal/find-with-relations/${id}`);
+    return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find-with-relations/${id}`);
   }
 
   static async findAll(body: GoalVO.GoalListFiltersVo) {
-    return request({ method: "get" })(`/goal/find-all`, body);
+    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/find-all`, body);
   }
 
   static async page(body: GoalVO.GoalPageFiltersVo) {
-    return request({ method: "get" })(`/goal/page`, body);
+    return request<GoalVO.GoalPageVo>({ method: "get" })(`/goal/page`, body);
   }
 
   static async tree(body: GoalVO.GoalListFiltersVo) {
-    return request({ method: "get" })(`/goal/tree`, body);
+    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/tree`, body);
   }
 
   static async findRoots() {
-    return request({ method: "get" })(`/goal/find-roots`);
+    return request<GoalVO.GoalVo[]>({ method: "get" })(`/goal/find-roots`);
   }
 
   static async abandon(id: string) {
-    return request({ method: "put" })(`/goal/abandon/${id}`);
+    return request<boolean>({ method: "put" })(`/goal/abandon/${id}`);
   }
 
   static async restore(id: string) {
-    return request({ method: "put" })(`/goal/restore/${id}`);
+    return request<boolean>({ method: "put" })(`/goal/restore/${id}`);
   }
 }

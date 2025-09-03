@@ -14,7 +14,7 @@ import { useState, useEffect } from 'react';
 export default class GoalService {
   static async getDetail(todoId: string) {
     try {
-      return GoalController.getDetail(todoId);
+      return GoalController.find(todoId);
     } catch (error) {
       Message.error(error.message);
       throw error;
@@ -23,7 +23,7 @@ export default class GoalService {
 
   static async batchDoneGoal(params: OperationByIdListVo) {
     try {
-      const res = await GoalController.batchDoneGoal(params);
+      const res = await GoalController.doneBatch(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -34,7 +34,7 @@ export default class GoalService {
 
   static async restoreGoal(id: string) {
     try {
-      const res = await GoalController.restoreGoal(id);
+      const res = await GoalController.restore(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -44,7 +44,7 @@ export default class GoalService {
 
   static async abandonGoal(id: string) {
     try {
-      const res = await GoalController.abandonGoal(id);
+      const res = await GoalController.abandon(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -55,7 +55,7 @@ export default class GoalService {
 
   static async createGoal(goal: CreateGoalVo) {
     try {
-      const res = await GoalController.createGoal(goal);
+      const res = await GoalController.create(goal);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -66,7 +66,7 @@ export default class GoalService {
 
   static async deleteGoal(id: string) {
     try {
-      const res = await GoalController.deleteGoal(id);
+      const res = await GoalController.delete(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -77,7 +77,7 @@ export default class GoalService {
 
   static async updateGoal(id: string, goal: UpdateGoalVo, silent = true) {
     try {
-      const res = await GoalController.updateGoal(id, goal);
+      const res = await GoalController.update(id, goal);
       if (!silent) {
         Message.success('操作成功');
       }
@@ -90,7 +90,7 @@ export default class GoalService {
 
   static async getGoalList(params: GoalListFiltersVo = {}) {
     try {
-      return GoalController.getGoalList(params);
+      return GoalController.findAll(params);
     } catch (error) {
       Message.error(error.message);
       throw error;
@@ -99,7 +99,7 @@ export default class GoalService {
 
   static async getGoalTree(params: GoalListFiltersVo = {}) {
     try {
-      return GoalController.getGoalTree(params);
+      return GoalController.tree(params);
     } catch (error) {
       Message.error(error.message);
       throw error;
@@ -126,7 +126,7 @@ export default class GoalService {
 
   static async getGoalPage(params: GoalPageFiltersVo = {}) {
     try {
-      return GoalController.getGoalPage(params);
+      return GoalController.page(params);
     } catch (error) {
       Message.error(error.message);
       throw error;

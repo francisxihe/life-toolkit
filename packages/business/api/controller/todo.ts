@@ -2,6 +2,7 @@ import { request } from '@life-toolkit/share-request';
 import { Todo as TodoVO } from '@life-toolkit/vo';
 
 export default class TodoController {
+
   static async create(body: TodoVO.CreateTodoVo) {
     return request<TodoVO.TodoVo>({ method: "post" })(`/todo/create`, body);
   }
@@ -27,7 +28,7 @@ export default class TodoController {
   }
 
   static async doneBatch(body: TodoVO.TodoListFiltersVo) {
-    return request({ method: "put" })(`/todo/done-batch`, body);
+    return request<any>({ method: "put" })(`/todo/done-batch`, body);
   }
 
   static async abandon(id: string) {

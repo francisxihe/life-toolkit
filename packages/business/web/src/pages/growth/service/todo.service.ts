@@ -16,7 +16,7 @@ export default class TodoService {
    */
   static async getTodoDetailWithRepeat(todoId: string) {
     try {
-      return TodoController.getTodoDetailWithRepeat(todoId);
+      return TodoController.detailWithRepeat(todoId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -29,7 +29,7 @@ export default class TodoService {
    */
   static async batchDoneTodo(params: OperationByIdListVo) {
     try {
-      const res = await TodoController.batchDoneTodo(params);
+      const res = await TodoController.doneBatch(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -44,7 +44,7 @@ export default class TodoService {
    */
   static async restoreTodo(id: string) {
     try {
-      const res = await TodoController.restoreTodo(id);
+      const res = await TodoController.restore(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -59,7 +59,7 @@ export default class TodoService {
    */
   static async abandonTodo(id: string) {
     try {
-      const res = await TodoController.abandonTodo(id);
+      const res = await TodoController.abandon(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -74,7 +74,7 @@ export default class TodoService {
    */
   static async createTodo(todo: CreateTodoVo) {
     try {
-      const res = await TodoController.createTodo(todo);
+      const res = await TodoController.create(todo);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -89,7 +89,7 @@ export default class TodoService {
    */
   static async deleteTodo(id: string) {
     try {
-      const res = await await TodoController.deleteTodo(id);
+      const res = await TodoController.delete(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -106,7 +106,7 @@ export default class TodoService {
    */
   static async updateTodo(id: string, todo: UpdateTodoVo, silent = true) {
     try {
-      const res = await TodoController.updateTodo(id, todo);
+      const res = await TodoController.update(id, todo);
       if (!silent) {
         Message.success('操作成功');
       }
@@ -123,7 +123,7 @@ export default class TodoService {
    */
   static async getTodoListWithRepeat(params: TodoListFiltersVo = {}) {
     try {
-      return TodoController.getTodoListWithRepeat(params);
+      return TodoController.listWithRepeat(params);
     } catch (error) {
       Message.error(error.message);
     }
@@ -136,7 +136,7 @@ export default class TodoService {
    */
   static async getTodoPage(params: TodoPageFiltersVo) {
     try {
-      return TodoController.getTodoPage(params);
+      return TodoController.page(params);
     } catch (error) {
       Message.error(error.message);
     }
