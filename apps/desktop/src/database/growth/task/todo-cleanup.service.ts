@@ -1,16 +1,19 @@
 import { TodoCleanupService } from "@life-toolkit/business-server";
-import { TodoRepository as DesktopTodoRepository } from "../todo/todo.repository";
+import { TodoRepository } from "../todo/todo.repository";
+import { TodoListFilterDto } from "@life-toolkit/business-server";
 
 // 轻量适配器：委托桌面端 TodoRepository 的软删除逻辑
 export class DesktopTodoCleanupService implements TodoCleanupService {
-  private readonly todoRepo: DesktopTodoRepository;
+  private readonly todoRepo: TodoRepository;
 
   constructor() {
-    this.todoRepo = new DesktopTodoRepository();
+    this.todoRepo = new TodoRepository();
   }
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {
     if (!Array.isArray(taskIds) || taskIds.length === 0) return;
-    await this.todoRepo.softDeleteByTaskIds(taskIds);
+    const filter = new TodoListFilterDto();
+    filter.taskIds = taskIds;
+    await this.todoRepo.softDeleteByFilter(filter);
   }
 }

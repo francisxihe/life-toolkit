@@ -121,6 +121,19 @@ export class GoalRepository implements _GoalRepository {
     await qb.delete().execute();
   }
 
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: GoalListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const goals = await qb.getMany();
+    if (goals.length > 0) {
+      const ids = goals.map(goal => goal.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
+  }
+
   async update(goalUpdate: Goal): Promise<Goal> {
     const entity = await this.repo.findOne({ where: { id: goalUpdate.id } });
     if (!entity) throw new Error(`目标不存在，ID: ${goalUpdate.id}`);
@@ -175,11 +188,4 @@ export class GoalRepository implements _GoalRepository {
     };
   }
 
-  async softDelete(id: string): Promise<void> {
-    await this.repo.softDelete(id);
-  }
-
-  async batchUpdate(includeIds: string[], goalUpdate: Goal): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, goalUpdate);
-  }
 }

@@ -163,7 +163,9 @@ export class TodoService {
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {
     if (!taskIds || taskIds.length === 0) return;
-    await this.todoRepository.softDeleteByTaskIds(taskIds);
+    const filter = new TodoListFilterDto();
+    filter.taskIds = taskIds;
+    await this.todoRepository.softDeleteByFilter(filter);
   }
 
   async doneBatch(params: { includeIds: string[] }): Promise<any> {

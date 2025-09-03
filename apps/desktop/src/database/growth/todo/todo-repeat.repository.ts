@@ -106,29 +106,22 @@ export class TodoRepeatRepository {
     return true;
   }
 
-  async deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder('todoRepeat');
-
-    // 根据过滤条件构建删除查询
-    if (filter.status !== undefined) {
-      qb.andWhere('todoRepeat.status = :status', { status: filter.status });
-    }
-
+  async deleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
   async softDelete(id: string): Promise<void> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (entity) {
-      await this.repo.softRemove(entity);
-    }
+    await this.repo.softDelete(id);
   }
 
-  async batchSoftDelete(includeIds: string[]): Promise<void> {
-    const entities = await this.repo.find({ where: { id: In(includeIds) } });
-    if (entities.length) {
-      await this.repo.softRemove(entities);
+  async softDeleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const list = await qb.getMany();
+    if (list.length) {
+      const ids = list.map(item => item.id);
+      await this.repo.softDelete({ id: In(ids) });
     }
   }
 
@@ -164,14 +157,4 @@ export class TodoRepeatRepository {
       .getMany();
   }
 
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    if (!taskIds || taskIds.length === 0) return;
-    // 通过关联的todos查找TodoRepeat
-    const items = await this.repo
-      .createQueryBuilder('todoRepeat')
-      .innerJoin('todoRepeat.todos', 'todo')
-      .where('todo.taskId IN (:...taskIds)', { taskIds })
-      .getMany();
-    if (items.length) await this.repo.softRemove(items);
-  }
 }

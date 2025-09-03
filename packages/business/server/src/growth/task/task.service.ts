@@ -147,7 +147,12 @@ export class TaskService {
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
-    return await this.taskRepository.taskWithTrackTime(taskId);
+    const entity = await this.taskRepository.findWithRelations(taskId);
+    const base = TaskDto.importEntity(entity);
+    const result = new TaskWithTrackTimeDto();
+    Object.assign(result, base);
+    result.trackTimeList = [];
+    return result;
   }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {

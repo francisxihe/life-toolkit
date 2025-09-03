@@ -20,12 +20,11 @@ export interface TodoRepeatRepository {
     todoRepeatUpdate: TodoRepeat  
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;
+  deleteByFilter(filter: TodoRepeatListFilterDto): Promise<void>;
   softDelete(id: string): Promise<void>;
-  batchSoftDelete(includeIds: string[]): Promise<void>;
+  softDeleteByFilter(filter: TodoRepeatListFilterDto): Promise<void>;
   find(id: string): Promise<TodoRepeat>;
   findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat>;
   findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]>;
-  softDeleteByTaskIds(taskIds: string[]): Promise<void>;
   findOneBy(condition: any): Promise<TodoRepeat | null>;
 }

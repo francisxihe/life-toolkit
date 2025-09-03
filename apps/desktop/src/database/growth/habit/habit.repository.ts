@@ -158,17 +158,14 @@ export class HabitRepository implements _HabitRepository {
     await this.repo.softDelete(id);
   }
 
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    // 通过todos关系查找相关的习惯
-    const qb = this.repo
-      .createQueryBuilder('habit')
-      .leftJoin('habit.todos', 'todo')
-      .where('todo.id IN (:...taskIds)', { taskIds });
+  async softDeleteByFilter(filter: HabitListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
     const habits = await qb.getMany();
     if (habits.length > 0) {
       await this.repo.softDelete(habits.map((h) => h.id));
     }
   }
+
 
   async updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);

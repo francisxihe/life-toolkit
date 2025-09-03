@@ -17,8 +17,9 @@ export interface TodoRepository {
   updateByFilter(filter: TodoListFilterDto, todoUpdate: Todo): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoPageFiltersDto): Promise<void>;
+  softDelete(id: string): Promise<void>;
+  softDeleteByFilter(filter: TodoListFilterDto): Promise<void>;
   find(id: string): Promise<Todo>;
   findWithRelations(id: string, relations?: string[]): Promise<Todo>;
   updateRepeatId(id: string, repeatId: string): Promise<void>;
-  softDeleteByTaskIds(taskIds: string[]): Promise<void>;
 }

@@ -1,8 +1,6 @@
-import { In, Repository, DeepPartial, UpdateResult } from 'typeorm';
+import { In, Repository, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
-  CreateTaskDto,
-  UpdateTaskDto,
   TaskPageFiltersDto,
   TaskListFiltersDto,
   TaskDto,
@@ -113,9 +111,31 @@ export class TaskRepository implements _TaskRepository {
     return await qb.update(taskUpdate).execute();
   }
 
-  async removeByIds(includeIds: string[]): Promise<void> {
-    if (!includeIds || !includeIds.length) return;
-    await this.repo.softDelete({ id: In(includeIds) });
+  async delete(id: string): Promise<boolean> {
+    await this.repo.delete(id);
+    return true;
+  }
+
+  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const tasks = await qb.getMany();
+    if (tasks.length > 0) {
+      const ids = tasks.map(task => task.id);
+      await this.repo.delete({ id: In(ids) });
+    }
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const tasks = await qb.getMany();
+    if (tasks.length > 0) {
+      const ids = tasks.map(task => task.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
   }
 
   async find(id: string): Promise<Task> {
@@ -161,14 +181,6 @@ export class TaskRepository implements _TaskRepository {
     };
   }
 
-  async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
-    const entity = await this.findWithRelations(taskId);
-    const base = TaskDto.importEntity(entity);
-    const result = new TaskWithTrackTimeDto();
-    Object.assign(result, base);
-    result.trackTimeList = [];
-    return result;
-  }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
     if (!goalIds || goalIds.length === 0) return [];

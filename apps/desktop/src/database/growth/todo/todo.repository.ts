@@ -128,11 +128,19 @@ export class TodoRepository implements _TodoRepository {
     await this.repo.update(id, { repeatId });
   }
 
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    if (!taskIds || taskIds.length === 0) return;
-    const items = await this.repo.find({ where: { taskId: In(taskIds) } });
-    if (items.length) await this.repo.softRemove(items);
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
   }
+
+  async softDeleteByFilter(filter: TodoListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const todos = await qb.getMany();
+    if (todos.length > 0) {
+      const ids = todos.map(todo => todo.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
+  }
+
 
   async findOneByRepeatAndDate(repeatId: string, date: Date): Promise<Todo | null> {
     const todo = await this.repo.findOne({

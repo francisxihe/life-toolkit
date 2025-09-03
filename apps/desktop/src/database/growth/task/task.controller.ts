@@ -46,10 +46,6 @@ export class TaskController {
     return this.controller.list(body);
   }
 
-  @Get("/task-with-track-time/:id")
-  async taskWithTrackTime(@Param("id") id: string) {
-    return this.controller.taskWithTrackTime(id);
-  }
 
   @Put("/abandon/:id")
   async abandon(@Param("id") id: string) {

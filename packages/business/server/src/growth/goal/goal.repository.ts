@@ -10,6 +10,8 @@ export interface GoalRepository {
   updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
+  softDelete(id: string): Promise<void>;
+  softDeleteByFilter(filter: GoalListFiltersDto): Promise<void>;
   find(id: string): Promise<Goal>;
   findWithRelations(id: string, relations?: string[]): Promise<Goal>;
   findAll(filter: GoalListFiltersDto): Promise<Goal[]>;

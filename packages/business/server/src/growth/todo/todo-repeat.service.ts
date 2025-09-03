@@ -144,13 +144,6 @@ export class TodoRepeatService {
     return result as any;
   }
 
-  async softDelete(id: string): Promise<void> {
-    await this.todoRepeatRepository.softDelete(id);
-  }
-
-  async batchSoftDelete(includeIds: string[]): Promise<void> {
-    await this.todoRepeatRepository.batchSoftDelete(includeIds);
-  }
 
   async done(id: string): Promise<any> {
     const todoRepeatUpdateEntity = new TodoRepeat();
