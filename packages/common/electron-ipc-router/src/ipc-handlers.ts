@@ -1,6 +1,6 @@
-import { ipcMain } from "electron";
-import { createRestRouter, type RouteDef } from "./rest-router";
-import { buildRoutesFromControllers } from "./rest-decorators";
+import { ipcMain } from 'electron';
+import { createRestRouter, type RouteDef } from './router';
+import { buildRoutesFromControllers } from './decorators';
 
 /**
  * 注册所有 IPC 处理器
@@ -14,16 +14,12 @@ export type RegisterIpcHandlersOptions = {
   channel?: string;
 };
 
-export function registerIpcHandlers(
-  options: RegisterIpcHandlersOptions = {}
-): void {
-  const { controllers = [], routes = [], channel = "REST" } = options;
+export function registerIpcHandlers(options: RegisterIpcHandlersOptions = {}): void {
+  const { controllers = [], routes = [], channel = 'REST' } = options;
 
   // 创建统一 REST 路由器并注册各模块路由
   const { registerRoutes, dispatch } = createRestRouter();
-  const decoratedRoutes = controllers.length
-    ? buildRoutesFromControllers(controllers)
-    : [];
+  const decoratedRoutes = controllers.length ? buildRoutesFromControllers(controllers) : [];
 
   registerRoutes([...decoratedRoutes, ...routes]);
 
@@ -33,13 +29,13 @@ export function registerIpcHandlers(
     async (
       _event,
       req: {
-        method: "POST" | "GET" | "PUT" | "DELETE";
+        method: 'POST' | 'GET' | 'PUT' | 'DELETE';
         path: string;
         payload: any;
       }
     ) => {
-      const method = req?.method || "GET";
-      const path = String(req?.path || "");
+      const method = req?.method || 'GET';
+      const path = String(req?.path || '');
       const payload = req?.payload;
       return await dispatch(method, path, payload);
     }

@@ -1,18 +1,7 @@
-export { registerIpcHandlers } from "./ipc-handlers";
-export type { RegisterIpcHandlersOptions } from "./ipc-handlers";
+export * from './decorators';
+export * from './router';
+export * from './ipc-handlers';
 
-export type { RouteDef, RestHandler, RestHandlerCtx } from "./rest-router";
+export type { RouteDef, RestHandler, RestHandlerCtx } from './router';
 
-export {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-  Query,
-  Body,
-  buildRoutesFromControllers,
-} from "./rest-decorators";
-
-export type { HttpMethod } from "./rest-decorators";
+export type { HttpMethod } from './decorators';
