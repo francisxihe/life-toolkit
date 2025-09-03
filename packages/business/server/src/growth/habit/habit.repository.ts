@@ -17,7 +17,8 @@ export interface HabitRepository {
   updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: HabitPageFiltersDto): Promise<void>;
-  findById(id: string, relations?: string[]): Promise<Habit>;
+  find(id: string): Promise<Habit>;
+  findWithRelations(id: string, relations?: string[]): Promise<Habit>;
   softDeleteByTaskIds(taskIds: string[]): Promise<void>;
 
   updateStreak(id: string, increment: boolean): Promise<Habit>;

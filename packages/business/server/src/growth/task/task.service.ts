@@ -52,7 +52,7 @@ export class TaskService {
         parentId: createTaskDto.parentId,
       });
     }
-    const resultEntity = await this.taskRepository.findById(entity.id);
+    const resultEntity = await this.taskRepository.find(entity.id);
     return TaskDto.importEntity(resultEntity);
   }
 
@@ -142,7 +142,7 @@ export class TaskService {
   }
 
   async findById(id: string): Promise<TaskDto> {
-    const entity = await this.taskRepository.findById(id);
+    const entity = await this.taskRepository.find(id);
     return TaskDto.importEntity(entity);
   }
 

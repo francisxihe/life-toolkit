@@ -211,4 +211,14 @@ export class GoalTreeRepository implements _GoalTreeRepository {
 
     return withChildren;
   }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<Goal> {
+    const defaultRelations = ['parent', 'children', 'taskList'];
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: relations || defaultRelations,
+    });
+    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
+    return entity;
+  }
 }

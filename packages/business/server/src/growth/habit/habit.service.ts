@@ -55,7 +55,7 @@ export class HabitService {
   }
 
   async findById(id: string): Promise<HabitDto> {
-    const entity = await this.habitRepository.findById(id);
+    const entity = await this.habitRepository.find(id);
     return HabitDto.importEntity(entity);
   }
 
@@ -106,7 +106,7 @@ export class HabitService {
     longestStreak: number;
     recentTodos: any[];
   }> {
-    const habitEntity = await this.habitRepository.findById(habitId);
+    const habitEntity = await this.habitRepository.find(habitId);
     const habit = HabitDto.importEntity(habitEntity);
     const { totalTodos, completedTodos, abandonedTodos, recentTodos } =
       await this.habitRepository.getHabitAnalyticsData(habitId);

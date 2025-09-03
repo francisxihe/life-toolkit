@@ -92,8 +92,18 @@ export class HabitRepository implements _HabitRepository {
     return saved;
   }
 
-  async findById(id: string, relations?: string[]): Promise<Habit> {
-    const entity = await this.repo.findOne({ where: { id }, relations });
+  async find(id: string): Promise<Habit> {
+    const entity = await this.repo.findOne({ where: { id } });
+    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
+    return entity;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<Habit> {
+    const defaultRelations = ['goals', 'todos'];
+    const entity = await this.repo.findOne({
+      where: { id },
+      relations: relations || defaultRelations,
+    });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
     return entity;
   }

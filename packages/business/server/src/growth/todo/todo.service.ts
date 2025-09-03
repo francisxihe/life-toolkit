@@ -75,7 +75,9 @@ export class TodoService {
   }
 
   async findById(id: string, relations?: string[]): Promise<TodoDto> {
-    const entity = await this.todoRepository.findById(id, relations);
+    const entity = relations 
+      ? await this.todoRepository.findWithRelations(id, relations)
+      : await this.todoRepository.find(id);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -142,7 +144,7 @@ export class TodoService {
 
   async detailWithRepeat(id: string): Promise<TodoDto> {
     try {
-      const entity = await this.todoRepository.findById(id);
+      const entity = await this.todoRepository.find(id);
       if (entity) {
         const todoDto = new TodoDto();
         todoDto.importEntity(entity);

@@ -14,19 +14,17 @@ export interface TodoRepeatRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(
-    id: string,
-    todoRepeatUpdate: TodoRepeat
-  ): Promise<TodoRepeat>;
-  batchUpdate(
-    includeIds: string[],
+  update(todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat>;
+  updateByFilter(
+    filter: any,
     todoRepeatUpdate: TodoRepeat  
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;
   softDelete(id: string): Promise<void>;
   batchSoftDelete(includeIds: string[]): Promise<void>;
-  findById(id: string, relations?: string[]): Promise<TodoRepeat>;
+  find(id: string): Promise<TodoRepeat>;
+  findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat>;
   findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]>;
   softDeleteByTaskIds(taskIds: string[]): Promise<void>;
   findOneBy(condition: any): Promise<TodoRepeat | null>;

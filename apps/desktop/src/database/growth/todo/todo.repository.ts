@@ -108,10 +108,17 @@ export class TodoRepository implements _TodoRepository {
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
-  async findById(id: string, relations?: string[]): Promise<Todo> {
+  async find(id: string): Promise<Todo> {
+    const todo = await this.repo.findOne({ where: { id } });
+    if (!todo) throw new Error(`待办不存在，ID: ${id}`);
+    return todo;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<Todo> {
+    const defaultRelations = ['task', 'habit'];
     const todo = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ['task', 'habit'],
+      relations: relations || defaultRelations,
     });
     if (!todo) throw new Error(`待办不存在，ID: ${id}`);
     return todo;

@@ -49,8 +49,8 @@ export class TodoRepeatService {
       repeatTimes: createTodoRepeatDto.repeatTimes,
       repeatedTimes: createTodoRepeatDto.repeatedTimes,
     };
-    const entity = await this.todoRepeatRepository.create(todoRepeatEntity);
-    const foundEntity = await this.todoRepeatRepository.findById(entity.id);
+    const entity = await this.todoRepeatRepository.create(todoRepeatEntity as TodoRepeat);
+    const foundEntity = await this.todoRepeatRepository.find(entity.id);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(foundEntity);
     return todoRepeatDto;
@@ -80,14 +80,17 @@ export class TodoRepeatService {
     if (updateTodoRepeatDto.repeatedTimes !== undefined) todoRepeatUpdate.repeatedTimes = updateTodoRepeatDto.repeatedTimes;
     if (updateTodoRepeatDto.abandonedAt !== undefined) todoRepeatUpdate.abandonedAt = updateTodoRepeatDto.abandonedAt;
     
-    const entity = await this.todoRepeatRepository.update(id, todoRepeatUpdate);
+    const todoRepeatUpdateEntity = new TodoRepeat();
+    todoRepeatUpdateEntity.id = id;
+    Object.assign(todoRepeatUpdateEntity, todoRepeatUpdate);
+    const entity = await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
     return todoRepeatDto;
   }
 
   async findById(id: string): Promise<TodoRepeatDto> {
-    const entity = await this.todoRepeatRepository.findById(id);
+    const entity = await this.todoRepeatRepository.find(id);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
     return todoRepeatDto;
@@ -134,9 +137,9 @@ export class TodoRepeatService {
     includeIds: string[],
     updateTodoRepeatDto: UpdateTodoRepeatDto
   ): Promise<TodoRepeatDto[]> {
-    const result = await this.todoRepeatRepository.batchUpdate(
-      includeIds,
-      updateTodoRepeatDto
+    const result = await this.todoRepeatRepository.updateByFilter(
+      { id: { $in: includeIds } },
+      updateTodoRepeatDto as any
     );
     return result as any;
   }
@@ -150,31 +153,34 @@ export class TodoRepeatService {
   }
 
   async done(id: string): Promise<any> {
-    const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.status = TodoStatus.DONE;
-    await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
+    const todoRepeatUpdateEntity = new TodoRepeat();
+    todoRepeatUpdateEntity.id = id;
+    todoRepeatUpdateEntity.status = TodoStatus.DONE;
+    await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
   }
 
   async abandon(id: string): Promise<any> {
-    const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.status = TodoStatus.ABANDONED;
-    updateTodoRepeatDto.abandonedAt = new Date();
-    await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
+    const todoRepeatUpdateEntity = new TodoRepeat();
+    todoRepeatUpdateEntity.id = id;
+    todoRepeatUpdateEntity.status = TodoStatus.ABANDONED;
+    todoRepeatUpdateEntity.abandonedAt = new Date();
+    await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
   }
 
   async restore(id: string): Promise<any> {
-    const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.status = TodoStatus.TODO;
-    updateTodoRepeatDto.abandonedAt = undefined;
-    await this.todoRepeatRepository.update(id, updateTodoRepeatDto);
+    const todoRepeatUpdateEntity = new TodoRepeat();
+    todoRepeatUpdateEntity.id = id;
+    todoRepeatUpdateEntity.status = TodoStatus.TODO;
+    todoRepeatUpdateEntity.abandonedAt = undefined;
+    await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
   }
 
   doneBatch(includeIds: string[]): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.DONE;
-    return this.todoRepeatRepository.batchUpdate(
-      includeIds,
-      updateTodoRepeatDto
+    return this.todoRepeatRepository.updateByFilter(
+      { id: { $in: includeIds } },
+      updateTodoRepeatDto as any
     );
   }
 

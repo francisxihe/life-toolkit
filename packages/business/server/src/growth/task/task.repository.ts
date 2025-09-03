@@ -12,7 +12,8 @@ export interface TaskRepository {
   create(task: Task): Promise<Task>;
   update(taskUpdate: Task): Promise<Task>;
   removeByIds(ids: string[]): Promise<void>;
-  findById(id: string, relations?: string[]): Promise<Task>;
+  find(id: string): Promise<Task>;
+  findWithRelations(id: string, relations?: string[]): Promise<Task>;
   findAll(filter: TaskListFiltersDto & { excludeIds?: string[] }): Promise<Task[]>;
   page(filter: TaskPageFiltersDto): Promise<{ list: Task[]; total: number; pageNum: number; pageSize: number }>;
   taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto>;

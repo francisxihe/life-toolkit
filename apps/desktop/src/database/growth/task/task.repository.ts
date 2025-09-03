@@ -118,10 +118,17 @@ export class TaskRepository implements _TaskRepository {
     await this.repo.softDelete({ id: In(includeIds) });
   }
 
-  async findById(id: string, relations?: string[]): Promise<Task> {
+  async find(id: string): Promise<Task> {
+    const entity = await this.repo.findOne({ where: { id } });
+    if (!entity) throw new Error(`任务不存在，ID: ${id}`);
+    return entity;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<Task> {
+    const defaultRelations = ['parent', 'children', 'goal', 'todoList'];
     const entity = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ['parent', 'children', 'goal', 'todoList'],
+      relations: relations || defaultRelations,
     });
     if (!entity) throw new Error(`任务不存在，ID: ${id}`);
     return entity;
@@ -155,7 +162,7 @@ export class TaskRepository implements _TaskRepository {
   }
 
   async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
-    const entity = await this.findById(taskId);
+    const entity = await this.findWithRelations(taskId);
     const base = TaskDto.importEntity(entity);
     const result = new TaskWithTrackTimeDto();
     Object.assign(result, base);

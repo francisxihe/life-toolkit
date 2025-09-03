@@ -127,7 +127,7 @@ export class GoalService {
   }
 
   async findById(id: string): Promise<GoalDto> {
-    const entity = await this.goalRepository.findById(id);
+    const entity = await this.goalRepository.find(id);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
@@ -147,15 +147,12 @@ export class GoalService {
     });
   }
 
-  async page(filter: GoalPageFiltersDto): Promise<{
-    list: GoalDto[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
+  async page(
+    filter: GoalPageFiltersDto
+  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { list, total, pageNum, pageSize } = await this.goalRepository.page(filter);
     return {
-      list: list.map((entity) => {
+      list: list.map(entity => {
         const goalDto = new GoalDto();
         goalDto.importEntity(entity);
         return goalDto;
@@ -167,7 +164,7 @@ export class GoalService {
   }
 
   async getDetail(id: string): Promise<GoalDto> {
-    const entity = await this.goalTreeRepository.findDetail(id);
+    const entity = await this.goalTreeRepository.findWithRelations(id);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
@@ -175,7 +172,7 @@ export class GoalService {
 
   // 状态操作（业务逻辑）
   async done(id: string): Promise<boolean> {
-    const entity = await this.goalRepository.findById(id);
+    const entity = await this.goalRepository.find(id);
     const dto = GoalDto.importEntity(entity);
     if (dto.status === GoalStatus.TODO || dto.status === GoalStatus.IN_PROGRESS) {
       throw new Error('当前状态不允许标记为完成');
@@ -189,7 +186,7 @@ export class GoalService {
   }
 
   async abandon(id: string): Promise<boolean> {
-    const entity = await this.goalRepository.findById(id);
+    const entity = await this.goalRepository.find(id);
     const dto = GoalDto.importEntity(entity);
     if (dto.status === GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许放弃');
@@ -203,7 +200,7 @@ export class GoalService {
   }
 
   async restore(id: string): Promise<boolean> {
-    const entity = await this.goalRepository.findById(id);
+    const entity = await this.goalRepository.find(id);
     const dto = GoalDto.importEntity(entity);
     if (dto.status !== GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许恢复');
@@ -227,7 +224,7 @@ export class GoalService {
 
   async findRoots(): Promise<GoalDto[]> {
     const entities = await this.goalTreeRepository.findRoots();
-    return entities.map((entity) => {
+    return entities.map(entity => {
       const goalDto = new GoalDto();
       goalDto.importEntity(entity);
       return goalDto;

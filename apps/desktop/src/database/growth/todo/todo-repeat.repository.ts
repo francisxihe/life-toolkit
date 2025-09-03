@@ -88,8 +88,8 @@ export class TodoRepeatRepository {
     };
   }
 
-  async update(id: string, todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat> {
-    const entity = await this.repo.findOne({ where: { id } });
+  async update(todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat> {
+    const entity = await this.repo.findOne({ where: { id: todoRepeatUpdate.id } });
     if (!entity) throw new Error('TodoRepeat not found');
 
     Object.assign(entity, todoRepeatUpdate);
@@ -97,8 +97,8 @@ export class TodoRepeatRepository {
     return saved;
   }
 
-  async batchUpdate(includeIds: string[], todoRepeatUpdate: TodoRepeat): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, todoRepeatUpdate);
+  async updateByFilter(filter: any, todoRepeatUpdate: TodoRepeat): Promise<UpdateResult> {
+    return this.repo.update(filter, todoRepeatUpdate);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -132,10 +132,17 @@ export class TodoRepeatRepository {
     }
   }
 
-  async findById(id: string, relations?: string[]): Promise<TodoRepeat> {
+  async find(id: string): Promise<TodoRepeat> {
+    const todoRepeat = await this.repo.findOne({ where: { id } });
+    if (!todoRepeat) throw new Error('TodoRepeat not found');
+    return todoRepeat;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat> {
+    const defaultRelations = ['todos'];
     const todoRepeat = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ['todos'],
+      relations: relations || defaultRelations,
     });
     if (!todoRepeat) throw new Error('TodoRepeat not found');
     return todoRepeat;

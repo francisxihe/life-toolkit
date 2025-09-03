@@ -6,6 +6,12 @@ import { CreateGoalDto, UpdateGoalDto, GoalPageFiltersDto, GoalListFiltersDto, G
 export interface GoalRepository {
   // 基础 CRUD 操作
   create(goal: Goal): Promise<Goal>;
+  update(goalUpdate: Goal): Promise<Goal>;
+  updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult>;
+  delete(id: string): Promise<boolean>;
+  deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
+  find(id: string): Promise<Goal>;
+  findWithRelations(id: string, relations?: string[]): Promise<Goal>;
   findAll(filter: GoalListFiltersDto): Promise<Goal[]>;
   page(filter: GoalPageFiltersDto): Promise<{
     list: Goal[];
@@ -13,16 +19,6 @@ export interface GoalRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(goalUpdate: Goal): Promise<Goal>;
-  updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult>;
-  delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
-  findById(id: string, relations?: string[]): Promise<Goal>;
-
-  // 细化方法
-  findDetail(id: string): Promise<Goal>;
-
-  doneBatch(ids: string[]): Promise<void>;
 }
 
 export interface GoalTreeRepository {
@@ -61,5 +57,5 @@ export interface GoalTreeRepository {
     parentId?: string;
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }>;
 
-  findDetail(id: string): Promise<Goal>;
+  findWithRelations(id: string, relations?: string[]): Promise<Goal>;
 }
