@@ -1,10 +1,11 @@
-export interface BatchOperationResultVo {
-  id: string;
-  result: boolean;
-}
-
-export interface OperationResultVo {
-  result: boolean;
+export interface OperationBatchResultVo {
+  list?: {
+    id: string;
+    result: 'success' | 'failed';
+    message?: string;
+  }[];
+  result: 'success' | 'failed';
+  message?: string;
 }
 
 export type OperationByIdListVo = {
