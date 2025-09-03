@@ -1,68 +1,64 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from "@life-toolkit/electron-ipc-router";
-import type { Goal as GoalVO } from "@life-toolkit/vo";
-import { GoalController as _GoalController } from "@life-toolkit/business-server";
-import { goalService } from "./goal.service";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import type { Goal as GoalVO } from '@life-toolkit/vo';
+import { GoalController as _GoalController } from '@life-toolkit/business-server';
+import { goalService } from './goal.service';
 
-@Controller("/goal")
+@Controller('/goal')
 export class GoalController {
   private readonly controller = new _GoalController(goalService);
 
-  @Post("/create")
+  @Post('/create')
   async create(@Body() body: GoalVO.CreateGoalVo) {
     return this.controller.create(body);
   }
 
-  @Get("/detail/:id")
-  async detail(@Param("id") id: string) {
-    return this.controller.detail(id);
-  }
-
-  @Put("/update/:id")
-  async update(@Param("id") id: string, @Body() body: GoalVO.UpdateGoalVo) {
-    return this.controller.update(id, body);
-  }
-
-  @Delete("/delete/:id")
-  async delete(@Param("id") id: string) {
+  @Delete('/delete/:id')
+  async delete(@Param('id') id: string) {
     return this.controller.delete(id);
   }
 
-  @Get("/page")
+  @Put('/update/:id')
+  async update(@Param('id') id: string, @Body() body: GoalVO.UpdateGoalVo) {
+    return this.controller.update(id, body);
+  }
+
+  @Get('/find/:id')
+  async find(@Param('id') id: string) {
+    return this.controller.find(id);
+  }
+
+  @Get('/find-with-relations/:id')
+  async findWithRelations(@Param('id') id: string) {
+    return this.controller.findWithRelations(id);
+  }
+
+  @Get('/find-all')
+  async findAll(@Body() body: GoalVO.GoalListFiltersVo) {
+    return this.controller.findAll(body);
+  }
+
+  @Get('/page')
   async page(@Body() body: GoalVO.GoalPageFiltersVo) {
     return this.controller.page(body);
   }
 
-  @Get("/list")
-  async list(@Body() body: GoalVO.GoalListFiltersVo) {
-    return this.controller.list(body);
-  }
-
-  @Get("/tree")
+  @Get('/tree')
   async tree(@Body() body: GoalVO.GoalListFiltersVo) {
     return this.controller.tree(body);
   }
 
-  @Get("/findRoots")
+  @Get('/find-roots')
   async findRoots() {
     return this.controller.findRoots();
   }
 
-  @Put("/abandon/:id")
-  async abandon(@Param("id") id: string) {
+  @Put('/abandon/:id')
+  async abandon(@Param('id') id: string) {
     return this.controller.abandon(id);
   }
 
-  @Put("/restore/:id")
-  async restore(@Param("id") id: string) {
+  @Put('/restore/:id')
+  async restore(@Param('id') id: string) {
     return this.controller.restore(id);
   }
 }

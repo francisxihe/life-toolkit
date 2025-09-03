@@ -12,9 +12,9 @@ export class TodoController {
     return this.controller.create(body);
   }
 
-  @Get('/detail/:id')
-  async findById(@Param('id') id: string) {
-    return this.controller.findById(id);
+  @Delete('/delete/:id')
+  async delete(@Param('id') id: string) {
+    return this.controller.delete(id);
   }
 
   @Put('/update/:id')
@@ -22,9 +22,14 @@ export class TodoController {
     return this.controller.update(id, body);
   }
 
-  @Delete('/delete/:id')
-  async delete(@Param('id') id: string) {
-    return this.controller.delete(id);
+  @Get('/find/:id')
+  async find(@Param('id') id: string) {
+    return this.controller.find(id);
+  }
+
+  @Get('/find-all')
+  async findAll(@Query() query?: TodoVO.TodoListFiltersVo) {
+    return this.controller.findAll(query);
   }
 
   @Get('/page')
@@ -32,12 +37,7 @@ export class TodoController {
     return this.controller.page(query);
   }
 
-  @Get('/list')
-  async list(@Query() query?: TodoVO.TodoListFiltersVo) {
-    return this.controller.list(query);
-  }
-
-  @Put('/done/batch')
+  @Put('/done-batch')
   async doneBatch(@Body() body: TodoVO.TodoListFiltersVo) {
     return this.controller.doneBatch(body);
   }
@@ -57,12 +57,12 @@ export class TodoController {
     return this.controller.done(id);
   }
 
-  @Get('/listWithRepeat')
+  @Get('/list-with-repeat')
   async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo) {
     return this.controller.listWithRepeat(query);
   }
 
-  @Get('/detailWithRepeat/:id')
+  @Get('/detail-with-repeat/:id')
   async detailWithRepeat(@Param('id') id: string) {
     return this.controller.detailWithRepeat(id);
   }
