@@ -5,7 +5,6 @@ import {
   Goal,
   GoalRepository as _GoalRepository,
 } from '@life-toolkit/business-server';
-import { GoalStatus } from '@life-toolkit/enum';
 import { AppDataSource } from '../../database.config';
 
 // 桌面端 GoalRepository 实现（适配 business 接口，结构化兼容）

@@ -1,4 +1,4 @@
-import { In, TreeRepository, FindOptionsWhere } from 'typeorm';
+import { In, TreeRepository } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import { Goal, GoalTreeRepository as _GoalTreeRepository } from '@life-toolkit/business-server';
 
@@ -19,14 +19,6 @@ export class GoalTreeRepository implements _GoalTreeRepository {
 
   async findDescendantsTree(entity: Goal): Promise<Goal> {
     return await this.repo.findDescendantsTree(entity);
-  }
-
-  async updateParent(currentGoal: Goal, parentId: string, treeRepo?: TreeRepository<Goal>): Promise<void> {
-    const repo = treeRepo ?? this.repo;
-    const parent = await repo.findOne({ where: { id: parentId } });
-    if (!parent) throw new Error(`父目标不存在，ID: ${parentId}`);
-    currentGoal.parent = parent;
-    await repo.save(currentGoal);
   }
 
   async deleteDescendants(target: Goal | Goal[], treeRepo?: TreeRepository<Goal>): Promise<void> {
@@ -97,12 +89,6 @@ export class GoalTreeRepository implements _GoalTreeRepository {
       traverse(full);
     }
     return res;
-  }
-
-  async deleteWithTree(id: string): Promise<void> {
-    const goal = await this.repo.findOne({ where: { id } });
-    if (!goal) throw new Error(`目标不存在，ID: ${id}`);
-    await this.repo.delete({ id });
   }
 
   async getFilteredTree(filter: { status?: Goal['status']; keyword?: string; importance?: number }): Promise<Goal[]> {

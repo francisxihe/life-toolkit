@@ -31,8 +31,8 @@ export default class GoalController {
     return request<GoalVO.GoalPageVo>({ method: "get" })(`/goal/page`, body);
   }
 
-  static async tree(body: GoalVO.GoalListFiltersVo) {
-    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/tree`, body);
+  static async getTree(body: GoalVO.GoalListFiltersVo) {
+    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/get-tree`, body);
   }
 
   static async findRoots() {

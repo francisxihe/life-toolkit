@@ -20,26 +20,6 @@ export class TaskTreeRepository {
   }
 
 
-  async updateParent(
-    {
-      task,
-      parentId,
-    }: {
-      task: Task;
-      parentId: string;
-    },
-    treeRepo?: TreeRepository<Task>
-  ) {
-    const repo = treeRepo ?? this.getTreeRepository();
-    const parentTask = await repo.findOne({
-      where: { id: parentId },
-      relations: ["children"],
-    });
-    if (!parentTask) throw new NotFoundException("Parent task not found");
-    parentTask.children.push(task);
-    await repo.save(parentTask);
-  }
-
   async findDescendantsTree(entity: Task) {
     const repo = this.getTreeRepository();
     return await repo.findDescendantsTree(entity);
@@ -69,12 +49,5 @@ export class TaskTreeRepository {
     }
     return allIds;
   }
-
-  async deleteByIds(ids: string[]) {
-    if (!ids.length) return;
-    const treeRepo = this.getTreeRepository();
-    await treeRepo.delete({ id: In(ids) });
-  }
-
 
 }

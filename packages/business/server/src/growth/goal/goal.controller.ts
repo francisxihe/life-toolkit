@@ -60,8 +60,8 @@ export class GoalController {
     return GoalDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Get('/tree', { description: '查询目标树形结构' })
-  async tree(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo): Promise<GoalVO.GoalListVo> {
+  @Get('/get-tree', { description: '查询目标树形结构' })
+  async getTree(@Query() goalListFiltersVo?: GoalVO.GoalListFiltersVo): Promise<GoalVO.GoalListVo> {
     const goalListFiltersDto = new GoalListFiltersDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.getTree(goalListFiltersDto);

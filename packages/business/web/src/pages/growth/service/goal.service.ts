@@ -99,7 +99,7 @@ export default class GoalService {
 
   static async getGoalTree(params: GoalListFiltersVo = {}) {
     try {
-      return GoalController.tree(params);
+      return GoalController.getTree(params);
     } catch (error) {
       Message.error(error.message);
       throw error;

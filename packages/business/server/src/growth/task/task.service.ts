@@ -17,7 +17,12 @@ export class TaskService {
   protected todoRepository: TodoRepository;
   protected todoRepeatRepository: TodoRepeatRepository;
 
-  constructor(taskRepository: TaskRepository, taskTreeRepository: TaskTreeRepository, todoRepository: TodoRepository, todoRepeatRepository: TodoRepeatRepository) {
+  constructor(
+    taskRepository: TaskRepository,
+    taskTreeRepository: TaskTreeRepository,
+    todoRepository: TodoRepository,
+    todoRepeatRepository: TodoRepeatRepository
+  ) {
     this.taskRepository = taskRepository;
     this.taskTreeRepository = taskTreeRepository;
     this.todoRepository = todoRepository;
@@ -42,10 +47,10 @@ export class TaskService {
     }
     const entity = await this.taskRepository.create(taskEntity as Task);
     if (createTaskDto.parentId) {
-      await this.taskTreeRepository.updateParent({
-        task: entity as Task,
-        parentId: createTaskDto.parentId,
-      });
+      const parent = await this.taskRepository.find(createTaskDto.parentId);
+      if (!parent) throw new Error(`父任务不存在，ID: ${createTaskDto.parentId}`);
+      entity.parent = parent;
+      await this.taskRepository.update(entity);
     }
     const resultEntity = await this.taskRepository.find(entity.id);
     return TaskDto.importEntity(resultEntity);
@@ -59,7 +64,7 @@ export class TaskService {
     const allIds = await this.taskTreeRepository.computeDescendantIds(taskToDelete);
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskTreeRepository.deleteByIds(allIds);
+    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
     return true;
   }
 
@@ -86,7 +91,7 @@ export class TaskService {
     }
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskTreeRepository.deleteByIds(allIds);
+    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
@@ -117,7 +122,6 @@ export class TaskService {
     const entities = await this.taskRepository.findAll(filter);
     return entities.map((entity) => TaskDto.importEntity(entity));
   }
-
 
   async page(filter: TaskPageFiltersDto): Promise<{
     list: TaskDto[];

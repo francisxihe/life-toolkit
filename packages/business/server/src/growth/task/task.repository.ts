@@ -22,7 +22,5 @@ export interface TaskRepository {
 }
 
 export interface TaskTreeRepository {
-  updateParent(params: { task: Task; parentId: string }, treeRepo?: unknown): Promise<void>;
   computeDescendantIds(target: Task | Task[]): Promise<string[]>;
-  deleteByIds(ids: string[]): Promise<void>;
 }

@@ -76,7 +76,9 @@ export class GoalService {
   }
 
   async delete(id: string): Promise<void> {
-    await this.goalTreeRepository.deleteWithTree(id);
+    const goal = await this.goalRepository.find(id);
+    if (!goal) throw new Error(`目标不存在，ID: ${id}`);
+    await this.goalRepository.delete(id);
   }
 
   async find(id: string): Promise<GoalDto> {

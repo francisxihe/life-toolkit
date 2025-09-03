@@ -31,8 +31,6 @@ export interface GoalTreeRepository {
 
   findDescendantsTree(entity: Goal): Promise<Goal>;
 
-  updateParent(currentGoal: Goal, parentId: string, treeRepo?: unknown): Promise<void>;
-
   deleteDescendants(target: Goal | Goal[], treeRepo?: unknown): Promise<void>;
 
   buildTree(node: Goal): Promise<Goal>;
@@ -40,8 +38,6 @@ export interface GoalTreeRepository {
   filterTreeNodes(node: Goal, nodeIdsToInclude: Set<string>): Goal | null;
 
   collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number }): Promise<Set<string>>;
-
-  deleteWithTree(id: string): Promise<void>;
 
   getFilteredTree(filter: { status?: string; keyword?: string; importance?: number }): Promise<Goal[]>;
 

@@ -45,20 +45,6 @@ export class GoalTreeRepository {
     return await this.getTreeRepository().findDescendantsTree(entity);
   }
 
-  async updateParent(
-    currentGoal: Goal,
-    parentId: string,
-    treeRepo?: TreeRepository<Goal>
-  ) {
-    const repo = treeRepo ?? this.getTreeRepository();
-    const parent = await repo.findOne({ where: { id: parentId } });
-    if (!parent) {
-      throw new NotFoundException(`父目标不存在，ID: ${parentId}`);
-    }
-    currentGoal.parent = parent;
-    await repo.save(currentGoal);
-  }
-
   async deleteDescendants(
     target: Goal | Goal[],
     treeRepo?: TreeRepository<Goal>
@@ -138,16 +124,6 @@ export class GoalTreeRepository {
     return ids;
   }
 
-
-  // 树形删除方法
-  async deleteWithTree(id: string): Promise<void> {
-    const treeRepo = this.getTreeRepository();
-    const goalToDelete = await treeRepo.findOne({ where: { id } });
-    if (!goalToDelete) {
-      throw new NotFoundException(`目标不存在，ID: ${id}`);
-    }
-    await treeRepo.remove(goalToDelete);
-  }
 
   // 手动树形结构查询和过滤
   async getFilteredTree(filter: {

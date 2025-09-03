@@ -1,35 +1,14 @@
-import { PageFilterDto } from "../../../common/filter";
-import { TaskDto } from "./task-model.dto";
-import {
-  PickType,
-  IntersectionType,
-  PartialType,
-} from "@life-toolkit/mapped-types";
-import {
-  IsOptional,
-  IsString,
-  IsArray,
-  IsEnum,
-  IsNumber,
-  IsDateString,
-  IsBoolean,
-} from "class-validator";
-import { Type } from "class-transformer";
-import { TaskListFiltersVo, TaskPageFiltersVo } from "@life-toolkit/vo/growth/task";
-import { TaskStatus } from "@life-toolkit/enum";
+import { PageFilterDto } from '../../../common/filter';
+import { TaskDto } from './task-model.dto';
+import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
+import { TaskListFiltersVo, TaskPageFiltersVo } from '@life-toolkit/vo/growth/task';
+import { BaseFilterDto, importBaseVo } from '@business/common/filter';
 
-export class TaskListFiltersDto extends PartialType(
-  PickType(TaskDto, [
-    "importance",
-    "urgency",
-    "status",
-  ] as const)
+export class TaskListFiltersDto extends IntersectionType(
+  BaseFilterDto,
+  PartialType(PickType(TaskDto, ['importance', 'urgency', 'status']))
 ) {
-  /** 搜索关键词 */
-  @IsString()
-  @IsOptional()
-  keyword?: string;
-
   /** 开始日期范围 - 开始 */
   @IsDateString()
   @IsOptional()
@@ -76,37 +55,29 @@ export class TaskListFiltersDto extends PartialType(
   @IsOptional()
   goalIds?: string[];
 
-  excludeIds?: string[];
-
   /** 任务ID */
   @IsString()
   @IsOptional()
   id?: string;
 
   importListVo(filterVo: TaskListFiltersVo) {
-    importListVo(filterVo, this);
+    importVo(filterVo, this);
   }
 }
 
-export class TaskPageFiltersDto extends IntersectionType(
-  PageFilterDto,
-  TaskListFiltersDto
-) {
+export class TaskPageFiltersDto extends IntersectionType(PageFilterDto, TaskListFiltersDto) {
   importPageVo(filterVo: TaskPageFiltersVo) {
-    importListVo(filterVo, this);
+    importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
     this.pageSize = filterVo.pageSize;
   }
 }
 
-function importListVo(
-  filterVo: TaskListFiltersVo,
-  filterDto: TaskListFiltersDto
-) {
+function importVo(filterVo: TaskListFiltersVo, filterDto: TaskListFiltersDto) {
+  importBaseVo(filterVo, filterDto);
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance;
   if (filterVo.urgency !== undefined) filterDto.urgency = filterVo.urgency;
-  if (filterVo.keyword) filterDto.keyword = filterVo.keyword;
   if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
   if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
   if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
@@ -115,5 +86,4 @@ function importListVo(
   if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
   if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   if (filterVo.abandonedDateEnd) filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
-  if (filterVo.excludeIds) filterDto.excludeIds = filterVo.excludeIds;
 }
