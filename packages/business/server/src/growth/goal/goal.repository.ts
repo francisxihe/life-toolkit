@@ -5,7 +5,7 @@ import { CreateGoalDto, UpdateGoalDto, GoalPageFiltersDto, GoalListFiltersDto, G
 
 export interface GoalRepository {
   // 基础 CRUD 操作
-  create(goal: Partial<Goal>): Promise<Goal>;
+  create(goal: Goal): Promise<Goal>;
   findAll(filter: GoalListFiltersDto): Promise<Goal[]>;
   page(filter: GoalPageFiltersDto): Promise<{
     list: Goal[];
@@ -13,12 +13,11 @@ export interface GoalRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, goalUpdate: Partial<Goal>): Promise<Goal>;
-  batchUpdate(includeIds: string[], goalUpdate: Partial<Goal>): Promise<UpdateResult>;
+  update(goalUpdate: Goal): Promise<Goal>;
+  updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: GoalPageFiltersDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<Goal>;
-  softDeleteByTaskIds(taskIds: string[]): Promise<void>;
 
   // 细化方法
   findDetail(id: string): Promise<Goal>;
@@ -29,8 +28,6 @@ export interface GoalRepository {
 export interface GoalTreeRepository {
   // 基础查询
   findOne(where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]): Promise<Goal | null>;
-
-  remove(entity: Goal): Promise<void>;
 
   save(entity: Goal): Promise<Goal>;
 
@@ -51,9 +48,9 @@ export interface GoalTreeRepository {
 
   collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number }): Promise<Set<string>>;
 
-  createWithParent(goal: Partial<Goal>): Promise<Goal>;
+  createWithParent(goal: Goal): Promise<Goal>;
 
-  updateWithParent(id: string, goalUpdate: Partial<Goal>): Promise<Goal>;
+  updateWithParent(goalUpdate: Goal): Promise<Goal>;
 
   deleteWithTree(id: string): Promise<void>;
 

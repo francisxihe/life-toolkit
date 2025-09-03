@@ -1,20 +1,11 @@
-import { UpdateResult } from "typeorm";
-import { Todo } from "./todo.entity";
-import {
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoPageFiltersDto,
-  TodoListFilterDto,
-  TodoDto,
-} from "./dto";
+import { UpdateResult } from 'typeorm';
+import { Todo } from './todo.entity';
+import { TodoPageFiltersDto, TodoListFilterDto } from './dto';
 
 export interface TodoRepository {
-  create(todo: Partial<Todo>): Promise<Todo>;
+  create(todo: Todo): Promise<Todo>;
   findOneByRepeatAndDate(repeatId: string, date: Date): Promise<Todo | null>;
-  createWithExtras(
-    todo: Partial<Todo>,
-    extras: Partial<Todo>
-  ): Promise<Todo>;
+  createWithExtras(todo: Todo, extras: Todo): Promise<Todo>;
   findAll(filter: TodoListFilterDto): Promise<Todo[]>;
   page(filter: TodoPageFiltersDto): Promise<{
     list: Todo[];
@@ -22,11 +13,8 @@ export interface TodoRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, todoUpdate: Partial<Todo>): Promise<Todo>;
-  batchUpdate(
-    includeIds: string[],
-    todoUpdate: Partial<Todo>
-  ): Promise<UpdateResult>;
+  update(todoUpdate: Todo): Promise<Todo>;
+  updateByFilter(filter: TodoListFilterDto, todoUpdate: Todo): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoPageFiltersDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<Todo>;

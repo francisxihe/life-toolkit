@@ -1,4 +1,4 @@
-import { In, Repository, DeepPartial } from 'typeorm';
+import { In, Repository, DeepPartial, UpdateResult } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import {
   CreateTaskDto,
@@ -8,9 +8,10 @@ import {
   TaskDto,
   TaskWithTrackTimeDto,
   Task,
+  TaskRepository as _TaskRepository,
 } from '@life-toolkit/business-server';
 
-export class TaskRepository /* implements import("@life-toolkit/business-server").TaskRepository */ {
+export class TaskRepository implements _TaskRepository {
   private repo: Repository<Task> = AppDataSource.getRepository(Task);
 
   private buildQuery(
@@ -83,18 +84,33 @@ export class TaskRepository /* implements import("@life-toolkit/business-server"
     return qb.orderBy('task.updatedAt', 'DESC');
   }
 
-  async create(task: Partial<Task>): Promise<Task> {
+  async create(task: Task): Promise<Task> {
     const entity = this.repo.create(task);
     const saved = await this.repo.save(entity);
     return saved;
   }
 
-  async update(id: string, taskUpdate: Partial<Task>): Promise<Task> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`任务不存在，ID: ${id}`);
+  async update(taskUpdate: Task): Promise<Task> {
+    if (!taskUpdate.id) throw new Error('任务ID不能为空');
+    const entity = await this.repo.findOne({ where: { id: taskUpdate.id } });
+    if (!entity) throw new Error(`任务不存在，ID: ${taskUpdate.id}`);
     Object.assign(entity, taskUpdate);
     const saved = await this.repo.save(entity);
     return saved;
+  }
+
+  async updateWithParent(taskUpdate: Task): Promise<Task> {
+    if (!taskUpdate.id) throw new Error('任务ID不能为空');
+    const entity = await this.repo.findOne({ where: { id: taskUpdate.id } });
+    if (!entity) throw new Error(`任务不存在，ID: ${taskUpdate.id}`);
+    Object.assign(entity, taskUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
+  }
+
+  async updateByFilter(filter: TaskListFiltersDto, taskUpdate: Task): Promise<UpdateResult> {
+    const qb = this.buildQuery(filter);
+    return await qb.update(taskUpdate).execute();
   }
 
   async removeByIds(includeIds: string[]): Promise<void> {

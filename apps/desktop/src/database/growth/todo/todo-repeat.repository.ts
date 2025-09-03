@@ -53,7 +53,7 @@ export class TodoRepeatRepository {
     return qb;
   }
 
-  async create(todoRepeat: Partial<TodoRepeat>): Promise<TodoRepeat> {
+  async create(todoRepeat: TodoRepeat): Promise<TodoRepeat> {
     const entity = this.repo.create(todoRepeat);
     const saved = await this.repo.save(entity);
     return saved;
@@ -88,7 +88,7 @@ export class TodoRepeatRepository {
     };
   }
 
-  async update(id: string, todoRepeatUpdate: Partial<TodoRepeat>): Promise<TodoRepeat> {
+  async update(id: string, todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error('TodoRepeat not found');
 
@@ -97,7 +97,7 @@ export class TodoRepeatRepository {
     return saved;
   }
 
-  async batchUpdate(includeIds: string[], todoRepeatUpdate: Partial<TodoRepeat>): Promise<UpdateResult> {
+  async batchUpdate(includeIds: string[], todoRepeatUpdate: TodoRepeat): Promise<UpdateResult> {
     return this.repo.update({ id: In(includeIds) }, todoRepeatUpdate);
   }
 

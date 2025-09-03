@@ -42,7 +42,7 @@ export class TodoService {
       taskId: createTodoDto.taskId,
       source: TodoSource.MANUAL,
     };
-    const entity = await this.todoRepository.create(todoEntity);
+    const entity = await this.todoRepository.create(todoEntity as Todo);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -53,7 +53,8 @@ export class TodoService {
   }
 
   async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    const todoUpdate: Partial<Todo> = {};
+    const todoUpdate = new Todo();
+    todoUpdate.id = id;
     if (updateTodoDto.name !== undefined) todoUpdate.name = updateTodoDto.name;
     if (updateTodoDto.description !== undefined) todoUpdate.description = updateTodoDto.description;
     if (updateTodoDto.status !== undefined) todoUpdate.status = updateTodoDto.status;
@@ -67,7 +68,7 @@ export class TodoService {
     if (updateTodoDto.abandonedAt !== undefined) todoUpdate.abandonedAt = updateTodoDto.abandonedAt;
     if (updateTodoDto.taskId !== undefined) todoUpdate.taskId = updateTodoDto.taskId;
     
-    const entity = await this.todoRepository.update(id, todoUpdate);
+    const entity = await this.todoRepository.update(todoUpdate);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -165,13 +166,12 @@ export class TodoService {
 
   async doneBatch(params: { includeIds: string[] }): Promise<any> {
     if (!params?.includeIds?.length) return;
-    const updateTodoDto = new UpdateTodoDto();
-    updateTodoDto.status = TodoStatus.DONE;
-    updateTodoDto.doneAt = new Date();
-    const result = await this.todoRepository.batchUpdate(
-      params.includeIds,
-      updateTodoDto
-    );
+    const filter = new TodoListFilterDto();
+    filter.importListVo({ includeIds: params.includeIds });
+    const todoUpdate = new Todo();
+    todoUpdate.status = TodoStatus.DONE;
+    todoUpdate.doneAt = new Date();
+    const result = await this.todoRepository.updateByFilter(filter, todoUpdate);
     console.log(result);
     return result;
   }
@@ -180,14 +180,14 @@ export class TodoService {
     const updateTodoDto = new UpdateTodoDto();
     updateTodoDto.status = TodoStatus.DONE;
     updateTodoDto.doneAt = new Date();
-    await this.todoRepository.update(id, updateTodoDto);
+    await this.update(id, updateTodoDto);
   }
 
   async abandon(id: string): Promise<any> {
     const updateTodoDto = new UpdateTodoDto();
     updateTodoDto.status = TodoStatus.ABANDONED;
     updateTodoDto.abandonedAt = new Date();
-    await this.todoRepository.update(id, updateTodoDto);
+    await this.update(id, updateTodoDto);
   }
 
   async restore(id: string): Promise<any> {
@@ -195,6 +195,6 @@ export class TodoService {
     updateTodoDto.status = TodoStatus.TODO;
     updateTodoDto.doneAt = undefined;
     updateTodoDto.abandonedAt = undefined;
-    await this.todoRepository.update(id, updateTodoDto);
+    await this.update(id, updateTodoDto);
   }
 }

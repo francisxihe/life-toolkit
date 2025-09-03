@@ -27,7 +27,7 @@ export class HabitService {
       startDate: createHabitDto.startDate,
       targetDate: createHabitDto.targetDate,
     };
-    const entity = await this.habitRepository.create(habitEntity);
+    const entity = await this.habitRepository.create(habitEntity as Habit);
     return HabitDto.importEntity(entity);
   }
 
@@ -36,7 +36,8 @@ export class HabitService {
   }
 
   async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    const habitUpdate: Partial<Habit> = {};
+    const habitUpdate = new Habit();
+    habitUpdate.id = id;
     if (updateHabitDto.name !== undefined) habitUpdate.name = updateHabitDto.name;
     if (updateHabitDto.description !== undefined) habitUpdate.description = updateHabitDto.description;
     if (updateHabitDto.status !== undefined) habitUpdate.status = updateHabitDto.status;
@@ -49,7 +50,7 @@ export class HabitService {
     if (updateHabitDto.longestStreak !== undefined) habitUpdate.longestStreak = updateHabitDto.longestStreak;
     if (updateHabitDto.completedCount !== undefined) habitUpdate.completedCount = updateHabitDto.completedCount;
     
-    const entity = await this.habitRepository.update(id, habitUpdate);
+    const entity = await this.habitRepository.update(habitUpdate);
     return HabitDto.importEntity(entity);
   }
 

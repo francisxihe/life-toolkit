@@ -32,8 +32,8 @@ export class GoalController {
   }
 
   @Delete("/delete/:id")
-  async remove(@Param("id") id: string) {
-    return this.controller.remove(id);
+  async delete(@Param("id") id: string) {
+    return this.controller.delete(id);
   }
 
   @Get("/page")

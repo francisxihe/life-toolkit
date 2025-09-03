@@ -45,7 +45,7 @@ export class TaskService {
     if (createTaskDto.parentId) {
       taskEntity.parent = { id: createTaskDto.parentId } as Task;
     }
-    const entity = await this.taskRepository.create(taskEntity);
+    const entity = await this.taskRepository.create(taskEntity as Task);
     if (createTaskDto.parentId) {
       await this.taskTreeRepository.updateParent({
         task: entity as Task,
@@ -92,7 +92,8 @@ export class TaskService {
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
-    const taskUpdate: Partial<Task> = {};
+    const taskUpdate = new Task();
+    taskUpdate.id = id;
     if (updateTaskDto.name !== undefined) taskUpdate.name = updateTaskDto.name;
     if (updateTaskDto.description !== undefined) taskUpdate.description = updateTaskDto.description;
     if (updateTaskDto.tags !== undefined) taskUpdate.tags = updateTaskDto.tags;
@@ -110,10 +111,7 @@ export class TaskService {
       taskUpdate.parent = updateTaskDto.parentId ? { id: updateTaskDto.parentId } as Task : undefined;
     }
     // 处理父子关系及基本字段更新（委托给树仓储）
-    const entity = await this.taskTreeRepository.updateWithParent(
-      id,
-      taskUpdate
-    );
+    const entity = await this.taskTreeRepository.updateWithParent(taskUpdate);
     return TaskDto.importEntity(entity);
   }
 

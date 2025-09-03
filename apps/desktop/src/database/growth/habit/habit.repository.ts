@@ -86,7 +86,7 @@ export class HabitRepository implements _HabitRepository {
     return qb.orderBy('habit.updatedAt', 'DESC');
   }
 
-  async create(habit: Partial<Habit>): Promise<Habit> {
+  async create(habit: Habit): Promise<Habit> {
     const entity = this.repo.create(habit);
     const saved = await this.repo.save(entity);
     return saved;
@@ -123,9 +123,10 @@ export class HabitRepository implements _HabitRepository {
     };
   }
 
-  async update(id: string, habitUpdate: Partial<Habit>): Promise<Habit> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
+  async update(habitUpdate: Habit): Promise<Habit> {
+    if (!habitUpdate.id) throw new Error('习惯ID不能为空');
+    const entity = await this.repo.findOne({ where: { id: habitUpdate.id } });
+    if (!entity) throw new Error(`习惯不存在，ID: ${habitUpdate.id}`);
     Object.assign(entity, habitUpdate);
     const saved = await this.repo.save(entity);
     return saved;
@@ -134,16 +135,13 @@ export class HabitRepository implements _HabitRepository {
   async delete(id: string): Promise<boolean> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    await this.repo.remove(entity);
+    await this.repo.delete(id);
     return true;
   }
 
   async deleteByFilter(filter: HabitPageFiltersDto): Promise<void> {
     const qb = this.buildQuery(filter);
-    const entities = await qb.getMany();
-    if (entities.length > 0) {
-      await this.repo.remove(entities);
-    }
+    await qb.delete().execute();
   }
 
   async softDelete(id: string): Promise<void> {
@@ -162,8 +160,9 @@ export class HabitRepository implements _HabitRepository {
     }
   }
 
-  async batchUpdate(includeIds: string[], habitUpdate: Partial<Habit>): Promise<UpdateResult> {
-    return this.repo.update({ id: In(includeIds) }, habitUpdate);
+  async updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult> {
+    const qb = this.buildQuery(filter);
+    return await qb.update(habitUpdate).execute();
   }
 
   async updateStreak(id: string, increment: boolean): Promise<Habit> {

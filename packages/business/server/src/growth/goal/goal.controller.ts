@@ -34,7 +34,7 @@ export class GoalController {
   }
 
   @Delete('/delete/:id')
-  async remove(@Param('id') id: string) {
+  async delete(@Param('id') id: string) {
     return await this.goalService.delete(id);
   }
 

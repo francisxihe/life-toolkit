@@ -5,7 +5,7 @@ import { CreateHabitDto, UpdateHabitDto, HabitListFiltersDto, HabitPageFiltersDt
 
 export interface HabitRepository {
   // 基础 CRUD
-  create(habit: Partial<Habit>): Promise<Habit>;
+  create(habit: Habit): Promise<Habit>;
   findAll(filter: HabitListFiltersDto): Promise<Habit[]>;
   page(filter: HabitPageFiltersDto): Promise<{
     list: Habit[];
@@ -13,8 +13,8 @@ export interface HabitRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  update(id: string, habitUpdate: Partial<Habit>): Promise<Habit>;
-  batchUpdate(includeIds: string[], habitUpdate: Partial<Habit>): Promise<UpdateResult>;
+  update(habitUpdate: Habit): Promise<Habit>;
+  updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: HabitPageFiltersDto): Promise<void>;
   findById(id: string, relations?: string[]): Promise<Habit>;

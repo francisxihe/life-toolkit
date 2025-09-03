@@ -1,8 +1,14 @@
 import { In, TreeRepository, FindOptionsWhere } from 'typeorm';
 import { AppDataSource } from '../../database.config';
-import { CreateGoalDto, UpdateGoalDto, GoalDto, Goal } from '@life-toolkit/business-server';
+import {
+  CreateGoalDto,
+  UpdateGoalDto,
+  GoalDto,
+  Goal,
+  GoalTreeRepository as _GoalTreeRepository,
+} from '@life-toolkit/business-server';
 
-export class GoalTreeRepository {
+export class GoalTreeRepository implements _GoalTreeRepository {
   repo: TreeRepository<Goal> = AppDataSource.getTreeRepository(Goal);
 
   async findOne(where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]): Promise<Goal | null> {
@@ -10,10 +16,6 @@ export class GoalTreeRepository {
       where,
       relations: ['children'],
     });
-  }
-
-  async remove(entity: Goal): Promise<void> {
-    await this.repo.remove(entity);
   }
 
   async save(entity: Goal): Promise<Goal> {
@@ -61,7 +63,7 @@ export class GoalTreeRepository {
     await repo.delete({ id: In(allIds) });
   }
 
-  async createWithParent(goal: Partial<Goal>): Promise<Goal> {
+  async createWithParent(goal: Goal): Promise<Goal> {
     const entity = this.repo.create(goal);
     const saved = await this.repo.save(entity);
     return saved;
@@ -120,9 +122,10 @@ export class GoalTreeRepository {
     return res;
   }
 
-  async updateWithParent(id: string, goalUpdate: Partial<Goal>): Promise<Goal> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
+  async updateWithParent(goalUpdate: Goal): Promise<Goal> {
+    if (!goalUpdate.id) throw new Error('目标ID不能为空');
+    const entity = await this.repo.findOne({ where: { id: goalUpdate.id } });
+    if (!entity) throw new Error(`目标不存在，ID: ${goalUpdate.id}`);
     Object.assign(entity, goalUpdate);
     const saved = await this.repo.save(entity);
     return saved;
@@ -131,7 +134,7 @@ export class GoalTreeRepository {
   async deleteWithTree(id: string): Promise<void> {
     const goal = await this.findOne({ id });
     if (!goal) throw new Error(`目标不存在，ID: ${id}`);
-    await this.remove(goal);
+    await this.repo.delete({ id });
   }
 
   async getFilteredTree(filter: { status?: Goal['status']; keyword?: string; importance?: number }): Promise<Goal[]> {

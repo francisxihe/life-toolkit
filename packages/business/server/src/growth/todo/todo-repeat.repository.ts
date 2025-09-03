@@ -1,15 +1,12 @@
-import { FindOptionsWhere, UpdateResult } from "typeorm";
+import { UpdateResult } from "typeorm";
 import { TodoRepeat } from "./todo-repeat.entity";
 import {
-  CreateTodoRepeatDto,
-  UpdateTodoRepeatDto,
   TodoRepeatPageFiltersDto,
   TodoRepeatListFilterDto,
-  TodoRepeatDto,
 } from "./dto";
 
 export interface TodoRepeatRepository {
-  create(todoRepeat: Partial<TodoRepeat>): Promise<TodoRepeat>;
+  create(todoRepeat: TodoRepeat): Promise<TodoRepeat>;
   findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeat[]>;
   page(filter: TodoRepeatPageFiltersDto): Promise<{
     list: TodoRepeat[];
@@ -19,11 +16,11 @@ export interface TodoRepeatRepository {
   }>;
   update(
     id: string,
-    todoRepeatUpdate: Partial<TodoRepeat>
+    todoRepeatUpdate: TodoRepeat
   ): Promise<TodoRepeat>;
   batchUpdate(
     includeIds: string[],
-    todoRepeatUpdate: Partial<TodoRepeat>
+    todoRepeatUpdate: TodoRepeat  
   ): Promise<UpdateResult>;
   delete(id: string): Promise<boolean>;
   deleteByFilter(filter: TodoRepeatPageFiltersDto): Promise<void>;

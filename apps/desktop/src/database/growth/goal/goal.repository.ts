@@ -142,12 +142,17 @@ export class GoalRepository implements _GoalRepository {
     };
   }
 
-  async update(id: string, goalUpdate: Goal): Promise<Goal> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
+  async update(goalUpdate: Goal): Promise<Goal> {
+    const entity = await this.repo.findOne({ where: { id: goalUpdate.id } });
+    if (!entity) throw new Error(`目标不存在，ID: ${goalUpdate.id}`);
     Object.assign(entity, goalUpdate);
     const saved = await this.repo.save(entity);
     return saved;
+  }
+
+  async updateByFilter(filter: GoalListFiltersDto, goalUpdate: Goal): Promise<UpdateResult> {
+    const qb = this.buildQuery(filter);
+    return await qb.update(goalUpdate).execute();
   }
 
   async delete(id: string): Promise<boolean> {
@@ -155,15 +160,9 @@ export class GoalRepository implements _GoalRepository {
     return true;
   }
 
-  async remove(id: string): Promise<void> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`目标不存在，ID: ${id}`);
-    await this.repo.remove(entity);
-  }
-
   async deleteByFilter(filter: GoalPageFiltersDto): Promise<void> {
     const qb = this.buildQuery(filter);
-    await qb.delete();
+    await qb.delete().execute();
   }
 
   async softDelete(id: string): Promise<void> {

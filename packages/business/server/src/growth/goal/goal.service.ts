@@ -13,16 +13,15 @@ export class GoalService {
   }
 
   async create(createGoalDto: CreateGoalDto): Promise<GoalDto> {
-    const goalEntity: Partial<Goal> = {
-      name: createGoalDto.name,
-      description: createGoalDto.description,
-      status: createGoalDto.status,
-      importance: createGoalDto.importance,
-      difficulty: createGoalDto.difficulty,
-      type: createGoalDto.type,
-      startAt: createGoalDto.startAt,
-      endAt: createGoalDto.endAt,
-    };
+    const goalEntity = new Goal();
+    goalEntity.name = createGoalDto.name;
+    goalEntity.description = createGoalDto.description;
+    goalEntity.status = createGoalDto.status;
+    goalEntity.importance = createGoalDto.importance;
+    goalEntity.difficulty = createGoalDto.difficulty;
+    goalEntity.type = createGoalDto.type;
+    goalEntity.startAt = createGoalDto.startAt;
+    goalEntity.endAt = createGoalDto.endAt;
     // parentId 需要通过关系设置
     if (createGoalDto.parentId) {
       goalEntity.parent = { id: createGoalDto.parentId } as Goal;
@@ -34,16 +33,15 @@ export class GoalService {
   }
 
   async createWithParent(createGoalDto: CreateGoalDto): Promise<GoalDto> {
-    const goalEntity: Partial<Goal> = {
-      name: createGoalDto.name,
-      description: createGoalDto.description,
-      status: createGoalDto.status,
-      importance: createGoalDto.importance,
-      difficulty: createGoalDto.difficulty,
-      type: createGoalDto.type,
-      startAt: createGoalDto.startAt,
-      endAt: createGoalDto.endAt,
-    };
+    const goalEntity = new Goal();
+    goalEntity.name = createGoalDto.name;
+    goalEntity.description = createGoalDto.description;
+    goalEntity.status = createGoalDto.status;
+    goalEntity.importance = createGoalDto.importance;
+    goalEntity.difficulty = createGoalDto.difficulty;
+    goalEntity.type = createGoalDto.type;
+    goalEntity.startAt = createGoalDto.startAt;
+    goalEntity.endAt = createGoalDto.endAt;
     // parentId 需要通过关系设置
     if (createGoalDto.parentId) {
       goalEntity.parent = { id: createGoalDto.parentId } as Goal;
@@ -79,7 +77,8 @@ export class GoalService {
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const goalUpdate: Partial<Goal> = {};
+    const goalUpdate = new Goal();
+    goalUpdate.id = id;
     if (updateGoalDto.name !== undefined) goalUpdate.name = updateGoalDto.name;
     if (updateGoalDto.description !== undefined) goalUpdate.description = updateGoalDto.description;
     if (updateGoalDto.status !== undefined) goalUpdate.status = updateGoalDto.status;
@@ -94,14 +93,15 @@ export class GoalService {
     if (updateGoalDto.doneAt !== undefined) goalUpdate.doneAt = updateGoalDto.doneAt;
     if (updateGoalDto.abandonedAt !== undefined) goalUpdate.abandonedAt = updateGoalDto.abandonedAt;
     
-    const entity = await this.goalRepository.update(id, goalUpdate);
+    const entity = await this.goalRepository.update(goalUpdate);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
   }
 
   async updateWithParent(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const goalUpdate: Partial<Goal> = {};
+    const goalUpdate = new Goal();
+    goalUpdate.id = id;
     if (updateGoalDto.name !== undefined) goalUpdate.name = updateGoalDto.name;
     if (updateGoalDto.description !== undefined) goalUpdate.description = updateGoalDto.description;
     if (updateGoalDto.status !== undefined) goalUpdate.status = updateGoalDto.status;
@@ -116,7 +116,7 @@ export class GoalService {
     if (updateGoalDto.doneAt !== undefined) goalUpdate.doneAt = updateGoalDto.doneAt;
     if (updateGoalDto.abandonedAt !== undefined) goalUpdate.abandonedAt = updateGoalDto.abandonedAt;
     
-    const entity = await this.goalTreeRepository.updateWithParent(id, goalUpdate);
+    const entity = await this.goalTreeRepository.updateWithParent(goalUpdate);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
@@ -180,13 +180,11 @@ export class GoalService {
     if (dto.status === GoalStatus.TODO || dto.status === GoalStatus.IN_PROGRESS) {
       throw new Error('当前状态不允许标记为完成');
     }
-    await this.goalRepository.update(
-      id,
-      Object.assign(new UpdateGoalDto(), {
-        status: GoalStatus.DONE,
-        doneAt: new Date(),
-      })
-    );
+    const goalUpdate = new Goal();
+    goalUpdate.id = id;
+    goalUpdate.status = GoalStatus.DONE;
+    goalUpdate.doneAt = new Date();
+    await this.goalRepository.update(goalUpdate);
     return true;
   }
 
@@ -196,13 +194,11 @@ export class GoalService {
     if (dto.status === GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许放弃');
     }
-    await this.goalRepository.update(
-      id,
-      Object.assign(new UpdateGoalDto(), {
-        status: GoalStatus.ABANDONED,
-        abandonedAt: new Date(),
-      })
-    );
+    const goalUpdate = new Goal();
+    goalUpdate.id = id;
+    goalUpdate.status = GoalStatus.ABANDONED;
+    goalUpdate.abandonedAt = new Date();
+    await this.goalRepository.update(goalUpdate);
     return true;
   }
 
@@ -212,24 +208,20 @@ export class GoalService {
     if (dto.status !== GoalStatus.ABANDONED) {
       throw new Error('当前状态不允许恢复');
     }
-    await this.goalRepository.update(
-      id,
-      Object.assign(new UpdateGoalDto(), {
-        status: GoalStatus.TODO,
-      })
-    );
+    const goalUpdate = new Goal();
+    goalUpdate.id = id;
+    goalUpdate.status = GoalStatus.TODO;
+    await this.goalRepository.update(goalUpdate);
     return true;
   }
 
   async doneBatch(params: { includeIds: string[] }): Promise<any> {
-    const goalUpdate = {
-      status: GoalStatus.DONE,
-      doneAt: new Date()
-    };
-    const result = await this.goalRepository.batchUpdate(
-      params.includeIds,
-      goalUpdate
-    );
+    const goalUpdate = new Goal();
+    goalUpdate.status = GoalStatus.DONE;
+    goalUpdate.doneAt = new Date();
+    const filter = new GoalListFiltersDto();
+    filter.includeIds = params.includeIds;
+    const result = await this.goalRepository.updateByFilter(filter, goalUpdate);
     return result;
   }
 

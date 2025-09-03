@@ -10,7 +10,7 @@ export class TaskTreeRepository {
     return await repo.findOne({ where });
   }
 
-  async createWithParent(task: Partial<Task>): Promise<Task> {
+  async createWithParent(task: Task): Promise<Task> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Task);
       const current = treeRepository.create(task);
@@ -27,7 +27,7 @@ export class TaskTreeRepository {
     });
   }
 
-  async updateWithParent(id: string, taskUpdate: Partial<Task>): Promise<Task> {
+  async updateWithParent(id: string, taskUpdate: Task): Promise<Task> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Task);
       const current = await treeRepository.findOne({ where: { id } });
