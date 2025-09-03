@@ -42,44 +42,6 @@ export class TodoRepository {
     return this.findById(todo.id);
   }
 
-  /**
-   * 查找某个重复配置在指定日期（当天）是否已有待办
-   */
-  async findOneByRepeatAndDate(
-    repeatId: string,
-    date: Date
-  ): Promise<TodoDto | null> {
-    const day = dayjs(date);
-    const start = new Date(day.format("YYYY-MM-DD") + "T00:00:00");
-    const end = new Date(day.format("YYYY-MM-DD") + "T23:59:59");
-    const existed = await this.todoRepository.findOne({
-      where: {
-        repeatId,
-        planDate: Between(start, end),
-      },
-    });
-    return (existed as unknown as TodoDto) || null;
-  }
-
-  /**
-   * 创建待办（支持附带额外字段，如 repeatId、source 等）
-   */
-  async createWithExtras(
-    createTodoDto: CreateTodoDto,
-    extras: Partial<Todo>
-  ): Promise<TodoDto> {
-    const todo = this.todoRepository.create({
-      ...createTodoDto,
-      ...extras,
-      status: TodoStatus.TODO,
-      tags: createTodoDto.tags || [],
-      planDate: createTodoDto.planDate
-        ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
-        : undefined,
-    });
-    await this.todoRepository.save(todo);
-    return this.findById(todo.id);
-  }
 
   async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
     const todoList = await this.todoRepository.find({
@@ -187,14 +149,7 @@ export class TodoRepository {
     }
   }
 
-  async updateRepeatId(id: string, repeatId: string): Promise<void> {
-    await this.todoRepository.update(id, { repeatId });
-  }
 
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    if (!taskIds || taskIds.length === 0) return;
-    await this.todoRepository.softDelete({ taskId: In(taskIds) });
-  }
 
   private buildWhere(
     filter: TodoPageFiltersDto | TodoListFilterDto

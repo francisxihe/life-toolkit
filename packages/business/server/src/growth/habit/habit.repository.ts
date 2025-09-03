@@ -21,21 +21,4 @@ export interface HabitRepository {
   softDeleteByFilter(filter: HabitListFiltersDto): Promise<void>;
   find(id: string): Promise<Habit>;
   findWithRelations(id: string, relations?: string[]): Promise<Habit>;
-
-  updateStreak(id: string, increment: boolean): Promise<Habit>;
-
-  // 聚合查询
-  getHabitTodos(habitId: string): Promise<{
-    activeTodos: any[];
-    completedTodos: any[];
-    abandonedTodos: any[];
-    totalCount: number;
-  }>;
-
-  getHabitAnalyticsData(habitId: string): Promise<{
-    totalTodos: number;
-    completedTodos: number;
-    abandonedTodos: number;
-    recentTodos: any[];
-  }>;
 }

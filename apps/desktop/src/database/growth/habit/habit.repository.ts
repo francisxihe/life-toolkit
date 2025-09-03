@@ -92,6 +92,44 @@ export class HabitRepository implements _HabitRepository {
     return saved;
   }
 
+  async delete(id: string): Promise<boolean> {
+    const entity = await this.repo.findOne({ where: { id } });
+    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
+    await this.repo.delete(id);
+    return true;
+  }
+
+  async deleteByFilter(filter: HabitPageFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    await qb.delete().execute();
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: HabitListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const habits = await qb.getMany();
+    if (habits.length > 0) {
+      await this.repo.softDelete(habits.map((h) => h.id));
+    }
+  }
+
+  async update(habitUpdate: Habit): Promise<Habit> {
+    if (!habitUpdate.id) throw new Error('习惯ID不能为空');
+    const entity = await this.repo.findOne({ where: { id: habitUpdate.id } });
+    if (!entity) throw new Error(`习惯不存在，ID: ${habitUpdate.id}`);
+    Object.assign(entity, habitUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
+  }
+
+  async updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult> {
+    const qb = this.buildQuery(filter);
+    return await qb.update(habitUpdate).execute();
+  }
+
   async find(id: string): Promise<Habit> {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
@@ -133,102 +171,4 @@ export class HabitRepository implements _HabitRepository {
     };
   }
 
-  async update(habitUpdate: Habit): Promise<Habit> {
-    if (!habitUpdate.id) throw new Error('习惯ID不能为空');
-    const entity = await this.repo.findOne({ where: { id: habitUpdate.id } });
-    if (!entity) throw new Error(`习惯不存在，ID: ${habitUpdate.id}`);
-    Object.assign(entity, habitUpdate);
-    const saved = await this.repo.save(entity);
-    return saved;
-  }
-
-  async delete(id: string): Promise<boolean> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    await this.repo.delete(id);
-    return true;
-  }
-
-  async deleteByFilter(filter: HabitPageFiltersDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    await qb.delete().execute();
-  }
-
-  async softDelete(id: string): Promise<void> {
-    await this.repo.softDelete(id);
-  }
-
-  async softDeleteByFilter(filter: HabitListFiltersDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const habits = await qb.getMany();
-    if (habits.length > 0) {
-      await this.repo.softDelete(habits.map((h) => h.id));
-    }
-  }
-
-
-  async updateByFilter(filter: HabitListFiltersDto, habitUpdate: Habit): Promise<UpdateResult> {
-    const qb = this.buildQuery(filter);
-    return await qb.update(habitUpdate).execute();
-  }
-
-  async updateStreak(id: string, increment: boolean): Promise<Habit> {
-    const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error(`习惯不存在，ID: ${id}`);
-    if (increment) {
-      entity.currentStreak = (entity.currentStreak || 0) + 1;
-      entity.completedCount = (entity.completedCount || 0) + 1;
-      if (entity.currentStreak > (entity.longestStreak || 0)) {
-        entity.longestStreak = entity.currentStreak;
-      }
-    } else {
-      entity.currentStreak = 0;
-    }
-    return await this.repo.save(entity);
-  }
-
-  async getHabitTodos(habitId: string): Promise<{
-    activeTodos: Todo[];
-    completedTodos: Todo[];
-    abandonedTodos: Todo[];
-    totalCount: number;
-  }> {
-    const activeTodos = await this.todoRepo.findBy({
-      habitId,
-      status: In([TodoStatus.TODO]),
-    });
-    const completedTodos = await this.todoRepo.findBy({
-      habitId,
-      status: TodoStatus.DONE,
-    });
-    const abandonedTodos = await this.todoRepo.findBy({
-      habitId,
-      status: TodoStatus.ABANDONED,
-    });
-    const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
-    return { activeTodos, completedTodos, abandonedTodos, totalCount };
-  }
-
-  async getHabitAnalyticsData(habitId: string): Promise<{
-    totalTodos: number;
-    completedTodos: number;
-    abandonedTodos: number;
-    recentTodos: Todo[];
-  }> {
-    const [completedTodos, abandonedTodos, recentTodos] = await Promise.all([
-      this.todoRepo.count({
-        where: { habitId, status: TodoStatus.DONE },
-      }),
-      this.todoRepo.count({
-        where: { habitId, status: TodoStatus.ABANDONED },
-      }),
-      this.todoRepo.find({
-        where: { habitId },
-        order: { updatedAt: 'DESC' },
-        take: 10,
-      }),
-    ]);
-    const totalTodos = await this.todoRepo.count({ where: { habitId } });
-    return { totalTodos, completedTodos, abandonedTodos, recentTodos };
-  }
 }

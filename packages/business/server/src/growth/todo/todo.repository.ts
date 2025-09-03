@@ -4,8 +4,6 @@ import { TodoPageFiltersDto, TodoListFilterDto } from './dto';
 
 export interface TodoRepository {
   create(todo: Todo): Promise<Todo>;
-  findOneByRepeatAndDate(repeatId: string, date: Date): Promise<Todo | null>;
-  createWithExtras(todo: Todo, extras: Todo): Promise<Todo>;
   findAll(filter: TodoListFilterDto): Promise<Todo[]>;
   page(filter: TodoPageFiltersDto): Promise<{
     list: Todo[];
@@ -21,5 +19,4 @@ export interface TodoRepository {
   softDeleteByFilter(filter: TodoListFilterDto): Promise<void>;
   find(id: string): Promise<Todo>;
   findWithRelations(id: string, relations?: string[]): Promise<Todo>;
-  updateRepeatId(id: string, repeatId: string): Promise<void>;
 }

@@ -114,11 +114,6 @@ export class TaskRepository {
     return dto;
   }
 
-  async findByGoalIds(goalIds: string[]): Promise<Task[]> {
-    return await this.taskRepository.find({
-      where: { goalId: In(goalIds), deletedAt: IsNull() },
-    });
-  }
 
   async updateStatus(
     id: string,

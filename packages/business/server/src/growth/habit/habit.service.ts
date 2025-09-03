@@ -1,4 +1,5 @@
 import { HabitRepository } from "./habit.repository";
+import { TodoRepository } from "../todo/todo.repository";
 import {
   CreateHabitDto,
   UpdateHabitDto,
@@ -7,13 +8,15 @@ import {
   HabitDto,
 } from "./dto";
 import { Habit } from "./habit.entity";
-import { HabitStatus } from "@life-toolkit/enum";
+import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
 
 export class HabitService {
   habitRepository: HabitRepository;
+  todoRepository: TodoRepository;
 
-  constructor(habitRepository: HabitRepository) {
+  constructor(habitRepository: HabitRepository, todoRepository: TodoRepository) {
     this.habitRepository = habitRepository;
+    this.todoRepository = todoRepository;
   }
 
   // ====== 基础 CRUD ======
@@ -84,8 +87,18 @@ export class HabitService {
 
   //  ====== 业务逻辑编排 ======
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
-    const entity = await this.habitRepository.updateStreak(id, increment);
-    return HabitDto.importEntity(entity);
+    const entity = await this.habitRepository.find(id);
+    if (increment) {
+      entity.currentStreak = (entity.currentStreak || 0) + 1;
+      entity.completedCount = (entity.completedCount || 0) + 1;
+      if (entity.currentStreak > (entity.longestStreak || 0)) {
+        entity.longestStreak = entity.currentStreak;
+      }
+    } else {
+      entity.currentStreak = 0;
+    }
+    const updatedEntity = await this.habitRepository.update(entity);
+    return HabitDto.importEntity(updatedEntity);
   }
 
   async getHabitTodos(habitId: string): Promise<{
@@ -94,7 +107,19 @@ export class HabitService {
     abandonedTodos: any[];
     totalCount: number;
   }> {
-    return await this.habitRepository.getHabitTodos(habitId);
+    // 使用TodoRepository的findAll方法查询不同状态的todos
+    const activeFilter = { habitId, status: [TodoStatus.TODO] };
+    const completedFilter = { habitId, status: [TodoStatus.DONE] };
+    const abandonedFilter = { habitId, status: [TodoStatus.ABANDONED] };
+    
+    const [activeTodos, completedTodos, abandonedTodos] = await Promise.all([
+      this.todoRepository.findAll(activeFilter as any),
+      this.todoRepository.findAll(completedFilter as any),
+      this.todoRepository.findAll(abandonedFilter as any)
+    ]);
+    
+    const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
+    return { activeTodos, completedTodos, abandonedTodos, totalCount };
   }
 
   async getHabitAnalytics(habitId: string): Promise<{
@@ -108,20 +133,31 @@ export class HabitService {
   }> {
     const habitEntity = await this.habitRepository.find(habitId);
     const habit = HabitDto.importEntity(habitEntity);
-    const { totalTodos, completedTodos, abandonedTodos, recentTodos } =
-      await this.habitRepository.getHabitAnalyticsData(habitId);
+    
+    // 使用TodoRepository查询分析数据
+    const [allTodos, completedTodos, abandonedTodos, recentTodos] = await Promise.all([
+      this.todoRepository.findAll({ habitId } as any),
+      this.todoRepository.findAll({ habitId, status: [TodoStatus.DONE] } as any),
+      this.todoRepository.findAll({ habitId, status: [TodoStatus.ABANDONED] } as any),
+      this.todoRepository.findAll({ habitId } as any) // 这里需要添加排序和限制逻辑
+    ]);
+    
+    // 对最近的todos进行排序和限制（取最新的10条）
+    const sortedRecentTodos = recentTodos
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 10);
 
-    const completionRate =
-      totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+    const totalTodos = allTodos.length;
+    const completionRate = totalTodos > 0 ? (completedTodos.length / totalTodos) * 100 : 0;
 
     return {
       totalTodos,
-      completedTodos,
-      abandonedTodos,
+      completedTodos: completedTodos.length,
+      abandonedTodos: abandonedTodos.length,
       completionRate,
       currentStreak: habit.currentStreak,
       longestStreak: habit.longestStreak,
-      recentTodos,
+      recentTodos: sortedRecentTodos,
     };
   }
 

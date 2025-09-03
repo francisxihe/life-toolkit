@@ -43,15 +43,6 @@ export class TodoRepository implements _TodoRepository {
     return saved;
   }
 
-  async createWithExtras(todo: Todo, extras: Todo): Promise<Todo> {
-    const entity = this.repo.create({
-      ...todo,
-      ...extras,
-    });
-    const saved = await this.repo.save(entity);
-    return saved;
-  }
-
   async findAll(filter: TodoListFilterDto): Promise<Todo[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy('todo.createdAt', 'DESC').getMany();
@@ -79,6 +70,32 @@ export class TodoRepository implements _TodoRepository {
       pageSize,
     };
   }
+  async delete(id: string): Promise<boolean> {
+    await this.repo.delete(id);
+    return true;
+  }
+
+  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
+    const qb = this.repo.createQueryBuilder('todo');
+    if (filter.taskIds && filter.taskIds.length > 0) {
+      qb.where('todo.taskId IN (:...includeIds)', { includeIds: filter.taskIds });
+    }
+    const list = await qb.getMany();
+    if (list.length) await this.repo.delete(list.map((x) => x.id));
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: TodoListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const todos = await qb.getMany();
+    if (todos.length > 0) {
+      const ids = todos.map((todo) => todo.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
+  }
 
   async update(todoUpdate: Todo): Promise<Todo> {
     if (!todoUpdate.id) throw new Error('待办ID不能为空');
@@ -92,20 +109,6 @@ export class TodoRepository implements _TodoRepository {
   async updateByFilter(filter: TodoListFilterDto, todoUpdate: Todo): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(todoUpdate).execute();
-  }
-
-  async delete(id: string): Promise<boolean> {
-    await this.repo.delete(id);
-    return true;
-  }
-
-  async deleteByFilter(filter: TodoPageFiltersDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder('todo');
-    if (filter.taskIds && filter.taskIds.length > 0) {
-      qb.where('todo.taskId IN (:...includeIds)', { includeIds: filter.taskIds });
-    }
-    const list = await qb.getMany();
-    if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
   async find(id: string): Promise<Todo> {
@@ -124,29 +127,4 @@ export class TodoRepository implements _TodoRepository {
     return todo;
   }
 
-  async updateRepeatId(id: string, repeatId: string): Promise<void> {
-    await this.repo.update(id, { repeatId });
-  }
-
-  async softDelete(id: string): Promise<void> {
-    await this.repo.softDelete(id);
-  }
-
-  async softDeleteByFilter(filter: TodoListFilterDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const todos = await qb.getMany();
-    if (todos.length > 0) {
-      const ids = todos.map(todo => todo.id);
-      await this.repo.softDelete({ id: In(ids) });
-    }
-  }
-
-
-  async findOneByRepeatAndDate(repeatId: string, date: Date): Promise<Todo | null> {
-    const todo = await this.repo.findOne({
-      where: { repeatId, planDate: date },
-    });
-    if (!todo) return null;
-    return todo;
-  }
 }

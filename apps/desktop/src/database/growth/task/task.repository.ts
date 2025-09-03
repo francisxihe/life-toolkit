@@ -88,6 +88,33 @@ export class TaskRepository implements _TaskRepository {
     return saved;
   }
 
+  async delete(id: string): Promise<boolean> {
+    await this.repo.delete(id);
+    return true;
+  }
+
+  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const tasks = await qb.getMany();
+    if (tasks.length > 0) {
+      const ids = tasks.map((task) => task.id);
+      await this.repo.delete({ id: In(ids) });
+    }
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: TaskListFiltersDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const tasks = await qb.getMany();
+    if (tasks.length > 0) {
+      const ids = tasks.map((task) => task.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
+  }
+
   async update(taskUpdate: Task): Promise<Task> {
     if (!taskUpdate.id) throw new Error('任务ID不能为空');
     const entity = await this.repo.findOne({ where: { id: taskUpdate.id } });
@@ -109,33 +136,6 @@ export class TaskRepository implements _TaskRepository {
   async updateByFilter(filter: TaskListFiltersDto, taskUpdate: Task): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
     return await qb.update(taskUpdate).execute();
-  }
-
-  async delete(id: string): Promise<boolean> {
-    await this.repo.delete(id);
-    return true;
-  }
-
-  async deleteByFilter(filter: TaskListFiltersDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const tasks = await qb.getMany();
-    if (tasks.length > 0) {
-      const ids = tasks.map(task => task.id);
-      await this.repo.delete({ id: In(ids) });
-    }
-  }
-
-  async softDelete(id: string): Promise<void> {
-    await this.repo.softDelete(id);
-  }
-
-  async softDeleteByFilter(filter: TaskListFiltersDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const tasks = await qb.getMany();
-    if (tasks.length > 0) {
-      const ids = tasks.map(task => task.id);
-      await this.repo.softDelete({ id: In(ids) });
-    }
   }
 
   async find(id: string): Promise<Task> {
@@ -181,10 +181,4 @@ export class TaskRepository implements _TaskRepository {
     };
   }
 
-
-  async findByGoalIds(goalIds: string[]): Promise<Task[]> {
-    if (!goalIds || goalIds.length === 0) return [];
-    const list = await this.repo.find({ where: { goalId: In(goalIds) } });
-    return list;
-  }
 }

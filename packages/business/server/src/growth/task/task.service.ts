@@ -151,7 +151,9 @@ export class TaskService {
   }
 
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
-    return await this.taskRepository.findByGoalIds(goalIds);
+    const filter = new TaskListFiltersDto();
+    filter.goalIds = goalIds;
+    return await this.taskRepository.findAll(filter);
   }
 
   async abandon(id: string): Promise<boolean> {

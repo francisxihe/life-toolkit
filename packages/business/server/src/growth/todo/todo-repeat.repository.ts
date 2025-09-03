@@ -25,6 +25,4 @@ export interface TodoRepeatRepository {
   softDeleteByFilter(filter: TodoRepeatListFilterDto): Promise<void>;
   find(id: string): Promise<TodoRepeat>;
   findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat>;
-  findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]>;
-  findOneBy(condition: any): Promise<TodoRepeat | null>;
 }

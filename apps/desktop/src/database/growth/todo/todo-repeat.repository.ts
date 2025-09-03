@@ -59,6 +59,59 @@ export class TodoRepeatRepository {
     return saved;
   }
 
+  async delete(id: string): Promise<boolean> {
+    await this.repo.delete(id);
+    return true;
+  }
+
+  async deleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const list = await qb.getMany();
+    if (list.length) await this.repo.delete(list.map((x) => x.id));
+  }
+
+  async softDelete(id: string): Promise<void> {
+    await this.repo.softDelete(id);
+  }
+
+  async softDeleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
+    const qb = this.buildQuery(filter);
+    const list = await qb.getMany();
+    if (list.length) {
+      const ids = list.map((item) => item.id);
+      await this.repo.softDelete({ id: In(ids) });
+    }
+  }
+
+  async update(todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat> {
+    const entity = await this.repo.findOne({ where: { id: todoRepeatUpdate.id } });
+    if (!entity) throw new Error('TodoRepeat not found');
+
+    Object.assign(entity, todoRepeatUpdate);
+    const saved = await this.repo.save(entity);
+    return saved;
+  }
+
+  async updateByFilter(filter: any, todoRepeatUpdate: TodoRepeat): Promise<UpdateResult> {
+    return this.repo.update(filter, todoRepeatUpdate);
+  }
+
+  async find(id: string): Promise<TodoRepeat> {
+    const todoRepeat = await this.repo.findOne({ where: { id } });
+    if (!todoRepeat) throw new Error('TodoRepeat not found');
+    return todoRepeat;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat> {
+    const defaultRelations = ['todos'];
+    const todoRepeat = await this.repo.findOne({
+      where: { id },
+      relations: relations || defaultRelations,
+    });
+    if (!todoRepeat) throw new Error('TodoRepeat not found');
+    return todoRepeat;
+  }
+
   async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeat[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy('todoRepeat.createdAt', 'DESC').getMany();
@@ -86,75 +139,6 @@ export class TodoRepeatRepository {
       pageNum,
       pageSize,
     };
-  }
-
-  async update(todoRepeatUpdate: TodoRepeat): Promise<TodoRepeat> {
-    const entity = await this.repo.findOne({ where: { id: todoRepeatUpdate.id } });
-    if (!entity) throw new Error('TodoRepeat not found');
-
-    Object.assign(entity, todoRepeatUpdate);
-    const saved = await this.repo.save(entity);
-    return saved;
-  }
-
-  async updateByFilter(filter: any, todoRepeatUpdate: TodoRepeat): Promise<UpdateResult> {
-    return this.repo.update(filter, todoRepeatUpdate);
-  }
-
-  async delete(id: string): Promise<boolean> {
-    await this.repo.delete(id);
-    return true;
-  }
-
-  async deleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const list = await qb.getMany();
-    if (list.length) await this.repo.delete(list.map((x) => x.id));
-  }
-
-  async softDelete(id: string): Promise<void> {
-    await this.repo.softDelete(id);
-  }
-
-  async softDeleteByFilter(filter: TodoRepeatListFilterDto): Promise<void> {
-    const qb = this.buildQuery(filter);
-    const list = await qb.getMany();
-    if (list.length) {
-      const ids = list.map(item => item.id);
-      await this.repo.softDelete({ id: In(ids) });
-    }
-  }
-
-  async find(id: string): Promise<TodoRepeat> {
-    const todoRepeat = await this.repo.findOne({ where: { id } });
-    if (!todoRepeat) throw new Error('TodoRepeat not found');
-    return todoRepeat;
-  }
-
-  async findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat> {
-    const defaultRelations = ['todos'];
-    const todoRepeat = await this.repo.findOne({
-      where: { id },
-      relations: relations || defaultRelations,
-    });
-    if (!todoRepeat) throw new Error('TodoRepeat not found');
-    return todoRepeat;
-  }
-
-  async findOneBy(condition: any): Promise<TodoRepeat | null> {
-    const todoRepeat = await this.repo.findOne({ where: condition });
-    if (!todoRepeat) return null;
-    return todoRepeat;
-  }
-
-  async findAllByTaskIds(taskIds: string[]): Promise<TodoRepeat[]> {
-    if (!taskIds || taskIds.length === 0) return [];
-    // 通过关联的todos查找TodoRepeat
-    return this.repo
-      .createQueryBuilder('todoRepeat')
-      .innerJoin('todoRepeat.todos', 'todo')
-      .where('todo.taskId IN (:...taskIds)', { taskIds })
-      .getMany();
   }
 
 }

@@ -19,7 +19,6 @@ export interface TaskRepository {
   findWithRelations(id: string, relations?: string[]): Promise<Task>;
   findAll(filter: TaskListFiltersDto & { excludeIds?: string[] }): Promise<Task[]>;
   page(filter: TaskPageFiltersDto): Promise<{ list: Task[]; total: number; pageNum: number; pageSize: number }>;
-  findByGoalIds(goalIds: string[]): Promise<Task[]>;
 }
 
 export interface TaskTreeRepository {

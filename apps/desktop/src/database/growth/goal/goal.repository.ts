@@ -129,7 +129,7 @@ export class GoalRepository implements _GoalRepository {
     const qb = this.buildQuery(filter);
     const goals = await qb.getMany();
     if (goals.length > 0) {
-      const ids = goals.map(goal => goal.id);
+      const ids = goals.map((goal) => goal.id);
       await this.repo.softDelete({ id: In(ids) });
     }
   }
@@ -187,5 +187,4 @@ export class GoalRepository implements _GoalRepository {
       pageSize,
     };
   }
-
 }
