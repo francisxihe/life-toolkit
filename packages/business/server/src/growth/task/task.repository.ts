@@ -30,7 +30,3 @@ export interface TaskTreeRepository {
   computeDescendantIds(target: Task | Task[]): Promise<string[]>;
   deleteByIds(ids: string[]): Promise<void>;
 }
-
-export interface TodoCleanupService {
-  deleteByTaskIds(taskIds: string[]): Promise<void>;
-}

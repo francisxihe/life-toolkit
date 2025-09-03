@@ -1,8 +1,4 @@
-import {
-  TaskRepository,
-  TaskTreeRepository,
-  TodoCleanupService,
-} from "./task.repository";
+import { TaskRepository, TaskTreeRepository } from './task.repository';
 import {
   CreateTaskDto,
   UpdateTaskDto,
@@ -10,23 +6,22 @@ import {
   TaskListFiltersDto,
   TaskDto,
   TaskWithTrackTimeDto,
-} from "./dto";
-import { Task } from "./task.entity";
-import { TaskStatus } from "@life-toolkit/enum";
+} from './dto';
+import { Task } from './task.entity';
+import { TaskStatus } from '@life-toolkit/enum';
+import { TodoService, TodoRepository, TodoRepeatRepository } from '../todo';
 
 export class TaskService {
   protected taskRepository: TaskRepository;
   protected taskTreeRepository: TaskTreeRepository;
-  protected todoCleanup: TodoCleanupService;
+  protected todoRepository: TodoRepository;
+  protected todoRepeatRepository: TodoRepeatRepository;
 
-  constructor(
-    taskRepository: TaskRepository,
-    taskTreeRepository: TaskTreeRepository,
-    todoCleanup: TodoCleanupService
-  ) {
+  constructor(taskRepository: TaskRepository, taskTreeRepository: TaskTreeRepository, todoRepository: TodoRepository, todoRepeatRepository: TodoRepeatRepository) {
     this.taskRepository = taskRepository;
     this.taskTreeRepository = taskTreeRepository;
-    this.todoCleanup = todoCleanup;
+    this.todoRepository = todoRepository;
+    this.todoRepeatRepository = todoRepeatRepository;
   }
 
   async create(createTaskDto: CreateTaskDto): Promise<TaskDto> {
@@ -61,11 +56,11 @@ export class TaskService {
       id,
     } as Partial<Task>);
     if (!taskToDelete) {
-      throw new Error("Task not found");
+      throw new Error('Task not found');
     }
-    const allIds =
-      await this.taskTreeRepository.computeDescendantIds(taskToDelete);
-    await this.todoCleanup.deleteByTaskIds(allIds);
+    const allIds = await this.taskTreeRepository.computeDescendantIds(taskToDelete);
+    const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
+    await todoService.deleteByTaskIds(allIds);
     await this.taskTreeRepository.deleteByIds(allIds);
     return true;
   }
@@ -80,14 +75,15 @@ export class TaskService {
       const t = await this.taskTreeRepository.findOne({ id } as Partial<Task>);
       if (t) treeTargets.push(t);
     }
-    if (!treeTargets.length) throw new Error("Task not found");
+    if (!treeTargets.length) throw new Error('Task not found');
 
     const allIds: string[] = [];
     for (const t of treeTargets) {
       const ids = await this.taskTreeRepository.computeDescendantIds(t);
       allIds.push(...ids);
     }
-    await this.todoCleanup.deleteByTaskIds(allIds);
+    const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
+    await todoService.deleteByTaskIds(allIds);
     await this.taskTreeRepository.deleteByIds(allIds);
   }
 
@@ -108,7 +104,7 @@ export class TaskService {
     if (updateTaskDto.abandonedAt !== undefined) taskUpdate.abandonedAt = updateTaskDto.abandonedAt;
     // 处理父任务关系
     if (updateTaskDto.parentId !== undefined) {
-      taskUpdate.parent = updateTaskDto.parentId ? { id: updateTaskDto.parentId } as Task : undefined;
+      taskUpdate.parent = updateTaskDto.parentId ? ({ id: updateTaskDto.parentId } as Task) : undefined;
     }
     // 处理父子关系及基本字段更新（委托给树仓储）
     const entity = await this.taskTreeRepository.updateWithParent(taskUpdate);
@@ -117,12 +113,12 @@ export class TaskService {
 
   async findAll(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     const entities = await this.taskRepository.findAll(filter);
-    return entities.map(entity => TaskDto.importEntity(entity));
+    return entities.map((entity) => TaskDto.importEntity(entity));
   }
 
   async list(filter: TaskListFiltersDto): Promise<TaskDto[]> {
     const entities = await this.taskRepository.findAll(filter);
-    return entities.map(entity => TaskDto.importEntity(entity));
+    return entities.map((entity) => TaskDto.importEntity(entity));
   }
 
   async page(filter: TaskPageFiltersDto): Promise<{
@@ -131,13 +127,12 @@ export class TaskService {
     pageNum: number;
     pageSize: number;
   }> {
-    const { list, total, pageNum, pageSize } =
-      await this.taskRepository.page(filter);
-    return { 
-      list: list.map(entity => TaskDto.importEntity(entity)), 
-      total, 
-      pageNum, 
-      pageSize 
+    const { list, total, pageNum, pageSize } = await this.taskRepository.page(filter);
+    return {
+      list: list.map((entity) => TaskDto.importEntity(entity)),
+      total,
+      pageNum,
+      pageSize,
     };
   }
 
@@ -160,18 +155,12 @@ export class TaskService {
   }
 
   async abandon(id: string): Promise<boolean> {
-    await this.update(
-      id,
-      Object.assign(new UpdateTaskDto(), { status: TaskStatus.ABANDONED })
-    );
+    await this.update(id, Object.assign(new UpdateTaskDto(), { status: TaskStatus.ABANDONED }));
     return true;
   }
 
   async restore(id: string): Promise<boolean> {
-    await this.update(
-      id,
-      Object.assign(new UpdateTaskDto(), { status: TaskStatus.TODO })
-    );
+    await this.update(id, Object.assign(new UpdateTaskDto(), { status: TaskStatus.TODO }));
     return true;
   }
 }

@@ -1,8 +1,9 @@
 import { In, TreeRepository, FindOptionsWhere } from 'typeorm';
 import { AppDataSource } from '../../database.config';
 import { CreateTaskDto, UpdateTaskDto, TaskDto, Task } from '@life-toolkit/business-server';
+import { TaskTreeRepository as _TaskTreeRepository } from '@life-toolkit/business-server';
 
-export class TaskTreeRepository {
+export class TaskTreeRepository implements _TaskTreeRepository {
   repo: TreeRepository<Task> = AppDataSource.getTreeRepository(Task);
 
   async findOne(where: FindOptionsWhere<Task> | FindOptionsWhere<Task>[]): Promise<Task | null> {
@@ -27,11 +28,11 @@ export class TaskTreeRepository {
     });
   }
 
-  async updateWithParent(id: string, taskUpdate: Task): Promise<Task> {
+  async updateWithParent(taskUpdate: Task): Promise<Task> {
     return await AppDataSource.manager.transaction(async (manager) => {
       const treeRepository = manager.getTreeRepository(Task);
-      const current = await treeRepository.findOne({ where: { id } });
-      if (!current) throw new Error(`任务不存在，ID: ${id}`);
+      const current = await treeRepository.findOne({ where: { id: taskUpdate.id } });
+      if (!current) throw new Error(`任务不存在，ID: ${taskUpdate.id}`);
 
       Object.assign(current, taskUpdate);
 
