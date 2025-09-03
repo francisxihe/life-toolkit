@@ -1,4 +1,4 @@
-import { UpdateResult } from 'typeorm';
+import { UpdateResult, DeleteResult } from 'typeorm';
 import { PageFilterDto } from './page.dto';
 
 export interface BaseRepository<Entity, FilterDto> {
@@ -6,10 +6,10 @@ export interface BaseRepository<Entity, FilterDto> {
   create(entity: Entity): Promise<Entity>;
   update(entityUpdate: Entity): Promise<Entity>;
   updateByFilter(filter: FilterDto, entityUpdate: Entity): Promise<UpdateResult>;
-  delete(id: string): Promise<boolean>;
-  deleteByFilter(filter: FilterDto): Promise<void>;
-  softDelete(id: string): Promise<void>;
-  softDeleteByFilter(filter: FilterDto): Promise<void>;
+  delete(id: string): Promise<DeleteResult>;
+  deleteByFilter(filter: FilterDto): Promise<DeleteResult>;
+  softDelete(id: string): Promise<DeleteResult>;
+  softDeleteByFilter(filter: FilterDto): Promise<DeleteResult>;
   find(id: string): Promise<Entity>;
   findWithRelations(id: string, relations?: string[]): Promise<Entity>;
   findAll(filter: FilterDto): Promise<Entity[]>;
