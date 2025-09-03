@@ -1,92 +1,67 @@
-import type { Task as TaskVO } from "@life-toolkit/vo";
-import { TaskService } from "./task.service";
-import {
-  Post,
-  Get,
-  Put,
-  Delete,
-  Controller,
-  Body,
-  Param,
-  Query,
-} from "@business/decorators";
-import {
-  TaskListFiltersDto,
-  TaskPageFiltersDto,
-  UpdateTaskDto,
-  CreateTaskDto,
-  TaskDto,
-} from "./dto";
-@Controller("/task")
+import type { Task as TaskVO } from '@life-toolkit/vo';
+import { TaskService } from './task.service';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@business/decorators';
+import { TaskListFiltersDto, TaskPageFiltersDto, UpdateTaskDto, CreateTaskDto, TaskDto } from './dto';
+@Controller('/task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
-  @Post("/create", { description: "创建任务" })
-  async create(
-    @Body() createTaskVo: TaskVO.CreateTaskVo
-  ): Promise<TaskVO.TaskVo> {
+  @Post('/create', { description: '创建任务' })
+  async create(@Body() createTaskVo: TaskVO.CreateTaskVo): Promise<TaskVO.TaskVo> {
     const createDto = new CreateTaskDto();
     createDto.importVo(createTaskVo);
     const dto = await this.taskService.create(createDto);
     return dto.exportVo();
   }
 
-  @Get("/detail/:id", { description: "根据ID查询任务详情" })
-  async findById(@Param("id") id: string): Promise<TaskVO.TaskVo> {
-    const dto = await this.taskService.findById(id);
-    return dto.exportVo();
+  @Delete('/delete/:id', { description: '删除任务' })
+  async delete(@Param('id') id: string): Promise<boolean> {
+    return await this.taskService.delete(id);
   }
 
-  @Put("/update/:id", { description: "更新任务" })
-  async update(
-    @Param("id") id: string,
-    @Body() body: TaskVO.UpdateTaskVo
-  ): Promise<TaskVO.TaskVo> {
+  @Put('/update/:id', { description: '更新任务' })
+  async update(@Param('id') id: string, @Body() body: TaskVO.UpdateTaskVo): Promise<TaskVO.TaskVo> {
     const updateDto = new UpdateTaskDto();
     updateDto.importVo(body);
     const dto = await this.taskService.update(id, updateDto);
     return dto.exportVo();
   }
 
-  @Delete("/delete/:id", { description: "删除任务" })
-  async delete(@Param("id") id: string): Promise<boolean> {
-    return await this.taskService.delete(id);
+  @Get('/find/:id', { description: '根据ID查询任务详情' })
+  async find(@Param('id') id: string): Promise<TaskVO.TaskVo> {
+    const dto = await this.taskService.find(id);
+    return dto.exportVo();
   }
 
-  @Get("/page", { description: "分页查询任务列表" })
-  async page(
-    @Query() taskPageFiltersVo?: TaskVO.TaskPageFiltersVo
-  ): Promise<TaskVO.TaskPageVo> {
-    const filter = new TaskPageFiltersDto();
-    if (taskPageFiltersVo) filter.importPageVo(taskPageFiltersVo);
-    const { list, total, pageNum, pageSize } =
-      await this.taskService.page(filter);
-    return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);
-  }
-
-  @Get("/list", { description: "查询任务列表" })
-  async list(
-    @Query() taskListFiltersVo?: TaskVO.TaskListFiltersVo
-  ): Promise<TaskVO.TaskListVo> {
+  @Get('/find-all', { description: '查询任务列表' })
+  async findAll(@Query() taskListFiltersVo?: TaskVO.TaskListFiltersVo): Promise<TaskVO.TaskListVo> {
     const filter = new TaskListFiltersDto();
     if (taskListFiltersVo) filter.importListVo(taskListFiltersVo);
-    const list = await this.taskService.list(filter);
+    const list = await this.taskService.findAll(filter);
     return TaskDto.dtoListToListVo(list);
   }
 
-  @Get("/task-with-track-time/:id", { description: "查询任务及其时间追踪信息" })
-  async taskWithTrackTime(@Param("id") id: string): Promise<TaskVO.TaskVo> {
+  @Get('/page', { description: '分页查询任务列表' })
+  async page(@Query() taskPageFiltersVo?: TaskVO.TaskPageFiltersVo): Promise<TaskVO.TaskPageVo> {
+    const filter = new TaskPageFiltersDto();
+    if (taskPageFiltersVo) filter.importPageVo(taskPageFiltersVo);
+    const { list, total, pageNum, pageSize } = await this.taskService.page(filter);
+    return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);
+  }
+
+  @Get('/task-with-track-time/:id', { description: '查询任务及其时间追踪信息' })
+  async taskWithTrackTime(@Param('id') id: string): Promise<TaskVO.TaskVo> {
     const dto = await this.taskService.taskWithTrackTime(id);
     return dto.exportVo(); // TaskWithTrackTimeDto 继承自 TaskDto
   }
 
-  @Put("/abandon/:id", { description: "放弃任务" })
-  async abandon(@Param("id") id: string): Promise<boolean> {
+  @Put('/abandon/:id', { description: '放弃任务' })
+  async abandon(@Param('id') id: string): Promise<boolean> {
     return await this.taskService.abandon(id);
   }
 
-  @Put("/restore/:id", { description: "恢复任务" })
-  async restore(@Param("id") id: string): Promise<boolean> {
+  @Put('/restore/:id', { description: '恢复任务' })
+  async restore(@Param('id') id: string): Promise<boolean> {
     return await this.taskService.restore(id);
   }
 }

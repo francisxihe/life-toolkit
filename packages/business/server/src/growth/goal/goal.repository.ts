@@ -24,11 +24,6 @@ export interface GoalRepository {
 }
 
 export interface GoalTreeRepository {
-  // 基础查询
-  findOne(where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]): Promise<Goal | null>;
-
-  save(entity: Goal): Promise<Goal>;
-
   // 树形相关操作
   findRoots(): Promise<Goal[]>;
   findDescendants(entity: Goal): Promise<Goal[]>;
@@ -46,10 +41,6 @@ export interface GoalTreeRepository {
 
   collectIdsByFilter(filter: { status?: string; keyword?: string; importance?: number }): Promise<Set<string>>;
 
-  createWithParent(goal: Goal): Promise<Goal>;
-
-  updateWithParent(goalUpdate: Goal): Promise<Goal>;
-
   deleteWithTree(id: string): Promise<void>;
 
   getFilteredTree(filter: { status?: string; keyword?: string; importance?: number }): Promise<Goal[]>;
@@ -58,6 +49,4 @@ export interface GoalTreeRepository {
     excludeIds?: string[];
     parentId?: string;
   }): Promise<{ includeIds?: string[]; excludeIds?: string[] }>;
-
-  findWithRelations(id: string, relations?: string[]): Promise<Goal>;
 }

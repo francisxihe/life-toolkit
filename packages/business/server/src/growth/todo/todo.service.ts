@@ -74,10 +74,15 @@ export class TodoService {
     return todoDto;
   }
 
-  async findById(id: string, relations?: string[]): Promise<TodoDto> {
-    const entity = relations 
-      ? await this.todoRepository.findWithRelations(id, relations)
-      : await this.todoRepository.find(id);
+  async find(id: string): Promise<TodoDto> {
+    const entity = await this.todoRepository.find(id);
+    const todoDto = new TodoDto();
+    todoDto.importEntity(entity);
+    return todoDto;
+  }
+
+  async findWithRelations(id: string, relations?: string[]): Promise<TodoDto> {
+    const entity = await this.todoRepository.findWithRelations(id, relations || []);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -92,14 +97,6 @@ export class TodoService {
     });
   }
 
-  async list(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const entities = await this.todoRepository.findAll(filter);
-    return entities.map((entity) => {
-      const todoDto = new TodoDto();
-      todoDto.importEntity(entity);
-      return todoDto;
-    });
-  }
 
   async page(filter: TodoPageFiltersDto): Promise<{
     list: TodoDto[];

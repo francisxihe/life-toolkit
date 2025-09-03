@@ -27,26 +27,6 @@ export class GoalTreeRepository {
     return this.goalRepository.manager.getTreeRepository(Goal);
   }
 
-  // 基础查询
-  async findOne(
-    where: FindOptionsWhere<Goal> | FindOptionsWhere<Goal>[]
-  ): Promise<Goal | null> {
-    const treeRepository = this.getTreeRepository();
-    return await treeRepository.findOne({
-      where,
-      relations: ["children"],
-    });
-  }
-
-  async remove(entity: Goal): Promise<void> {
-    const treeRepository = this.getTreeRepository();
-    await treeRepository.remove(entity);
-  }
-
-  async save(entity: Goal): Promise<Goal> {
-    const treeRepository = this.getTreeRepository();
-    return await treeRepository.save(entity);
-  }
 
   // 树形相关操作
   async findRoots(): Promise<Goal[]> {
@@ -158,60 +138,15 @@ export class GoalTreeRepository {
     return ids;
   }
 
-  // 带父级关系的事务创建
-  async createWithParent(dto: CreateGoalDto): Promise<GoalDto> {
-    const treeRepo = this.getTreeRepository();
-
-    return await treeRepo.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Goal);
-
-      const entity = treeRepository.create({
-        ...dto,
-        status: dto.status || GoalStatus.TODO,
-      });
-
-      if (dto.parentId) {
-        await this.updateParent(entity, dto.parentId, treeRepository);
-      }
-
-      const savedEntity = await treeRepository.save(entity);
-      return GoalDto.importEntity(savedEntity);
-    });
-  }
-
-  // 带父级关系的事务更新
-  async updateWithParent(id: string, dto: UpdateGoalDto): Promise<GoalDto> {
-    const treeRepo = this.getTreeRepository();
-
-    return await treeRepo.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Goal);
-
-      const currentGoal = await treeRepository.findOne({ where: { id } });
-      if (!currentGoal) {
-        throw new NotFoundException(`目标不存在，ID: ${id}`);
-      }
-
-      Object.assign(currentGoal, dto);
-
-      if (dto.parentId) {
-        await this.updateParent(currentGoal, dto.parentId, treeRepository);
-      } else if (dto.parentId === null) {
-        currentGoal.parent = undefined;
-        await treeRepository.save(currentGoal);
-      }
-
-      const savedEntity = await treeRepository.save(currentGoal);
-      return GoalDto.importEntity(savedEntity);
-    });
-  }
 
   // 树形删除方法
   async deleteWithTree(id: string): Promise<void> {
-    const goalToDelete = await this.findOne({ id });
+    const treeRepo = this.getTreeRepository();
+    const goalToDelete = await treeRepo.findOne({ where: { id } });
     if (!goalToDelete) {
       throw new NotFoundException(`目标不存在，ID: ${id}`);
     }
-    await this.remove(goalToDelete);
+    await treeRepo.remove(goalToDelete);
   }
 
   // 手动树形结构查询和过滤
@@ -281,27 +216,4 @@ export class GoalTreeRepository {
     return { includeIds, excludeIds };
   }
 
-  // 获取详细信息（含关联关系）
-  async findDetail(id: string): Promise<GoalDto> {
-    const treeRepo = this.getTreeRepository();
-
-    const entity = await treeRepo.findOne({ where: { id } });
-    if (!entity) {
-      throw new NotFoundException(`目标不存在，ID: ${id}`);
-    }
-
-    const treeWithChildren = await treeRepo.findDescendantsTree(entity);
-
-    const entityWithRelations = await treeRepo.findOne({
-      where: { id },
-      relations: ["parent", "taskList"],
-    });
-
-    if (entityWithRelations) {
-      treeWithChildren.parent = entityWithRelations.parent;
-      treeWithChildren.taskList = entityWithRelations.taskList;
-    }
-
-    return GoalDto.importEntity(treeWithChildren);
-  }
 }

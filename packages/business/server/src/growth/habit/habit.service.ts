@@ -57,7 +57,7 @@ export class HabitService {
     return HabitDto.importEntity(entity);
   }
 
-  async findById(id: string): Promise<HabitDto> {
+  async find(id: string): Promise<HabitDto> {
     const entity = await this.habitRepository.find(id);
     return HabitDto.importEntity(entity);
   }
@@ -67,10 +67,6 @@ export class HabitService {
     return entities.map(entity => HabitDto.importEntity(entity));
   }
 
-  async list(filter: HabitListFiltersDto): Promise<HabitDto[]> {
-    const entities = await this.habitRepository.findAll(filter);
-    return entities.map(entity => HabitDto.importEntity(entity));
-  }
 
   async page(
     filter: HabitPageFiltersDto

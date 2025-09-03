@@ -99,17 +99,6 @@ export class GoalRepository {
     await this.goalRepository.update({ id: In(ids) }, updateData);
   }
 
-  // 细化方法
-  async findDetail(id: string): Promise<GoalDto> {
-    const entity = await this.goalRepository.findOne({
-      where: { id },
-      relations: ["parent", "children", "taskList"],
-    });
-    if (!entity) {
-      throw new NotFoundException(`目标不存在，ID: ${id}`);
-    }
-    return GoalDto.importEntity(entity);
-  }
 
   async updateStatus(
     id: string,

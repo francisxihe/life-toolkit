@@ -19,15 +19,6 @@ export class TaskTreeRepository {
     return this.taskRepository.manager.getTreeRepository(Task);
   }
 
-  async findOne(where: FindOptionsWhere<Task> | FindOptionsWhere<Task>[]) {
-    const treeRepo = this.getTreeRepository();
-    return await treeRepo.findOne({ where, relations: ["children"] });
-  }
-
-  async save(entity: Task) {
-    const treeRepo = this.getTreeRepository();
-    return await treeRepo.save(entity);
-  }
 
   async updateParent(
     {
@@ -85,64 +76,5 @@ export class TaskTreeRepository {
     await treeRepo.delete({ id: In(ids) });
   }
 
-  async createWithParent(dto: CreateTaskDto): Promise<TaskDto> {
-    return await this.getTreeRepository().manager.transaction(
-      async (manager) => {
-        const treeRepo = manager.getTreeRepository(Task);
-        const entity = treeRepo.create({ ...dto }) as unknown as Task;
-        if (dto.parentId) {
-          const parent = await treeRepo.findOne({
-            where: { id: dto.parentId },
-          });
-          if (!parent) throw new NotFoundException("Parent task not found");
-          parent.children = parent.children || [];
-          parent.children.push(entity);
-          await treeRepo.save(parent);
-        }
-        const saved = (await treeRepo.save(entity)) as unknown as Task;
-        return TaskDto.importEntity(saved);
-      }
-    );
-  }
 
-  async updateWithParent(id: string, dto: UpdateTaskDto): Promise<TaskDto> {
-    return await this.getTreeRepository().manager.transaction(
-      async (manager) => {
-        const treeRepo = manager.getTreeRepository(Task);
-        const entity = await treeRepo.findOne({ where: { id } });
-        if (!entity) throw new NotFoundException("Task not found");
-        Object.assign(entity, dto);
-        if (dto.parentId) {
-          await this.updateParent(
-            { task: entity, parentId: dto.parentId },
-            treeRepo
-          );
-        } else if (dto.parentId === null) {
-          entity.parent = undefined;
-          await treeRepo.save(entity);
-        }
-        const saved = (await treeRepo.save(entity)) as unknown as Task;
-        return TaskDto.importEntity(saved);
-      }
-    );
-  }
-
-  async deleteWithTree(id: string): Promise<void> {
-    const toDelete = await this.findOne({ id });
-    if (!toDelete) throw new NotFoundException("Task not found");
-    const ids = await this.computeDescendantIds(toDelete);
-    await this.deleteByIds(ids);
-  }
-
-  async deleteWithTreeByIds(ids: string[]): Promise<void> {
-    if (!ids.length) return;
-    const treeRepo = this.getTreeRepository();
-    const targets = await treeRepo.find({ where: { id: In(ids) } });
-    const all: string[] = [];
-    for (const t of targets) {
-      const arr = await this.computeDescendantIds(t);
-      all.push(...arr);
-    }
-    await this.deleteByIds(all);
-  }
 }

@@ -32,9 +32,9 @@ export class TodoController {
     return todoDto.exportVo();
   }
 
-  @Get('/detail/:id', { description: '根据ID查询待办详情' })
-  async findById(@Param('id') id: string): Promise<TodoVO.TodoVo> {
-    return (await this.todoService.findById(id)).exportVo();
+  @Delete('/delete/:id', { description: '删除待办' })
+  async delete(@Param('id') id: string): Promise<boolean> {
+    return await this.todoService.delete(id);
   }
 
   @Put('/update/:id', { description: '更新待办' })
@@ -54,9 +54,19 @@ export class TodoController {
     return dto.exportVo();
   }
 
-  @Delete('/delete/:id', { description: '删除待办' })
-  async delete(@Param('id') id: string): Promise<boolean> {
-    return await this.todoService.delete(id);
+  @Get('/find/:id', { description: '根据ID查询待办详情' })
+  async find(@Param('id') id: string): Promise<TodoVO.TodoVo> {
+    return (await this.todoService.find(id)).exportVo();
+  }
+
+  @Get('/find-all', { description: '列表查询待办' })
+  async findAll(@Query() query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
+    const filter = new TodoListFilterDto();
+    if (query) filter.importListVo(query);
+    const list = await this.todoService.findAll(filter);
+    return {
+      list: list.map((todo) => todo.exportVo()),
+    };
   }
 
   @Get('/page', { description: '分页查询待办' })
@@ -72,19 +82,9 @@ export class TodoController {
     };
   }
 
-  @Get('/list', { description: '列表查询待办' })
-  async list(@Query() query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
-    const filter = new TodoListFilterDto();
-    if (query) filter.importListVo(query);
-    const list = await this.todoService.list(filter);
-    return {
-      list: list.map((todo) => todo.exportVo()),
-    };
-  }
-
   // ==============业务操作==================
 
-  @Put('/done/batch', { description: '批量完成待办' })
+  @Put('/done-batch', { description: '批量完成待办' })
   async doneBatch(@Body() body?: TodoVO.TodoListFiltersVo) {
     return await this.todoService.doneBatch({ includeIds: body?.includeIds ?? [] });
   }
@@ -104,7 +104,7 @@ export class TodoController {
     return await this.todoService.done(id);
   }
 
-  @Get('/listWithRepeat', { description: '列表查询待办及其重复信息' })
+  @Get('/list-with-repeat', { description: '列表查询待办及其重复信息' })
   async listWithRepeat(@Query() query?: TodoVO.TodoListFiltersVo): Promise<TodoVO.TodoListVo> {
     const filter = new TodoListFilterDto();
     if (query) filter.importListVo(query);
@@ -114,7 +114,7 @@ export class TodoController {
     };
   }
 
-  @Get('/detailWithRepeat/:id', { description: '查询待办及其重复信息' })
+  @Get('/detail-with-repeat/:id', { description: '查询待办及其重复信息' })
   async detailWithRepeat(@Param('id') id: string): Promise<TodoVO.TodoVo> {
     return (await this.todoService.detailWithRepeat(id)).exportVo();
   }

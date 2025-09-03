@@ -52,9 +52,7 @@ export class TaskService {
   }
 
   async delete(id: string): Promise<boolean> {
-    const taskToDelete = await this.taskTreeRepository.findOne({
-      id,
-    } as Partial<Task>);
+    const taskToDelete = await this.taskRepository.find(id);
     if (!taskToDelete) {
       throw new Error('Task not found');
     }
@@ -72,8 +70,12 @@ export class TaskService {
 
     const treeTargets: Task[] = [] as Task[];
     for (const id of toDeleteIds) {
-      const t = await this.taskTreeRepository.findOne({ id } as Partial<Task>);
-      if (t) treeTargets.push(t);
+      try {
+        const t = await this.taskRepository.find(id);
+        if (t) treeTargets.push(t);
+      } catch (error) {
+        // 任务不存在，跳过
+      }
     }
     if (!treeTargets.length) throw new Error('Task not found');
 
@@ -106,8 +108,8 @@ export class TaskService {
     if (updateTaskDto.parentId !== undefined) {
       taskUpdate.parent = updateTaskDto.parentId ? ({ id: updateTaskDto.parentId } as Task) : undefined;
     }
-    // 处理父子关系及基本字段更新（委托给树仓储）
-    const entity = await this.taskTreeRepository.updateWithParent(taskUpdate);
+    // 使用标准仓储方法更新
+    const entity = await this.taskRepository.update(taskUpdate);
     return TaskDto.importEntity(entity);
   }
 
@@ -116,10 +118,6 @@ export class TaskService {
     return entities.map((entity) => TaskDto.importEntity(entity));
   }
 
-  async list(filter: TaskListFiltersDto): Promise<TaskDto[]> {
-    const entities = await this.taskRepository.findAll(filter);
-    return entities.map((entity) => TaskDto.importEntity(entity));
-  }
 
   async page(filter: TaskPageFiltersDto): Promise<{
     list: TaskDto[];
@@ -136,7 +134,7 @@ export class TaskService {
     };
   }
 
-  async findById(id: string): Promise<TaskDto> {
+  async find(id: string): Promise<TaskDto> {
     const entity = await this.taskRepository.find(id);
     return TaskDto.importEntity(entity);
   }

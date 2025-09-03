@@ -6,51 +6,6 @@ import { TaskTreeRepository as _TaskTreeRepository } from '@life-toolkit/busines
 export class TaskTreeRepository implements _TaskTreeRepository {
   repo: TreeRepository<Task> = AppDataSource.getTreeRepository(Task);
 
-  async findOne(where: FindOptionsWhere<Task> | FindOptionsWhere<Task>[]): Promise<Task | null> {
-    const repo = this.repo;
-    return await repo.findOne({ where });
-  }
-
-  async createWithParent(task: Task): Promise<Task> {
-    return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Task);
-      const current = treeRepository.create(task);
-
-      if (task.parent && task.parent.id) {
-        const parent = await treeRepository.findOne({
-          where: { id: task.parent.id },
-        });
-        if (!parent) throw new Error(`父任务不存在，ID: ${task.parent.id}`);
-        current.parent = parent;
-      }
-
-      return await treeRepository.save(current);
-    });
-  }
-
-  async updateWithParent(taskUpdate: Task): Promise<Task> {
-    return await AppDataSource.manager.transaction(async (manager) => {
-      const treeRepository = manager.getTreeRepository(Task);
-      const current = await treeRepository.findOne({ where: { id: taskUpdate.id } });
-      if (!current) throw new Error(`任务不存在，ID: ${taskUpdate.id}`);
-
-      Object.assign(current, taskUpdate);
-
-      if (taskUpdate.parent) {
-        if (taskUpdate.parent.id) {
-          const parent = await treeRepository.findOne({
-            where: { id: taskUpdate.parent.id },
-          });
-          if (!parent) throw new Error(`父任务不存在，ID: ${taskUpdate.parent.id}`);
-          current.parent = parent;
-        } else {
-          current.parent = undefined;
-        }
-      }
-
-      return await treeRepository.save(current);
-    });
-  }
 
   async updateParent(params: { task: Task; parentId: string }, treeRepo?: unknown): Promise<void> {
     const repo = (treeRepo as TreeRepository<Task>) ?? this.repo;

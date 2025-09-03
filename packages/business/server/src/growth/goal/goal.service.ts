@@ -1,7 +1,7 @@
-import { GoalDto, CreateGoalDto, UpdateGoalDto, GoalListFiltersDto, GoalPageFiltersDto } from "./dto";
-import { GoalRepository, GoalTreeRepository } from "./goal.repository";
-import { Goal } from "./goal.entity";
-import { GoalStatus } from "@life-toolkit/enum";
+import { GoalDto, CreateGoalDto, UpdateGoalDto, GoalListFiltersDto, GoalPageFiltersDto } from './dto';
+import { GoalRepository, GoalTreeRepository } from './goal.repository';
+import { Goal } from './goal.entity';
+import { GoalStatus } from '@life-toolkit/enum';
 
 export class GoalService {
   goalRepository: GoalRepository;
@@ -32,26 +32,6 @@ export class GoalService {
     return goalDto;
   }
 
-  async createWithParent(createGoalDto: CreateGoalDto): Promise<GoalDto> {
-    const goalEntity = new Goal();
-    goalEntity.name = createGoalDto.name;
-    goalEntity.description = createGoalDto.description;
-    goalEntity.status = createGoalDto.status;
-    goalEntity.importance = createGoalDto.importance;
-    goalEntity.difficulty = createGoalDto.difficulty;
-    goalEntity.type = createGoalDto.type;
-    goalEntity.startAt = createGoalDto.startAt;
-    goalEntity.endAt = createGoalDto.endAt;
-    // parentId 需要通过关系设置
-    if (createGoalDto.parentId) {
-      goalEntity.parent = { id: createGoalDto.parentId } as Goal;
-    }
-    const entity = await this.goalTreeRepository.createWithParent(goalEntity);
-    const goalDto = new GoalDto();
-    goalDto.importEntity(entity);
-    return goalDto;
-  }
-
   async findAll(filter: GoalListFiltersDto): Promise<GoalDto[]> {
     const treeFilters = await this.goalTreeRepository.processTreeFilter({
       excludeIds: filter.excludeIds,
@@ -71,10 +51,6 @@ export class GoalService {
     });
   }
 
-  async list(filter: GoalListFiltersDto): Promise<GoalDto[]> {
-    const list = await this.findAll(filter);
-    return list;
-  }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
     const goalUpdate = new Goal();
@@ -86,37 +62,14 @@ export class GoalService {
     if (updateGoalDto.difficulty !== undefined) goalUpdate.difficulty = updateGoalDto.difficulty;
     if (updateGoalDto.type !== undefined) goalUpdate.type = updateGoalDto.type;
     if (updateGoalDto.parentId !== undefined) {
-      goalUpdate.parent = updateGoalDto.parentId ? { id: updateGoalDto.parentId } as Goal : undefined;
+      goalUpdate.parent = updateGoalDto.parentId ? ({ id: updateGoalDto.parentId } as Goal) : undefined;
     }
     if (updateGoalDto.startAt !== undefined) goalUpdate.startAt = updateGoalDto.startAt;
     if (updateGoalDto.endAt !== undefined) goalUpdate.endAt = updateGoalDto.endAt;
     if (updateGoalDto.doneAt !== undefined) goalUpdate.doneAt = updateGoalDto.doneAt;
     if (updateGoalDto.abandonedAt !== undefined) goalUpdate.abandonedAt = updateGoalDto.abandonedAt;
-    
-    const entity = await this.goalRepository.update(goalUpdate);
-    const goalDto = new GoalDto();
-    goalDto.importEntity(entity);
-    return goalDto;
-  }
 
-  async updateWithParent(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const goalUpdate = new Goal();
-    goalUpdate.id = id;
-    if (updateGoalDto.name !== undefined) goalUpdate.name = updateGoalDto.name;
-    if (updateGoalDto.description !== undefined) goalUpdate.description = updateGoalDto.description;
-    if (updateGoalDto.status !== undefined) goalUpdate.status = updateGoalDto.status;
-    if (updateGoalDto.importance !== undefined) goalUpdate.importance = updateGoalDto.importance;
-    if (updateGoalDto.difficulty !== undefined) goalUpdate.difficulty = updateGoalDto.difficulty;
-    if (updateGoalDto.type !== undefined) goalUpdate.type = updateGoalDto.type;
-    if (updateGoalDto.parentId !== undefined) {
-      goalUpdate.parent = updateGoalDto.parentId ? { id: updateGoalDto.parentId } as Goal : undefined;
-    }
-    if (updateGoalDto.startAt !== undefined) goalUpdate.startAt = updateGoalDto.startAt;
-    if (updateGoalDto.endAt !== undefined) goalUpdate.endAt = updateGoalDto.endAt;
-    if (updateGoalDto.doneAt !== undefined) goalUpdate.doneAt = updateGoalDto.doneAt;
-    if (updateGoalDto.abandonedAt !== undefined) goalUpdate.abandonedAt = updateGoalDto.abandonedAt;
-    
-    const entity = await this.goalTreeRepository.updateWithParent(goalUpdate);
+    const entity = await this.goalRepository.update(goalUpdate);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
@@ -126,7 +79,7 @@ export class GoalService {
     await this.goalTreeRepository.deleteWithTree(id);
   }
 
-  async findById(id: string): Promise<GoalDto> {
+  async find(id: string): Promise<GoalDto> {
     const entity = await this.goalRepository.find(id);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
@@ -152,7 +105,7 @@ export class GoalService {
   ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { list, total, pageNum, pageSize } = await this.goalRepository.page(filter);
     return {
-      list: list.map(entity => {
+      list: list.map((entity) => {
         const goalDto = new GoalDto();
         goalDto.importEntity(entity);
         return goalDto;
@@ -163,8 +116,8 @@ export class GoalService {
     };
   }
 
-  async getDetail(id: string): Promise<GoalDto> {
-    const entity = await this.goalTreeRepository.findWithRelations(id);
+  async findWithRelations(id: string): Promise<GoalDto> {
+    const entity = await this.goalRepository.findWithRelations(id, ['parent', 'children', 'taskList']);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;
@@ -224,7 +177,7 @@ export class GoalService {
 
   async findRoots(): Promise<GoalDto[]> {
     const entities = await this.goalTreeRepository.findRoots();
-    return entities.map(entity => {
+    return entities.map((entity) => {
       const goalDto = new GoalDto();
       goalDto.importEntity(entity);
       return goalDto;
