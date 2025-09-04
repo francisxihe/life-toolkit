@@ -45,7 +45,7 @@ export default class HabitService {
   static async getHabitList(filter: HabitFilter = {}) {
     try {
       const params = mapHabitFilterToParams(filter);
-      return await HabitController.findAll(params);
+      return await HabitController.findByFilter(params);
     } catch (error) {
       Message.error(error.message);
     }

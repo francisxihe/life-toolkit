@@ -73,7 +73,7 @@ export class {Module}Controller {
    * 列表查询{资源名称}
    */
   async list(filter: {Module}ListFilterDto): Promise<{Module}VO.{Module}ListVo> {
-    const list = await this.{module}Service.findAll(filter);
+    const list = await this.{module}Service.findByFilter(filter);
     return {Module}Dto.dtoListToListVo(list);
   }
 

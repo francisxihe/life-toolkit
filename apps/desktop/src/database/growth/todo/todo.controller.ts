@@ -27,9 +27,9 @@ export class TodoController {
     return this.controller.find(id);
   }
 
-  @Get('/find-all')
-  async findAll(@Query() query?: TodoVO.TodoFilterVo) {
-    return this.controller.findAll(query);
+  @Get('/find-by-filter')
+  async findByFilter(@Query() query?: TodoVO.TodoFilterVo) {
+    return this.controller.findByFilter(query);
   }
 
   @Get('/page')

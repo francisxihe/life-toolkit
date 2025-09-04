@@ -18,8 +18,8 @@ export default class TaskController {
     return request<TaskVO.TaskVo>({ method: 'get' })(`/task/find/${id}`);
   }
 
-  static async findAll(body: TaskVO.TaskFilterVo) {
-    return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/find-all`, body);
+  static async findByFilter(body: TaskVO.TaskFilterVo) {
+    return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/find-by-filter`, body);
   }
 
   static async page(body: TaskVO.TaskPageFilterVo) {

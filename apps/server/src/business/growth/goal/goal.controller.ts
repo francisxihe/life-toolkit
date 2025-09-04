@@ -1,36 +1,19 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Body,
-  Param,
-  Query,
-} from "@nestjs/common";
-import { GoalService } from "./goal.service";
-import type { Goal as GoalVO } from "@life-toolkit/vo";
-import {
-  GoalPageFilterDto,
-  GoalFilterDto,
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalDto,
-} from "@life-toolkit/business-server";
-import { Response } from "@/decorators/response.decorator";
+import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { GoalService } from './goal.service';
+import type { Goal as GoalVO } from '@life-toolkit/vo';
+import { GoalPageFilterDto, GoalFilterDto, CreateGoalDto, UpdateGoalDto, GoalDto } from '@life-toolkit/business-server';
+import { Response } from '@/decorators/response.decorator';
 
-@Controller("goal")
+@Controller('goal')
 export class GoalController {
   constructor(private readonly goalService: GoalService) {}
 
   /**
    * 创建目标
    */
-  @Post("create")
+  @Post('create')
   @Response()
-  async create(
-    @Body() createVo: GoalVO.CreateGoalVo
-  ): Promise<GoalVO.GoalModelVo> {
+  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalModelVo> {
     const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
     return dto.exportModelVo();
@@ -39,32 +22,27 @@ export class GoalController {
   /**
    * 分页查询目标列表
    */
-  @Get("page")
+  @Get('page')
   @Response()
   async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
     const { list, total } = await this.goalService.page(filter);
-    return GoalDto.dtoListToPageVo(
-      list,
-      total,
-      filter.pageNum || 1,
-      filter.pageSize || 10
-    );
+    return GoalDto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
 
   /**
    * 列表查询目标
    */
-  @Get("list")
+  @Get('list')
   @Response()
   async list(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalListVo> {
-    const goalList = await this.goalService.findAll(filter);
+    const goalList = await this.goalService.findByFilter(filter);
     return GoalDto.dtoListToListVo(goalList);
   }
 
   /**
    * 获取目标树
    */
-  @Get("tree")
+  @Get('tree')
   @Response()
   async getTree(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalVo[]> {
     const goalTree = await this.goalService.getTree(filter);
@@ -74,9 +52,9 @@ export class GoalController {
   /**
    * 根据ID查询目标详情
    */
-  @Get("detail/:id")
+  @Get('detail/:id')
   @Response()
-  async findDetail(@Param("id") id: string): Promise<GoalVO.GoalVo> {
+  async findDetail(@Param('id') id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findDetail(id);
     return dto.exportVo();
   }
@@ -84,12 +62,9 @@ export class GoalController {
   /**
    * 更新目标
    */
-  @Put("update/:id")
+  @Put('update/:id')
   @Response()
-  async update(
-    @Param("id") id: string,
-    @Body() updateVo: GoalVO.UpdateGoalVo
-  ): Promise<GoalVO.GoalModelVo> {
+  async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalModelVo> {
     const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
     return dto.exportModelVo();
@@ -98,16 +73,16 @@ export class GoalController {
   /**
    * 删除目标
    */
-  @Delete("delete/:id")
+  @Delete('delete/:id')
   @Response()
-  async delete(@Param("id") id: string): Promise<void> {
+  async delete(@Param('id') id: string): Promise<void> {
     await this.goalService.delete(id);
   }
 
   /**
    * 批量完成目标
    */
-  @Put("done/batch")
+  @Put('done/batch')
   @Response()
   async doneBatch(@Body() params: { includeIds: string[] }): Promise<void> {
     await this.goalService.doneBatch(params.includeIds);
@@ -116,9 +91,9 @@ export class GoalController {
   /**
    * 放弃目标
    */
-  @Put("abandon/:id")
+  @Put('abandon/:id')
   @Response()
-  async abandon(@Param("id") id: string): Promise<{ result: boolean }> {
+  async abandon(@Param('id') id: string): Promise<{ result: boolean }> {
     const result = await this.goalService.abandon(id);
     return { result };
   }
@@ -126,16 +101,16 @@ export class GoalController {
   /**
    * 恢复目标
    */
-  @Put("restore/:id")
+  @Put('restore/:id')
   @Response()
-  async restore(@Param("id") id: string): Promise<{ result: boolean }> {
+  async restore(@Param('id') id: string): Promise<{ result: boolean }> {
     const result = await this.goalService.restore(id);
     return { result };
   }
 
-  @Get("findById/:id")
+  @Get('findById/:id')
   @Response()
-  async findById(@Param("id") id: string): Promise<GoalVO.GoalVo> {
+  async findById(@Param('id') id: string): Promise<GoalVO.GoalVo> {
     const dto = await this.goalService.findById(id);
     return dto.exportVo();
   }

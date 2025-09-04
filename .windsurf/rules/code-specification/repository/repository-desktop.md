@@ -114,7 +114,7 @@ export class ModuleRepository {
     return ModuleDto.importEntity(saved);
   }
 
-  async findAll(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
+  async findByFilter(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
     return list.map((item) => ModuleDto.importEntity(item));
@@ -546,7 +546,7 @@ export class ModuleRepository {
     return ModuleDto.importEntity(saved);
   }
 
-  async findAll(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
+  async findByFilter(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
     const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
     return list.map((item) => ModuleDto.importEntity(item));

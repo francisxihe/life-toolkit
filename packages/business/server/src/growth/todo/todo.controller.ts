@@ -57,11 +57,11 @@ export class TodoController {
     return (await this.todoService.find(id)).exportVo();
   }
 
-  @Get('/find-all', { description: '列表查询待办' })
-  async findAll(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
+  @Get('/find-by-filter', { description: '列表查询待办' })
+  async findByFilter(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
     const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
-    const list = await this.todoService.findAll(filter);
+    const list = await this.todoService.findByFilter(filter);
     return {
       list: list.map((todo) => todo.exportVo()),
     };

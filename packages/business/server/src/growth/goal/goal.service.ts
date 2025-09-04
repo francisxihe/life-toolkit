@@ -32,8 +32,8 @@ export class GoalService {
     return goalDto;
   }
 
-  async findAll(filter: GoalFilterDto): Promise<GoalDto[]> {
-    const treeFilters = await this.goalTreeRepository.processTreeFilter({
+  async findByFilter(filter: GoalFilterDto): Promise<GoalDto[]> {
+    const treeFilters = await this.processTreeFilter({
       excludeIds: filter.excludeIds,
       parentId: filter.parentId,
     });
@@ -43,14 +43,13 @@ export class GoalService {
       ...treeFilters,
     };
 
-    const entities = await this.goalRepository.findAll(processedFilter as any);
+    const entities = await this.goalRepository.findByFilter(processedFilter as any);
     return entities.map((entity) => {
       const goalDto = new GoalDto();
       goalDto.importEntity(entity);
       return goalDto;
     });
   }
-
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
     const goalUpdate = new Goal();
@@ -90,11 +89,9 @@ export class GoalService {
 
   async getTree(filter: GoalFilterDto): Promise<GoalDto[]> {
     // 交由仓储层处理树形构建与过滤
-    const entities = await this.goalTreeRepository.getFilteredTree({
-      status: filter.status,
-      keyword: filter.keyword,
-      importance: filter.importance,
-    });
+    const goalFilterDto = new GoalFilterDto();
+    goalFilterDto.importListVo(filter);
+    const entities = await this.getFilteredTree(goalFilterDto);
     return entities.map((entity) => {
       const goalDto = new GoalDto();
       goalDto.importEntity(entity);
@@ -184,5 +181,113 @@ export class GoalService {
       goalDto.importEntity(entity);
       return goalDto;
     });
+  }
+
+  async buildTree(node: Goal): Promise<Goal> {
+    const tree = await this.goalTreeRepository.findDescendantsTree(node);
+    // 过滤软删除
+    const filterDeleted = (n: Goal): Goal | null => {
+      if (n.deletedAt) return null;
+      const children: Goal[] = [];
+      for (const c of n.children || []) {
+        const fc = filterDeleted(c);
+        if (fc) children.push(fc);
+      }
+      n.children = children;
+      return n;
+    };
+    const filtered = filterDeleted(tree);
+    return filtered || node;
+  }
+
+  filterTreeNodes(node: Goal, nodeIdsToInclude: Set<string>): Goal | null {
+    if (!nodeIdsToInclude.has(node.id)) return null;
+    const children: Goal[] = [];
+    for (const child of node.children || []) {
+      const fc = this.filterTreeNodes(child, nodeIdsToInclude);
+      if (fc) children.push(fc);
+    }
+    return { ...node, children } as Goal;
+  }
+
+  async collectIdsByFilter(filter: GoalFilterDto): Promise<Set<string>> {
+    const treeRepo = this.goalTreeRepository;
+    const roots = await treeRepo.findRoots();
+    const res = new Set<string>();
+    for (const r of roots) {
+      const full = await treeRepo.findDescendantsTree(r);
+      const traverse = (n: Goal) => {
+        if (
+          (!filter.status || n.status === filter.status) &&
+          (!filter.keyword || n.name.includes(filter.keyword) || (n.description || '').includes(filter.keyword)) &&
+          (!filter.importance || n.importance === filter.importance)
+        ) {
+          res.add(n.id);
+        }
+        for (const c of n.children || []) traverse(c);
+      };
+      traverse(full);
+    }
+    return res;
+  }
+
+  async getFilteredTree(filter: GoalFilterDto): Promise<Goal[]> {
+    const treeRepo = this.goalTreeRepository;
+    if (!filter.status && !filter.keyword && !filter.importance) {
+      const roots = await treeRepo.findRoots();
+      const trees: Goal[] = [];
+      for (const r of roots) {
+        const full = await this.buildTree(r);
+        trees.push(full);
+      }
+      return trees;
+    }
+
+    const includeIds = await this.collectIdsByFilter(filter);
+    if (includeIds.size === 0) return [];
+
+    const roots = await treeRepo.findRoots();
+    const trees: Goal[] = [];
+    for (const r of roots) {
+      if (includeIds.has(r.id)) {
+        const full = await treeRepo.findDescendantsTree(r);
+        const filtered = this.filterTreeNodes(full, includeIds);
+        if (filtered) trees.push(filtered);
+      }
+    }
+    return trees;
+  }
+
+  async processTreeFilter(filter: {
+    excludeIds?: string[];
+    parentId?: string;
+  }): Promise<{ includeIds?: string[]; excludeIds?: string[] }> {
+    const treeRepo = this.goalTreeRepository;
+    let includeIds: string[] = [];
+    let excludeIds: string[] = [];
+
+    if (filter.excludeIds) {
+      const filter = new GoalFilterDto();
+      filter.excludeIds = filter.excludeIds;
+      const nodes = await this.goalRepository.findByFilter(filter);
+      for (const node of nodes) {
+        const all = await this.goalTreeRepository.findDescendants(node);
+        excludeIds = all.map((n) => n.id);
+        excludeIds.push(node.id);
+      }
+    }
+
+    if (filter.parentId) {
+      const filter = new GoalFilterDto();
+      filter.parentId = filter.parentId;
+      const parent = await this.goalRepository.findByFilter(filter);
+      if (parent.length > 0) {
+        const all = await treeRepo.findDescendants(parent[0]);
+        includeIds = all.map((n) => n.id);
+        includeIds.push(parent[0].id);
+      }
+    }
+
+    return { includeIds, excludeIds };
   }
 }

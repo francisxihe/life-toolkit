@@ -44,11 +44,11 @@ export class GoalController {
     return dto.exportVo();
   }
 
-  @Get('/find-all', { description: '查询目标列表' })
-  async findAll(@Query() goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<GoalVO.GoalListVo> {
+  @Get('/find-by-filter', { description: '查询目标列表' })
+  async findByFilter(@Query() goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<GoalVO.GoalListVo> {
     const goalListFiltersDto = new GoalFilterDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
-    const list = await this.goalService.findAll(goalListFiltersDto);
+    const list = await this.goalService.findByFilter(goalListFiltersDto);
     return GoalDto.dtoListToListVo(list);
   }
 

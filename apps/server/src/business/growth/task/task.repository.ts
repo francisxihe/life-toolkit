@@ -63,7 +63,7 @@ export class TaskRepository {
     return TaskDto.importEntity(entity);
   }
 
-  async findAll(
+  async findByFilter(
     filter: TaskFilterDto & { excludeIds?: string[] }
   ): Promise<TaskDto[]> {
     const where: FindOptionsWhere<Task> = this.buildWhere(filter as any);

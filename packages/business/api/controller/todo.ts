@@ -19,8 +19,8 @@ export default class TodoController {
     return request<TodoVO.TodoVo>({ method: "get" })(`/todo/find/${id}`);
   }
 
-  static async findAll(params: TodoVO.TodoFilterVo) {
-    return request<TodoVO.TodoListVo>({ method: "get" })(`/todo/find-all`, params);
+  static async findByFilter(params: TodoVO.TodoFilterVo) {
+    return request<TodoVO.TodoListVo>({ method: "get" })(`/todo/find-by-filter`, params);
   }
 
   static async page(params: TodoVO.TodoPageFilterVo) {

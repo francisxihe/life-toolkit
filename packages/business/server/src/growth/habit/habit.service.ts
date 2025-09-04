@@ -62,8 +62,8 @@ export class HabitService {
     return HabitDto.importEntity(entity);
   }
 
-  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
-    const entities = await this.habitRepository.findAll(filter);
+  async findByFilter(filter: HabitFilterDto): Promise<HabitDto[]> {
+    const entities = await this.habitRepository.findByFilter(filter);
     return entities.map(entity => HabitDto.importEntity(entity));
   }
 
@@ -109,9 +109,9 @@ export class HabitService {
     const abandonedFilter = { habitId, status: [TodoStatus.ABANDONED] };
     
     const [activeTodos, completedTodos, abandonedTodos] = await Promise.all([
-      this.todoRepository.findAll(activeFilter as any),
-      this.todoRepository.findAll(completedFilter as any),
-      this.todoRepository.findAll(abandonedFilter as any)
+      this.todoRepository.findByFilter(activeFilter as any),
+      this.todoRepository.findByFilter(completedFilter as any),
+      this.todoRepository.findByFilter(abandonedFilter as any)
     ]);
     
     const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
@@ -132,10 +132,10 @@ export class HabitService {
     
     // 使用TodoRepository查询分析数据
     const [allTodos, completedTodos, abandonedTodos, recentTodos] = await Promise.all([
-      this.todoRepository.findAll({ habitId } as any),
-      this.todoRepository.findAll({ habitId, status: [TodoStatus.DONE] } as any),
-      this.todoRepository.findAll({ habitId, status: [TodoStatus.ABANDONED] } as any),
-      this.todoRepository.findAll({ habitId } as any) // 这里需要添加排序和限制逻辑
+      this.todoRepository.findByFilter({ habitId } as any),
+      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.DONE] } as any),
+      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.ABANDONED] } as any),
+      this.todoRepository.findByFilter({ habitId } as any) // 这里需要添加排序和限制逻辑
     ]);
     
     // 对最近的todos进行排序和限制（取最新的10条）

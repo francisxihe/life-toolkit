@@ -19,8 +19,8 @@ export default class HabitController {
     return request<HabitVO.HabitVo>({ method: "get" })(`/habit/find/${id}`);
   }
 
-  static async findAll(body: HabitVO.HabitFilterVo) {
-    return request<HabitVO.HabitListVo>({ method: "get" })(`/habit/find-all`, body);
+  static async findByFilter(body: HabitVO.HabitFilterVo) {
+    return request<HabitVO.HabitListVo>({ method: "get" })(`/habit/find-by-filter`, body);
   }
 
   static async page(body: HabitVO.HabitPageFilterVo) {

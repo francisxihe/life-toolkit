@@ -32,9 +32,9 @@ export class GoalController {
     return this.controller.findWithRelations(id);
   }
 
-  @Get('/find-all')
-  async findAll(@Body() body: GoalVO.GoalFilterVo) {
-    return this.controller.findAll(body);
+  @Get('/find-by-filter')
+  async findByFilter(@Body() body: GoalVO.GoalFilterVo) {
+    return this.controller.findByFilter(body);
   }
 
   @Get('/page')
@@ -42,9 +42,9 @@ export class GoalController {
     return this.controller.page(body);
   }
 
-  @Get('/tree')
-  async tree(@Body() body: GoalVO.GoalFilterVo) {
-    return this.controller.tree(body);
+  @Get('/get-tree')
+  async getTree(@Body() body: GoalVO.GoalFilterVo) {
+    return this.controller.getTree(body);
   }
 
   @Get('/find-roots')

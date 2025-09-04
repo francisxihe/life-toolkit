@@ -69,7 +69,7 @@ export class TaskService {
   }
 
   async deleteByFilter(filter: TaskFilterDto): Promise<void> {
-    const entities = await this.taskRepository.findAll(filter);
+    const entities = await this.taskRepository.findByFilter(filter);
     if (!entities.length) return;
     const toDeleteIds = entities.map((t) => t.id);
 
@@ -118,8 +118,8 @@ export class TaskService {
     return TaskDto.importEntity(entity);
   }
 
-  async findAll(filter: TaskFilterDto): Promise<TaskDto[]> {
-    const entities = await this.taskRepository.findAll(filter);
+  async findByFilter(filter: TaskFilterDto): Promise<TaskDto[]> {
+    const entities = await this.taskRepository.findByFilter(filter);
     return entities.map((entity) => TaskDto.importEntity(entity));
   }
 
@@ -155,7 +155,7 @@ export class TaskService {
   async findByGoalIds(goalIds: string[]): Promise<Task[]> {
     const filter = new TaskFilterDto();
     filter.goalIds = goalIds;
-    return await this.taskRepository.findAll(filter);
+    return await this.taskRepository.findByFilter(filter);
   }
 
   async abandon(id: string): Promise<boolean> {

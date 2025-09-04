@@ -48,7 +48,7 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
     return entity;
   }
 
-  async findAll(filter: FilterDto): Promise<Entity[]> {
+  async findByFilter(filter: FilterDto): Promise<Entity[]> {
     const qb = this.buildQuery(filter);
     return await qb.getMany();
   }

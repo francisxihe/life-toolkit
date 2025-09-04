@@ -90,7 +90,7 @@ export default class GoalService {
 
   static async getGoalList(params: GoalFilterVo = {}) {
     try {
-      return GoalController.findAll(params);
+      return GoalController.findByFilter(params);
     } catch (error) {
       Message.error(error.message);
       throw error;

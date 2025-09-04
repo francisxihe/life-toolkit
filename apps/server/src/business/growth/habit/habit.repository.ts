@@ -64,7 +64,7 @@ export class HabitRepository implements _HabitRepository {
     return dto;
   }
 
-  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
+  async findByFilter(filter: HabitFilterDto): Promise<HabitDto[]> {
     const query = this.buildQuery(filter);
     const habits = await query.getMany();
     return habits.map((habit) => {

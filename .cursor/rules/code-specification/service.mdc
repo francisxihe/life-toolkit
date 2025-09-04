@@ -71,13 +71,13 @@ async create(createDto: CreateModuleDto): Promise<ModuleDto> {
 #### 查询方法族
 ```typescript
 // 查找所有记录
-async findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
-  return await this.moduleRepository.findAll(filter);
+async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
+  return await this.moduleRepository.findByFilter(filter);
 }
 
 // 列表查询（可能包含额外处理）
 async list(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
-  const list = await this.moduleRepository.findAll(filter);
+  const list = await this.moduleRepository.findByFilter(filter);
   return list;
 }
 
@@ -213,7 +213,7 @@ const relatedConfig = {
 ## 🔧 最佳实践
 
 ### 1. 方法命名约定
-- **基础操作**: `create`, `findAll`, `update`, `delete`, `findById`
+- **基础操作**: `create`, `findByFilter`, `update`, `delete`, `findById`
 - **查询变体**: `list` (简单查询), `page` (分页查询)
 - **状态变更**: `markDone`, `markAbandoned`, `restore`
 - **批量操作**: `batchChangeStatus`, `deleteByRelatedIds`
@@ -312,8 +312,8 @@ export class ModuleService {
     return await this.moduleRepository.findById((module as any).id);
   }
 
-  async findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
-    return await this.moduleRepository.findAll(filter);
+  async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
+    return await this.moduleRepository.findByFilter(filter);
   }
 
   async page(

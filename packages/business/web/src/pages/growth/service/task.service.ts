@@ -85,7 +85,7 @@ export default class TaskService {
 
   static async getTaskList(params: TaskFilterVo = {}) {
     try {
-      return TaskController.findAll(params);
+      return TaskController.findByFilter(params);
     } catch (error) {
       Message.error(error.message);
     }

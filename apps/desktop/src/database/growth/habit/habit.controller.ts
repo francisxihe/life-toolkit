@@ -27,9 +27,9 @@ export class HabitController {
     return this.controller.find(id);
   }
 
-  @Get('/find-all')
-  async findAll(@Body() body: HabitVO.HabitFilterVo) {
-    return this.controller.findAll(body);
+  @Get('/find-by-filter')
+  async findByFilter(@Body() body: HabitVO.HabitFilterVo) {
+    return this.controller.findByFilter(body);
   }
 
   @Get('/page')

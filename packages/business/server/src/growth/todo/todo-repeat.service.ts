@@ -96,8 +96,8 @@ export class TodoRepeatService {
     return todoRepeatDto;
   }
 
-  async findAll(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
-    const entities = await this.todoRepeatRepository.findAll(filter);
+  async findByFilter(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
+    const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoRepeatDto = new TodoRepeatDto();
       todoRepeatDto.importEntity(entity);
@@ -106,7 +106,7 @@ export class TodoRepeatService {
   }
 
   async list(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
-    const entities = await this.todoRepeatRepository.findAll(filter);
+    const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoRepeatDto = new TodoRepeatDto();
       todoRepeatDto.importEntity(entity);
@@ -195,7 +195,7 @@ export class TodoRepeatService {
     repeatFilter.currentDateStart = filter.planDateStart as any;
     repeatFilter.currentDateEnd = filter.planDateEnd as any;
 
-    const repeatEntities = await this.todoRepeatRepository.findAll(repeatFilter);
+    const repeatEntities = await this.todoRepeatRepository.findByFilter(repeatFilter);
     const results: TodoDto[] = [];
 
     for (const repeatEntity of repeatEntities) {

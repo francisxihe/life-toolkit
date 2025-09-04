@@ -23,8 +23,8 @@ export default class GoalController {
     return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find-with-relations/${id}`);
   }
 
-  static async findAll(body: GoalVO.GoalFilterVo) {
-    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/find-all`, body);
+  static async findByFilter(body: GoalVO.GoalFilterVo) {
+    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/find-by-filter`, body);
   }
 
   static async page(body: GoalVO.GoalPageFilterVo) {

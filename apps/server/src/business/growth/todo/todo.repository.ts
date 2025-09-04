@@ -43,7 +43,7 @@ export class TodoRepository {
   }
 
 
-  async findAll(filter: TodoFilterDto): Promise<TodoDto[]> {
+  async findByFilter(filter: TodoFilterDto): Promise<TodoDto[]> {
     const todoList = await this.todoRepository.find({
       where: this.buildWhere(filter),
     });

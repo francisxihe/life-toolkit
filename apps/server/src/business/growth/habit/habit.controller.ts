@@ -99,7 +99,7 @@ export class HabitController {
   @Get("list")
   @Response()
   async list(@Query() filter: HabitFilterDto) {
-    const habits = await this.habitService.findAll(filter);
+    const habits = await this.habitService.findByFilter(filter);
     return HabitDto.dtoListToListVo(habits);
   }
 

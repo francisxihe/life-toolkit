@@ -46,7 +46,7 @@ export interface ModuleRepository {
   ): Promise<ModuleDto>;
 
   // 查询操作
-  findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
+  findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
   page(filter: ModulePageFiltersDto): Promise<{
     list: ModuleDto[];
     total: number;
@@ -120,7 +120,7 @@ createWithExtras(
 ### 查询方法
 ```typescript
 // 查询全部（支持过滤条件）
-findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
+findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
 
 // 分页查询
 page(filter: ModulePageFiltersDto): Promise<{
@@ -328,7 +328,7 @@ export interface ModuleRepository {
   ): Promise<ModuleDto>;
 
   // 查询操作
-  findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
+  findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
   page(filter: ModulePageFiltersDto): Promise<{
     list: ModuleDto[];
     total: number;

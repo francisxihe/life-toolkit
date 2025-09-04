@@ -10,8 +10,8 @@ export function registerUserIpcHandlers(): void {
     return await userService.createUser(userData);
   });
 
-  ipcMain.handle('/user/findAll', async () => {
-    return await userService.findAll();
+  ipcMain.handle('/user/findByFilter', async () => {
+    return await userService.findByFilter();
   });
 
   ipcMain.handle('/user/detail', async (_, id) => {

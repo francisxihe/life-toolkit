@@ -65,8 +65,8 @@ export class TodoService {
     return todoDto;
   }
 
-  async findAll(filter: TodoFilterDto): Promise<TodoDto[]> {
-    const entities = await this.todoRepository.findAll(filter);
+  async findByFilter(filter: TodoFilterDto): Promise<TodoDto[]> {
+    const entities = await this.todoRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoDto = new TodoDto();
       todoDto.importEntity(entity);
@@ -94,7 +94,7 @@ export class TodoService {
   // ====== 业务逻辑编排 ======
 
   async listWithRepeat(filter: TodoFilterDto): Promise<TodoDto[]> {
-    const todoEntities = await this.todoRepository.findAll(filter);
+    const todoEntities = await this.todoRepository.findByFilter(filter);
     const todoDtoList = todoEntities.map((entity) => {
       const todoDto = new TodoDto();
       todoDto.importEntity(entity);

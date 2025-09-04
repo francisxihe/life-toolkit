@@ -33,11 +33,11 @@ export class TaskController {
     return dto.exportVo();
   }
 
-  @Get('/find-all', { description: '查询任务列表' })
-  async findAll(@Query() taskListFiltersVo?: TaskVO.TaskFilterVo): Promise<TaskVO.TaskListVo> {
+  @Get('/find-by-filter', { description: '查询任务列表' })
+  async findByFilter(@Query() taskListFiltersVo?: TaskVO.TaskFilterVo): Promise<TaskVO.TaskListVo> {
     const filter = new TaskFilterDto();
     if (taskListFiltersVo) filter.importListVo(taskListFiltersVo);
-    const list = await this.taskService.findAll(filter);
+    const list = await this.taskService.findByFilter(filter);
     return TaskDto.dtoListToListVo(list);
   }
 

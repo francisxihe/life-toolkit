@@ -27,9 +27,9 @@ export class TaskController {
     return this.controller.find(id);
   }
 
-  @Get('/find-all')
-  async findAll(@Body() body: TaskVO.TaskFilterVo) {
-    return this.controller.findAll(body);
+  @Get('/find-by-filter')
+  async findByFilter(@Body() body: TaskVO.TaskFilterVo) {
+    return this.controller.findByFilter(body);
   }
 
   @Get('/page')

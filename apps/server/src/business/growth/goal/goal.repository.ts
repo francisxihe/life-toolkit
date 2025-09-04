@@ -43,7 +43,7 @@ export class GoalRepository {
     return GoalDto.importEntity(entity);
   }
 
-  async findAll(filter: GoalFilterDto): Promise<GoalDto[]> {
+  async findByFilter(filter: GoalFilterDto): Promise<GoalDto[]> {
     const query = this.buildQuery(filter);
     const entities = await query.getMany();
     return entities.map((entity) => GoalDto.importEntity(entity));

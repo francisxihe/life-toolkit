@@ -109,7 +109,7 @@ export class ModuleRepository {
     return this.findById(resource.id);
   }
 
-  async findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
+  async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
     const resourceList = await this.moduleRepository.find({
       where: this.buildWhere(filter),
     });
@@ -647,7 +647,7 @@ export class ModuleRepository {
     return this.findById(resource.id);
   }
 
-  async findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
+  async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
     const resourceList = await this.moduleRepository.find({
       where: this.buildWhere(filter),
     });

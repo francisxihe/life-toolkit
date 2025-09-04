@@ -11,7 +11,7 @@ export class EventsService {
     private eventsRepository: Repository<Event>
   ) {}
 
-  findAll(): Promise<Event[]> {
+  findByFilter(): Promise<Event[]> {
     return this.eventsRepository.find();
   }
 

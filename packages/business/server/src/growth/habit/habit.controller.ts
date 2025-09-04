@@ -34,11 +34,11 @@ export class HabitController {
     return dto.exportVo();
   }
 
-  @Get('/find-all', { description: '查询习惯列表' })
-  async findAll(@Query() habitListFiltersVo?: HabitVO.HabitFilterVo): Promise<HabitVO.HabitListVo> {
+  @Get('/find-by-filter', { description: '查询习惯列表' })
+  async findByFilter(@Query() habitListFiltersVo?: HabitVO.HabitFilterVo): Promise<HabitVO.HabitListVo> {
     const filter = new HabitFilterDto();
     if (habitListFiltersVo) filter.importListVo(habitListFiltersVo);
-    const list = await this.habitService.findAll(filter);
+    const list = await this.habitService.findByFilter(filter);
     return HabitDto.dtoListToListVo(list);
   }
 

@@ -263,7 +263,7 @@ export interface ModuleRepository {
   createWithExtras(createModuleDto: CreateModuleDto, extras: Partial<Module>): Promise<ModuleDto>;
 
   // 查询操作
-  findAll(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
+  findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]>;
   page(filter: ModulePageFiltersDto): Promise<{
     list: ModuleDto[];
     total: number;
@@ -533,7 +533,7 @@ export class ModuleController {
     const filterDto = ModuleListFilterDto.importVo(filter);
 
     // 调用业务服务
-    const dtos = await this.moduleService.findAll(filterDto);
+    const dtos = await this.moduleService.findByFilter(filterDto);
 
     // DTO → VO 转换
     return dtos.map(dto => dto.exportVo());

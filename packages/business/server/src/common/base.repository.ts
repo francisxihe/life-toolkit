@@ -12,7 +12,7 @@ export interface BaseRepository<Entity, FilterDto> {
   softDeleteByFilter(filter: FilterDto): Promise<DeleteResult>;
   find(id: string): Promise<Entity>;
   findWithRelations(id: string, relations?: string[]): Promise<Entity>;
-  findAll(filter: FilterDto): Promise<Entity[]>;
+  findByFilter(filter: FilterDto): Promise<Entity[]>;
   page(filter: FilterDto & PageFilterDto): Promise<{
     list: Entity[];
     total: number;
