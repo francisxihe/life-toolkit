@@ -13,8 +13,6 @@ export class TodoController {
     private readonly todoRepeatService: TodoRepeatService
   ) {}
 
-  // ==============CURD==================
-
   @Post('/create', { description: '创建待办' })
   async create(@Body() createTodoVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoVo> {
     if (createTodoVo.repeat) {
@@ -81,8 +79,6 @@ export class TodoController {
       pageSize,
     };
   }
-
-  // ==============业务操作==================
 
   @Put('/done-batch', { description: '批量完成待办' })
   async doneBatch(@Body() body?: TodoVO.TodoFilterVo): Promise<any> {

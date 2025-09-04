@@ -26,7 +26,7 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   async softDelete(id: Entity['id']): Promise<DeleteResult> {
     return await this.repo.softDelete(id);
   }
-
+ 
   async softDeleteByFilter(filter: FilterDto): Promise<DeleteResult> {
     const qb = this.buildQuery(filter);
     return await qb.softDelete().execute();

@@ -6,7 +6,7 @@
   "main": "dist/main/index.js",
   "author": "francisxihe",
   "scripts": {
-    "dev": "electron-vite dev ",
+    "dev": "electron-vite dev",
     "build": "electron-vite build",
     "package": "electron-builder",
     "build:mac": "electron-vite build && electron-builder --mac --dir",

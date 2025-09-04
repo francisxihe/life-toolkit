@@ -1,60 +1,57 @@
 // 主进程入口文件
-import "reflect-metadata";
-import { fileURLToPath } from "url";
-import path from "path";
-import fs from "fs";
+import 'reflect-metadata';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 
 // 在ESM环境中导入Electron
-import electron from "electron";
+import electron from 'electron';
 
 const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 
 // 导入数据库初始化功能
-import { initDB, setupDatabaseCleanup } from "../database/init";
-import { initIpcRouter } from "./ipc-handlers";
+import { initDB, setupDatabaseCleanup } from '../database/init';
+import { initIpcRouter } from './ipc-handlers';
 
 // 是否为开发环境
-const isDev = process.env.NODE_ENV === "development";
+const isDev = process.env.NODE_ENV === 'development';
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = path.dirname(currentFilePath);
 
 // 输出路径信息，便于调试
-console.log("当前文件路径:", currentFilePath);
-console.log("当前目录路径:", currentDirPath);
-console.log("[热加载测试] 主进程已启动");
+console.log('当前文件路径:', currentFilePath);
+console.log('当前目录路径:', currentDirPath);
+console.log('[热加载测试] 主进程已启动');
 
 // 获取最终的预加载脚本路径
 function getPreloadPath() {
   // 可能的预加载脚本路径
   const possiblePaths = [
-    path.join(currentDirPath, "../../dist/preload/index.cjs"),
-    path.join(currentDirPath, "../preload/index.cjs"),
-    path.join(process.cwd(), "dist/preload/index.cjs"),
-    path.join(__dirname, "../../dist/preload/index.cjs"),
-    path.join(__dirname, "../preload/index.cjs"),
+    path.join(currentDirPath, '../../dist/preload/index.cjs'),
+    path.join(currentDirPath, '../preload/index.cjs'),
+    path.join(process.cwd(), 'dist/preload/index.cjs'),
+    path.join(__dirname, '../../dist/preload/index.cjs'),
+    path.join(__dirname, '../preload/index.cjs'),
   ];
 
   // 检查每个可能的路径
   for (const p of possiblePaths) {
-    console.log("检查预加载脚本路径:", p);
+    console.log('检查预加载脚本路径:', p);
     try {
       if (fs.existsSync(p)) {
-        console.log("找到预加载脚本:", p);
+        console.log('找到预加载脚本:', p);
         return p;
       }
     } catch (error) {
-      console.error("检查路径出错:", p, error);
+      console.error('检查路径出错:', p, error);
     }
   }
 
   // 找不到预加载脚本，返回默认路径
-  console.warn("找不到预加载脚本，使用默认路径");
-  return path.join(
-    currentDirPath,
-    isDev ? "../../dist/preload/index.cjs" : "../preload/index.cjs"
-  );
+  console.warn('找不到预加载脚本，使用默认路径');
+  return path.join(currentDirPath, isDev ? '../../dist/preload/index.cjs' : '../preload/index.cjs');
 }
 
 // electron-vite 已经提供了内置的热加载机制，无需手动实现
@@ -68,10 +65,10 @@ if (isDev) {
   if (process.env.ELECTRON_RENDERER_URL) {
     DEFAULT_URL = process.env.ELECTRON_RENDERER_URL;
   } else {
-    DEFAULT_URL = "http://localhost:8100/";
+    DEFAULT_URL = 'http://localhost:8100/';
   }
 } else {
-  DEFAULT_URL = `file://${path.join(__dirname, "../renderer/index.html")}`;
+  DEFAULT_URL = `file://${path.join(__dirname, '../renderer/index.html')}`;
 }
 
 function createWindow() {
@@ -90,10 +87,10 @@ function createWindow() {
   });
 
   // 加载默认URL
-  mainWindow.loadURL(DEFAULT_URL + "/growth/habit/habit-list");
+  mainWindow.loadURL(DEFAULT_URL + '/growth/habit/habit-list');
 
   // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
-  mainWindow.webContents.once("did-finish-load", () => {
+  mainWindow.webContents.once('did-finish-load', () => {
     if (isDev) {
       // 开发环境下延迟显示，避免热更新时抢夺焦点
       if (mainWindow && !mainWindow.isDestroyed()) {
@@ -107,7 +104,7 @@ function createWindow() {
 
   // 在开发环境中插入脚本解决跨域问题
   if (isDev) {
-    mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow.webContents.on('did-finish-load', () => {
       mainWindow.webContents
         .executeJavaScript(
           `
@@ -119,7 +116,7 @@ function createWindow() {
         }
       `
         )
-        .catch((err) => console.error("执行脚本失败:", err));
+        .catch((err) => console.error('执行脚本失败:', err));
     });
   }
 
@@ -130,17 +127,14 @@ function createWindow() {
 
   // 允许打开外部链接
   mainWindow.webContents.setWindowOpenHandler((details: { url: string }) => {
-    if (
-      details.url.startsWith("https://") ||
-      details.url.startsWith("http://")
-    ) {
+    if (details.url.startsWith('https://') || details.url.startsWith('http://')) {
       shell.openExternal(details.url);
     }
-    return { action: "deny" };
+    return { action: 'deny' };
   });
 
   // 窗口关闭时释放引用
-  mainWindow.on("closed", () => {
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
@@ -150,9 +144,9 @@ app.whenReady().then(async () => {
   // 初始化数据库
   try {
     await initDB();
-    console.log("数据库初始化完成");
+    console.log('数据库初始化完成');
   } catch (error) {
-    console.error("数据库初始化失败:", error);
+    console.error('数据库初始化失败:', error);
   }
 
   // 设置数据库清理
@@ -163,7 +157,7 @@ app.whenReady().then(async () => {
 
   createWindow();
 
-  app.on("activate", () => {
+  app.on('activate', () => {
     // 在macOS上，当点击dock图标且没有其他窗口打开时，通常需要在应用程序中重新创建一个窗口
     if (mainWindow === null) {
       createWindow();
@@ -172,24 +166,24 @@ app.whenReady().then(async () => {
 });
 
 // 当所有窗口关闭时退出应用
-app.on("window-all-closed", () => {
+app.on('window-all-closed', () => {
   // 在macOS上，用户通常希望应用在点X后继续运行，直到明确退出
-  if (process.platform !== "darwin") {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 // 提供加载新URL的方法
-ipcMain.handle("load-url", async (_: any, url: string) => {
+ipcMain.handle('load-url', async (_: any, url: string) => {
   if (mainWindow) {
     await mainWindow.loadURL(url);
     return { success: true };
   }
-  return { success: false, error: "窗口未创建" };
+  return { success: false, error: '窗口未创建' };
 });
 
 // 提供获取应用信息的方法
-ipcMain.handle("get-app-info", () => {
+ipcMain.handle('get-app-info', () => {
   return {
     version: app.getVersion(),
     platform: process.platform,
@@ -197,7 +191,7 @@ ipcMain.handle("get-app-info", () => {
 });
 
 // 设置CSP安全策略
-app.on("web-contents-created", (_, contents) => {
+app.on('web-contents-created', (_, contents) => {
   // 开发环境中，关闭CSP校验
   if (isDev) {
     contents.session.webRequest.onHeadersReceived((details, callback) => {
@@ -205,7 +199,7 @@ app.on("web-contents-created", (_, contents) => {
         responseHeaders: {
           ...details.responseHeaders,
           // 删除任何现有的CSP头
-          "Content-Security-Policy": [""],
+          'Content-Security-Policy': [''],
         },
       });
     });
@@ -215,7 +209,7 @@ app.on("web-contents-created", (_, contents) => {
       callback({
         responseHeaders: {
           ...details.responseHeaders,
-          "Content-Security-Policy": [
+          'Content-Security-Policy': [
             "default-src 'self'; script-src 'self'; connect-src 'self' https://*; img-src 'self' data: https:; style-src 'self' 'unsafe-inline';",
           ],
         },

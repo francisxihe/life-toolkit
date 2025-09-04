@@ -1,26 +1,16 @@
-import { TodoRepository } from "./todo.repository";
-import { TodoRepeatRepository } from "./todo-repeat.repository";
-import {
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoPageFilterDto,
-  TodoFilterDto,
-  TodoDto,
-  UpdateTodoRepeatDto,
-} from "./dto";
-import { Todo } from "./todo.entity";
-import { TodoStatus, TodoSource } from "@life-toolkit/enum";
-import { TodoRepeatService } from "./todo-repeat.service";
+import { TodoRepository } from './todo.repository';
+import { TodoRepeatRepository } from './todo-repeat.repository';
+import { CreateTodoDto, UpdateTodoDto, TodoPageFilterDto, TodoFilterDto, TodoDto, UpdateTodoRepeatDto } from './dto';
+import { Todo } from './todo.entity';
+import { TodoStatus, TodoSource } from '@life-toolkit/enum';
+import { TodoRepeatService } from './todo-repeat.service';
 
 export class TodoService {
   protected todoRepository: TodoRepository;
   protected todoRepeatRepository: TodoRepeatRepository;
   protected todoRepeatService: TodoRepeatService;
 
-  constructor(
-    todoRepository: TodoRepository,
-    todoRepeatRepository: TodoRepeatRepository
-  ) {
+  constructor(todoRepository: TodoRepository, todoRepeatRepository: TodoRepeatRepository) {
     this.todoRepository = todoRepository;
     this.todoRepeatRepository = todoRepeatRepository;
     this.todoRepeatService = new TodoRepeatService(todoRepeatRepository);
@@ -29,20 +19,7 @@ export class TodoService {
   // ====== 基础 CRUD ======
 
   async create(createTodoDto: CreateTodoDto): Promise<TodoDto> {
-    const todoEntity: Partial<Todo> = {
-      name: createTodoDto.name,
-      description: createTodoDto.description,
-      status: createTodoDto.status ?? TodoStatus.TODO,
-      importance: createTodoDto.importance,
-      urgency: createTodoDto.urgency,
-      tags: createTodoDto.tags,
-      planDate: createTodoDto.planDate,
-      planStartAt: createTodoDto.planStartAt,
-      planEndAt: createTodoDto.planEndAt,
-      taskId: createTodoDto.taskId,
-      source: TodoSource.MANUAL,
-    };
-    const entity = await this.todoRepository.create(todoEntity as Todo);
+    const entity = await this.todoRepository.create(createTodoDto.exportCreateEntity());
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -67,7 +44,7 @@ export class TodoService {
     if (updateTodoDto.doneAt !== undefined) todoUpdate.doneAt = updateTodoDto.doneAt;
     if (updateTodoDto.abandonedAt !== undefined) todoUpdate.abandonedAt = updateTodoDto.abandonedAt;
     if (updateTodoDto.taskId !== undefined) todoUpdate.taskId = updateTodoDto.taskId;
-    
+
     const entity = await this.todoRepository.update(todoUpdate);
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
@@ -97,7 +74,6 @@ export class TodoService {
     });
   }
 
-
   async page(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
     total: number;
@@ -124,8 +100,7 @@ export class TodoService {
       todoDto.importEntity(entity);
       return todoDto;
     });
-    const todoRepeatDtoList =
-      await this.todoRepeatService.generateTodosInRange(filter);
+    const todoRepeatDtoList = await this.todoRepeatService.generateTodosInRange(filter);
 
     // 合并并去重：优先保留普通待办；
     const map = new Map<string, TodoDto>();
@@ -134,9 +109,7 @@ export class TodoService {
       if (!map.has(todoRepeatDto.id)) map.set(todoRepeatDto.id, todoRepeatDto);
     });
 
-    return Array.from(map.values()).sort(
-      (a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime()
-    );
+    return Array.from(map.values()).sort((a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime());
   }
 
   async detailWithRepeat(id: string): Promise<TodoDto> {
@@ -155,7 +128,7 @@ export class TodoService {
     if (repeatTodo) {
       return this.todoRepeatService.generateTodo(repeatTodo);
     }
-    throw new Error("未找到待办");
+    throw new Error('未找到待办');
   }
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {
