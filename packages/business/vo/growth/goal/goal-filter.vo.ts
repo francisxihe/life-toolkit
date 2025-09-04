@@ -26,3 +26,5 @@ export type GoalPageVo = {
   pageNum: number;
   pageSize: number;
 };
+
+export type GoalTreeVo = GoalVo[];

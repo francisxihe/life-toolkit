@@ -1,12 +1,6 @@
 import { Controller, Post, Put, Get, Delete, Body, Param, Query } from '@business/decorators';
 import type { Goal as GoalVO } from '@life-toolkit/vo';
-import {
-  GoalFilterDto,
-  GoalPageFilterDto,
-  CreateGoalDto,
-  UpdateGoalDto,
-  GoalDto,
-} from '@life-toolkit/business-server';
+import { GoalFilterDto, GoalPageFilterDto, CreateGoalDto, UpdateGoalDto, GoalDto } from '@life-toolkit/business-server';
 import { GoalService } from './goal.service';
 
 @Controller('/goal')
@@ -61,11 +55,11 @@ export class GoalController {
   }
 
   @Get('/get-tree', { description: '查询目标树形结构' })
-  async getTree(@Query() goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<GoalVO.GoalListVo> {
+  async getTree(@Query() goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<GoalVO.GoalTreeVo> {
     const goalListFiltersDto = new GoalFilterDto();
     goalListFiltersDto.importListVo(goalListFiltersVo ?? {});
     const list = await this.goalService.getTree(goalListFiltersDto);
-    return GoalDto.dtoListToListVo(list);
+    return list.map((dto) => dto.exportVo());
   }
 
   @Get('/find-roots', { description: '查询根目标列表' })

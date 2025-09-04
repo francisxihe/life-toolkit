@@ -13,6 +13,14 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   // Entity → DTO (实例方法)
   importEntity(entity: Habit) {
     Object.assign(this, BaseMapper.entityToDto(entity));
+    this.name = entity.name;
+    this.description = entity.description;
+    this.status = entity.status;
+    this.importance = entity.importance;
+    this.difficulty = entity.difficulty;
+    this.startDate = entity.startDate;
+    this.targetDate = entity.targetDate;
+    
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.goals) {
       this.goals = entity.goals.map((goal) => {

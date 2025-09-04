@@ -17,10 +17,21 @@ export class GoalDto extends IntersectionType(
   // Entity → DTO (实例方法)
   importEntity(entity: Goal) {
     Object.assign(this, BaseMapper.entityToDto(entity));
+    this.name = entity.name;
+    this.description = entity.description;
+    this.status = entity.status;
+    this.importance = entity.importance;
+    this.difficulty = entity.difficulty;
+    this.type = entity.type;
+    this.startAt = entity.startAt;
+    this.endAt = entity.endAt;
+    this.doneAt = entity.doneAt;
+    this.abandonedAt = entity.abandonedAt;
+    
     // 关联对象映射（浅拷贝，避免循环引用）
-    if (entity.parent) this.parent = entity.parent as any;
-    if (entity.children) this.children = entity.children as any;
-    if (entity.taskList) this.taskList = entity.taskList as any;
+    if (entity.parent) this.parent = GoalDto.importEntity(entity.parent);
+    if (entity.children) this.children = entity.children.map((child) => GoalDto.importEntity(child));
+    if (entity.taskList) this.taskList = entity.taskList.map((task) => TaskDto.importEntity(task));
   }
 
   // Entity → DTO (静态方法)
