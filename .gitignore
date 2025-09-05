@@ -14,6 +14,7 @@ coverage
 out/
 build
 dist
+release
 
 # vite
 .vite/

@@ -30,6 +30,7 @@ export default defineConfig({
           "electron-devtools-installer",
           "sqlite3",
           "typeorm",
+          "typeorm-naming-strategies",
           "reflect-metadata",
           "class-validator",
           "class-transformer",
@@ -40,7 +41,7 @@ export default defineConfig({
           /^immutability-helper/,
         ],
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
       // 监听整个 src 目录的变化
       watch:
@@ -74,7 +75,6 @@ export default defineConfig({
           "class-validator",
           "class-transformer",
           "uuid",
-          /^@life-toolkit\/components-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
@@ -84,7 +84,7 @@ export default defineConfig({
           entryFileNames: "[name].cjs",
         },
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
     },
   },
@@ -135,13 +135,12 @@ export default defineConfig({
       rollupOptions: {
         input: path.resolve(currentDirPath, "src/render/index.html"),
         external: [
-          /^@life-toolkit\/components-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
         ],
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
     },
     optimizeDeps: {

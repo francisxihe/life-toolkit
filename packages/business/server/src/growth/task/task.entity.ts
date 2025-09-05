@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { BaseEntity } from '@business/common';
 import { TaskStatus } from '@life-toolkit/enum';
 import { Goal } from '../goal/goal.entity';

@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { BaseEntity } from '@business/common';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import { Task } from '../task';

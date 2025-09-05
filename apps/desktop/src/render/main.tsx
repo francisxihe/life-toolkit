@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { createRoot } from 'react-dom/client';
 import LifeToolkitApp from '@life-toolkit/business-web';
 

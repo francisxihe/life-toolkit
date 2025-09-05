@@ -87,7 +87,12 @@ function createWindow() {
   });
 
   // 加载默认URL
-  mainWindow.loadURL(DEFAULT_URL + '/growth/habit/habit-list');
+  if (isDev) {
+    mainWindow.loadURL(DEFAULT_URL + '/growth/habit/habit-list');
+  } else {
+    // 生产环境直接加载 index.html，路由由前端处理
+    mainWindow.loadURL(DEFAULT_URL);
+  }
 
   // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
   mainWindow.webContents.once('did-finish-load', () => {

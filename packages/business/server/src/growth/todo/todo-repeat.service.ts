@@ -17,7 +17,7 @@ import {
 import { Todo } from "./todo.entity";
 import { TodoRepeat } from "./todo-repeat.entity";
 import { RepeatEndMode, Repeat as RepeatConfig } from "@life-toolkit/components-repeat/types";
-import { calculateNextDate } from "@life-toolkit/components-repeat/common";
+import { calculateNextDate } from "@life-toolkit/components-repeat/common/calculateNextDate";
 import { TodoStatus, TodoSource } from "@life-toolkit/enum";
 import dayjs from "dayjs";
 
