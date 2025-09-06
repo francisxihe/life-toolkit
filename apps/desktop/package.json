@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@life-toolkit/business-server": "workspace:*",
-    "@life-toolkit/calendar": "workspace:*",
+    "chinese-holiday-calendar": "0.0.1",
     "@life-toolkit/business-web": "workspace:*",
     "@life-toolkit/electron-ipc-router": "workspace:*",
     "@life-toolkit/enum": "workspace:*",

@@ -9,7 +9,7 @@ import {
   YearlyType,
   TimeUnit,
 } from "../types";
-import { getNextWorkday, getNextRestDay } from "@life-toolkit/calendar";
+import { getNextWorkday, getNextRestDay } from "chinese-holiday-calendar";
 
 /**
  * 根据重复配置计算下一个日期

@@ -34,7 +34,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@life-toolkit/calendar": "workspace:*",
+    "chinese-holiday-calendar": "0.0.1",
     "@life-toolkit/common-web-utils": "workspace:*",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21"
