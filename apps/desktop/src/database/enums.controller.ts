@@ -2,7 +2,7 @@ import { ipcMain } from "electron";
 import type {
   RouteDef,
   RestHandlerCtx,
-} from "@life-toolkit/electron-ipc-router";
+} from "electron-ipc-restful";
 import {
   TodoStatus,
   TodoSource,

@@ -21,7 +21,7 @@
     "@life-toolkit/business-server": "workspace:*",
     "chinese-holiday-calendar": "0.0.1",
     "@life-toolkit/business-web": "workspace:*",
-    "@life-toolkit/electron-ipc-router": "workspace:*",
+    "electron-ipc-restful": "0.0.1",
     "@life-toolkit/enum": "workspace:*",
     "@life-toolkit/mapped-types": "workspace:*",
     "@life-toolkit/share-types": "workspace:*",

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from 'electron-ipc-restful';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 import { TodoController as _TodoController } from '@life-toolkit/business-server';
 import { todoService, todoRepeatService } from './todo.service';

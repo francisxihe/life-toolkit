@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from 'electron-ipc-restful';
 import type { Task as TaskVO } from '@life-toolkit/vo';
 import { TaskController as _TaskController } from '@life-toolkit/business-server';
 import { taskService } from './task.service';
