@@ -1,37 +1,89 @@
-import { IsOptional, IsString, IsDateString } from "class-validator";
-import { PageDto } from "../../../base/page.dto";
-import { TaskDto } from "./task-model.dto";
-import { PickType, IntersectionType, PartialType } from "../../../common/mapped-types";
+import { PageFilterDto } from '../../../common';
+import { TaskDto } from './task-model.dto';
+import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
+import { TaskFilterVo, TaskPageFilterVo } from '@life-toolkit/vo/growth/task';
+import { BaseFilterDto, importBaseVo } from '@business/common';
 
-export class TaskListFilterDto extends PartialType(
-  PickType(TaskDto, ["importance", "urgency", "status", "startAt", "endAt"] as const)
+export class TaskFilterDto extends IntersectionType(
+  BaseFilterDto,
+  PartialType(PickType(TaskDto, ['importance', 'urgency', 'status']))
 ) {
-  /** 搜索关键词 */
-  keyword?: string;
+  /** 开始日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  startDateStart?: string;
+
+  /** 开始日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  startDateEnd?: string;
+
+  /** 结束日期范围 - 开始 */
+  @IsDateString()
+  @IsOptional()
+  endDateStart?: string;
+
+  /** 结束日期范围 - 结束 */
+  @IsDateString()
+  @IsOptional()
+  endDateEnd?: string;
 
   /** 完成开始日期 */
+  @IsDateString()
+  @IsOptional()
   doneDateStart?: string;
 
   /** 完成结束日期 */
+  @IsDateString()
+  @IsOptional()
   doneDateEnd?: string;
 
   /** 放弃开始日期 */
+  @IsDateString()
+  @IsOptional()
   abandonedDateStart?: string;
 
   /** 放弃结束日期 */
+  @IsDateString()
+  @IsOptional()
   abandonedDateEnd?: string;
 
-  /** 目标ID */
+  /** 目标ID列表 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
   goalIds?: string[];
 
-  /** 不包含自身 */
-  withoutSelf?: boolean;
-
   /** 任务ID */
+  @IsString()
+  @IsOptional()
   id?: string;
+
+  importListVo(filterVo: TaskFilterVo) {
+    importVo(filterVo, this);
+  }
 }
 
-export class TaskPageFilterDto extends IntersectionType(
-  PageDto,
-  TaskListFilterDto
-) {}
+export class TaskPageFilterDto extends IntersectionType(PageFilterDto, TaskFilterDto) {
+  importPageVo(filterVo: TaskPageFilterVo) {
+    importVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+function importVo(filterVo: TaskFilterVo, filterDto: TaskFilterDto) {
+  importBaseVo(filterVo, filterDto);
+  if (filterVo.status !== undefined) filterDto.status = filterVo.status;
+  if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance;
+  if (filterVo.urgency !== undefined) filterDto.urgency = filterVo.urgency;
+  if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
+  if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
+  if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
+  if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
+  if (filterVo.doneDateStart) filterDto.doneDateStart = filterVo.doneDateStart;
+  if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
+  if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;
+  if (filterVo.abandonedDateEnd) filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
+}

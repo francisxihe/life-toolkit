@@ -3,7 +3,7 @@
 import { Tag, Typography, Popover, Button } from '@arco-design/web-react';
 import { isToday } from 'date-fns';
 import { FlexibleContainer } from 'francis-component-react';
-import { URGENCY_MAP, IMPORTANCE_MAP } from '../../service/todo.constants';
+import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { TodoService } from '../../service';

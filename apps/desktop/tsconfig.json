@@ -23,6 +23,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@business/*": ["../../packages/business/server/src/*"],
       "@life-toolkit/business-server": ["../../packages/business/server/src/index.ts"],
       "@life-toolkit/business-web": ["../../packages/business/web/src/main.tsx"]
     }

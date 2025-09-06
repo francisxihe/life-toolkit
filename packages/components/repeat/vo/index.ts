@@ -6,6 +6,9 @@ export type RepeatVo = {
   repeatEndMode: RepeatEndMode;
   repeatTimes?: number;
   repeatEndDate?: string;
+  repeatStartDate?: string;
+  currentDate?: string;
+  repeatedTimes?: number;
 };
 
 export type CreateRepeatVo = {
@@ -14,13 +17,15 @@ export type CreateRepeatVo = {
   repeatEndMode: RepeatEndMode;
   repeatTimes?: number;
   repeatEndDate?: string;
+  repeatStartDate: string;
+  currentDate: string;
 };
 
 export type UpdateRepeatVo = {
-  repeatMode: RepeatMode;
+  repeatMode?: RepeatMode;
   repeatConfig?: RepeatConfig;
   repeatEndMode: RepeatEndMode;
   repeatTimes?: number;
   repeatEndDate?: string;
-  id: string;
+  repeatStartDate?: string;
 };

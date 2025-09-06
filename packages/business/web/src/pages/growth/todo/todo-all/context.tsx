@@ -10,9 +10,10 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { TodoVo, TodoPageFiltersVo, TodoStatus } from '@life-toolkit/vo/growth';
-import {TodoService} from '../../service';
+import { TodoVo, TodoPageFilterVo } from '@life-toolkit/vo/growth';
+import { TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
+import { TodoStatus } from '@life-toolkit/enum';
 
 function useSyncState<T>(
   initialValue: T,
@@ -36,14 +37,14 @@ export const [TodoAllProvider, useTodoAllContext] = createInjectState<{
   ContextType: {
     todoList: TodoVo[];
     getTodoPage: () => Promise<void>;
-    filters: TodoPageFiltersVo;
-    setFilters: Dispatch<SetStateAction<TodoPageFiltersVo>>;
+    filters: TodoPageFilterVo;
+    setFilters: Dispatch<SetStateAction<TodoPageFilterVo>>;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
   const [todoList, setTodoList] = useState<TodoVo[]>([]);
 
-  const [filters, setFilters, filtersRef] = useSyncState<TodoPageFiltersVo>({
+  const [filters, setFilters, filtersRef] = useSyncState<TodoPageFilterVo>({
     keyword: '',
     importance: undefined,
     urgency: undefined,

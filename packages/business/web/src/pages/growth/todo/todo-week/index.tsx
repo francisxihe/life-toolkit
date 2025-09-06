@@ -5,8 +5,9 @@ import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo/growth';
 import { useTodoContext } from '../context';
+import { TodoStatus } from '@life-toolkit/enum';
 
 const { Fixed, Shrink } = FlexibleContainer;
 
@@ -20,27 +21,27 @@ export default function TodoWeek() {
   );
 
   async function refreshData() {
-    const { list: todos } = await TodoService.getTodoList({
+    const { list: todos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.TODO,
       planDateStart: weekStart,
       planDateEnd: weekEnd,
     });
     setWeekTodoList(todos);
 
-    const { list: doneTodos } = await TodoService.getTodoList({
+    const { list: doneTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.DONE,
       doneDateStart: weekStart,
       doneDateEnd: weekEnd,
     });
     setWeekDoneTodoList(doneTodos);
 
-    const { list: expiredTodos } = await TodoService.getTodoList({
+    const { list: expiredTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.TODO,
       planDateEnd: weekStart,
     });
     setExpiredTodoList(expiredTodos);
 
-    const { list: abandonedTodos } = await TodoService.getTodoList({
+    const { list: abandonedTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.ABANDONED,
       abandonedDateStart: weekStart,
       abandonedDateEnd: weekEnd,
@@ -62,7 +63,7 @@ export default function TodoWeek() {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodo(id);
+    const todo = await TodoService.getTodoDetailWithRepeat(id);
     setCurrentTodo(todo);
   }
 

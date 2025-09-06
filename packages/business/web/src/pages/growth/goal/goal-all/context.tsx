@@ -10,15 +10,10 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import {
-  GoalVo,
-  GoalItemVo,
-  GoalPageFiltersVo,
-  GoalStatus,
-  GoalType,
-} from '@life-toolkit/vo/growth';
+import { GoalVo, GoalModelVo, GoalPageFilterVo } from '@life-toolkit/vo/growth';
 import { GoalService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 function useSyncState<T>(
   initialValue: T,
@@ -40,16 +35,16 @@ function useSyncState<T>(
 
 export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   ContextType: {
-    goalList: GoalItemVo[];
-    filters: GoalPageFiltersVo;
-    setFilters: Dispatch<SetStateAction<GoalPageFiltersVo>>;
+    goalList: GoalModelVo[];
+    filters: GoalPageFilterVo;
+    setFilters: Dispatch<SetStateAction<GoalPageFilterVo>>;
     clearFilters: () => Promise<void>;
     getGoalPage: () => Promise<void>;
   };
 }>(() => {
-  const [goalList, setGoalList] = useState<GoalItemVo[]>([]);
+  const [goalList, setGoalList] = useState<GoalModelVo[]>([]);
 
-  const [filters, setFilters, filtersRef] = useSyncState<GoalPageFiltersVo>({
+  const [filters, setFilters, filtersRef] = useSyncState<GoalPageFilterVo>({
     keyword: undefined,
     importance: undefined,
     status: GoalStatus.TODO,

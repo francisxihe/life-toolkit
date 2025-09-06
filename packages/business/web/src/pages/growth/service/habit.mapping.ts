@@ -11,12 +11,12 @@ export const mapHabitFilterToParams = (filter: HabitFilter) => {
     params.status = filter.status;
   }
   
-  if (filter.frequency && filter.frequency.length > 0) {
-    params.frequency = filter.frequency;
-  }
-  
   if (filter.difficulty && filter.difficulty.length > 0) {
     params.difficulty = filter.difficulty;
+  }
+
+  if (filter.importance !== undefined) {
+    params.importance = filter.importance;
   }
   
   if (filter.tags && filter.tags.length > 0) {

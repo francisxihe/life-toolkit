@@ -4,8 +4,8 @@ import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import type {
   TaskVo,
   UpdateTaskVo,
-  GoalItemVo,
-  TaskItemVo,
+  GoalModelVo,
+  TaskModelVo,
   CreateTaskVo,
 } from '@life-toolkit/vo/growth';
 import {
@@ -18,7 +18,7 @@ import { createInjectState } from '@/utils/createInjectState';
 
 export type TaskDetailContextProps = {
   children: React.ReactNode;
-  task?: TaskVo | TaskItemVo;
+  task?: TaskVo | TaskModelVo;
   initialFormData?: Partial<TaskFormData>;
   mode: 'editor' | 'creator';
   size?: 'small' | 'default';
@@ -30,8 +30,8 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   ContextType: {
     currentTask: TaskVo;
     taskFormData: TaskFormData;
-    goalList: GoalItemVo[];
-    taskList: TaskItemVo[];
+    goalList: GoalModelVo[];
+    taskList: TaskModelVo[];
     loading: boolean;
     size: 'small' | 'default';
     setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;
@@ -56,8 +56,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     useState<TaskFormData>(defaultFormData);
 
   const { taskList } = TaskService.useTaskList({
-    withoutSelf: true,
-    id: props.task?.id,
+    excludeIds: [props.task?.id],
   });
 
   const { goalList } = GoalService.useGoalList();
@@ -67,7 +66,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   };
 
   const refreshTaskDetail = async (id: string) => {
-    const task = await TaskService.getTaskWithTrackTime(id);
+    const task = await TaskService.getTaskDetail(id);
     setCurrentTask(task);
     setTaskFormData(TaskMapping.voToFormData(task));
   };
@@ -91,7 +90,7 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
     if (!taskFormData.name) {
       return;
     }
-    await TaskService.addTask(createTaskVo);
+    await TaskService.createTask(createTaskVo);
     setTaskFormData(defaultFormData);
   }
 

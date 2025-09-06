@@ -1,7 +1,8 @@
 'use client';
 
 import { Input, Select, Popover } from '@arco-design/web-react';
-import { IMPORTANCE_MAP, URGENCY_MAP, TodoFormData } from '../../service';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
+import { TodoFormData } from '../../service';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import IconSelector from '../IconSelector';
 import DateTimeTool from './DateTimeTool';

@@ -11,8 +11,9 @@ import {
   Empty,
 } from '@arco-design/web-react';
 import { HabitController } from '@life-toolkit/api';
-import { HabitVo, HabitStatus } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo/growth/habit';
 import { HABIT_STATUS_OPTIONS } from './constants';
+import { HabitStatus } from '@life-toolkit/enum';
 
 const { Title, Text } = Typography;
 const { Option } = Select;

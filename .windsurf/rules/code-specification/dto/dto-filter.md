@@ -1,0 +1,649 @@
+---
+trigger: model_decision
+description: 编写server DTO Filter代码时
+globs:
+---
+需要生成或修改DTO过滤器时
+
+# DTO Filter 规范
+
+## 📋 概述
+
+DTO Filter 是用于查询过滤的对象，主要包含列表过滤DTO和分页过滤DTO。本规范定义了Filter DTO的标准结构、验证规则和VO映射逻辑。
+
+## 🎯 标准DTO过滤类型定义
+
+### 1. 过滤DTO文件 ({module}-filter.dto.ts)
+
+#### 基础模板
+
+```typescript
+import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
+import { Type } from "class-transformer";
+import { PageFilterDto } from "../../../common/filter";
+import { {Module}Dto } from "./{module}-model.dto";
+import { PickType, IntersectionType, PartialType } from "@life-toolkit/mapped-types";
+import { {Module}ListFiltersVo, {Module}PageFiltersVo } from "@life-toolkit/vo";
+
+// 列表过滤DTO - 选择可过滤的字段
+export class {Module}ListFilterDto extends PartialType(
+  PickType({Module}Dto, ["status", "priority", "relationId"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  dateEnd?: string;
+
+  /** 完成时间范围过滤 */
+  @IsString()
+  @IsOptional()
+  completedDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  completedDateEnd?: string;
+
+  /** 关联ID数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relationIds?: string[];
+
+  /** 从VO导入数据的辅助方法（可选） */
+  importListVo(filterVo: {Module}ListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+// 分页过滤DTO - 继承列表过滤 + 分页
+export class {Module}PageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  {Module}ListFilterDto
+) {
+  /** 从VO导入数据的辅助方法（可选） */
+  importPageVo(filterVo: {Module}PageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+// 导入辅助函数
+function importListVo(
+  filterVo: {Module}ListFiltersVo,
+  filterDto: {Module}ListFilterDto
+) {
+  filterDto.keyword = filterVo.keyword;
+  filterDto.dateStart = filterVo.dateStart;
+  filterDto.dateEnd = filterVo.dateEnd;
+  filterDto.relationIds = filterVo.relationIds;
+  // ... 其他字段映射
+}
+```
+
+#### 完整示例（抽象化）
+
+```typescript
+// entity-filter.dto.ts
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsNumber,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { PageFilterDto } from "../../../common/filter";
+import { EntityDto } from "./entity-model.dto";
+import {
+  PickType,
+  IntersectionType,
+  PartialType,
+} from "@life-toolkit/mapped-types";
+import { EntityListFiltersVo, EntityPageFiltersVo } from "@life-toolkit/vo";
+import { EntityStatus, EntityType } from "../entity.entity";
+
+// 列表过滤DTO
+export class EntityListFilterDto extends PartialType(
+  PickType(EntityDto, ["status", "importance", "relatedId"] as const)
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 计划日期范围过滤 */
+  @IsString()
+  @IsOptional()
+  scheduledDateStart?: string;
+
+  @IsString()
+  @IsOptional()
+  scheduledDateEnd?: string;
+
+  /** 关联ID数组过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  relatedIds?: string[];
+
+  /** 状态数组过滤 */
+  @IsArray()
+  @IsEnum(EntityStatus, { each: true })
+  @IsOptional()
+  statusList?: EntityStatus[];
+
+  importListVo(filterVo: EntityListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+// 分页过滤DTO
+export class EntityPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  EntityListFilterDto
+) {
+  importPageVo(filterVo: EntityPageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+
+// 导入辅助函数
+function importListVo(
+  filterVo: EntityListFiltersVo,
+  filterDto: EntityListFilterDto
+) {
+  filterDto.keyword = filterVo.keyword;
+  filterDto.scheduledDateStart = filterVo.scheduledDateStart;
+  filterDto.scheduledDateEnd = filterVo.scheduledDateEnd;
+  filterDto.importance = filterVo.importance;
+  filterDto.status = filterVo.status;
+  filterDto.relatedIds = filterVo.relatedIds;
+  filterDto.statusList = filterVo.statusList;
+}
+```
+
+## 🔧 验证装饰器规范
+
+### 1. 过滤器验证装饰器
+
+```typescript
+import {
+  IsOptional, // 可选字段标记（过滤器字段通常都是可选的）
+  IsString, // 字符串验证
+  IsNumber, // 数字验证
+  IsBoolean, // 布尔值验证
+  IsEnum, // 枚举验证
+  IsArray, // 数组验证
+  IsDateString, // 日期字符串验证
+  Min, // 最小值验证
+  Max, // 最大值验证
+} from "class-validator";
+
+import { Type } from "class-transformer";
+```
+
+### 2. 常见过滤字段模式
+
+```typescript
+export class EntityListFilterDto {
+  /** 搜索关键词 - 字符串搜索 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 单一状态过滤 - 枚举 */
+  @IsEnum(EntityStatus)
+  @IsOptional()
+  status?: EntityStatus;
+
+  /** 多状态过滤 - 枚举数组 */
+  @IsArray()
+  @IsEnum(EntityStatus, { each: true })
+  @IsOptional()
+  statusList?: EntityStatus[];
+
+  /** 数值范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(0)
+  priorityMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Max(10)
+  priorityMax?: number;
+
+  /** 日期范围过滤 */
+  @IsDateString()
+  @IsOptional()
+  createdDateStart?: string;
+
+  @IsDateString()
+  @IsOptional()
+  createdDateEnd?: string;
+
+  /** 关联ID过滤 - 单个 */
+  @IsString()
+  @IsOptional()
+  categoryId?: string;
+
+  /** 关联ID过滤 - 数组 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  categoryIds?: string[];
+
+  /** 标签过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 布尔值过滤 */
+  @IsBoolean()
+  @Type(() => Boolean)
+  @IsOptional()
+  isActive?: boolean;
+}
+```
+
+## 🔄 常见过滤模式
+
+### 1. 基础过滤模式
+
+```typescript
+// 简单列表过滤
+export class ItemListFilterDto extends PartialType(
+  PickType(ItemDto, ["status", "categoryId", "priority"])
+) {
+  /** 搜索关键词 */
+  @IsString()
+  @IsOptional()
+  keyword?: string;
+
+  /** 创建时间范围 */
+  @IsDateString()
+  @IsOptional()
+  createdDateStart?: string;
+
+  @IsDateString()
+  @IsOptional()
+  createdDateEnd?: string;
+}
+
+// 分页过滤
+export class ItemPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  ItemListFilterDto
+) {}
+```
+
+### 2. 复杂过滤模式
+
+```typescript
+// 高级过滤器 - 继承基础过滤器并添加复杂条件
+export class ItemAdvancedFilterDto extends ItemListFilterDto {
+  /** 价格范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  priceMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  priceMax?: number;
+
+  /** 库存范围过滤 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  stockMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  stockMax?: number;
+
+  /** 多状态过滤 */
+  @IsArray()
+  @IsEnum(ItemStatus, { each: true })
+  @IsOptional()
+  statusList?: ItemStatus[];
+
+  /** 标签过滤 */
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  tags?: string[];
+
+  /** 评分范围 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(1)
+  @Max(5)
+  ratingMin?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  @Min(1)
+  @Max(5)
+  ratingMax?: number;
+}
+```
+
+### 3. 关联过滤模式
+
+```typescript
+// 多级关联过滤
+export class OrderFilterDto extends PartialType(
+  PickType(OrderDto, ["status", "userId"])
+) {
+  /** 订单项相关过滤 */
+  @IsString()
+  @IsOptional()
+  itemName?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  itemIds?: string[];
+
+  /** 用户相关过滤 */
+  @IsString()
+  @IsOptional()
+  userEmail?: string;
+
+  @IsString()
+  @IsOptional()
+  userLevel?: string;
+
+  /** 地址相关过滤 */
+  @IsString()
+  @IsOptional()
+  shippingCity?: string;
+
+  @IsString()
+  @IsOptional()
+  shippingRegion?: string;
+}
+```
+
+### 4. 时间过滤模式
+
+```typescript
+export class TimeBasedFilterDto {
+  /** 精确日期 */
+  @IsDateString()
+  @IsOptional()
+  exactDate?: string;
+
+  /** 日期范围 */
+  @IsDateString()
+  @IsOptional()
+  dateStart?: string;
+
+  @IsDateString()
+  @IsOptional()
+  dateEnd?: string;
+
+  /** 时间戳范围 */
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  timestampStart?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsOptional()
+  timestampEnd?: number;
+
+  /** 相对时间过滤 */
+  @IsEnum(['today', 'week', 'month', 'year'])
+  @IsOptional()
+  timeRange?: 'today' | 'week' | 'month' | 'year';
+
+  /** 星期几过滤 */
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @Type(() => Number)
+  @IsOptional()
+  weekdays?: number[]; // 0-6, 0为周日
+}
+```
+
+## 🎯 VO映射逻辑
+
+### 1. 导入映射方法
+
+```typescript
+// 列表过滤DTO的VO导入
+export class EntityListFilterDto {
+  // ... 过滤字段定义
+
+  /** 从VO导入数据 */
+  importListVo(filterVo: EntityListFiltersVo) {
+    importListVo(filterVo, this);
+  }
+}
+
+// 分页过滤DTO的VO导入
+export class EntityPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  EntityListFilterDto
+) {
+  /** 从VO导入数据 */
+  importPageVo(filterVo: EntityPageFiltersVo) {
+    importListVo(filterVo, this);
+    this.pageNum = filterVo.pageNum;
+    this.pageSize = filterVo.pageSize;
+  }
+}
+```
+
+### 2. 导入辅助函数
+
+```typescript
+// 通用导入函数
+function importListVo(
+  filterVo: EntityListFiltersVo,
+  filterDto: EntityListFilterDto
+) {
+  // 基础字段映射
+  filterDto.keyword = filterVo.keyword;
+  filterDto.status = filterVo.status;
+  filterDto.importance = filterVo.importance;
+  
+  // 日期范围映射
+  filterDto.scheduledDateStart = filterVo.scheduledDateStart;
+  filterDto.scheduledDateEnd = filterVo.scheduledDateEnd;
+  
+  // 数组字段映射
+  filterDto.relatedIds = filterVo.relatedIds;
+  filterDto.statusList = filterVo.statusList;
+  filterDto.tags = filterVo.tags;
+  
+  // 数值范围映射
+  filterDto.priorityMin = filterVo.priorityMin;
+  filterDto.priorityMax = filterVo.priorityMax;
+}
+```
+
+### 3. 复杂映射处理
+
+```typescript
+// 处理嵌套对象和特殊转换
+function importAdvancedListVo(
+  filterVo: EntityAdvancedFiltersVo,
+  filterDto: EntityAdvancedFilterDto
+) {
+  // 基础字段导入
+  importListVo(filterVo, filterDto);
+  
+  // 特殊字段处理
+  if (filterVo.dateRange) {
+    filterDto.scheduledDateStart = filterVo.dateRange.start;
+    filterDto.scheduledDateEnd = filterVo.dateRange.end;
+  }
+  
+  // 枚举数组处理
+  if (filterVo.statusFilter?.length) {
+    filterDto.statusList = filterVo.statusFilter.map(s => s as EntityStatus);
+  }
+  
+  // 关联对象处理
+  if (filterVo.categoryFilter) {
+    filterDto.categoryIds = [filterVo.categoryFilter.id];
+  }
+}
+```
+
+## 🎯 最佳实践
+
+### 1. 职责分离原则
+
+- **Filter DTO**: 查询条件验证，包含列表和分页的过滤参数
+- **性能优先**: 只定义实际需要的过滤字段，避免过度查询
+- **类型安全**: 使用枚举和严格类型定义
+
+### 2. 过滤字段设计
+
+```typescript
+// ✅ 推荐：使用有意义的过滤字段
+export class EntityListFilterDto {
+  @IsString()
+  @IsOptional()
+  keyword?: string; // 通用搜索
+
+  @IsArray()
+  @IsEnum(EntityStatus, { each: true })
+  @IsOptional()
+  statusList?: EntityStatus[]; // 多状态过滤
+
+  @IsDateString()
+  @IsOptional()
+  createdDateStart?: string; // 时间范围
+}
+
+// ❌ 避免：过于复杂或无用的过滤条件
+export class BadFilterDto {
+  @IsString()
+  @IsOptional()
+  exactTitle?: string; // 过于精确，用处不大
+
+  @IsNumber()
+  @IsOptional()
+  randomField?: number; // 无实际业务意义
+}
+```
+
+### 3. 性能优化
+
+```typescript
+// 索引友好的过滤字段
+export class OptimizedFilterDto {
+  /** 使用索引字段进行过滤 */
+  @IsString()
+  @IsOptional()
+  categoryId?: string; // 通常有索引
+
+  @IsEnum(EntityStatus)
+  @IsOptional()
+  status?: EntityStatus; // 枚举字段，索引效果好
+
+  /** 避免复杂的文本搜索 */
+  @IsString()
+  @IsOptional()
+  keyword?: string; // 需要全文索引支持
+}
+```
+
+### 4. 分页优化
+
+```typescript
+// 合理的分页参数
+export class EntityPageFiltersDto extends IntersectionType(
+  PageFilterDto,
+  EntityListFilterDto
+) {
+  /** 重写分页参数以添加限制 */
+  @IsNumber()
+  @Type(() => Number)
+  @Min(1)
+  @Max(100) // 限制每页最大数量
+  @IsOptional()
+  pageSize?: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @Min(1)
+  @IsOptional()
+  pageNum?: number;
+}
+```
+
+## 🚫 禁止事项
+
+1. **不要在Filter DTO中包含业务逻辑** - 仅用于查询条件验证
+2. **不要定义过多的过滤字段** - 只定义实际需要的过滤条件
+3. **不要忽略性能影响** - 避免无索引字段的复杂过滤
+4. **不要使用 `any` 类型** - 应明确定义具体类型
+5. **不要忽略验证装饰器** - 所有字段都应有适当的验证规则
+6. **不要创建循环依赖** - Filter DTO应避免相互引用
+7. **不要过度设计** - 保持过滤条件简单实用
+
+## ✅ 检查清单
+
+### 基础结构
+- [ ] 文件命名符合规范 (`{module}-filter.dto.ts`)
+- [ ] 类命名符合规范 (`{Module}ListFilterDto`, `{Module}PageFiltersDto`)
+- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 导入了必要的验证装饰器
+
+### 继承关系
+- [ ] 正确继承自 `PageFilterDto`
+- [ ] 使用了合适的工具类型 (PickType, PartialType, IntersectionType等)
+- [ ] 避免了重复的字段定义
+- [ ] 继承链清晰合理
+
+### 验证规则
+- [ ] 所有字段都使用了 `@IsOptional()`（过滤字段通常都是可选的）
+- [ ] 数字字段使用了 `@Type(() => Number)`
+- [ ] 日期字段使用了 `@IsDateString()`
+- [ ] 枚举字段使用了 `@IsEnum()`
+- [ ] 数组字段使用了 `@IsArray()`
+- [ ] 字符串数组使用了 `@IsString({ each: true })`
+
+### 字段设计
+- [ ] 过滤条件完整且实用
+- [ ] 关联字段处理合理（使用ID列表）
+- [ ] 时间范围过滤设计合理
+- [ ] 数值范围过滤设计合理
+
+### VO映射
+- [ ] 实现了 `importListVo()` 方法
+- [ ] 实现了 `importPageVo()` 方法
+- [ ] 导入辅助函数设计合理
+- [ ] 字段映射完整正确
+
+### 代码质量
+- [ ] 导入了必要的依赖
+- [ ] 避免了循环依赖
+- [ ] 注释清晰准确
+- [ ] 遵循了项目的编码规范

@@ -1,6 +1,6 @@
-import { Repository, DeepPartial, FindOptionsWhere, UpdateResult } from "typeorm";
-import { BaseEntity } from "./base.entity";
-import { v4 as uuidv4 } from "uuid";
+import { Repository, DeepPartial, FindOptionsWhere, UpdateResult } from 'typeorm';
+import { BaseEntity } from './base.entity';
+import { v4 as uuidv4 } from 'uuid';
 
 export abstract class BaseService<T extends BaseEntity> {
   constructor(protected readonly repository: Repository<T>) {}
@@ -15,11 +15,11 @@ export abstract class BaseService<T extends BaseEntity> {
 
   async findById(id: string): Promise<T | null> {
     return await this.repository.findOne({
-      where: ({ id } as unknown) as FindOptionsWhere<T>,
+      where: { id } as unknown as FindOptionsWhere<T>,
     });
   }
 
-  async findAll(): Promise<T[]> {
+  async findByFilter(): Promise<T[]> {
     return await this.repository.find();
   }
 
@@ -45,7 +45,7 @@ export abstract class BaseService<T extends BaseEntity> {
 
   async exists(id: string): Promise<boolean> {
     const count = await this.repository.count({
-      where: ({ id } as unknown) as FindOptionsWhere<T>,
+      where: { id } as unknown as FindOptionsWhere<T>,
     });
     return count > 0;
   }

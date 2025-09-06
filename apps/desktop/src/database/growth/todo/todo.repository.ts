@@ -1,246 +1,63 @@
-import { Repository, In, Like, DeepPartial } from "typeorm";
-import { AppDataSource } from "../../database.config";
-import {
-  Todo,
-  TodoStatus as DesktopTodoStatus,
-  TodoSource as DesktopTodoSource,
-} from "./todo.entity";
-import {
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoPageFilterDto,
-  TodoListFilterDto,
-  TodoDto,
-  TodoMapper,
-} from "@life-toolkit/business-server";
+import { AppDataSource } from '../../database.config';
+import { TodoFilterDto, Todo, TodoRepository as _TodoRepository } from '@life-toolkit/business-server';
+import { BaseRepository } from '../../common/base';
+import dayjs from 'dayjs';
 
-export class TodoRepository /* implements import("@life-toolkit/business-server").TodoRepository */ {
-  private repo: Repository<Todo> = AppDataSource.getRepository(Todo);
+export class TodoRepository extends BaseRepository<Todo, TodoFilterDto> implements _TodoRepository {
+  constructor() {
+    function buildQuery(filter: TodoFilterDto) {
+      const qb = this.repo
+        .createQueryBuilder('todo')
+        .leftJoinAndSelect('todo.task', 'task')
+        .leftJoinAndSelect('todo.habit', 'habit');
 
-  private toDto(e: Todo): TodoDto {
-    // 仅映射已知字段，其余保持为 any 以兼容业务层 DTO
-    const dto: any = {
-      id: e.id,
-      name: e.name,
-      description: e.description,
-      status: e.status as any,
-      importance: e.importance,
-      urgency: e.urgency,
-      tags: e.tags,
-      doneAt: e.doneAt as any,
-      abandonedAt: e.abandonedAt as any,
-      planDate: e.planDate as any,
-      planStartAt: e.planStartAt,
-      planEndAt: e.planEndAt,
-      taskId: e.taskId,
-      repeatId: e.repeatId,
-      originalRepeatId: e.originalRepeatId,
-      createdAt: (e as any).createdAt,
-      updatedAt: (e as any).updatedAt,
-      deletedAt: (e as any).deletedAt,
-      source: e.source as any,
-      // 关联映射（最小化）
-      task: e.task
-        ? { id: (e.task as any).id, name: (e.task as any).name }
-        : undefined,
-      repeat: e.repeatId ? { id: e.repeatId } : undefined,
-      habit: e.habit
-        ? { id: (e.habit as any).id, name: (e.habit as any).name }
-        : undefined,
-    };
-    return dto as TodoDto;
-  }
+      // 处理 includeIds 和 excludeIds
+      if (filter.includeIds && filter.includeIds.length > 0) {
+        qb.andWhere('todo.id IN (:...includeIds)', { includeIds: filter.includeIds });
+      }
+      if (filter.excludeIds && filter.excludeIds.length > 0) {
+        qb.andWhere('todo.id NOT IN (:...excludeIds)', { excludeIds: filter.excludeIds });
+      }
+      if (filter.status !== undefined) qb.andWhere('todo.status = :status', { status: filter.status });
+      if (filter.importance !== undefined)
+        qb.andWhere('todo.importance = :importance', {
+          importance: filter.importance,
+        });
+      if (filter.urgency !== undefined) qb.andWhere('todo.urgency = :urgency', { urgency: filter.urgency });
+      if (filter.taskId) qb.andWhere('todo.taskId = :taskId', { taskId: filter.taskId });
+      if (filter.keyword) qb.andWhere('todo.name LIKE :kw', { kw: `%${filter.keyword}%` });
+      if (filter.planDateStart) qb.andWhere('todo.planDate >= :ds', { ds: filter.planDateStart });
+      if (filter.planDateEnd) qb.andWhere('todo.planDate <= :de', { de: filter.planDateEnd });
+      if (filter.doneDateStart)
+        qb.andWhere('todo.doneAt >= :dds', {
+          dds: dayjs(filter.doneDateStart).tz('UTC').startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        });
+      if (filter.doneDateEnd)
+        qb.andWhere('todo.doneAt <= :dde', {
+          dde: dayjs(filter.doneDateEnd).tz('UTC').endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+        });
+      if (filter.abandonedDateStart)
+        qb.andWhere('todo.abandonedAt >= :ads', {
+          ads: dayjs(filter.abandonedDateStart).tz('UTC').format('YYYY-MM-DD HH:mm:ss'),
+        });
+      if (filter.abandonedDateEnd)
+        qb.andWhere('todo.abandonedAt <= :ade', {
+          ade: dayjs(filter.abandonedDateEnd).tz('UTC').format('YYYY-MM-DD HH:mm:ss'),
+        });
 
-  async create(createDto: CreateTodoDto): Promise<TodoDto> {
-    const entity = this.repo.create({
-      name: createDto.name,
-      description: (createDto as any).description,
-      status:
-        ((createDto as any).status as DesktopTodoStatus) ??
-        DesktopTodoStatus.TODO,
-      importance: (createDto as any).importance,
-      urgency: (createDto as any).urgency,
-      tags: (createDto as any).tags,
-      planDate: (createDto as any).planDate as any,
-      planStartAt: (createDto as any).planStartAt,
-      planEndAt: (createDto as any).planEndAt,
-      taskId: (createDto as any).taskId,
-      source:
-        ((createDto as any).source as DesktopTodoSource) ??
-        DesktopTodoSource.MANUAL,
-    } as DeepPartial<Todo>);
-    const saved = await this.repo.save(entity);
-    return this.toDto(saved);
-  }
-
-  async createWithExtras(
-    createDto: CreateTodoDto,
-    extras: Partial<Todo>
-  ): Promise<TodoDto> {
-    const entity = this.repo.create({
-      name: createDto.name,
-      description: (createDto as any).description,
-      status:
-        ((createDto as any).status as DesktopTodoStatus) ??
-        DesktopTodoStatus.TODO,
-      importance: (createDto as any).importance,
-      urgency: (createDto as any).urgency,
-      tags: (createDto as any).tags,
-      planDate: (createDto as any).planDate as any,
-      planStartAt: (createDto as any).planStartAt,
-      planEndAt: (createDto as any).planEndAt,
-      taskId: (createDto as any).taskId,
-      source:
-        ((createDto as any).source as DesktopTodoSource) ??
-        DesktopTodoSource.MANUAL,
-      ...extras,
-    } as DeepPartial<Todo>);
-    const saved = await this.repo.save(entity);
-    return this.toDto(saved);
-  }
-
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
-    const qb = this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit");
-
-    if (filter.status !== undefined)
-      qb.andWhere("todo.status = :status", { status: filter.status });
-    if (filter.importance !== undefined)
-      qb.andWhere("todo.importance = :importance", {
-        importance: filter.importance,
-      });
-    if (filter.urgency !== undefined)
-      qb.andWhere("todo.urgency = :urgency", { urgency: filter.urgency });
-    if (filter.taskId)
-      qb.andWhere("todo.taskId = :taskId", { taskId: filter.taskId });
-    if (filter.keyword)
-      qb.andWhere("todo.name LIKE :kw", { kw: `%${filter.keyword}%` });
-    if (filter.planDateStart)
-      qb.andWhere("todo.planDate >= :ds", { ds: filter.planDateStart });
-    if (filter.planDateEnd)
-      qb.andWhere("todo.planDate <= :de", { de: filter.planDateEnd });
-    if (filter.doneDateStart)
-      qb.andWhere("todo.doneAt >= :ds", { ds: filter.doneDateStart });
-    if (filter.doneDateEnd)
-      qb.andWhere("todo.doneAt <= :de", { de: filter.doneDateEnd });
-    if (filter.abandonedDateStart)
-      qb.andWhere("todo.abandonedAt >= :ds", { ds: filter.abandonedDateStart });
-    if (filter.abandonedDateEnd)
-      qb.andWhere("todo.abandonedAt <= :de", { de: filter.abandonedDateEnd });
-
-    const list = await qb.orderBy("todo.createdAt", "DESC").getMany();
-
-    return list.map((it) =>
-      TodoMapper.entityToDto(TodoMapper.importEntity<Todo>(it))
-    );
-  }
-
-  async findPage(filter: TodoPageFilterDto): Promise<{
-    list: TodoDto[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
-    const pageNum = (filter as any).pageNum ?? 1;
-    const pageSize = (filter as any).pageSize ?? 10;
-    const qb = this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit");
-
-    if ((filter as any).status !== undefined)
-      qb.andWhere("todo.status = :status", { status: (filter as any).status });
-    if ((filter as any).importance !== undefined)
-      qb.andWhere("todo.importance = :importance", {
-        importance: (filter as any).importance,
-      });
-    if ((filter as any).urgency !== undefined)
-      qb.andWhere("todo.urgency = :urgency", {
-        urgency: (filter as any).urgency,
-      });
-    if ((filter as any).taskId)
-      qb.andWhere("todo.taskId = :taskId", { taskId: (filter as any).taskId });
-    if ((filter as any).keyword)
-      qb.andWhere("todo.name LIKE :kw", { kw: `%${(filter as any).keyword}%` });
-    if ((filter as any).planDateStart)
-      qb.andWhere("todo.planDate >= :ds", {
-        ds: (filter as any).planDateStart,
-      });
-    if ((filter as any).planDateEnd)
-      qb.andWhere("todo.planDate <= :de", { de: (filter as any).planDateEnd });
-
-    const [list, total] = await qb
-      .skip((pageNum - 1) * pageSize)
-      .take(pageSize)
-      .orderBy("todo.createdAt", "DESC")
-      .getManyAndCount();
-    return { list: list.map((it) => this.toDto(it)), total, pageNum, pageSize };
-  }
-
-  async update(id: string, updateDto: UpdateTodoDto): Promise<TodoDto> {
-    await this.repo.update(id, updateDto);
-    return await this.findById(id);
-  }
-
-  async batchUpdate(
-    idList: string[],
-    updateDto: UpdateTodoDto
-  ): Promise<TodoDto[]> {
-    await this.repo.update(idList, updateDto);
-    const qb = this.repo
-      .createQueryBuilder("todo")
-      .leftJoinAndSelect("todo.task", "task")
-      .leftJoinAndSelect("todo.habit", "habit");
-    const list = await qb
-      .where("todo.id IN (:...ids)", { ids: idList })
-      .getMany();
-
-    return list.map((it) =>
-      TodoMapper.entityToDto(TodoMapper.importEntity<Todo>(it))
-    );
-  }
-
-  async delete(id: string): Promise<boolean> {
-    await this.repo.delete(id);
-    return true;
-  }
-
-  async deleteByFilter(filter: TodoPageFilterDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder("todo");
-    if ((filter as any).taskIds && (filter as any).taskIds.length > 0) {
-      qb.where("todo.taskId IN (:...ids)", { ids: (filter as any).taskIds });
+      return qb;
     }
-    const list = await qb.getMany();
-    if (list.length) await this.repo.delete(list.map((x) => x.id));
+
+    super(AppDataSource.getRepository(Todo), buildQuery);
   }
 
-  async findById(id: string, relations?: string[]): Promise<TodoDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<Todo> {
+    const defaultRelations = ['task', 'habit'];
     const todo = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ["task", "habit"],
+      relations: relations || defaultRelations,
     });
-    return this.toDto(todo as Todo);
-  }
-
-  async updateRepeatId(id: string, repeatId: string): Promise<void> {
-    await this.repo.update(id, { repeatId });
-  }
-
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    if (!taskIds || taskIds.length === 0) return;
-    const items = await this.repo.find({ where: { taskId: In(taskIds) } });
-    if (items.length) await this.repo.softRemove(items);
-  }
-
-  async findOneByRepeatAndDate(
-    repeatId: string,
-    date: Date
-  ): Promise<TodoDto | null> {
-    const todo = await this.repo.findOne({
-      where: { repeatId, planDate: date as any },
-    });
-    return todo ? this.toDto(todo) : null;
+    if (!todo) throw new Error(`待办不存在，ID: ${id}`);
+    return todo;
   }
 }

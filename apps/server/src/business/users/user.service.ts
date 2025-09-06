@@ -19,7 +19,7 @@ export class UserService {
     return user;
   }
 
-  findAll(): User[] {
+  findByFilter(): User[] {
     return this.users;
   }
 

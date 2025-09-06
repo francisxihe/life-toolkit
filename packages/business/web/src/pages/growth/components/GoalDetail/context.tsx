@@ -1,19 +1,14 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import {
-  GoalVo,
-  UpdateGoalVo,
-  GoalItemVo,
-  GoalStatus,
-  CreateGoalVo,
-} from '@life-toolkit/vo/growth';
+import { GoalVo, GoalModelVo } from '@life-toolkit/vo/growth';
 import { GoalFormData, GoalService, GoalMapping } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
+import { GoalType, GoalStatus, Importance } from '@life-toolkit/enum';
 
 export type GoalDetailContextProps = {
+  goalId?: string;
   children: React.ReactNode;
-  goalId: string;
   initialFormData?: Partial<GoalFormData>;
   size?: 'small' | 'default';
   onClose?: () => Promise<void>;
@@ -25,7 +20,7 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   ContextType: {
     currentGoal: GoalVo;
     goalFormData: GoalFormData;
-    goalList: GoalItemVo[];
+    goalList: GoalModelVo[];
     size: 'small' | 'default';
     setGoalFormData: Dispatch<React.SetStateAction<GoalFormData>>;
     onSubmit: () => Promise<void>;
@@ -40,7 +35,9 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
 
   const defaultFormData: GoalFormData = {
     name: '',
-    status: GoalStatus.TODO,
+    type: props.initialFormData?.type || GoalType.KEY_RESULT,
+    status: props.initialFormData?.status || GoalStatus.TODO,
+    importance: props.initialFormData?.importance || Importance.Helpful,
     planTimeRange: [undefined, undefined],
     children: [],
     ...props.initialFormData,
@@ -62,12 +59,11 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   );
 
   const { goalList } = GoalService.useGoalList({
-    withoutSelf: true,
-    id: props.goalId,
+    excludeIds: [props.goalId],
   });
 
   async function handleCreate() {
-    await GoalService.addGoal(GoalMapping.formDataToCreateVo(goalFormData));
+    await GoalService.createGoal(GoalMapping.formDataToCreateVo(goalFormData));
     setGoalFormData(defaultFormData);
   }
 

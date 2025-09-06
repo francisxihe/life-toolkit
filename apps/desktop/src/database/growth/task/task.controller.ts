@@ -1,126 +1,54 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from "@life-toolkit/electron-ipc-router";
-import { taskService } from "./task.service";
-import { TaskStatus } from "./task.entity";
-import type { Task as TaskVO } from "@life-toolkit/vo";
-import { TaskMapper } from "@life-toolkit/business-server";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import type { Task as TaskVO } from '@life-toolkit/vo';
+import { TaskController as _TaskController } from '@life-toolkit/business-server';
+import { taskService } from './task.service';
 
-@Controller("/task")
+@Controller('/task')
 export class TaskController {
-  @Post("/create")
-  async create(@Body() payload: TaskVO.CreateTaskVo) {
-    return TaskMapper.dtoToVo(
-      await taskService.create(TaskMapper.voToCreateDto(payload))
-    );
+  private readonly controller = new _TaskController(taskService);
+
+  @Post('/create')
+  async create(@Body() body: TaskVO.CreateTaskVo) {
+    return this.controller.create(body);
   }
 
-  @Get("/findAll")
-  async findAll() {
-    return TaskMapper.dtoToVoList(await taskService.findAll());
+  @Delete('/delete/:id')
+  async delete(@Param('id') id: string) {
+    return this.controller.delete(id);
   }
 
-  @Get("/findById/:id")
-  async findById(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(await taskService.findById(id));
+  @Put('/update/:id')
+  async update(@Param('id') id: string, @Body() body: TaskVO.UpdateTaskVo) {
+    return this.controller.update(id, body);
   }
 
-  @Get("/findTree")
-  async findTree() {
-    return (await taskService.findTree()).map((e) =>
-      TaskMapper.dtoToVo(TaskMapper.entityToDto(e as any))
-    );
+  @Get('/find/:id')
+  async find(@Param('id') id: string) {
+    return this.controller.find(id);
   }
 
-  @Get("/findByGoalId/:goalId")
-  async findByGoalId(@Param("goalId") goalId: string) {
-    return TaskMapper.dtoToVoList(await taskService.findByGoalId(goalId));
+  @Get('/find-by-filter')
+  async findByFilter(@Body() body: TaskVO.TaskFilterVo) {
+    return this.controller.findByFilter(body);
   }
 
-  @Get("/findByStatus/:status")
-  async findByStatus(@Param("status") status: string) {
-    return TaskMapper.dtoToVoList(
-      await taskService.findByStatus(status as TaskStatus)
-    );
+  @Get('/page')
+  async page(@Body() body: TaskVO.TaskPageFilterVo) {
+    return this.controller.page(body);
   }
 
-  @Post("/updateStatus/:id")
-  async updateStatus(
-    @Param("id") id: string,
-    @Body() payload?: { status?: TaskStatus }
-  ) {
-    return await taskService.updateStatus(id, payload?.status as TaskStatus);
+  @Get('/task-with-track-time/:id')
+  async taskWithTrackTime(@Param('id') id: string) {
+    return this.controller.taskWithTrackTime(id);
   }
 
-  @Put("/update/:id")
-  async update(
-    @Param("id") id: string,
-    @Body() payload: TaskVO.CreateTaskVo
-  ) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(
-        id,
-        TaskMapper.voToUpdateDto(payload as TaskVO.CreateTaskVo)
-      )
-    );
+  @Put('/abandon/:id')
+  async abandon(@Param('id') id: string) {
+    return this.controller.abandon(id);
   }
 
-  @Delete("/delete/:id")
-  async remove(@Param("id") id: string) {
-    return await taskService.delete(id);
-  }
-
-  @Get("/page")
-  async page(
-    @Query() q?: { pageNum?: number | string; pageSize?: number | string }
-  ) {
-    const pageNum = Number(q?.pageNum) || 1;
-    const pageSize = Number(q?.pageSize) || 10;
-    const res = await taskService.page(pageNum, pageSize);
-    return TaskMapper.dtoToPageVo(res.data, res.total, pageNum, pageSize);
-  }
-
-  @Get("/list")
-  async list() {
-    return TaskMapper.dtoToListVo(await taskService.list());
-  }
-
-  @Get("/taskWithTrackTime/:id")
-  async taskWithTrackTime(@Param("id") id: string) {
-    return TaskMapper.dtoToWithTrackTimeVo(
-      await taskService.taskWithTrackTime(id)
-    );
-  }
-
-  @Post("/batchDone")
-  async batchDone(@Body() body?: { idList?: string[] }) {
-    return (
-      await Promise.all(
-        (body?.idList ?? []).map((id: string) =>
-          taskService.update(id, { status: TaskStatus.DONE })
-        )
-      )
-    ).map((dto) => TaskMapper.dtoToVo(dto));
-  }
-
-  @Post("/abandon/:id")
-  async abandon(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(id, { status: TaskStatus.ABANDONED })
-    );
-  }
-
-  @Post("/restore/:id")
-  async restore(@Param("id") id: string) {
-    return TaskMapper.dtoToVo(
-      await taskService.update(id, { status: TaskStatus.TODO })
-    );
+  @Put('/restore/:id')
+  async restore(@Param('id') id: string) {
+    return this.controller.restore(id);
   }
 }

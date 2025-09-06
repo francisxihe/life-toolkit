@@ -1,4 +1,5 @@
 import { HabitRepository } from "./habit.repository";
+import { TodoRepository } from "../todo/todo.repository";
 import {
   CreateHabitDto,
   UpdateHabitDto,
@@ -6,53 +7,94 @@ import {
   HabitPageFilterDto,
   HabitDto,
 } from "./dto";
+import { Habit } from "./habit.entity";
+import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
 
 export class HabitService {
   habitRepository: HabitRepository;
+  todoRepository: TodoRepository;
 
-  constructor(habitRepository: HabitRepository) {
+  constructor(habitRepository: HabitRepository, todoRepository: TodoRepository) {
     this.habitRepository = habitRepository;
+    this.todoRepository = todoRepository;
   }
 
-  // 业务逻辑编排
+  // ====== 基础 CRUD ======
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    const result = await this.habitRepository.create(createHabitDto);
-    return result;
-  }
-
-  async findAll(filter: HabitFilterDto): Promise<HabitDto[]> {
-    return await this.habitRepository.findAll(filter);
-  }
-
-  async page(
-    filter: HabitPageFilterDto
-  ): Promise<{ list: HabitDto[]; total: number }> {
-    return await this.habitRepository.page(filter);
-  }
-
-  async findById(id: string): Promise<HabitDto> {
-    return await this.habitRepository.findById(id);
-  }
-
-  async findByIdWithRelations(id: string): Promise<HabitDto> {
-    return await this.habitRepository.findById(id, ["goals", "todos"]);
-  }
-
-  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    const result = await this.habitRepository.update(id, updateHabitDto);
-    return result;
+    const habitEntity: Partial<Habit> = {
+      name: createHabitDto.name,
+      description: createHabitDto.description,
+      importance: createHabitDto.importance,
+      tags: createHabitDto.tags,
+      difficulty: createHabitDto.difficulty,
+      startDate: createHabitDto.startDate,
+      targetDate: createHabitDto.targetDate,
+    };
+    const entity = await this.habitRepository.create(habitEntity as Habit);
+    return HabitDto.importEntity(entity);
   }
 
   async delete(id: string): Promise<void> {
     await this.habitRepository.delete(id);
   }
 
-  async findByGoalId(goalId: string): Promise<HabitDto[]> {
-    return await this.habitRepository.findByGoalId(goalId);
+  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
+    const habitUpdate = new Habit();
+    habitUpdate.id = id;
+    if (updateHabitDto.name !== undefined) habitUpdate.name = updateHabitDto.name;
+    if (updateHabitDto.description !== undefined) habitUpdate.description = updateHabitDto.description;
+    if (updateHabitDto.status !== undefined) habitUpdate.status = updateHabitDto.status;
+    if (updateHabitDto.importance !== undefined) habitUpdate.importance = updateHabitDto.importance;
+    if (updateHabitDto.tags !== undefined) habitUpdate.tags = updateHabitDto.tags;
+    if (updateHabitDto.difficulty !== undefined) habitUpdate.difficulty = updateHabitDto.difficulty;
+    if (updateHabitDto.startDate !== undefined) habitUpdate.startDate = updateHabitDto.startDate;
+    if (updateHabitDto.targetDate !== undefined) habitUpdate.targetDate = updateHabitDto.targetDate;
+    if (updateHabitDto.currentStreak !== undefined) habitUpdate.currentStreak = updateHabitDto.currentStreak;
+    if (updateHabitDto.longestStreak !== undefined) habitUpdate.longestStreak = updateHabitDto.longestStreak;
+    if (updateHabitDto.completedCount !== undefined) habitUpdate.completedCount = updateHabitDto.completedCount;
+    
+    const entity = await this.habitRepository.update(habitUpdate);
+    return HabitDto.importEntity(entity);
   }
 
+  async find(id: string): Promise<HabitDto> {
+    const entity = await this.habitRepository.find(id);
+    return HabitDto.importEntity(entity);
+  }
+
+  async findByFilter(filter: HabitFilterDto): Promise<HabitDto[]> {
+    const entities = await this.habitRepository.findByFilter(filter);
+    return entities.map(entity => HabitDto.importEntity(entity));
+  }
+
+
+  async page(
+    filter: HabitPageFilterDto
+  ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
+    const { list, total, pageNum, pageSize } =
+      await this.habitRepository.page(filter);
+    return { 
+      list: list.map(entity => HabitDto.importEntity(entity)), 
+      total, 
+      pageNum, 
+      pageSize 
+    };
+  }
+
+  //  ====== 业务逻辑编排 ======
   async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
-    return await this.habitRepository.updateStreak(id, increment);
+    const entity = await this.habitRepository.find(id);
+    if (increment) {
+      entity.currentStreak = (entity.currentStreak || 0) + 1;
+      entity.completedCount = (entity.completedCount || 0) + 1;
+      if (entity.currentStreak > (entity.longestStreak || 0)) {
+        entity.longestStreak = entity.currentStreak;
+      }
+    } else {
+      entity.currentStreak = 0;
+    }
+    const updatedEntity = await this.habitRepository.update(entity);
+    return HabitDto.importEntity(updatedEntity);
   }
 
   async getHabitTodos(habitId: string): Promise<{
@@ -61,7 +103,19 @@ export class HabitService {
     abandonedTodos: any[];
     totalCount: number;
   }> {
-    return await this.habitRepository.getHabitTodos(habitId);
+    // 使用TodoRepository的findAll方法查询不同状态的todos
+    const activeFilter = { habitId, status: [TodoStatus.TODO] };
+    const completedFilter = { habitId, status: [TodoStatus.DONE] };
+    const abandonedFilter = { habitId, status: [TodoStatus.ABANDONED] };
+    
+    const [activeTodos, completedTodos, abandonedTodos] = await Promise.all([
+      this.todoRepository.findByFilter(activeFilter as any),
+      this.todoRepository.findByFilter(completedFilter as any),
+      this.todoRepository.findByFilter(abandonedFilter as any)
+    ]);
+    
+    const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
+    return { activeTodos, completedTodos, abandonedTodos, totalCount };
   }
 
   async getHabitAnalytics(habitId: string): Promise<{
@@ -73,21 +127,71 @@ export class HabitService {
     longestStreak: number;
     recentTodos: any[];
   }> {
-    const habit = await this.habitRepository.findById(habitId);
-    const { totalTodos, completedTodos, abandonedTodos, recentTodos } =
-      await this.habitRepository.getHabitAnalyticsData(habitId);
+    const habitEntity = await this.habitRepository.find(habitId);
+    const habit = HabitDto.importEntity(habitEntity);
+    
+    // 使用TodoRepository查询分析数据
+    const [allTodos, completedTodos, abandonedTodos, recentTodos] = await Promise.all([
+      this.todoRepository.findByFilter({ habitId } as any),
+      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.DONE] } as any),
+      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.ABANDONED] } as any),
+      this.todoRepository.findByFilter({ habitId } as any) // 这里需要添加排序和限制逻辑
+    ]);
+    
+    // 对最近的todos进行排序和限制（取最新的10条）
+    const sortedRecentTodos = recentTodos
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 10);
 
-    const completionRate = totalTodos > 0 ? (completedTodos / totalTodos) * 100 : 0;
+    const totalTodos = allTodos.length;
+    const completionRate = totalTodos > 0 ? (completedTodos.length / totalTodos) * 100 : 0;
 
     return {
       totalTodos,
-      completedTodos,
-      abandonedTodos,
+      completedTodos: completedTodos.length,
+      abandonedTodos: abandonedTodos.length,
       completionRate,
-      currentStreak: (habit as any).currentStreak,
-      longestStreak: (habit as any).longestStreak,
-      recentTodos,
+      currentStreak: habit.currentStreak,
+      longestStreak: habit.longestStreak,
+      recentTodos: sortedRecentTodos,
     };
   }
-}
 
+  async abandon(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED })
+    );
+  }
+
+  async restore(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
+    );
+  }
+
+  async pauseHabit(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.PAUSED })
+    );
+  }
+
+  async resumeHabit(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
+    );
+  }
+
+  async completeHabit(id: string): Promise<void> {
+    await this.update(
+      id,
+      Object.assign(new UpdateHabitDto(), {
+        status: HabitStatus.COMPLETED,
+        targetDate: new Date(),
+      })
+    );
+  }
+}

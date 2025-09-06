@@ -9,61 +9,61 @@ import {
   Query,
 } from "@nestjs/common";
 import { HabitService } from "./habit.service";
-import { HabitPageFilterDto, HabitFilterDto } from "@life-toolkit/business-server";
+import {
+  HabitPageFilterDto,
+  HabitFilterDto,
+  CreateHabitDto,
+  UpdateHabitDto,
+  HabitDto,
+} from "@life-toolkit/business-server";
 import { Response } from "@/decorators/response.decorator";
-import { HabitMapper } from "@life-toolkit/business-server";
-import type { Habit, OperationByIdListVo } from "@life-toolkit/vo";
-import { OperationMapper } from "@/common/operation";
+import type { Habit as HabitVO } from "@life-toolkit/vo";
 
 @Controller("habit")
 export class HabitController {
-  constructor(
-    private readonly habitService: HabitService
-  ) {}
+  constructor(private readonly habitService: HabitService) {}
 
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.habitService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
-    );
+  async doneBatch(@Body() body: HabitVO.HabitFilterVo) {
+    return await this.habitService.doneBatch(body.includeIds);
   }
 
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.habitService.abandon(id);
-    return { result };
+    await this.habitService.abandon(id);
+    return { result: true };
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.habitService.restore(id);
-    return { result };
+    await this.habitService.restore(id);
+    return { result: true };
   }
 
   @Put("pause/:id")
   @Response()
   async pause(@Param("id") id: string) {
-    const result = await this.habitService.pause(id);
-    return { result };
+    await this.habitService.pause(id);
+    return { result: true };
   }
 
   @Put("resume/:id")
   @Response()
   async resume(@Param("id") id: string) {
-    const result = await this.habitService.resume(id);
-    return { result };
+    await this.habitService.resume(id);
+    return { result: true };
   }
 
   @Post("create")
   @Response()
   async create(@Body() createHabitVO: Habit.CreateHabitVo) {
-    const dto = await this.habitService.create(
-      HabitMapper.voToCreateDto(createHabitVO)
-    );
-    return HabitMapper.dtoToVo(dto);
+    const createDto = new CreateHabitDto();
+    createDto.importVo(createHabitVO);
+    const dto = await this.habitService.create(createDto);
+    return dto.exportVo();
   }
 
   @Delete("delete/:id")
@@ -78,18 +78,17 @@ export class HabitController {
     @Param("id") id: string,
     @Body() updateHabitVO: Habit.UpdateHabitVo
   ) {
-    const dto = await this.habitService.update(
-      id,
-      HabitMapper.voToUpdateDto(updateHabitVO)
-    );
-    return HabitMapper.dtoToVo(dto);
+    const updateDto = new UpdateHabitDto();
+    updateDto.importVo(updateHabitVO);
+    const dto = await this.habitService.update(id, updateDto);
+    return dto.exportVo();
   }
 
   @Get("page")
   @Response()
   async page(@Query() filter: HabitPageFilterDto) {
     const { list, total } = await this.habitService.page(filter);
-    return HabitMapper.dtoToPageVo(
+    return HabitDto.dtoListToPageVo(
       list,
       total,
       filter.pageNum || 1,
@@ -100,29 +99,15 @@ export class HabitController {
   @Get("list")
   @Response()
   async list(@Query() filter: HabitFilterDto) {
-    const habits = await this.habitService.findAll(filter);
-    return HabitMapper.dtoToListVo(habits);
+    const habits = await this.habitService.findByFilter(filter);
+    return HabitDto.dtoListToListVo(habits);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
     const habit = await this.habitService.findById(id);
-    return HabitMapper.dtoToVo(habit);
-  }
-
-  @Get("detail-with-relations/:id")
-  @Response()
-  async findByIdWithRelations(@Param("id") id: string) {
-    const habit = await this.habitService.findByIdWithRelations(id);
-    return HabitMapper.dtoToVo(habit);
-  }
-
-  @Get("by-goal/:goalId")
-  @Response()
-  async findByGoalId(@Param("goalId") goalId: string) {
-    const habits = await this.habitService.findByGoalId(goalId);
-    return HabitMapper.dtoToListVo(habits);
+    return habit.exportVo();
   }
 
   @Get("todos/:id")

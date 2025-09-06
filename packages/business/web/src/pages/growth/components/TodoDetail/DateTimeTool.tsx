@@ -3,11 +3,13 @@ import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useState } from 'react';
-import { RepeatSelector } from '@life-toolkit/components-repeat/web';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
-import { webMapping } from '@life-toolkit/components-repeat/web';
+import {
+  RepeatSelector,
+  webMapping,
+} from '@life-toolkit/components-repeat/web';
 import type { RepeatVo } from '@life-toolkit/components-repeat/vo';
 
 const { RangePicker } = TimePicker;

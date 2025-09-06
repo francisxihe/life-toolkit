@@ -11,7 +11,7 @@ export class GoalMapping {
       name: goalVo.name,
       description: goalVo.description,
       importance: goalVo.importance,
-      urgency: goalVo.urgency,
+      difficulty: goalVo.difficulty,
       planTimeRange: [goalVo.startAt, goalVo.endAt],
       type: goalVo.type,
       status: goalVo.status,

@@ -1,0 +1,238 @@
+---
+description: AI 字段流转结构（系统全链路）
+alwaysApply: false
+---
+# 字段流转结构（Monorepo 全链路）
+
+以下是系统字段在整个技术栈中的完整流转结构，用于指导任何字段相关变更的实施路径。从数据库实体到前端展示的完整链路，确保字段变更在所有层级保持一致性。
+
+## 🎯 适用场景
+- **字段变更**：添加/修改/删除业务字段
+- **类型检查**：验证字段类型在各层级的一致性
+- **数据流转**：追踪字段从后端到前端的完整路径
+- **架构对齐**：确保字段定义在所有层级同步
+
+**注意**：筛选字段相关操作请使用 `field-filter-manage`，本文档专注于基础字段的流转结构。
+
+## 🏗️ 系统架构层级与文件路径
+
+### 字段流转链路
+```
+数据库层 → 实体层 → DTO层 →  服务层 → 控制器层 → API类型层 → 前端展示层
+   ↓         ↓        ↓        ↓        ↓           ↓            ↓
+  MySQL     Entity    DTO     Service Controller   Types        UI
+```
+
+### 各层级职责与路径
+- **数据库层**：物理存储，约束，索引
+  - 位置：MySQL 数据库表结构
+
+- **实体层**：数据模型，字段定义，关联关系
+  - 路径：`packages/business/server/src/{domain}/{module}/entities/*.entity.ts`
+
+- **DTO层**：数据传输，验证规则，序列化
+  - 路径：`packages/business/server/src/{domain}/{module}/dto/`
+
+- **映射层**：类型转换，格式化，适配
+  - 路径：`packages/business/server/src/{domain}/{module}/*.mapper.ts`
+
+- **服务层**：业务逻辑，数据处理，规则计算
+  - 路径：`packages/business/server/src/{domain}/{module}/*.service.ts`
+
+- **控制器层**：HTTP接口适配，参数绑定，路由处理（Server环境）
+  - 路径：`apps/server/src/business/{domain}/{module}/*.controller.ts`
+
+- **IPC层**：进程间通信适配，数据传输，接口处理（Desktop环境）
+  - 路径：`apps/desktop/src/main/{domain}/{module}/` 或 IPC handlers
+
+- **API类型层**：类型定义，契约声明，前后端同步
+  - 路径：`packages/business/api/controller/{domain}/{module}/`
+
+- **前端展示层**：用户界面，交互逻辑，状态管理
+  - 路径：`packages/business/web/src/pages/{domain}/{module}/`
+
+## 🔄 字段流转实施清单
+
+### 后端实施步骤
+
+#### 1) 实体层修改
+- [ ] 在 `packages/business/server/src/{domain}/{module}/entities/*.entity.ts` 中定义字段
+- [ ] 设置 `@Column` 装饰器，指定类型、长度、默认值等
+- [ ] 如需索引，添加 `@Index()` 装饰器
+- [ ] 如为枚举字段，引用 `packages/business/enum/{domain}/` 中的枚举
+- [ ] 如果没有特别说明，字段默认非必填，且没有默认值
+
+
+#### 2) DTO层修改
+- [ ] 在 `packages/business/server/src/{domain}/{module}/dto/` 中添加字段
+- [ ] 更新 ModelDto、FormDto 等相关 DTO 类
+- [ ] 添加验证装饰器：`@IsString()`、`@IsOptional()`、`@Type()` 等
+- [ ] 保持字段顺序与实体一致
+
+#### 3) 映射层修改
+- [ ] 在 `packages/business/server/src/{domain}/{module}/*.mapper.ts` 中添加映射
+- [ ] 实现 Entity → DTO 的正向映射
+- [ ] 实现 DTO → Entity 的反向映射
+- [ ] 处理日期、金额、枚举等特殊类型转换
+
+#### 4) 仓储层修改
+- [ ] **接口定义**：在 `packages/business/server/src/{domain}/{module}/*.repository.ts` 中定义仓储接口
+- [ ] **查询方法**：确保查询方法支持新字段的 select 和 where 条件
+- [ ] **复杂查询**：如涉及复杂查询，更新查询构建逻辑
+
+##### Server环境适配
+- [ ] 在 `apps/server/src/business/{domain}/{module}/` 中注入具体的仓储实现
+- [ ] 使用 TypeORM Repository 或自定义实现
+- [ ] 配置数据库连接和事务管理
+
+##### Desktop环境适配
+- [ ] 在 `apps/desktop/src/database/{domain}/{module}/` 中实现SQLite仓储
+- [ ] 使用更好的-sqlite3 或 typeorm 适配
+- [ ] 处理桌面端的数据持久化和查询优化
+
+#### 5) 服务层修改
+- [ ] **接口定义**：在 `packages/business/server/src/{domain}/{module}/*.service.ts` 中定义服务接口
+- [ ] **业务逻辑**：更新 create、update、find 等方法的字段处理
+- [ ] **计算字段**：如有计算字段或默认值逻辑，在此实现
+
+##### Server环境适配
+- [ ] 在 `apps/server/src/business/{domain}/{module}/` 中注入服务实现
+- [ ] 配置依赖注入，连接仓储层和外部服务
+- [ ] 处理HTTP请求和响应格式
+
+##### Desktop环境适配
+- [ ] 在 `apps/desktop/src/database/{domain}/{module}/` 中实现桌面端服务
+- [ ] 适配 Electron 的 IPC 通信机制
+- [ ] 处理本地数据存储和同步逻辑
+
+#### 6) 控制器层/IPC层修改
+
+##### Server环境 - 控制器适配
+- [ ] 在 `apps/server/src/business/{domain}/{module}/*.controller.ts` 中更新HTTP接口
+- [ ] 调整请求参数绑定和响应处理
+- [ ] 确保 API 路径和参数正确
+- [ ] 配置路由守卫和中间件
+
+##### Desktop环境 - IPC适配
+- [ ] 在 `apps/desktop/src/main/ipc-handlers.ts` 中添加IPC处理器
+- [ ] 实现 `ipcMain.handle()` 方法处理数据操作
+- [ ] 适配 Electron 的异步通信机制
+- [ ] 处理主进程与渲染进程的数据同步
+
+#### 7) API类型层修改
+- [ ] 在 `packages/business/api/controller/{domain}/{module}/` 中更新类型定义
+- [ ] 同步请求和响应类型
+- [ ] 保持前后端类型定义一致
+
+#### 8) 数据库迁移
+- [ ] 生成并执行数据库迁移脚本
+- [ ] 验证表结构变更是否正确
+- [ ] 考虑历史数据迁移策略
+
+### 前端实施步骤
+
+#### 1) 类型定义更新
+- [ ] 检查 `packages/business/web/src/` 中的类型定义文件
+- [ ] 同步后端 API 类型的变更
+
+#### 2) 组件层修改
+- [ ] 在 `packages/business/web/src/pages/{domain}/{module}/` 中更新表单组件
+- [ ] 添加或修改输入控件，设置验证规则
+- [ ] 更新展示组件的字段渲染逻辑
+
+#### 3) 状态管理更新
+- [ ] 检查相关 store、hooks、context 文件
+- [ ] 更新状态结构以包含新字段
+- [ ] 调整数据获取和更新的逻辑
+
+#### 4) 工具函数更新
+- [ ] 更新 utils、helpers、constants 等工具文件
+- [ ] 保持格式化、验证等工具函数的同步
+
+## 🎨 前端适配原则
+
+前端应根据后端字段流转结构进行适配，确保用户界面与数据模型保持同步：
+
+### 1) 表单层适配
+- [ ] 根据 DTO 验证规则配置前端表单校验
+- [ ] 保持表单字段顺序与业务逻辑一致
+- [ ] 提供适当的用户交互反馈
+
+### 2) 展示层适配
+- [ ] 根据 API 响应结构渲染界面元素
+- [ ] 实现字段格式化与后端映射层保持一致
+- [ ] 处理加载状态和错误状态
+
+### 3) 状态层适配
+- [ ] 状态结构与 API 类型定义同步
+- [ ] 数据流转与后端服务层逻辑对应
+- [ ] 缓存策略与业务需求匹配
+
+### 4) 工具层适配
+- [ ] 工具函数与后端映射层逻辑对应
+- [ ] 常量定义与枚举/配置保持同步
+- [ ] 类型定义与后端 API 类型一致
+
+## ✅ 流转验证清单
+
+### 字段一致性验证
+- [ ] 各层级字段定义一致（类型、约束、默认值）
+- [ ] 数据流转无信息丢失或类型转换错误
+- [ ] API 契约与实现保持同步
+- [ ] 前后端类型定义一致
+
+### 业务功能验证
+- [ ] CRUD 操作正常执行
+- [ ] 业务规则正确应用
+- [ ] 异常情况正确处理
+- [ ] 性能满足业务需求
+
+## 📋 使用指南
+
+### 场景适配
+1. **字段类型检查**：使用核心层级检查清单
+2. **字段变更实施**：按流转链路逐层执行
+3. **架构对齐评估**：完整执行流转验证清单
+4. **筛选字段操作**：使用 `field-filter-manage.mdc`
+
+### 实施策略
+- **自顶向下**：从数据库层开始，逐步向上层级推进
+- **逐层验证**：每完成一层级修改后进行验证
+- **回滚准备**：确保有数据和代码的备份方案
+- **分批执行**：复杂变更可分阶段实施
+
+## 🏛️ 架构模式说明
+
+### Monorepo分层架构
+- **packages/business/server**：业务域包，提供接口定义和基础实现
+- **apps/server**：Server环境适配，注入MySQL数据库实现
+- **apps/desktop**：Desktop环境适配，注入SQLite数据库实现
+- **packages/business/api**：类型定义包，确保前后端类型同步
+
+### 环境适配策略
+- **接口隔离**：业务逻辑接口与具体实现分离
+- **依赖注入**：通过DI容器实现不同环境的仓储和服务注入
+- **配置驱动**：通过配置文件选择不同的数据库和外部服务
+- **统一抽象**：保持上层业务逻辑与具体实现解耦
+
+## 🛡️ 关键原则
+
+### 一致性原则
+- **类型一致**：各层级字段类型定义统一
+- **约束同步**：验证规则在所有层级保持一致
+- **命名规范**：字段命名在整个链路中统一
+
+### 兼容性原则
+- **向后兼容**：变更不破坏现有功能
+- **版本控制**：破坏性变更通过版本管理
+- **过渡策略**：提供新旧版本的过渡方案
+
+### 性能原则
+- **索引优化**：合理使用索引提升查询性能
+- **缓存策略**：根据业务需求配置缓存
+- **批量处理**：大数据量操作使用批量处理
+
+### 安全原则
+- **数据验证**：各层级实施数据验证
+- **注入防护**：防止SQL注入等安全风险
+- **权限控制**：确保字段访问权限正确

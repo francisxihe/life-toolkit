@@ -4,10 +4,11 @@ import { FlexibleContainer } from 'francis-component-react';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
-import { TodoVo, TodoStatus } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo/growth';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 import { useTodoContext } from '../context';
+import { TodoStatus } from '@life-toolkit/enum';
 
 const { Fixed, Shrink } = FlexibleContainer;
 
@@ -21,27 +22,27 @@ export default function TodoToday() {
   >([]);
 
   async function refreshData() {
-    const { list: todos } = await TodoService.getTodoList({
+    const { list: todos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.TODO,
       planDateStart: today,
       planDateEnd: today,
     });
     setTodayTodoList(todos);
 
-    const { list: doneTodos } = await TodoService.getTodoList({
+    const { list: doneTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.DONE,
       doneDateStart: today,
       doneDateEnd: today,
     });
     setTodayDoneTodoList(doneTodos);
 
-    const { list: expiredTodos } = await TodoService.getTodoList({
+    const { list: expiredTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.TODO,
       planDateEnd: yesterday,
     });
     setExpiredTodoList(expiredTodos);
 
-    const { list: abandonedTodos } = await TodoService.getTodoList({
+    const { list: abandonedTodos } = await TodoService.getTodoListWithRepeat({
       status: TodoStatus.ABANDONED,
       abandonedDateStart: today,
       abandonedDateEnd: today,
@@ -63,7 +64,7 @@ export default function TodoToday() {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodo(id);
+    const todo = await TodoService.getTodoDetailWithRepeat(id);
     setCurrentTodo(todo);
   }
 

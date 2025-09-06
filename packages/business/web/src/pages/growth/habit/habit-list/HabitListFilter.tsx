@@ -1,20 +1,15 @@
-import { Button, Input, Message, Select, Grid } from '@arco-design/web-react';
-import { IconRefresh, IconPlus, IconSearch } from '@arco-design/web-react/icon';
+import { Select, Grid } from '@arco-design/web-react';
 import { TableFilter } from '@/components/Layout/TableFilter';
-import { HabitPageFiltersVo } from '@life-toolkit/vo/growth/habit';
+import { HabitPageFilterVo } from '@life-toolkit/vo/growth/habit';
 import { useState } from 'react';
 import { HABIT_STATUS_OPTIONS } from '../constants';
+import { useHabitListContext } from './context';
 
 const { Row, Col } = Grid;
 
-export default function HabitListFilter({
-  handleRefresh,
-  loading,
-}: {
-  handleRefresh: (filters: HabitPageFiltersVo) => Promise<void>;
-  loading: boolean;
-}) {
-  const [filters, setFilters] = useState<HabitPageFiltersVo>({
+export default function HabitListFilter() {
+  const { handleRefresh } = useHabitListContext();
+  const [filters, setFilters] = useState<HabitPageFilterVo>({
     pageNum: 1,
     pageSize: 12,
   });
@@ -22,17 +17,11 @@ export default function HabitListFilter({
   return (
     <TableFilter
       clearFilters={async () => {
-        await handleRefresh({
-          pageNum: 1,
-          pageSize: 12,
-        });
+        await handleRefresh();
       }}
-      search={async () =>
-        await handleRefresh({
-          pageNum: 1,
-          pageSize: 12,
-        })
-      }
+      search={async () => {
+        await handleRefresh();
+      }}
     >
       <Row gutter={[16, 16]}>
         <Col span={6}>
@@ -44,6 +33,7 @@ export default function HabitListFilter({
             }))}
             value={filters.status}
             onChange={(value) => setFilters({ ...filters, status: value })}
+            allowClear
           />
         </Col>
       </Row>

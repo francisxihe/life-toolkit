@@ -9,15 +9,16 @@ import {
   Like,
   In,
 } from "typeorm";
-import { Todo, TodoStatus } from "./entities";
 import {
   CreateTodoDto,
   UpdateTodoDto,
   TodoPageFilterDto,
-  TodoListFilterDto,
+  TodoFilterDto,
   TodoDto,
+  Todo,
 } from "@life-toolkit/business-server";
 import dayjs from "dayjs";
+import { TodoStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class TodoRepository {
@@ -41,46 +42,8 @@ export class TodoRepository {
     return this.findById(todo.id);
   }
 
-  /**
-   * 查找某个重复配置在指定日期（当天）是否已有待办
-   */
-  async findOneByRepeatAndDate(
-    repeatId: string,
-    date: Date
-  ): Promise<TodoDto | null> {
-    const day = dayjs(date);
-    const start = new Date(day.format("YYYY-MM-DD") + "T00:00:00");
-    const end = new Date(day.format("YYYY-MM-DD") + "T23:59:59");
-    const existed = await this.todoRepository.findOne({
-      where: {
-        repeatId,
-        planDate: Between(start, end),
-      },
-    });
-    return (existed as unknown as TodoDto) || null;
-  }
 
-  /**
-   * 创建待办（支持附带额外字段，如 repeatId、source 等）
-   */
-  async createWithExtras(
-    createTodoDto: CreateTodoDto,
-    extras: Partial<Todo>
-  ): Promise<TodoDto> {
-    const todo = this.todoRepository.create({
-      ...createTodoDto,
-      ...extras,
-      status: TodoStatus.TODO,
-      tags: createTodoDto.tags || [],
-      planDate: createTodoDto.planDate
-        ? dayjs(createTodoDto.planDate).format("YYYY-MM-DD")
-        : undefined,
-    });
-    await this.todoRepository.save(todo);
-    return this.findById(todo.id);
-  }
-
-  async findAll(filter: TodoListFilterDto): Promise<TodoDto[]> {
+  async findByFilter(filter: TodoFilterDto): Promise<TodoDto[]> {
     const todoList = await this.todoRepository.find({
       where: this.buildWhere(filter),
     });
@@ -88,7 +51,7 @@ export class TodoRepository {
     return todoList as TodoDto[];
   }
 
-  async findPage(filter: TodoPageFilterDto): Promise<{
+  async page(filter: TodoPageFilterDto): Promise<{
     list: TodoDto[];
     total: number;
     pageNum: number;
@@ -127,6 +90,28 @@ export class TodoRepository {
     return this.findById(id);
   }
 
+  async batchUpdate(
+    includeIds: string[],
+    updateTodoDto: UpdateTodoDto
+  ): Promise<TodoDto[]> {
+    if (!includeIds || includeIds.length === 0) return [];
+
+    await this.todoRepository.update(
+      { id: In(includeIds) },
+      {
+        ...updateTodoDto,
+        planDate: updateTodoDto.planDate
+          ? dayjs(updateTodoDto.planDate).toDate()
+          : undefined,
+      }
+    );
+
+    const updated = await this.todoRepository.find({
+      where: { id: In(includeIds) },
+    });
+    return (updated as unknown as TodoDto[]) || [];
+  }
+
   async delete(id: string): Promise<boolean> {
     const result = await this.todoRepository.softDelete(id);
     return (result.affected ?? 0) > 0;
@@ -153,7 +138,7 @@ export class TodoRepository {
           relations: ["repeat"],
         });
         if (todoWithRepeat?.repeat) {
-          (todo as any).repeat = todoWithRepeat.repeat;
+          todo.repeat = todoWithRepeat.repeat;
         }
       }
 
@@ -164,16 +149,11 @@ export class TodoRepository {
     }
   }
 
-  async updateRepeatId(id: string, repeatId: string): Promise<void> {
-    await this.todoRepository.update(id, { repeatId });
-  }
 
-  async softDeleteByTaskIds(taskIds: string[]): Promise<void> {
-    if (!taskIds || taskIds.length === 0) return;
-    await this.todoRepository.softDelete({ taskId: In(taskIds) });
-  }
 
-  private buildWhere(filter: TodoPageFilterDto): FindOptionsWhere<Todo> {
+  private buildWhere(
+    filter: TodoPageFilterDto | TodoFilterDto
+  ): FindOptionsWhere<Todo> {
     const where: FindOptionsWhere<Todo> = {};
     if (filter.planDateStart && filter.planDateEnd) {
       where.planDate = Between(
@@ -211,23 +191,23 @@ export class TodoRepository {
         new Date(filter.abandonedDateEnd + "T23:59:59")
       );
     }
-    if ((filter as any).keyword) {
-      where.name = Like(`%${(filter as any).keyword}%`);
+    if (filter.keyword) {
+      where.name = Like(`%${filter.keyword}%`);
     }
     if (filter.status) {
       where.status = filter.status;
     }
-    if ((filter as any).importance) {
-      where.importance = (filter as any).importance;
+    if (filter.importance) {
+      where.importance = filter.importance;
     }
-    if ((filter as any).urgency) {
-      where.urgency = (filter as any).urgency;
+    if (filter.urgency) {
+      where.urgency = filter.urgency;
     }
-    if ((filter as any).taskId) {
-      where.taskId = (filter as any).taskId;
+    if (filter.taskId) {
+      where.taskId = filter.taskId;
     }
-    if ((filter as any).taskIds) {
-      where.taskId = In((filter as any).taskIds);
+    if (filter.taskIds) {
+      where.taskId = In(filter.taskIds);
     }
 
     return where;

@@ -103,9 +103,6 @@ habit/
 │   ├── habit-form.dto.ts       # 表单操作 DTO
 │   ├── habit-filter.dto.ts     # 过滤查询 DTO
 │   └── index.ts                # 导出文件
-├── mapper/                     # 对象映射层
-│   ├── habit.mapper.ts         # 对象映射文件
-│   └── index.ts                # 导出文件
 ├── habit.controller.ts         # 控制器层
 ├── habit.service.ts            # 业务服务层
 ├── habit.repository.ts         # 数据访问层

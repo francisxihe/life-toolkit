@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import react from "@vitejs/plugin-react";
 import svgrPlugin from "@arco-plugins/vite-plugin-svgr";
 import tailwindcss from "@tailwindcss/vite";
-import { vitePluginForArco } from '@arco-plugins/vite-react';
+import { vitePluginForArco } from "@arco-plugins/vite-react";
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -12,7 +12,13 @@ const currentDirPath = path.dirname(currentFilePath);
 
 export default defineConfig({
   main: {
-    // 主进程配置
+    resolve: {
+      alias: {
+        "@business": path.resolve(currentDirPath, "../../packages/business/server/src"),
+        "@database": path.resolve(currentDirPath, "src/database"),
+        "@": path.resolve(currentDirPath, "src/main"),
+      },
+    },
     build: {
       outDir: "dist/main",
       rollupOptions: {
@@ -24,6 +30,7 @@ export default defineConfig({
           "electron-devtools-installer",
           "sqlite3",
           "typeorm",
+          "typeorm-naming-strategies",
           "reflect-metadata",
           "class-validator",
           "class-transformer",
@@ -34,7 +41,7 @@ export default defineConfig({
           /^immutability-helper/,
         ],
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
       // 监听整个 src 目录的变化
       watch:
@@ -68,7 +75,6 @@ export default defineConfig({
           "class-validator",
           "class-transformer",
           "uuid",
-          /^@life-toolkit\/components-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
@@ -78,11 +84,14 @@ export default defineConfig({
           entryFileNames: "[name].cjs",
         },
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
     },
   },
   renderer: {
+    server: {
+      port: 8100,
+    },
     // 渲染进程配置
     root: path.resolve(currentDirPath, "src/render"),
     plugins: [
@@ -92,7 +101,7 @@ export default defineConfig({
         svgrOptions: {},
       }),
       vitePluginForArco({
-        theme: '@arco-themes/react-francis',
+        theme: "@arco-themes/react-francis",
         modifyVars: {
           // 'arcoblue-6': setting.themeColor,
         },
@@ -110,10 +119,13 @@ export default defineConfig({
       alias: [
         {
           find: /^@\/(.*)$/,
-          replacement: path.resolve(currentDirPath, "../../packages/business/web/src/$1"),
+          replacement: path.resolve(
+            currentDirPath,
+            "../../packages/business/web/src/$1"
+          ),
         },
         {
-          find: '@',
+          find: "@",
           replacement: path.resolve(currentDirPath, "src/render"),
         },
       ],
@@ -123,22 +135,21 @@ export default defineConfig({
       rollupOptions: {
         input: path.resolve(currentDirPath, "src/render/index.html"),
         external: [
-          /^@life-toolkit\/components-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
         ],
       },
-      minify: process.env.NODE_ENV === "production",
+      minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== "production",
     },
     optimizeDeps: {
       include: [
-        'react',
-        'react-dom',
-        'react-dnd',
-        'react-dnd-html5-backend',
-        'mitt',
+        "react",
+        "react-dom",
+        "react-dnd",
+        "react-dnd-html5-backend",
+        "mitt",
       ],
       exclude: [],
     },

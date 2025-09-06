@@ -13,7 +13,7 @@ document_meta:
   reviewers: ["架构师", "前端负责人"]
   target_audience: ["backend_developer", "frontend_developer"]
   related_documents: ["doc/growth/habit/prd.md"]
-  
+
 tech_stack:
   backend:
     framework: "NestJS"
@@ -45,7 +45,7 @@ interface HabitSystemArchitecture {
     constraints: ["强制目标关联", "实时进度同步", "数据一致性保障"];
     principles: ["目标导向", "数据驱动", "用户体验优先", "可扩展性"];
   };
-  
+
   layers: {
     presentation: {
       components: ["HabitPage", "HabitForm", "HabitCard", "StatisticsChart"];
@@ -63,7 +63,7 @@ interface HabitSystemArchitecture {
       storage: ["MySQL", "SQLite", "Redis Cache"];
     };
   };
-  
+
   dependencies: {
     HabitModule: {
       depends_on: ["GoalModule", "TodoModule", "UserModule"];
@@ -83,26 +83,26 @@ graph TB
         B[统计分析页面]
         C[目标详情页面]
     end
-    
+
     subgraph "共享包层"
         D[HabitVO]
         E[HabitAPI]
         F[通用组件]
     end
-    
+
     subgraph "后端服务层"
         G[HabitController]
         H[HabitService]
         I[GoalProgressService]
         J[StatisticsService]
     end
-    
+
     subgraph "数据存储层"
         K[HabitEntity]
         L[GoalEntity]
         M[HabitGoalRelation]
     end
-    
+
     A --> D
     A --> E
     G --> H
@@ -119,13 +119,13 @@ graph TB
 
 ```typescript
 // 导入依赖
-import { 
-  Entity, 
-  Column, 
-  OneToMany, 
+import {
+  Entity,
+  Column,
+  OneToMany,
   ManyToOne,
   JoinColumn,
-  Index
+  Index,
 } from "typeorm";
 import {
   IsString,
@@ -146,7 +146,7 @@ import { BaseEntity } from "@/base/base.entity";
 // 习惯状态枚举
 export enum HabitStatus {
   ACTIVE = "active",
-  PAUSED = "paused", 
+  PAUSED = "paused",
   COMPLETED = "completed",
   ABANDONED = "abandoned",
 }
@@ -332,23 +332,24 @@ export class HabitDto extends IntersectionType(
   completionRecords?: HabitCompletionDto[];
 }
 
-// 模型DTO - 排除关联字段
-export class HabitModelDto extends OmitType(HabitDto, [
-  "user",
-  "goalRelations", 
-  "completionRecords",
-] as const) {}
-
 // habit-form.dto.ts
 import { PartialType, PickType } from "@nestjs/mapped-types";
-import { IsOptional, IsArray, IsString, IsNumber, IsInt, Min, Max } from "class-validator";
+import {
+  IsOptional,
+  IsArray,
+  IsString,
+  IsNumber,
+  IsInt,
+  Min,
+  Max,
+} from "class-validator";
 import { Type } from "class-transformer";
 import { HabitDto } from "./habit-model.dto";
 
 // 创建DTO
 export class CreateHabitDto extends PickType(HabitDto, [
   "title",
-  "description", 
+  "description",
   "importance",
   "difficulty",
   "tags",
@@ -376,7 +377,7 @@ export class UpdateHabitDto extends PartialType(
   PickType(CreateHabitDto, [
     "title",
     "description",
-    "importance", 
+    "importance",
     "difficulty",
     "tags",
     "targetDate",
@@ -389,7 +390,14 @@ export class UpdateHabitDto extends PartialType(
 }
 
 // habit-filter.dto.ts
-import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsInt } from "class-validator";
+import {
+  IsOptional,
+  IsString,
+  IsArray,
+  IsEnum,
+  IsNumber,
+  IsInt,
+} from "class-validator";
 import { Type } from "class-transformer";
 import { PageDto } from "@/base/page.dto";
 import { HabitDto } from "./habit-model.dto";
@@ -397,7 +405,7 @@ import { HabitStatus } from "../entities";
 import { PickType, IntersectionType, PartialType } from "@nestjs/mapped-types";
 
 // 列表过滤DTO
-export class HabitListFilterDto extends PartialType(
+export class HabitFilterDto extends PartialType(
   PickType(HabitDto, ["status", "importance", "userId"] as const)
 ) {
   /** 搜索关键词 */
@@ -418,11 +426,12 @@ export class HabitListFilterDto extends PartialType(
   @IsString()
   @IsOptional()
   goalId?: string;
-  
-  /** 排除自身 */
+
+  /** 排除ID列表 */
+  @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  @Type(() => Boolean)
-  withoutSelf?: boolean;
+  excludeIds?: string[];
 
   /** 状态数组过滤 */
   @IsArray()
@@ -450,7 +459,7 @@ export class HabitListFilterDto extends PartialType(
 // 分页过滤DTO
 export class HabitPageFilterDto extends IntersectionType(
   PageDto,
-  HabitListFilterDto
+  HabitFilterDto
 ) {}
 
 // 标记完成DTO
@@ -493,7 +502,7 @@ import { BaseModelVo } from "../../base";
 export enum HabitStatus {
   ACTIVE = "active",
   PAUSED = "paused",
-  COMPLETED = "completed", 
+  COMPLETED = "completed",
   ABANDONED = "abandoned",
 }
 
@@ -514,34 +523,34 @@ export type HabitModelVo = {
 };
 
 // 项目VO (包含基础字段)
-export type HabitItemVo = BaseModelVo & HabitModelVo;
+export type HabitModelVo = BaseModelVo & HabitModelVo;
 
 // 完整VO (包含关联数据和计算字段)
-export type HabitVo = HabitItemVo & {
+export type HabitVo = HabitModelVo & {
   // 关联数据
   goalRelations?: HabitGoalRelationVo[];
   user?: UserItemVo;
-  
+
   // 计算字段
-  completionRate: number;        // 完成率
-  totalDays: number;             // 总天数
-  todayCompleted: boolean;       // 今日是否完成
-  isOverdue: boolean;            // 是否过期
-  remainingDays?: number;        // 剩余天数
-  goalCount: number;             // 关联目标数量
+  completionRate: number; // 完成率
+  totalDays: number; // 总天数
+  todayCompleted: boolean; // 今日是否完成
+  isOverdue: boolean; // 是否过期
+  remainingDays?: number; // 剩余天数
+  goalCount: number; // 关联目标数量
 };
 
 // habit-filter.vo.ts
-import { HabitVo, HabitItemVo, HabitStatus } from "./habit-model.vo";
+import { HabitVo, HabitModelVo, HabitStatus } from "./habit-model.vo";
 
 // 列表过滤VO
-export type HabitListFiltersVo = Partial<
+export type HabitFilterVo = Partial<
   Pick<HabitVo, "status" | "importance" | "userId"> & {
     keyword?: string;
     dateStart?: string;
     dateEnd?: string;
     goalId?: string;
-    withoutSelf?: boolean;
+    excludeIds?: string[];
     statusList?: HabitStatus[];
     tags?: string[];
     sortBy?: "createdAt" | "importance" | "currentStreak";
@@ -550,19 +559,19 @@ export type HabitListFiltersVo = Partial<
 >;
 
 // 分页过滤VO
-export type HabitPageFiltersVo = HabitListFiltersVo & {
+export type HabitPageFilterVo = HabitFilterVo & {
   pageNum?: number;
   pageSize?: number;
 };
 
 // 列表结果VO
 export type HabitListVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
 };
 
 // 分页结果VO
 export type HabitPageVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -598,22 +607,22 @@ export type HabitGoalRelationVo = {
   goalId: string;
   goalTitle: string;
   contributionWeight: number;
-  goalProgress: number;          // 目标当前进度
-  habitContribution: number;     // 该习惯的贡献度
+  goalProgress: number; // 目标当前进度
+  habitContribution: number; // 该习惯的贡献度
 };
 
 // 统计相关VO
 export type HabitStatisticsVo = {
-  totalHabits: number;           // 总习惯数
-  activeHabits: number;          // 活跃习惯数
-  completedHabits: number;       // 已完成习惯数
+  totalHabits: number; // 总习惯数
+  activeHabits: number; // 活跃习惯数
+  completedHabits: number; // 已完成习惯数
   overallCompletionRate: number; // 整体完成率
-  averageStreak: number;         // 平均连续天数
-  
+  averageStreak: number; // 平均连续天数
+
   // 趋势数据
-  weeklyTrend: TrendDataVo[];    // 周趋势
-  monthlyTrend: TrendDataVo[];   // 月趋势
-  
+  weeklyTrend: TrendDataVo[]; // 周趋势
+  monthlyTrend: TrendDataVo[]; // 月趋势
+
   // 分类统计
   categoryStats: CategoryStatVo[];
   importanceStats: ImportanceStatVo[];
@@ -621,10 +630,10 @@ export type HabitStatisticsVo = {
 
 // 趋势数据VO
 export type TrendDataVo = {
-  date: string;                  // 日期
-  completionRate: number;        // 完成率
-  completedCount: number;        // 完成数量
-  totalCount: number;            // 总数量
+  date: string; // 日期
+  completionRate: number; // 完成率
+  completedCount: number; // 完成数量
+  totalCount: number; // 总数量
 };
 
 // 分类统计VO
@@ -652,45 +661,45 @@ const HabitValidationRules = {
     required: true,
     minLength: 1,
     maxLength: 50,
-    pattern: /^[^<>]*$/,         // 不允许HTML标签
-    unique: true                 // 用户内唯一
+    pattern: /^[^<>]*$/, // 不允许HTML标签
+    unique: true, // 用户内唯一
   },
   description: {
-    maxLength: 200
+    maxLength: 200,
   },
   importance: {
     min: 1,
     max: 5,
-    default: 3
+    default: 3,
   },
   difficulty: {
     min: 1,
     max: 5,
-    default: 3
+    default: 3,
   },
   tags: {
     maxCount: 5,
-    itemMaxLength: 20
+    itemMaxLength: 20,
   },
   startDate: {
     required: true,
-    format: 'ISO_DATE',
-    notBefore: 'today'           // 不能早于今天
+    format: "ISO_DATE",
+    notBefore: "today", // 不能早于今天
   },
   targetDate: {
-    format: 'ISO_DATE',
-    afterField: 'startDate'      // 必须晚于开始日期
+    format: "ISO_DATE",
+    afterField: "startDate", // 必须晚于开始日期
   },
   goalIds: {
     required: true,
-    minCount: 1,                 // 至少关联一个目标
-    maxCount: 5                  // 最多关联5个目标
+    minCount: 1, // 至少关联一个目标
+    maxCount: 5, // 最多关联5个目标
   },
   contributionWeight: {
     min: 1,
     max: 10,
-    default: 5
-  }
+    default: 5,
+  },
 };
 ```
 
@@ -699,32 +708,36 @@ const HabitValidationRules = {
 ```typescript
 const HabitStatusTransitions = {
   [HabitStatus.ACTIVE]: {
-    allowedTransitions: [HabitStatus.PAUSED, HabitStatus.COMPLETED, HabitStatus.ABANDONED],
+    allowedTransitions: [
+      HabitStatus.PAUSED,
+      HabitStatus.COMPLETED,
+      HabitStatus.ABANDONED,
+    ],
     conditions: {
-      [HabitStatus.PAUSED]: [],                // 无条件
-      [HabitStatus.COMPLETED]: ['hasTargetDate', 'reachedTargetDate'],
-      [HabitStatus.ABANDONED]: []              // 无条件
-    }
+      [HabitStatus.PAUSED]: [], // 无条件
+      [HabitStatus.COMPLETED]: ["hasTargetDate", "reachedTargetDate"],
+      [HabitStatus.ABANDONED]: [], // 无条件
+    },
   },
   [HabitStatus.PAUSED]: {
     allowedTransitions: [HabitStatus.ACTIVE, HabitStatus.ABANDONED],
     conditions: {
-      [HabitStatus.ACTIVE]: [],                // 无条件
-      [HabitStatus.ABANDONED]: []              // 无条件
-    }
+      [HabitStatus.ACTIVE]: [], // 无条件
+      [HabitStatus.ABANDONED]: [], // 无条件
+    },
   },
   [HabitStatus.COMPLETED]: {
     allowedTransitions: [HabitStatus.ACTIVE],
     conditions: {
-      [HabitStatus.ACTIVE]: []                 // 允许重新激活
-    }
+      [HabitStatus.ACTIVE]: [], // 允许重新激活
+    },
   },
   [HabitStatus.ABANDONED]: {
     allowedTransitions: [HabitStatus.ACTIVE],
     conditions: {
-      [HabitStatus.ACTIVE]: []                 // 允许重新激活
-    }
-  }
+      [HabitStatus.ACTIVE]: [], // 允许重新激活
+    },
+  },
 };
 ```
 
@@ -734,30 +747,42 @@ const HabitStatusTransitions = {
 const HabitCalculationRules = {
   // 完成率计算
   completionRate: (completedCount: number, totalDays: number): number => {
-    return totalDays > 0 ? Math.round((completedCount / totalDays) * 100 * 100) / 100 : 0;
+    return totalDays > 0
+      ? Math.round((completedCount / totalDays) * 100 * 100) / 100
+      : 0;
   },
-  
+
   // 总天数计算
   totalDays: (startDate: Date, endDate?: Date): number => {
     const end = endDate || new Date();
-    return Math.ceil((end.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    return (
+      Math.ceil((end.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) +
+      1
+    );
   },
-  
+
   // 是否过期
   isOverdue: (targetDate?: Date, status?: string): boolean => {
-    return status === 'active' && targetDate && targetDate < new Date();
+    return status === "active" && targetDate && targetDate < new Date();
   },
-  
+
   // 剩余天数
   remainingDays: (targetDate?: Date): number | undefined => {
     if (!targetDate) return undefined;
-    return Math.ceil((targetDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    return Math.ceil(
+      (targetDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+    );
   },
-  
+
   // 目标进度贡献计算
-  goalContribution: (habitCompletionRate: number, contributionWeight: number): number => {
-    return Math.round(habitCompletionRate * (contributionWeight / 10) * 100) / 100;
-  }
+  goalContribution: (
+    habitCompletionRate: number,
+    contributionWeight: number
+  ): number => {
+    return (
+      Math.round(habitCompletionRate * (contributionWeight / 10) * 100) / 100
+    );
+  },
 };
 ```
 
@@ -768,28 +793,30 @@ const GoalProgressSyncRules = {
   // 目标进度计算公式
   calculateGoalProgress: (habitRelations: HabitGoalRelationVo[]): number => {
     if (habitRelations.length === 0) return 0;
-    
+
     const totalWeightedProgress = habitRelations.reduce((sum, relation) => {
-      return sum + (relation.habitContribution * relation.contributionWeight);
+      return sum + relation.habitContribution * relation.contributionWeight;
     }, 0);
-    
+
     const totalWeight = habitRelations.reduce((sum, relation) => {
       return sum + relation.contributionWeight;
     }, 0);
-    
-    return totalWeight > 0 ? Math.round((totalWeightedProgress / totalWeight) * 100) / 100 : 0;
+
+    return totalWeight > 0
+      ? Math.round((totalWeightedProgress / totalWeight) * 100) / 100
+      : 0;
   },
-  
+
   // 同步触发条件
   syncTriggers: [
-    'habit_completed',           // 习惯完成
-    'habit_status_changed',      // 习惯状态变更
-    'habit_goal_relation_updated', // 关联关系更新
-    'habit_deleted'              // 习惯删除
+    "habit_completed", // 习惯完成
+    "habit_status_changed", // 习惯状态变更
+    "habit_goal_relation_updated", // 关联关系更新
+    "habit_deleted", // 习惯删除
   ],
-  
+
   // 同步策略
-  syncStrategy: 'immediate'      // 立即同步
+  syncStrategy: "immediate", // 立即同步
 };
 ```
 
@@ -805,7 +832,7 @@ interface HabitApiDesign {
     authentication: "JWT";
     content_type: "application/json";
   };
-  
+
   endpoints: {
     // 习惯CRUD操作
     "POST /": {
@@ -816,24 +843,24 @@ interface HabitApiDesign {
       responses: [
         { status_code: 201; schema: "HabitVo"; description: "创建成功" },
         { status_code: 400; schema: "ErrorResponse"; description: "参数错误" },
-        { status_code: 401; schema: "ErrorResponse"; description: "未授权" }
+        { status_code: 401; schema: "ErrorResponse"; description: "未授权" },
       ];
       security: ["JWT"];
       tags: ["习惯管理"];
     };
-    
+
     "GET /": {
       method: "GET";
       summary: "查询习惯列表";
       description: "分页查询用户的习惯列表";
       parameters: HabitPageFilterDto;
       responses: [
-        { status_code: 200; schema: "HabitPageVo"; description: "查询成功" }
+        { status_code: 200; schema: "HabitPageVo"; description: "查询成功" },
       ];
       security: ["JWT"];
       tags: ["习惯管理"];
     };
-    
+
     "GET /:id": {
       method: "GET";
       summary: "获取习惯详情";
@@ -841,12 +868,16 @@ interface HabitApiDesign {
       parameters: [{ name: "id"; type: "number"; required: true }];
       responses: [
         { status_code: 200; schema: "HabitVo"; description: "获取成功" },
-        { status_code: 404; schema: "ErrorResponse"; description: "习惯不存在" }
+        {
+          status_code: 404;
+          schema: "ErrorResponse";
+          description: "习惯不存在";
+        },
       ];
       security: ["JWT"];
       tags: ["习惯管理"];
     };
-    
+
     "PUT /:id": {
       method: "PUT";
       summary: "更新习惯";
@@ -854,24 +885,22 @@ interface HabitApiDesign {
       parameters: [{ name: "id"; type: "number"; required: true }];
       request_body: UpdateHabitDto;
       responses: [
-        { status_code: 200; schema: "HabitVo"; description: "更新成功" }
+        { status_code: 200; schema: "HabitVo"; description: "更新成功" },
       ];
       security: ["JWT"];
       tags: ["习惯管理"];
     };
-    
+
     "DELETE /:id": {
       method: "DELETE";
       summary: "删除习惯";
       description: "删除指定习惯";
       parameters: [{ name: "id"; type: "number"; required: true }];
-      responses: [
-        { status_code: 204; description: "删除成功" }
-      ];
+      responses: [{ status_code: 204; description: "删除成功" }];
       security: ["JWT"];
       tags: ["习惯管理"];
     };
-    
+
     // 习惯状态操作
     "POST /:id/complete": {
       method: "POST";
@@ -880,34 +909,34 @@ interface HabitApiDesign {
       parameters: [{ name: "id"; type: "number"; required: true }];
       request_body: MarkCompletionDto;
       responses: [
-        { status_code: 200; schema: "HabitVo"; description: "标记成功" }
+        { status_code: 200; schema: "HabitVo"; description: "标记成功" },
       ];
       security: ["JWT"];
       tags: ["习惯操作"];
     };
-    
+
     "POST /:id/pause": {
       method: "POST";
       summary: "暂停习惯";
       description: "将习惯状态设置为暂停";
       responses: [
-        { status_code: 200; schema: "HabitVo"; description: "暂停成功" }
+        { status_code: 200; schema: "HabitVo"; description: "暂停成功" },
       ];
       security: ["JWT"];
       tags: ["习惯操作"];
     };
-    
+
     "POST /:id/resume": {
       method: "POST";
       summary: "恢复习惯";
       description: "将暂停的习惯恢复为活跃状态";
       responses: [
-        { status_code: 200; schema: "HabitVo"; description: "恢复成功" }
+        { status_code: 200; schema: "HabitVo"; description: "恢复成功" },
       ];
       security: ["JWT"];
       tags: ["习惯操作"];
     };
-    
+
     // 目标关联操作
     "POST /:id/goals": {
       method: "POST";
@@ -915,28 +944,28 @@ interface HabitApiDesign {
       description: "为习惯添加新的目标关联";
       request_body: HabitGoalRelationDto;
       responses: [
-        { status_code: 201; schema: "HabitVo"; description: "关联成功" }
+        { status_code: 201; schema: "HabitVo"; description: "关联成功" },
       ];
       security: ["JWT"];
       tags: ["目标关联"];
     };
-    
+
     "PUT /:id/goals/:goalId": {
       method: "PUT";
       summary: "更新目标关联";
       description: "更新习惯与目标的关联权重";
       parameters: [
         { name: "id"; type: "number"; required: true },
-        { name: "goalId"; type: "number"; required: true }
+        { name: "goalId"; type: "number"; required: true },
       ];
       request_body: { contributionWeight: number };
       responses: [
-        { status_code: 200; schema: "HabitVo"; description: "更新成功" }
+        { status_code: 200; schema: "HabitVo"; description: "更新成功" },
       ];
       security: ["JWT"];
       tags: ["目标关联"];
     };
-    
+
     // 统计分析
     "GET /statistics": {
       method: "GET";
@@ -944,10 +973,14 @@ interface HabitApiDesign {
       description: "获取用户的习惯统计数据";
       parameters: [
         { name: "period"; type: "string"; enum: ["week", "month", "year"] },
-        { name: "goalId"; type: "number"; required: false }
+        { name: "goalId"; type: "number"; required: false },
       ];
       responses: [
-        { status_code: 200; schema: "HabitStatisticsVo"; description: "获取成功" }
+        {
+          status_code: 200;
+          schema: "HabitStatisticsVo";
+          description: "获取成功";
+        },
       ];
       security: ["JWT"];
       tags: ["统计分析"];
@@ -968,73 +1001,129 @@ interface HabitPageDesign {
       component_name: "HabitListPage";
       props: [];
       state: [
-        { name: "habits"; type: "HabitItemVo[]"; description: "习惯列表" },
+        { name: "habits"; type: "HabitModelVo[]"; description: "习惯列表" },
         { name: "loading"; type: "boolean"; description: "加载状态" },
-        { name: "filters"; type: "HabitPageFiltersVo"; description: "筛选条件" }
+        {
+          name: "filters";
+          type: "HabitPageFilterVo";
+          description: "筛选条件";
+        },
       ];
       hooks: [
         { name: "useHabitList"; description: "习惯列表管理" },
-        { name: "useHabitOperations"; description: "习惯操作" }
+        { name: "useHabitOperations"; description: "习惯操作" },
       ];
       child_components: ["HabitCard", "HabitFilter", "CreateHabitModal"];
       api_calls: ["getHabitList", "markHabitComplete", "updateHabitStatus"];
     };
-    
+
     HabitDetailPage: {
       path: "/growth/habits/:id";
       component_name: "HabitDetailPage";
       props: [
-        { name: "habitId"; type: "number"; required: true; description: "习惯ID" }
+        {
+          name: "habitId";
+          type: "number";
+          required: true;
+          description: "习惯ID";
+        },
       ];
       state: [
         { name: "habit"; type: "HabitVo"; description: "习惯详情" },
-        { name: "statistics"; type: "HabitStatisticsVo"; description: "统计数据" }
+        {
+          name: "statistics";
+          type: "HabitStatisticsVo";
+          description: "统计数据";
+        },
       ];
       child_components: ["HabitInfo", "GoalRelations", "StatisticsChart"];
-      api_calls: ["getHabitDetail", "updateHabit", "getHabitStatistics"];
+      api_calls: ["getHabitDetail", "updateHabit"];
     };
-    
+
     HabitStatisticsPage: {
       path: "/growth/habits/statistics";
       component_name: "HabitStatisticsPage";
       props: [];
       state: [
-        { name: "statistics"; type: "HabitStatisticsVo"; description: "统计数据" },
-        { name: "period"; type: "string"; description: "统计周期" }
+        {
+          name: "statistics";
+          type: "HabitStatisticsVo";
+          description: "统计数据";
+        },
+        { name: "period"; type: "string"; description: "统计周期" },
       ];
       child_components: ["TrendChart", "CategoryChart", "ProgressChart"];
-      api_calls: ["getHabitStatistics"];
     };
   };
-  
+
   components: {
     HabitCard: {
       type: "functional";
       props: [
-        { name: "habit"; type: "HabitItemVo"; required: true; description: "习惯数据" },
-        { name: "onComplete"; type: "function"; required: true; description: "完成回调" },
-        { name: "onEdit"; type: "function"; required: true; description: "编辑回调" }
+        {
+          name: "habit";
+          type: "HabitModelVo";
+          required: true;
+          description: "习惯数据";
+        },
+        {
+          name: "onComplete";
+          type: "function";
+          required: true;
+          description: "完成回调";
+        },
+        {
+          name: "onEdit";
+          type: "function";
+          required: true;
+          description: "编辑回调";
+        },
       ];
       events: ["onComplete", "onEdit", "onPause", "onResume"];
       dependencies: ["Arco Design"];
     };
-    
+
     CreateHabitModal: {
       type: "functional";
       props: [
-        { name: "visible"; type: "boolean"; required: true; description: "显示状态" },
-        { name: "onSubmit"; type: "function"; required: true; description: "提交回调" },
-        { name: "onCancel"; type: "function"; required: true; description: "取消回调" }
+        {
+          name: "visible";
+          type: "boolean";
+          required: true;
+          description: "显示状态";
+        },
+        {
+          name: "onSubmit";
+          type: "function";
+          required: true;
+          description: "提交回调";
+        },
+        {
+          name: "onCancel";
+          type: "function";
+          required: true;
+          description: "取消回调";
+        },
       ];
       events: ["onSubmit", "onCancel"];
       dependencies: ["Arco Design", "React Hook Form"];
     };
-    
+
     HabitFilter: {
       type: "functional";
       props: [
-        { name: "filters"; type: "HabitListFiltersVo"; required: true; description: "筛选条件" },
-        { name: "onChange"; type: "function"; required: true; description: "变更回调" }
+        {
+          name: "filters";
+          type: "HabitFilterVo";
+          required: true;
+          description: "筛选条件";
+        },
+        {
+          name: "onChange";
+          type: "function";
+          required: true;
+          description: "变更回调";
+        },
       ];
       events: ["onChange"];
       dependencies: ["Arco Design"];
@@ -1057,24 +1146,30 @@ ai_instructions:
           entity_name: "HabitEntity"
           table_name: "habits"
           relationships: ["User", "Goal", "HabitCompletion"]
-        
+
       - task: "生成HabitGoalRelationEntity实体类"
         template: "entity_template"
         output_path: "apps/server/src/business/growth/habit/entities/habit-goal-relation.entity.ts"
         dependencies: ["TypeORM", "class-validator"]
-        
+
       - task: "生成HabitCompletionEntity实体类"
         template: "entity_template"
         output_path: "apps/server/src/business/growth/habit/entities/habit-completion.entity.ts"
         dependencies: ["TypeORM", "class-validator"]
-        
+
       - task: "生成Habit DTO传输对象"
         template: "dto_template"
         output_path: "apps/server/src/business/growth/habit/dto/"
         dependencies: ["class-validator", "class-transformer"]
         context:
-          dtos: ["CreateHabitDto", "UpdateHabitDto", "QueryHabitDto", "MarkCompletionDto"]
-        
+          dtos:
+            [
+              "CreateHabitDto",
+              "UpdateHabitDto",
+              "QueryHabitDto",
+              "MarkCompletionDto",
+            ]
+
       - task: "生成HabitController控制器"
         template: "controller_template"
         output_path: "apps/server/src/business/growth/habit/habit.controller.ts"
@@ -1083,15 +1178,16 @@ ai_instructions:
           controller_name: "HabitController"
           base_path: "habits"
           operations: ["CRUD", "complete", "pause", "resume", "statistics"]
-        
+
       - task: "生成HabitService服务类"
         template: "service_template"
         output_path: "apps/server/src/business/growth/habit/habit.service.ts"
         dependencies: ["TypeORM", "Repository"]
         context:
           service_name: "HabitService"
-          entities: ["HabitEntity", "HabitGoalRelationEntity", "HabitCompletionEntity"]
-        
+          entities:
+            ["HabitEntity", "HabitGoalRelationEntity", "HabitCompletionEntity"]
+
       - task: "生成GoalProgressService服务类"
         template: "service_template"
         output_path: "apps/server/src/business/growth/habit/goal-progress.service.ts"
@@ -1099,15 +1195,7 @@ ai_instructions:
         context:
           service_name: "GoalProgressService"
           purpose: "目标进度同步计算"
-        
-      - task: "生成HabitMapper映射器"
-        template: "mapper_template"
-        output_path: "apps/server/src/business/growth/habit/mappers/habit.mapper.ts"
-        dependencies: []
-        context:
-          mapper_name: "HabitMapper"
-          mappings: ["Entity->VO", "DTO->Entity"]
-        
+
     frontend:
       - task: "生成习惯列表页面"
         template: "page_template"
@@ -1116,7 +1204,7 @@ ai_instructions:
         context:
           page_name: "HabitListPage"
           features: ["列表展示", "筛选", "操作", "创建"]
-        
+
       - task: "生成习惯详情页面"
         template: "page_template"
         output_path: "apps/web/src/pages/growth/habit/HabitDetailPage.tsx"
@@ -1124,7 +1212,7 @@ ai_instructions:
         context:
           page_name: "HabitDetailPage"
           features: ["详情展示", "编辑", "统计", "目标关联"]
-        
+
       - task: "生成习惯卡片组件"
         template: "component_template"
         output_path: "apps/web/src/components/habit/HabitCard.tsx"
@@ -1132,7 +1220,7 @@ ai_instructions:
         context:
           component_name: "HabitCard"
           type: "展示组件"
-        
+
       - task: "生成创建习惯模态框"
         template: "component_template"
         output_path: "apps/web/src/components/habit/CreateHabitModal.tsx"
@@ -1140,7 +1228,7 @@ ai_instructions:
         context:
           component_name: "CreateHabitModal"
           type: "表单组件"
-        
+
     shared:
       - task: "生成Habit VO值对象"
         template: "vo_template"
@@ -1148,8 +1236,8 @@ ai_instructions:
         dependencies: []
         context:
           vo_name: "HabitVo"
-          types: ["HabitVo", "HabitItemVo", "HabitModelVo", "HabitStatisticsVo"]
-        
+          types: ["HabitVo", "HabitModelVo", "HabitModelVo", "HabitStatisticsVo"]
+
       - task: "生成Habit API接口"
         template: "api_template"
         output_path: "packages/api/src/controller/growth/habit.api.ts"
@@ -1179,7 +1267,7 @@ ai_instructions:
       - "实时进度同步: 习惯状态变更立即更新目标进度"
       - "数据一致性: 确保习惯、目标、待办数据同步"
       - "权限控制: 用户只能操作自己的习惯"
-    
+
   validation_rules:
     - "遵循Life Toolkit项目架构规范"
     - "使用统一的命名约定(camelCase + PascalCase)"
@@ -1191,7 +1279,7 @@ ai_instructions:
     - "实现响应式布局设计"
     - "强制实现目标关联逻辑"
     - "实现目标进度实时同步"
-    
+
   file_paths:
     backend:
       entity: "apps/server/src/business/growth/habit/entities/"
@@ -1218,7 +1306,7 @@ development_workflow:
       - "pnpm >= 8.0.0"
       - "MySQL >= 8.0 (生产环境)"
       - "Git >= 2.30.0"
-    
+
     setup_steps:
       - command: "git clone <repository_url>"
         description: "克隆项目仓库"
@@ -1228,7 +1316,7 @@ development_workflow:
         description: "配置环境变量"
       - command: "pnpm dev"
         description: "启动开发服务器"
-    
+
     verification:
       - check: "http://localhost:3000 可访问"
         description: "前端服务正常启动"
@@ -1242,25 +1330,25 @@ development_workflow:
       - "创建DTO传输对象"
       - "创建VO值对象"
       - "实现Repository层"
-      
+
     phase_2_business:
       - "实现HabitService核心业务逻辑"
       - "实现GoalProgressService目标进度同步"
       - "实现StatisticsService统计分析"
       - "创建Mapper映射器"
-      
+
     phase_3_api:
       - "实现HabitController API接口"
       - "添加API文档注解"
       - "实现权限验证"
       - "添加参数验证"
-      
+
     phase_4_frontend:
       - "创建API接口定义"
       - "实现页面组件 (列表、详情、统计)"
       - "实现通用组件 (卡片、表单、图表)"
       - "实现状态管理"
-      
+
     phase_5_integration:
       - "前后端接口联调"
       - "业务流程测试"
@@ -1273,13 +1361,13 @@ development_workflow:
       - "Mapper映射逻辑测试"
       - "计算规则测试"
       - "验证规则测试"
-      
+
     integration_tests:
       - "API接口测试"
       - "数据库操作测试"
       - "目标进度同步测试"
       - "权限控制测试"
-      
+
     e2e_tests:
       - "习惯创建流程测试"
       - "状态操作流程测试"
@@ -1307,13 +1395,13 @@ performance_requirements:
     throughput: "> 500 req/s"
     memory_usage: "< 256MB"
     cpu_usage: "< 60%"
-    
+
   frontend:
     page_load: "< 1.5s (首次)"
     interaction: "< 50ms"
     bundle_size: "< 500KB (gzipped)"
     lighthouse_score: "> 90"
-    
+
   database:
     query_time: "< 50ms (95%)"
     connection_pool: "5-20 connections"
@@ -1324,11 +1412,11 @@ quality_requirements:
   type_coverage: "> 95%"
   linting_errors: "0"
   security_vulnerabilities: "0 (high/critical)"
-  
+
 business_requirements:
-  goal_association_rate: "100%"  # 所有习惯必须关联目标
+  goal_association_rate: "100%" # 所有习惯必须关联目标
   progress_sync_accuracy: "> 99%" # 目标进度同步准确率
-  data_consistency: "100%"        # 数据一致性保障
+  data_consistency: "100%" # 数据一致性保障
   user_permission_coverage: "100%" # 权限控制覆盖率
 
 compatibility_requirements:
@@ -1400,4 +1488,4 @@ compatibility_requirements:
 **相关实体**: [HabitEntity, GoalEntity, UserEntity, TodoEntity]
 **技术栈**: [NestJS, TypeORM, React, Arco Design, MySQL]
 **代码规范**: [参考 entity-specification, dto-specification, controller-specification 等规则]
-**业务约束**: [强制目标关联, 实时进度同步, 权限控制, 数据一致性] 
+**业务约束**: [强制目标关联, 实时进度同步, 权限控制, 数据一致性]

@@ -1,4 +1,5 @@
-import { HabitStatus, HabitDifficulty } from '@life-toolkit/vo/growth/habit';
+
+import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 
 export const HABIT_STATUS_OPTIONS = [
   {
@@ -25,17 +26,17 @@ export const HABIT_STATUS_OPTIONS = [
 export const HABIT_DIFFICULTY_OPTIONS = [
   {
     label: '容易',
-    value: HabitDifficulty.EASY,
+    value: Difficulty.GettingStarted,
     color: 'green',
   },
   {
     label: '中等',
-    value: HabitDifficulty.MEDIUM,
+    value: Difficulty.Challenger,
     color: 'orange',
   },
   {
     label: '困难',
-    value: HabitDifficulty.HARD,
+    value: Difficulty.Legendary,
     color: 'red',
   },
 ];

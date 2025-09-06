@@ -13,110 +13,85 @@ import { Response } from "@/decorators/response.decorator";
 import { TaskStatusService } from "./task-status.service";
 import type {
   Task,
-  OperationByIdListVo,
-  TaskListFiltersVo,
+  TaskFilterVo,
+  TaskPageFilterVo,
 } from "@life-toolkit/vo";
 import {
-  TaskMapper,
-  TaskPageFilterDto,
-  TaskListFilterDto,
+  TaskController as BusinessTaskController,
 } from "@life-toolkit/business-server";
 import { OperationMapper } from "@/common/operation";
 
 @Controller("task")
 export class TaskController {
+  private readonly businessController: BusinessTaskController;
+
   constructor(
     private readonly taskService: TaskService,
     private readonly taskStatusService: TaskStatusService
-  ) {}
+  ) {
+    this.businessController = new BusinessTaskController(taskService);
+  }
 
-  @Put("batch-done")
+  @Put("done/batch")
   @Response()
-  async batchDone(@Body() idList: OperationByIdListVo) {
-    return await this.taskStatusService.batchDone(
-      OperationMapper.voToOperationByIdListDto(idList)
-    );
+  async doneBatch(@Body() body: { includeIds?: string[] }) {
+    return await this.businessController.doneBatch(body);
   }
 
   @Put("abandon/:id")
   @Response()
   async abandon(@Param("id") id: string) {
-    const result = await this.taskStatusService.abandon(id);
-    return { result };
+    return await this.businessController.abandon(id);
   }
 
   @Put("restore/:id")
   @Response()
   async restore(@Param("id") id: string) {
-    const result = await this.taskStatusService.restore(id);
-    return { result };
+    return await this.businessController.restore(id);
   }
 
   @Get("task-with-track-time/:id")
   @Response()
   async taskWithTrackTime(@Param("id") id: string) {
-    const dto = await this.taskService.taskWithTrackTime(id);
-    return TaskMapper.dtoToWithTrackTimeVo(dto);
+    return await this.businessController.taskWithTrackTime(id);
   }
 
   @Post("create")
   @Response()
   async create(@Body() createTaskVo: Task.CreateTaskVo) {
-    const createdDto = TaskMapper.voToCreateDto(createTaskVo);
-    const dto = await this.taskService.create(createdDto);
-    return TaskMapper.dtoToVo(dto);
+    return await this.businessController.create(createTaskVo);
   }
 
   @Delete("delete/:id")
   @Response()
   async delete(@Param("id") id: string) {
-    return this.taskService.delete(id);
+    return await this.businessController.remove(id);
   }
 
   @Put("update/:id")
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateTaskVo: Task.CreateTaskVo
+    @Body() updateTaskVo: Task.UpdateTaskVo
   ) {
-    const updatedDto = TaskMapper.voToUpdateDto(updateTaskVo);
-    const dto = await this.taskService.update(id, updatedDto);
-    return TaskMapper.dtoToVo(dto);
+    return await this.businessController.update(id, updateTaskVo);
   }
 
   @Get("page")
   @Response()
-  async page(@Query() filter: TaskPageFilterDto) {
-    const { list, total } = await this.taskService.page(filter);
-    return TaskMapper.dtoToPageVo(
-      list,
-      total,
-      filter.pageNum || 1,
-      filter.pageSize || 10
-    );
+  async page(@Query() filter: TaskPageFilterVo) {
+    return await this.businessController.page(filter);
   }
 
   @Get("list")
   @Response()
-  async list(@Query() filter: TaskListFiltersVo) {
-    const taskListFilterDto = new TaskListFilterDto();
-    taskListFilterDto.withoutSelf = filter.withoutSelf;
-    taskListFilterDto.id = filter.id;
-    taskListFilterDto.importance = filter.importance;
-    taskListFilterDto.urgency = filter.urgency;
-    taskListFilterDto.status = filter.status;
-    taskListFilterDto.startAt = filter.startAt
-      ? new Date(filter.startAt)
-      : undefined;
-    taskListFilterDto.endAt = filter.endAt ? new Date(filter.endAt) : undefined;
-    const taskList = await this.taskService.findAll(taskListFilterDto);
-    return TaskMapper.dtoToListVo(taskList);
+  async list(@Query() filter: TaskFilterVo) {
+    return await this.businessController.list(filter);
   }
 
   @Get("detail/:id")
   @Response()
   async findById(@Param("id") id: string) {
-    const task = await this.taskService.findById(id);
-    return TaskMapper.dtoToVo(task);
+    return await this.businessController.findById(id);
   }
 }

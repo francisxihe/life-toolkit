@@ -1,33 +1,33 @@
-export * from "./habit-model.vo";
-import { HabitVo, HabitItemVo, HabitStatus, HabitDifficulty, HabitCompletionScore } from "./habit-model.vo";
-import { self } from "../../base";
+import { HabitVo, HabitModelVo, HabitCompletionScore } from './habit-model.vo';
+import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
+import { BaseFilterVo } from '../../common';
 
-export type HabitListFiltersVo = Partial<
-  Pick<HabitVo, "status" | "difficulty" | "importance" | "tags"> & {
-    keyword?: string;
-    statusList?: HabitStatus[];
-    difficultyList?: HabitDifficulty[];
-    importanceMin?: number;
-    importanceMax?: number;
-    startAtFrom?: string;
-    startAtTo?: string;
-    goalIds?: string[];
-  } & self
->;
+export type HabitFilterVo = BaseFilterVo &
+  Partial<
+    Pick<HabitVo, 'status' | 'difficulty' | 'importance' | 'tags'> & {
+      statusList?: HabitStatus[];
+      difficultyList?: Difficulty[];
+      startDateStart?: string;
+      startDateEnd?: string;
+      endDataStart?: string;
+      endDataEnd?: string;
+      goalIds?: string[];
+    }
+  >;
 
-export type HabitPageFiltersVo = HabitListFiltersVo & {
+export type HabitPageFilterVo = HabitFilterVo & {
   pageNum?: number;
   pageSize?: number;
-  sortBy?: "createdAt" | "updatedAt" | "name" | "importance" | "currentStreak" | "longestStreak" | "completedCount";
-  sortOrder?: "ASC" | "DESC";
+  sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'importance' | 'currentStreak' | 'longestStreak' | 'completedCount';
+  sortOrder?: 'ASC' | 'DESC';
 };
 
 export type HabitListVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
 };
 
 export type HabitPageVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -42,22 +42,23 @@ export type HabitLogListFiltersVo = Partial<{
   moodMin?: number;
   moodMax?: number;
   hasNote?: boolean;
-} & self>;
+  excludeIds?: string[];
+}>;
 
 export type HabitLogPageFiltersVo = HabitLogListFiltersVo & {
   pageNum?: number;
   pageSize?: number;
-  sortBy?: "logDate" | "completionScore" | "mood" | "createdAt";
-  sortOrder?: "ASC" | "DESC";
+  sortBy?: 'logDate' | 'completionScore' | 'mood' | 'createdAt';
+  sortOrder?: 'ASC' | 'DESC';
 };
 
 export type HabitLogListVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
 };
 
 export type HabitLogPageVo = {
-  list: HabitItemVo[];
+  list: HabitModelVo[];
   total: number;
   pageNum: number;
   pageSize: number;
-}; 
+};

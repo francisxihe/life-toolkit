@@ -62,7 +62,7 @@
 - `HabitController.getHabitDetail()`: 获取习惯详情
 - `HabitController.getHabitPage()`: 分页获取习惯列表
 - `HabitController.deleteHabit()`: 删除习惯
-- `HabitController.batchCompleteHabit()`: 批量完成习惯
+- `HabitController.batchDoneHabit()`: 批量完成习惯
 - `HabitController.pauseHabit()`: 暂停习惯
 - `HabitController.resumeHabit()`: 恢复习惯
 - `HabitController.abandonHabit()`: 放弃习惯
@@ -84,10 +84,10 @@ interface HabitVo {
   description?: string;
   status: HabitStatus;
   importance?: number;
-  difficulty?: HabitDifficulty;
+  difficulty?: Difficulty;
   tags?: string[];
   startAt?: string;
-  targetAt?: string;
+  endAt?: string;
   currentStreak?: number;
   longestStreak?: number;
   completedCount?: number;

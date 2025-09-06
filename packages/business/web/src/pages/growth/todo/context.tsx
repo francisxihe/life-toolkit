@@ -15,10 +15,6 @@ export const [TodoProvider, useTodoContext] = createInjectState<{
   const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
   const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
 
-  console.log('weekStart', dayjs().startOf('week'));
-  console.log('weekStart', weekStart);
-  console.log('weekEnd', weekEnd);
-
   return {
     today,
     yesterday,

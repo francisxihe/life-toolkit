@@ -1,0 +1,696 @@
+---
+trigger: model_decision
+description: 编写VO代码时
+globs:
+---
+# VO 规范
+## 📋 概述
+
+VO (Value Object) 是用于数据传输和类型定义的对象，主要用于前后端数据交互、表单处理、过滤查询等场景。本规范定义了VO模块的标准结构、命名约定和最佳实践。
+
+## 🏗️ 目录结构规范
+
+### 基础结构
+```
+packages/vo/
+├── base/                    # 基础VO定义
+│   ├── model.vo.ts         # 基础模型VO
+│   ├── operation.vo.ts     # 操作相关VO
+│   ├── response.vo.ts      # 响应VO
+│   ├── without-self.ts     # 工具类型
+│   └── index.ts            # 导出文件
+├── [domain]/               # 业务域目录
+│   ├── [module]/           # 具体模块目录
+│   │   ├── [module]-model.vo.ts    # 模型定义
+│   │   ├── [module]-filter.vo.ts   # 过滤查询VO
+│   │   ├── [module]-form.vo.ts     # 表单VO
+│   │   └── index.ts                # 模块导出
+│   └── index.ts            # 域导出
+└── index.ts                # 总导出
+```
+
+### 示例结构
+```
+packages/vo/example/module/
+├── module-model.vo.ts      # 模块模型VO
+├── module-filter.vo.ts     # 模块过滤VO
+├── module-form.vo.ts       # 模块表单VO
+└── index.ts                # 导出文件
+```
+
+## 📝 文件命名规范
+
+### 文件命名格式
+- **模型VO**: `[module]-model.vo.ts`
+- **过滤VO**: `[module]-filter.vo.ts`
+- **表单VO**: `[module]-form.vo.ts`
+- **导出文件**: `index.ts`
+
+### 类型命名格式
+- **枚举**: `[Module][Property]` (如: `ItemStatus`, `ItemType`)
+- **基础模型**: `[Module]ModelVo`
+- **项目模型**: `[Module]ModelVo` (继承BaseModelVo)
+- **完整模型**: `[Module]Vo` (包含关联数据)
+- **表单VO**: `Create[Module]Vo`, `Update[Module]Vo`
+- **过滤VO**: `[Module]ListFiltersVo`, `[Module]PageFiltersVo`
+- **结果VO**: `[Module]ListVo`, `[Module]PageVo`
+
+## 🎯 标准VO类型定义
+
+### 1. 基础模型VO (BaseModelVo)
+```typescript
+export type BaseModelVo = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+};
+```
+
+### 2. 模型VO结构
+
+#### 基础模板
+```typescript
+// 1. 枚举定义
+export enum ModuleStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+}
+
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
+}
+
+// 2. 基础模型VO
+export type ModuleModelVo = {
+  title: string;           // 字符串类型
+  description?: string;    // 可选字符串
+  importance?: number;     // 数字类型
+  status: ModuleStatus;    // 枚举类型
+  tags: string[];          // 数组类型
+  planDate: string;        // 日期类型
+  doneAt?: string;         // 可选日期时间
+  relatedId?: string;      // 关联字段
+};
+
+// 3. 项目VO (包含基础字段)
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
+
+// 4. 完整VO (包含关联数据)
+export type ModuleVo = ModuleItemVo & {
+  // 关联数据
+  related?: RelatedItemVo;
+};
+```
+
+#### 完整示例
+```typescript
+// module-model.vo.ts
+import { BaseModelVo } from "../../base";
+
+// 枚举定义
+export enum ModuleStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+}
+
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
+}
+
+// 基础模型VO
+export type ModuleModelVo = {
+  title: string;           // 字符串类型
+  description?: string;    // 可选字符串
+  importance?: number;     // 数字类型
+  status: ModuleStatus;    // 枚举类型
+  tags: string[];          // 数组类型
+  planDate: string;        // 日期类型
+  doneAt?: string;         // 可选日期时间
+  relatedId?: string;      // 关联字段
+};
+
+// 项目VO (包含基础字段)
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
+
+// 完整VO (包含关联数据)
+export type ModuleVo = ModuleItemVo & {
+  related?: RelatedItemVo;
+};
+```
+
+### 3. 表单VO结构
+
+#### 基础模板
+```typescript
+// 创建表单VO
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "doneAt"
+> & {
+  relatedId?: string;
+};
+
+// 更新表单VO
+export type UpdateModuleVo = Partial<CreateModuleVo>;
+```
+
+#### 完整示例
+```typescript
+// module-form.vo.ts
+import { ModuleModelVo, ModuleStatus } from "./module-model.vo";
+
+// 创建表单VO
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "doneAt"
+> & {
+  relatedId?: string;
+};
+
+// 更新表单VO
+export type UpdateModuleVo = Partial<CreateModuleVo>;
+
+// 状态操作VO
+export type ModuleStatusUpdateVo = {
+  status: ModuleStatus;
+  reason?: string;
+};
+```
+
+### 4. 过滤VO结构
+
+#### 基础模板
+```typescript
+// 列表过滤VO
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
+    keyword?: string;
+    planDateStart?: string;
+    planDateEnd?: string;
+    withoutSelf?: boolean;
+    statusList?: ModuleStatus[];
+    relatedIds?: string[];
+  }
+>;
+
+// 分页过滤VO
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
+  pageNum?: number;
+  pageSize?: number;
+};
+
+// 列表结果VO
+export type ModuleListVo = {
+  list: ModuleItemVo[];
+};
+
+// 分页结果VO
+export type ModulePageVo = {
+  list: ModuleItemVo[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+};
+```
+
+#### 完整示例
+```typescript
+// module-filter.vo.ts
+import { ModuleVo, ModuleItemVo, ModuleStatus, ModuleType } from "./module-model.vo";
+
+// 列表过滤VO
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
+    keyword?: string;
+    planDateStart?: string;
+    planDateEnd?: string;
+    withoutSelf?: boolean;
+    statusList?: ModuleStatus[];
+    relatedIds?: string[];
+  }
+>;
+
+// 分页过滤VO
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
+  pageNum?: number;
+  pageSize?: number;
+};
+
+// 列表结果VO
+export type ModuleListVo = {
+  list: ModuleItemVo[];
+};
+
+// 分页结果VO
+export type ModulePageVo = {
+  list: ModuleItemVo[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+};
+
+// 统计VO
+export type ModuleStatsVo = {
+  total: number;
+  active: number;
+  completed: number;
+  cancelled: number;
+  completionRate: number;
+};
+```
+
+## 🔧 导出规范
+
+### 1. 模块导出 (index.ts)
+```typescript
+// 重新导出模型VO
+export * from "./module-model.vo";
+
+// 重新导出过滤VO
+export * from "./module-filter.vo";
+
+// 重新导出表单VO
+export * from "./module-form.vo";
+```
+
+### 2. 域导出
+```typescript
+// example/index.ts
+export * from "./module";
+export * from "./related";
+export * from "./category";
+export * from "./user";
+```
+
+### 3. 总导出
+```typescript
+// packages/vo/index.ts
+export * from "./base";
+export * from "./example";
+export * from "./system";
+export * from "./common";
+```
+
+## 📊 数据类型规范
+
+### 1. 日期时间
+- **类型**: 使用 `string` 类型
+- **格式**: ISO 8601 格式 (`YYYY-MM-DDTHH:mm:ss.sssZ`)
+- **字段命名**: `xxxAt` (如: `createdAt`, `updatedAt`, `startAt`, `endAt`)
+
+```typescript
+export type DateFields = {
+  createdAt: string;        // "2024-01-01T00:00:00.000Z"
+  updatedAt: string;        // "2024-01-01T00:00:00.000Z"
+  startDate: string;        // "2024-01-01"
+  endDate?: string;         // "2024-12-31"
+  completedAt?: string;     // "2024-06-15T10:30:00.000Z"
+};
+```
+
+### 2. 状态枚举
+- **值格式**: 使用小写字符串值
+- **常见状态**: `"active"`, `"inactive"`, `"pending"`, `"completed"`, `"cancelled"`
+
+```typescript
+export enum CommonStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  PENDING = "pending",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  DELETED = "deleted",
+}
+```
+
+### 3. 可选字段
+- **标记**: 使用 `?:` 标记可选字段
+- **描述性字段**: 通常为可选 (`description?`, `note?`, `remark?`)
+- **关联字段**: 通常为可选 (`parent?`, `children?`)
+
+```typescript
+export type OptionalFields = {
+  // 必填字段
+  id: string;
+  name: string;
+  status: Status;
+  
+  // 可选字段
+  description?: string;
+  note?: string;
+  parent?: ParentVo;
+  children?: ChildVo[];
+};
+```
+
+### 4. 数组字段
+- **命名**: 使用复数命名 (`tags`, `items`, `children`)
+- **关联数据**: 使用 `xxxList` 或直接复数形式
+
+```typescript
+export type ArrayFields = {
+  tags: string[];           // 标签数组
+  items: ModelVo[];          // 项目数组
+  children: ChildVo[];      // 子项数组
+  relatedItems: ModelVo[];   // 关联项目数组
+};
+```
+
+### 5. 数值字段
+- **评分**: 通常使用 1-5 或 1-10 的整数
+- **百分比**: 使用 0-100 的数字
+- **金额**: 使用数字类型，单位在字段名或注释中说明
+
+```typescript
+export type NumericFields = {
+  importance: number;       // 重要性 (1-5)
+  progress: number;         // 进度 (0-100)
+  amount: number;           // 金额 (分)
+  score: number;            // 评分 (1-10)
+};
+```
+
+## 🎯 最佳实践
+
+### 1. 类型安全
+```typescript
+// 优先使用联合类型而非字符串
+export type Priority = "low" | "medium" | "high" | "urgent";
+
+// 使用枚举定义固定值集合
+export enum Status {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+}
+
+// 利用 TypeScript 工具类型
+export type CreateVo = Omit<ModelVo, "id" | "createdAt" | "updatedAt">;
+export type UpdateVo = Partial<CreateVo>;
+```
+
+### 2. 可维护性
+```typescript
+// 单一职责：每个VO文件只负责一个业务实体
+// item-model.vo.ts - 只定义项目相关的VO
+
+// 清晰命名：类型名称要能清楚表达用途
+export type ItemCreateFormVo = { /* 项目创建表单 */ };
+export type ItemListFilterVo = { /* 项目列表过滤 */ };
+
+// 适当注释：复杂业务逻辑需要添加注释
+export type ModelVo = {
+  /** 项目标题 - 必填，最大100字符 */
+  title: string;
+
+  /** 重要性评分 - 1-5，默认3 */
+  importance: number;
+};
+```
+
+### 3. 复用性
+```typescript
+// 继承BaseModelVo获得基础字段
+export type ItemItemVo = BaseModelVo & ItemModelVo;
+
+// 使用工具类型避免重复定义
+export type CreateItemVo = Omit<ItemModelVo, "status" | "completedAt">;
+
+// 合理抽象公共类型
+export type BaseFilterVo = {
+  keyword?: string;
+  dateStart?: string;
+  dateEnd?: string;
+};
+
+export type ItemFilterVo = BaseFilterVo & {
+  status?: ItemStatus;
+  priority?: ItemPriority;
+};
+```
+
+### 4. 向后兼容
+```typescript
+// 新增字段使用可选类型
+export type ModelVo = {
+  id: string;
+  title: string;
+  // 新增字段
+  category?: string;        // v2.0 新增
+  estimatedHours?: number;  // v2.1 新增
+};
+
+// 使用版本化处理重大变更
+export namespace ItemVoV2 {
+  export type ModelVo = {
+    // 重大变更的类型定义
+  };
+}
+```
+
+## 🎛️ 特殊类型定义
+
+### 1. 操作相关VO
+```typescript
+// 批量操作结果VO
+export interface BatchOperationResultVo {
+  id: string;
+  result: boolean;
+}
+
+// 操作结果VO
+export interface OperationResultVo {
+  result: boolean;
+}
+
+// 按ID列表操作VO
+export type OperationByIdListVo = {
+  includeIds: string[];
+};
+
+// 工具类型 - 排除自身
+export type self = {
+  withoutSelf: boolean;
+  id?: string;
+};
+```
+
+### 2. 响应VO
+```typescript
+// 基础响应VO
+export interface ResponseVo<T> {
+  code: number;
+  message: string;
+}
+
+// 分页响应VO
+export interface PageResponseVo<T> extends ResponseVo<T> {
+  data: {
+    list: T[];
+    total: number;
+    pageNum: number;
+    pageSize: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+}
+
+// 列表响应VO
+export interface ListResponseVo<T> extends ResponseVo<T> {
+  data: {
+    list: T[];
+  };
+}
+```
+
+### 3. 统计VO
+```typescript
+// 基础统计VO
+export type BaseStatsVo = {
+  total: number;
+  active: number;
+  completed: number;
+  cancelled: number;
+  completionRate: number;
+};
+
+// 详细统计VO
+export type DetailedStatsVo = BaseStatsVo & {
+  createdThisWeek: number;
+  createdThisMonth: number;
+  completedThisWeek: number;
+  completedThisMonth: number;
+  averageCompletionTime: number; // 平均完成时间（天）
+  bestStreak: number;            // 最佳连续完成天数
+  currentStreak: number;         // 当前连续完成天数
+};
+```
+
+## 🚫 禁止事项
+
+1. **不要在单个文件中定义所有类型** - 应按功能分离到不同文件
+2. **不要使用 `any` 类型** - 应明确定义具体类型
+3. **不要在VO中包含业务逻辑** - VO仅用于数据结构定义
+4. **不要使用 `Date` 对象** - 统一使用字符串格式的日期时间
+5. **不要混合不同业务域的类型** - 保持模块边界清晰
+6. **不要忽略可选字段标记** - 明确区分必填和可选字段
+7. **不要使用复杂的嵌套结构** - 保持类型定义简洁明了
+
+## ✅ 检查清单
+
+在创建或修改VO时，请确认以下事项：
+
+### 基础结构
+- [ ] 文件命名符合规范 (`[module]-[type].vo.ts`)
+- [ ] 类型命名符合规范 (`[Module][Type]Vo`)
+- [ ] 继承了BaseModelVo (如适用)
+- [ ] 使用了合适的工具类型
+- [ ] 包含了基础的枚举定义
+
+### 类型定义
+- [ ] 使用了明确的类型定义
+- [ ] 避免了 `any` 类型的使用
+- [ ] 正确标记了可选字段 (`?:`)
+- [ ] 日期字段使用string类型
+- [ ] 枚举值使用小写字符串
+- [ ] 定义了完整的VO层次结构
+
+### 字段设计
+- [ ] 字段命名语义清晰
+- [ ] 数组字段使用复数命名
+- [ ] 关联字段处理合理
+- [ ] 添加了必要的注释
+- [ ] 数值字段有明确的取值范围
+
+### 特殊类型
+- [ ] 定义了表单VO (Create/Update)
+- [ ] 定义了过滤VO (List/Page)
+- [ ] 定义了结果VO (List/Page)
+- [ ] 定义了操作相关的VO
+- [ ] 定义了统计VO (如适用)
+
+### 导出管理
+- [ ] 添加了必要的导出语句
+- [ ] 在模块index.ts中正确导出
+- [ ] 避免了循环依赖
+- [ ] 导出顺序合理
+
+### 业务逻辑
+- [ ] 没有包含业务逻辑代码
+- [ ] 类型定义符合业务需求
+- [ ] 考虑了向后兼容性
+- [ ] 遵循了最佳实践
+
+## 📝 完整示例
+
+```typescript
+// module-model.vo.ts
+import { BaseModelVo } from "../../base";
+
+// 枚举定义
+export enum ModuleStatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+}
+
+export enum ModuleType {
+  PERSONAL = "personal",
+  WORK = "work",
+  STUDY = "study",
+  HEALTH = "health",
+}
+
+// 基础模型VO
+export type ModuleModelVo = {
+  /** 模块标题 - 字符串类型 */
+  title: string;
+
+  /** 模块描述 - 可选字符串 */
+  description?: string;
+
+  /** 重要程度 - 数字类型 */
+  importance?: number;
+
+  /** 模块状态 - 枚举类型 */
+  status: ModuleStatus;
+
+  /** 标签 - 数组类型 */
+  tags: string[];
+
+  /** 计划日期 - 日期类型 */
+  planDate: string;
+
+  /** 完成时间 - 可选日期时间 */
+  doneAt?: string;
+
+  /** 关联ID - 关联字段 */
+  relatedId?: string;
+};
+
+// 项目VO
+export type ModuleItemVo = BaseModelVo & ModuleModelVo;
+
+// 完整VO
+export type ModuleVo = ModuleItemVo & {
+  related?: RelatedItemVo;
+};
+
+// module-form.vo.ts
+import { ModuleModelVo, ModuleStatus } from "./module-model.vo";
+
+export type CreateModuleVo = Omit<
+  ModuleModelVo,
+  "doneAt"
+> & {
+  relatedId?: string;
+};
+
+export type UpdateModuleVo = Partial<CreateModuleVo>;
+
+// module-filter.vo.ts
+import { ModuleVo, ModuleItemVo, ModuleStatus, ModuleType } from "./module-model.vo";
+
+export type ModuleListFiltersVo = Partial<
+  Pick<ModuleVo, "status" | "importance" | "relatedId"> & {
+    keyword?: string;
+    planDateStart?: string;
+    planDateEnd?: string;
+    statusList?: ModuleStatus[];
+    relatedIds?: string[];
+  }
+>;
+
+export type ModulePageFiltersVo = ModuleListFiltersVo & {
+  pageNum?: number;
+  pageSize?: number;
+};
+
+export type ModulePageVo = {
+  list: ModuleItemVo[];
+  total: number;
+  pageNum: number;
+  pageSize: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+};
+
+// index.ts
+export * from "./module-model.vo";
+export * from "./module-filter.vo";
+export * from "./module-form.vo";
+```

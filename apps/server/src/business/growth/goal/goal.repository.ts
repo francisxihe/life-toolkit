@@ -1,15 +1,19 @@
-import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In, FindOptionsWhere } from "typeorm";
-import { Goal, GoalStatus } from "./entities";
 import {
   CreateGoalDto,
   UpdateGoalDto,
   GoalPageFilterDto,
-  GoalListFilterDto,
+  GoalFilterDto,
   GoalDto,
 } from "@life-toolkit/business-server";
-import { GoalMapper } from "@life-toolkit/business-server";
+import { Goal } from "@life-toolkit/business-server";
+import { GoalType, GoalStatus } from "@life-toolkit/enum";
 
 @Injectable()
 export class GoalRepository {
@@ -25,7 +29,7 @@ export class GoalRepository {
       status: GoalStatus.TODO,
     });
     const savedEntity = await this.goalRepository.save(entity);
-    return GoalMapper.entityToDto(savedEntity);
+    return GoalDto.importEntity(savedEntity);
   }
 
   async findById(id: string, relations?: string[]): Promise<GoalDto> {
@@ -36,18 +40,18 @@ export class GoalRepository {
     if (!entity) {
       throw new NotFoundException(`目标不存在，ID: ${id}`);
     }
-    return GoalMapper.entityToDto(entity);
+    return GoalDto.importEntity(entity);
   }
 
-  async findAll(filter: GoalListFilterDto): Promise<GoalDto[]> {
+  async findByFilter(filter: GoalFilterDto): Promise<GoalDto[]> {
     const query = this.buildQuery(filter);
     const entities = await query.getMany();
-    return entities.map((entity) => GoalMapper.entityToDto(entity));
+    return entities.map((entity) => GoalDto.importEntity(entity));
   }
 
   async page(
     filter: GoalPageFilterDto
-  ): Promise<{ list: GoalDto[]; total: number }> {
+  ): Promise<{ list: GoalDto[]; total: number; pageNum: number; pageSize: number }> {
     const { pageNum = 1, pageSize = 10 } = filter;
     const skip = (pageNum - 1) * pageSize;
 
@@ -58,8 +62,10 @@ export class GoalRepository {
       .getManyAndCount();
 
     return {
-      list: entities.map((entity) => GoalMapper.entityToDto(entity)),
+      list: entities.map((entity) => GoalDto.importEntity(entity)),
       total,
+      pageNum,
+      pageSize,
     };
   }
 
@@ -71,7 +77,7 @@ export class GoalRepository {
 
     Object.assign(entity, updateGoalDto);
     const savedEntity = await this.goalRepository.save(entity);
-    return GoalMapper.entityToDto(savedEntity);
+    return GoalDto.importEntity(savedEntity);
   }
 
   async remove(id: string): Promise<void> {
@@ -93,34 +99,30 @@ export class GoalRepository {
     await this.goalRepository.update({ id: In(ids) }, updateData);
   }
 
-  // 细化方法
-  async findDetail(id: string): Promise<GoalDto> {
-    const entity = await this.goalRepository.findOne({
-      where: { id },
-      relations: ["parent", "children", "taskList"],
-    });
-    if (!entity) {
-      throw new NotFoundException(`目标不存在，ID: ${id}`);
-    }
-    return GoalMapper.entityToDto(entity);
-  }
 
-  async updateStatus(id: string, status: GoalStatus, extra: Partial<Goal> = {}): Promise<void> {
+  async updateStatus(
+    id: string,
+    status: GoalStatus,
+    extra: Partial<Goal> = {}
+  ): Promise<void> {
     const entity = await this.goalRepository.findOne({ where: { id } });
     if (!entity) throw new NotFoundException(`目标不存在，ID: ${id}`);
     Object.assign(entity, { status, ...extra });
     await this.goalRepository.save(entity);
   }
 
-  async batchDone(ids: string[]): Promise<void> {
-    await this.goalRepository.update({ id: In(ids) }, {
-      status: GoalStatus.DONE,
-      doneAt: new Date(),
-    });
+  async doneBatch(ids: string[]): Promise<void> {
+    await this.goalRepository.update(
+      { id: In(ids) },
+      {
+        status: GoalStatus.DONE,
+        doneAt: new Date(),
+      }
+    );
   }
 
   // 构建查询条件的私有方法
-  private buildQuery(filter: GoalListFilterDto) {
+  private buildQuery(filter: GoalFilterDto) {
     let query = this.goalRepository
       .createQueryBuilder("goal")
       .leftJoinAndSelect("goal.parent", "parent");
@@ -130,15 +132,21 @@ export class GoalRepository {
 
     // includeIds / excludeIds（由 service 预处理）
     if ((filter as any).includeIds && (filter as any).includeIds.length > 0) {
-      query = query.andWhere("goal.id IN (:...includeIds)", { includeIds: (filter as any).includeIds });
+      query = query.andWhere("goal.id IN (:...includeIds)", {
+        includeIds: (filter as any).includeIds,
+      });
     }
     if ((filter as any).excludeIds && (filter as any).excludeIds.length > 0) {
-      query = query.andWhere("goal.id NOT IN (:...excludeIds)", { excludeIds: (filter as any).excludeIds });
+      query = query.andWhere("goal.id NOT IN (:...excludeIds)", {
+        excludeIds: (filter as any).excludeIds,
+      });
     }
 
     // 父级过滤
     if (filter.parentId) {
-      query = query.andWhere("parent.id = :parentId", { parentId: filter.parentId });
+      query = query.andWhere("parent.id = :parentId", {
+        parentId: filter.parentId,
+      });
     }
 
     // 状态过滤
@@ -200,21 +208,32 @@ export class GoalRepository {
     }
 
     // 放弃日期范围过滤
-    if ((filter as any).abandonedDateStart && (filter as any).abandonedDateEnd) {
+    if (
+      (filter as any).abandonedDateStart &&
+      (filter as any).abandonedDateEnd
+    ) {
       query = query.andWhere(
         "goal.abandonedAt BETWEEN :abandonedDateStart AND :abandonedDateEnd",
         {
-          abandonedDateStart: new Date((filter as any).abandonedDateStart + "T00:00:00"),
-          abandonedDateEnd: new Date((filter as any).abandonedDateEnd + "T23:59:59"),
+          abandonedDateStart: new Date(
+            (filter as any).abandonedDateStart + "T00:00:00"
+          ),
+          abandonedDateEnd: new Date(
+            (filter as any).abandonedDateEnd + "T23:59:59"
+          ),
         }
       );
     } else if ((filter as any).abandonedDateStart) {
       query = query.andWhere("goal.abandonedAt >= :abandonedDateStart", {
-        abandonedDateStart: new Date((filter as any).abandonedDateStart + "T00:00:00"),
+        abandonedDateStart: new Date(
+          (filter as any).abandonedDateStart + "T00:00:00"
+        ),
       });
     } else if ((filter as any).abandonedDateEnd) {
       query = query.andWhere("goal.abandonedAt <= :abandonedDateEnd", {
-        abandonedDateEnd: new Date((filter as any).abandonedDateEnd + "T23:59:59"),
+        abandonedDateEnd: new Date(
+          (filter as any).abandonedDateEnd + "T23:59:59"
+        ),
       });
     }
 

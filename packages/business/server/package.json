@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@life-toolkit/components-repeat": "workspace:*",
+    "@life-toolkit/mapped-types": "workspace:*",
     "tsup": "^7.0.0",
     "ts-mixer": "^6.0.3"
   },

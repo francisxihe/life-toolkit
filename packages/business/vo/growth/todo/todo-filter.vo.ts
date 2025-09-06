@@ -1,7 +1,8 @@
-import { TodoVo } from "./todo-model.vo";
+import { TodoVo, TodoModelVo } from './todo-model.vo';
+import { BaseFilterVo } from '../../common';
 
 export type TodoPageVo = {
-  list: TodoVo[];
+  list: TodoModelVo[];
 
   total: number;
 
@@ -11,32 +12,22 @@ export type TodoPageVo = {
 };
 
 export type TodoListVo = {
-  list: TodoVo[];
+  list: TodoModelVo[];
 };
 
-export type TodoListFiltersVo = {
-  keyword?: string;
+export type TodoFilterVo = BaseFilterVo & {
   planDateStart?: string;
   planDateEnd?: string;
-  importance?: TodoVo["importance"];
-  urgency?: TodoVo["urgency"];
-  status?: TodoVo["status"];
+  importance?: TodoVo['importance'];
+  urgency?: TodoVo['urgency'];
+  status?: TodoVo['status'];
   doneDateStart?: string;
   doneDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
 };
 
-export type TodoPageFiltersVo = {
-  keyword?: string;
-  planDateStart?: string;
-  planDateEnd?: string;
-  importance?: TodoVo["importance"];
-  urgency?: TodoVo["urgency"];
-  status?: TodoVo["status"];
-  doneDateStart?: string;
-  doneDateEnd?: string;
-  abandonedDateStart?: string;
-  abandonedDateEnd?: string;
-  tags?: string[];
+export type TodoPageFilterVo = TodoFilterVo & {
+  pageNum: number;
+  pageSize: number;
 };

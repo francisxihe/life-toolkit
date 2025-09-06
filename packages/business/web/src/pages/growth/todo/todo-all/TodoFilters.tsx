@@ -2,11 +2,12 @@
 
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
-import { IMPORTANCE_MAP, URGENCY_MAP } from '../../service/todo.constants';
+import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { useTodoAllContext } from './context';
-import { TodoStatus, TodoPageFiltersVo } from '@life-toolkit/vo/growth';
+import { TodoPageFilterVo } from '@life-toolkit/vo/growth';
 import { TableFilter } from '@/components/Layout/TableFilter';
+import { TodoStatus } from '@life-toolkit/enum';
 
 const DatePickerRange = DatePicker.RangePicker;
 const { Row, Col } = Grid;
@@ -31,7 +32,7 @@ export function TodoFilters() {
             placeholder="关键字"
             value={filters.keyword}
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 keyword: value,
               }));
@@ -44,7 +45,7 @@ export function TodoFilters() {
             value={[filters.planDateStart, filters.planDateEnd]}
             className="w-full"
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 planDateStart: value[0],
                 planDateEnd: value[1],
@@ -56,7 +57,7 @@ export function TodoFilters() {
           <Select
             value={filters.importance}
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 importance: value,
               }));
@@ -77,7 +78,7 @@ export function TodoFilters() {
           <Select
             value={filters.urgency}
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 urgency: value,
               }));
@@ -96,7 +97,7 @@ export function TodoFilters() {
           <Select
             value={filters.status}
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 status: value,
               }));
@@ -114,7 +115,7 @@ export function TodoFilters() {
             multiple={true}
             value={filters.tags}
             onChange={(value) => {
-              setFilters((prev: TodoPageFiltersVo) => ({
+              setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
                 tags: value,
               }));

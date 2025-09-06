@@ -2,8 +2,8 @@ import { Message } from '@arco-design/web-react';
 import { TodoController } from '@life-toolkit/api';
 import type {
   CreateTodoVo,
-  TodoPageFiltersVo,
-  TodoListFiltersVo,
+  TodoPageFilterVo,
+  TodoFilterVo,
   UpdateTodoVo,
 } from '@life-toolkit/vo/growth';
 import { OperationByIdListVo } from '@life-toolkit/vo';
@@ -14,9 +14,9 @@ export default class TodoService {
    * @param todoId 任务ID
    * @returns 任务详情
    */
-  static async getTodo(todoId: string) {
+  static async getTodoDetailWithRepeat(todoId: string) {
     try {
-      return TodoController.getTodo(todoId);
+      return TodoController.detailWithRepeat(todoId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -29,7 +29,7 @@ export default class TodoService {
    */
   static async batchDoneTodo(params: OperationByIdListVo) {
     try {
-      const res = await TodoController.batchDoneTodo(params);
+      const res = await TodoController.doneBatch(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -44,7 +44,7 @@ export default class TodoService {
    */
   static async restoreTodo(id: string) {
     try {
-      const res = await TodoController.restoreTodo(id);
+      const res = await TodoController.restore(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -59,7 +59,7 @@ export default class TodoService {
    */
   static async abandonTodo(id: string) {
     try {
-      const res = await TodoController.abandonTodo(id);
+      const res = await TodoController.abandon(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -72,9 +72,9 @@ export default class TodoService {
    * @param todo 任务详情
    * @returns 操作结果
    */
-  static async addTodo(todo: CreateTodoVo) {
+  static async createTodo(todo: CreateTodoVo) {
     try {
-      const res = await TodoController.addTodo(todo);
+      const res = await TodoController.create(todo);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -89,7 +89,7 @@ export default class TodoService {
    */
   static async deleteTodo(id: string) {
     try {
-      const res = await await TodoController.deleteTodo(id);
+      const res = await TodoController.delete(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -106,7 +106,7 @@ export default class TodoService {
    */
   static async updateTodo(id: string, todo: UpdateTodoVo, silent = true) {
     try {
-      const res = await TodoController.updateTodo(id, todo);
+      const res = await TodoController.update(id, todo);
       if (!silent) {
         Message.success('操作成功');
       }
@@ -121,9 +121,9 @@ export default class TodoService {
    * @param params 任务列表过滤条件
    * @returns 任务列表
    */
-  static async getTodoList(params: TodoListFiltersVo = {}) {
+  static async getTodoListWithRepeat(params: TodoFilterVo = {}) {
     try {
-      return TodoController.getTodoList(params);
+      return TodoController.listWithRepeat(params);
     } catch (error) {
       Message.error(error.message);
     }
@@ -134,9 +134,9 @@ export default class TodoService {
    * @param params 任务分页过滤条件
    * @returns 任务分页列表
    */
-  static async getTodoPage(params: TodoPageFiltersVo = {}) {
+  static async getTodoPage(params: TodoPageFilterVo) {
     try {
-      return TodoController.getTodoPage(params);
+      return TodoController.page(params);
     } catch (error) {
       Message.error(error.message);
     }

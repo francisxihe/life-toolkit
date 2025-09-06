@@ -17,8 +17,8 @@ export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Get("events")
-  findAll(): Promise<Event[]> {
-    return this.eventsService.findAll();
+  findByFilter(): Promise<Event[]> {
+    return this.eventsService.findByFilter();
   }
 
   @Post("events")

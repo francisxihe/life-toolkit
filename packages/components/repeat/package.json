@@ -9,18 +9,16 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js"
     },
-    "./server": {
-      "import": "./dist/server-index.js",
-      "require": "./dist/server-index.js"
-    },
-    "./server/entity": "./dist/server/entity.js",
-    "./server/service": "./dist/server/service.js",
-    "./server/mapper": "./dist/server/mapper.js",
-    "./server/dto": "./dist/server/dto.js",
-    "./web": "./web/index.tsx",
+    "./web": "./web/index.ts",
     "./types": "./dist/types/index.js",
-    "./types/repeat-end": "./dist/types/repeat-end.js",
-    "./common": "./dist/common/index.js",
+    "./common": {
+      "import": "./dist/common/index.js",
+      "require": "./dist/common/index.js"
+    },
+    "./common/calculateNextDate": {
+      "import": "./dist/common/calculateNextDate.js",
+      "require": "./dist/common/calculateNextDate.js"
+    },
     "./vo": "./vo/index.ts"
   },
   "files": [
@@ -28,7 +26,6 @@
     "vo",
     "web",
     "types",
-    "server",
     "common"
   ],
   "scripts": {

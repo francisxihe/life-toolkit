@@ -1,30 +1,30 @@
-export * from "./goal-model.vo";
-import { GoalVo, GoalItemVo } from "./goal-model.vo";
-import { self } from "../../base";
+import { GoalVo, GoalModelVo } from "./goal-model.vo";
+import { BaseFilterVo } from "../../common";
 
-export type GoalListFiltersVo = Partial<
+export type GoalFilterVo = BaseFilterVo & Partial<
   Pick<GoalVo, "startAt" | "endAt" | "importance" | "status" | "type"> & {
-    keyword?: string;
     doneDateStart?: GoalVo["doneAt"];
     doneDateEnd?: GoalVo["doneAt"];
     abandonedDateStart?: GoalVo["abandonedAt"];
     abandonedDateEnd?: GoalVo["abandonedAt"];
     parentId?: GoalVo["id"];
-  } & self
+  }
 >;
 
-export type GoalPageFiltersVo = GoalListFiltersVo & {
+export type GoalPageFilterVo = GoalFilterVo & {
   pageNum?: number;
   pageSize?: number;
 };
 
 export type GoalListVo = {
-  list: GoalItemVo[];
+  list: GoalModelVo[];
 };
 
 export type GoalPageVo = {
-  list: GoalItemVo[];
+  list: GoalModelVo[];
   total: number;
   pageNum: number;
   pageSize: number;
 };
+
+export type GoalTreeVo = GoalVo[];

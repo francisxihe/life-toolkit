@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Todo, TodoRepeat } from "./entities";
+import { Todo, TodoRepeat } from "@life-toolkit/business-server";
 import { TodoController } from "./todo.controller";
 import { TodoService } from "./todo.service";
 import { TodoRepeatService } from "./todo-repeat.service";

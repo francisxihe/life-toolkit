@@ -3,8 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between } from "typeorm";
 import { Transaction } from "./entities/transaction.entity";
 import { Budget } from "./entities/budget.entity";
-// import { CreateTransactionDto } from './dto/create-transaction.dto';
-// import { CreateBudgetDto } from "./dto/create-budget.dto";
 import { User } from "../users/entities/user.entity";
 
 @Injectable()

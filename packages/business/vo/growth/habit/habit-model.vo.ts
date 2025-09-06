@@ -1,18 +1,7 @@
-import { BaseModelVo } from "../../base/model.vo";
-import { GoalVo } from "../goal/goal-model.vo";
-
-export enum HabitStatus {
-  ACTIVE = "active",
-  PAUSED = "paused",
-  COMPLETED = "completed",
-  ABANDONED = "abandoned",
-}
-
-export enum HabitDifficulty {
-  EASY = "easy",
-  MEDIUM = "medium",
-  HARD = "hard",
-}
+import { BaseModelVo } from '../../common/model.vo';
+import { GoalVo } from '../goal/goal-model.vo';
+import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
+import { TodoVo } from '../todo/todo-model.vo';
 
 export enum HabitCompletionScore {
   NOT_COMPLETED = 0,
@@ -24,23 +13,23 @@ export type HabitModelVo = {
   name: string;
   status: HabitStatus;
   description?: string;
-  importance?: number;
+  importance?: Importance;
   tags?: string[];
-  difficulty?: HabitDifficulty;
+  difficulty?: Difficulty;
   startAt?: string;
-  targetAt?: string;
+  endAt?: string;
   currentStreak?: number;
   longestStreak?: number;
   completedCount?: number;
   doneAt?: string;
   abandonedAt?: string;
-};
+} & BaseModelVo;
 
-export type HabitItemVo = BaseModelVo & HabitModelVo;
-
-export type HabitVo = HabitItemVo & {
+export type HabitVo = HabitModelVo & {
   /** 关联的目标 */
   goals?: GoalVo[];
+  /** 关联的待办事项 */
+  todos?: TodoVo[];
   /** 最近的日志记录 */
   recentLogs?: HabitLogVo[];
   /** 统计信息 */
@@ -69,4 +58,4 @@ export type HabitLogVo = {
   createdAt: string;
   updatedAt: string;
   habit?: HabitVo;
-}; 
+};

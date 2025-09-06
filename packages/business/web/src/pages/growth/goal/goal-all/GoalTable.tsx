@@ -1,12 +1,13 @@
 import { Table, Button, Modal, Card, Divider } from '@arco-design/web-react';
 import dayjs from 'dayjs';
-import { IMPORTANCE_MAP } from '../constants';
+import { IMPORTANCE_MAP } from '../../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
-import { GoalVo, GoalStatus, GoalType } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo/growth';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
 import { useGoalDetail } from '../../components/GoalDetail';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 export default function GoalTable() {
   const { goalList, getGoalPage } = useGoalAllContext();
@@ -138,34 +139,32 @@ export default function GoalTable() {
   };
 
   return (
-    <>
-      <Table
-        className="w-full"
-        columns={columns}
-        data={goalList}
-        pagination={false}
-        rowKey="id"
-        onExpand={onExpandTable}
-        expandedRowRender={(record) => {
-          if (subGoalLoadingStatus[record.id] === 'unLoading') return true;
-          if (subGoalLoadingStatus[record.id] === 'loading') {
-            return (
-              <Card
-                loading={subGoalLoadingStatus[record.id] === 'loading'}
-              ></Card>
-            );
-          }
-          if (subGoalLoadingStatus[record.id] === 'loaded') {
-            return expandedData[record.id]?.children?.length ? (
-              <Card>
-                {expandedData[record.id]?.children
-                  .map((item) => item.name)
-                  .join(',')}
-              </Card>
-            ) : null;
-          }
-        }}
-      />
-    </>
+    <Table
+      className="w-full"
+      columns={columns}
+      data={goalList}
+      pagination={false}
+      rowKey="id"
+      onExpand={onExpandTable}
+      expandedRowRender={(record) => {
+        if (subGoalLoadingStatus[record.id] === 'unLoading') return true;
+        if (subGoalLoadingStatus[record.id] === 'loading') {
+          return (
+            <Card
+              loading={subGoalLoadingStatus[record.id] === 'loading'}
+            ></Card>
+          );
+        }
+        if (subGoalLoadingStatus[record.id] === 'loaded') {
+          return expandedData[record.id]?.children?.length ? (
+            <Card>
+              {expandedData[record.id]?.children
+                .map((item) => item.name)
+                .join(',')}
+            </Card>
+          ) : null;
+        }
+      }}
+    />
   );
 }

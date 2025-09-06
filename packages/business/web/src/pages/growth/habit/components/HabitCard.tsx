@@ -19,13 +19,14 @@ import {
   IconDelete,
   IconEdit,
 } from '@arco-design/web-react/icon';
-import { HabitItemVo, HabitStatus, HabitDifficulty } from '@life-toolkit/vo/growth/habit';
+import { HabitModelVo } from '@life-toolkit/vo/growth/habit';
+import { HabitStatus } from '@life-toolkit/enum';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 
 const { Text, Paragraph } = Typography;
 
 interface HabitCardProps {
-  habit: HabitItemVo;
+  habit: HabitModelVo;
   onComplete?: () => void;
   onPause?: () => void;
   onResume?: () => void;
@@ -44,13 +45,22 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   onEdit,
 }) => {
   // 获取状态配置
-  const statusConfig = HABIT_STATUS_OPTIONS.find(option => option.value === habit.status);
-  const difficultyConfig = HABIT_DIFFICULTY_OPTIONS.find(option => option.value === habit.difficulty);
+  const statusConfig = HABIT_STATUS_OPTIONS.find(
+    (option) => option.value === habit.status,
+  );
+  const difficultyConfig = HABIT_DIFFICULTY_OPTIONS.find(
+    (option) => option.value === habit.difficulty,
+  );
 
   // 计算完成率
-  const completionRate = habit.completedCount && habit.currentStreak 
-    ? Math.round((habit.completedCount / (habit.currentStreak + habit.completedCount)) * 100)
-    : 0;
+  const completionRate =
+    habit.completedCount && habit.currentStreak
+      ? Math.round(
+          (habit.completedCount /
+            (habit.currentStreak + habit.completedCount)) *
+            100,
+        )
+      : 0;
 
   // 渲染操作菜单
   const renderActionMenu = () => {
@@ -63,7 +73,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         </Menu.Item>,
         <Menu.Item key="pause" onClick={onPause}>
           <IconPause /> 暂停习惯
-        </Menu.Item>
+        </Menu.Item>,
       );
     }
 
@@ -71,15 +81,18 @@ export const HabitCard: React.FC<HabitCardProps> = ({
       menuItems.push(
         <Menu.Item key="resume" onClick={onResume}>
           <IconPlayArrow /> 恢复习惯
-        </Menu.Item>
+        </Menu.Item>,
       );
     }
 
-    if (habit.status === HabitStatus.ACTIVE || habit.status === HabitStatus.PAUSED) {
+    if (
+      habit.status === HabitStatus.ACTIVE ||
+      habit.status === HabitStatus.PAUSED
+    ) {
       menuItems.push(
         <Menu.Item key="abandon" onClick={onAbandon}>
           <IconClose /> 放弃习惯
-        </Menu.Item>
+        </Menu.Item>,
       );
     }
 
@@ -89,7 +102,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
       </Menu.Item>,
       <Menu.Item key="delete" onClick={onDelete} className="text-red-500">
         <IconDelete /> 删除习惯
-      </Menu.Item>
+      </Menu.Item>,
     );
 
     return <Menu>{menuItems}</Menu>;
@@ -181,8 +194,8 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           {habit.startAt && (
             <div>开始时间: {new Date(habit.startAt).toLocaleDateString()}</div>
           )}
-          {habit.targetAt && (
-            <div>目标时间: {new Date(habit.targetAt).toLocaleDateString()}</div>
+          {habit.endAt && (
+            <div>目标时间: {new Date(habit.endAt).toLocaleDateString()}</div>
           )}
         </div>
       </div>
@@ -200,11 +213,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
             >
               完成
             </Button>
-            <Button
-              size="small"
-              icon={<IconPause />}
-              onClick={onPause}
-            >
+            <Button size="small" icon={<IconPause />} onClick={onPause}>
               暂停
             </Button>
           </Space>
@@ -228,4 +237,4 @@ export const HabitCard: React.FC<HabitCardProps> = ({
   );
 };
 
-export default HabitCard; 
+export default HabitCard;

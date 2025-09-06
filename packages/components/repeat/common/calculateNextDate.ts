@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import { Repeat } from "../server/entity";
+import { Repeat } from "../types";
 import {
   RepeatMode,
   OrdinalWeek,

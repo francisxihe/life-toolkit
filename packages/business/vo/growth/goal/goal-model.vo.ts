@@ -1,44 +1,23 @@
-import { BaseModelVo } from "../../base/model.vo";
-import { TaskVo } from "../task/task-model.vo";
-
-export enum GoalStatus {
-  TODO = "todo",
-  IN_PROGRESS = "in_progress",
-  DONE = "done",
-  ABANDONED = "abandoned",
-}
-
-export enum GoalType {
-  OBJECTIVE = "objective",
-  KEY_RESULT = "key_result",
-}
+import { BaseModelVo } from '../../common/model.vo';
+import { TaskVo } from '../task/task-model.vo';
+import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
 export type GoalModelVo = {
   name: string;
-
   status: GoalStatus;
-
-  type?: GoalType;
-
+  type: GoalType;
   description?: string;
-
-  importance?: number;
-
+  importance: number;
+  difficulty?: number;
   startAt?: string;
-
   endAt?: string;
-
   doneAt?: string;
-
   abandonedAt?: string;
-};
-
-export type GoalItemVo = BaseModelVo & GoalModelVo;
+} & BaseModelVo;
 
 export type GoalVo = {
   children: GoalVo[];
   parent?: GoalVo;
   /** 任务 */
   taskList?: TaskVo[];
-} & BaseModelVo &
-  GoalModelVo;
+} & GoalModelVo;

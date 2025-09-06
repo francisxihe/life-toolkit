@@ -4,7 +4,7 @@ export class OperationByIdListDto {
   @IsNotEmpty()
   @IsArray()
   @IsString({ each: true })
-  idList: string[];
+  includeIds: string[];
 }
 
 export class OperationByIdListResultDto {

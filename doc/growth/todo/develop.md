@@ -215,11 +215,6 @@ interface TodoModuleStructure {
       "dto/todo-model.dto.ts",
       "dto/index.ts"
     ];
-    mappers: [
-      "mappers/todo.mapper.ts",
-      "mappers/todo-repeat.mapper.ts",
-      "mappers/index.ts"
-    ];
     controllers: ["todo.controller.ts"];
     services: [
       "todo.service.ts",
@@ -295,13 +290,6 @@ interface TodoModuleStructure {
         response_vo: "TodoVo[]";
         permissions: ["authenticated", "owner"];
       },
-      {
-        operation: "getStatistics";
-        endpoint: "GET /api/todo/statistics";
-        request_dto: "StatisticsFilterDto";
-        response_vo: "TodoStatisticsVo";
-        permissions: ["authenticated"];
-      }
     ];
   };
   
@@ -649,7 +637,7 @@ interface TodoAPISpecification {
       method: "GET";
       path: "/list";
       description: "获取待办事项列表";
-      query_params: "TodoListFiltersVo";
+      query_params: "TodoFilterVo";
       response: "TodoVo[]";
       status_codes: {
         200: "获取成功";
@@ -752,9 +740,9 @@ interface TodoAPISpecification {
       ];
     };
     
-    batchDone: {
+    doneBatch: {
       method: "PUT";
-      path: "/batch-done";
+      path: "/done/batch";
       description: "批量标记待办事项为完成";
       request_body: "OperationByIdListVo";
       response: "void";
@@ -908,10 +896,10 @@ interface TodoServiceImplementation {
       delegation: "TodoStatusService.restore";
     };
     
-    batchDone: {
-      signature: "async batchDone(params: OperationByIdListDto): Promise<void>";
+    doneBatch: {
+      signature: "async doneBatch(params: OperationByIdListDto): Promise<void>";
       description: "批量标记待办为完成";
-      delegation: "TodoStatusService.batchDone";
+      delegation: "TodoStatusService.doneBatch";
     };
   };
 }

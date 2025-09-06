@@ -59,7 +59,7 @@ export class UserService extends BaseService<User> {
     keyword?: string;
   }): Promise<User[]> {
     if (!filter) {
-      return await this.findAll();
+      return await this.findByFilter();
     }
 
     const queryBuilder = this.repository.createQueryBuilder('user');

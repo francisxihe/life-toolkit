@@ -7,9 +7,10 @@ import {
   Radio,
 } from '@arco-design/web-react';
 import { useGoalDetailContext } from './context';
-import { GoalType } from '@life-toolkit/vo/growth';
 import { useEffect } from 'react';
 import { GoalMapping } from '../../service';
+import { GoalType, Importance, Difficulty } from '@life-toolkit/enum';
+import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 
 const { Row, Col } = Grid;
 const RangePicker = DatePicker.RangePicker;
@@ -55,6 +56,24 @@ export default function GoalForm() {
             <Radio value={GoalType.OBJECTIVE}>战略规划</Radio>
             <Radio value={GoalType.KEY_RESULT}>成果指标</Radio>
           </Radio.Group>
+        </Item>
+        <Item span={24} label="重要程度" name="importance">
+          <Select
+            defaultValue={Importance.Helpful}
+            options={[...IMPORTANCE_MAP.entries()].map(([key, value]) => ({
+              label: value.label,
+              value: key,
+            }))}
+          ></Select>
+        </Item>
+        <Item span={24} label="难度" name="difficulty">
+          <Select
+            defaultValue={Difficulty.Skilled}
+            options={[...DIFFICULTY_MAP.entries()].map(([key, value]) => ({
+              label: value.label,
+              value: key,
+            }))}
+          ></Select>
         </Item>
 
         <Item span={24} label="父级目标" name="parentId">

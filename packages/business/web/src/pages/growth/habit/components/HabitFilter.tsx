@@ -10,12 +10,7 @@ import {
   Grid,
 } from '@arco-design/web-react';
 import { IconSearch, IconRefresh } from '@arco-design/web-react/icon';
-import {
-  HabitPageFiltersVo,
-  HabitStatus,
-  HabitDifficulty,
-  GoalVo,
-} from '@life-toolkit/vo/growth';
+import { HabitPageFilterVo, GoalVo } from '@life-toolkit/vo/growth';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 
 const { Option } = Select;
@@ -23,9 +18,9 @@ const { RangePicker } = DatePicker;
 const { Row, Col } = Grid;
 
 interface HabitFilterProps {
-  filters: HabitPageFiltersVo;
+  filters: HabitPageFilterVo;
   goals: GoalVo[];
-  onChange: (filters: HabitPageFiltersVo) => void;
+  onChange: (filters: HabitPageFilterVo) => void;
   onReset: () => void;
 }
 
@@ -55,7 +50,10 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
   };
 
   // 处理重要程度范围变更
-  const handleImportanceRangeChange = (field: 'importanceMin' | 'importanceMax', value: number) => {
+  const handleImportanceRangeChange = (
+    field: 'importanceMin' | 'importanceMax',
+    value: number,
+  ) => {
     const newFilters = { ...filters, [field]: value };
     onChange(newFilters);
   };
@@ -67,11 +65,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      autoComplete="off"
-    >
+    <Form form={form} layout="vertical" autoComplete="off">
       <Row gutter={16}>
         {/* 关键词搜索 */}
         <Col span={6}>
@@ -96,7 +90,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
               onChange={(value) => handleFilterChange('statusList', value)}
               allowClear
             >
-              {HABIT_STATUS_OPTIONS.map(option => (
+              {HABIT_STATUS_OPTIONS.map((option) => (
                 <Option key={option.value} value={option.value}>
                   <Space>
                     <span style={{ color: option.color }}>●</span>
@@ -118,7 +112,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
               onChange={(value) => handleFilterChange('difficultyList', value)}
               allowClear
             >
-              {HABIT_DIFFICULTY_OPTIONS.map(option => (
+              {HABIT_DIFFICULTY_OPTIONS.map((option) => (
                 <Option key={option.value} value={option.value}>
                   <Space>
                     <span style={{ color: option.color }}>●</span>
@@ -140,7 +134,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
               onChange={(value) => handleFilterChange('goalIds', value)}
               allowClear
             >
-              {goals.map(goal => (
+              {goals.map((goal) => (
                 <Option key={goal.id} value={goal.id}>
                   {goal.name}
                 </Option>
@@ -160,7 +154,9 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
                 min={1}
                 max={5}
                 value={filters.importanceMin}
-                onChange={(value) => handleImportanceRangeChange('importanceMin', value)}
+                onChange={(value) =>
+                  handleImportanceRangeChange('importanceMin', value)
+                }
                 style={{ width: 80 }}
               />
               <span>-</span>
@@ -169,7 +165,9 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
                 min={1}
                 max={5}
                 value={filters.importanceMax}
-                onChange={(value) => handleImportanceRangeChange('importanceMax', value)}
+                onChange={(value) =>
+                  handleImportanceRangeChange('importanceMax', value)
+                }
                 style={{ width: 80 }}
               />
             </Space>
@@ -232,4 +230,4 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
   );
 };
 
-export default HabitFilter; 
+export default HabitFilter;
