@@ -72,9 +72,6 @@ importers:
       '@life-toolkit/business-web':
         specifier: workspace:*
         version: link:../../packages/business/web
-      '@life-toolkit/electron-ipc-router':
-        specifier: workspace:*
-        version: link:../../packages/common/electron-ipc-router
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
@@ -93,6 +90,9 @@ importers:
       class-validator:
         specifier: ^0.14.0
         version: 0.14.2
+      electron-ipc-restful:
+        specifier: 0.0.1
+        version: 0.0.1(electron@36.8.1)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -580,22 +580,6 @@ importers:
       react:
         specifier: '*'
         version: 18.3.1
-
-  packages/common/electron-ipc-router:
-    dependencies:
-      electron:
-        specifier: '*'
-        version: 36.8.1
-      find-my-way:
-        specifier: ^7.7.0
-        version: 7.7.0
-      reflect-metadata:
-        specifier: ^0.1.13
-        version: 0.1.14
-    devDependencies:
-      tsup:
-        specifier: ^7.0.0
-        version: 7.3.0(@swc/core@1.13.4)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/common/mapped-types:
     dependencies:
@@ -5163,6 +5147,11 @@ packages:
 
   electron-devtools-installer@3.2.1:
     resolution: {integrity: sha512-FaCi+oDCOBTw0gJUsuw5dXW32b2Ekh5jO8lI1NRCQigo3azh2VogsIi0eelMVrP1+LkN/bewyH3Xoo1USjO0eQ==}
+
+  electron-ipc-restful@0.0.1:
+    resolution: {integrity: sha512-k591o+A42ad1ec/7M2Uzd0cS06MBA3UXYlCRVCWswplu5uT1IDd79DqHYGWJVPMUZQ9I928S2iUg7ZFSZJylqQ==}
+    peerDependencies:
+      electron: '*'
 
   electron-is-dev@2.0.0:
     resolution: {integrity: sha512-3X99K852Yoqu9AcW50qz3ibYBWY79/pBhlMCab8ToEWS48R0T9tyxRiQhwylE7zQdXrMnx2JKqUJyMPmt5FBqA==}
@@ -15137,6 +15126,12 @@ snapshots:
       semver: 7.7.2
       tslib: 2.8.1
       unzip-crx-3: 0.2.0
+
+  electron-ipc-restful@0.0.1(electron@36.8.1):
+    dependencies:
+      electron: 36.8.1
+      find-my-way: 7.7.0
+      reflect-metadata: 0.1.14
 
   electron-is-dev@2.0.0: {}
 

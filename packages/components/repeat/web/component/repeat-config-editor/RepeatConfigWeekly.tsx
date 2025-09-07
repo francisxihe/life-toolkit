@@ -1,7 +1,7 @@
 import { Select } from '@arco-design/web-react';
 import { WeekDayMap } from '../constants';
 import { useLocaleContext } from '../useLocale';
-import { RepeatFormWeekly } from '../../types';
+import { RepeatFormWeekly } from '../../../types';
 
 export default function RepeatConfigWeekly(props: {
   repeatConfig: RepeatFormWeekly['repeatConfig'];
