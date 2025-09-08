@@ -37,9 +37,9 @@ export class TaskController {
     return this.controller.page(body);
   }
 
-  @Get('/task-with-track-time/:id')
-  async taskWithTrackTime(@Param('id') id: string) {
-    return this.controller.taskWithTrackTime(id);
+  @Get('/task-with-relations/:id')
+  async taskWithRelations(@Param('id') id: string) {
+    return this.controller.taskWithRelations(id);
   }
 
   @Put('/abandon/:id')

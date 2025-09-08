@@ -26,8 +26,8 @@ export default class TaskController {
     return request<ResponsePageVo<TaskVO.TaskWithoutRelationsVo>>({ method: 'get' })(`/task/page`, body);
   }
 
-  static async taskWithTrackTime(id: string) {
-    return request<TaskVO.TaskVo>({ method: 'get' })(`/task/task-with-track-time/${id}`);
+  static async taskWithRelations(id: string) {
+    return request<TaskVO.TaskVo>({ method: 'get' })(`/task/task-with-relations/${id}`);
   }
 
   static async abandon(id: string) {

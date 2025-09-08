@@ -38,7 +38,7 @@ POST   /task/create                    # 创建任务
 PUT    /task/update/:id                # 更新任务
 DELETE /task/delete/:id                # 删除任务
 GET    /task/detail/:id                # 获取任务详情
-GET    /task/task-with-track-time/:id  # 获取任务及时间跟踪信息
+GET    /task/task-with-relations/:id  # 获取任务及时间跟踪信息
 ```
 
 ### 状态操作
@@ -73,7 +73,7 @@ interface CreateTaskVo {
 
 ### 任务时间跟踪
 ```typescript
-interface TaskWithTrackTimeVo {
+interface taskWithRelationsVo {
   id: string;
   name: string;
   description?: string;

@@ -18,7 +18,7 @@ import {
   TaskPageFilterDto,
   TaskFilterDto,
   TaskDto,
-  TaskWithTrackTimeDto,
+  taskWithRelationsDto,
   Task,
 } from "@life-toolkit/business-server";
 import { TaskStatus } from "@life-toolkit/enum";
@@ -92,14 +92,14 @@ export class TaskRepository {
     return { list: list.map((t) => TaskDto.importEntity(t)), total, pageNum, pageSize };
   }
 
-  async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
+  async taskWithRelations(taskId: string): Promise<taskWithRelationsDto> {
     const task = await this.taskRepository.findOne({
       where: { id: taskId },
       relations: ["children", "parent", "goal", "todoList"],
     });
     if (!task) throw new NotFoundException("Task not found");
 
-    const dto = new TaskWithTrackTimeDto();
+    const dto = new taskWithRelationsDto();
     dto.importEntity(task);
     
     if (task.trackTimeIds?.length) {

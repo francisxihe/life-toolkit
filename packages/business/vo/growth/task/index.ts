@@ -5,6 +5,6 @@ export * from "./task-model.vo";
 import { TaskVo } from "./task-model.vo";
 import { TrackTimeVo } from "../track-time";
 
-export type TaskWithTrackTimeVo = TaskVo & {
+export type taskWithRelationsVo = TaskVo & {
   trackTimeList: TrackTimeVo[];
 };

@@ -49,10 +49,10 @@ export class TaskController {
     return await this.businessController.restore(id);
   }
 
-  @Get("task-with-track-time/:id")
+  @Get("task-with-relations/:id")
   @Response()
-  async taskWithTrackTime(@Param("id") id: string) {
-    return await this.businessController.taskWithTrackTime(id);
+  async taskWithRelations(@Param("id") id: string) {
+    return await this.businessController.taskWithRelations(id);
   }
 
   @Post("create")

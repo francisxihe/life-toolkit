@@ -5,7 +5,6 @@ import {
   TaskPageFilterDto,
   TaskFilterDto,
   TaskDto,
-  TaskWithTrackTimeDto,
 } from './dto';
 import { Task } from './task.entity';
 import { TaskStatus } from '@life-toolkit/enum';
@@ -143,10 +142,10 @@ export class TaskService {
     return TaskDto.importEntity(entity);
   }
 
-  async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
+  async taskWithRelations(taskId: string): Promise<TaskDto> {
     const entity = await this.taskRepository.findWithRelations(taskId);
     const base = TaskDto.importEntity(entity);
-    const result = new TaskWithTrackTimeDto();
+    const result = new TaskDto();
     Object.assign(result, base);
     result.trackTimeList = [];
     return result;

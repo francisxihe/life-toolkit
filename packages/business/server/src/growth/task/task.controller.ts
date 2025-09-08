@@ -49,10 +49,10 @@ export class TaskController {
     return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Get('/task-with-track-time/:id', { description: '查询任务及其时间追踪信息' })
-  async taskWithTrackTime(@Param('id') id: string): Promise<TaskVO.TaskVo> {
-    const dto = await this.taskService.taskWithTrackTime(id);
-    return dto.exportVo(); // TaskWithTrackTimeDto 继承自 TaskDto
+  @Get('/task-with-relations/:id', { description: '查询任务及其时间追踪信息' })
+  async taskWithRelations(@Param('id') id: string): Promise<TaskVO.TaskVo> {
+    const dto = await this.taskService.taskWithRelations(id);
+    return dto.exportVo(); // taskWithRelationsDto 继承自 TaskDto
   }
 
   @Put('/abandon/:id', { description: '放弃任务' })
