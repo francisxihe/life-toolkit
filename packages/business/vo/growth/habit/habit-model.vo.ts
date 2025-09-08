@@ -1,4 +1,4 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 import { GoalVo } from '../goal/goal-model.vo';
 import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
 import { TodoVo } from '../todo/todo-model.vo';
@@ -23,7 +23,7 @@ export type HabitWithoutRelationsVo = {
   completedCount?: number;
   doneAt?: string;
   abandonedAt?: string;
-} & BaseModelVo;
+} & BaseEntityVo;
 
 export type HabitVo = HabitWithoutRelationsVo & {
   /** 关联的目标 */

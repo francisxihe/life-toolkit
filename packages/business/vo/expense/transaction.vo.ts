@@ -1,6 +1,6 @@
 "use client";
 
-import { BaseModelVo } from "../common/model.vo";
+import { BaseEntityVo } from "../common";
 
 export type TransactionType = "income" | "expense";
 
@@ -17,7 +17,7 @@ export interface TransactionModelVo {
   };
 }
 
-export type TransactionVo = BaseModelVo & TransactionModelVo;
+export type TransactionVo = BaseEntityVo & TransactionModelVo;
 
 export type CreateTransactionVo = Omit<TransactionModelVo, "recurring">;
 

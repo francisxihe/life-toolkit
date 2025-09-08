@@ -1,4 +1,4 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 import { TaskVo } from '../task/task-model.vo';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
@@ -13,7 +13,7 @@ export type GoalWithoutRelationsVo = {
   endAt?: string;
   doneAt?: string;
   abandonedAt?: string;
-} & BaseModelVo;
+} & BaseEntityVo;
 
 export type GoalVo = {
   children: GoalVo[];

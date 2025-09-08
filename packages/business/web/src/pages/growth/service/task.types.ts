@@ -1,7 +1,7 @@
 import {
   GoalVo,
   TaskVo,
-  TrackTimeModelVo,
+  TrackTimeWithoutRelationsVo,
   TodoVo,
 } from '@life-toolkit/vo/growth';
 
@@ -21,5 +21,5 @@ export type TaskFormData = {
   parentId?: string;
   children: TaskVo[];
   todoList?: TodoVo[];
-  trackTimeList?: TrackTimeModelVo[];
+  trackTimeList?: TrackTimeWithoutRelationsVo[];
 };

@@ -1,4 +1,4 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 import { TaskVo } from '../task/task-model.vo';
 import { RepeatVo } from '@life-toolkit/components-repeat/vo';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
@@ -17,7 +17,7 @@ export type TodoWithoutRelationsVo = {
   doneAt?: string;
   abandonedAt?: string;
   source?: TodoSource;
-} & BaseModelVo;
+} & BaseEntityVo;
 
 export type TodoVo = TodoWithoutRelationsVo & {
   /** 关联的任务 */

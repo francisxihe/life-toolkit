@@ -1,4 +1,4 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 import { TrackTimeVo } from '../track-time/track-time.vo';
 import { GoalVo } from '../goal/goal-model.vo';
 import { TodoVo } from '../todo/todo-model.vo';
@@ -18,7 +18,7 @@ export type TaskWithoutRelationsVo = {
   goalId?: string;
   parentId?: string;
   tags?: string[];
-} & BaseModelVo;
+} & BaseEntityVo;
 
 export type TaskVo = TaskWithoutRelationsVo & {
   children: TaskVo[];

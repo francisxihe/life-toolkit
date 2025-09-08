@@ -1,10 +1,10 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 
-export type TrackTimeModelVo = {
+export type TrackTimeWithoutRelationsVo = {
   startAt?: string;
   endAt?: string;
   duration?: number;
   notes?: string;
-} & BaseModelVo;
+} & BaseEntityVo;
 
-export type TrackTimeVo = TrackTimeModelVo;
+export type TrackTimeVo = TrackTimeWithoutRelationsVo;

@@ -1,4 +1,4 @@
-import { BaseModelVo } from "../common/model.vo";
+import { BaseEntityVo } from "../common";
 
 export interface BudgetModelVo {
   category: string;
@@ -9,7 +9,7 @@ export interface BudgetModelVo {
   spent: number;
 }
 
-export type BudgetVo = BaseModelVo & BudgetModelVo;
+export type BudgetVo = BaseEntityVo & BudgetModelVo;
 
 
 export type CreateBudgetVo = Omit<BudgetModelVo, "spent">;
