@@ -18,51 +18,40 @@ export interface DtoField {
 }
 
 // 解析 DTO 类
-export function parseDtoClasses(content: string): DtoClass[] {
+export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass[] {
   const classes: DtoClass[] = [];
   
-  // 提取导入语句
-  const imports = extractImports(content);
-  
-  // 先尝试从实体中推断字段（针对使用 IntersectionType/OmitType 的情况）
-  const entityFields = extractEntityFields(content);
-  
-  // 匹配所有导出的类，改进正则表达式以正确捕获类体
-  const classRegex = /export\s+class\s+(\w+Dto)\s*(?:extends\s+([^{]+?))?\s*{([\s\S]*?)^}/gm;
+  // 匹配所有类定义，包含完整的类体
+  const classRegex = /export\s+class\s+(\w+)[\s\S]*?(?=export\s+class|$)/g;
   let match;
   
   while ((match = classRegex.exec(content)) !== null) {
-    const [, className, extendsClause, classBody] = match;
+    const [fullMatch, className] = match;
+    
     
     // 确定 DTO 类型
-    let type: 'model' | 'form' | 'filter' = 'model';
-    if (className.includes('Form')) type = 'form';
-    else if (className.includes('Filter')) type = 'filter';
-    
-    // 解析字段
-    let fields = parseClassFields(classBody);
-    
-    // 对于 model 类型，总是使用推断字段，因为大多数字段通过 IntersectionType 隐式定义
-    if (type === 'model') {
-      if (entityFields.length > 0) {
-        // 合并显式字段和推断字段，显式字段优先
-        const explicitFieldNames = new Set(fields.map(f => f.name));
-        const additionalFields = entityFields.filter(f => !explicitFieldNames.has(f.name));
-        fields = [...fields, ...additionalFields];
-      }
-      
-      // 如果仍然没有足够的字段，说明解析有问题，使用完整的推断字段
-      if (fields.length < 5 && entityFields.length > 0) {
-        fields = entityFields;
-      }
+    let type: 'model' | 'filter' | 'form' = 'model';
+    if (className.toLowerCase().includes('filter')) {
+      type = 'filter';
+    } else if (className.toLowerCase().includes('form')) {
+      type = 'form';
     }
+    
+    // 解析类字段
+    const fields = parseClassFields(fullMatch);
+    
+    
+    // 动态解析实体字段
+    const entityFields = extractEntityFields(content, dtoFilePath);
+    
+    // 合并字段
+    const allFields = [...fields, ...entityFields];
     
     classes.push({
       name: className,
       type,
-      fields,
-      imports,
-      extends: extendsClause?.trim(),
+      fields: allFields,
+      imports: []
     });
   }
   
@@ -82,124 +71,284 @@ function extractImports(content: string): string[] {
   return imports;
 }
 
-// 从实体导入中推断字段
-function extractEntityFields(content: string): DtoField[] {
+// 从实体文件中动态解析字段
+function extractEntityFields(content: string, dtoFilePath?: string): DtoField[] {
   const fields: DtoField[] = [];
   
-  // 查找实体导入
-  const entityImportMatch = content.match(/import\s+{\s*(\w+)\s+}\s+from\s+['"][^'"]*\.entity['"]/);
-  if (!entityImportMatch) return fields;
+  // 解析实体导入和 IntersectionType 引用
+  const entityRefs = extractEntityReferences(content);
   
-  const entityName = entityImportMatch[1];
+  for (const entityRef of entityRefs) {
+    const entityFields = parseEntityFile(entityRef.filePath, entityRef.className, dtoFilePath);
+    fields.push(...entityFields);
+  }
   
-  // 根据实体名称推断常见字段
-  const commonFields = getCommonFieldsByEntityName(entityName);
-  return commonFields;
+  return fields;
 }
 
-// 根据实体名称获取常见字段
-function getCommonFieldsByEntityName(entityName: string): DtoField[] {
-  const baseFields: DtoField[] = [
-    { name: 'id', type: 'string', optional: false, isArray: false, decorators: [] },
-    { name: 'createdAt', type: 'string', optional: true, isArray: false, decorators: [] },
-    { name: 'updatedAt', type: 'string', optional: true, isArray: false, decorators: [] },
-  ];
+// 提取实体引用信息
+function extractEntityReferences(content: string): Array<{className: string, filePath: string}> {
+  const refs: Array<{className: string, filePath: string}> = [];
   
-  if (entityName === 'Goal') {
-    return [
-      ...baseFields,
-      { name: 'name', type: 'string', optional: false, isArray: false, decorators: [] },
-      { name: 'description', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'status', type: 'GoalStatus', optional: false, isArray: false, decorators: [] },
-      { name: 'type', type: 'GoalType', optional: false, isArray: false, decorators: [] },
-      { name: 'importance', type: 'number', optional: false, isArray: false, decorators: [] },
-      { name: 'difficulty', type: 'number', optional: true, isArray: false, decorators: [] },
-      { name: 'startAt', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'endAt', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'doneAt', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'abandonedAt', type: 'string', optional: true, isArray: false, decorators: [] },
-    ];
+  // 查找实体导入
+  const entityImportMatches = content.matchAll(/import\s+{\s*([^}]+)\s+}\s+from\s+['"]([^'"]*\.entity)['"]/g);
+  
+  for (const match of entityImportMatches) {
+    const imports = match[1].split(',').map(s => s.trim());
+    const importPath = match[2];
+    
+    imports.forEach(imp => {
+      const className = imp.replace(/\s+as\s+\w+/, '').trim();
+      if (className) {
+        refs.push({ className, filePath: importPath });
+      }
+    });
   }
   
-  if (entityName === 'Task') {
-    return [
-      ...baseFields,
-      { name: 'name', type: 'string', optional: false, isArray: false, decorators: [] },
-      { name: 'description', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'status', type: 'TaskStatus', optional: false, isArray: false, decorators: [] },
-      { name: 'priority', type: 'TaskPriority', optional: true, isArray: false, decorators: [] },
-      { name: 'dueAt', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'completedAt', type: 'string', optional: true, isArray: false, decorators: [] },
-    ];
-  }
-  
-  if (entityName === 'Todo') {
-    return [
-      ...baseFields,
-      { name: 'title', type: 'string', optional: false, isArray: false, decorators: [] },
-      { name: 'content', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'completed', type: 'boolean', optional: false, isArray: false, decorators: [] },
-      { name: 'priority', type: 'TodoPriority', optional: true, isArray: false, decorators: [] },
-      { name: 'dueAt', type: 'string', optional: true, isArray: false, decorators: [] },
-    ];
-  }
-  
-  if (entityName === 'Habit') {
-    return [
-      ...baseFields,
-      { name: 'name', type: 'string', optional: false, isArray: false, decorators: [] },
-      { name: 'description', type: 'string', optional: true, isArray: false, decorators: [] },
-      { name: 'frequency', type: 'HabitFrequency', optional: false, isArray: false, decorators: [] },
-      { name: 'target', type: 'number', optional: true, isArray: false, decorators: [] },
-      { name: 'unit', type: 'string', optional: true, isArray: false, decorators: [] },
-    ];
-  }
-  
-  return baseFields;
+  return refs;
 }
+
+// 解析实体文件中的字段定义
+function parseEntityFile(relativePath: string, className: string, dtoFilePath?: string): DtoField[] {
+  const path = require('path');
+  const fs = require('fs');
+  
+  try {
+    // 构建实体文件的绝对路径
+    const { ROOT } = require('../constants');
+    
+    let entityPath: string;
+    if (dtoFilePath && relativePath.startsWith('../')) {
+      // 基于 DTO 文件路径解析相对路径
+      const dtoDir = path.dirname(dtoFilePath);
+      entityPath = path.resolve(dtoDir, relativePath + '.ts');
+    } else {
+      // 默认处理
+      const SERVER_BASE = path.join(ROOT, 'packages/business/server/src');
+      entityPath = path.resolve(SERVER_BASE, relativePath + '.ts');
+    }
+    
+    if (!fs.existsSync(entityPath)) {
+      console.warn(`Entity file not found: ${entityPath}`);
+      return [];
+    }
+    
+    const entityContent = fs.readFileSync(entityPath, 'utf-8');
+    return parseEntityClass(entityContent, className);
+  } catch (error) {
+    console.warn(`Failed to parse entity file: ${relativePath}`, error.message);
+    return [];
+  }
+}
+
+// 解析实体类中的字段
+function parseEntityClass(content: string, className: string): DtoField[] {
+  const fields: DtoField[] = [];
+  
+  // 匹配类定义
+  const classRegex = new RegExp(`export\\s+class\\s+${className}\\s*(?:extends\\s+[^{]+)?\\s*{([\\s\\S]*?)^}`, 'm');
+  const classMatch = content.match(classRegex);
+  
+  if (!classMatch) {
+    return fields;
+  }
+  
+  const classBody = classMatch[1];
+  
+  // 预处理：移除所有装饰器和注释
+  const cleanedBody = classBody
+    .replace(/\/\*[\s\S]*?\*\//g, '') // 移除多行注释
+    .replace(/\/\/.*$/gm, '') // 移除单行注释
+    .replace(/@[^(]*\([^)]*\)/g, '') // 移除简单装饰器
+    .replace(/@[^(]*\({[\s\S]*?}\)/g, '') // 移除复杂装饰器
+    .replace(/@\w+/g, ''); // 移除无参数装饰器
+  
+  // 改进的字段匹配：支持多行内联对象类型
+  const fieldDefinitions = extractFieldDefinitions(cleanedBody);
+  
+  // 调试输出
+  if (className.includes('TodoFilter')) {
+    console.log(`[DEBUG] ${className} field definitions:`, fieldDefinitions);
+  }
+  
+  for (const { fieldName, fieldType } of fieldDefinitions) {
+    // 跳过方法定义和构造函数
+    if (fieldType.includes('(') && fieldType.includes(')')) continue;
+    if (fieldName === 'constructor') continue;
+    
+    // 清理字段类型
+    const cleanFieldType = fieldType.replace(/\s*=.*$/, '').trim();
+    
+    // 跳过空类型
+    if (!cleanFieldType) continue;
+    
+    // 检查字段是否可选
+    const isOptional = cleanFieldType.includes('?') || 
+                      cleanFieldType.includes('undefined') ||
+                      cleanFieldType.includes('null');
+    
+    // 检查是否为数组
+    const isArray = cleanFieldType.includes('[]');
+    
+    // 提取基础类型
+    let baseType = cleanFieldType;
+    
+    // 对于内联对象类型，保持完整结构
+    if (baseType.includes('{') && baseType.includes('}')) {
+      // 移除数组标记但保持对象结构
+      baseType = baseType.replace(/\[\]$/, '').trim();
+    } else {
+      // 对于普通类型，进行标准清理
+      baseType = baseType
+        .replace(/\?/g, '')
+        .replace(/\[\]/g, '')
+        .replace(/\s*\|\s*undefined/g, '')
+        .replace(/\s*\|\s*null/g, '')
+        .trim();
+    }
+    
+    const field: DtoField = {
+      name: fieldName,
+      type: mapTsTypeToVoType(baseType),
+      optional: isOptional,
+      isArray: isArray,
+      decorators: []
+    };
+    
+    fields.push(field);
+  }
+  
+  return fields;
+}
+
+// 提取字段定义，支持多行内联对象类型
+function extractFieldDefinitions(classBody: string): Array<{fieldName: string, fieldType: string}> {
+  const fields: Array<{fieldName: string, fieldType: string}> = [];
+  const lines = classBody.split('\n');
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // 匹配字段定义开始：fieldName?: 或 fieldName:
+    const fieldStartMatch = line.match(/^(\w+)([!?]?):\s*(.*)/);
+    if (!fieldStartMatch) continue;
+    
+    const [, fieldName, optionalMarker, typeStart] = fieldStartMatch;
+    let fieldType = typeStart;
+    
+    // 如果类型以 { 开始，需要收集多行内容直到匹配的 }[]
+    if (typeStart.includes('{')) {
+      let braceCount = (typeStart.match(/{/g) || []).length - (typeStart.match(/}/g) || []).length;
+      
+      // 收集多行内容直到大括号平衡
+      if (braceCount > 0) {
+        for (let j = i + 1; j < lines.length && braceCount > 0; j++) {
+          const nextLine = lines[j].trim();
+          fieldType += '\n  ' + nextLine; // 保持适当的缩进
+          braceCount += (nextLine.match(/{/g) || []).length - (nextLine.match(/}/g) || []).length;
+          i = j; // 更新外层循环索引
+        }
+      }
+      
+      // 格式化内联对象类型
+      fieldType = fieldType
+        .replace(/\n\s*/g, ' ') // 将多行合并为单行
+        .replace(/\s*{\s*/g, '{ ')
+        .replace(/\s*;\s*}/g, '; }') // 修复分号和右大括号之间的格式
+        .replace(/\s*}\s*\[\]/g, ' }[]') // 修复右大括号和数组标记之间的格式
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+    
+    // 清理字段类型，移除末尾的分号
+    fieldType = fieldType.replace(/;$/, '').trim();
+    
+    // 保留可选标记信息
+    const finalFieldName = optionalMarker === '?' ? fieldName + '?' : fieldName;
+    
+    
+    fields.push({ fieldName: finalFieldName, fieldType });
+  }
+  
+  return fields;
+}
+
+// 映射 TypeORM 列类型到 TypeScript 类型
+function mapColumnTypeToTsType(columnType: string): string {
+  const typeMap: Record<string, string> = {
+    'varchar': 'string',
+    'text': 'string',
+    'int': 'number',
+    'integer': 'number',
+    'float': 'number',
+    'double': 'number',
+    'decimal': 'number',
+    'boolean': 'boolean',
+    'bool': 'boolean',
+    'date': 'string',
+    'datetime': 'string',
+    'timestamp': 'string',
+    'time': 'string',
+    'json': 'any',
+    'simple-array': 'string[]'
+  };
+  
+  return typeMap[columnType] || 'string';
+}
+
+// 映射 TypeScript 类型到 VO 类型
+function mapTsTypeToVoType(tsType: string): string {
+  // 日期类型统一转为 string
+  if (tsType === 'Date') return 'string';
+  
+  // 处理内联对象类型：{ id: string; source: TodoSource; }
+  if (tsType.startsWith('{') && tsType.endsWith('}')) {
+    // 清理内联对象类型的格式，确保正确的换行和缩进
+    return tsType
+      .replace(/\s*{\s*/g, '{ ')
+      .replace(/\s*;\s*/g, '; ')
+      .replace(/\s*}\s*/g, ' }')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+  
+  // 保持其他类型不变
+  return tsType;
+}
+
+// 已移除硬编码的实体字段定义，改为动态解析
 
 // 解析类字段
 function parseClassFields(classBody: string): DtoField[] {
   const fields: DtoField[] = [];
   
-  // 移除方法定义和注释，只保留属性声明
-  const lines = classBody.split('\n');
-  let inComment = false;
+  // 使用 extractFieldDefinitions 函数来处理多行内联对象类型
+  const fieldDefinitions = extractFieldDefinitions(classBody);
   
-  for (const line of lines) {
-    const trimmed = line.trim();
+  for (const { fieldName, fieldType } of fieldDefinitions) {
+    // 跳过方法定义
+    if (fieldType.includes('(') && fieldType.includes(')')) continue;
+    if (fieldName === 'constructor') continue;
     
-    // 跳过空行
-    if (!trimmed) continue;
+    // 清理字段类型
+    const cleanFieldType = fieldType.replace(/\s*=.*$/, '').trim();
     
-    // 处理多行注释
-    if (trimmed.startsWith('/*')) {
-      inComment = true;
-      continue;
-    }
-    if (trimmed.endsWith('*/')) {
-      inComment = false;
-      continue;
-    }
-    if (inComment) continue;
+    // 跳过空类型
+    if (!cleanFieldType) continue;
     
-    // 跳过单行注释
-    if (trimmed.startsWith('//')) continue;
+    // 解析字段属性
+    const optional = fieldName.includes('?');
+    const isArray = cleanFieldType.endsWith('[]');
+    const baseType = isArray ? cleanFieldType.slice(0, -2) : cleanFieldType;
     
-    // 跳过装饰器
-    if (trimmed.startsWith('@')) continue;
-    
-    // 跳过方法定义（包含括号的行）
-    if (trimmed.includes('(') && trimmed.includes(')')) continue;
-    
-    // 跳过代码块开始
-    if (trimmed.includes('{') && !trimmed.includes(':')) continue;
-    
-    // 解析属性定义
-    const field = parseFieldLine(trimmed);
-    if (field) {
-      fields.push(field);
-    }
+    fields.push({
+      name: fieldName.replace('?', ''),
+      type: baseType,
+      optional,
+      isArray,
+      decorators: []
+    });
   }
   
   return fields;
@@ -300,14 +449,18 @@ function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): string[
   }
   
   // 检查是否需要枚举导入
-  const hasEnumFields = dtoClasses.some(dtoClass => 
-    dtoClass.fields.some(field => 
-      ['GoalType', 'GoalStatus', 'Importance', 'Difficulty'].includes(field.type)
-    )
-  );
+  const enumTypes = new Set<string>();
+  dtoClasses.forEach(dtoClass => {
+    dtoClass.fields.forEach(field => {
+      if (['GoalType', 'GoalStatus', 'Importance', 'Difficulty', 'TodoStatus', 'TodoSource', 'TaskStatus', 'TaskPriority', 'HabitFrequency'].includes(field.type)) {
+        enumTypes.add(field.type);
+      }
+    });
+  });
   
-  if (hasEnumFields) {
-    imports.push("import { GoalType, GoalStatus, Importance, Difficulty } from '@life-toolkit/enum';");
+  if (enumTypes.size > 0) {
+    const enumImports = Array.from(enumTypes).sort();
+    imports.push(`import { ${enumImports.join(', ')} } from '@life-toolkit/enum';`);
   }
   
   // 检查是否需要其他 ModelVo 类型导入
@@ -371,14 +524,24 @@ function generateSingleVo(dtoClass: DtoClass): string {
 // 转换 DTO 字段为 VO 字段
 function convertDtoFieldToVo(field: DtoField): string | null {
   // 跳过某些内部字段
-  if (['importVo', 'appendToCreateEntity', 'appendToUpdateEntity', 'exportUpdateEntity'].includes(field.name)) {
+  if (['importVo', 'appendToCreateEntity', 'appendToUpdateEntity', 'exportUpdateEntity', 'importEntity', 'exportWithoutRelationsVo', 'exportVo'].includes(field.name)) {
     return null;
   }
   
-  let type = convertDtoTypeToVo(field.type);
+  let type = field.type;
   
-  if (field.isArray) {
-    type += '[]';
+  // 对于内联对象类型，直接使用原始类型（已包含数组标记）
+  if (type.startsWith('{') && type.endsWith('}')) {
+    // 内联对象类型保持原样，数组标记由 field.isArray 控制
+    if (field.isArray && !type.endsWith('[]')) {
+      type += '[]';
+    }
+  } else {
+    // 对于普通类型，进行标准转换
+    type = convertDtoTypeToVo(type);
+    if (field.isArray && !type.endsWith('[]')) {
+      type += '[]';
+    }
   }
   
   const optional = field.optional ? '?' : '';
@@ -390,11 +553,22 @@ function convertDtoTypeToVo(type: string): string {
   // 日期类型转换
   if (type === 'Date') return 'string';
   
+  // 数组类型处理
+  if (type.endsWith('[]')) {
+    const baseType = type.slice(0, -2);
+    return convertDtoTypeToVo(baseType) + '[]';
+  }
+  
   // DTO 类型转换
   if (type.endsWith('Dto')) {
     const baseName = type.replace('Dto', '');
     // 对于关联字段，使用 ModelVo 类型
     return `${baseName}ModelVo`;
+  }
+  
+  // 枚举类型保持不变
+  if (['GoalType', 'GoalStatus', 'Importance', 'Difficulty', 'TodoStatus', 'TodoSource', 'TaskStatus', 'TaskPriority', 'HabitFrequency'].includes(type)) {
+    return type;
   }
   
   // 保持原类型

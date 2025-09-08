@@ -30,7 +30,7 @@ export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations
     this.task = entity.task ? TaskDto.importEntity(entity.task) : undefined;
   }
 
-  exportModelVo(): TodoVO.TodoVo {
+  exportWithoutRelationsVo(): TodoVO.TodoVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name || '',
@@ -50,6 +50,6 @@ export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations
   }
 
   exportVo(): TodoVO.TodoWithoutRelationsVo {
-    return this.exportModelVo();
+    return this.exportWithoutRelationsVo();
   }
 }

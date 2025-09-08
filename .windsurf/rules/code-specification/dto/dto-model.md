@@ -68,7 +68,7 @@ export class EntityModelDto extends OmitType(EntityDto, [
 ### 映射规则
 
 - DTO 类包含内置的数据转换方法，实现 Entity↔DTO↔VO 的双向转换
-- 在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`
+- 在具体 DTO 类中实现：`importEntity(entity)`、`exportWithoutRelationsVo()`、`exportVo()`
 - 列表/分页导出提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`
 - 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用
 - DTO 内部字段的日期保持为 Date；导出 VO 时统一用 dayjs 格式化为字符串。
@@ -121,7 +121,7 @@ export class EntityDto extends IntersectionType(
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): EntityVO.EntityItemVo {
+  exportWithoutRelationsVo(): EntityVO.EntityItemVo {
     return {
       id: this.id,
       name: this.name,
@@ -131,7 +131,7 @@ export class EntityDto extends IntersectionType(
 
   // 可选：列表/分页辅助
   static dtoListToListVo(list: EntityDto[]): EntityVO.EntityListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
   
   static dtoListToPageVo(
@@ -141,7 +141,7 @@ export class EntityDto extends IntersectionType(
     pageSize: number
   ): EntityVO.EntityPageVo {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,
@@ -237,7 +237,7 @@ export class EntityDto extends IntersectionType(
 
 ### 映射逻辑
 - [ ] 实现了 `importEntity()` 方法
-- [ ] 实现了 `exportVo()` 和 `exportModelVo()` 方法
+- [ ] 实现了 `exportVo()` 和 `exportWithoutRelationsVo()` 方法
 - [ ] 日期字段格式化正确
 - [ ] 关联对象处理合理
 

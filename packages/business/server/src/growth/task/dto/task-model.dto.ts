@@ -86,7 +86,7 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): TaskVO.TaskWithoutRelationsVo {
+  exportWithoutRelationsVo(): TaskVO.TaskWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
@@ -104,12 +104,12 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
 
   // 列表/分页辅助
   static dtoListToListVo(list: TaskDto[]): TaskVO.TaskListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
   static dtoListToPageVo(list: TaskDto[], total: number, pageNum: number, pageSize: number): TaskVO.TaskPageVo {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,

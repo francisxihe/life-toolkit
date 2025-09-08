@@ -45,7 +45,7 @@ export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelations
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): GoalVO.GoalWithoutRelationsVo {
+  exportWithoutRelationsVo(): GoalVO.GoalWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
@@ -60,7 +60,7 @@ export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelations
   // DTO → 业务完整 VO
   exportVo(): GoalVO.GoalVo {
     return {
-      ...this.exportModelVo(),
+      ...this.exportWithoutRelationsVo(),
       children: this.children?.map((child) => child.exportVo()) || [],
       parent: this.parent?.exportVo(),
       taskList: this.taskList?.map((task) => task.exportVo()),
@@ -69,12 +69,12 @@ export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelations
 
   // 列表/分页辅助
   static dtoListToListVo(list: GoalDto[]): GoalVO.GoalListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
   static dtoListToPageVo(list: GoalDto[], total: number, pageNum: number, pageSize: number): GoalVO.GoalPageVo {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,

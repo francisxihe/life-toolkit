@@ -149,7 +149,7 @@ export class UpdateEntityDto {
 ## 🧭 映射逻辑合并至 DTO
 
 - 将 Entity→DTO、DTO→VO、VO→DTO 的转换统一放入对应 DTO 文件中
-- 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`
+- 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportWithoutRelationsVo()`、`exportVo()`
 - 列表/分页导出可提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`
 - 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用
 - DTO 内部字段的日期保持为 Date；导出 VO 时统一用 dayjs 格式化为字符串
@@ -180,7 +180,7 @@ export class EntityDto extends IntersectionType(
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): EntityVO.EntityItemVo {
+  exportWithoutRelationsVo(): EntityVO.EntityItemVo {
     return {
       ...BaseMapper.dtoToVo(this),
     } as EntityVO.EntityItemVo;

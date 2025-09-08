@@ -67,7 +67,7 @@ function syncOne(dtoFilePath: string) {
   if (!dtoContent) return;
   
   try {
-    const dtoClasses = parseDtoClasses(dtoContent);
+    const dtoClasses = parseDtoClasses(dtoContent, dtoFilePath);
     if (dtoClasses.length === 0) {
       logLocal('Skip (no DTO classes found):', rel);
       return;

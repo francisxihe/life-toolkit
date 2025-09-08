@@ -46,7 +46,7 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): HabitVO.HabitWithoutRelationsVo {
+  exportWithoutRelationsVo(): HabitVO.HabitWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
@@ -59,7 +59,7 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   // DTO → 业务完整 VO
   exportVo(): HabitVO.HabitVo {
     return {
-      ...this.exportModelVo(),
+      ...this.exportWithoutRelationsVo(),
       goals: this.goals?.map((goal) => goal.exportVo()),
       todos: this.todos?.map((todo) => todo.exportVo()),
     };
@@ -67,12 +67,12 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
 
   // 列表/分页辅助
   static dtoListToListVo(list: HabitDto[]): HabitVO.HabitListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
   static dtoListToPageVo(list: HabitDto[], total: number, pageNum: number, pageSize: number): HabitVO.HabitPageVo {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,

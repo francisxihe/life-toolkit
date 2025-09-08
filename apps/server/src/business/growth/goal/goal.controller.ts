@@ -16,7 +16,7 @@ export class GoalController {
   async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
-    return dto.exportModelVo();
+    return dto.exportWithoutRelationsVo();
   }
 
   /**
@@ -67,7 +67,7 @@ export class GoalController {
   async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
-    return dto.exportModelVo();
+    return dto.exportWithoutRelationsVo();
   }
 
   /**
