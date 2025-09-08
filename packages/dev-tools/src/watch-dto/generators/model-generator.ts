@@ -50,10 +50,7 @@ export function generateWithoutRelationsVo(dtoClass: DtoClass): string {
 /**
  * 生成完整的 Model VO（WithoutRelations + 关系字段）
  */
-export function generateFullModelVo(
-  mainClass: DtoClass, 
-  withoutRelationsExists: boolean
-): string {
+export function generateFullModelVo(mainClass: DtoClass, withoutRelationsExists: boolean): string {
   const lines: string[] = [];
   const baseName = mainClass.name.replace('Dto', '').replace('Model', '');
   const voName = `${baseName}Vo`;
@@ -62,12 +59,12 @@ export function generateFullModelVo(
   if (withoutRelationsExists) {
     // 提取关系字段
     const relationFields = filterRelationFields(mainClass.fields);
-    
+
     if (relationFields.length > 0) {
       lines.push(`export type ${voName} = ${withoutRelationsVoName} & {`);
-      
+
       // 去重关系字段
-      const uniqueRelationFields = new Map<string, typeof relationFields[0]>();
+      const uniqueRelationFields = new Map<string, (typeof relationFields)[0]>();
       for (const field of relationFields) {
         const existing = uniqueRelationFields.get(field.name);
         if (!existing) {

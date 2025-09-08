@@ -28,30 +28,21 @@ export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass
 
     // 确定类型
     let type: 'model' | 'filter' | 'form' = 'model';
-    if (
-      className.includes('Filter') ||
-      className.includes('Page') ||
-      className.includes('Search')
-    ) {
+    if (className.includes('Filter') || className.includes('Page') || className.includes('Search')) {
       type = 'filter';
-    } else if (
-      className.includes('Create') ||
-      className.includes('Update') ||
-      className.includes('Form')
-    ) {
+    } else if (className.includes('Create') || className.includes('Update') || className.includes('Form')) {
       type = 'form';
     }
-    
 
     // 解析类字段
     let fields: DtoField[] = [];
 
     // 解析类体中直接定义的字段
     const directFields = parseClassFields(fullMatch);
-    
+
     // 保存原始类定义用于后续的继承信息解析
     const classDefinition = fullMatch;
-    
+
     // 合并字段（现在不解析继承字段，只保留直接定义的字段）
     fields = directFields;
 
@@ -555,11 +546,11 @@ export function generateVoContent(dtoClasses: DtoClass[], dtoFilePath: string): 
     } else {
       // Filter 等其他类型
       const baseName = dtoClass.name.replace('Dto', '').replace('Filter', '');
-      
+
       if (dtoClass.name.includes('Page')) {
         // PageFilter 类型特殊处理，添加 pageNum 和 pageSize 字段
         const voName = `${baseName}FilterVo`;
-        
+
         if (!generatedVoNames.has(voName)) {
           generatedVoNames.add(voName);
           const voContent = generatePageFilterVo(dtoClass);
@@ -567,7 +558,7 @@ export function generateVoContent(dtoClasses: DtoClass[], dtoFilePath: string): 
         }
       } else {
         const voName = `${baseName}FilterVo`;
-        
+
         if (!generatedVoNames.has(voName)) {
           generatedVoNames.add(voName);
           const voContent = generateFilterVo(dtoClass);
@@ -818,12 +809,19 @@ function parseInheritanceInfo(classBody: string): { type: 'simple' | 'pick' | 'i
   const pickTypeMatch = classBody.match(/extends\s+PickType\(([^,]+),\s*\[([^\]]+)\]/);
   if (pickTypeMatch) {
     const [, sourceClass, fieldsStr] = pickTypeMatch;
-    const fieldNames = fieldsStr.split(',').map(f => 
-      f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()
-    ).filter(f => f.length > 0);
+    const fieldNames = fieldsStr
+      .split(',')
+      .map((f) =>
+        f
+          .trim()
+          .replace(/[\"']/g, '')
+          .replace(/as const/, '')
+          .trim()
+      )
+      .filter((f) => f.length > 0);
     return {
       type: 'pick',
-      info: { sourceClass: sourceClass.trim(), fields: fieldNames }
+      info: { sourceClass: sourceClass.trim(), fields: fieldNames },
     };
   }
 
@@ -835,7 +833,7 @@ function parseInheritanceInfo(classBody: string): { type: 'simple' | 'pick' | 'i
     const types = parseIntersectionTypes(cleanTypesStr);
     return {
       type: 'intersection',
-      info: { types }
+      info: { types },
     };
   }
 
@@ -856,7 +854,7 @@ function parseIntersectionTypes(typesStr: string): string[] {
 
   while (i < typesStr.length) {
     const char = typesStr[i];
-    
+
     if (char === '(') {
       depth++;
       current += char;
@@ -872,27 +870,29 @@ function parseIntersectionTypes(typesStr: string): string[] {
     } else {
       current += char;
     }
-    
+
     i++;
   }
-  
+
   // 添加最后一个类型
   if (current.trim()) {
     types.push(current.trim());
   }
-  
+
   return types;
 }
 
 // 从源类中获取字段定义 - 简化版本，不做跨文件查找
 function getFieldsFromSource(sourceClass: string, content: string, dtoFilePath?: string): DtoField[] {
   // 只从当前文件中查找类定义
-  const classMatch = content.match(new RegExp(`export class ${sourceClass}[\\s\\S]*?\\{([\\s\\S]*?)(?=\\n\\s*export|\\n\\s*$|$)`));
+  const classMatch = content.match(
+    new RegExp(`export class ${sourceClass}[\\s\\S]*?\\{([\\s\\S]*?)(?=\\n\\s*export|\\n\\s*$|$)`)
+  );
   if (classMatch) {
     const classBody = classMatch[1];
     return parseClassFields(classBody);
   }
-  
+
   return [];
 }
 
@@ -916,17 +916,17 @@ function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'): string
   } else {
     // Create VO 基于继承信息生成
     const inheritanceInfo = parseInheritanceInfo(dtoClass.classDefinition || '');
-    
+
     if (inheritanceInfo.type === 'pick') {
       // PickType: Pick<SourceVo, 'field1' | 'field2'>
       const sourceVoName = inheritanceInfo.info.sourceClass.replace('Dto', 'WithoutRelationsVo');
       const fieldList = inheritanceInfo.info.fields.map((f: string) => `'${f}'`).join(' | ');
-      
+
       // 添加直接定义的字段
-      const customFields = dtoClass.fields.filter(field => 
-        !checkIsRelationField(field) && !isImportMethod(field.name)
+      const customFields = dtoClass.fields.filter(
+        (field) => !checkIsRelationField(field) && !isImportMethod(field.name)
       );
-      
+
       if (customFields.length > 0) {
         lines.push(`export type ${voName} = Pick<${sourceVoName}, ${fieldList}> & {`);
         for (const field of customFields) {
@@ -960,12 +960,12 @@ function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'): string
 // 生成 Filter VO - 基于继承信息生成类型组合
 function generateFilterVo(dtoClass: DtoClass): string {
   const lines: string[] = [];
-  
+
   const baseName = dtoClass.name.replace('FilterDto', '').replace('Dto', '');
   const filterVoName = `${baseName}FilterVo`;
-  
+
   const inheritanceInfo = parseInheritanceInfo(dtoClass.classDefinition || '');
-  
+
   if (inheritanceInfo.type === 'intersection') {
     // IntersectionType: 直接用 & 组合 VO 类型
     const voTypes = inheritanceInfo.info.types.map((type: string) => {
@@ -975,9 +975,18 @@ function generateFilterVo(dtoClass: DtoClass): string {
         if (match) {
           const [, sourceClass, fieldsStr] = match;
           const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
-          const fieldList = fieldsStr.split(',').map((f: string) => 
-            `'${f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()}'`
-          ).filter(f => f !== "''").join(' | ');
+          const fieldList = fieldsStr
+            .split(',')
+            .map(
+              (f: string) =>
+                `'${f
+                  .trim()
+                  .replace(/[\"']/g, '')
+                  .replace(/as const/, '')
+                  .trim()}'`
+            )
+            .filter((f) => f !== "''")
+            .join(' | ');
           return `Partial<Pick<${sourceVoName}, ${fieldList}>>`;
         }
       } else if (type.includes('PickType')) {
@@ -986,9 +995,18 @@ function generateFilterVo(dtoClass: DtoClass): string {
         if (match) {
           const [, sourceClass, fieldsStr] = match;
           const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
-          const fieldList = fieldsStr.split(',').map((f: string) => 
-            `'${f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()}'`
-          ).filter(f => f !== "''").join(' | ');
+          const fieldList = fieldsStr
+            .split(',')
+            .map(
+              (f: string) =>
+                `'${f
+                  .trim()
+                  .replace(/[\"']/g, '')
+                  .replace(/as const/, '')
+                  .trim()}'`
+            )
+            .filter((f) => f !== "''")
+            .join(' | ');
           return `Pick<${sourceVoName}, ${fieldList}>`;
         }
       }
@@ -998,12 +1016,10 @@ function generateFilterVo(dtoClass: DtoClass): string {
       }
       return type.replace('Dto', 'Vo');
     });
-    
+
     // 添加直接定义的字段
-    const customFields = dtoClass.fields.filter(field => 
-      !checkIsRelationField(field) && !isImportMethod(field.name)
-    );
-    
+    const customFields = dtoClass.fields.filter((field) => !checkIsRelationField(field) && !isImportMethod(field.name));
+
     if (customFields.length > 0) {
       lines.push(`export type ${filterVoName} = {`);
       for (const field of customFields) {
@@ -1047,32 +1063,82 @@ function convertDtoTypeToVoType(dtoType: string): string {
 
 // 检查是否为导入方法
 function isImportMethod(fieldName: string): boolean {
-  return ['importVo', 'importCreateVo', 'importUpdateVo', 'importEntity', 'importUpdateEntity', 'exportCreateEntity', 'exportUpdateEntity', 'appendToCreateEntity', 'appendToUpdateEntity'].includes(fieldName);
+  return [
+    'importVo',
+    'importCreateVo',
+    'importUpdateVo',
+    'importEntity',
+    'importUpdateEntity',
+    'exportCreateEntity',
+    'exportUpdateEntity',
+    'appendToCreateEntity',
+    'appendToUpdateEntity',
+  ].includes(fieldName);
 }
 
 // 提取 PickType 中的字段名 - 从 DTO 类的原始定义中解析
 function extractPickTypeFieldNames(dtoClass: DtoClass): string[] {
   // 需要映射实体字段名到 VO 字段名
   const entityToVoFieldMap: Record<string, string> = {
-    'startDate': 'startAt',
-    'targetDate': 'endAt'
+    startDate: 'startAt',
+    targetDate: 'endAt',
   };
-  
+
   // 直接从 DTO 类名推断应该包含的字段
   // 根据实际的 WithoutRelationsVo 定义来映射字段
   const moduleFieldMap: Record<string, string[]> = {
-    'CreateGoalDto': ['name', 'type', 'startAt', 'endAt', 'description', 'importance', 'difficulty', 'status'],
-    'UpdateGoalDto': ['name', 'type', 'startAt', 'endAt', 'description', 'importance', 'difficulty', 'status'],
-    'CreateHabitDto': ['name', 'description', 'importance', 'tags', 'difficulty'],
-    'UpdateHabitDto': ['name', 'description', 'importance', 'tags', 'difficulty'],
-    'CreateTaskDto': ['name', 'description', 'tags', 'estimateTime', 'importance', 'urgency', 'goalId', 'startAt', 'endAt'],
-    'UpdateTaskDto': ['name', 'description', 'tags', 'estimateTime', 'importance', 'urgency', 'goalId', 'startAt', 'endAt'],
-    'CreateTodoDto': ['name', 'description', 'status', 'planDate', 'planStartAt', 'planEndAt', 'importance', 'urgency', 'tags'],
-    'UpdateTodoDto': ['name', 'description', 'status', 'planDate', 'planStartAt', 'planEndAt', 'importance', 'urgency', 'tags']
+    CreateGoalDto: ['name', 'type', 'startAt', 'endAt', 'description', 'importance', 'difficulty', 'status'],
+    UpdateGoalDto: ['name', 'type', 'startAt', 'endAt', 'description', 'importance', 'difficulty', 'status'],
+    CreateHabitDto: ['name', 'description', 'importance', 'tags', 'difficulty'],
+    UpdateHabitDto: ['name', 'description', 'importance', 'tags', 'difficulty'],
+    CreateTaskDto: [
+      'name',
+      'description',
+      'tags',
+      'estimateTime',
+      'importance',
+      'urgency',
+      'goalId',
+      'startAt',
+      'endAt',
+    ],
+    UpdateTaskDto: [
+      'name',
+      'description',
+      'tags',
+      'estimateTime',
+      'importance',
+      'urgency',
+      'goalId',
+      'startAt',
+      'endAt',
+    ],
+    CreateTodoDto: [
+      'name',
+      'description',
+      'status',
+      'planDate',
+      'planStartAt',
+      'planEndAt',
+      'importance',
+      'urgency',
+      'tags',
+    ],
+    UpdateTodoDto: [
+      'name',
+      'description',
+      'status',
+      'planDate',
+      'planStartAt',
+      'planEndAt',
+      'importance',
+      'urgency',
+      'tags',
+    ],
   };
-  
+
   const pickFields = moduleFieldMap[dtoClass.name] || [];
-  
+
   return pickFields;
 }
 
@@ -1101,16 +1167,16 @@ function checkIsRelationField(field: DtoField): boolean {
 // 生成 PageFilter VO（包含 pageNum 和 pageSize 字段）
 function generatePageFilterVo(dtoClass: DtoClass): string {
   const lines: string[] = [];
-  
+
   // 生成基础 Filter VO 名称
   const baseName = dtoClass.name.replace('PageDto', '').replace('Dto', '').replace('Page', '').replace('Filter', '');
   const baseFilterVoName = `${baseName}FilterVo`;
   const pageFilterVoName = `${baseName}PageFilterVo`;
-  
+
   lines.push(`export type ${pageFilterVoName} = ${baseFilterVoName} & {`);
   lines.push('  pageNum: number;');
   lines.push('  pageSize: number;');
   lines.push('};');
-  
+
   return lines.join('\n');
 }

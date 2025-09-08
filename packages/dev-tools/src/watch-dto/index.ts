@@ -27,7 +27,7 @@ const logLocal = createLogger('dto-vo');
 function extractImportsFromContent(content: string): string | null {
   const lines = content.split('\n');
   const importLines: string[] = [];
-  
+
   for (const line of lines) {
     const trimmed = line.trim();
     if (trimmed.startsWith('import ')) {
@@ -37,7 +37,7 @@ function extractImportsFromContent(content: string): string | null {
       break;
     }
   }
-  
+
   return importLines.length > 0 ? importLines.join('\n') : null;
 }
 
@@ -46,7 +46,7 @@ function removeImportsFromContent(content: string): string {
   const lines = content.split('\n');
   const nonImportLines: string[] = [];
   let foundNonImport = false;
-  
+
   for (const line of lines) {
     const trimmed = line.trim();
     if (trimmed.startsWith('import ')) {
@@ -58,7 +58,7 @@ function removeImportsFromContent(content: string): string {
       if (trimmed) foundNonImport = true;
     }
   }
-  
+
   return nonImportLines.join('\n').trim();
 }
 
@@ -71,15 +71,15 @@ function getVoIndexPath(voFilePath: string): string {
 function updateVoIndex(voFilePath: string, exportNames: string[]) {
   const indexPath = getVoIndexPath(voFilePath);
   const fileName = path.basename(voFilePath, '.vo.ts');
-  
+
   let indexContent = '';
   if (fs.existsSync(indexPath)) {
     indexContent = readFileSafe(indexPath) || '';
   }
-  
+
   // 生成新的导出语句
   const newExport = `export * from './${fileName}.vo';`;
-  
+
   // 检查是否已存在该导出
   if (!indexContent.includes(newExport)) {
     indexContent = indexContent.trim();
@@ -87,13 +87,13 @@ function updateVoIndex(voFilePath: string, exportNames: string[]) {
       indexContent += '\n';
     }
     indexContent += newExport + '\n';
-    
+
     // 确保目录存在
     const dir = path.dirname(indexPath);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    
+
     writeFileIfChanged(indexPath, indexContent);
     logLocal('Updated index:', path.relative(ROOT, indexPath));
   }
@@ -102,49 +102,48 @@ function updateVoIndex(voFilePath: string, exportNames: string[]) {
 function syncOne(dtoFilePath: string) {
   const rel = path.relative(SERVER_DTO_BASE, dtoFilePath);
   if (!rel.includes('/dto/') || !rel.endsWith('.dto.ts')) return;
-  
+
   const dtoContent = readFileSafe(dtoFilePath);
   if (!dtoContent) return;
-  
+
   try {
     const dtoClasses = parseDtoClasses(dtoContent, dtoFilePath);
     if (dtoClasses.length === 0) {
       logLocal('Skip (no DTO classes found):', rel);
       return;
     }
-    
+
     const voContent = generateVoContent(dtoClasses, dtoFilePath);
     const voPath = getVoPathFromDto(dtoFilePath);
-    
+
     // 确保目录存在
     const voDir = path.dirname(voPath);
     if (!fs.existsSync(voDir)) {
       fs.mkdirSync(voDir, { recursive: true });
     }
-    
+
     // 检查文件是否存在，如果存在则保留用户的 import
     let finalContent = voContent;
     if (fs.existsSync(voPath)) {
       const existingContent = readFileSafe(voPath) || '';
       const existingImports = extractImportsFromContent(existingContent);
-      
+
       if (existingImports) {
         // 移除生成内容中的 import，使用现有的 import
         const contentWithoutImports = removeImportsFromContent(voContent);
         finalContent = existingImports + '\n\n' + contentWithoutImports;
       }
     }
-    
+
     // 写入 VO 文件
     const changed = writeFileIfChanged(voPath, finalContent);
     if (changed) {
       logLocal('Generated VO:', path.relative(ROOT, voPath));
-      
+
       // 更新 index.ts
-      const exportNames = dtoClasses.map(cls => cls.name.replace('Dto', 'Vo'));
+      const exportNames = dtoClasses.map((cls) => cls.name.replace('Dto', 'Vo'));
       updateVoIndex(voPath, exportNames);
     }
-    
   } catch (error) {
     logLocal('Error processing:', rel, (error as Error).message);
   }
@@ -153,7 +152,7 @@ function syncOne(dtoFilePath: string) {
 function syncAllOnce() {
   const dtoPaths = fg.sync(path.join(SERVER_DTO_BASE, '**/dto/*.dto.ts').replace(/\\/g, '/'));
   logLocal(`Found ${dtoPaths.length} DTO files`);
-  
+
   for (const p of dtoPaths) {
     syncOne(p);
   }
@@ -162,19 +161,19 @@ function syncAllOnce() {
 function watchAndSync() {
   const dtoGlob = path.join(SERVER_DTO_BASE, '**/dto/*.dto.ts');
   logLocal('Watching:', dtoGlob);
-  
+
   const watcher = chokidar.watch(dtoGlob, {
     ignoreInitial: false,
     persistent: true,
   });
-  
+
   watcher.on('add', syncOne);
   watcher.on('change', syncOne);
-  
+
   watcher.on('ready', () => {
     logLocal('Initial scan complete. Watching for changes...');
   });
-  
+
   return watcher;
 }
 

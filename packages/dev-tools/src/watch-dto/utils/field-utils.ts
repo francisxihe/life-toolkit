@@ -30,17 +30,17 @@ export function checkIsRelationField(field: DtoField): boolean {
  */
 export function isImportMethod(fieldName: string): boolean {
   return [
-    'importVo', 
-    'importCreateVo', 
-    'importUpdateVo', 
-    'importEntity', 
-    'importUpdateEntity', 
-    'exportCreateEntity', 
-    'exportUpdateEntity', 
-    'appendToCreateEntity', 
+    'importVo',
+    'importCreateVo',
+    'importUpdateVo',
+    'importEntity',
+    'importUpdateEntity',
+    'exportCreateEntity',
+    'exportUpdateEntity',
+    'appendToCreateEntity',
     'appendToUpdateEntity',
     'importListVo',
-    'importPageVo'
+    'importPageVo',
   ].includes(fieldName);
 }
 
@@ -82,14 +82,12 @@ export function deduplicateFields(fields: DtoField[]): DtoField[] {
  * 过滤出非关系字段
  */
 export function filterNonRelationFields(fields: DtoField[]): DtoField[] {
-  return fields.filter(field => 
-    !checkIsRelationField(field) && !isImportMethod(field.name)
-  );
+  return fields.filter((field) => !checkIsRelationField(field) && !isImportMethod(field.name));
 }
 
 /**
  * 过滤出关系字段
  */
 export function filterRelationFields(fields: DtoField[]): DtoField[] {
-  return fields.filter(field => checkIsRelationField(field));
+  return fields.filter((field) => checkIsRelationField(field));
 }

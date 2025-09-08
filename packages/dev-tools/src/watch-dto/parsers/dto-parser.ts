@@ -26,7 +26,7 @@ export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass
 
     // 解析类字段
     const directFields = parseClassFields(fullMatch);
-    
+
     // 合并字段（现在不解析继承字段，只保留直接定义的字段）
     const fields = directFields;
 
@@ -77,7 +77,7 @@ export function getVoFileType(dtoClass: DtoClass): 'model' | 'filter' | 'form' {
  */
 export function getBaseName(className: string): string {
   let baseName = className.replace('Dto', '');
-  
+
   // 移除类型前缀
   if (baseName.startsWith('Create')) {
     baseName = baseName.replace('Create', '');
@@ -88,6 +88,6 @@ export function getBaseName(className: string): string {
   } else if (baseName.includes('Page')) {
     baseName = baseName.replace('Page', '').replace('Filter', '');
   }
-  
+
   return baseName;
 }

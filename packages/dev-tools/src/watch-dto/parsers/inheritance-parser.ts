@@ -8,13 +8,20 @@ export function parseInheritanceInfo(classBody: string): InheritanceInfo {
   const pickTypeMatch = classBody.match(/extends\s+PickType\(([^,]+),\s*\[([^\]]+)\]/);
   if (pickTypeMatch) {
     const [, sourceClass, fieldsStr] = pickTypeMatch;
-    const fieldNames = fieldsStr.split(',').map(f => 
-      f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()
-    ).filter(f => f.length > 0);
-    
+    const fieldNames = fieldsStr
+      .split(',')
+      .map((f) =>
+        f
+          .trim()
+          .replace(/[\"']/g, '')
+          .replace(/as const/, '')
+          .trim()
+      )
+      .filter((f) => f.length > 0);
+
     return {
       type: 'pick',
-      info: { sourceClass: sourceClass.trim(), fields: fieldNames } as PickTypeInfo
+      info: { sourceClass: sourceClass.trim(), fields: fieldNames } as PickTypeInfo,
     };
   }
 
@@ -24,10 +31,10 @@ export function parseInheritanceInfo(classBody: string): InheritanceInfo {
     const [, typesStr] = intersectionMatch;
     const cleanTypesStr = typesStr.replace(/\s+/g, ' ').trim();
     const types = parseIntersectionTypes(cleanTypesStr);
-    
+
     return {
       type: 'intersection',
-      info: { types } as IntersectionTypeInfo
+      info: { types } as IntersectionTypeInfo,
     };
   }
 
@@ -83,9 +90,18 @@ export function convertIntersectionTypeToVo(type: string): string {
     if (match) {
       const [, sourceClass, fieldsStr] = match;
       const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
-      const fieldList = fieldsStr.split(',').map((f: string) => 
-        `'${f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()}'`
-      ).filter(f => f !== "''").join(' | ');
+      const fieldList = fieldsStr
+        .split(',')
+        .map(
+          (f: string) =>
+            `'${f
+              .trim()
+              .replace(/[\"']/g, '')
+              .replace(/as const/, '')
+              .trim()}'`
+        )
+        .filter((f) => f !== "''")
+        .join(' | ');
       return `Partial<Pick<${sourceVoName}, ${fieldList}>>`;
     }
   } else if (type.includes('PickType')) {
@@ -94,13 +110,22 @@ export function convertIntersectionTypeToVo(type: string): string {
     if (match) {
       const [, sourceClass, fieldsStr] = match;
       const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
-      const fieldList = fieldsStr.split(',').map((f: string) => 
-        `'${f.trim().replace(/[\"']/g, '').replace(/as const/, '').trim()}'`
-      ).filter(f => f !== "''").join(' | ');
+      const fieldList = fieldsStr
+        .split(',')
+        .map(
+          (f: string) =>
+            `'${f
+              .trim()
+              .replace(/[\"']/g, '')
+              .replace(/as const/, '')
+              .trim()}'`
+        )
+        .filter((f) => f !== "''")
+        .join(' | ');
       return `Pick<${sourceVoName}, ${fieldList}>`;
     }
   }
-  
+
   // 简单类型直接转换
   if (type.includes('BaseFilterDto')) {
     return 'BaseFilterVo';

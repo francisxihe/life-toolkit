@@ -48,16 +48,12 @@ export function isWithoutRelationsClass(className: string): boolean {
  * 检查是否为 Filter 类
  */
 export function isFilterClass(className: string): boolean {
-  return className.includes('Filter') || 
-         className.includes('Page') || 
-         className.includes('Search');
+  return className.includes('Filter') || className.includes('Page') || className.includes('Search');
 }
 
 /**
  * 检查是否为 Form 类
  */
 export function isFormClass(className: string): boolean {
-  return className.includes('Create') || 
-         className.includes('Update') || 
-         className.includes('Form');
+  return className.includes('Create') || className.includes('Update') || className.includes('Form');
 }

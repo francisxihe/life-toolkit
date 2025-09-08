@@ -5,15 +5,15 @@ import { DtoField } from '../types';
  */
 export function mapTsTypeToVoType(tsType: string): string {
   const typeMap: Record<string, string> = {
-    'string': 'string',
-    'number': 'number',
-    'boolean': 'boolean',
-    'Date': 'string',
-    'any': 'any',
-    'unknown': 'unknown',
-    'void': 'void',
-    'null': 'null',
-    'undefined': 'undefined',
+    string: 'string',
+    number: 'number',
+    boolean: 'boolean',
+    Date: 'string',
+    any: 'any',
+    unknown: 'unknown',
+    void: 'void',
+    null: 'null',
+    undefined: 'undefined',
   };
 
   return typeMap[tsType] || tsType;
@@ -26,9 +26,9 @@ export function convertDtoTypeToVoType(dtoType: string): string {
   // 处理数组类型
   const isArray = dtoType.endsWith('[]');
   const baseType = isArray ? dtoType.slice(0, -2) : dtoType;
-  
+
   let voType: string;
-  
+
   // Entity 类型转换为 VO 类型
   if (['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].includes(baseType)) {
     voType = `${baseType}Vo`;
@@ -51,7 +51,7 @@ export function convertDtoFieldToVo(field: DtoField): string | null {
 
   const voType = convertDtoTypeToVoType(field.type);
   const optional = field.optional ? '?' : '';
-  
+
   return `${field.name}${optional}: ${voType};`;
 }
 

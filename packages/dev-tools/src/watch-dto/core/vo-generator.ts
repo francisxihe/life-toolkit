@@ -17,9 +17,7 @@ export function generateVoContent(dtoClasses: DtoClass[], dtoFilePath: string): 
   lines.push(...imports, '');
 
   // 分离不同类型的 DTO 类
-  const withoutRelationsClasses = dtoClasses.filter(
-    (dto) => isWithoutRelationsClass(dto.name) && dto.type === 'model'
-  );
+  const withoutRelationsClasses = dtoClasses.filter((dto) => isWithoutRelationsClass(dto.name) && dto.type === 'model');
   const mainClasses = dtoClasses.filter((dto) => !isWithoutRelationsClass(dto.name) && dto.type === 'model');
   const otherClasses = dtoClasses.filter((dto) => dto.type !== 'model');
 
@@ -97,11 +95,11 @@ function generateFormVos(dtoClass: DtoClass, lines: string[], generatedVoNames: 
  */
 function generateFilterVos(dtoClass: DtoClass, lines: string[], generatedVoNames: Set<string>): void {
   const baseName = getBaseName(dtoClass.name);
-  
+
   if (dtoClass.name.includes('Page')) {
     // PageFilter 类型特殊处理
     const voName = `${baseName}PageFilterVo`;
-    
+
     if (!generatedVoNames.has(voName)) {
       generatedVoNames.add(voName);
       const voContent = generatePageFilterVo(dtoClass);
@@ -109,7 +107,7 @@ function generateFilterVos(dtoClass: DtoClass, lines: string[], generatedVoNames
     }
   } else {
     const voName = `${baseName}FilterVo`;
-    
+
     if (!generatedVoNames.has(voName)) {
       generatedVoNames.add(voName);
       const voContent = generateFilterVo(dtoClass);

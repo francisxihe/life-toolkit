@@ -25,15 +25,15 @@ export function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'):
   } else {
     // Create VO 基于继承信息生成
     const inheritanceInfo = parseInheritanceInfo(dtoClass.classDefinition || '');
-    
+
     if (inheritanceInfo.type === 'pick') {
       // PickType: Pick<SourceVo, 'field1' | 'field2'>
       const sourceVoName = inheritanceInfo.info.sourceClass.replace('Dto', 'WithoutRelationsVo');
       const fieldList = inheritanceInfo.info.fields.map((f: string) => `'${f}'`).join(' | ');
-      
+
       // 添加直接定义的字段
       const customFields = filterNonRelationFields(dtoClass.fields);
-      
+
       if (customFields.length > 0) {
         lines.push(`export type ${voName} = Pick<${sourceVoName}, ${fieldList}> & {`);
         for (const field of customFields) {

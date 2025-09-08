@@ -8,23 +8,21 @@ import { convertDtoFieldToVo } from '../utils/type-mapping';
  */
 export function generateFilterVo(dtoClass: DtoClass): string {
   const lines: string[] = [];
-  
+
   const baseName = dtoClass.name.replace('FilterDto', '').replace('Dto', '');
   const filterVoName = `${baseName}FilterVo`;
-  
+
   const inheritanceInfo = parseInheritanceInfo(dtoClass.classDefinition || '');
-  
+
   if (inheritanceInfo.type === 'intersection') {
     // IntersectionType: 直接用 & 组合 VO 类型
-    const voTypes = inheritanceInfo.info.types.map((type: string) => 
-      convertIntersectionTypeToVo(type)
-    );
-    
+    const voTypes = inheritanceInfo.info.types.map((type: string) => convertIntersectionTypeToVo(type));
+
     // 添加直接定义的字段（排除方法）
-    const customFields = filterNonRelationFields(dtoClass.fields).filter(field => 
-      !field.name.includes('(') && !field.name.includes('import')
+    const customFields = filterNonRelationFields(dtoClass.fields).filter(
+      (field) => !field.name.includes('(') && !field.name.includes('import')
     );
-    
+
     if (customFields.length > 0) {
       lines.push(`export type ${filterVoName} = {`);
       for (const field of customFields) {
@@ -58,16 +56,16 @@ export function generateFilterVo(dtoClass: DtoClass): string {
  */
 export function generatePageFilterVo(dtoClass: DtoClass): string {
   const lines: string[] = [];
-  
+
   // 生成基础 Filter VO 名称
   const baseName = dtoClass.name.replace('PageDto', '').replace('Dto', '').replace('Page', '').replace('Filter', '');
   const baseFilterVoName = `${baseName}FilterVo`;
   const pageFilterVoName = `${baseName}PageFilterVo`;
-  
+
   lines.push(`export type ${pageFilterVoName} = ${baseFilterVoName} & {`);
   lines.push('  pageNum: number;');
   lines.push('  pageSize: number;');
   lines.push('};');
-  
+
   return lines.join('\n');
 }
