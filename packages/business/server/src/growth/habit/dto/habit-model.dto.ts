@@ -1,4 +1,4 @@
-import { Habit } from '../habit.entity';
+import { Habit, HabitWithoutRelations } from '../habit.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
 import dayjs from 'dayjs';
@@ -6,7 +6,9 @@ import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@life-too
 import { GoalDto } from '../../goal';
 import { TodoDto } from '../../todo';
 
-export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['goals', 'todos'] as const)) {
+export class HabitWithoutRelationsDto extends IntersectionType(BaseModelDto, HabitWithoutRelations) {}
+
+export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelationsDto) {
   goals?: GoalDto[];
   todos?: TodoDto[];
 
@@ -20,7 +22,7 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
     this.difficulty = entity.difficulty;
     this.startDate = entity.startDate;
     this.targetDate = entity.targetDate;
-    
+
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.goals) {
       this.goals = entity.goals.map((goal) => {
@@ -70,7 +72,12 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: HabitDto[], total: number, pageNum: number, pageSize: number): ResponsePageVo<HabitVO.HabitWithoutRelationsVo> {
+  static dtoListToPageVo(
+    list: HabitDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): ResponsePageVo<HabitVO.HabitWithoutRelationsVo> {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,

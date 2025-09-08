@@ -14,13 +14,51 @@ import chokidar from 'chokidar';
 import fg from 'fast-glob';
 import { ROOT } from '../constants';
 import { createLogger, readFileSafe, writeFileIfChanged, getVoPathFromDto } from '../utils';
-import { parseDtoClasses, generateVoFromDto } from './parser';
+import { parseDtoClasses, generateVoContent } from './parser';
 
 const SERVER_DTO_BASE = path.join(ROOT, 'packages/business/server/src');
 const VO_BASE = path.join(ROOT, 'packages/business/vo');
 
 const logLocal = createLogger('dto-vo');
 
+// 提取文件中的 import 语句
+function extractImportsFromContent(content: string): string | null {
+  const lines = content.split('\n');
+  const importLines: string[] = [];
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('import ')) {
+      importLines.push(line);
+    } else if (trimmed && !trimmed.startsWith('//') && !trimmed.startsWith('/*')) {
+      // 遇到非 import 非注释的内容就停止
+      break;
+    }
+  }
+  
+  return importLines.length > 0 ? importLines.join('\n') : null;
+}
+
+// 移除文件中的 import 语句
+function removeImportsFromContent(content: string): string {
+  const lines = content.split('\n');
+  const nonImportLines: string[] = [];
+  let foundNonImport = false;
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('import ')) {
+      // 跳过 import 行
+      continue;
+    } else if (trimmed || foundNonImport) {
+      // 保留非 import 行
+      nonImportLines.push(line);
+      if (trimmed) foundNonImport = true;
+    }
+  }
+  
+  return nonImportLines.join('\n').trim();
+}
 
 // 获取模块的 index.ts 路径
 function getVoIndexPath(voFilePath: string): string {
@@ -73,7 +111,7 @@ function syncOne(dtoFilePath: string) {
       return;
     }
     
-    const voContent = generateVoFromDto(dtoClasses, dtoFilePath);
+    const voContent = generateVoContent(dtoClasses, dtoFilePath);
     const voPath = getVoPathFromDto(dtoFilePath);
     
     // 确保目录存在
@@ -82,8 +120,21 @@ function syncOne(dtoFilePath: string) {
       fs.mkdirSync(voDir, { recursive: true });
     }
     
+    // 检查文件是否存在，如果存在则保留用户的 import
+    let finalContent = voContent;
+    if (fs.existsSync(voPath)) {
+      const existingContent = readFileSafe(voPath) || '';
+      const existingImports = extractImportsFromContent(existingContent);
+      
+      if (existingImports) {
+        // 移除生成内容中的 import，使用现有的 import
+        const contentWithoutImports = removeImportsFromContent(voContent);
+        finalContent = existingImports + '\n\n' + contentWithoutImports;
+      }
+    }
+    
     // 写入 VO 文件
-    const changed = writeFileIfChanged(voPath, voContent);
+    const changed = writeFileIfChanged(voPath, finalContent);
     if (changed) {
       logLocal('Generated VO:', path.relative(ROOT, voPath));
       
@@ -93,7 +144,7 @@ function syncOne(dtoFilePath: string) {
     }
     
   } catch (error) {
-    logLocal('Error processing:', rel, error.message);
+    logLocal('Error processing:', rel, (error as Error).message);
   }
 }
 
