@@ -32,9 +32,13 @@ export function convertDtoTypeToVoType(dtoType: string): string {
   // Entity 类型转换为 VO 类型
   if (['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].includes(baseType)) {
     voType = `${baseType}Vo`;
+  } else if (baseType.endsWith('Dto')) {
+    // DTO 类型转换为 VO 类型
+    voType = baseType.replace('Dto', 'Vo');
   } else if (baseType.endsWith('Entity')) {
     voType = baseType.replace('Entity', 'Vo');
   } else {
+    // 其他类型保持不变或映射
     voType = mapTsTypeToVoType(baseType);
   }
 
@@ -45,13 +49,27 @@ export function convertDtoTypeToVoType(dtoType: string): string {
  * 将 DTO 字段转换为 VO 字段定义
  */
 export function convertDtoFieldToVo(field: DtoField): string | null {
-  if (!field.name || field.name.trim() === '') {
-    return null;
+  if (!field.name || !field.type) return null;
+
+  let voType = convertDtoTypeToVoType(field.type);
+  
+  // 处理复杂对象类型，确保语法正确
+  if (voType.startsWith('{')) {
+    // 清理和格式化对象类型
+    voType = voType
+      .replace(/\s+/g, ' ')  // 压缩空格
+      .replace(/{\s*;/g, '{ ')   // 移除开头的分号
+      .replace(/;\s*}/g, ' }')   // 确保分号和大括号格式正确
+      .replace(/}\s*\[\]/g, '}[]')  // 确保数组标记格式正确
+      .trim();
+    
+    // 修复常见的语法问题
+    if (voType.includes('{;')) {
+      voType = voType.replace('{;', '{');
+    }
   }
-
-  const voType = convertDtoTypeToVoType(field.type);
+  
   const optional = field.optional ? '?' : '';
-
   return `${field.name}${optional}: ${voType};`;
 }
 

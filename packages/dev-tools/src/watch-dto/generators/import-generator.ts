@@ -1,5 +1,4 @@
 import { DtoClass } from '../types/index';
-import path from 'path';
 
 /**
  * 生成 VO 文件的导入语句
@@ -7,6 +6,7 @@ import path from 'path';
 export function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): string[] {
   const imports: string[] = [];
   const importSet = new Set<string>();
+  const enumSet = new Set<string>();
 
   // 分析需要的导入
   for (const dtoClass of dtoClasses) {
@@ -29,6 +29,32 @@ export function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): 
         const voType = `${fieldType}Vo`;
         importSet.add(voType);
       }
+
+      // 检查是否需要导入枚举类型
+      if (['GoalType', 'GoalStatus', 'TaskStatus', 'TodoStatus', 'HabitStatus', 'Importance', 'Difficulty', 'Urgency'].includes(fieldType)) {
+        enumSet.add(fieldType);
+      }
+    }
+
+    // 检查标准字段中的枚举类型（用于 WithoutRelationsVo）
+    if (dtoClass.name.includes('WithoutRelations')) {
+      const baseName = dtoClass.name.replace('WithoutRelationsDto', '');
+      if (baseName === 'Goal') {
+        enumSet.add('GoalType');
+        enumSet.add('GoalStatus');
+        enumSet.add('Importance');
+        enumSet.add('Difficulty');
+      } else if (baseName === 'Task') {
+        enumSet.add('Importance');
+        enumSet.add('Urgency');
+      } else if (baseName === 'Todo') {
+        enumSet.add('TodoStatus');
+        enumSet.add('Importance');
+        enumSet.add('Urgency');
+      } else if (baseName === 'Habit') {
+        enumSet.add('Importance');
+        enumSet.add('Difficulty');
+      }
     }
   }
 
@@ -39,6 +65,12 @@ export function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): 
     if (importSet.has('BaseFilterVo')) baseImports.push('BaseFilterVo');
 
     imports.push(`import { ${baseImports.join(', ')} } from '../../common';`);
+  }
+
+  // 生成枚举类型导入
+  if (enumSet.size > 0) {
+    const enumImports = Array.from(enumSet).sort();
+    imports.push(`import { ${enumImports.join(', ')} } from '@life-toolkit/enum';`);
   }
 
   // 生成关联 VO 的导入

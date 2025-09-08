@@ -30,7 +30,7 @@ export function generateVoContent(dtoClasses: DtoClass[], dtoFilePath: string): 
 
     if (!generatedVoNames.has(voName)) {
       generatedVoNames.add(voName);
-      const voContent = generateWithoutRelationsVo(dtoClass);
+      const voContent = generateWithoutRelationsVo(dtoClass, dtoFilePath);
       lines.push(voContent, '');
     }
   }
