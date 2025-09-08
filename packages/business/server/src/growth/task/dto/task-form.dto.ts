@@ -1,33 +1,21 @@
-import { Task } from "../task.entity";
-import { TaskDto } from "./task-model.dto";
-import {
-  IntersectionType,
-  PartialType,
-  PickType,
-  OmitType,
-} from "@life-toolkit/mapped-types";
-import {
-  IsOptional,
-  IsArray,
-  IsString,
-  IsNumber,
-  IsEnum,
-  IsDateString,
-} from "class-validator";
-import { Type } from "class-transformer";
-import { TaskStatus } from "@life-toolkit/enum";
-import type { Task as TaskVO } from "@life-toolkit/vo";
+import { Task } from '../task.entity';
+import { TaskDto } from './task-model.dto';
+import { IntersectionType, PartialType, PickType, OmitType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsArray, IsString, IsNumber, IsEnum, IsDateString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { TaskStatus } from '@life-toolkit/enum';
+import type { Task as TaskVO } from '@life-toolkit/vo';
 
 export class CreateTaskDto extends PickType(TaskDto, [
-  "name",
-  "description",
-  "tags",
-  "estimateTime",
-  "importance",
-  "urgency",
-  "goalId",
-  "startAt",
-  "endAt",
+  'name',
+  'description',
+  'tags',
+  'estimateTime',
+  'importance',
+  'urgency',
+  'goalId',
+  'startAt',
+  'endAt',
 ] as const) {
   /** 父任务ID */
   @IsString()
@@ -76,9 +64,9 @@ export class CreateTaskDto extends PickType(TaskDto, [
 }
 
 export class UpdateTaskDto extends IntersectionType(
-  PartialType(OmitType(CreateTaskDto, ["trackTimeIds", "importVo"] as const)),
-  PickType(Task, ["id"] as const),
-  PickType(TaskDto, ["status", "doneAt", "abandonedAt"] as const)
+  PartialType(OmitType(CreateTaskDto, ['trackTimeIds', 'importVo'] as const)),
+  PickType(Task, ['id'] as const),
+  PickType(TaskDto, ['status', 'doneAt', 'abandonedAt'] as const)
 ) {
   // VO → DTO
   importVo(vo: TaskVO.UpdateTaskVo) {

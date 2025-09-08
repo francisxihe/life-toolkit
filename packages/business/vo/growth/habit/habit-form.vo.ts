@@ -1,8 +1,8 @@
-import { HabitWithoutRelationsVo, HabitCompletionScore } from './habit-model.vo';
+import { HabitWithoutRelationsVo } from './habit-model.vo';
 
-export type CreateHabitVo = Omit<
+export type CreateHabitVo = Pick<
   HabitWithoutRelationsVo,
-  'status' | 'currentStreak' | 'longestStreak' | 'completedCount' | 'doneAt' | 'abandonedAt'
+  'name' | 'description' | 'importance' | 'tags' | 'difficulty' | 'startAt' | 'endAt'
 > & {
   goalIds?: string[];
 };

@@ -1,7 +1,10 @@
 export * from './task-model.vo';
 import { TaskWithoutRelationsVo, TaskVo } from './task-model.vo';
 
-export type CreateTaskVo = Omit<TaskWithoutRelationsVo, 'doneAt' | 'abandonedAt' | 'status'> & {
+export type CreateTaskVo = Pick<
+  TaskWithoutRelationsVo,
+  'name' | 'description' | 'tags' | 'estimateTime' | 'importance' | 'urgency' | 'goalId' | 'startAt' | 'endAt'
+> & {
   parentId?: string;
 };
 

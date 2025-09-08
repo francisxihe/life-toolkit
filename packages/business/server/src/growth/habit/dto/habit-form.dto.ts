@@ -1,31 +1,19 @@
-import {
-  PartialType,
-  IntersectionType,
-  PickType,
-  OmitType,
-} from "@life-toolkit/mapped-types";
-import {
-  IsOptional,
-  IsArray,
-  IsString,
-  IsEnum,
-  IsDateString,
-} from "class-validator";
-import { Type } from "class-transformer";
-import { HabitDto } from "./habit-model.dto";
-import { Habit } from "../habit.entity";
-import { HabitStatus, Importance, Difficulty } from "@life-toolkit/enum";
-import type { Habit as HabitVO } from "@life-toolkit/vo";
-import dayjs from "dayjs";
+import { PartialType, IntersectionType, PickType, OmitType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsArray, IsString, IsEnum, IsDateString } from 'class-validator';
+import { HabitDto } from './habit-model.dto';
+import { Habit } from '../habit.entity';
+import { HabitStatus, Importance, Difficulty } from '@life-toolkit/enum';
+import type { Habit as HabitVO } from '@life-toolkit/vo';
+import dayjs from 'dayjs';
 
 export class CreateHabitDto extends PickType(HabitDto, [
-  "name",
-  "description",
-  "importance",
-  "tags",
-  "difficulty",
-  "startDate",
-  "targetDate",
+  'name',
+  'description',
+  'importance',
+  'tags',
+  'difficulty',
+  'startDate',
+  'targetDate',
 ] as const) {
   /** 目标ID列表 */
   @IsArray()
@@ -60,14 +48,9 @@ export class CreateHabitDto extends PickType(HabitDto, [
 }
 
 export class UpdateHabitDto extends IntersectionType(
-  PartialType(OmitType(CreateHabitDto, ["goalIds"] as const)),
-  PickType(Habit, ["id"] as const),
-  PickType(HabitDto, [
-    "status",
-    "currentStreak",
-    "longestStreak",
-    "completedCount",
-  ] as const)
+  PartialType(OmitType(CreateHabitDto, ['goalIds'] as const)),
+  PickType(Habit, ['id'] as const),
+  PickType(HabitDto, ['status', 'currentStreak', 'longestStreak', 'completedCount'] as const)
 ) {
   /** 目标ID列表 */
   @IsArray()
@@ -100,11 +83,8 @@ export class UpdateHabitDto extends IntersectionType(
     if (this.startDate !== undefined) entity.startDate = this.startDate;
     if (this.targetDate !== undefined) entity.targetDate = this.targetDate;
     if (this.status !== undefined) entity.status = this.status;
-    if (this.currentStreak !== undefined)
-      entity.currentStreak = this.currentStreak;
-    if (this.longestStreak !== undefined)
-      entity.longestStreak = this.longestStreak;
-    if (this.completedCount !== undefined)
-      entity.completedCount = this.completedCount;
+    if (this.currentStreak !== undefined) entity.currentStreak = this.currentStreak;
+    if (this.longestStreak !== undefined) entity.longestStreak = this.longestStreak;
+    if (this.completedCount !== undefined) entity.completedCount = this.completedCount;
   }
 }

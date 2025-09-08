@@ -1,9 +1,9 @@
 import { TodoWithoutRelationsVo } from './todo-model.vo';
 import { CreateRepeatVo, UpdateRepeatVo } from '@life-toolkit/components-repeat/vo';
 
-export type CreateTodoVo = Omit<
+export type CreateTodoVo = Pick<
   TodoWithoutRelationsVo,
-  'doneAt' | 'abandonedAt' | 'status' | 'repeat' | 'id' | 'createdAt' | 'updatedAt'
+  'name' | 'description' | 'status' | 'planDate' | 'planStartAt' | 'planEndAt' | 'importance' | 'urgency' | 'tags'
 > & {
   taskId?: string;
   /** 关联的重复配置ID，优先于嵌套的 repeat */
@@ -11,6 +11,6 @@ export type CreateTodoVo = Omit<
   repeat?: CreateRepeatVo;
 };
 
-export type UpdateTodoVo = Partial<Omit<CreateTodoVo, 'repeat'>> & {
+export type UpdateTodoVo = Partial<CreateTodoVo> & {
   repeat?: UpdateRepeatVo;
 };
