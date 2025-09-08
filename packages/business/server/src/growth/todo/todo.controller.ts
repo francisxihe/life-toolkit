@@ -99,7 +99,7 @@ export class TodoController {
   }
 
   @Get('/list-with-repeat', { description: '列表查询待办及其重复信息' })
-  async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
+  async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo): Promise<ResponseListVo<TodoVO.TodoWithoutRelationsVo>> {
     const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.listWithRepeat(filter);

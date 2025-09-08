@@ -1,8 +1,7 @@
-import { PartialType, IntersectionType, PickType, OmitType } from '@life-toolkit/mapped-types';
-import { IsOptional, IsArray, IsString, IsEnum, IsDateString } from 'class-validator';
+import { PartialType, IntersectionType, PickType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsArray, IsString } from 'class-validator';
 import { HabitDto } from './habit-model.dto';
 import { Habit } from '../habit.entity';
-import { HabitStatus, Importance, Difficulty } from '@life-toolkit/enum';
 import type { Habit as HabitVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
@@ -21,7 +20,7 @@ export class CreateHabitDto extends PickType(HabitDto, [
   @IsOptional()
   goalIds?: string[];
 
-  importVo(vo: HabitVO.CreateHabitVo) {
+  importCreateVo(vo: HabitVO.CreateHabitVo) {
     this.name = vo.name;
     this.description = vo.description;
     this.importance = vo.importance;
@@ -48,16 +47,11 @@ export class CreateHabitDto extends PickType(HabitDto, [
 }
 
 export class UpdateHabitDto extends IntersectionType(
-  PartialType(OmitType(CreateHabitDto, ['goalIds'] as const)),
+  PartialType(CreateHabitDto),
   PickType(Habit, ['id'] as const),
   PickType(HabitDto, ['status', 'currentStreak', 'longestStreak', 'completedCount'] as const)
 ) {
-  /** 目标ID列表 */
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  goalIds?: string[];
-  importVo(vo: HabitVO.UpdateHabitVo) {
+  importUpdateVo(vo: HabitVO.UpdateHabitVo) {
     if (vo.name !== undefined) this.name = vo.name;
     if (vo.description !== undefined) this.description = vo.description;
     if (vo.importance !== undefined) this.importance = vo.importance;

@@ -29,7 +29,7 @@ export class CreateTaskDto extends PickType(TaskDto, [
   trackTimeIds?: string[];
 
   // VO → DTO
-  importVo(vo: TaskVO.CreateTaskVo) {
+  importCreateVo(vo: TaskVO.CreateTaskVo) {
     if (vo.name !== undefined) this.name = vo.name;
     if (vo.description !== undefined) this.description = vo.description;
     if (vo.tags !== undefined) this.tags = vo.tags;
@@ -40,13 +40,6 @@ export class CreateTaskDto extends PickType(TaskDto, [
     if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
     if (vo.endAt !== undefined) this.endAt = new Date(vo.endAt);
     if (vo.parentId !== undefined) this.parentId = vo.parentId;
-  }
-
-  // VO → DTO (静态方法)
-  static importVo(vo: TaskVO.CreateTaskVo): CreateTaskDto {
-    const dto = new CreateTaskDto();
-    dto.importVo(vo);
-    return dto;
   }
 
   appendToCreateEntity(entity: Task) {
@@ -64,12 +57,12 @@ export class CreateTaskDto extends PickType(TaskDto, [
 }
 
 export class UpdateTaskDto extends IntersectionType(
-  PartialType(OmitType(CreateTaskDto, ['trackTimeIds', 'importVo'] as const)),
+  PartialType(CreateTaskDto),
   PickType(Task, ['id'] as const),
   PickType(TaskDto, ['status', 'doneAt', 'abandonedAt'] as const)
 ) {
   // VO → DTO
-  importVo(vo: TaskVO.UpdateTaskVo) {
+  importUpdateVo(vo: TaskVO.UpdateTaskVo) {
     if (vo.name !== undefined) this.name = vo.name;
     if (vo.description !== undefined) this.description = vo.description;
     if (vo.tags !== undefined) this.tags = vo.tags;
@@ -80,13 +73,6 @@ export class UpdateTaskDto extends IntersectionType(
     if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
     if (vo.endAt !== undefined) this.endAt = new Date(vo.endAt);
     if (vo.parentId !== undefined) this.parentId = vo.parentId;
-  }
-
-  // VO → DTO (静态方法)
-  static importVo(vo: TaskVO.UpdateTaskVo): UpdateTaskDto {
-    const dto = new UpdateTaskDto();
-    dto.importVo(vo);
-    return dto;
   }
 
   appendToUpdateEntity(entity: Task) {

@@ -59,9 +59,9 @@ export class HabitController {
 
   @Post("create")
   @Response()
-  async create(@Body() createHabitVO: Habit.CreateHabitVo) {
+  async create(@Body() createHabitVO: HabitVO.CreateHabitVo) {
     const createDto = new CreateHabitDto();
-    createDto.importVo(createHabitVO);
+    createDto.importCreateVo(createHabitVO);
     const dto = await this.habitService.create(createDto);
     return dto.exportVo();
   }
@@ -76,10 +76,10 @@ export class HabitController {
   @Response()
   async update(
     @Param("id") id: string,
-    @Body() updateHabitVO: Habit.UpdateHabitVo
+    @Body() updateHabitVO: HabitVO.UpdateHabitVo
   ) {
     const updateDto = new UpdateHabitDto();
-    updateDto.importVo(updateHabitVO);
+    updateDto.importUpdateVo(updateHabitVO);
     const dto = await this.habitService.update(id, updateDto);
     return dto.exportVo();
   }

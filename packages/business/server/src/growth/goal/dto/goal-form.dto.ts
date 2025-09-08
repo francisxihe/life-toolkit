@@ -18,13 +18,19 @@ export class CreateGoalDto extends PickType(GoalDto, [
   'difficulty',
   'status',
 ] as const) {
+  static importCreateVo(body: GoalVO.CreateGoalVo) {
+    throw new Error('Method not implemented.');
+  }
+  static importVo(body: GoalVO.CreateGoalVo) {
+    throw new Error('Method not implemented.');
+  }
   /** 父目标ID */
   @IsString()
   @IsOptional()
   parentId?: string;
 
   // VO → DTO
-  importVo(vo: GoalVO.CreateGoalVo) {
+  importCreateVo(vo: GoalVO.CreateGoalVo) {
     this.name = vo.name;
     this.description = vo.description;
     this.type = vo.type;
@@ -35,13 +41,6 @@ export class CreateGoalDto extends PickType(GoalDto, [
     // 日期字段转换 (string → Date)
     this.startAt = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
     this.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
-  }
-
-  // VO → DTO (静态方法)
-  static importVo(vo: GoalVO.CreateGoalVo): CreateGoalDto {
-    const dto = new CreateGoalDto();
-    dto.importVo(vo);
-    return dto;
   }
 
   appendToCreateEntity(entity: Goal) {
@@ -58,12 +57,12 @@ export class CreateGoalDto extends PickType(GoalDto, [
 
 // 更新DTO - 基于创建DTO的部分字段 + 实体ID + 状态字段
 export class UpdateGoalDto extends IntersectionType(
-  PartialType(OmitType(CreateGoalDto, ['importVo'] as const)),
+  PartialType(CreateGoalDto),
   PickType(Goal, ['id'] as const),
   PickType(GoalDto, ['doneAt', 'abandonedAt'] as const)
 ) {
   // VO → DTO
-  importVo(vo: GoalVO.UpdateGoalVo) {
+  importUpdateVo(vo: GoalVO.UpdateGoalVo) {
     // 只更新提供的字段
     if (vo.name !== undefined) this.name = vo.name;
     if (vo.description !== undefined) this.description = vo.description;

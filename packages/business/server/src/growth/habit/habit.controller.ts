@@ -10,7 +10,7 @@ export class HabitController {
   @Post('/create', { description: '创建习惯' })
   async create(@Body() createHabitVo: HabitVO.CreateHabitVo): Promise<HabitVO.HabitVo> {
     const createDto = new CreateHabitDto();
-    createDto.importVo(createHabitVo);
+    createDto.importCreateVo(createHabitVo);
     const dto = await this.habitService.create(createDto);
     return dto.exportVo();
   }
@@ -23,7 +23,7 @@ export class HabitController {
   @Put('/update/:id', { description: '更新习惯' })
   async update(@Param('id') id: string, @Body() updateHabitVo: HabitVO.UpdateHabitVo): Promise<HabitVO.HabitVo> {
     const updateDto = new UpdateHabitDto();
-    updateDto.importVo(updateHabitVo);
+    updateDto.importUpdateVo(updateHabitVo);
     const dto = await this.habitService.update(id, updateDto);
     return dto.exportVo();
   }

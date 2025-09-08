@@ -830,6 +830,7 @@ function parseFormDtoFields(classBody: string, content: string, dtoFilePath?: st
     for (const fieldName of fieldNames) {
       const sourceField = sourceFields.find((f) => f.name === fieldName);
       if (sourceField) {
+        // 对于 Form DTO，直接使用源字段
         fields.push(sourceField);
       }
     }
@@ -900,39 +901,118 @@ function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'): string
     baseName = baseName.replace('Update', '');
   }
 
-  const voName = `${prefix}${baseName}FormVo`;
+  const voName = `${prefix}${baseName}Vo`;
+  const withoutRelationsVoName = `${baseName}WithoutRelationsVo`;
 
-  lines.push(`export type ${voName} = {`);
-
-  // 生成字段定义，去重处理
-  const addedFields = new Set<string>();
-  for (const field of dtoClass.fields) {
-    // 跳过重复字段和内部方法字段
-    if (addedFields.has(field.name)) continue;
-    if (
-      [
-        'importVo',
-        'importCreateVo',
-        'importUpdateVo',
-        'importEntity',
-        'importUpdateEntity',
-        'exportCreateEntity',
-        'exportUpdateEntity',
-      ].includes(field.name)
-    )
-      continue;
-
-    addedFields.add(field.name);
-
+  // 生成 Pick 类型定义
+  lines.push(`export type ${voName} = Pick<`);
+  lines.push(`  ${withoutRelationsVoName},`);
+  
+  // 提取 PickType 中的字段名
+  const pickFields = extractPickTypeFieldNames(dtoClass);
+  if (pickFields.length > 0) {
+    const fieldList = pickFields.map((f: string) => `'${f}'`).join(' | ');
+    lines.push(`  ${fieldList}`);
+  } else {
+    // 如果没有 PickType 字段，使用所有非关系字段
+    const nonRelationFields = dtoClass.fields.filter(field => 
+      !checkIsRelationField(field) && 
+      !['importVo', 'importCreateVo', 'importUpdateVo', 'importEntity', 'importUpdateEntity', 'exportCreateEntity', 'exportUpdateEntity'].includes(field.name) &&
+      // 排除额外字段，只保留 WithoutRelationsVo 中存在的字段
+      !['goalIds', 'taskId', 'parentId', 'repeatId', 'habitId'].includes(field.name)
+    );
+    const fieldList = nonRelationFields.map(f => `'${f.name}'`).join(' | ');
+    if (fieldList) {
+      lines.push(`  ${fieldList}`);
+    } else {
+      lines.push(`  never`);
+    }
+  }
+  
+  lines.push(`> & {`);
+  
+  // 添加额外的字段（如 goalIds, taskId 等）- 只包含非 WithoutRelationsVo 中的字段
+  const extraFields = dtoClass.fields.filter(field => 
+    !pickFields.includes(field.name) && 
+    !checkIsRelationField(field) &&
+    !['importVo', 'importCreateVo', 'importUpdateVo', 'importEntity', 'importUpdateEntity', 'exportCreateEntity', 'exportUpdateEntity'].includes(field.name) &&
+    // 排除 WithoutRelationsVo 中已有的字段
+    !['name', 'description', 'status', 'importance', 'urgency', 'tags', 'difficulty', 'startAt', 'endAt', 'planDate', 'planStartAt', 'planEndAt', 'estimateTime', 'goalId', 'parentId', 'taskId', 'repeatId', 'habitId', 'currentStreak', 'longestStreak', 'completedCount', 'targetDate', 'doneAt', 'abandonedAt', 'source'].includes(field.name)
+  );
+  
+  for (const field of extraFields) {
     const voField = convertDtoFieldToVo(field);
     if (voField) {
       lines.push(`  ${voField}`);
     }
   }
-
-  lines.push(`} & BaseFormVo;`);
+  
+  lines.push(`};`);
 
   return lines.join('\n');
+}
+
+// 提取 PickType 中的字段名
+function extractPickTypeFieldNames(dtoClass: DtoClass): string[] {
+  // 从已解析的字段中提取来自 PickType 的字段
+  const pickFields: string[] = [];
+  
+  // 需要映射实体字段名到 VO 字段名
+  const entityToVoFieldMap: Record<string, string> = {
+    'startDate': 'startAt',
+    'targetDate': 'endAt'
+  };
+  
+  // 从 DTO 字段中提取基础字段，排除额外字段和关系字段
+  for (const field of dtoClass.fields) {
+    // 跳过方法字段
+    if (['importVo', 'importCreateVo', 'importUpdateVo', 'importEntity', 'importUpdateEntity', 'exportCreateEntity', 'exportUpdateEntity'].includes(field.name)) {
+      continue;
+    }
+    
+    // 跳过关系字段
+    if (checkIsRelationField(field)) {
+      continue;
+    }
+    
+    // 跳过额外字段（不在 WithoutRelationsVo 中的字段）
+    if (['goalIds', 'taskId', 'parentId', 'repeatId', 'habitId'].includes(field.name)) {
+      continue;
+    }
+    
+    // 映射字段名
+    const voFieldName = entityToVoFieldMap[field.name] || field.name;
+    
+    // 只添加在 WithoutRelationsVo 中存在的字段
+    const validVoFields = ['name', 'description', 'status', 'importance', 'urgency', 'tags', 'difficulty', 'startAt', 'endAt', 'planDate', 'planStartAt', 'planEndAt', 'estimateTime', 'goalId', 'currentStreak', 'longestStreak', 'completedCount'];
+    if (validVoFields.includes(voFieldName)) {
+      pickFields.push(voFieldName);
+    }
+  }
+  
+  return pickFields;
+}
+
+// 检查是否为关系字段
+function checkIsRelationField(field: DtoField): boolean {
+  return (
+    // 实体类型
+    ['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].some(
+      (entity) => field.type === entity || field.type === `${entity}[]`
+    ) ||
+    // DTO 类型
+    field.type.endsWith('Dto') ||
+    field.type.endsWith('Dto[]') ||
+    // VO 类型
+    field.type.endsWith('Vo') ||
+    field.type.endsWith('Vo[]') ||
+    // 内联对象类型
+    (field.type.includes('{') && field.type.includes('}')) ||
+    // 复杂关系类型
+    ['TodoRepeat', 'TaskRepeat', 'GoalRepeat', 'HabitRepeat'].includes(field.type) ||
+    // any 类型
+    field.type === 'any'
+  );
 }
 
 // 生成 PageFilter VO（包含 pageNum 和 pageSize 字段）

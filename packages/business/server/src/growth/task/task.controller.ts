@@ -9,7 +9,7 @@ export class TaskController {
   @Post('/create', { description: '创建任务' })
   async create(@Body() createTaskVo: TaskVO.CreateTaskVo): Promise<TaskVO.TaskVo> {
     const createDto = new CreateTaskDto();
-    createDto.importVo(createTaskVo);
+    createDto.importCreateVo(createTaskVo);
     const dto = await this.taskService.create(createDto);
     return dto.exportVo();
   }
@@ -22,7 +22,7 @@ export class TaskController {
   @Put('/update/:id', { description: '更新任务' })
   async update(@Param('id') id: string, @Body() body: TaskVO.UpdateTaskVo): Promise<TaskVO.TaskVo> {
     const updateDto = new UpdateTaskDto();
-    updateDto.importVo(body);
+    updateDto.importUpdateVo(body);
     const dto = await this.taskService.update(id, updateDto);
     return dto.exportVo();
   }
