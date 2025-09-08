@@ -1,11 +1,13 @@
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
-import { TodoRepeat } from '../todo-repeat.entity';
+import { TodoRepeat, TodoRepeatWithoutRelations } from '../todo-repeat.entity';
 import { Todo } from '../../todo/todo.entity';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
-export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoRepeat, ['todos'] as const)) {
+export class TodoRepeatModelDto extends TodoRepeatWithoutRelations {}
+
+export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatModelDto) {
   todos?: Todo[];
 
   importEntity(entity: TodoRepeat) {
@@ -63,5 +65,3 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoR
     };
   }
 }
-
-export class TodoRepeatModelDto extends OmitType(TodoRepeatDto, ['todos'] as const) {}

@@ -7,7 +7,7 @@ import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne, OneToMany } 
 import { IsEnum, IsOptional, IsString, IsNumber, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class TaskModel extends BaseEntity {
+export class TaskWithoutRelations extends BaseEntity {
   /** 任务名称 */
   @Column('varchar')
   @IsString()
@@ -86,7 +86,7 @@ export class TaskModel extends BaseEntity {
 
 @Entity('task')
 @Tree('closure-table')
-export class Task extends TaskModel {
+export class Task extends TaskWithoutRelations {
   /** 父任务 */
   @TreeParent({
     onDelete: 'CASCADE',

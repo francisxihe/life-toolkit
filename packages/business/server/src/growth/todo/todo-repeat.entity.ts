@@ -17,7 +17,7 @@ import {
 import { Type } from "class-transformer";
 import { BaseEntity } from "@business/common";
 
-export class TodoRepeatModel extends BaseEntity {
+export class TodoRepeatWithoutRelations extends BaseEntity {
   /** 重复模式 */
   @Column({
     type: "varchar",
@@ -110,7 +110,7 @@ export class TodoRepeatModel extends BaseEntity {
 }
 
 @Entity("todo_repeat")
-export class TodoRepeat extends TodoRepeatModel {
+export class TodoRepeat extends TodoRepeatWithoutRelations {
   /** 关联的待办列表 */
   @OneToMany(() => Todo, (todo) => todo.repeat, { nullable: true })
   todos?: Todo[];

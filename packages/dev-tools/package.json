@@ -6,7 +6,9 @@
   "main": "src/watch-controllers.ts",
   "scripts": {
     "watch:controllers": "tsx ./src/watch-controllers/index.ts",
-    "sync:controllers": "tsx ./src/watch-controllers/index.ts --once"
+    "sync:controllers": "tsx ./src/watch-controllers/index.ts --once",
+    "watch:dto": "tsx ./src/watch-dto/index.ts",
+    "sync:dto": "tsx ./src/watch-dto/index.ts --once"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

@@ -5,7 +5,7 @@ import { BaseEntity } from "@business/common";
 import { Goal } from "../goal";
 import { Todo } from "../todo";
 
-export class HabitModel extends BaseEntity {
+export class HabitWithoutRelations extends BaseEntity {
   /** 习惯名称 */
   @Column("varchar", { length: 255 })
   name!: string;
@@ -64,7 +64,7 @@ export class HabitModel extends BaseEntity {
 }
 
 @Entity("habit")
-export class Habit extends HabitModel {
+export class Habit extends HabitWithoutRelations {
   /** 关联的目标 */
   @ManyToMany(() => Goal, { cascade: true })
   @JoinTable({

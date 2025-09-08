@@ -7,7 +7,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { IsString, IsOptional, IsEnum, IsArray, IsNumber, IsISO8601 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-export class TodoModel extends BaseEntity {
+export class TodoWithoutRelations extends BaseEntity {
   /** 待办名称 */
   @Column('varchar')
   @IsString()
@@ -84,7 +84,7 @@ export class TodoModel extends BaseEntity {
 }
 
 @Entity('todo')
-export class Todo extends TodoModel {
+export class Todo extends TodoWithoutRelations {
   /** 关联的任务 */
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;

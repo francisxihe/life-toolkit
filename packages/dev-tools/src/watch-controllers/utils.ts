@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { DESKTOP_BASE, SERVER_BASE } from './constants';
+import { DESKTOP_BASE, SERVER_BASE } from '../constants';
 
 export function log(...args: any[]) {
   // eslint-disable-next-line no-console

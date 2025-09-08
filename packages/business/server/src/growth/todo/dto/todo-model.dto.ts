@@ -1,12 +1,12 @@
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
-import { Todo } from '../todo.entity';
+import { Todo, TodoWithoutRelations } from '../todo.entity';
 import { TaskDto } from '../../task';
 import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoStatus } from '@life-toolkit/enum';
 
-export class TodoDto extends IntersectionType(BaseModelDto, OmitType(Todo, ['task', 'repeat', 'habit'] as const)) {
+export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations) {
   task?: TaskDto;
   habit?: any;
 

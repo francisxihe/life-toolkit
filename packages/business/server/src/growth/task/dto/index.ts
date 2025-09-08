@@ -5,10 +5,10 @@ export * from "./task-model.dto";
 import { Task } from "../task.entity";
 import { TrackTimeDto } from "../../track-time";
 import { IntersectionType, PickType } from "@life-toolkit/mapped-types";
-import { TaskModelDto } from "./task-model.dto";
+import { TaskWithoutRelationsDto } from "./task-model.dto";
 
 export class TaskWithTrackTimeDto extends IntersectionType(
-  TaskModelDto,
+  TaskWithoutRelationsDto,
   PickType(Task, [] as const)
 ) {
   trackTimeList?: TrackTimeDto[];

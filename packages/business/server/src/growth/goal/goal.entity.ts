@@ -16,7 +16,7 @@ import {
   OneToMany,
 } from "typeorm";
 
-export class GoalModel extends BaseEntity {
+export class GoalWithoutRelations extends BaseEntity {
   /** 目标名称 */
   @Column("varchar", { length: 255 })
   name!: string;
@@ -75,7 +75,7 @@ export class GoalModel extends BaseEntity {
 
 @Entity("goal")
 @Tree("closure-table")
-export class Goal extends GoalModel {
+export class Goal extends GoalWithoutRelations {
   /** 父目标 */
   @TreeParent({
     onDelete: "CASCADE",

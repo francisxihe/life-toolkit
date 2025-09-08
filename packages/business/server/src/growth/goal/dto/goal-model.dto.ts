@@ -1,15 +1,15 @@
-import { Goal } from '../goal.entity';
+import { Goal, GoalWithoutRelations } from '../goal.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
 import dayjs from 'dayjs';
 import type { Goal as GoalVO } from '@life-toolkit/vo';
 import { TaskDto } from '../../task';
 
+// 没有关联字段的DTO
+export class GoalWithoutRelationsDto extends GoalWithoutRelations {}
+
 // 基础DTO - 包含所有字段
-export class GoalDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Goal, ['children', 'parent', 'taskList'] as const)
-) {
+export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelationsDto) {
   importVo(body: Partial<GoalVO.CreateGoalVo>) {
     throw new Error('Method not implemented.');
   }
@@ -30,7 +30,7 @@ export class GoalDto extends IntersectionType(
     this.endAt = entity.endAt;
     this.doneAt = entity.doneAt;
     this.abandonedAt = entity.abandonedAt;
-    
+
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.parent) this.parent = GoalDto.importEntity(entity.parent);
     if (entity.children) this.children = entity.children.map((child) => GoalDto.importEntity(child));
@@ -81,6 +81,3 @@ export class GoalDto extends IntersectionType(
     };
   }
 }
-
-// 模型DTO - 排除关联字段
-export class GoalModelDto extends OmitType(GoalDto, ['children', 'parent', 'taskList'] as const) {}

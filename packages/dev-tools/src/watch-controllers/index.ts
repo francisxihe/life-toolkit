@@ -12,43 +12,23 @@ import path from 'path';
 import fs from 'fs';
 import chokidar from 'chokidar';
 import fg from 'fast-glob';
-import { ROOT, SERVER_BASE, DESKTOP_BASE } from './constants';
+import { ROOT, SERVER_BASE } from '../constants';
 import {
-  log as _log,
+  createLogger,
   readFileSafe,
   writeFileIfChanged,
   getRelServerPath,
   getDesktopControllerPathFromServer,
-} from './utils';
+  getApiControllerPathFromServer,
+  typeToServiceConstName,
+} from '../utils';
 import { parseClassName, parseConstructorServiceTypes } from './parser';
 import { syncMissingMethods, ensureConstructorArgs } from './sync/sync-database';
 import { syncApiMethods } from './sync/sync-api';
 
-function logLocal(...args: any[]) {
-  // eslint-disable-next-line no-console
-  _log(...args);
-}
+const logLocal = createLogger('watch-controllers');
 
-function typeToServiceConstName(type: string): string {
-  if (type.endsWith('Service')) {
-    const base = type.slice(0, -7); // remove "Service"
-    return base.charAt(0).toLowerCase() + base.slice(1) + 'Service';
-  }
-  return type.charAt(0).toLowerCase() + type.slice(1);
-}
 
-// 获取 API controller 路径
-function getApiControllerPathFromServer(serverControllerPath: string): string {
-  // 从 packages/business/server/src/growth/task/task.controller.ts
-  // 转换为 packages/business/api/controller/task/task.ts
-  const relativePath = path.relative(path.join(ROOT, 'packages/business/server/src'), serverControllerPath);
-  const parts = relativePath.split(path.sep);
-
-  // 移除最后的 .controller.ts 并替换为 .ts
-  const fileName = parts[parts.length - 1].replace('.controller.ts', '.ts');
-
-  return path.join(ROOT, 'packages/business/api/controller', fileName);
-}
 
 function syncOne(serverControllerPath: string) {
   const rel = getRelServerPath(serverControllerPath);
