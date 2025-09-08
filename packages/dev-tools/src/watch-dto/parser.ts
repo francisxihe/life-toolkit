@@ -421,7 +421,7 @@ export function generateVoFromDto(dtoClasses: DtoClass[], dtoFilePath: string): 
     lines.push(voContent, '');
   }
   
-  // 生成额外的类型定义（如 ListVo, PageVo）
+  // 生成额外的类型定义（如 ListVo, ResponsePageVo）
   const additionalTypes = generateAdditionalTypes(dtoClasses);
   if (additionalTypes.length > 0) {
     lines.push(...additionalTypes);
@@ -580,7 +580,7 @@ function generateAdditionalTypes(dtoClasses: DtoClass[]): string[] {
   const lines: string[] = [];
   const generatedTypes = new Set<string>();
   
-  // 为 model 类型生成 ListVo 和 PageVo，但避免重复
+  // 为 model 类型生成 ListVo 和 ResponsePageVo，但避免重复
   const modelClasses = dtoClasses.filter(cls => cls.type === 'model');
   
   // 按类名去重，避免 GoalDto 和 GoalWithoutRelationsDto 都生成相同的类型
@@ -598,7 +598,7 @@ function generateAdditionalTypes(dtoClasses: DtoClass[]): string[] {
     const voName = `${baseName}ModelVo`;
     
     const listTypeName = `${baseName}ListVo`;
-    const pageTypeName = `${baseName}PageVo`;
+    const pageTypeName = `${baseName}ResponsePageVo`;
     
     if (!generatedTypes.has(listTypeName)) {
       generatedTypes.add(listTypeName);

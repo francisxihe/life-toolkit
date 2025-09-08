@@ -7,7 +7,7 @@ import {
   Progress,
   Table,
 } from '@arco-design/web-react';
-import { HabitWithoutRelationsVo } from '@life-toolkit/vo/growth';
+import { HabitWithoutRelationsVo } from '@life-toolkit/vo';
 import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
 import { useHabitContext } from '../context';

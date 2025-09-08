@@ -1,5 +1,5 @@
 import { request } from '@life-toolkit/share-request';
-import { Task as TaskVO } from '@life-toolkit/vo/growth';
+import { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@life-toolkit/vo';
 
 export default class TaskController {
   static async create(body: TaskVO.CreateTaskVo) {
@@ -19,11 +19,11 @@ export default class TaskController {
   }
 
   static async findByFilter(body: TaskVO.TaskFilterVo) {
-    return request<TaskVO.TaskListVo>({ method: 'get' })(`/task/find-by-filter`, body);
+    return request<ResponseListVo<TaskVO.TaskWithoutRelationsVo>>({ method: 'get' })(`/task/find-by-filter`, body);
   }
 
   static async page(body: TaskVO.TaskPageFilterVo) {
-    return request<TaskVO.TaskPageVo>({ method: 'get' })(`/task/page`, body);
+    return request<ResponsePageVo<TaskVO.TaskWithoutRelationsVo>>({ method: 'get' })(`/task/page`, body);
   }
 
   static async taskWithTrackTime(id: string) {

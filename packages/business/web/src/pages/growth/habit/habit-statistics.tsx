@@ -11,7 +11,7 @@ import {
   Empty,
 } from '@arco-design/web-react';
 import { HabitController } from '@life-toolkit/api';
-import { HabitVo } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo';
 import { HABIT_STATUS_OPTIONS } from './constants';
 import { HabitStatus } from '@life-toolkit/enum';
 

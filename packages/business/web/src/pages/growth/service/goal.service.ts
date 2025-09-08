@@ -6,7 +6,7 @@ import type {
   GoalFilterVo,
   UpdateGoalVo,
   GoalWithoutRelationsVo,
-} from '@life-toolkit/vo/growth';
+} from '@life-toolkit/vo';
 import { useState, useEffect } from 'react';
 
 export default class GoalService {

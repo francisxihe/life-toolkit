@@ -62,7 +62,7 @@ export class {Module}ServerController {
    * 分页查询{资源名称}列表
    */
   @Get("page")
-  async page(@Query() filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
+  async page(@Query() filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}ResponsePageVo> {
     return await this.{module}Controller.page(filter);
   }
 

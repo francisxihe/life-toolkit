@@ -1,7 +1,7 @@
 'use client';
 
 import { Typography, Tag } from '@arco-design/web-react';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo';
 
 const { Title, Text } = Typography;
 

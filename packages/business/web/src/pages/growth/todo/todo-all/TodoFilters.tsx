@@ -5,7 +5,7 @@ import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TagSelector } from '../../../../components/TagSelector';
 import { useTodoAllContext } from './context';
-import { TodoPageFilterVo } from '@life-toolkit/vo/growth';
+import { TodoPageFilterVo } from '@life-toolkit/vo';
 import { TableFilter } from '@/components/Layout/TableFilter';
 import { TodoStatus } from '@life-toolkit/enum';
 

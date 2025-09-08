@@ -2,7 +2,7 @@ import { PageFilterDto } from '../../../common';
 import { HabitDto } from './habit-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsDateString, IsBoolean } from 'class-validator';
-import { HabitFilterVo, HabitPageFilterVo } from '@life-toolkit/vo/growth/habit';
+import { HabitFilterVo, HabitPageFilterVo } from '@life-toolkit/vo';
 import { HabitStatus, Importance, Difficulty } from '@life-toolkit/enum';
 import { BaseFilterDto, importBaseVo } from '@business/common';
 

@@ -64,7 +64,7 @@ export class {Module}Controller {
   /**
    * 分页查询{资源名称}列表
    */
-  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
+  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}ResponsePageVo> {
     const { list, total } = await this.{module}Service.page(filter);
     return {Module}Dto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }

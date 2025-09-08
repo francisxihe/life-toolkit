@@ -6,7 +6,7 @@ import { TrackTimeDto } from '../../track-time';
 import { TodoDto } from '../../todo';
 import dayjs from 'dayjs';
 import { BaseMapper } from '@business/common/base.mapper';
-import type { Task as TaskVO } from '@life-toolkit/vo';
+import type { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@life-toolkit/vo';
 
 export class TaskWithoutRelationsDto extends TaskWithoutRelations {}
 
@@ -103,11 +103,11 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
   }
 
   // 列表/分页辅助
-  static dtoListToListVo(list: TaskDto[]): TaskVO.TaskListVo {
+  static dtoListToListVo(list: TaskDto[]): ResponseListVo<TaskVO.TaskWithoutRelationsVo> {
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: TaskDto[], total: number, pageNum: number, pageSize: number): TaskVO.TaskPageVo {
+  static dtoListToPageVo(list: TaskDto[], total: number, pageNum: number, pageSize: number): ResponsePageVo<TaskVO.TaskWithoutRelationsVo> {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,

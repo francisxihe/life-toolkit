@@ -1,5 +1,5 @@
 import { FlexibleContainer } from 'francis-component-react';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import {
   GoalDetailProvider,
   GoalDetailContextProps,

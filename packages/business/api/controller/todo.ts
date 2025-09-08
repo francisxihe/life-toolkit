@@ -1,5 +1,5 @@
 import { request } from '@life-toolkit/share-request';
-import { Todo as TodoVO } from '@life-toolkit/vo';
+import { Todo as TodoVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
 
 export default class TodoController {
   static async create(body: TodoVO.CreateTodoVo) {
@@ -19,11 +19,11 @@ export default class TodoController {
   }
 
   static async findByFilter(params: TodoVO.TodoFilterVo) {
-    return request<TodoVO.TodoListVo>({ method: 'get' })(`/todo/find-by-filter`, params);
+    return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/find-by-filter`, params);
   }
 
   static async page(params: TodoVO.TodoPageFilterVo) {
-    return request<TodoVO.TodoPageVo>({ method: 'get' })(`/todo/page`, params);
+    return request<ResponsePageVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/page`, params);
   }
 
   static async listWithRepeat(params: TodoVO.TodoFilterVo) {

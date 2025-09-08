@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { GoalService } from './goal.service';
-import type { Goal as GoalVO } from '@life-toolkit/vo';
+import type { Goal as GoalVO, ResponsePageVo, ResponseListVo } from '@life-toolkit/vo';
 import { GoalPageFilterDto, GoalFilterDto, CreateGoalDto, UpdateGoalDto, GoalDto } from '@life-toolkit/business-server';
 import { Response } from '@/decorators/response.decorator';
 
@@ -24,7 +24,7 @@ export class GoalController {
    */
   @Get('page')
   @Response()
-  async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
+  async page(@Query() filter: GoalPageFilterDto): Promise<ResponsePageVo<GoalVO.GoalWithoutRelationsVo>> {
     const { list, total } = await this.goalService.page(filter);
     return GoalDto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
@@ -34,7 +34,7 @@ export class GoalController {
    */
   @Get('list')
   @Response()
-  async list(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalListVo> {
+  async list(@Query() filter: GoalFilterDto): Promise<ResponseListVo<GoalVO.GoalWithoutRelationsVo>> {
     const goalList = await this.goalService.findByFilter(filter);
     return GoalDto.dtoListToListVo(goalList);
   }

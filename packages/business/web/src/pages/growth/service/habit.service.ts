@@ -3,10 +3,8 @@ import { HabitController } from '@life-toolkit/api';
 import type {
   CreateHabitVo,
   UpdateHabitVo,
-  CreateHabitLogVo,
-  UpdateHabitLogVo,
-} from '@life-toolkit/vo/growth/habit';
-import { OperationByIdListVo } from '@life-toolkit/vo';
+  HabitFilterVo,
+} from '@life-toolkit/vo';
 import { HabitFilter, HabitPageFilter } from './habit.types';
 import {
   mapHabitFilterToParams,
@@ -70,7 +68,7 @@ export default class HabitService {
     }
   }
 
-  static async doneBatchHabit(params: OperationByIdListVo) {
+  static async doneBatchHabit(params: HabitFilterVo) {
     try {
       const res = await HabitController.doneBatch(params);
       Message.success('操作成功');

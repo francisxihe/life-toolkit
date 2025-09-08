@@ -1,19 +1,5 @@
-import { TaskVo, TaskWithoutRelationsVo } from './task-model.vo';
+import { TaskVo } from './task-model.vo';
 import { BaseFilterVo } from '../../common';
-
-export type TaskPageVo = {
-  list: TaskWithoutRelationsVo[];
-
-  total: number;
-
-  pageNum: number;
-
-  pageSize: number;
-};
-
-export type TaskListVo = {
-  list: TaskWithoutRelationsVo[];
-};
 
 export type TaskFilterVo = BaseFilterVo &
   Partial<

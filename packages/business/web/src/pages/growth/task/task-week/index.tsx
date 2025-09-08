@@ -6,7 +6,7 @@ import { Collapse, Divider, Button } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TaskWithoutRelationsVo } from '@life-toolkit/vo/growth';
+import { TaskWithoutRelationsVo } from '@life-toolkit/vo';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { useTaskDetail, TaskEditor } from '../../components';
 import { TaskStatus } from '@life-toolkit/enum';

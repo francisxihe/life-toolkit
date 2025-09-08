@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { TaskVo } from '@life-toolkit/vo/growth';
+import { TaskVo } from '@life-toolkit/vo';
 import { useTaskDetail } from '../../components/TaskDetail';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';

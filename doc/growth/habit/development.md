@@ -569,15 +569,6 @@ export type HabitListVo = {
   list: HabitWithoutRelationsVo[];
 };
 
-// 分页结果VO
-export type HabitPageVo = {
-  list: HabitWithoutRelationsVo[];
-  total: number;
-  pageNum: number;
-  pageSize: number;
-  hasNext: boolean;
-  hasPrev: boolean;
-};
 
 // habit-form.vo.ts
 import { HabitWithoutRelationsVo, HabitStatus } from "./habit-model.vo";

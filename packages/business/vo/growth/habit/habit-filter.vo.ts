@@ -1,5 +1,5 @@
-import { HabitVo, HabitWithoutRelationsVo, HabitCompletionScore } from './habit-model.vo';
-import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
+import { HabitStatus, Difficulty } from '@life-toolkit/enum';
+import { HabitVo } from './habit-model.vo';
 import { BaseFilterVo } from '../../common';
 
 export type HabitFilterVo = BaseFilterVo &
@@ -20,45 +20,4 @@ export type HabitPageFilterVo = HabitFilterVo & {
   pageSize?: number;
   sortBy?: 'createdAt' | 'updatedAt' | 'name' | 'importance' | 'currentStreak' | 'longestStreak' | 'completedCount';
   sortOrder?: 'ASC' | 'DESC';
-};
-
-export type HabitListVo = {
-  list: HabitWithoutRelationsVo[];
-};
-
-export type HabitPageVo = {
-  list: HabitWithoutRelationsVo[];
-  total: number;
-  pageNum: number;
-  pageSize: number;
-};
-
-export type HabitLogListFiltersVo = Partial<{
-  habitId?: string;
-  habitIds?: string[];
-  logDateFrom?: string;
-  logDateTo?: string;
-  completionScoreList?: HabitCompletionScore[];
-  moodMin?: number;
-  moodMax?: number;
-  hasNote?: boolean;
-  excludeIds?: string[];
-}>;
-
-export type HabitLogPageFiltersVo = HabitLogListFiltersVo & {
-  pageNum?: number;
-  pageSize?: number;
-  sortBy?: 'logDate' | 'completionScore' | 'mood' | 'createdAt';
-  sortOrder?: 'ASC' | 'DESC';
-};
-
-export type HabitLogListVo = {
-  list: HabitWithoutRelationsVo[];
-};
-
-export type HabitLogPageVo = {
-  list: HabitWithoutRelationsVo[];
-  total: number;
-  pageNum: number;
-  pageSize: number;
 };

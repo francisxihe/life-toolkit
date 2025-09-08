@@ -16,7 +16,7 @@ import { HabitController } from '@life-toolkit/api';
 import {
   CreateHabitVo,
   GoalVo,
-} from '@life-toolkit/vo/growth';
+} from '@life-toolkit/vo';
 import { Difficulty } from '@life-toolkit/enum';
 import { HABIT_DIFFICULTY_OPTIONS } from '../constants';
 import dayjs from 'dayjs';

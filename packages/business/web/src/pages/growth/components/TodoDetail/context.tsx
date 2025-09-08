@@ -3,7 +3,7 @@
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { TodoFormData, TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo/growth';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
 import { TodoStatus } from '@life-toolkit/enum';

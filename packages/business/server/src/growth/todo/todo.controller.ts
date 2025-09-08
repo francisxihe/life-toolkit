@@ -1,4 +1,4 @@
-import type { Todo as TodoVO } from '@life-toolkit/vo';
+import type { Todo as TodoVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
 import { TodoFilterDto, TodoPageFilterDto } from './dto';
 import { TodoService } from './todo.service';
 import { TodoRepeatService } from './todo-repeat.service';
@@ -59,7 +59,7 @@ export class TodoController {
   }
 
   @Get('/find-by-filter', { description: '列表查询待办' })
-  async findByFilter(@Query() query?: TodoVO.TodoFilterVo): Promise<TodoVO.TodoListVo> {
+  async findByFilter(@Query() query?: TodoVO.TodoFilterVo): Promise<ResponseListVo<TodoVO.TodoWithoutRelationsVo>> {
     const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.findByFilter(filter);
@@ -69,7 +69,7 @@ export class TodoController {
   }
 
   @Get('/page', { description: '分页查询待办' })
-  async page(@Query() query?: TodoVO.TodoPageFilterVo): Promise<TodoVO.TodoPageVo> {
+  async page(@Query() query?: TodoVO.TodoPageFilterVo): Promise<ResponsePageVo<TodoVO.TodoWithoutRelationsVo>> {
     const filter = new TodoPageFilterDto();
     if (query) filter.importPageVo(query);
     const { list, total, pageNum, pageSize } = await this.todoService.page(filter);
@@ -103,7 +103,7 @@ export class TodoController {
     const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.listWithRepeat(filter);
-    
+
     return {
       list: list.map((todo) => todo.exportVo()),
     };

@@ -1,6 +1,6 @@
 import { createInjectState } from '@life-toolkit/common-web-utils';
 import { useState } from 'react';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import { GoalService } from '../../service';
 import { Message } from '@arco-design/web-react';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';

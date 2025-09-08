@@ -7,7 +7,7 @@ import IconSelector from '../../components/IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { TaskService } from '../../service';
-import { TaskWithoutRelationsVo } from '@life-toolkit/vo/growth';
+import { TaskWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 

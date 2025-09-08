@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { Table, Tag } from '@arco-design/web-react';
 import type { ColumnProps } from '@arco-design/web-react/es/Table/interface';
 import { useExpenses } from '../context';
-import type { BudgetVo } from '@life-toolkit/vo/expense';
+import type { BudgetVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
 export default function BudgetTable() {

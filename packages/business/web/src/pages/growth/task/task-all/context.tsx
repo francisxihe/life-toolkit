@@ -12,7 +12,7 @@ import {
   TaskVo,
   TaskWithoutRelationsVo,
   TaskPageFilterVo,
-} from '@life-toolkit/vo/growth';
+} from '@life-toolkit/vo';
 import { TaskService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { TaskStatus } from '@life-toolkit/enum';

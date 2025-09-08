@@ -10,7 +10,7 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { GoalVo, GoalWithoutRelationsVo, GoalPageFilterVo } from '@life-toolkit/vo/growth';
+import { GoalVo, GoalWithoutRelationsVo, GoalPageFilterVo } from '@life-toolkit/vo';
 import { GoalService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import {
   MindMap,
   createGoalConverter,

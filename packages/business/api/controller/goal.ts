@@ -1,49 +1,48 @@
-import { request } from "@life-toolkit/share-request";
-import { Goal as GoalVO } from "@life-toolkit/vo/growth";
+import { request } from '@life-toolkit/share-request';
+import { Goal as GoalVO, ResponsePageVo, ResponseListVo, ResponseTreeVo } from '@life-toolkit/vo';
 
 export default class GoalController {
-
   static async create(body: GoalVO.CreateGoalVo) {
-    return request<GoalVO.GoalVo>({ method: "post" })(`/goal/create`, body);
+    return request<GoalVO.GoalVo>({ method: 'post' })(`/goal/create`, body);
   }
 
   static async delete(id: string) {
-    return request<void>({ method: "remove" })(`/goal/delete/${id}`);
+    return request<void>({ method: 'remove' })(`/goal/delete/${id}`);
   }
 
   static async update(id: string, body: GoalVO.UpdateGoalVo) {
-    return request<GoalVO.GoalVo>({ method: "put" })(`/goal/update/${id}`, body);
+    return request<GoalVO.GoalVo>({ method: 'put' })(`/goal/update/${id}`, body);
   }
 
   static async find(id: string) {
-    return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find/${id}`);
+    return request<GoalVO.GoalVo>({ method: 'get' })(`/goal/find/${id}`);
   }
 
   static async findWithRelations(id: string) {
-    return request<GoalVO.GoalVo>({ method: "get" })(`/goal/find-with-relations/${id}`);
+    return request<GoalVO.GoalVo>({ method: 'get' })(`/goal/find-with-relations/${id}`);
   }
 
   static async findByFilter(body: GoalVO.GoalFilterVo) {
-    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/find-by-filter`, body);
+    return request<ResponseListVo<GoalVO.GoalWithoutRelationsVo>>({ method: 'get' })(`/goal/find-by-filter`, body);
   }
 
   static async page(body: GoalVO.GoalPageFilterVo) {
-    return request<GoalVO.GoalPageVo>({ method: "get" })(`/goal/page`, body);
+    return request<ResponsePageVo<GoalVO.GoalWithoutRelationsVo>>({ method: 'get' })(`/goal/page`, body);
   }
 
   static async getTree(body: GoalVO.GoalFilterVo) {
-    return request<GoalVO.GoalListVo>({ method: "get" })(`/goal/get-tree`, body);
+    return request<ResponseTreeVo<GoalVO.GoalVo>>({ method: 'get' })(`/goal/get-tree`, body);
   }
 
   static async findRoots() {
-    return request<GoalVO.GoalVo[]>({ method: "get" })(`/goal/find-roots`);
+    return request<GoalVO.GoalVo[]>({ method: 'get' })(`/goal/find-roots`);
   }
 
   static async abandon(id: string) {
-    return request<boolean>({ method: "put" })(`/goal/abandon/${id}`);
+    return request<boolean>({ method: 'put' })(`/goal/abandon/${id}`);
   }
 
   static async restore(id: string) {
-    return request<boolean>({ method: "put" })(`/goal/restore/${id}`);
+    return request<boolean>({ method: 'put' })(`/goal/restore/${id}`);
   }
 }

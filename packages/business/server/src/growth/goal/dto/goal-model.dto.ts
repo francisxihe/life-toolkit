@@ -2,7 +2,7 @@ import { Goal, GoalWithoutRelations } from '../goal.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
 import dayjs from 'dayjs';
-import type { Goal as GoalVO } from '@life-toolkit/vo';
+import type { Goal as GoalVO, ResponsePageVo, ResponseListVo, ResponseTreeVo } from '@life-toolkit/vo';
 import { TaskDto } from '../../task';
 
 // 没有关联字段的DTO
@@ -68,11 +68,16 @@ export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelations
   }
 
   // 列表/分页辅助
-  static dtoListToListVo(list: GoalDto[]): GoalVO.GoalListVo {
+  static dtoListToListVo(list: GoalDto[]): ResponseListVo<GoalVO.GoalWithoutRelationsVo> {
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: GoalDto[], total: number, pageNum: number, pageSize: number): GoalVO.GoalPageVo {
+  static dtoListToPageVo(
+    list: GoalDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): ResponsePageVo<GoalVO.GoalWithoutRelationsVo> {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,

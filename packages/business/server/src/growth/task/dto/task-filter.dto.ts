@@ -2,7 +2,7 @@ import { PageFilterDto } from '../../../common';
 import { TaskDto } from './task-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
-import { TaskFilterVo, TaskPageFilterVo } from '@life-toolkit/vo/growth/task';
+import { TaskFilterVo, TaskPageFilterVo } from '@life-toolkit/vo';
 import { BaseFilterDto, importBaseVo } from '@business/common';
 
 export class TaskFilterDto extends IntersectionType(

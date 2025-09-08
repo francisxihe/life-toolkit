@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { HabitVo } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo';
 
 export interface HabitContextType {
   selectedHabit: HabitVo | null;

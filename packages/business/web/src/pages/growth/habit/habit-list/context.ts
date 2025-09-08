@@ -18,7 +18,7 @@ import {
   HabitWithoutRelationsVo,
   HabitPageFilterVo,
   GoalVo,
-} from '@life-toolkit/vo/growth';
+} from '@life-toolkit/vo';
 import { useHabitContext } from '../context';
 
 export const [HabitListProvider, useHabitListContext] = createInjectState<{

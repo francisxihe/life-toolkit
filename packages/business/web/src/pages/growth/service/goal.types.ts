@@ -1,4 +1,4 @@
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 
 export type GoalFormData = Pick<
   GoalVo,

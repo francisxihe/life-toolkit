@@ -59,7 +59,7 @@ export class {Module}DesktopController {
   /**
    * 分页查询{资源名称}列表
    */
-  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
+  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}ResponsePageVo> {
     return await this.{module}Controller.page(filter);
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
-import { GoalVo, GoalWithoutRelationsVo } from '@life-toolkit/vo/growth';
+import { GoalVo, GoalWithoutRelationsVo } from '@life-toolkit/vo';
 import { GoalFormData, GoalService, GoalMapping } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus, Importance } from '@life-toolkit/enum';

@@ -2,7 +2,7 @@ import { Habit } from '../habit.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
 import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
 import dayjs from 'dayjs';
-import type { Habit as HabitVO } from '@life-toolkit/vo';
+import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
 import { GoalDto } from '../../goal';
 import { TodoDto } from '../../todo';
 
@@ -66,11 +66,11 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   }
 
   // 列表/分页辅助
-  static dtoListToListVo(list: HabitDto[]): HabitVO.HabitListVo {
+  static dtoListToListVo(list: HabitDto[]): ResponseListVo<HabitVO.HabitWithoutRelationsVo> {
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: HabitDto[], total: number, pageNum: number, pageSize: number): HabitVO.HabitPageVo {
+  static dtoListToPageVo(list: HabitDto[], total: number, pageNum: number, pageSize: number): ResponsePageVo<HabitVO.HabitWithoutRelationsVo> {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,

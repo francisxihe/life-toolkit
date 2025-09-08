@@ -1,6 +1,6 @@
 import { IsOptional, IsString, IsDateString, IsBoolean } from 'class-validator';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
-import { GoalFilterVo, GoalPageFilterVo } from '@life-toolkit/vo/growth/goal';
+import { GoalFilterVo, GoalPageFilterVo } from '@life-toolkit/vo';
 import { GoalDto } from './goal-model.dto';
 import { PageFilterDto } from '../../../common';
 import { BaseFilterDto, importBaseVo } from '@business/common';
