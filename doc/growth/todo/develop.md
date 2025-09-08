@@ -388,7 +388,6 @@ erDiagram
         date planDate
         string taskId FK
         string repeatId FK
-        string originalRepeatId
         string habitId FK
         enum source
         datetime createdAt
@@ -520,11 +519,6 @@ interface TodoEntityStructure {
       foreign_key: "TodoRepeat.id";
       required: false;
       description: "重复配置ID";
-    };
-    originalRepeatId: {
-      type: "string";
-      required: false;
-      description: "原始重复配置ID，用于历史追踪";
     };
     habitId: {
       type: "string";

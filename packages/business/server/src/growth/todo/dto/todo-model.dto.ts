@@ -6,7 +6,9 @@ import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoStatus } from '@life-toolkit/enum';
 
-export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations) {
+export class TodoWithoutRelationsDto extends IntersectionType(BaseModelDto, TodoWithoutRelations) {}
+
+export class TodoDto extends TodoWithoutRelationsDto {
   task?: TaskDto;
   habit?: any;
 
@@ -20,7 +22,6 @@ export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations
     this.urgency = entity.urgency;
     this.planDate = entity.planDate;
     this.repeatId = entity.repeatId;
-    this.originalRepeatId = entity.originalRepeatId;
     this.source = entity.source;
     this.doneAt = entity.doneAt;
     this.abandonedAt = entity.abandonedAt;

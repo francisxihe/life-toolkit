@@ -106,12 +106,6 @@ export class Todo extends TodoWithoutRelations {
   @IsOptional()
   repeatId?: string;
 
-  /** 原始重复配置ID（用于保留关联记录） */
-  @Column('varchar', { nullable: true })
-  @IsString()
-  @IsOptional()
-  originalRepeatId?: string;
-
   /** 关联的习惯 */
   @ManyToOne('Habit', 'todos', { nullable: true })
   @JoinColumn({ name: 'habit_id' })

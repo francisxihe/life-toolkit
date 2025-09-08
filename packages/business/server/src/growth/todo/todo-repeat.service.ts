@@ -225,7 +225,6 @@ export class TodoRepeatService {
       createdAt: new Date(),
       updatedAt: new Date(),
       repeat: todoRepeat,
-      originalRepeatId: todoRepeat.id,
       source: TodoSource.IS_REPEAT,
       status: TodoStatus.TODO,
     });

@@ -312,21 +312,10 @@ interface TodoStats {
 当一个重复待办被完成或放弃时，系统会自动：
 1. 立即创建一个新的重复待办作为重复待办的主体
 2. 将原先的重复待办转换为普通待办（移除重复配置关联）
-3. 保留原先与重复配置的关联记录（通过 `originalRepeatId` 字段）
 
 ## 核心实现
 
 ### 1. 数据库字段
-
-在 `Todo` 实体中添加了 `originalRepeatId` 字段：
-
-```typescript
-/** 原始重复配置ID（用于保留关联记录） */
-@Column({ nullable: true })
-@IsString()
-@IsOptional()
-originalRepeatId?: string;
-```
 
 ### 2. 关系模型调整
 
@@ -361,7 +350,6 @@ if (todo.repeatId) {
   await manager.update(Todo, id, {
     status,
     [dateField]: new Date(),
-    originalRepeatId: repeatId, // 保存原始重复配置ID
     repeatId: undefined, // 移除重复配置关联
   });
   
@@ -373,7 +361,6 @@ if (todo.repeatId) {
 这样确保了：
 1. **无约束冲突**：ManyToOne关系没有唯一约束限制
 2. **ORM便利性**：保持了TypeORM关系的所有优势
-3. **历史追溯**：通过 `originalRepeatId` 保留关联历史
 4. **数据一致性**：在事务中完成所有操作
 
 ### 4. 重复待办创建
@@ -396,7 +383,6 @@ if (todo.repeatId) {
 2. 系统检查该待办是否有 `repeatId`
 3. 如果有，则：
    - 先断开当前待办与重复配置的关联，将其转为普通待办
-   - 保存原始重复配置ID到 `originalRepeatId`
    - 调用 `createNextTodo()` 创建下一个重复待办
    - 新待办自动与重复配置建立关联
 4. 如果没有，则直接更新状态
@@ -404,7 +390,6 @@ if (todo.repeatId) {
 ## 字段说明
 
 - `repeatId`: 当前活跃的重复配置ID
-- `originalRepeatId`: 原始重复配置ID（用于保留历史关联）
 - `source`: 待办来源（`manual` 手动创建，`repeat` 重复创建）
 
 ## 核心优势
@@ -412,6 +397,5 @@ if (todo.repeatId) {
 这种 `OneToMany` / `ManyToOne` 的设计确保了：
 1. **无约束冲突**：避免了一对一关系的唯一约束问题
 2. **ORM便利性**：保持了TypeORM关系的所有优势
-3. **历史追溯**：通过 `originalRepeatId` 保留完整的关联历史
 4. **灵活扩展**：支持未来更复杂的重复待办场景
 5. **操作原子性**：整个过程在一个事务中完成，确保数据完整性

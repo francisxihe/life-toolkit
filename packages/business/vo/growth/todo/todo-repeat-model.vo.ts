@@ -22,7 +22,6 @@ export type TodoRepeatModelVo = {
   taskId?: string;
   repeat?: TodoRepeat;
   repeatId?: string;
-  originalRepeatId?: string;
   habit?: any;
   habitId?: string;
 } & BaseModelVo;
