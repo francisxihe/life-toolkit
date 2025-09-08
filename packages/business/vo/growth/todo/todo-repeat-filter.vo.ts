@@ -1,4 +1,4 @@
-import { BaseFilterVo } from '../../common/model.vo';
+import { BaseFilterVo } from '../../common';
 
 export type TodoRepeatListFilterVo = {
   currentDateStart?: string;

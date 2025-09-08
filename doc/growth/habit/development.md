@@ -507,7 +507,7 @@ export enum HabitStatus {
 }
 
 // 基础模型VO
-export type HabitModelVo = {
+export type HabitWithoutRelationsVo = {
   title: string;
   description?: string;
   importance: number;
@@ -523,10 +523,10 @@ export type HabitModelVo = {
 };
 
 // 项目VO (包含基础字段)
-export type HabitModelVo = BaseModelVo & HabitModelVo;
+export type HabitWithoutRelationsVo = BaseModelVo & HabitWithoutRelationsVo;
 
 // 完整VO (包含关联数据和计算字段)
-export type HabitVo = HabitModelVo & {
+export type HabitVo = HabitWithoutRelationsVo & {
   // 关联数据
   goalRelations?: HabitGoalRelationVo[];
   user?: UserItemVo;
@@ -541,7 +541,7 @@ export type HabitVo = HabitModelVo & {
 };
 
 // habit-filter.vo.ts
-import { HabitVo, HabitModelVo, HabitStatus } from "./habit-model.vo";
+import { HabitVo, HabitWithoutRelationsVo, HabitStatus } from "./habit-model.vo";
 
 // 列表过滤VO
 export type HabitFilterVo = Partial<
@@ -566,12 +566,12 @@ export type HabitPageFilterVo = HabitFilterVo & {
 
 // 列表结果VO
 export type HabitListVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
 };
 
 // 分页结果VO
 export type HabitPageVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -580,11 +580,11 @@ export type HabitPageVo = {
 };
 
 // habit-form.vo.ts
-import { HabitModelVo, HabitStatus } from "./habit-model.vo";
+import { HabitWithoutRelationsVo, HabitStatus } from "./habit-model.vo";
 
 // 创建表单VO
 export type CreateHabitVo = Omit<
-  HabitModelVo,
+  HabitWithoutRelationsVo,
   "status" | "completedCount" | "currentStreak" | "longestStreak"
 > & {
   goalIds: string[];
@@ -1001,7 +1001,7 @@ interface HabitPageDesign {
       component_name: "HabitListPage";
       props: [];
       state: [
-        { name: "habits"; type: "HabitModelVo[]"; description: "习惯列表" },
+        { name: "habits"; type: "HabitWithoutRelationsVo[]"; description: "习惯列表" },
         { name: "loading"; type: "boolean"; description: "加载状态" },
         {
           name: "filters";
@@ -1062,7 +1062,7 @@ interface HabitPageDesign {
       props: [
         {
           name: "habit";
-          type: "HabitModelVo";
+          type: "HabitWithoutRelationsVo";
           required: true;
           description: "习惯数据";
         },
@@ -1236,7 +1236,7 @@ ai_instructions:
         dependencies: []
         context:
           vo_name: "HabitVo"
-          types: ["HabitVo", "HabitModelVo", "HabitModelVo", "HabitStatisticsVo"]
+          types: ["HabitVo", "HabitWithoutRelationsVo", "HabitWithoutRelationsVo", "HabitStatisticsVo"]
 
       - task: "生成Habit API接口"
         template: "api_template"

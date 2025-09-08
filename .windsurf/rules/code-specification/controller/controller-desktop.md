@@ -199,7 +199,7 @@ ipcMain.handle('todo:delete', deleteHandler);
 ```typescript
 // ✅ 推荐做法 - 充分利用异步特性
 export class TodoDesktopController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 直接返回Promise，让Electron处理异步
     return await this.todoController.create(createVo);
   }
@@ -207,7 +207,7 @@ export class TodoDesktopController {
 
 // ❌ 避免的做法 - 阻塞主进程
 export class TodoDesktopController {
-  create(createVo: TodoVO.CreateTodoVo): TodoVO.TodoModelVo {
+  create(createVo: TodoVO.CreateTodoVo): TodoVO.TodoWithoutRelationsVo {
     // ❌ 同步处理会阻塞主进程
     return this.todoController.createSync(createVo);
   }

@@ -46,7 +46,7 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): HabitVO.HabitModelVo {
+  exportModelVo(): HabitVO.HabitWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,

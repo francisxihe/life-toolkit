@@ -1,19 +1,14 @@
 import { BaseModelVo } from '../../common/model.vo';
 
-export type TodoRepeatModelVo = {
-  todos?: Todo[];
-  repeat: {;
-  id: string;
-  createdAt?: string;
-  updatedAt?: string;
+export type TodoRepeatWithoutRelationsVo = {
 } & BaseModelVo;
 
 export type TodoRepeatListVo = {
-  list: TodoRepeatModelVo[];
+  list: TodoRepeatWithoutRelationsVo[];
 };
 
 export type TodoRepeatPageVo = {
-  list: TodoRepeatModelVo[];
+  list: TodoRepeatWithoutRelationsVo[];
   total: number;
   pageNum: number;
   pageSize: number;

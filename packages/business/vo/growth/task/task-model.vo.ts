@@ -4,7 +4,7 @@ import { GoalVo } from '../goal/goal-model.vo';
 import { TodoVo } from '../todo/todo-model.vo';
 import { TaskStatus } from '@life-toolkit/enum';
 
-export type TaskModelVo = {
+export type TaskWithoutRelationsVo = {
   name: string;
   status: TaskStatus;
   description?: string;
@@ -20,7 +20,7 @@ export type TaskModelVo = {
   tags?: string[];
 } & BaseModelVo;
 
-export type TaskVo = TaskModelVo & {
+export type TaskVo = TaskWithoutRelationsVo & {
   children: TaskVo[];
   parent?: TaskVo;
   trackTimeList?: TrackTimeVo[];

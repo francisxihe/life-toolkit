@@ -13,7 +13,7 @@ export class GoalController {
    */
   @Post('create')
   @Response()
-  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalModelVo> {
+  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
     return dto.exportModelVo();
@@ -64,7 +64,7 @@ export class GoalController {
    */
   @Put('update/:id')
   @Response()
-  async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalModelVo> {
+  async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
     return dto.exportModelVo();

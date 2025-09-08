@@ -1,4 +1,4 @@
-import { GoalVo, GoalModelVo } from "./goal-model.vo";
+import { GoalVo, GoalWithoutRelationsVo } from "./goal-model.vo";
 import { BaseFilterVo } from "../../common";
 
 export type GoalFilterVo = BaseFilterVo & Partial<
@@ -17,11 +17,11 @@ export type GoalPageFilterVo = GoalFilterVo & {
 };
 
 export type GoalListVo = {
-  list: GoalModelVo[];
+  list: GoalWithoutRelationsVo[];
 };
 
 export type GoalPageVo = {
-  list: GoalModelVo[];
+  list: GoalWithoutRelationsVo[];
   total: number;
   pageNum: number;
   pageSize: number;

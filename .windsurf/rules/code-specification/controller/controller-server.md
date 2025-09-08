@@ -199,7 +199,7 @@ export class TodoServerController {
   constructor(private readonly todoController: TodoController) {}
 
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 直接调用核心业务控制器
     return await this.todoController.create(createVo);
   }
@@ -209,7 +209,7 @@ export class TodoServerController {
 @Controller("todo")
 export class TodoServerController {
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // ❌ 不应该在适配层做参数验证
     if (!createVo.title) {
       throw new BadRequestException("标题不能为空");
@@ -252,7 +252,7 @@ import { Body, Param, Query, BadRequestException } from "@nestjs/common";
 @Controller("todo")
 export class TodoServerController {
   @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // HTTP参数验证可以在这里进行
     return await this.todoController.create(createVo);
   }

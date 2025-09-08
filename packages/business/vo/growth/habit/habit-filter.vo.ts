@@ -1,4 +1,4 @@
-import { HabitVo, HabitModelVo, HabitCompletionScore } from './habit-model.vo';
+import { HabitVo, HabitWithoutRelationsVo, HabitCompletionScore } from './habit-model.vo';
 import { HabitStatus, Difficulty, Importance } from '@life-toolkit/enum';
 import { BaseFilterVo } from '../../common';
 
@@ -23,11 +23,11 @@ export type HabitPageFilterVo = HabitFilterVo & {
 };
 
 export type HabitListVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
 };
 
 export type HabitPageVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
   total: number;
   pageNum: number;
   pageSize: number;
@@ -53,11 +53,11 @@ export type HabitLogPageFiltersVo = HabitLogListFiltersVo & {
 };
 
 export type HabitLogListVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
 };
 
 export type HabitLogPageVo = {
-  list: HabitModelVo[];
+  list: HabitWithoutRelationsVo[];
   total: number;
   pageNum: number;
   pageSize: number;

@@ -15,7 +15,7 @@ import {
 } from '@arco-design/web-react';
 import { HabitController, GoalController } from '@life-toolkit/api';
 import {
-  HabitModelVo,
+  HabitWithoutRelationsVo,
   HabitPageFilterVo,
   GoalVo,
 } from '@life-toolkit/vo/growth';
@@ -26,7 +26,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
     children: ReactNode;
   };
   ContextType: {
-    habits: HabitModelVo[];
+    habits: HabitWithoutRelationsVo[];
     goals: GoalVo[];
     loading: boolean;
     pagination: {
@@ -44,7 +44,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   const { refreshHabits } = useHabitContext();
 
   // 状态管理
-  const [habits, setHabits] = useState<HabitModelVo[]>([]);
+  const [habits, setHabits] = useState<HabitWithoutRelationsVo[]>([]);
   const [goals, setGoals] = useState<GoalVo[]>([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({

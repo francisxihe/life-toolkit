@@ -9,7 +9,7 @@ export enum HabitCompletionScore {
   FULLY_COMPLETED = 2,
 }
 
-export type HabitModelVo = {
+export type HabitWithoutRelationsVo = {
   name: string;
   status: HabitStatus;
   description?: string;
@@ -25,7 +25,7 @@ export type HabitModelVo = {
   abandonedAt?: string;
 } & BaseModelVo;
 
-export type HabitVo = HabitModelVo & {
+export type HabitVo = HabitWithoutRelationsVo & {
   /** 关联的目标 */
   goals?: GoalVo[];
   /** 关联的待办事项 */

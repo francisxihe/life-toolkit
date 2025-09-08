@@ -1,8 +1,8 @@
-import { TaskVo, TaskModelVo } from './task-model.vo';
+import { TaskVo, TaskWithoutRelationsVo } from './task-model.vo';
 import { BaseFilterVo } from '../../common';
 
 export type TaskPageVo = {
-  list: TaskModelVo[];
+  list: TaskWithoutRelationsVo[];
 
   total: number;
 
@@ -12,7 +12,7 @@ export type TaskPageVo = {
 };
 
 export type TaskListVo = {
-  list: TaskModelVo[];
+  list: TaskWithoutRelationsVo[];
 };
 
 export type TaskFilterVo = BaseFilterVo &

@@ -2,7 +2,7 @@ import { BaseModelVo } from '../../common/model.vo';
 import { TaskVo } from '../task/task-model.vo';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
 
-export type GoalModelVo = {
+export type GoalWithoutRelationsVo = {
   name: string;
   status: GoalStatus;
   type: GoalType;
@@ -20,4 +20,4 @@ export type GoalVo = {
   parent?: GoalVo;
   /** 任务 */
   taskList?: TaskVo[];
-} & GoalModelVo;
+} & GoalWithoutRelationsVo;

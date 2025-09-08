@@ -1,9 +1,9 @@
-import { TodoVo, TodoModelVo } from './todo-model.vo';
+import { TodoVo, TodoWithoutRelationsVo } from './todo-model.vo';
 import { BaseFilterVo } from '../../common';
 import { TodoSource } from '@life-toolkit/enum';
 
 export type TodoPageVo = {
-  list: TodoModelVo[];
+  list: TodoWithoutRelationsVo[];
 
   total: number;
 
@@ -13,7 +13,7 @@ export type TodoPageVo = {
 };
 
 export type TodoListVo = {
-  list: TodoModelVo[];
+  list: TodoWithoutRelationsVo[];
 };
 
 export type TodoFilterVo = BaseFilterVo & {

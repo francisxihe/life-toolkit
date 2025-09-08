@@ -1,8 +1,8 @@
 export * from "./task-model.vo";
-import { TaskModelVo, TaskVo } from "./task-model.vo";
+import { TaskWithoutRelationsVo, TaskVo } from "./task-model.vo";
 
 export type CreateTaskVo = Omit<
-  TaskModelVo,
+  TaskWithoutRelationsVo,
   "doneAt" | "abandonedAt" | "status"
 > & {
   parentId?: string;

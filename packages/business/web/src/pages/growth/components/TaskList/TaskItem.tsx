@@ -7,14 +7,14 @@ import IconSelector from '../../components/IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { TaskService } from '../../service';
-import { TaskModelVo } from '@life-toolkit/vo/growth';
+import { TaskWithoutRelationsVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 
 const { Paragraph } = Typography;
 
 export type TaskItemProps = {
-  task: TaskModelVo;
+  task: TaskWithoutRelationsVo;
   onClickTask: (id: string) => Promise<void>;
   refreshTaskList: () => Promise<void>;
   TriggerCheckbox: React.ReactNode;

@@ -181,7 +181,7 @@ async statistics(filter: {Module}StatisticsFilterDto): Promise<{Module}VO.Statis
 ```typescript
 // ✅ 推荐做法 - 只关注业务逻辑
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 1. 数据转换
     const createDto = CreateTodoDto.importVo(createVo);
 
@@ -196,7 +196,7 @@ export class TodoController {
 // ❌ 避免的做法 - 包含HTTP相关逻辑
 export class TodoController {
   @Post("create") // ❌ 不应该有HTTP装饰器
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // ❌ HTTP相关逻辑不应该出现在Business层
     return await this.todoService.create(createVo);
   }
@@ -208,7 +208,7 @@ export class TodoController {
 // 让Service层抛出具体的业务异常
 // Business Controller层只负责数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     try {
       const createDto = CreateTodoDto.importVo(createVo);
       const dto = await this.todoService.create(createDto); // Service会抛出业务异常
@@ -225,7 +225,7 @@ export class TodoController {
 ```typescript
 // 使用专门的Mapper进行数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 1. VO转DTO
     const createDto = CreateTodoDto.importVo(createVo);
 

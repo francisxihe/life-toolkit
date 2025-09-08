@@ -7,14 +7,14 @@ import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { TodoService } from '../../service';
-import { TodoModelVo } from '@life-toolkit/vo/growth';
+import { TodoWithoutRelationsVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 
 const { Paragraph } = Typography;
 
 export type TodoItemProps = {
-  todo: TodoModelVo;
+  todo: TodoWithoutRelationsVo;
   onClickTodo: (id: string) => Promise<void>;
   refreshTodoList: () => Promise<void>;
   TriggerCheckbox: React.ReactNode;

@@ -3,7 +3,7 @@ import { TaskVo } from '../task/task-model.vo';
 import { RepeatVo } from '@life-toolkit/components-repeat/vo';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 
-export type TodoModelVo = {
+export type TodoWithoutRelationsVo = {
   name: string;
   status: TodoStatus;
   planDate: string;
@@ -19,7 +19,7 @@ export type TodoModelVo = {
   source?: TodoSource;
 } & BaseModelVo;
 
-export type TodoVo = TodoModelVo & {
+export type TodoVo = TodoWithoutRelationsVo & {
   /** 关联的任务 */
   task?: TaskVo;
 };

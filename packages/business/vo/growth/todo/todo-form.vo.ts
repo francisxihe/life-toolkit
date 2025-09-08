@@ -1,8 +1,8 @@
-import { TodoModelVo } from './todo-model.vo';
+import { TodoWithoutRelationsVo } from './todo-model.vo';
 import { CreateRepeatVo, UpdateRepeatVo } from '@life-toolkit/components-repeat/vo';
 
 export type CreateTodoVo = Omit<
-  TodoModelVo,
+  TodoWithoutRelationsVo,
   'doneAt' | 'abandonedAt' | 'status' | 'repeat' | 'id' | 'createdAt' | 'updatedAt'
 > & {
   taskId?: string;

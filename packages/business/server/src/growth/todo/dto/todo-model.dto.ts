@@ -49,7 +49,7 @@ export class TodoDto extends IntersectionType(BaseModelDto, TodoWithoutRelations
     };
   }
 
-  exportVo(): TodoVO.TodoModelVo {
+  exportVo(): TodoVO.TodoWithoutRelationsVo {
     return this.exportModelVo();
   }
 }
