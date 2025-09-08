@@ -1,9 +1,7 @@
 import { Goal } from '../goal.entity';
-import { PartialType, PickType, IntersectionType, OmitType } from '@life-toolkit/mapped-types';
-import { IsOptional, IsString, IsEnum, IsDateString } from 'class-validator';
-import { Type } from 'class-transformer';
+import { PartialType, PickType, IntersectionType } from '@life-toolkit/mapped-types';
+import { IsOptional, IsString } from 'class-validator';
 import { GoalDto } from './goal-model.dto';
-import { GoalType, GoalStatus, Importance, Difficulty } from '@life-toolkit/enum';
 import type { Goal as GoalVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
@@ -18,12 +16,6 @@ export class CreateGoalDto extends PickType(GoalDto, [
   'difficulty',
   'status',
 ] as const) {
-  static importCreateVo(body: GoalVO.CreateGoalVo) {
-    throw new Error('Method not implemented.');
-  }
-  static importVo(body: GoalVO.CreateGoalVo) {
-    throw new Error('Method not implemented.');
-  }
   /** 父目标ID */
   @IsString()
   @IsOptional()
@@ -78,13 +70,6 @@ export class UpdateGoalDto extends IntersectionType(
     if (vo.endAt !== undefined) {
       this.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
     }
-  }
-
-  // VO → DTO (静态方法)
-  static importVo(vo: GoalVO.UpdateGoalVo): UpdateGoalDto {
-    const dto = new UpdateGoalDto();
-    dto.importVo(vo);
-    return dto;
   }
 
   /** 修改UpdateEntity */
