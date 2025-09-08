@@ -36,7 +36,7 @@ export class HabitController {
   async page(@Body() body: HabitVO.HabitPageFilterVo) {
     return this.controller.page(body);
   }
-
+ 
   @Put('/update-streak/:id')
   async updateStreak(@Param('id') id: string, @Body() body: { completed?: boolean }) {
     return this.controller.updateStreak(id, body);
@@ -52,7 +52,7 @@ export class HabitController {
     return this.controller.getHabitAnalytics(id);
   }
 
-  @Put('/done-batch')
+  @Put('/done/batch')
   async doneBatch(@Body() body: { includeIds?: string[] }) {
     return this.controller.doneBatch(body);
   }

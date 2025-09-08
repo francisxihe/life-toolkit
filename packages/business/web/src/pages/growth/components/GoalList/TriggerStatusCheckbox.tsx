@@ -33,7 +33,7 @@ export default function TriggerStatusCheckbox(props: {
           });
 
           if (children.length === 0) {
-            await GoalService.batchDoneGoal({
+            await GoalService.doneBatchGoal({
               includeIds: [goal.id],
             });
             await props.onChange();
@@ -44,7 +44,7 @@ export default function TriggerStatusCheckbox(props: {
             title: '完成目标',
             content: `完成目标后，将自动完成其所有子目标。`,
             onOk: async () => {
-              await GoalService.batchDoneGoal({
+              await GoalService.doneBatchGoal({
                 includeIds: [goal.id, ...children.map((child) => child.id)],
               });
               await props.onChange();

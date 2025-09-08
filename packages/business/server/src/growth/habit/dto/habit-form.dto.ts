@@ -90,6 +90,8 @@ export class UpdateHabitDto extends IntersectionType(
   }
 
   appendToUpdateEntity(entity: Habit) {
+    if (!entity.id) entity.id = this.id;
+    else if (entity.id !== this.id) throw new Error('ID不匹配');
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;

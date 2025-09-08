@@ -48,13 +48,14 @@ export class TodoController {
     }
     const updateDto = new UpdateTodoDto();
     updateDto.importUpdateVo(updateVo);
-    const dto = await this.todoService.update(id, updateDto);
+    const dto = await this.todoService.update(updateDto);
     return dto.exportVo();
   }
 
   @Get('/find/:id', { description: '根据ID查询待办详情' })
   async find(@Param('id') id: string): Promise<TodoVO.TodoVo> {
-    return (await this.todoService.find(id)).exportVo();
+    const dto = await this.todoService.find(id);
+    return dto.exportVo();
   }
 
   @Get('/find-by-filter', { description: '列表查询待办' })
@@ -80,24 +81,21 @@ export class TodoController {
     };
   }
 
-  @Put('/done-batch', { description: '批量完成待办' })
-  async doneBatch(@Body() body?: TodoVO.TodoFilterVo): Promise<any> {
-    return await this.todoService.doneBatch({ includeIds: body?.includeIds ?? [] });
+  @Put('/done-with-repeat/batch', { description: '批量完成待办' })
+  async doneWithRepeatBatch(@Body() body: TodoVO.TodoFilterVo): Promise<any> {
+    const filter = new TodoFilterDto();
+    filter.importListVo(body);
+    return await this.todoService.doneWithRepeatBatch(filter);
   }
 
-  @Put('/abandon/:id', { description: '废弃待办' })
-  async abandon(@Param('id') id: string): Promise<boolean> {
-    return await this.todoService.abandon(id);
+  @Put('/abandon-with-repeat/:id', { description: '废弃待办' })
+  async abandonWithRepeat(@Param('id') id: string): Promise<boolean> {
+    return await this.todoService.abandonWithRepeat(id);
   }
 
-  @Put('/restore/:id', { description: '恢复待办' })
-  async restore(@Param('id') id: string): Promise<boolean> {
-    return await this.todoService.restore(id);
-  }
-
-  @Put('/done/:id', { description: '完成待办' })
-  async done(@Param('id') id: string): Promise<boolean> {
-    return await this.todoService.done(id);
+  @Put('/restore-with-repeat/:id', { description: '恢复待办' })
+  async restoreWithRepeat(@Param('id') id: string): Promise<boolean> {
+    return await this.todoService.restoreWithRepeat(id);
   }
 
   @Get('/list-with-repeat', { description: '列表查询待办及其重复信息' })
@@ -105,6 +103,7 @@ export class TodoController {
     const filter = new TodoFilterDto();
     if (query) filter.importListVo(query);
     const list = await this.todoService.listWithRepeat(filter);
+    
     return {
       list: list.map((todo) => todo.exportVo()),
     };

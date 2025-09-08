@@ -13,4 +13,6 @@ export enum TodoSource {
   HABIT = "habit",
   /** 任务创建 */
   TASK = "task",
+  /** 重复 */
+  IS_REPEAT = "is-repeat",
 }

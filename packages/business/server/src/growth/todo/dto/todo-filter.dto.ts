@@ -3,6 +3,7 @@ import { TodoDto } from './todo-model.dto';
 import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
 import { TodoFilterVo, TodoPageFilterVo } from '@life-toolkit/vo';
 import { BaseFilterDto, importBaseVo } from '@business/common';
+import { TodoSource } from '@life-toolkit/enum';
 
 export class TodoFilterDto extends IntersectionType(
   BaseFilterDto,
@@ -21,6 +22,11 @@ export class TodoFilterDto extends IntersectionType(
   abandonedDateEnd?: string;
 
   taskIds?: string[];
+
+  todoWithRepeatList?: {
+    id: string;
+    source: TodoSource;
+  }[];
 
   importListVo(filterVo: TodoFilterVo) {
     importVo(filterVo, this);

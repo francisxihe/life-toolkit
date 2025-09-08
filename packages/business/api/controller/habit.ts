@@ -40,7 +40,7 @@ export default class HabitController {
   }
 
   static async doneBatch(body: { includeIds?: string[] }) {
-    return request<any[]>({ method: "put" })(`/habit/done-batch`, body);
+    return request<any[]>({ method: "put" })(`/habit/done/batch`, body);
   }
 
   static async abandon(id: string) {

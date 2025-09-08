@@ -1,5 +1,6 @@
 import { TodoVo, TodoModelVo } from './todo-model.vo';
 import { BaseFilterVo } from '../../common';
+import { TodoSource } from '@life-toolkit/enum';
 
 export type TodoPageVo = {
   list: TodoModelVo[];
@@ -25,6 +26,10 @@ export type TodoFilterVo = BaseFilterVo & {
   doneDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
+  todoWithRepeatList?: {
+    id: string;
+    source: TodoSource;
+  }[];
 };
 
 export type TodoPageFilterVo = TodoFilterVo & {

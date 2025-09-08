@@ -27,9 +27,9 @@ export default class TodoService {
    * @param params 任务ID列表
    * @returns 操作结果
    */
-  static async batchDoneTodo(params: OperationByIdListVo) {
+  static async doneBatchTodo(params: TodoFilterVo) {
     try {
-      const res = await TodoController.doneBatch(params);
+      const res = await TodoController.doneWithRepeatBatch(params);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -44,7 +44,7 @@ export default class TodoService {
    */
   static async restoreTodo(id: string) {
     try {
-      const res = await TodoController.restore(id);
+      const res = await TodoController.restoreWithRepeat(id);
       Message.success('操作成功');
       return res;
     } catch (error) {
@@ -59,7 +59,7 @@ export default class TodoService {
    */
   static async abandonTodo(id: string) {
     try {
-      const res = await TodoController.abandon(id);
+      const res = await TodoController.abandonWithRepeat(id);
       Message.success('操作成功');
       return res;
     } catch (error) {

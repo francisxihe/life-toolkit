@@ -11,4 +11,5 @@ export type TodoFormData = {
   planTimeRange?: [string, string];
   repeat?: TodoVo['repeat'];
   taskId?: string;
+  source?: TodoVo['source'];
 };

@@ -51,24 +51,9 @@ export class GoalService {
     });
   }
 
-  async update(id: string, updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
-    const goalUpdate = new Goal();
-    goalUpdate.id = id;
-    if (updateGoalDto.name !== undefined) goalUpdate.name = updateGoalDto.name;
-    if (updateGoalDto.description !== undefined) goalUpdate.description = updateGoalDto.description;
-    if (updateGoalDto.status !== undefined) goalUpdate.status = updateGoalDto.status;
-    if (updateGoalDto.importance !== undefined) goalUpdate.importance = updateGoalDto.importance;
-    if (updateGoalDto.difficulty !== undefined) goalUpdate.difficulty = updateGoalDto.difficulty;
-    if (updateGoalDto.type !== undefined) goalUpdate.type = updateGoalDto.type;
-    if (updateGoalDto.parentId !== undefined) {
-      goalUpdate.parent = updateGoalDto.parentId ? ({ id: updateGoalDto.parentId } as Goal) : undefined;
-    }
-    if (updateGoalDto.startAt !== undefined) goalUpdate.startAt = updateGoalDto.startAt;
-    if (updateGoalDto.endAt !== undefined) goalUpdate.endAt = updateGoalDto.endAt;
-    if (updateGoalDto.doneAt !== undefined) goalUpdate.doneAt = updateGoalDto.doneAt;
-    if (updateGoalDto.abandonedAt !== undefined) goalUpdate.abandonedAt = updateGoalDto.abandonedAt;
-
-    const entity = await this.goalRepository.update(goalUpdate);
+  async update(updateGoalDto: UpdateGoalDto): Promise<GoalDto> {
+    const updateEntity = updateGoalDto.exportUpdateEntity();
+    const entity = await this.goalRepository.update(updateEntity);
     const goalDto = new GoalDto();
     goalDto.importEntity(entity);
     return goalDto;

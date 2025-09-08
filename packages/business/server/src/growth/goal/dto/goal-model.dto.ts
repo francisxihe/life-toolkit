@@ -10,6 +10,9 @@ export class GoalDto extends IntersectionType(
   BaseModelDto,
   OmitType(Goal, ['children', 'parent', 'taskList'] as const)
 ) {
+  importVo(body: Partial<GoalVO.CreateGoalVo>) {
+    throw new Error('Method not implemented.');
+  }
   children?: GoalDto[];
   parent?: GoalDto;
   taskList?: TaskDto[];

@@ -1,25 +1,17 @@
-import { TodoRepeatRepository } from "./todo-repeat.repository";
+import { TodoRepeatRepository } from './todo-repeat.repository';
 import {
   CreateTodoRepeatDto,
   UpdateTodoRepeatDto,
   TodoRepeatPageFiltersDto,
   TodoRepeatListFilterDto,
   TodoRepeatDto,
-} from "./dto";
-import { TodoRepository } from "./todo.repository";
-import {
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoPageFilterDto,
-  TodoFilterDto,
-  TodoDto,
-} from "./dto";
-import { Todo } from "./todo.entity";
-import { TodoRepeat } from "./todo-repeat.entity";
-import { RepeatEndMode, Repeat as RepeatConfig } from "@life-toolkit/components-repeat/types";
-import { calculateNextDate } from "@life-toolkit/components-repeat/common/calculateNextDate";
-import { TodoStatus, TodoSource } from "@life-toolkit/enum";
-import dayjs from "dayjs";
+} from './dto';
+import { TodoFilterDto, TodoDto } from './dto';
+import { TodoRepeat } from './todo-repeat.entity';
+import { RepeatEndMode, Repeat as RepeatConfig } from '@life-toolkit/components-repeat/types';
+import { calculateNextDate } from '@life-toolkit/components-repeat/common/calculateNextDate';
+import { TodoStatus, TodoSource } from '@life-toolkit/enum';
+import dayjs from 'dayjs';
 
 export class TodoRepeatService {
   todoRepeatRepository: TodoRepeatRepository;
@@ -30,9 +22,7 @@ export class TodoRepeatService {
 
   // ====== 基础 CRUD ======
 
-  async create(
-    createTodoRepeatDto: CreateTodoRepeatDto
-  ): Promise<TodoRepeatDto> {
+  async create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
     const todoRepeatEntity: Partial<TodoRepeat> = {
       name: createTodoRepeatDto.name,
       description: createTodoRepeatDto.description,
@@ -59,30 +49,9 @@ export class TodoRepeatService {
   async delete(id: string): Promise<boolean> {
     return await this.todoRepeatRepository.delete(id);
   }
-  async update(
-    id: string,
-    updateTodoRepeatDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto> {
-    const todoRepeatUpdate: Partial<TodoRepeat> = {};
-    if (updateTodoRepeatDto.name !== undefined) todoRepeatUpdate.name = updateTodoRepeatDto.name;
-    if (updateTodoRepeatDto.description !== undefined) todoRepeatUpdate.description = updateTodoRepeatDto.description;
-    if (updateTodoRepeatDto.importance !== undefined) todoRepeatUpdate.importance = updateTodoRepeatDto.importance;
-    if (updateTodoRepeatDto.urgency !== undefined) todoRepeatUpdate.urgency = updateTodoRepeatDto.urgency;
-    if (updateTodoRepeatDto.tags !== undefined) todoRepeatUpdate.tags = updateTodoRepeatDto.tags;
-    if (updateTodoRepeatDto.status !== undefined) todoRepeatUpdate.status = updateTodoRepeatDto.status;
-    if (updateTodoRepeatDto.repeatStartDate !== undefined) todoRepeatUpdate.repeatStartDate = updateTodoRepeatDto.repeatStartDate;
-    if (updateTodoRepeatDto.currentDate !== undefined) todoRepeatUpdate.currentDate = updateTodoRepeatDto.currentDate;
-    if (updateTodoRepeatDto.repeatMode !== undefined) todoRepeatUpdate.repeatMode = updateTodoRepeatDto.repeatMode;
-    if (updateTodoRepeatDto.repeatConfig !== undefined) todoRepeatUpdate.repeatConfig = updateTodoRepeatDto.repeatConfig;
-    if (updateTodoRepeatDto.repeatEndMode !== undefined) todoRepeatUpdate.repeatEndMode = updateTodoRepeatDto.repeatEndMode;
-    if (updateTodoRepeatDto.repeatEndDate !== undefined) todoRepeatUpdate.repeatEndDate = updateTodoRepeatDto.repeatEndDate;
-    if (updateTodoRepeatDto.repeatTimes !== undefined) todoRepeatUpdate.repeatTimes = updateTodoRepeatDto.repeatTimes;
-    if (updateTodoRepeatDto.repeatedTimes !== undefined) todoRepeatUpdate.repeatedTimes = updateTodoRepeatDto.repeatedTimes;
-    if (updateTodoRepeatDto.abandonedAt !== undefined) todoRepeatUpdate.abandonedAt = updateTodoRepeatDto.abandonedAt;
-    
-    const todoRepeatUpdateEntity = new TodoRepeat();
-    todoRepeatUpdateEntity.id = id;
-    Object.assign(todoRepeatUpdateEntity, todoRepeatUpdate);
+
+  async update(id: string, updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
+    const todoRepeatUpdateEntity = updateTodoRepeatDto.exportUpdateEntity();
     const entity = await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
@@ -133,19 +102,12 @@ export class TodoRepeatService {
 
   // ====== 业务逻辑编排 ======
 
-  async batchUpdate(
-    includeIds: string[],
-    updateTodoRepeatDto: UpdateTodoRepeatDto
-  ): Promise<TodoRepeatDto[]> {
+  async batchUpdate(includeIds: string[], updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto[]> {
     const filterDto = new TodoRepeatListFilterDto();
     filterDto.includeIds = includeIds;
-    const result = await this.todoRepeatRepository.updateByFilter(
-      filterDto,
-      updateTodoRepeatDto as any
-    );
+    const result = await this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
     return result as any;
   }
-
 
   async done(id: string): Promise<any> {
     const todoRepeatUpdateEntity = new TodoRepeat();
@@ -175,37 +137,33 @@ export class TodoRepeatService {
     updateTodoRepeatDto.status = TodoStatus.DONE;
     const filterDto = new TodoRepeatListFilterDto();
     filterDto.includeIds = includeIds;
-    return this.todoRepeatRepository.updateByFilter(
-      filterDto,
-      updateTodoRepeatDto as any
-    );
+    return this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
   }
 
   /**
    * 基于 TodoListFilter 的日期范围，展开符合条件的重复待办为 TodoDto 列表
    * 不会落库，仅在内存中生成；若当日已有具体待办，则使用已存在的待办（并补充 repeat 信息）
    */
-  async generateTodosInRange(filter: TodoFilterDto): Promise<TodoDto[]> {
-    const rangeStart = filter.planDateStart
-      ? dayjs(filter.planDateStart)
-      : undefined;
-    const rangeEnd = filter.planDateEnd ? dayjs(filter.planDateEnd) : undefined;
+  async generateTodoByRepeat(todoFilter: TodoFilterDto): Promise<TodoDto[]> {
+    if (todoFilter.status !== TodoStatus.TODO) {
+      return [];
+    }
+    const rangeStart = todoFilter.planDateStart ? dayjs(todoFilter.planDateStart) : undefined;
+    const rangeEnd = todoFilter.planDateEnd ? dayjs(todoFilter.planDateEnd) : undefined;
 
     const repeatFilter = new TodoRepeatListFilterDto();
-    repeatFilter.currentDateStart = filter.planDateStart as any;
-    repeatFilter.currentDateEnd = filter.planDateEnd as any;
+    repeatFilter.currentDateStart = todoFilter.planDateStart;
+    repeatFilter.currentDateEnd = todoFilter.planDateEnd;
 
-    const repeatEntities = await this.todoRepeatRepository.findByFilter(repeatFilter);
-    const results: TodoDto[] = [];
+    const repeatEntityList = await this.todoRepeatRepository.findByFilter(repeatFilter);
+    const results: TodoDto[] = []
 
-    for (const repeatEntity of repeatEntities) {
+    repeatEntityList.forEach((repeatEntity) => {
       const repeat = new TodoRepeatDto();
       repeat.importEntity(repeatEntity);
       // 结束条件预处理
       const endMode = repeat.repeatEndMode as RepeatEndMode | undefined;
-      const endDate = repeat.repeatEndDate
-        ? dayjs(repeat.repeatEndDate)
-        : undefined;
+      const endDate = repeat.repeatEndDate ? dayjs(repeat.repeatEndDate) : undefined;
       const maxTimes = repeat.repeatTimes ?? undefined;
       const alreadyTimes = repeat.repeatedTimes ?? 0;
 
@@ -216,9 +174,7 @@ export class TodoRepeatService {
       } as RepeatConfig;
 
       const baseDate = repeat.currentDate ?? repeat.repeatStartDate;
-      let cursor = baseDate
-        ? dayjs(baseDate).subtract(1, "day")
-        : dayjs(rangeStart).subtract(1, "day");
+      let cursor = baseDate ? dayjs(baseDate).subtract(1, 'day') : dayjs(rangeStart).subtract(1, 'day');
       let timesCount = alreadyTimes;
 
       while (true) {
@@ -232,11 +188,7 @@ export class TodoRepeatService {
         }
 
         // 终止日期限制
-        if (
-          endMode === RepeatEndMode.TO_DATE &&
-          endDate &&
-          next.isAfter(endDate, "day")
-        ) {
+        if (endMode === RepeatEndMode.TO_DATE && endDate && next.isAfter(endDate, 'day')) {
           break;
         }
 
@@ -244,13 +196,14 @@ export class TodoRepeatService {
         cursor = next;
 
         // 跳过范围外
-        if (next.isBefore(rangeStart, "day")) continue;
-        if (next.isAfter(rangeEnd, "day")) break;
+        if (rangeStart && next.isBefore(rangeStart, 'day')) continue;
+        if (rangeEnd && next.isAfter(rangeEnd, 'day')) break;
 
         const todoDto = this.generateTodo(repeat);
+        
         results.push(todoDto);
       }
-    }
+    });
 
     return results;
   }
@@ -273,8 +226,8 @@ export class TodoRepeatService {
       updatedAt: new Date(),
       repeat: todoRepeat,
       originalRepeatId: todoRepeat.id,
-      source: TodoSource.REPEAT,
-      status: todoRepeat.status ?? TodoStatus.TODO,
+      source: TodoSource.IS_REPEAT,
+      status: TodoStatus.TODO,
     });
     return todoDto;
   }

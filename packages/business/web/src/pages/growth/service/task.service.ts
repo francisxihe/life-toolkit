@@ -18,7 +18,7 @@ export default class TaskService {
     }
   }
 
-  static async batchDoneTask(params: OperationByIdListVo) {
+  static async doneBatchTask(params: OperationByIdListVo) {
     try {
       // Task 模块暂时没有批量操作方法，需要逐个处理
       const results = await Promise.all(

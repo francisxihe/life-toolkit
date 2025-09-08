@@ -45,6 +45,7 @@ export class TodoDto extends IntersectionType(BaseModelDto, OmitType(Todo, ['tas
       doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       task: this.task ? this.task.exportVo() : undefined,
+      source: this.source,
     };
   }
 

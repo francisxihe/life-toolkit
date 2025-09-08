@@ -11,15 +11,15 @@ function TaskList(props: {
 }) {
   return (
     <div className="w-full mt-[-8px]">
-      {props.taskList.map((todo) => (
+      {props.taskList.map((task) => (
         <TaskItem
-          key={todo.id}
-          todo={todo}
+          key={task.id}
+          task={task}
           onClickTask={props.onClickTask}
           refreshTaskList={props.refreshTaskList}
           TriggerCheckbox={
             <TriggerStatusCheckbox
-              todo={todo}
+              todo={task}
               type="todo"
               onChange={props.refreshTaskList}
             />

@@ -70,7 +70,7 @@ export default class HabitService {
     }
   }
 
-  static async batchDoneHabit(params: OperationByIdListVo) {
+  static async doneBatchHabit(params: OperationByIdListVo) {
     try {
       const res = await HabitController.doneBatch(params);
       Message.success('操作成功');

@@ -21,8 +21,10 @@ export class GoalController {
 
   @Put('/update/:id', { description: '更新目标' })
   async update(@Param('id') id: string, @Body() updateGoalVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalVo> {
-    const updateDto = UpdateGoalDto.importVo(updateGoalVo);
-    const dto = await this.goalService.update(id, updateDto);
+    const updateDto = new UpdateGoalDto();
+    updateDto.id = id;
+    updateDto.importVo(updateGoalVo);
+    const dto = await this.goalService.update(updateDto);
     return dto.exportVo();
   }
 

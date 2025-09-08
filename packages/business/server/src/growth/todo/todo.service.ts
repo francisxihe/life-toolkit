@@ -29,23 +29,8 @@ export class TodoService {
     return await this.todoRepository.delete(id);
   }
 
-  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
-    const todoUpdate = new Todo();
-    todoUpdate.id = id;
-    if (updateTodoDto.name !== undefined) todoUpdate.name = updateTodoDto.name;
-    if (updateTodoDto.description !== undefined) todoUpdate.description = updateTodoDto.description;
-    if (updateTodoDto.status !== undefined) todoUpdate.status = updateTodoDto.status;
-    if (updateTodoDto.planDate !== undefined) todoUpdate.planDate = updateTodoDto.planDate;
-    if (updateTodoDto.planStartAt !== undefined) todoUpdate.planStartAt = updateTodoDto.planStartAt;
-    if (updateTodoDto.planEndAt !== undefined) todoUpdate.planEndAt = updateTodoDto.planEndAt;
-    if (updateTodoDto.importance !== undefined) todoUpdate.importance = updateTodoDto.importance;
-    if (updateTodoDto.urgency !== undefined) todoUpdate.urgency = updateTodoDto.urgency;
-    if (updateTodoDto.tags !== undefined) todoUpdate.tags = updateTodoDto.tags;
-    if (updateTodoDto.doneAt !== undefined) todoUpdate.doneAt = updateTodoDto.doneAt;
-    if (updateTodoDto.abandonedAt !== undefined) todoUpdate.abandonedAt = updateTodoDto.abandonedAt;
-    if (updateTodoDto.taskId !== undefined) todoUpdate.taskId = updateTodoDto.taskId;
-
-    const entity = await this.todoRepository.update(todoUpdate);
+  async update(updateTodoDto: UpdateTodoDto): Promise<TodoDto> {
+    const entity = await this.todoRepository.update(updateTodoDto.exportUpdateEntity());
     const todoDto = new TodoDto();
     todoDto.importEntity(entity);
     return todoDto;
@@ -100,7 +85,7 @@ export class TodoService {
       todoDto.importEntity(entity);
       return todoDto;
     });
-    const todoRepeatDtoList = await this.todoRepeatService.generateTodosInRange(filter);
+    const todoRepeatDtoList = await this.todoRepeatService.generateTodoByRepeat(filter);
 
     // 合并并去重：优先保留普通待办；
     const map = new Map<string, TodoDto>();
@@ -138,10 +123,7 @@ export class TodoService {
     await this.todoRepository.softDeleteByFilter(filter);
   }
 
-  async doneBatch(params: { includeIds: string[] }): Promise<any> {
-    if (!params?.includeIds?.length) return;
-    const filter = new TodoFilterDto();
-    filter.importListVo({ includeIds: params.includeIds });
+  async doneWithRepeatBatch(filter: TodoFilterDto): Promise<any> {
     const todoUpdate = new Todo();
     todoUpdate.status = TodoStatus.DONE;
     todoUpdate.doneAt = new Date();
@@ -150,25 +132,20 @@ export class TodoService {
     return result;
   }
 
-  async done(id: string): Promise<any> {
+  async abandonWithRepeat(id: string): Promise<any> {
     const updateTodoDto = new UpdateTodoDto();
-    updateTodoDto.status = TodoStatus.DONE;
-    updateTodoDto.doneAt = new Date();
-    await this.update(id, updateTodoDto);
-  }
-
-  async abandon(id: string): Promise<any> {
-    const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.id = id;
     updateTodoDto.status = TodoStatus.ABANDONED;
     updateTodoDto.abandonedAt = new Date();
-    await this.update(id, updateTodoDto);
+    await this.update(updateTodoDto);
   }
 
-  async restore(id: string): Promise<any> {
+  async restoreWithRepeat(id: string): Promise<any> {
     const updateTodoDto = new UpdateTodoDto();
+    updateTodoDto.id = id;
     updateTodoDto.status = TodoStatus.TODO;
     updateTodoDto.doneAt = undefined;
     updateTodoDto.abandonedAt = undefined;
-    await this.update(id, updateTodoDto);
+    await this.update(updateTodoDto);
   }
 }

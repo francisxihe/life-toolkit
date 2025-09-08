@@ -7,41 +7,29 @@ import IconSelector from '../../components/IconSelector';
 import { SiteIcon } from '@life-toolkit/components-web-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { TaskService } from '../../service';
-import { TaskVo } from '@life-toolkit/vo/growth';
+import { TaskModelVo } from '@life-toolkit/vo/growth';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
 
 const { Paragraph } = Typography;
 
 export type TaskItemProps = {
-  todo: {
-    id: TaskVo['id'];
-    name: TaskVo['name'];
-    description?: TaskVo['description'];
-    status?: TaskVo['status'];
-    tags?: TaskVo['tags'];
-    importance?: TaskVo['importance'];
-    urgency?: TaskVo['urgency'];
-    startAt?: TaskVo['startAt'];
-    endAt?: TaskVo['endAt'];
-    doneAt?: TaskVo['doneAt'];
-    abandonedAt?: TaskVo['abandonedAt'];
-  };
+  task: TaskModelVo;
   onClickTask: (id: string) => Promise<void>;
   refreshTaskList: () => Promise<void>;
   TriggerCheckbox: React.ReactNode;
 };
 
 function TaskItem(props: TaskItemProps) {
-  const { todo } = props;
+  const { task } = props;
   return (
-    <div className={'w-full pl-4 py-2 bg-bg-3'} key={todo.id}>
+    <div className={'w-full pl-4 py-2 bg-bg-3'} key={task.id}>
       <FlexibleContainer direction="vertical" className="items-start">
         <FlexibleContainer.Fixed className="flex items-start ">
           {props.TriggerCheckbox}
         </FlexibleContainer.Fixed>
         <FlexibleContainer.Shrink
-          onClick={() => props.onClickTask(todo.id)}
+          onClick={() => props.onClickTask(task.id)}
           className={clsx([
             'cursor-pointer border-b',
             'after:content-[""] after:block after:h-1 after:w-full',
@@ -50,7 +38,7 @@ function TaskItem(props: TaskItemProps) {
           <div
             className={clsx(['flex items-center justify-between', 'leading-8'])}
           >
-            <span className="text-text-1">{todo.name}</span>
+            <span className="text-text-1">{task.name}</span>
 
             <div className="h-8 flex items-center">
               <Popover
@@ -60,7 +48,7 @@ function TaskItem(props: TaskItemProps) {
                     <div
                       className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
                       onClick={() => {
-                        TaskService.abandonTask(todo.id);
+                        TaskService.abandonTask(task.id);
                         props.refreshTaskList();
                       }}
                     >
@@ -69,7 +57,7 @@ function TaskItem(props: TaskItemProps) {
                     <div
                       className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
                       onClick={() => {
-                        TaskService.deleteTask(todo.id);
+                        TaskService.deleteTask(task.id);
                         props.refreshTaskList();
                       }}
                     >
@@ -91,39 +79,39 @@ function TaskItem(props: TaskItemProps) {
               </Popover>
             </div>
           </div>
-          {todo.description && (
+          {task.description && (
             <Paragraph
               className="text-body-1 !mb-0.5"
               style={{
                 textDecoration:
-                  todo.status === 'done' ? 'line-through' : 'none',
+                  task.status === 'done' ? 'line-through' : 'none',
                 color: 'var(--color-text-3)',
               }}
             >
-              {todo.description}
+              {task.description}
             </Paragraph>
           )}
           <div className={clsx(['flex items-center gap-2', 'text-body-2'])}>
-            {todo.importance && (
+            {task.importance && (
               <IconSelector
                 map={IMPORTANCE_MAP}
                 iconName="priority-0"
-                value={todo.importance}
+                value={task.importance}
                 readonly
               />
             )}
 
-            {todo.urgency && (
+            {task.urgency && (
               <IconSelector
                 map={URGENCY_MAP}
                 iconName="urgency"
-                value={todo.urgency}
+                value={task.urgency}
                 readonly
               />
             )}
-            {todo.tags?.length > 0 && (
+            {task.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1">
-                {todo.tags.map((tag, index) => (
+                {task.tags.map((tag, index) => (
                   <Tag key={index} color="arcoblue">
                     {tag}
                   </Tag>

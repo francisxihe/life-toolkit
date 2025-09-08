@@ -65,7 +65,7 @@ export class HabitController {
     return await this.habitService.getHabitAnalytics(id);
   }
 
-  @Put('/done-batch', { description: '批量完成习惯' })
+  @Put('/done/batch', { description: '批量完成习惯' })
   async doneBatch(@Body() body?: { includeIds?: string[] }): Promise<any[]> {
     return await Promise.all((body?.includeIds ?? []).map((id: string) => this.habitService.completeHabit(id)));
   }

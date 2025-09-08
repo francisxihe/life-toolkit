@@ -17,5 +17,5 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": ["node_modules"]
+  "include": ["apps/**/*", "packages/**/*"]
 }
