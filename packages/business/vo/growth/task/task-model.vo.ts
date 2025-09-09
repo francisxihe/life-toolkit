@@ -7,23 +7,24 @@ import { TaskStatus } from '@life-toolkit/enum';
 export type TaskWithoutRelationsVo = {
   name: string;
   status: TaskStatus;
+  estimateTime?: string;
+  trackTimeIds: string[];
   description?: string;
   importance?: number;
   urgency?: number;
-  startAt?: string;
-  endAt?: string;
+  tags: string[];
   doneAt?: string;
   abandonedAt?: string;
-  estimateTime?: string;
-  goalId?: string;
+  startAt?: string;
+  endAt?: string;
   parentId?: string;
-  tags?: string[];
+  goalId?: string;
 } & BaseEntityVo;
 
 export type TaskVo = TaskWithoutRelationsVo & {
-  children: TaskVo[];
+  children?: TaskVo[];
   parent?: TaskVo;
-  trackTimeList?: TrackTimeVo[];
   goal?: GoalVo;
+  trackTimeList?: TrackTimeVo[];
   todoList?: TodoVo[];
 };

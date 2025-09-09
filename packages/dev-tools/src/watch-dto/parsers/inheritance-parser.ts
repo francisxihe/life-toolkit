@@ -89,7 +89,7 @@ export function convertIntersectionTypeToVo(type: string): string {
     const match = type.match(/PartialType\s*\(\s*PickType\(([^,]+),\s*\[([^\]]+)\]/);
     if (match) {
       const [, sourceClass, fieldsStr] = match;
-      const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
+      const sourceVoName = sourceClass.trim().replace('Dto', 'Vo');
       const fieldList = fieldsStr
         .split(',')
         .map(
@@ -109,7 +109,7 @@ export function convertIntersectionTypeToVo(type: string): string {
     const match = type.match(/PickType\(([^,]+),\s*\[([^\]]+)\]/);
     if (match) {
       const [, sourceClass, fieldsStr] = match;
-      const sourceVoName = sourceClass.trim().replace('Dto', 'WithoutRelationsVo');
+      const sourceVoName = sourceClass.trim().replace('Dto', 'Vo');
       const fieldList = fieldsStr
         .split(',')
         .map(

@@ -2,8 +2,8 @@ import { TodoRepeatRepository } from './todo-repeat.repository';
 import {
   CreateTodoRepeatDto,
   UpdateTodoRepeatDto,
-  TodoRepeatPageFiltersDto,
-  TodoRepeatListFilterDto,
+  TodoRepeatPageFilterDto,
+  TodoRepeatFilterDto,
   TodoRepeatDto,
 } from './dto';
 import { TodoFilterDto, TodoDto } from './dto';
@@ -65,7 +65,7 @@ export class TodoRepeatService {
     return todoRepeatDto;
   }
 
-  async findByFilter(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
+  async findByFilter(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
     const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoRepeatDto = new TodoRepeatDto();
@@ -74,7 +74,7 @@ export class TodoRepeatService {
     });
   }
 
-  async list(filter: TodoRepeatListFilterDto): Promise<TodoRepeatDto[]> {
+  async list(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
     const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoRepeatDto = new TodoRepeatDto();
@@ -83,7 +83,7 @@ export class TodoRepeatService {
     });
   }
 
-  async page(filter: TodoRepeatPageFiltersDto): Promise<{
+  async page(filter: TodoRepeatPageFilterDto): Promise<{
     list: TodoRepeatDto[];
     total: number;
     pageNum: number;
@@ -103,7 +103,7 @@ export class TodoRepeatService {
   // ====== 业务逻辑编排 ======
 
   async batchUpdate(includeIds: string[], updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto[]> {
-    const filterDto = new TodoRepeatListFilterDto();
+    const filterDto = new TodoRepeatFilterDto();
     filterDto.includeIds = includeIds;
     const result = await this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
     return result as any;
@@ -135,7 +135,7 @@ export class TodoRepeatService {
   doneBatch(includeIds: string[]): Promise<any> {
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.status = TodoStatus.DONE;
-    const filterDto = new TodoRepeatListFilterDto();
+    const filterDto = new TodoRepeatFilterDto();
     filterDto.includeIds = includeIds;
     return this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
   }
@@ -151,7 +151,7 @@ export class TodoRepeatService {
     const rangeStart = todoFilter.planDateStart ? dayjs(todoFilter.planDateStart) : undefined;
     const rangeEnd = todoFilter.planDateEnd ? dayjs(todoFilter.planDateEnd) : undefined;
 
-    const repeatFilter = new TodoRepeatListFilterDto();
+    const repeatFilter = new TodoRepeatFilterDto();
     repeatFilter.currentDateStart = todoFilter.planDateStart;
     repeatFilter.currentDateEnd = todoFilter.planDateEnd;
 

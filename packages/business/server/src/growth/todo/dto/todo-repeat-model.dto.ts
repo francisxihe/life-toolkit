@@ -5,9 +5,9 @@ import { TodoRepeat, TodoRepeatWithoutRelations } from '../todo-repeat.entity';
 import { Todo } from '../../todo/todo.entity';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 
-export class TodoRepeatModelDto extends TodoRepeatWithoutRelations {}
+export class TodoRepeatWithoutRelationsDto extends TodoRepeatWithoutRelations {}
 
-export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatModelDto) {
+export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWithoutRelationsDto) {
   todos?: Todo[];
 
   importEntity(entity: TodoRepeat) {
@@ -53,8 +53,8 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatMode
       planDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
 
       repeat: {
-        repeatStartDate: this.repeatStartDate ? dayjs(this.repeatStartDate).format('YYYY-MM-DD') : undefined,
         currentDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
+        repeatStartDate: this.repeatStartDate ? dayjs(this.repeatStartDate).format('YYYY-MM-DD') : undefined,
         repeatMode: this.repeatMode,
         repeatConfig: this.repeatConfig,
         repeatEndMode: this.repeatEndMode,

@@ -29,14 +29,28 @@ export function convertDtoTypeToVoType(dtoType: string): string {
 
   let voType: string;
 
+  // 处理索引访问类型，如 CreateTodoRepeatDto['repeatMode']
+  if (baseType.includes('[') && baseType.includes(']')) {
+    const indexAccessMatch = baseType.match(/^(.+?)\[(.+)\]$/);
+    if (indexAccessMatch) {
+      const [, objectType, propertyKey] = indexAccessMatch;
+      const voObjectType = convertDtoTypeToVoType(objectType);
+      voType = `${voObjectType}[${propertyKey}]`;
+    } else {
+      voType = baseType;
+    }
+  }
   // Entity 类型转换为 VO 类型
-  if (['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].includes(baseType)) {
+  else if (['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].includes(baseType)) {
     voType = `${baseType}Vo`;
   } else if (baseType.endsWith('Dto')) {
     // DTO 类型转换为 VO 类型
     voType = baseType.replace('Dto', 'Vo');
   } else if (baseType.endsWith('Entity')) {
     voType = baseType.replace('Entity', 'Vo');
+  } else if (baseType === 'simple-array') {
+    // TypeORM simple-array 类型转换为 string[]
+    voType = 'string[]';
   } else {
     // 其他类型保持不变或映射
     voType = mapTsTypeToVoType(baseType);
@@ -53,14 +67,23 @@ export function convertDtoFieldToVo(field: DtoField): string | null {
 
   let voType = convertDtoTypeToVoType(field.type);
   
-  // 处理复杂对象类型，确保语法正确
-  if (voType.startsWith('{')) {
+  // 处理数组类型
+  if (field.isArray && !voType.endsWith('[]')) {
+    voType = `${voType}[]`;
+  }
+  
+  // 处理复杂对象类型，确保语法正确并转换内部的 DTO 类型
+  if (voType.includes('{')) {
+    // 转换对象类型中的 DTO 引用
+    voType = voType.replace(/(\w+Dto)\[/g, (match, dtoType) => {
+      return convertDtoTypeToVoType(dtoType) + '[';
+    });
+    
     // 清理和格式化对象类型
     voType = voType
       .replace(/\s+/g, ' ')  // 压缩空格
       .replace(/{\s*;/g, '{ ')   // 移除开头的分号
       .replace(/;\s*}/g, ' }')   // 确保分号和大括号格式正确
-      .replace(/}\s*\[\]/g, '}[]')  // 确保数组标记格式正确
       .trim();
     
     // 修复常见的语法问题

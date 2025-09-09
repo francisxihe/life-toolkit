@@ -5,7 +5,6 @@ import { Goal } from '../goal/goal.entity';
 import { Todo } from '../todo/todo.entity';
 import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne, OneToMany } from 'typeorm';
 import { IsEnum, IsOptional, IsString, IsNumber, IsArray } from 'class-validator';
-import { Type } from 'class-transformer';
 
 export class TaskWithoutRelations extends BaseEntity {
   /** 任务名称 */
@@ -47,14 +46,12 @@ export class TaskWithoutRelations extends BaseEntity {
   @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
-  @Type(() => Number)
   importance?: number;
 
   /** 任务紧急程度 */
   @Column('int', { nullable: true })
   @IsNumber()
   @IsOptional()
-  @Type(() => Number)
   urgency?: number;
 
   /** 任务标签 */
@@ -82,6 +79,18 @@ export class TaskWithoutRelations extends BaseEntity {
   /** 计划任务结束时间 */
   @Column('datetime', { nullable: true })
   endAt?: Date;
+
+  /** 父ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  parentId?: string;
+
+  /** 目标ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  goalId?: string;
 }
 
 @Entity('task')
@@ -108,10 +117,4 @@ export class Task extends TaskWithoutRelations {
   @ManyToOne(() => Goal, (goal) => goal.taskList)
   @IsOptional()
   goal?: Goal;
-
-  /** 目标ID */
-  @Column('varchar', { nullable: true })
-  @IsString()
-  @IsOptional()
-  goalId?: string;
 }

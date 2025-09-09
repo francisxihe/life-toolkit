@@ -58,7 +58,15 @@ export function generatePageFilterVo(dtoClass: DtoClass): string {
   const lines: string[] = [];
 
   // 生成基础 Filter VO 名称
-  const baseName = dtoClass.name.replace('PageDto', '').replace('Dto', '').replace('Page', '').replace('Filter', '');
+  const baseName = dtoClass.name
+    .replace('PageFilterDto', '')
+    .replace('FiltersDto', '')
+    .replace('FilterDto', '')
+    .replace('PageDto', '')
+    .replace('Dto', '')
+    .replace('Page', '')
+    .replace('Filters', '')
+    .replace('Filter', '');
   const baseFilterVoName = `${baseName}FilterVo`;
   const pageFilterVoName = `${baseName}PageFilterVo`;
 

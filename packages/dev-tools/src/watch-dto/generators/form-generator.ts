@@ -1,5 +1,5 @@
 import { DtoClass } from '../types/index';
-import { parseInheritanceInfo } from '../parsers/inheritance-parser';
+import { parseInheritanceInfo, convertIntersectionTypeToVo } from '../parsers/inheritance-parser';
 import { filterNonRelationFields } from '../utils/field-utils';
 import { convertDtoFieldToVo } from '../utils/type-mapping';
 
@@ -28,7 +28,7 @@ export function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'):
 
     if (inheritanceInfo.type === 'pick') {
       // PickType: Pick<SourceVo, 'field1' | 'field2'>
-      const sourceVoName = inheritanceInfo.info.sourceClass.replace('Dto', 'WithoutRelationsVo');
+      const sourceVoName = inheritanceInfo.info.sourceClass.replace('Dto', 'Vo');
       const fieldList = inheritanceInfo.info.fields.map((f: string) => `'${f}'`).join(' | ');
 
       // 添加直接定义的字段
@@ -45,6 +45,27 @@ export function generateFormVo(dtoClass: DtoClass, prefix: 'Create' | 'Update'):
         lines.push('};');
       } else {
         lines.push(`export type ${voName} = Pick<${sourceVoName}, ${fieldList}>;`);
+      }
+    } else if (inheritanceInfo.type === 'intersection') {
+      // IntersectionType: 处理复杂的交集类型
+      const voTypes = inheritanceInfo.info.types.map((type: string) => convertIntersectionTypeToVo(type));
+
+      // 添加直接定义的字段
+      const customFields = filterNonRelationFields(dtoClass.fields).filter(
+        (field) => !field.name.includes('(') && !field.name.includes('import')
+      );
+
+      if (customFields.length > 0) {
+        lines.push(`export type ${voName} = {`);
+        for (const field of customFields) {
+          const voField = convertDtoFieldToVo(field);
+          if (voField) {
+            lines.push(`  ${voField}`);
+          }
+        }
+        lines.push(`} & ${voTypes.join(' & ')};`);
+      } else {
+        lines.push(`export type ${voName} = ${voTypes.join(' & ')};`);
       }
     } else {
       // 简单类型，直接基于字段生成

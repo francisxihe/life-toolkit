@@ -1,12 +1,12 @@
 import { Goal } from '../goal.entity';
 import { PartialType, PickType, IntersectionType } from '@life-toolkit/mapped-types';
 import { IsOptional, IsString } from 'class-validator';
-import { GoalDto } from './goal-model.dto';
+import { GoalWithoutRelationsDto, GoalDto } from './goal-model.dto';
 import type { Goal as GoalVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
 // 创建DTO - 选择需要的字段
-export class CreateGoalDto extends PickType(GoalDto, [
+export class CreateGoalDto extends PickType(GoalWithoutRelationsDto, [
   'name',
   'type',
   'startAt',
@@ -15,12 +15,8 @@ export class CreateGoalDto extends PickType(GoalDto, [
   'importance',
   'difficulty',
   'status',
+  'parentId',
 ] as const) {
-  /** 父目标ID */
-  @IsString()
-  @IsOptional()
-  parentId?: string;
-
   // VO → DTO
   importCreateVo(vo: GoalVO.CreateGoalVo) {
     this.name = vo.name;

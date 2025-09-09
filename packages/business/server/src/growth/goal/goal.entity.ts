@@ -3,6 +3,7 @@ import { BaseEntity } from '@business/common';
 import { GoalType, GoalStatus, Importance, Difficulty } from '@life-toolkit/enum';
 import { Task } from '../task';
 import { Entity, Column, TreeChildren, TreeParent, Tree, OneToMany } from 'typeorm';
+import { IsEnum, IsOptional, IsString, IsNumber, IsArray } from 'class-validator';
 
 export class GoalWithoutRelations extends BaseEntity {
   /** 目标名称 */
@@ -59,6 +60,12 @@ export class GoalWithoutRelations extends BaseEntity {
   /** 放弃目标时间 */
   @Column('datetime', { nullable: true })
   abandonedAt?: Date;
+
+  /** 父ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  parentId?: string;
 }
 
 @Entity('goal')

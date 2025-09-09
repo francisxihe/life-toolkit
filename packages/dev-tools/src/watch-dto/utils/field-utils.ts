@@ -16,8 +16,6 @@ export function checkIsRelationField(field: DtoField): boolean {
     // VO 类型
     field.type.endsWith('Vo') ||
     field.type.endsWith('Vo[]') ||
-    // 内联对象类型
-    (field.type.includes('{') && field.type.includes('}')) ||
     // 复杂关系类型
     ['TodoRepeat', 'TaskRepeat', 'GoalRepeat', 'HabitRepeat'].includes(field.type) ||
     // any 类型

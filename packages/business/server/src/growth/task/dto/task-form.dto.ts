@@ -16,12 +16,8 @@ export class CreateTaskDto extends PickType(TaskDto, [
   'goalId',
   'startAt',
   'endAt',
+  'parentId',
 ] as const) {
-  /** 父任务ID */
-  @IsString()
-  @IsOptional()
-  parentId?: string;
-
   /** 跟踪时间ID列表 */
   @IsArray()
   @IsString({ each: true })

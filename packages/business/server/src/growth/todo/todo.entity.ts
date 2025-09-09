@@ -81,6 +81,24 @@ export class TodoWithoutRelations extends BaseEntity {
   })
   @IsOptional()
   source?: TodoSource;
+
+  /** 任务ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  taskId?: string;
+
+  /** 重复配置ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  repeatId?: string;
+
+  /** 习惯ID */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  habitId?: string;
 }
 
 @Entity('todo')
@@ -89,31 +107,13 @@ export class Todo extends TodoWithoutRelations {
   @ManyToOne(() => Task, (task) => task.todoList)
   task?: Task;
 
-  /** 任务ID */
-  @Column('varchar', { nullable: true })
-  @IsString()
-  @IsOptional()
-  taskId?: string;
-
   /** 重复配置 */
   @ManyToOne(() => TodoRepeat, (repeat) => repeat.todos, { nullable: true })
   @JoinColumn({ name: 'repeat_id' })
   repeat?: TodoRepeat;
 
-  /** 重复配置ID */
-  @Column('varchar', { nullable: true })
-  @IsString()
-  @IsOptional()
-  repeatId?: string;
-
   /** 关联的习惯 */
   @ManyToOne('Habit', 'todos', { nullable: true })
   @JoinColumn({ name: 'habit_id' })
   habit?: any;
-
-  /** 习惯ID */
-  @Column('varchar', { nullable: true })
-  @IsString()
-  @IsOptional()
-  habitId?: string;
 }

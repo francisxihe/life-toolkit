@@ -49,8 +49,7 @@ export function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): 
         enumSet.add('Urgency');
       } else if (baseName === 'Todo') {
         enumSet.add('TodoStatus');
-        enumSet.add('Importance');
-        enumSet.add('Urgency');
+        enumSet.add('TodoSource');
       } else if (baseName === 'Habit') {
         enumSet.add('Importance');
         enumSet.add('Difficulty');

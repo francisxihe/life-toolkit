@@ -1,124 +1,83 @@
-import { DtoField } from '../types/index';
+import { DtoField } from "../types";
+import { dtoAstParser } from "./ast-field-parser";
 
 /**
- * 解析类体中的字段定义
+ * 解析类的字段定义 - 使用 AST 解析器
  */
-export function parseClassFields(classBody: string): DtoField[] {
+export function parseClassFields(classBody: string, className?: string): DtoField[] {
+  try {
+    // 如果传入的是完整的类定义，直接使用
+    if (classBody.includes('export class')) {
+      return dtoAstParser.parseClassFields(classBody, className);
+    } else {
+      // 构造完整的类定义用于 AST 解析
+      const fullClassContent = className 
+        ? `export class ${className} {\n${classBody}\n}`
+        : `export class TempClass {\n${classBody}\n}`;
+      
+      return dtoAstParser.parseClassFields(fullClassContent, className || 'TempClass');
+    }
+  } catch (error) {
+    console.warn("AST解析字段失败，回退到正则表达式:", error);
+    return parseClassFieldsRegex(classBody);
+  }
+}
+
+/**
+ * 回退的正则表达式解析方法
+ */
+function parseClassFieldsRegex(classBody: string): DtoField[] {
   const fields: DtoField[] = [];
 
-  // 移除方法定义和复杂的代码块
+  // Remove decorators and comments
   let cleanedBody = classBody
-    .replace(/\w+\([^)]*\)\s*{[^}]*}/g, '') // 移除方法
-    .replace(/\/\*[\s\S]*?\*\//g, '') // 移除块注释
-    .replace(/\/\/.*$/gm, ''); // 移除行注释
+    .replace(/\/\*\*[\s\S]*?\*\//g, '') // Remove JSDoc
+    .replace(/\/\/.*$/gm, '') // Remove line comments
+    .replace(/@[^(\n]*(?:\([^)]*\))?\s*/g, '') // Remove decorators
+    .replace(/\w+\([^)]*\)\s*{[^}]*}/g, ''); // Remove methods
 
-  // 使用更精确的正则匹配字段定义
-  // 匹配：可选装饰器 + 字段名 + 可选问号 + 冒号 + 类型 + 分号
-  const lines = cleanedBody.split('\n');
-  let currentField: Partial<DtoField> | null = null;
-  
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    
-    // 跳过空行和注释
-    if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
-    
-    // 检查是否是装饰器行
-    if (line.startsWith('@')) {
-      // 如果已有字段在处理，先保存装饰器信息
-      if (!currentField) {
-        currentField = { decorators: [] };
-      }
-      currentField.decorators = currentField.decorators || [];
-      currentField.decorators.push(line);
-      continue;
-    }
-    
-    // 匹配字段定义：fieldName?: Type;
-    const fieldMatch = line.match(/^\s*(\w+)(\??):\s*([^;]+);?\s*$/);
-    if (fieldMatch) {
-      const [, fieldName, optional, fieldType] = fieldMatch;
-      
-      // 解析类型信息
-      const { type, isArray } = parseFieldType(fieldType.trim());
-      
-      fields.push({
-        name: fieldName.trim(),
-        type,
-        optional: optional === '?',
-        isArray,
-        decorators: currentField?.decorators || [],
-      });
-      
-      // 重置当前字段
-      currentField = null;
-    } else {
-      // 检查是否是多行对象类型的开始
-      const multiLineFieldMatch = line.match(/^\s*(\w+)(\??):\s*\{\s*$/);
-      if (multiLineFieldMatch) {
-        const [, fieldName, optional] = multiLineFieldMatch;
-        
-        // 收集多行对象类型定义
-        let objectType = '{';
-        let braceCount = 1;
-        let j = i + 1;
-        
-        while (j < lines.length && braceCount > 0) {
-          const nextLine = lines[j].trim();
-          objectType += ' ' + nextLine;
-          
-          // 计算大括号数量
-          for (const char of nextLine) {
-            if (char === '{') braceCount++;
-            if (char === '}') braceCount--;
-          }
-          
-          j++;
-        }
-        
-        // 检查是否有数组标记
-        if (j < lines.length && lines[j].trim() === '[];') {
-          objectType += '[]';
-          j++;
-        }
-        
-        // 解析类型信息
-        const { type, isArray } = parseFieldType(objectType);
-        
-        fields.push({
-          name: fieldName.trim(),
-          type,
-          optional: optional === '?',
-          isArray,
-          decorators: currentField?.decorators || [],
-        });
-        
-        // 跳过已处理的行
-        i = j - 1;
-        currentField = null;
-      }
-    }
+  // Regex to match field definitions
+  const fieldRegex = /^\s*(\w+)([?!]?):\s*([^;=\n]+)(?:[;=]|$)/gm;
+  let match;
+
+  while ((match = fieldRegex.exec(cleanedBody)) !== null) {
+    const [, fieldName, modifier, fieldType] = match;
+
+    if (!fieldName || fieldName.length < 2) continue;
+
+    const { type, isArray } = parseFieldType(fieldType.trim());
+
+    // Skip decorator config keys
+    if (['type', 'length', 'nullable', 'default', 'enum'].includes(fieldName)) continue;
+
+    fields.push({
+      name: fieldName.trim(),
+      type,
+      optional: modifier === '?',
+      isArray,
+      decorators: [],
+    });
   }
 
   return fields;
 }
 
 /**
- * 解析字段类型，提取基础类型和数组信息
+ * 解析字段类型，处理数组和复杂类型
  */
 function parseFieldType(typeStr: string): { type: string; isArray: boolean } {
-  const trimmed = typeStr.trim();
-
+  const cleanType = typeStr.trim();
+  
   // 检查是否为数组类型
-  if (trimmed.endsWith('[]')) {
+  if (cleanType.endsWith('[]')) {
     return {
-      type: trimmed.slice(0, -2).trim(),
+      type: cleanType.slice(0, -2).trim(),
       isArray: true,
     };
   }
 
   // 检查是否为 Array<T> 格式
-  const arrayMatch = trimmed.match(/^Array<(.+)>$/);
+  const arrayMatch = cleanType.match(/^Array<(.+)>$/);
   if (arrayMatch) {
     return {
       type: arrayMatch[1].trim(),
@@ -127,7 +86,7 @@ function parseFieldType(typeStr: string): { type: string; isArray: boolean } {
   }
 
   return {
-    type: trimmed,
+    type: cleanType,
     isArray: false,
   };
 }

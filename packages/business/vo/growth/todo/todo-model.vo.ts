@@ -1,25 +1,28 @@
 import { BaseEntityVo } from '../../common';
 import { TaskVo } from '../task/task-model.vo';
-import { RepeatVo } from '@life-toolkit/components-repeat/vo';
+import { TodoRepeatVo } from './todo-repeat-model.vo';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 
 export type TodoWithoutRelationsVo = {
   name: string;
   status: TodoStatus;
-  planDate: string;
   description?: string;
-  tags?: string[];
   importance?: number;
   urgency?: number;
-  planStartAt?: string;
-  planEndAt?: string;
-  repeat?: RepeatVo;
+  tags: string[];
   doneAt?: string;
   abandonedAt?: string;
+  planStartAt?: string;
+  planEndAt?: string;
+  planDate: string;
   source?: TodoSource;
+  taskId?: string;
+  repeatId?: string;
+  habitId?: string;
 } & BaseEntityVo;
 
 export type TodoVo = TodoWithoutRelationsVo & {
-  /** 关联的任务 */
   task?: TaskVo;
+  habit?: any;
+  repeat?: TodoRepeatVo;
 };

@@ -25,7 +25,8 @@ export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass
     }
 
     // 解析类字段
-    const directFields = parseClassFields(fullMatch);
+    const directFields = parseClassFields(fullMatch, className);
+
 
     // 合并字段（现在不解析继承字段，只保留直接定义的字段）
     const fields = directFields;

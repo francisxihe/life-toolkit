@@ -1,24 +1,30 @@
 import { TodoRepeatDto } from './todo-repeat-model.dto';
 import { PickType, IntersectionType, PartialType, OmitType } from '@life-toolkit/mapped-types';
 import { TodoRepeat } from '../todo-repeat.entity';
-import { TodoRepeatModelDto } from './todo-repeat-model.dto';
+import { TodoRepeatWithoutRelationsDto } from './todo-repeat-model.dto';
 import { CreateRepeatVo, UpdateRepeatVo } from '@life-toolkit/components-repeat/vo';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 
-export class CreateTodoRepeatDto extends IntersectionType(
-  TodoRepeatModelDto,
-  PickType(TodoRepeatDto, [
-    'name',
-    'description',
-    'importance',
-    'urgency',
-    'tags',
-    'repeatStartDate',
-    'currentDate',
-    'status',
-  ] as const)
-) {
-  importCreateVo(vo: TodoVO.CreateTodoVo & { repeat: CreateRepeatVo }) {
+export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
+  'name',
+  'description',
+  'importance',
+  'urgency',
+  'tags',
+  'status',
+  'currentDate',
+  'repeatStartDate',
+  'repeatMode',
+  'repeatConfig',
+  'repeatEndMode',
+  'repeatEndDate',
+  'repeatTimes',
+  'repeatedTimes',
+] as const) {
+  importCreateVo(vo: TodoVO.CreateTodoVo) {
+    if (!vo.repeat) {
+      throw new Error('重复配置不能为空');
+    }
     this.name = vo.name;
     this.description = vo.description;
     this.importance = vo.importance;
@@ -56,22 +62,22 @@ export class CreateTodoRepeatDto extends IntersectionType(
 }
 
 export class UpdateTodoRepeatDto extends IntersectionType(
-  PartialType(OmitType(CreateTodoRepeatDto, [] as const)),
+  PartialType(CreateTodoRepeatDto),
   PickType(TodoRepeat, ['id'] as const),
   PickType(TodoRepeatDto, ['abandonedAt'] as const)
 ) {
-  importUpdateVo(vo: TodoVO.UpdateTodoVo & { repeat: UpdateRepeatVo }) {
+  importUpdateVo(vo: TodoVO.UpdateTodoVo) {
     this.name = vo.name;
     this.description = vo.description;
     this.importance = vo.importance;
     this.urgency = vo.urgency;
     this.tags = vo.tags;
-    this.repeatStartDate = vo.repeat.repeatStartDate;
-    this.repeatMode = vo.repeat.repeatMode;
-    this.repeatConfig = vo.repeat.repeatConfig;
-    this.repeatEndMode = vo.repeat.repeatEndMode;
-    this.repeatEndDate = vo.repeat.repeatEndDate;
-    this.repeatTimes = vo.repeat.repeatTimes;
+    this.repeatStartDate = vo.repeat?.repeatStartDate;
+    this.repeatMode = vo.repeat?.repeatMode;
+    this.repeatConfig = vo.repeat?.repeatConfig;
+    this.repeatEndMode = vo.repeat?.repeatEndMode;
+    this.repeatEndDate = vo.repeat?.repeatEndDate;
+    this.repeatTimes = vo.repeat?.repeatTimes;
   }
 
   importUpdateEntity(todoRepeat: TodoRepeat) {

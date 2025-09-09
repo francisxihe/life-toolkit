@@ -5,12 +5,14 @@ import { TaskDto } from '../../task';
 import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoStatus } from '@life-toolkit/enum';
+import { TodoRepeatDto } from './todo-repeat-model.dto';
 
 export class TodoWithoutRelationsDto extends IntersectionType(BaseModelDto, TodoWithoutRelations) {}
 
 export class TodoDto extends TodoWithoutRelationsDto {
   task?: TaskDto;
   habit?: any;
+  repeat?: TodoRepeatDto;
 
   importEntity(entity: Todo) {
     Object.assign(this, BaseMapper.entityToDto(entity));
@@ -27,11 +29,19 @@ export class TodoDto extends TodoWithoutRelationsDto {
     this.abandonedAt = entity.abandonedAt;
     this.planStartAt = entity.planStartAt;
     this.planEndAt = entity.planEndAt;
-    // 关联属性（浅拷贝，避免递归）
-    this.task = entity.task ? TaskDto.importEntity(entity.task) : undefined;
+    if (entity.task) {
+      const taskDto = new TaskDto();
+      taskDto.importEntity(entity.task);
+      this.task = taskDto;
+    }
+    if (entity.repeat) {
+      const repeatDto = new TodoRepeatDto();
+      repeatDto.importEntity(entity.repeat);
+      this.repeat = repeatDto;
+    }
   }
 
-  exportWithoutRelationsVo(): TodoVO.TodoVo {
+  exportWithoutRelationsVo(): TodoVO.TodoWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name || '',
@@ -45,12 +55,14 @@ export class TodoDto extends TodoWithoutRelationsDto {
       planEndAt: this.planEndAt ? dayjs(this.planEndAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
-      task: this.task ? this.task.exportVo() : undefined,
       source: this.source,
     };
   }
 
-  exportVo(): TodoVO.TodoWithoutRelationsVo {
-    return this.exportWithoutRelationsVo();
+  exportVo(): TodoVO.TodoVo {
+    return {
+      ...this.exportWithoutRelationsVo(),
+      task: this.task ? this.task.exportVo() : undefined,
+    };
   }
 }
