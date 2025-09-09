@@ -28,7 +28,7 @@ export const Icon: React.FC<IconProps> = ({
   color = 'currentColor',
   onClick,
   showLoading = true,
-  fallback = null
+  fallback = null,
 }) => {
   const [iconContent, setIconContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -41,9 +41,9 @@ export const Icon: React.FC<IconProps> = ({
       try {
         setLoading(true);
         setError(false);
-        
+
         const content = await iconLoader.getIcon(name);
-        
+
         if (mounted) {
           if (content) {
             setIconContent(content);
@@ -68,15 +68,18 @@ export const Icon: React.FC<IconProps> = ({
     };
   }, [name]);
 
-  const svgProps = useMemo(() => ({
-    width: size,
-    height: size,
-    viewBox: '0 0 24 24',
-    fill: color,
-    className: `icon ${className}`.trim(),
-    onClick,
-    style: onClick ? { cursor: 'pointer' } : undefined
-  }), [size, color, className, onClick]);
+  const svgProps = useMemo(
+    () => ({
+      width: size,
+      height: size,
+      viewBox: '0 0 24 24',
+      fill: color,
+      className: `icon ${className}`.trim(),
+      onClick,
+      style: onClick ? { cursor: 'pointer' } : undefined,
+    }),
+    [size, color, className, onClick],
+  );
 
   // 加载中状态
   if (loading && showLoading) {
@@ -109,7 +112,7 @@ export const Icon: React.FC<IconProps> = ({
     if (fallback) {
       return <>{fallback}</>;
     }
-    
+
     return (
       <svg {...svgProps}>
         <path
@@ -125,7 +128,9 @@ export const Icon: React.FC<IconProps> = ({
     return (
       <svg
         {...svgProps}
-        dangerouslySetInnerHTML={{ __html: iconContent.replace(/<symbol[^>]*>|<\/symbol>/g, '') }}
+        dangerouslySetInnerHTML={{
+          __html: iconContent.replace(/<symbol[^>]*>|<\/symbol>/g, ''),
+        }}
       />
     );
   }
@@ -168,7 +173,7 @@ export const useIconList = (prefix?: string) => {
     const loadIcons = async () => {
       try {
         await iconLoader.init();
-        const iconList = prefix 
+        const iconList = prefix
           ? iconLoader.getIconsByPrefix(prefix)
           : iconLoader.getIconList();
         setIcons(iconList);
@@ -206,13 +211,13 @@ export const IconGrid: React.FC<IconGridProps> = ({
   size = 32,
   columns = 8,
   onIconClick,
-  showNames = false
+  showNames = false,
 }) => {
   const gridStyle: React.CSSProperties = {
     display: 'grid',
     gridTemplateColumns: `repeat(${columns}, 1fr)`,
     gap: '16px',
-    padding: '16px'
+    padding: '16px',
   };
 
   const itemStyle: React.CSSProperties = {
@@ -223,12 +228,12 @@ export const IconGrid: React.FC<IconGridProps> = ({
     padding: '8px',
     borderRadius: '8px',
     cursor: onIconClick ? 'pointer' : 'default',
-    transition: 'background-color 0.2s'
+    transition: 'background-color 0.2s',
   };
 
   return (
     <div style={gridStyle}>
-      {icons.map(iconName => (
+      {icons.map((iconName) => (
         <div
           key={iconName}
           style={itemStyle}
@@ -244,7 +249,13 @@ export const IconGrid: React.FC<IconGridProps> = ({
         >
           <Icon name={iconName} size={size} />
           {showNames && (
-            <span style={{ fontSize: '12px', textAlign: 'center', wordBreak: 'break-all' }}>
+            <span
+              style={{
+                fontSize: '12px',
+                textAlign: 'center',
+                wordBreak: 'break-all',
+              }}
+            >
               {iconName}
             </span>
           )}
@@ -254,4 +265,4 @@ export const IconGrid: React.FC<IconGridProps> = ({
   );
 };
 
-export default Icon; 
+export default Icon;

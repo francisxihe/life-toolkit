@@ -1,12 +1,5 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from "typeorm";
-import { User } from "../../users/entities/user.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Budget {
@@ -16,7 +9,7 @@ export class Budget {
   @Column()
   category: string;
 
-  @Column("decimal", { precision: 10, scale: 2 })
+  @Column('decimal', { precision: 10, scale: 2 })
   amount: number;
 
   @Column()
@@ -28,7 +21,7 @@ export class Budget {
   @Column({ nullable: true })
   endDate: Date;
 
-  @Column("decimal", { precision: 10, scale: 2, default: 0 })
+  @Column('decimal', { precision: 10, scale: 2, default: 0 })
   spent: number;
 
   @CreateDateColumn()

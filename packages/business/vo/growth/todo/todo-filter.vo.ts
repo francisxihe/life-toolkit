@@ -11,7 +11,8 @@ export type TodoFilterVo = {
   abandonedDateEnd?: string;
   taskIds?: string[];
   todoWithRepeatList?: { id: string; source: TodoSource }[];
-} & BaseFilterVo & Partial<Pick<TodoVo, 'importance' | 'urgency' | 'status' | 'taskId'>>;
+} & BaseFilterVo &
+  Partial<Pick<TodoVo, 'importance' | 'urgency' | 'status' | 'taskId'>>;
 
 export type TodoPageFilterVo = TodoFilterVo & {
   pageNum: number;

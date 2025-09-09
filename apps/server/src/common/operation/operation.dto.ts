@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsArray, IsString, IsBoolean } from "class-validator";
+import { IsNotEmpty, IsArray, IsString, IsBoolean } from 'class-validator';
 
 export class OperationByIdListDto {
   @IsNotEmpty()

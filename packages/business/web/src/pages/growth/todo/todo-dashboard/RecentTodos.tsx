@@ -3,7 +3,11 @@
 import { Typography, List, Tag, Avatar } from '@arco-design/web-react';
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
 import { TodoVo } from '@life-toolkit/vo';
-import { IconCheckCircle, IconClockCircle, IconExclamation } from '@arco-design/web-react/icon';
+import {
+  IconCheckCircle,
+  IconClockCircle,
+  IconExclamation,
+} from '@arco-design/web-react/icon';
 
 const { Title, Text } = Typography;
 
@@ -21,13 +25,17 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
       weekAgo.setDate(weekAgo.getDate() - 7);
       return doneDate >= weekAgo;
     })
-    .sort((a, b) => new Date(b.doneAt!).getTime() - new Date(a.doneAt!).getTime())
+    .sort(
+      (a, b) => new Date(b.doneAt!).getTime() - new Date(a.doneAt!).getTime(),
+    )
     .slice(0, 5);
 
   // 即将到期的任务
   const upcomingTasks = todoList
     .filter((todo) => todo.status === 'todo')
-    .sort((a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime())
+    .sort(
+      (a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime(),
+    )
     .slice(0, 5);
 
   const getDateLabel = (dateStr: string) => {
@@ -62,11 +70,13 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
             <div className="w-5 h-5 bg-success rounded"></div>
           </div>
           <div>
-            <Title heading={5} className="!mb-0">最近完成</Title>
+            <Title heading={5} className="!mb-0">
+              最近完成
+            </Title>
             <div className="text-sm text-text-3">最近7天完成的任务</div>
           </div>
         </div>
-        
+
         <List
           size="small"
           dataSource={recentCompleted}
@@ -79,12 +89,20 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
                   </Avatar>
                 }
                 title={
-                  <Text ellipsis style={{ maxWidth: 200 }} className="text-text-1">
+                  <Text
+                    ellipsis
+                    style={{ maxWidth: 200 }}
+                    className="text-text-1"
+                  >
                     {todo.name}
                   </Text>
                 }
                 description={
-                  <Text type="secondary" style={{ fontSize: 12 }} className="text-text-3">
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: 12 }}
+                    className="text-text-3"
+                  >
                     {format(new Date(todo.doneAt!), 'MM/dd HH:mm')} 完成
                   </Text>
                 }
@@ -102,7 +120,9 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
           )}
           noDataElement={
             <div className="text-center py-8">
-              <Text type="secondary" className="text-text-3">暂无最近完成的任务</Text>
+              <Text type="secondary" className="text-text-3">
+                暂无最近完成的任务
+              </Text>
             </div>
           }
         />
@@ -115,11 +135,13 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
             <div className="w-5 h-5 bg-warning rounded"></div>
           </div>
           <div>
-            <Title heading={5} className="!mb-0">即将到期</Title>
+            <Title heading={5} className="!mb-0">
+              即将到期
+            </Title>
             <div className="text-sm text-text-3">按计划日期排序的待办任务</div>
           </div>
         </div>
-        
+
         <List
           size="small"
           dataSource={upcomingTasks}
@@ -132,7 +154,11 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
                   </Avatar>
                 }
                 title={
-                  <Text ellipsis style={{ maxWidth: 200 }} className="text-text-1">
+                  <Text
+                    ellipsis
+                    style={{ maxWidth: 200 }}
+                    className="text-text-1"
+                  >
                     {todo.name}
                   </Text>
                 }
@@ -153,11 +179,13 @@ export function RecentTodos({ todoList }: RecentTodosProps) {
           )}
           noDataElement={
             <div className="text-center py-8">
-              <Text type="secondary" className="text-text-3">暂无待处理任务</Text>
+              <Text type="secondary" className="text-text-3">
+                暂无待处理任务
+              </Text>
             </div>
           }
         />
       </div>
     </div>
   );
-} 
+}

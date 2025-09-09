@@ -31,7 +31,18 @@ export function generateVoImports(dtoClasses: DtoClass[], dtoFilePath: string): 
       }
 
       // 检查是否需要导入枚举类型
-      if (['GoalType', 'GoalStatus', 'TaskStatus', 'TodoStatus', 'HabitStatus', 'Importance', 'Difficulty', 'Urgency'].includes(fieldType)) {
+      if (
+        [
+          'GoalType',
+          'GoalStatus',
+          'TaskStatus',
+          'TodoStatus',
+          'HabitStatus',
+          'Importance',
+          'Difficulty',
+          'Urgency',
+        ].includes(fieldType)
+      ) {
         enumSet.add(fieldType);
       }
     }

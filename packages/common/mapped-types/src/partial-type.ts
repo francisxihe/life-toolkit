@@ -4,9 +4,9 @@ import {
   inheritTransformationMetadata,
   applyValidateIfDefinedDecorator,
   applyIsOptionalDecorator,
-} from "./helpers";
-import { RemoveFieldsWithType, Type } from "./types";
-import { MappedType } from "./interface";
+} from './helpers';
+import { RemoveFieldsWithType, Type } from './types';
+import { MappedType } from './interface';
 
 export function PartialType<T>(
   classRef: Type<T>,
@@ -39,11 +39,9 @@ export function PartialType<T>(
     });
   }
 
-  Object.defineProperty(PartialClassType, "name", {
+  Object.defineProperty(PartialClassType, 'name', {
     value: `Partial${classRef.name}`,
   });
 
-  return PartialClassType as MappedType<
-    RemoveFieldsWithType<Partial<T>, Function>
-  >;
+  return PartialClassType as MappedType<RemoveFieldsWithType<Partial<T>, Function>>;
 }

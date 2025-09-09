@@ -29,7 +29,7 @@ function Router() {
         <Route path="/login" element={<Login />} />
         <Route path="/" element={<PageLayout />}>
           {renderRouteComponent(
-            router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath)
+            router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath),
           )}
           {/* {flattenRoutes.map((route) => {
           return (

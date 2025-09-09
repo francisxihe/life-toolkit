@@ -1,10 +1,10 @@
-export * from "./repeat";
-export * from "./repeat-end";
-export * from "./base";
-export * from "./ordinal";
+export * from './repeat';
+export * from './repeat-end';
+export * from './base';
+export * from './ordinal';
 
-import { RepeatMode, RepeatConfig } from "./repeat";
-import { RepeatEndMode } from "./repeat-end";
+import { RepeatMode, RepeatConfig } from './repeat';
+import { RepeatEndMode } from './repeat-end';
 
 export interface Repeat {
   /** 主键 */

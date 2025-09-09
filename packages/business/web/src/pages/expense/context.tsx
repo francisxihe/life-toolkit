@@ -46,21 +46,18 @@ export function ExpensesProvider({ children }: { children: React.ReactNode }) {
     period: 'all',
   });
 
-  const addTransaction = useCallback(
-    (transaction: CreateTransactionVo) => {
-      console.log('transaction', transaction);
-      setTransactions((prev) => [
-        ...prev,
-        {
-          ...transaction,
-          id: Date.now().toString(),
-          createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-          updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-        },
-      ]);
-    },
-    [],
-  );
+  const addTransaction = useCallback((transaction: CreateTransactionVo) => {
+    console.log('transaction', transaction);
+    setTransactions((prev) => [
+      ...prev,
+      {
+        ...transaction,
+        id: Date.now().toString(),
+        createdAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+        updatedAt: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+      },
+    ]);
+  }, []);
 
   const updateTransaction = useCallback(
     (id: string, updates: Partial<TransactionVo>) => {

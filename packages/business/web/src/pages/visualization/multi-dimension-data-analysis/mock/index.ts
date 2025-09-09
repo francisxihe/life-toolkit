@@ -67,7 +67,7 @@ setupMock({
       });
       let list = [];
       legend.forEach(
-        (name, index) => (list = list.concat(getLineData(name, index)))
+        (name, index) => (list = list.concat(getLineData(name, index))),
       );
       return {
         overviewData,

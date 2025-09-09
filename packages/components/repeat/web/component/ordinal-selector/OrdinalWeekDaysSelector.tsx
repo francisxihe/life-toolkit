@@ -1,15 +1,15 @@
-import { Select } from "@arco-design/web-react";
-import { useLocaleContext } from "../useLocale";
-import { WeekDayMap } from "../constants";
-import { WeekDay, OrdinalWeek } from "../../../types";
+import { Select } from '@arco-design/web-react';
+import { useLocaleContext } from '../useLocale';
+import { WeekDayMap } from '../constants';
+import { WeekDay, OrdinalWeek } from '../../../types';
 
 export const OrdinalMap = new Map<OrdinalWeek, string>([
-  [OrdinalWeek.FIRST, "first"],
-  [OrdinalWeek.SECOND, "second"],
-  [OrdinalWeek.THIRD, "third"],
-  [OrdinalWeek.FOURTH, "fourth"],
-  [OrdinalWeek.SECOND_LAST, "secondLast"],
-  [OrdinalWeek.LAST, "last"],
+  [OrdinalWeek.FIRST, 'first'],
+  [OrdinalWeek.SECOND, 'second'],
+  [OrdinalWeek.THIRD, 'third'],
+  [OrdinalWeek.FOURTH, 'fourth'],
+  [OrdinalWeek.SECOND_LAST, 'secondLast'],
+  [OrdinalWeek.LAST, 'last'],
 ]);
 
 export default function OrdinalWeekDaysSelector({

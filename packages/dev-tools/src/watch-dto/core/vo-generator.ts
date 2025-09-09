@@ -21,6 +21,21 @@ export function generateVoContent(dtoClasses: DtoClass[], dtoFilePath: string): 
   const mainClasses = dtoClasses.filter((dto) => !isWithoutRelationsClass(dto.name) && dto.type === 'model');
   const otherClasses = dtoClasses.filter((dto) => dto.type !== 'model');
 
+  // 调试日志
+  console.log('[DEBUG] DTO class classification:');
+  console.log(
+    '  withoutRelationsClasses:',
+    withoutRelationsClasses.map((c) => c.name)
+  );
+  console.log(
+    '  mainClasses:',
+    mainClasses.map((c) => c.name)
+  );
+  console.log(
+    '  otherClasses:',
+    otherClasses.map((c) => c.name)
+  );
+
   const generatedVoNames = new Set<string>();
 
   // 1. 先生成 WithoutRelationsVo 类型

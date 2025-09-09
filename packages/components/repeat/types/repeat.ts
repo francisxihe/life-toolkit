@@ -1,18 +1,17 @@
-import { OrdinalWeek, OrdinalDayType, OrdinalDay } from "./ordinal";
-import { WeekDay, TimeUnit } from "./base";
-
+import { OrdinalWeek, OrdinalDayType, OrdinalDay } from './ordinal';
+import { WeekDay, TimeUnit } from './base';
 
 export enum RepeatMode {
-  NONE = "none",
-  DAILY = "daily",
-  WEEKLY = "weekly",
-  MONTHLY = "monthly",
-  YEARLY = "yearly",
-  WEEKDAYS = "weekdays",
-  WEEKEND = "weekend",
-  WORKDAYS = "workdays",
-  REST_DAY = "restDay",
-  CUSTOM = "custom",
+  NONE = 'none',
+  DAILY = 'daily',
+  WEEKLY = 'weekly',
+  MONTHLY = 'monthly',
+  YEARLY = 'yearly',
+  WEEKDAYS = 'weekdays',
+  WEEKEND = 'weekend',
+  WORKDAYS = 'workdays',
+  REST_DAY = 'restDay',
+  CUSTOM = 'custom',
 }
 
 export type RepeatFormNormal = {
@@ -33,9 +32,9 @@ export type RepeatFormWeekly = {
 };
 
 export enum MonthlyType {
-  DAY = "day",
-  ORDINAL_WEEK = "ordinalWeek",
-  ORDINAL_DAY = "ordinalDay",
+  DAY = 'day',
+  ORDINAL_WEEK = 'ordinalWeek',
+  ORDINAL_DAY = 'ordinalDay',
 }
 
 type RepeatConfigOrdinalDay = {
@@ -68,8 +67,8 @@ export type RepeatFormMonthly = {
 };
 
 export enum YearlyType {
-  MONTH = "month",
-  ORDINAL_WEEK = "ordinalWeek",
+  MONTH = 'month',
+  ORDINAL_WEEK = 'ordinalWeek',
 }
 
 export type RepeatFormYearly = {
@@ -95,25 +94,25 @@ export type RepeatFormCustom = {
     | {
         interval: number;
         intervalUnit: TimeUnit.WEEK;
-        [TimeUnit.WEEK]: RepeatFormWeekly["repeatConfig"];
+        [TimeUnit.WEEK]: RepeatFormWeekly['repeatConfig'];
       }
     | {
         interval: number;
         intervalUnit: TimeUnit.MONTH;
-        [TimeUnit.MONTH]: RepeatFormMonthly["repeatConfig"];
+        [TimeUnit.MONTH]: RepeatFormMonthly['repeatConfig'];
       }
     | {
         interval: number;
         intervalUnit: TimeUnit.YEAR;
-        [TimeUnit.YEAR]: RepeatFormYearly["repeatConfig"];
+        [TimeUnit.YEAR]: RepeatFormYearly['repeatConfig'];
       };
 };
 
 export type RepeatConfig =
-  | RepeatFormWeekly["repeatConfig"]
-  | RepeatFormMonthly["repeatConfig"]
-  | RepeatFormYearly["repeatConfig"]
-  | RepeatFormCustom["repeatConfig"];
+  | RepeatFormWeekly['repeatConfig']
+  | RepeatFormMonthly['repeatConfig']
+  | RepeatFormYearly['repeatConfig']
+  | RepeatFormCustom['repeatConfig'];
 
 export type RepeatModeForm =
   | RepeatFormNormal
@@ -121,4 +120,3 @@ export type RepeatModeForm =
   | RepeatFormYearly
   | RepeatFormMonthly
   | RepeatFormWeekly;
-

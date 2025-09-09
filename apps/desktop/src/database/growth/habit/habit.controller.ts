@@ -36,7 +36,7 @@ export class HabitController {
   async page(@Body() body: HabitVO.HabitPageFilterVo) {
     return this.controller.page(body);
   }
- 
+
   @Put('/update-streak/:id')
   async updateStreak(@Param('id') id: string, @Body() body: { completed?: boolean }) {
     return this.controller.updateStreak(id, body);

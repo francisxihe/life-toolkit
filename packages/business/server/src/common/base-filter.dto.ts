@@ -1,4 +1,3 @@
-
 import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
 
 export class BaseFilterDto {

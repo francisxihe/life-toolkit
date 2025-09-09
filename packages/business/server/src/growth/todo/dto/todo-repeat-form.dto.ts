@@ -22,7 +22,7 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
   'repeatedTimes',
 ] as const) {
   importCreateVo(vo: TodoVO.CreateTodoVo) {
-    if (!vo.repeat) {
+    if (!vo.repeatConfig) {
       throw new Error('重复配置不能为空');
     }
     this.name = vo.name;
@@ -30,13 +30,13 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
     this.importance = vo.importance;
     this.urgency = vo.urgency;
     this.tags = vo.tags;
-    this.repeatStartDate = vo.repeat.repeatStartDate;
-    this.currentDate = vo.repeat.currentDate;
-    this.repeatMode = vo.repeat.repeatMode;
-    this.repeatConfig = vo.repeat.repeatConfig;
-    this.repeatEndMode = vo.repeat.repeatEndMode;
-    this.repeatEndDate = vo.repeat.repeatEndDate;
-    this.repeatTimes = vo.repeat.repeatTimes;
+    this.repeatStartDate = vo.repeatConfig.repeatStartDate;
+    this.currentDate = vo.repeatConfig.currentDate;
+    this.repeatMode = vo.repeatConfig.repeatMode;
+    this.repeatConfig = vo.repeatConfig.repeatConfig;
+    this.repeatEndMode = vo.repeatConfig.repeatEndMode;
+    this.repeatEndDate = vo.repeatConfig.repeatEndDate;
+    this.repeatTimes = vo.repeatConfig.repeatTimes;
   }
 
   exportCreateEntity() {
@@ -72,12 +72,12 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     this.importance = vo.importance;
     this.urgency = vo.urgency;
     this.tags = vo.tags;
-    this.repeatStartDate = vo.repeat?.repeatStartDate;
-    this.repeatMode = vo.repeat?.repeatMode;
-    this.repeatConfig = vo.repeat?.repeatConfig;
-    this.repeatEndMode = vo.repeat?.repeatEndMode;
-    this.repeatEndDate = vo.repeat?.repeatEndDate;
-    this.repeatTimes = vo.repeat?.repeatTimes;
+    this.repeatStartDate = vo.repeatConfig?.repeatStartDate;
+    this.repeatMode = vo.repeatConfig?.repeatMode;
+    this.repeatConfig = vo.repeatConfig?.repeatConfig;
+    this.repeatEndMode = vo.repeatConfig?.repeatEndMode;
+    this.repeatEndDate = vo.repeatConfig?.repeatEndDate;
+    this.repeatTimes = vo.repeatConfig?.repeatTimes;
   }
 
   importUpdateEntity(todoRepeat: TodoRepeat) {

@@ -35,14 +35,14 @@ export default class TodoController {
   }
 
   static async doneWithRepeatBatch(body: TodoVO.TodoFilterVo) {
-    return request<any>({ method: "put" })(`/todo/done-with-repeat/batch`, body);
+    return request<any>({ method: 'put' })(`/todo/done-with-repeat/batch`, body);
   }
 
   static async abandonWithRepeat(id: string) {
-    return request<boolean>({ method: "put" })(`/todo/abandon-with-repeat/${id}`);
+    return request<boolean>({ method: 'put' })(`/todo/abandon-with-repeat/${id}`);
   }
 
   static async restoreWithRepeat(id: string) {
-    return request<boolean>({ method: "put" })(`/todo/restore-with-repeat/${id}`);
+    return request<boolean>({ method: 'put' })(`/todo/restore-with-repeat/${id}`);
   }
 }

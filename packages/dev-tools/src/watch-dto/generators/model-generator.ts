@@ -33,48 +33,17 @@ export function generateWithoutRelationsVo(dtoClass: DtoClass, dtoFilePath: stri
   const baseName = dtoClass.name.replace('Dto', '').replace('Model', '').replace('WithoutRelations', '');
   const voName = `${baseName}WithoutRelationsVo`;
 
-  // 对于 WithoutRelationsDto，需要从实体文件解析 WithoutRelations 类的字段
+  // 对于 WithoutRelationsDto，检查是否有自定义字段
   if (dtoClass.name.includes('WithoutRelations')) {
-    const entityName = getEntityNameFromDto(dtoClass.name);
-    
-    // 构建实体文件路径
-    const entityFilePath = buildEntityPath(dtoFilePath, entityName);
-    
-    try {
-      // 读取实体文件内容
-      const fs = require('fs');
-      const entityContent = fs.readFileSync(entityFilePath, 'utf8');
-      
-      // 解析 WithoutRelations 类的字段
-      const entityFields = parseEntityFields(entityContent, entityName);
-      
-      if (entityFields.length > 0) {
-        lines.push(`export type ${voName} = {`);
-        const nonRelationFields = filterNonRelationFields(entityFields);
-        for (const field of nonRelationFields) {
-          const voField = convertDtoFieldToVo(field);
-          if (voField) {
-            lines.push(`  ${voField}`);
-          }
-        }
-        lines.push('} & BaseEntityVo;');
-      } else {
-        // 如果解析失败，使用 DTO 字段作为后备
-        lines.push(`export type ${voName} = {`);
-        const nonRelationFields = filterNonRelationFields(dtoClass.fields);
-        for (const field of nonRelationFields) {
-          const voField = convertDtoFieldToVo(field);
-          if (voField) {
-            lines.push(`  ${voField}`);
-          }
-        }
-        lines.push('} & BaseEntityVo;');
-      }
-    } catch (error) {
-      console.warn(`无法读取实体文件 ${entityFilePath}:`, error);
-      // 回退到使用 DTO 字段
+    // 检查是否有自定义字段（除了标准关系字段）
+    const hasCustomFields = dtoClass.fields.some(
+      (field) => !['task', 'habit', 'repeat', 'goal', 'parent', 'children', 'trackTimes'].includes(field.name)
+    );
+
+    if (hasCustomFields) {
+      // 如果有自定义字段，使用 DTO 字段
       lines.push(`export type ${voName} = {`);
-      const nonRelationFields = filterNonRelationFields(dtoClass.fields);
+      const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
       for (const field of nonRelationFields) {
         const voField = convertDtoFieldToVo(field);
         if (voField) {
@@ -82,18 +51,114 @@ export function generateWithoutRelationsVo(dtoClass: DtoClass, dtoFilePath: stri
         }
       }
       lines.push('} & BaseEntityVo;');
-    }
-  } else {
-    // 非 WithoutRelationsDto，使用原有逻辑
-    lines.push(`export type ${voName} = {`);
-    const nonRelationFields = filterNonRelationFields(dtoClass.fields);
-    for (const field of nonRelationFields) {
-      const voField = convertDtoFieldToVo(field);
-      if (voField) {
-        lines.push(`  ${voField}`);
+    } else {
+      // 没有自定义字段，使用实体字段
+      const entityName = getEntityNameFromDto(dtoClass.name);
+      const entityFilePath = buildEntityPath(dtoFilePath, entityName);
+
+      try {
+        const fs = require('fs');
+        const entityContent = fs.readFileSync(entityFilePath, 'utf8');
+        const entityFields = parseEntityFields(entityContent, entityName);
+
+        if (entityFields.length > 0) {
+          lines.push(`export type ${voName} = {`);
+          const nonRelationFields = filterNonRelationFields(entityFields);
+          for (const field of nonRelationFields) {
+            const voField = convertDtoFieldToVo(field);
+            if (voField) {
+              lines.push(`  ${voField}`);
+            }
+          }
+          lines.push('} & BaseEntityVo;');
+        } else {
+          // 回退到 DTO 字段
+          lines.push(`export type ${voName} = {`);
+          const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
+          for (const field of nonRelationFields) {
+            const voField = convertDtoFieldToVo(field);
+            if (voField) {
+              lines.push(`  ${voField}`);
+            }
+          }
+          lines.push('} & BaseEntityVo;');
+        }
+      } catch (error) {
+        console.warn(`无法读取实体文件 ${entityFilePath}:`, error);
+        // 回退到 DTO 字段
+        lines.push(`export type ${voName} = {`);
+        const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
+        for (const field of nonRelationFields) {
+          const voField = convertDtoFieldToVo(field);
+          if (voField) {
+            lines.push(`  ${voField}`);
+          }
+        }
+        lines.push('} & BaseEntityVo;');
       }
     }
-    lines.push('} & BaseEntityVo;');
+  } else {
+    // 非 WithoutRelationsDto，检查是否有自定义字段
+    const hasCustomFields = dtoClass.fields.some(
+      (field) => !['task', 'habit', 'repeat', 'goal', 'parent', 'children', 'trackTimes'].includes(field.name)
+    );
+
+    if (hasCustomFields) {
+      // 如果有自定义字段，使用 DTO 字段而不是实体字段
+      lines.push(`export type ${voName} = {`);
+      const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
+      for (const field of nonRelationFields) {
+        const voField = convertDtoFieldToVo(field);
+        if (voField) {
+          lines.push(`  ${voField}`);
+        }
+      }
+      lines.push('} & BaseEntityVo;');
+    } else {
+      // 没有自定义字段，使用原有的实体字段逻辑
+      const entityName = getEntityNameFromDto(dtoClass.name);
+      const entityFilePath = buildEntityPath('', entityName);
+
+      try {
+        const fs = require('fs');
+        const entityContent = fs.readFileSync(entityFilePath, 'utf8');
+        const entityFields = parseEntityFields(entityContent, entityName);
+
+        if (entityFields.length > 0) {
+          lines.push(`export type ${voName} = {`);
+          const nonRelationFields = filterNonRelationFields(entityFields);
+          for (const field of nonRelationFields) {
+            const voField = convertDtoFieldToVo(field);
+            if (voField) {
+              lines.push(`  ${voField}`);
+            }
+          }
+          lines.push('} & BaseEntityVo;');
+        } else {
+          // 回退到 DTO 字段
+          lines.push(`export type ${voName} = {`);
+          const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
+          for (const field of nonRelationFields) {
+            const voField = convertDtoFieldToVo(field);
+            if (voField) {
+              lines.push(`  ${voField}`);
+            }
+          }
+          lines.push('} & BaseEntityVo;');
+        }
+      } catch (error) {
+        // 回退到 DTO 字段
+        lines.push(`export type ${voName} = {`);
+        const nonRelationFields = filterNonRelationFields(dtoClass.fields, dtoClass.name);
+        for (const field of nonRelationFields) {
+          const voField = convertDtoFieldToVo(field);
+          if (voField) {
+            lines.push(`  ${voField}`);
+          }
+        }
+        lines.push('} & BaseEntityVo;');
+      }
+    }
   }
 
   return lines.join('\n');
@@ -109,11 +174,64 @@ export function generateFullModelVo(mainClass: DtoClass, withoutRelationsExists:
   const withoutRelationsVoName = `${baseName}WithoutRelationsVo`;
 
   if (withoutRelationsExists) {
-    // 提取关系字段
+    // 检查主类是否有额外的非关系字段（不在 WithoutRelations 中的字段）
     const relationFields = filterRelationFields(mainClass.fields);
+    const nonRelationFields = filterNonRelationFields(mainClass.fields, mainClass.name);
 
-    if (relationFields.length > 0) {
+    // 检查是否有自定义非关系字段（如 repeatConfig）
+    const hasCustomNonRelationFields = nonRelationFields.some(
+      (field) =>
+        ![
+          'name',
+          'description',
+          'status',
+          'planDate',
+          'planStartAt',
+          'planEndAt',
+          'importance',
+          'urgency',
+          'tags',
+          'taskId',
+          'doneAt',
+          'abandonedAt',
+          'source',
+          'repeatId',
+          'habitId',
+        ].includes(field.name)
+    );
+
+    if (relationFields.length > 0 || hasCustomNonRelationFields) {
       lines.push(`export type ${voName} = ${withoutRelationsVoName} & {`);
+
+      // 添加自定义非关系字段
+      if (hasCustomNonRelationFields) {
+        for (const field of nonRelationFields) {
+          if (
+            ![
+              'name',
+              'description',
+              'status',
+              'planDate',
+              'planStartAt',
+              'planEndAt',
+              'importance',
+              'urgency',
+              'tags',
+              'taskId',
+              'doneAt',
+              'abandonedAt',
+              'source',
+              'repeatId',
+              'habitId',
+            ].includes(field.name)
+          ) {
+            const voField = convertDtoFieldToVo(field);
+            if (voField) {
+              lines.push(`  ${voField}`);
+            }
+          }
+        }
+      }
 
       // 去重关系字段
       const uniqueRelationFields = new Map<string, (typeof relationFields)[0]>();
@@ -140,7 +258,7 @@ export function generateFullModelVo(mainClass: DtoClass, withoutRelationsExists:
 
       lines.push('};');
     } else {
-      // 如果没有关系字段，直接使用 WithoutRelationsVo
+      // 如果没有关系字段和自定义字段，直接使用 WithoutRelationsVo
       lines.push(`export type ${voName} = ${withoutRelationsVoName};`);
     }
   } else {

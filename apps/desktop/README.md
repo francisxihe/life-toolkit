@@ -101,19 +101,18 @@ const DEFAULT_URL = 'https://your-website.com';
 const isElectron = window.electronAPI.isElectron;
 
 // 获取应用信息
-window.electronAPI.getAppInfo().then(info => {
+window.electronAPI.getAppInfo().then((info) => {
   console.log(`版本: ${info.version}, 平台: ${info.platform}`);
 });
 
 // 加载新的URL
-window.electronAPI.loadURL('https://example.com')
-  .then(result => {
-    if (result.success) {
-      console.log('URL加载成功');
-    } else {
-      console.error(`加载失败: ${result.error}`);
-    }
-  });
+window.electronAPI.loadURL('https://example.com').then((result) => {
+  if (result.success) {
+    console.log('URL加载成功');
+  } else {
+    console.error(`加载失败: ${result.error}`);
+  }
+});
 ```
 
 ## 项目结构
@@ -133,4 +132,4 @@ window.electronAPI.loadURL('https://example.com')
 ├── package.json            # 项目配置
 ├── tsconfig.json           # TypeScript配置
 └── tsconfig.node.json      # Node.js TypeScript配置
-``` 
+```

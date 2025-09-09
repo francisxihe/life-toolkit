@@ -38,12 +38,14 @@ graph/
 画布状态管理的核心，提供以下状态和方法：
 
 **状态：**
+
 - `graph`: X6 图形实例
 - `zoom`: 当前缩放级别
 - `position`: 画布位置
 - `graphRef`: 画布 DOM 引用
 
 **操作方法：**
+
 - `centerContent()`: 居中显示内容
 - `zoomIn()`: 放大画布
 - `zoomOut()`: 缩小画布
@@ -63,7 +65,7 @@ import { MindMapGraphProvider, useMindMapGraphContext } from './context';
 // 在组件中使用
 function GraphComponent() {
   const { graph, zoomIn, zoomOut, centerContent } = useMindMapGraphContext();
-  
+
   return (
     <div>
       <button onClick={zoomIn}>放大</button>
@@ -209,8 +211,8 @@ function MindMapContainer() {
           hGap: 50,
           vGap: 25,
         }}
-        onNodeClick={(nodeId) => console.log('节点点击:', nodeId)}
-        onGraphReady={(graph) => console.log('画布就绪:', graph)}
+        onNodeClick={nodeId => console.log('节点点击:', nodeId)}
+        onGraphReady={graph => console.log('画布就绪:', graph)}
       />
     </MindMapGraphProvider>
   );
@@ -222,7 +224,7 @@ function MindMapContainer() {
 ```tsx
 const CustomMindMapNode = ({ node, graph }) => {
   const data = node.getData();
-  
+
   return (
     <div className="custom-node">
       <span>{data.label}</span>
@@ -233,7 +235,7 @@ const CustomMindMapNode = ({ node, graph }) => {
   );
 };
 
-<InternalMindMapGraph MindMapNode={CustomMindMapNode} />
+<InternalMindMapGraph MindMapNode={CustomMindMapNode} />;
 ```
 
 ### 扩展画布操作
@@ -257,22 +259,26 @@ export const useGraphOperations = ({ graph, ... }) => {
 ## 架构特点
 
 ### 1. 职责分离
+
 - **Context**: 只管理画布相关状态
 - **EventEmitter**: 处理跨组件通信
 - **Helpers**: 提供纯函数工具
 - **Graph**: 负责 X6 实例初始化
 
 ### 2. 类型安全
+
 - 完整的 TypeScript 类型定义
 - 事件系统的类型安全
 - 严格的接口约束
 
 ### 3. 可扩展性
+
 - 模块化设计，易于添加新功能
 - 插件式的节点和边注册
 - 灵活的事件系统
 
 ### 4. 性能优化
+
 - 合理使用 useCallback 和 useMemo
 - 事件监听的自动清理
 - 画布大小变化的防抖处理

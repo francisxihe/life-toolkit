@@ -1,17 +1,9 @@
-import {
-  inheritPropertyInitializers,
-  inheritValidationMetadata,
-  inheritTransformationMetadata,
-} from "./helpers";
-import { RemoveFieldsWithType, Type } from "./types";
-import { MappedType } from "./interface";
+import { inheritPropertyInitializers, inheritValidationMetadata, inheritTransformationMetadata } from './helpers';
+import { RemoveFieldsWithType, Type } from './types';
+import { MappedType } from './interface';
 
 // https://stackoverflow.com/questions/50374908/transform-union-type-to-intersection-type
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
-) => void
-  ? I
-  : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
 // Converts ClassRefs array `Type<Class>[]` to `Class[]` using `infer`
 // e.g. `ClassRefsToConstructors<[Type<Foo>, Type<Bar>]>` becomes `[Foo, Bar]`
@@ -25,10 +17,7 @@ type ClassRefsToConstructors<T extends Type[]> = {
 // e.g. `Foo | Bar` becomes `Foo & Bar`
 // finally, returns `MappedType` passing the generated intersection type as a type argument
 type Intersection<T extends Type[]> = MappedType<
-  RemoveFieldsWithType<
-    UnionToIntersection<ClassRefsToConstructors<T>[number]>,
-    Function
-  >
+  RemoveFieldsWithType<UnionToIntersection<ClassRefsToConstructors<T>[number]>, Function>
 >;
 
 /**
@@ -45,16 +34,11 @@ export function IntersectionType<T extends Type[]>(...classRefs: T) {
 
   classRefs.forEach((classRef) => {
     inheritValidationMetadata(classRef, IntersectionClassType);
-    inheritTransformationMetadata(
-      classRef,
-      IntersectionClassType,
-      undefined,
-      false
-    );
+    inheritTransformationMetadata(classRef, IntersectionClassType, undefined, false);
   });
 
-  const intersectedNames = classRefs.reduce((prev, ref) => prev + ref.name, "");
-  Object.defineProperty(IntersectionClassType, "name", {
+  const intersectedNames = classRefs.reduce((prev, ref) => prev + ref.name, '');
+  Object.defineProperty(IntersectionClassType, 'name', {
     value: `Intersection${intersectedNames}`,
   });
 

@@ -166,4 +166,4 @@ export default function HabitListTable() {
       scroll={{ x: 900 }}
     />
   );
-};
+}

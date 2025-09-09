@@ -1,4 +1,4 @@
-import { RepeatMode, RepeatConfig, RepeatEndMode } from "../types";
+import { RepeatMode, RepeatConfig, RepeatEndMode } from '../types';
 
 export type RepeatVo = {
   repeatMode: RepeatMode;

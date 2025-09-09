@@ -1,39 +1,35 @@
-"use client"
+'use client';
 
-import { useState } from 'react'
-import * as z from 'zod'
-import { 
-  Form, 
-  Input, 
-  Button, 
-  Table, 
-  Message 
-} from '@arco-design/web-react'
+import { useState } from 'react';
+import * as z from 'zod';
+import { Form, Input, Button, Table, Message } from '@arco-design/web-react';
 
 const productSchema = z.object({
-  name: z.string().min(1, { message: "Product name is required" }),
+  name: z.string().min(1, { message: 'Product name is required' }),
   price: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Price must be a positive number",
+    message: 'Price must be a positive number',
   }),
-  quantity: z.string().refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
-    message: "Quantity must be a non-negative number",
-  }),
-})
+  quantity: z
+    .string()
+    .refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+      message: 'Quantity must be a non-negative number',
+    }),
+});
 
-type Product = z.infer<typeof productSchema> & { id: number }
+type Product = z.infer<typeof productSchema> & { id: number };
 
 export default function ERPPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [form] = Form.useForm()
+  const [products, setProducts] = useState<Product[]>([]);
+  const [form] = Form.useForm();
 
   function onSubmit(values: any) {
     const newProduct: Product = {
       id: Date.now(),
       ...values,
-    }
-    setProducts([...products, newProduct])
-    form.resetFields()
-    Message.success('The new product has been added to the inventory.')
+    };
+    setProducts([...products, newProduct]);
+    form.resetFields();
+    Message.success('The new product has been added to the inventory.');
   }
 
   const columns = [
@@ -50,12 +46,12 @@ export default function ERPPage() {
       title: 'Quantity',
       dataIndex: 'quantity',
     },
-  ]
+  ];
 
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">ERP System</h1>
-      
+
       <Form
         form={form}
         onSubmit={onSubmit}
@@ -65,9 +61,7 @@ export default function ERPPage() {
         <Form.Item
           label="Product Name"
           field="name"
-          rules={[
-            { required: true, message: 'Product name is required' }
-          ]}
+          rules={[{ required: true, message: 'Product name is required' }]}
         >
           <Input placeholder="Enter product name" />
         </Form.Item>
@@ -80,11 +74,11 @@ export default function ERPPage() {
             {
               validator: (value) => {
                 if (isNaN(Number(value)) || Number(value) <= 0) {
-                  return 'Price must be a positive number'
+                  return 'Price must be a positive number';
                 }
-                return true
-              }
-            }
+                return true;
+              },
+            },
           ]}
         >
           <Input type="number" step="0.01" placeholder="Enter price" />
@@ -98,11 +92,11 @@ export default function ERPPage() {
             {
               validator: (value) => {
                 if (isNaN(Number(value)) || Number(value) < 0) {
-                  return 'Quantity must be a non-negative number'
+                  return 'Quantity must be a non-negative number';
                 }
-                return true
-              }
-            }
+                return true;
+              },
+            },
           ]}
         >
           <Input type="number" placeholder="Enter quantity" />
@@ -123,5 +117,5 @@ export default function ERPPage() {
         className="mt-6"
       />
     </div>
-  )
+  );
 }

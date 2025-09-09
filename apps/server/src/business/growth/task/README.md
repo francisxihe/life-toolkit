@@ -7,6 +7,7 @@ Task（任务）模块是个人成长管理系统中用于管理具体执行任�
 ## 功能特性
 
 ### 核心功能
+
 - ✅ 任务创建、更新、删除
 - ✅ 任务状态管理（待办、进行中、已完成、已放弃）
 - ✅ 任务层级结构（父子任务关系）
@@ -16,16 +17,19 @@ Task（任务）模块是个人成长管理系统中用于管理具体执行任�
 - ✅ 任务与目标关联
 
 ### 状态管理
+
 - `TODO` - 待办
 - `IN_PROGRESS` - 进行中
 - `DONE` - 已完成
 - `ABANDONED` - 已放弃
 
 ### 优先级系统
+
 - **重要性**：`HIGH`、`MEDIUM`、`LOW`
 - **紧急性**：`HIGH`、`MEDIUM`、`LOW`
 
 ### 时间跟踪
+
 - 预估工作时间
 - 实际工作时间记录
 - 时间效率分析
@@ -33,6 +37,7 @@ Task（任务）模块是个人成长管理系统中用于管理具体执行任�
 ## API 接口
 
 ### 任务管理
+
 ```http
 POST   /task/create                    # 创建任务
 PUT    /task/update/:id                # 更新任务
@@ -42,6 +47,7 @@ GET    /task/task-with-relations/:id  # 获取任务及时间跟踪信息
 ```
 
 ### 状态操作
+
 ```http
 PUT /task/done/batch          # 批量完成任务
 PUT /task/abandon/:id         # 放弃任务
@@ -49,6 +55,7 @@ PUT /task/restore/:id         # 恢复任务
 ```
 
 ### 查询接口
+
 ```http
 GET /task/page               # 分页查询任务
 GET /task/list               # 列表查询任务
@@ -57,51 +64,54 @@ GET /task/list               # 列表查询任务
 ## 数据结构
 
 ### 创建任务请求
+
 ```typescript
 interface CreateTaskVo {
-  name: string;              // 任务名称
-  description?: string;      // 任务描述
-  importance?: string;       // 重要性
-  urgency?: string;         // 紧急性
-  estimatedTime?: number;   // 预估时间（分钟）
-  startAt?: Date;           // 开始时间
-  endAt?: Date;             // 结束时间
-  goalId?: string;          // 关联目标ID
-  parentId?: string;        // 父任务ID
+  name: string; // 任务名称
+  description?: string; // 任务描述
+  importance?: string; // 重要性
+  urgency?: string; // 紧急性
+  estimatedTime?: number; // 预估时间（分钟）
+  startAt?: Date; // 开始时间
+  endAt?: Date; // 结束时间
+  goalId?: string; // 关联目标ID
+  parentId?: string; // 父任务ID
 }
 ```
 
 ### 任务时间跟踪
+
 ```typescript
 interface taskWithRelationsVo {
   id: string;
   name: string;
   description?: string;
   status: string;
-  estimatedTime?: number;    // 预估时间
-  actualTime?: number;       // 实际时间
+  estimatedTime?: number; // 预估时间
+  actualTime?: number; // 实际时间
   trackRecords: TrackRecord[]; // 时间跟踪记录
 }
 
 interface TrackRecord {
   id: string;
-  startTime: Date;          // 开始时间
-  endTime?: Date;           // 结束时间
-  duration: number;         // 持续时间（分钟）
-  description?: string;     // 记录描述
+  startTime: Date; // 开始时间
+  endTime?: Date; // 结束时间
+  duration: number; // 持续时间（分钟）
+  description?: string; // 记录描述
 }
 ```
 
 ### 查询过滤器
+
 ```typescript
 interface TaskFilterVo {
-  id?: string;              // 任务ID
-  importance?: string;      // 重要性
-  urgency?: string;         // 紧急性
-  status?: string;          // 状态
-  startAt?: string;         // 开始时间
-  endAt?: string;           // 结束时间
-  excludeIds?: string[];    // 排除ID列表
+  id?: string; // 任务ID
+  importance?: string; // 重要性
+  urgency?: string; // 紧急性
+  status?: string; // 状态
+  startAt?: string; // 开始时间
+  endAt?: string; // 结束时间
+  excludeIds?: string[]; // 排除ID列表
 }
 ```
 
@@ -123,65 +133,71 @@ task/
 ## 使用示例
 
 ### 创建简单任务
+
 ```typescript
 const simpleTask = {
-  name: "完成项目文档",
-  description: "编写项目的技术文档和用户手册",
-  importance: "HIGH",
-  urgency: "MEDIUM",
-  estimatedTime: 240,  // 4小时
-  startAt: "2024-01-01T09:00:00",
-  endAt: "2024-01-01T17:00:00"
+  name: '完成项目文档',
+  description: '编写项目的技术文档和用户手册',
+  importance: 'HIGH',
+  urgency: 'MEDIUM',
+  estimatedTime: 240, // 4小时
+  startAt: '2024-01-01T09:00:00',
+  endAt: '2024-01-01T17:00:00',
 };
 ```
 
 ### 创建关联目标的任务
+
 ```typescript
 const goalTask = {
-  name: "学习React Hooks",
-  description: "深入学习React Hooks的使用方法",
-  goalId: "goal-id-123",
-  importance: "HIGH",
-  urgency: "HIGH",
-  estimatedTime: 180  // 3小时
+  name: '学习React Hooks',
+  description: '深入学习React Hooks的使用方法',
+  goalId: 'goal-id-123',
+  importance: 'HIGH',
+  urgency: 'HIGH',
+  estimatedTime: 180, // 3小时
 };
 ```
 
 ### 创建子任务
+
 ```typescript
 const subTask = {
-  name: "编写单元测试",
-  description: "为新功能编写完整的单元测试",
-  parentId: "parent-task-id",
-  importance: "MEDIUM",
-  urgency: "HIGH",
-  estimatedTime: 120  // 2小时
+  name: '编写单元测试',
+  description: '为新功能编写完整的单元测试',
+  parentId: 'parent-task-id',
+  importance: 'MEDIUM',
+  urgency: 'HIGH',
+  estimatedTime: 120, // 2小时
 };
 ```
 
 ## 时间跟踪功能
 
 ### 开始时间跟踪
+
 ```typescript
 // 开始执行任务时记录开始时间
 const startTracking = {
-  taskId: "task-id",
+  taskId: 'task-id',
   startTime: new Date(),
-  description: "开始编写代码"
+  description: '开始编写代码',
 };
 ```
 
 ### 结束时间跟踪
+
 ```typescript
 // 完成任务时记录结束时间
 const endTracking = {
-  trackRecordId: "record-id",
+  trackRecordId: 'record-id',
   endTime: new Date(),
-  description: "完成核心功能开发"
+  description: '完成核心功能开发',
 };
 ```
 
 ### 时间统计分析
+
 - **预估 vs 实际**：对比预估时间和实际花费时间
 - **效率分析**：计算任务完成效率
 - **时间分布**：分析时间在不同任务上的分配
@@ -190,6 +206,7 @@ const endTracking = {
 ## 任务分解策略
 
 ### SMART原则
+
 - **Specific**（具体的）：任务目标明确具体
 - **Measurable**（可衡量的）：有明确的完成标准
 - **Achievable**（可实现的）：在能力范围内
@@ -197,6 +214,7 @@ const endTracking = {
 - **Time-bound**（有时限的）：有明确的时间限制
 
 ### 任务分解建议
+
 1. **大任务分解**：将大任务分解为多个小任务
 2. **时间估算**：合理估算每个任务的执行时间
 3. **依赖关系**：明确任务之间的依赖关系
@@ -205,16 +223,19 @@ const endTracking = {
 ## 与其他模块的关系
 
 ### 与Goal模块的关系
+
 - 任务是目标的具体执行步骤
 - 任务完成状态影响目标进度
 - 支持从目标自动生成任务
 
 ### 与Time Tracking模块的关系
+
 - 记录任务执行的详细时间
 - 分析时间使用效率
 - 优化时间分配策略
 
 ### 与Calendar模块的关系
+
 - 任务可以安排到具体的时间段
 - 支持日程规划和提醒
 - 避免时间冲突
@@ -247,4 +268,4 @@ const endTracking = {
 2. 任务状态变更会影响关联目标的进度
 3. 时间跟踪数据用于效率分析，建议准确记录
 4. 批量操作需要确保用户有相应权限
-5. 任务时间安排要考虑现实可行性 
+5. 任务时间安排要考虑现实可行性

@@ -27,6 +27,13 @@ export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass
     // 解析类字段
     const directFields = parseClassFields(fullMatch, className);
 
+    // 调试日志
+    if (className === 'TodoDto') {
+      console.log(
+        `[DEBUG] DTO parser fields for ${className}:`,
+        directFields.map((f) => `${f.name}: ${f.type}`)
+      );
+    }
 
     // 合并字段（现在不解析继承字段，只保留直接定义的字段）
     const fields = directFields;
@@ -38,9 +45,17 @@ export function parseDtoClasses(content: string, dtoFilePath?: string): DtoClass
       name: className,
       type,
       fields: deduplicatedFields,
-      imports: [],
+      imports: extractImports(content),
       classDefinition: fullMatch,
     };
+
+    // 调试日志
+    if (className === 'TodoDto') {
+      console.log(
+        `[DEBUG] Final DTO class fields for ${className}:`,
+        dtoClass.fields.map((f) => `${f.name}: ${f.type}`)
+      );
+    }
 
     // 验证并添加到结果中
     if (validateDtoClass(dtoClass)) {

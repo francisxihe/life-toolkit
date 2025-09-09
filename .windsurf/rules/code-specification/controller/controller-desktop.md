@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写desktop Controller代码时
 globs:
 ---
+
 # Desktop Adapter Controller 开发规范
 
 ## 📋 概述
@@ -12,6 +13,7 @@ Desktop Adapter Controller 是Desktop端的适配层，负责将Electron的IPC�
 ## 🏗️ 职责定位
 
 ### 核心职责
+
 - **IPC接口适配**: 处理Electron IPC调用
 - **数据格式转换**: 处理Desktop平台的数据格式差异
 - **异常转换**: 将业务异常转换为Desktop可处理的格式
@@ -19,12 +21,14 @@ Desktop Adapter Controller 是Desktop端的适配层，负责将Electron的IPC�
 - **资源管理**: 管理控制器实例和资源清理
 
 ### 设计原则
+
 - **轻量适配**: 只做数据适配，不包含业务逻辑
 - **异步友好**: 充分利用Electron IPC的异步特性
 - **错误处理**: 完善的错误处理和用户提示
 - **性能优化**: 避免阻塞主进程，合理使用Worker线程
 
 ## 📁 文件位置
+
 ```
 apps/desktop/src/database/growth/
 ├── {module}.controller.ts       # Desktop适配控制器
@@ -34,6 +38,7 @@ apps/desktop/src/database/growth/
 ## 🎯 标准模板
 
 ### 基础Controller模板
+
 ```typescript
 import { {Module}Controller } from "@life-toolkit/business-server";
 import type { {Module} as {Module}VO } from "@life-toolkit/vo";
@@ -131,6 +136,7 @@ export const {module}IpcHandlers = {
 ```
 
 ### IPC注册模板
+
 ```typescript
 import { ipcMain } from "electron";
 import { {Module}Controller } from "@life-toolkit/business-server";
@@ -168,11 +174,13 @@ export const {module}Handlers = {module}IpcHandlers;
 ## 📝 使用指南
 
 ### 占位符替换规则
+
 - `{Module}` → 模块名，如：`Todo`, `Goal`, `Habit`
 - `{module}` → 模块名小写，如：`todo`, `goal`, `habit`
 - `{资源名称}` → 中文资源名，如：`待办事项`, `目标`, `习惯`
 
 ### 导入路径说明
+
 ```typescript
 // Desktop适配层使用包路径导入核心业务控制器
 import { {Module}Controller } from "@life-toolkit/business-server";
@@ -183,6 +191,7 @@ import { ipcMain } from "electron";
 ```
 
 ### IPC通道命名规范
+
 ```typescript
 // 推荐的IPC通道命名格式
 ipcMain.handle('{module}:{action}', handler);
@@ -196,6 +205,7 @@ ipcMain.handle('todo:delete', deleteHandler);
 ## 🔍 最佳实践
 
 ### 1. 异步处理优化
+
 ```typescript
 // ✅ 推荐做法 - 充分利用异步特性
 export class TodoDesktopController {
@@ -215,6 +225,7 @@ export class TodoDesktopController {
 ```
 
 ### 2. 错误处理和用户反馈
+
 ```typescript
 // IPC处理器中的错误处理
 export function registerTodoIpcHandlers() {
@@ -228,8 +239,8 @@ export function registerTodoIpcHandlers() {
         success: false,
         error: {
           message: error.message,
-          code: error.code || 'UNKNOWN_ERROR'
-        }
+          code: error.code || 'UNKNOWN_ERROR',
+        },
       };
     }
   });
@@ -237,6 +248,7 @@ export function registerTodoIpcHandlers() {
 ```
 
 ### 3. 资源管理和清理
+
 ```typescript
 // 主进程中的资源管理
 class DatabaseManager {
@@ -268,6 +280,7 @@ class DatabaseManager {
 ```
 
 ### 4. 性能优化建议
+
 ```typescript
 // 使用Worker线程处理密集计算
 export class HeavyTaskDesktopController {
@@ -297,23 +310,27 @@ export class HeavyTaskDesktopController {
 ## 📋 检查清单
 
 ### 文件结构检查
+
 - [ ] 文件位置正确：`apps/desktop/src/database/growth/{module}.controller.ts`
 - [ ] 导出文件存在：`index.ts`
 - [ ] IPC处理器正确导出：`{module}IpcHandlers`
 
 ### 代码质量检查
+
 - [ ] 类名符合规范：`{Module}DesktopController`
 - [ ] 没有框架相关装饰器
 - [ ] 方法返回Promise类型
 - [ ] 添加完整的JSDoc注释
 
 ### IPC规范检查
+
 - [ ] 通道命名规范：`{module}:{action}`
 - [ ] 错误处理机制完善
 - [ ] 异步处理正确实现
 - [ ] 资源清理机制
 
 ### 性能优化检查
+
 - [ ] 避免阻塞主进程
 - [ ] 合理使用Worker线程
 - [ ] 内存使用优化
@@ -321,4 +338,4 @@ export class HeavyTaskDesktopController {
 
 ---
 
-*此文档为Desktop Adapter Controller开发规范，Electron IPC适配指南。*
+_此文档为Desktop Adapter Controller开发规范，Electron IPC适配指南。_

@@ -8,7 +8,7 @@
     "watch:controllers": "tsx ./src/watch-controllers/index.ts",
     "sync:controllers": "tsx ./src/watch-controllers/index.ts --once",
     "watch:dto": "tsx ./src/watch-dto/index.ts",
-    "sync:dto": "tsx ./src/watch-dto/index.ts --once"
+    "sync:dto": "tsx ./src/watch-dto/index.ts --once && npx prettier --write ../../"
   },
   "dependencies": {
     "chokidar": "^3.6.0",

@@ -10,10 +10,10 @@ export {
   collectAllMethodNames,
   parseServerMethodNames,
   typeToServiceConstName,
-} from "./parser";
+} from './parser';
 
 // AST parser class/singleton
-export { TypeScriptASTParser, astParser } from "./core/ast";
+export { TypeScriptASTParser, astParser } from './core/ast';
 
 // AST-adapted helpers (with fallback in their implementations)
 export {
@@ -24,4 +24,4 @@ export {
   getClassBodyRange as getClassBodyRangeAST,
   parseControllerInfo,
   getServerMethodDecorators,
-} from "./parser-ast";
+} from './parser-ast';

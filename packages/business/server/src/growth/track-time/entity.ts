@@ -1,5 +1,4 @@
-
-import { BaseEntity } from "@business/common";
+import { BaseEntity } from '@business/common';
 
 export class TrackTime extends BaseEntity {
   startAt?: Date;

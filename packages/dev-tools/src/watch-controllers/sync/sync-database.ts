@@ -1,4 +1,4 @@
-import { log } from "../utils";
+import { log } from '../utils';
 import {
   collectAllMethodNames,
   getMethodOccurrences,
@@ -6,41 +6,23 @@ import {
   getClassBodyRange,
   getServerMethodDecorators,
   parseServerMethodNames,
-} from "../parser";
-import { MethodDecoratorInfo } from "../types";
+} from '../parser';
+import { MethodDecoratorInfo } from '../types';
 
-export function ensureConstructorArgs(
-  content: string,
-  className: string,
-  serviceConstNames: string[]
-): string {
-  const baseName = className.replace(/Controller$/, "");
-  const callRe = new RegExp(
-    `new\\s+_${baseName}Controller\\s*\\(([^)]*)\\)`,
-    "ms"
-  );
+export function ensureConstructorArgs(content: string, className: string, serviceConstNames: string[]): string {
+  const baseName = className.replace(/Controller$/, '');
+  const callRe = new RegExp(`new\\s+_${baseName}Controller\\s*\\(([^)]*)\\)`, 'ms');
   if (!callRe.test(content)) return content;
-  return content.replace(
-    callRe,
-    `new _${baseName}Controller(${serviceConstNames.join(", ")})`
-  );
+  return content.replace(callRe, `new _${baseName}Controller(${serviceConstNames.join(', ')})`);
 }
 
 export function genMethodWrapper(
   decoratorInfo: MethodDecoratorInfo,
   options: { includeDescription?: boolean } = {}
 ): string {
-  const {
-    name,
-    verb,
-    path: p,
-    paramStyle,
-    description,
-    paramTypes,
-    returnType,
-  } = decoratorInfo;
+  const { name, verb, path: p, paramStyle, description, paramTypes, returnType } = decoratorInfo;
   const { includeDescription = false } = options;
-  const indent = "  ";
+  const indent = '  ';
   const lines: string[] = [];
 
   // 生成装饰器（默认不包含描述）
@@ -51,35 +33,33 @@ export function genMethodWrapper(
   }
 
   switch (paramStyle) {
-    case "none":
+    case 'none':
       lines.push(`${indent}async ${name}() {`);
       lines.push(`${indent}  return this.controller.${name}();`);
       lines.push(`${indent}}`);
       break;
-    case "id":
-      lines.push(`${indent}async ${name}(@Param("id") id: ${paramTypes?.idType || "string"}) {`);
+    case 'id':
+      lines.push(`${indent}async ${name}(@Param("id") id: ${paramTypes?.idType || 'string'}) {`);
       lines.push(`${indent}  return this.controller.${name}(id);`);
       lines.push(`${indent}}`);
       break;
-    case "id+body":
-      lines.push(
-        `${indent}async ${name}(@Param("id") id: string, @Body() body: ${paramTypes?.bodyType || "any"}) {`
-      );
+    case 'id+body':
+      lines.push(`${indent}async ${name}(@Param("id") id: string, @Body() body: ${paramTypes?.bodyType || 'any'}) {`);
       lines.push(`${indent}  return this.controller.${name}(id, body);`);
       lines.push(`${indent}}`);
       break;
-    case "query":
-      lines.push(`${indent}async ${name}(@Query() query?: ${paramTypes?.queryType || "any"}) {`);
+    case 'query':
+      lines.push(`${indent}async ${name}(@Query() query?: ${paramTypes?.queryType || 'any'}) {`);
       lines.push(`${indent}  return this.controller.${name}(query);`);
       lines.push(`${indent}}`);
       break;
-    case "body":
-      lines.push(`${indent}async ${name}(@Body() body: ${paramTypes?.bodyType || "any"}) {`);
+    case 'body':
+      lines.push(`${indent}async ${name}(@Body() body: ${paramTypes?.bodyType || 'any'}) {`);
       lines.push(`${indent}  return this.controller.${name}(body);`);
       lines.push(`${indent}}`);
       break;
   }
-  return lines.join("\n");
+  return lines.join('\n');
 }
 
 export function removeExtraGeneratedMethods(
@@ -95,16 +75,16 @@ export function removeExtraGeneratedMethods(
 
   const nameSet = collectAllMethodNames(body);
   try {
-    log("Collected method names:", className, Array.from(nameSet));
+    log('Collected method names:', className, Array.from(nameSet));
   } catch {}
 
   for (const name of nameSet) {
-    if (name === "constructor") continue;
+    if (name === 'constructor') continue;
     if (!serverMethodSet.has(name)) {
       const occ = getMethodOccurrences(body, name);
       if (occ.length) {
         try {
-          log("Removing non-server method:", className, name, "x", occ.length);
+          log('Removing non-server method:', className, name, 'x', occ.length);
         } catch {}
         occ
           .sort((a, b) => b.start - a.start)
@@ -116,18 +96,12 @@ export function removeExtraGeneratedMethods(
   }
 
   for (const name of nameSet) {
-    if (name === "constructor") continue;
+    if (name === 'constructor') continue;
     if (!serverMethodSet.has(name)) continue;
     const occ = getMethodOccurrences(body, name);
     if (occ.length > 1) {
       try {
-        log(
-          "Removing duplicate methods:",
-          className,
-          name,
-          "remove",
-          occ.length - 1
-        );
+        log('Removing duplicate methods:', className, name, 'remove', occ.length - 1);
       } catch {}
       occ
         .slice(1)
@@ -138,30 +112,19 @@ export function removeExtraGeneratedMethods(
     }
   }
 
-  return head + body + "}" + tail;
+  return head + body + '}' + tail;
 }
 
-export function syncMissingMethods(
-  desktopContent: string,
-  className: string,
-  serverContent: string
-): string {
+export function syncMissingMethods(desktopContent: string, className: string, serverContent: string): string {
   // 使用AST解析器获取server方法装饰器信息
-  const serverMethodDecorators = getServerMethodDecorators(
-    serverContent,
-    className
-  );
+  const serverMethodDecorators = getServerMethodDecorators(serverContent, className);
   const serverMethods = Array.from(serverMethodDecorators.keys());
   try {
-    log("Server methods parsed for", className, serverMethods);
+    log('Server methods parsed for', className, serverMethods);
   } catch {}
 
   // 使用AST解析器进行精确的方法级比对和清理
-  let next = removeExtraGeneratedMethodsAST(
-    desktopContent,
-    className,
-    new Set(serverMethods)
-  );
+  let next = removeExtraGeneratedMethodsAST(desktopContent, className, new Set(serverMethods));
 
   const existing = parseDesktopMethodNames(next, className);
   const missing = serverMethods.filter((n) => !existing.has(n));
@@ -182,8 +145,8 @@ export function syncMissingMethods(
 
   if (newMethods.length === 0) return next;
 
-  const insertion = "\n" + newMethods.join("\n\n") + "\n";
-  return before + insertion + "}" + after;
+  const insertion = '\n' + newMethods.join('\n\n') + '\n';
+  return before + insertion + '}' + after;
 }
 
 // 使用AST解析器的方法清理函数
@@ -201,17 +164,17 @@ function removeExtraGeneratedMethodsAST(
   // 使用传统方法获取desktop文件中的所有方法名（因为AST解析器主要针对server文件）
   const nameSet = collectAllMethodNames(body);
   try {
-    log("Collected method names:", className, Array.from(nameSet));
+    log('Collected method names:', className, Array.from(nameSet));
   } catch {}
 
   // 删除不在server中的方法
   for (const name of nameSet) {
-    if (name === "constructor") continue;
+    if (name === 'constructor') continue;
     if (!serverMethodSet.has(name)) {
       const occ = getMethodOccurrences(body, name);
       if (occ.length) {
         try {
-          log("Removing non-server method:", className, name, "x", occ.length);
+          log('Removing non-server method:', className, name, 'x', occ.length);
         } catch {}
         occ
           .sort((a, b) => b.start - a.start)
@@ -224,18 +187,12 @@ function removeExtraGeneratedMethodsAST(
 
   // 删除重复方法
   for (const name of nameSet) {
-    if (name === "constructor") continue;
+    if (name === 'constructor') continue;
     if (!serverMethodSet.has(name)) continue;
     const occ = getMethodOccurrences(body, name);
     if (occ.length > 1) {
       try {
-        log(
-          "Removing duplicate methods:",
-          className,
-          name,
-          "remove",
-          occ.length - 1
-        );
+        log('Removing duplicate methods:', className, name, 'remove', occ.length - 1);
       } catch {}
       occ
         .slice(1)
@@ -246,5 +203,5 @@ function removeExtraGeneratedMethodsAST(
     }
   }
 
-  return head + body + "}" + tail;
+  return head + body + '}' + tail;
 }

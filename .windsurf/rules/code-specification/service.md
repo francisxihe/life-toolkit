@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写server Service代码时
 globs:
 ---
+
 # Service 规范
 
 ## 📋 概述
@@ -12,25 +13,17 @@ globs:
 ## 🏗️ 基础架构
 
 ### 1. 服务类结构
+
 ```typescript
-import { ModuleRepository, RelatedService } from "./module.repository";
-import {
-  CreateModuleDto,
-  UpdateModuleDto,
-  ModulePageFiltersDto,
-  ModuleListFilterDto,
-  ModuleDto,
-} from "./dto";
-import { ModuleStatus } from "@life-toolkit/enum";
+import { ModuleRepository, RelatedService } from './module.repository';
+import { CreateModuleDto, UpdateModuleDto, ModulePageFiltersDto, ModuleListFilterDto, ModuleDto } from './dto';
+import { ModuleStatus } from '@life-toolkit/enum';
 
 export class ModuleService {
   protected relatedService: RelatedService;
   protected moduleRepository: ModuleRepository;
 
-  constructor(
-    relatedService: RelatedService,
-    moduleRepository: ModuleRepository
-  ) {
+  constructor(relatedService: RelatedService, moduleRepository: ModuleRepository) {
     this.relatedService = relatedService;
     this.moduleRepository = moduleRepository;
   }
@@ -38,6 +31,7 @@ export class ModuleService {
 ```
 
 ### 2. 依赖注入规范
+
 - **构造函数注入**: 所有依赖通过构造函数参数注入
 - **属性声明**: 使用 `protected` 修饰符声明依赖属性
 - **立即赋值**: 在构造函数中立即将参数赋值给属性
@@ -47,6 +41,7 @@ export class ModuleService {
 ### 1. 基础 CRUD 方法
 
 #### 创建方法 (create)
+
 ```typescript
 async create(createDto: CreateModuleDto): Promise<ModuleDto> {
   const module = await this.moduleRepository.create(createDto);
@@ -70,6 +65,7 @@ async create(createDto: CreateModuleDto): Promise<ModuleDto> {
 ```
 
 #### 查询方法族
+
 ```typescript
 // 查找所有记录
 async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
@@ -98,6 +94,7 @@ async findById(id: string): Promise<ModuleDto> {
 ```
 
 #### 更新方法 (update)
+
 ```typescript
 async update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto> {
   const module = await this.moduleRepository.update(id, updateDto);
@@ -117,6 +114,7 @@ async update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto> {
 ```
 
 #### 删除方法 (delete)
+
 ```typescript
 async delete(id: string): Promise<boolean> {
   return await this.moduleRepository.delete(id);
@@ -126,6 +124,7 @@ async delete(id: string): Promise<boolean> {
 ### 2. 状态管理方法
 
 #### 状态变更方法
+
 ```typescript
 async changeStatus(id: string, newStatus: ModuleStatus): Promise<any> {
   const updateDto = new UpdateModuleDto();
@@ -160,6 +159,7 @@ async restore(id: string): Promise<any> {
 ### 3. 批量操作方法
 
 #### 批量状态变更
+
 ```typescript
 async batchChangeStatus(params: { includeIds: string[]; status: ModuleStatus }): Promise<any> {
   if (!params?.includeIds?.length) return;
@@ -172,6 +172,7 @@ async batchChangeStatus(params: { includeIds: string[]; status: ModuleStatus }):
 ```
 
 #### 按关联ID删除
+
 ```typescript
 async deleteByRelatedIds(relatedIds: string[]): Promise<void> {
   if (!relatedIds || relatedIds.length === 0) return;
@@ -182,6 +183,7 @@ async deleteByRelatedIds(relatedIds: string[]): Promise<void> {
 ## 📊 数据处理规范
 
 ### 1. 类型断言使用
+
 ```typescript
 // 在处理动态字段或关联数据时使用类型断言
 if ((createDto as any).relatedConfig) {
@@ -193,6 +195,7 @@ updateDto.doneAt = null as any; // 清除时间戳
 ```
 
 ### 2. DTO 实例化
+
 ```typescript
 // 创建 DTO 实例进行状态变更
 const updateDto = new UpdateModuleDto();
@@ -201,6 +204,7 @@ updateDto.doneAt = new Date();
 ```
 
 ### 3. 关联数据同步
+
 ```typescript
 // 同步业务字段到关联对象
 const relatedConfig = {
@@ -214,22 +218,26 @@ const relatedConfig = {
 ## 🔧 最佳实践
 
 ### 1. 方法命名约定
+
 - **基础操作**: `create`, `findByFilter`, `update`, `delete`, `findById`
 - **查询变体**: `list` (简单查询), `page` (分页查询)
 - **状态变更**: `markDone`, `markAbandoned`, `restore`
 - **批量操作**: `batchChangeStatus`, `deleteByRelatedIds`
 
 ### 2. 错误处理原则
+
 - **参数校验**: 在方法开始处校验必要参数
 - **空值检查**: 检查数组参数是否为空
 - **异常抛出**: 让底层 Repository 处理具体异常
 
 ### 3. 性能优化
+
 - **批量操作**: 优先使用批量更新方法
 - **关联查询**: 让 Repository 处理关联数据的延迟加载
 - **分页查询**: 统一返回分页结果格式
 
 ### 4. 数据一致性
+
 - **关联数据**: 创建时同步关联数据
 - **状态管理**: 状态变更时清理相关时间戳
 - **软删除**: 使用软删除保持数据完整性
@@ -247,24 +255,28 @@ const relatedConfig = {
 在创建或修改 Service 时，请确认以下事项：
 
 ### 基础结构
+
 - [ ] 类名符合规范 (PascalCase)
 - [ ] 使用了依赖注入模式
 - [ ] 导入了必要的 DTO 和枚举
 - [ ] 构造函数正确赋值依赖
 
 ### 方法实现
+
 - [ ] 实现了标准的 CRUD 方法
 - [ ] 查询方法返回正确的 DTO 类型
 - [ ] 更新方法处理了关联数据同步
 - [ ] 状态变更方法正确更新时间戳
 
 ### 数据处理
+
 - [ ] 使用了适当的类型断言
 - [ ] DTO 实例化正确
 - [ ] 关联数据同步逻辑完整
 - [ ] 批量操作有参数校验
 
 ### 业务逻辑
+
 - [ ] 状态管理逻辑正确
 - [ ] 关联数据创建/更新处理完整
 - [ ] 错误情况处理合理
@@ -272,24 +284,15 @@ const relatedConfig = {
 ## 📝 完整示例
 
 ```typescript
-import { ModuleRepository, RelatedService } from "./module.repository";
-import {
-  CreateModuleDto,
-  UpdateModuleDto,
-  ModulePageFiltersDto,
-  ModuleListFilterDto,
-  ModuleDto,
-} from "./dto";
-import { ModuleStatus } from "@life-toolkit/enum";
+import { ModuleRepository, RelatedService } from './module.repository';
+import { CreateModuleDto, UpdateModuleDto, ModulePageFiltersDto, ModuleListFilterDto, ModuleDto } from './dto';
+import { ModuleStatus } from '@life-toolkit/enum';
 
 export class ModuleService {
   protected relatedService: RelatedService;
   protected moduleRepository: ModuleRepository;
 
-  constructor(
-    relatedService: RelatedService,
-    moduleRepository: ModuleRepository
-  ) {
+  constructor(relatedService: RelatedService, moduleRepository: ModuleRepository) {
     this.relatedService = relatedService;
     this.moduleRepository = moduleRepository;
   }
@@ -304,10 +307,7 @@ export class ModuleService {
         description: (createDto as any).description,
         tags: (createDto as any).tags,
       });
-      await this.moduleRepository.updateRelatedId(
-        (module as any).id,
-        (related as any).id
-      );
+      await this.moduleRepository.updateRelatedId((module as any).id, (related as any).id);
     }
 
     return await this.moduleRepository.findById((module as any).id);
@@ -320,8 +320,7 @@ export class ModuleService {
   async page(
     filter: ModulePageFiltersDto
   ): Promise<{ list: ModuleDto[]; total: number; pageNum: number; pageSize: number }> {
-    const { list, total, pageNum, pageSize } =
-      await this.moduleRepository.page(filter);
+    const { list, total, pageNum, pageSize } = await this.moduleRepository.page(filter);
     return { list, total, pageNum, pageSize };
   }
 

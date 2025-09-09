@@ -13,10 +13,10 @@ import {
   YearlyType,
   OrdinalDay,
   OrdinalDayType,
-} from "../../types";
-import { createInjectState } from "@life-toolkit/common-web-utils/src/createInjectState";
-import { useRef, useState } from "react";
-import { useLocaleContext } from "./useLocale";
+} from '../../types';
+import { createInjectState } from '@life-toolkit/common-web-utils/src/createInjectState';
+import { useRef, useState } from 'react';
+import { useLocaleContext } from './useLocale';
 
 export type RepeatContextProps = {
   value?: RepeatModeForm & RepeatEndModeForm;
@@ -44,11 +44,9 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       repeatMode: RepeatMode.NONE,
     }
   );
-  const [repeatEndModeForm, setRepeatEndModeForm] = useState<RepeatEndModeForm>(
-    {
-      repeatEndMode: RepeatEndMode.FOREVER,
-    }
-  );
+  const [repeatEndModeForm, setRepeatEndModeForm] = useState<RepeatEndModeForm>({
+    repeatEndMode: RepeatEndMode.FOREVER,
+  });
 
   const repeatModeFormRef = useRef<RepeatModeForm>(repeatModeForm);
   const repeatEndModeFormRef = useRef<RepeatEndModeForm>(repeatEndModeForm);
@@ -107,25 +105,25 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       case RepeatMode.WEEKLY:
         repeatModeFormRef.current = {
           repeatMode: RepeatMode.WEEKLY,
-          repeatConfig: repeatConfig as RepeatFormWeekly["repeatConfig"],
+          repeatConfig: repeatConfig as RepeatFormWeekly['repeatConfig'],
         };
         break;
       case RepeatMode.MONTHLY:
         repeatModeFormRef.current = {
           repeatMode: RepeatMode.MONTHLY,
-          repeatConfig: repeatConfig as RepeatFormMonthly["repeatConfig"],
+          repeatConfig: repeatConfig as RepeatFormMonthly['repeatConfig'],
         };
         break;
       case RepeatMode.YEARLY:
         repeatModeFormRef.current = {
           repeatMode: RepeatMode.YEARLY,
-          repeatConfig: repeatConfig as RepeatFormYearly["repeatConfig"],
+          repeatConfig: repeatConfig as RepeatFormYearly['repeatConfig'],
         };
         break;
       case RepeatMode.CUSTOM:
         repeatModeFormRef.current = {
           repeatMode: RepeatMode.CUSTOM,
-          repeatConfig: repeatConfig as RepeatFormCustom["repeatConfig"],
+          repeatConfig: repeatConfig as RepeatFormCustom['repeatConfig'],
         };
         break;
       default:

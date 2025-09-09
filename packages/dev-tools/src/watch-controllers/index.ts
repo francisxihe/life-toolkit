@@ -28,8 +28,6 @@ import { syncApiMethods } from './sync/sync-api';
 
 const logLocal = createLogger('watch-controllers');
 
-
-
 function syncOne(serverControllerPath: string) {
   const rel = getRelServerPath(serverControllerPath);
   if (!rel.endsWith('.controller.ts')) return;

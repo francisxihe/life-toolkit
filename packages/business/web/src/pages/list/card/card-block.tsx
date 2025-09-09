@@ -56,7 +56,7 @@ function CardBlock(props: CardBlockType) {
       setTimeout(() => {
         setStatus(status !== 1 ? 1 : 0);
         resolve(null);
-      }, 1000)
+      }, 1000),
     ).finally(() => setLoading(false));
   };
 

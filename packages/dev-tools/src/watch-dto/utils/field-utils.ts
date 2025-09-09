@@ -5,12 +5,22 @@ import { getTypeComplexity } from './type-mapping';
  * 检查是否为关系字段
  */
 export function checkIsRelationField(field: DtoField): boolean {
+  // 如果类型包含索引访问语法（如 SomeDto['field']），不应被视为关系字段
+  if (field.type.includes('[') && field.type.includes(']')) {
+    return false;
+  }
+
+  // 如果类型包含内联对象定义（包含大括号），不应被视为关系字段
+  if (field.type.includes('{') && field.type.includes('}')) {
+    return false;
+  }
+
   return (
     // 实体类型
     ['Task', 'Todo', 'Goal', 'Habit', 'TrackTime', 'User'].some(
       (entity) => field.type === entity || field.type === `${entity}[]`
     ) ||
-    // DTO 类型
+    // DTO 类型（但排除索引访问类型）
     field.type.endsWith('Dto') ||
     field.type.endsWith('Dto[]') ||
     // VO 类型
@@ -79,8 +89,24 @@ export function deduplicateFields(fields: DtoField[]): DtoField[] {
 /**
  * 过滤出非关系字段
  */
-export function filterNonRelationFields(fields: DtoField[]): DtoField[] {
-  return fields.filter((field) => !checkIsRelationField(field) && !isImportMethod(field.name));
+export function filterNonRelationFields(fields: DtoField[], className?: string): DtoField[] {
+  if (className === 'TodoDto') {
+    console.log(
+      `[DEBUG] filterNonRelationFields input for ${className}:`,
+      fields.map((f) => `${f.name}: ${f.type}`)
+    );
+  }
+
+  const filtered = fields.filter((field) => !checkIsRelationField(field));
+
+  if (className === 'TodoDto') {
+    console.log(
+      `[DEBUG] filterNonRelationFields output for ${className}:`,
+      filtered.map((f) => `${f.name}: ${f.type}`)
+    );
+  }
+
+  return filtered;
 }
 
 /**

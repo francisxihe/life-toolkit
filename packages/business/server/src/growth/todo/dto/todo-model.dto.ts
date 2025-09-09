@@ -1,7 +1,8 @@
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
+import { IntersectionType } from '@life-toolkit/mapped-types';
 import { Todo, TodoWithoutRelations } from '../todo.entity';
 import { TaskDto } from '../../task';
+import { HabitDto } from '../../habit';
 import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoStatus } from '@life-toolkit/enum';
@@ -11,8 +12,19 @@ export class TodoWithoutRelationsDto extends IntersectionType(BaseModelDto, Todo
 
 export class TodoDto extends TodoWithoutRelationsDto {
   task?: TaskDto;
-  habit?: any;
+  habit?: HabitDto;
   repeat?: TodoRepeatDto;
+  // 重复配置内联对象 - 测试最终修复
+  repeatConfig?: {
+    currentDate: TodoRepeatDto['currentDate'];
+    repeatStartDate: TodoRepeatDto['repeatStartDate'];
+    repeatMode: TodoRepeatDto['repeatMode'];
+    repeatConfig: TodoRepeatDto['repeatConfig'];
+    repeatEndMode: TodoRepeatDto['repeatEndMode'];
+    repeatEndDate: TodoRepeatDto['repeatEndDate'];
+    repeatTimes: TodoRepeatDto['repeatTimes'];
+    repeatedTimes: TodoRepeatDto['repeatedTimes'];
+  };
 
   importEntity(entity: Todo) {
     Object.assign(this, BaseMapper.entityToDto(entity));

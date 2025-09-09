@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写server DTO Filter代码时
 globs:
 ---
+
 需要生成或修改DTO过滤器时
 
 # DTO Filter 规范
@@ -94,27 +95,17 @@ function importListVo(
 
 ```typescript
 // entity-filter.dto.ts
-import {
-  IsOptional,
-  IsString,
-  IsArray,
-  IsEnum,
-  IsNumber,
-} from "class-validator";
-import { Type } from "class-transformer";
-import { PageFilterDto } from "../../../common/filter";
-import { EntityDto } from "./entity-model.dto";
-import {
-  PickType,
-  IntersectionType,
-  PartialType,
-} from "@life-toolkit/mapped-types";
-import { EntityListFiltersVo, EntityPageFiltersVo } from "@life-toolkit/vo";
-import { EntityStatus, EntityType } from "../entity.entity";
+import { IsOptional, IsString, IsArray, IsEnum, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
+import { PageFilterDto } from '../../../common/filter';
+import { EntityDto } from './entity-model.dto';
+import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { EntityListFiltersVo, EntityPageFiltersVo } from '@life-toolkit/vo';
+import { EntityStatus, EntityType } from '../entity.entity';
 
 // 列表过滤DTO
 export class EntityListFilterDto extends PartialType(
-  PickType(EntityDto, ["status", "importance", "relatedId"] as const)
+  PickType(EntityDto, ['status', 'importance', 'relatedId'] as const)
 ) {
   /** 搜索关键词 */
   @IsString()
@@ -148,10 +139,7 @@ export class EntityListFilterDto extends PartialType(
 }
 
 // 分页过滤DTO
-export class EntityPageFiltersDto extends IntersectionType(
-  PageFilterDto,
-  EntityListFilterDto
-) {
+export class EntityPageFiltersDto extends IntersectionType(PageFilterDto, EntityListFilterDto) {
   importPageVo(filterVo: EntityPageFiltersVo) {
     importListVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
@@ -160,10 +148,7 @@ export class EntityPageFiltersDto extends IntersectionType(
 }
 
 // 导入辅助函数
-function importListVo(
-  filterVo: EntityListFiltersVo,
-  filterDto: EntityListFilterDto
-) {
+function importListVo(filterVo: EntityListFiltersVo, filterDto: EntityListFilterDto) {
   filterDto.keyword = filterVo.keyword;
   filterDto.scheduledDateStart = filterVo.scheduledDateStart;
   filterDto.scheduledDateEnd = filterVo.scheduledDateEnd;
@@ -189,9 +174,9 @@ import {
   IsDateString, // 日期字符串验证
   Min, // 最小值验证
   Max, // 最大值验证
-} from "class-validator";
+} from 'class-validator';
 
-import { Type } from "class-transformer";
+import { Type } from 'class-transformer';
 ```
 
 ### 2. 常见过滤字段模式
@@ -267,9 +252,7 @@ export class EntityListFilterDto {
 
 ```typescript
 // 简单列表过滤
-export class ItemListFilterDto extends PartialType(
-  PickType(ItemDto, ["status", "categoryId", "priority"])
-) {
+export class ItemListFilterDto extends PartialType(PickType(ItemDto, ['status', 'categoryId', 'priority'])) {
   /** 搜索关键词 */
   @IsString()
   @IsOptional()
@@ -286,10 +269,7 @@ export class ItemListFilterDto extends PartialType(
 }
 
 // 分页过滤
-export class ItemPageFiltersDto extends IntersectionType(
-  PageFilterDto,
-  ItemListFilterDto
-) {}
+export class ItemPageFiltersDto extends IntersectionType(PageFilterDto, ItemListFilterDto) {}
 ```
 
 ### 2. 复杂过滤模式
@@ -352,9 +332,7 @@ export class ItemAdvancedFilterDto extends ItemListFilterDto {
 
 ```typescript
 // 多级关联过滤
-export class OrderFilterDto extends PartialType(
-  PickType(OrderDto, ["status", "userId"])
-) {
+export class OrderFilterDto extends PartialType(PickType(OrderDto, ['status', 'userId'])) {
   /** 订单项相关过滤 */
   @IsString()
   @IsOptional()
@@ -444,10 +422,7 @@ export class EntityListFilterDto {
 }
 
 // 分页过滤DTO的VO导入
-export class EntityPageFiltersDto extends IntersectionType(
-  PageFilterDto,
-  EntityListFilterDto
-) {
+export class EntityPageFiltersDto extends IntersectionType(PageFilterDto, EntityListFilterDto) {
   /** 从VO导入数据 */
   importPageVo(filterVo: EntityPageFiltersVo) {
     importListVo(filterVo, this);
@@ -461,24 +436,21 @@ export class EntityPageFiltersDto extends IntersectionType(
 
 ```typescript
 // 通用导入函数
-function importListVo(
-  filterVo: EntityListFiltersVo,
-  filterDto: EntityListFilterDto
-) {
+function importListVo(filterVo: EntityListFiltersVo, filterDto: EntityListFilterDto) {
   // 基础字段映射
   filterDto.keyword = filterVo.keyword;
   filterDto.status = filterVo.status;
   filterDto.importance = filterVo.importance;
-  
+
   // 日期范围映射
   filterDto.scheduledDateStart = filterVo.scheduledDateStart;
   filterDto.scheduledDateEnd = filterVo.scheduledDateEnd;
-  
+
   // 数组字段映射
   filterDto.relatedIds = filterVo.relatedIds;
   filterDto.statusList = filterVo.statusList;
   filterDto.tags = filterVo.tags;
-  
+
   // 数值范围映射
   filterDto.priorityMin = filterVo.priorityMin;
   filterDto.priorityMax = filterVo.priorityMax;
@@ -489,24 +461,21 @@ function importListVo(
 
 ```typescript
 // 处理嵌套对象和特殊转换
-function importAdvancedListVo(
-  filterVo: EntityAdvancedFiltersVo,
-  filterDto: EntityAdvancedFilterDto
-) {
+function importAdvancedListVo(filterVo: EntityAdvancedFiltersVo, filterDto: EntityAdvancedFilterDto) {
   // 基础字段导入
   importListVo(filterVo, filterDto);
-  
+
   // 特殊字段处理
   if (filterVo.dateRange) {
     filterDto.scheduledDateStart = filterVo.dateRange.start;
     filterDto.scheduledDateEnd = filterVo.dateRange.end;
   }
-  
+
   // 枚举数组处理
   if (filterVo.statusFilter?.length) {
-    filterDto.statusList = filterVo.statusFilter.map(s => s as EntityStatus);
+    filterDto.statusList = filterVo.statusFilter.map((s) => s as EntityStatus);
   }
-  
+
   // 关联对象处理
   if (filterVo.categoryFilter) {
     filterDto.categoryIds = [filterVo.categoryFilter.id];
@@ -578,10 +547,7 @@ export class OptimizedFilterDto {
 
 ```typescript
 // 合理的分页参数
-export class EntityPageFiltersDto extends IntersectionType(
-  PageFilterDto,
-  EntityListFilterDto
-) {
+export class EntityPageFiltersDto extends IntersectionType(PageFilterDto, EntityListFilterDto) {
   /** 重写分页参数以添加限制 */
   @IsNumber()
   @Type(() => Number)
@@ -611,18 +577,21 @@ export class EntityPageFiltersDto extends IntersectionType(
 ## ✅ 检查清单
 
 ### 基础结构
+
 - [ ] 文件命名符合规范 (`{module}-filter.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}ListFilterDto`, `{Module}PageFiltersDto`)
 - [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
 - [ ] 导入了必要的验证装饰器
 
 ### 继承关系
+
 - [ ] 正确继承自 `PageFilterDto`
 - [ ] 使用了合适的工具类型 (PickType, PartialType, IntersectionType等)
 - [ ] 避免了重复的字段定义
 - [ ] 继承链清晰合理
 
 ### 验证规则
+
 - [ ] 所有字段都使用了 `@IsOptional()`（过滤字段通常都是可选的）
 - [ ] 数字字段使用了 `@Type(() => Number)`
 - [ ] 日期字段使用了 `@IsDateString()`
@@ -631,18 +600,21 @@ export class EntityPageFiltersDto extends IntersectionType(
 - [ ] 字符串数组使用了 `@IsString({ each: true })`
 
 ### 字段设计
+
 - [ ] 过滤条件完整且实用
 - [ ] 关联字段处理合理（使用ID列表）
 - [ ] 时间范围过滤设计合理
 - [ ] 数值范围过滤设计合理
 
 ### VO映射
+
 - [ ] 实现了 `importListVo()` 方法
 - [ ] 实现了 `importPageVo()` 方法
 - [ ] 导入辅助函数设计合理
 - [ ] 字段映射完整正确
 
 ### 代码质量
+
 - [ ] 导入了必要的依赖
 - [ ] 避免了循环依赖
 - [ ] 注释清晰准确

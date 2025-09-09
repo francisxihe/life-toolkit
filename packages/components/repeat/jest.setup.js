@@ -12,4 +12,4 @@ global.ResizeObserver = jest.fn().mockImplementation(() => ({
 jest.mock('dayjs', () => {
   const originalDayjs = jest.requireActual('dayjs');
   return originalDayjs;
-}); 
+});

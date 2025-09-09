@@ -107,7 +107,12 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: TaskDto[], total: number, pageNum: number, pageSize: number): ResponsePageVo<TaskVO.TaskWithoutRelationsVo> {
+  static dtoListToPageVo(
+    list: TaskDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): ResponsePageVo<TaskVO.TaskWithoutRelationsVo> {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,

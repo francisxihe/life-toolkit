@@ -10,7 +10,8 @@ export type HabitFilterVo = {
   excludeIds?: string[];
   id?: string;
   goalId?: string;
-} & BaseFilterVo & Partial<Pick<HabitVo, 'status' | 'difficulty' | 'tags' | 'importance'>>;
+} & BaseFilterVo &
+  Partial<Pick<HabitVo, 'status' | 'difficulty' | 'tags' | 'importance'>>;
 
 export type HabitPageFilterVo = HabitFilterVo & {
   pageNum: number;

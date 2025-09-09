@@ -1,18 +1,18 @@
 export enum TodoStatus {
-  TODO = "todo",
-  DONE = "done",
-  ABANDONED = "abandoned",
+  TODO = 'todo',
+  DONE = 'done',
+  ABANDONED = 'abandoned',
 }
 
 export enum TodoSource {
   /** 手动创建 */
-  MANUAL = "manual",
+  MANUAL = 'manual',
   /** 重复创建 */
-  REPEAT = "repeat",
+  REPEAT = 'repeat',
   /** 习惯创建 */
-  HABIT = "habit",
+  HABIT = 'habit',
   /** 任务创建 */
-  TASK = "task",
+  TASK = 'task',
   /** 重复 */
-  IS_REPEAT = "is-repeat",
+  IS_REPEAT = 'is-repeat',
 }

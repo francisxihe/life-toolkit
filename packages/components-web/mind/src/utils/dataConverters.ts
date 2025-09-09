@@ -92,7 +92,10 @@ export class MindMapDataConverter<T extends MindMapNode = MindMapNode> {
     // 递归处理子节点
     if (node.children && node.children.length > 0) {
       mindMapNode.children = node.children.map((child: MindMapNode) =>
-        this.convertSingleNode(child, type === ENodeType.topic ? ENodeType.topicBranch : ENodeType.topicChild)
+        this.convertSingleNode(
+          child,
+          type === ENodeType.topic ? ENodeType.topicBranch : ENodeType.topicChild
+        )
       );
     }
 

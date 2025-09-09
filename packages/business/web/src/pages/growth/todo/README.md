@@ -7,6 +7,7 @@ Todo模块是Life Toolkit项目中的核心功能模块，提供完整的待办�
 ## 功能特性
 
 ### 🎯 核心功能
+
 - **任务管理**: 创建、编辑、删除、完成、放弃待办任务
 - **时间规划**: 支持按日期规划任务，包括今日、本周、历史任务管理
 - **状态跟踪**: 支持待办、已完成、已放弃等多种任务状态
@@ -14,12 +15,14 @@ Todo模块是Life Toolkit项目中的核心功能模块，提供完整的待办�
 - **日历视图**: 直观的日历界面查看和管理任务
 
 ### 📊 数据分析
+
 - **任务统计**: 完成率、高优先级任务统计
 - **趋势分析**: 任务完成趋势图表
 - **时间分析**: 平均完成时间统计
 - **数据看板**: 综合数据展示面板
 
 ### 🔍 高级功能
+
 - **智能搜索**: 支持任务内容、标签、日期等多维度搜索
 - **过滤筛选**: 按状态、优先级、日期范围等条件筛选
 - **批量操作**: 支持批量修改任务状态
@@ -64,16 +67,19 @@ todo/
 ## 技术架构
 
 ### 状态管理
+
 - 使用自定义的 `createInjectState` 工具进行状态管理
 - 每个子模块都有独立的context管理局部状态
 - 全局context提供日期相关的共享状态
 
 ### 组件设计
+
 - 采用模块化设计，每个功能独立成模块
 - 使用React Router进行路由管理
 - 组件间通过props和context进行数据传递
 
 ### 样式方案
+
 - 使用CSS Modules进行样式隔离
 - 采用Less预处理器
 - 结合Tailwind CSS进行快速样式开发
@@ -89,16 +95,16 @@ import TodoPage from './todo';
 // 路由配置示例
 const routes = [
   {
-    path: "/todo",
+    path: '/todo',
     element: <TodoPage />,
     children: [
-      { path: "today", element: <TodoToday /> },
-      { path: "week", element: <TodoWeek /> },
-      { path: "dashboard", element: <TodoDashboard /> },
-      { path: "calendar", element: <TodoCalendar /> },
-      { path: "all", element: <TodoAll /> }
-    ]
-  }
+      { path: 'today', element: <TodoToday /> },
+      { path: 'week', element: <TodoWeek /> },
+      { path: 'dashboard', element: <TodoDashboard /> },
+      { path: 'calendar', element: <TodoCalendar /> },
+      { path: 'all', element: <TodoAll /> },
+    ],
+  },
 ];
 ```
 
@@ -110,7 +116,7 @@ import { useTodoContext } from './context';
 
 function MyComponent() {
   const { today, yesterday, weekStart, weekEnd } = useTodoContext();
-  
+
   // 使用日期状态
   console.log('今天:', today);
   console.log('昨天:', yesterday);
@@ -122,8 +128,9 @@ function MyComponent() {
 ## 子模块说明
 
 ### 1. Todo Today (今日待办)
+
 - **功能**: 专注于今日任务管理
-- **特性**: 
+- **特性**:
   - 显示今日计划任务
   - 展示已过期任务
   - 今日完成和放弃的任务
@@ -131,6 +138,7 @@ function MyComponent() {
   - 任务详情编辑
 
 ### 2. Todo Week (本周待办)
+
 - **功能**: 本周任务规划和管理
 - **特性**:
   - 按周显示任务
@@ -138,6 +146,7 @@ function MyComponent() {
   - 周计划制定
 
 ### 3. Todo Dashboard (数据看板)
+
 - **功能**: 任务数据分析和统计
 - **特性**:
   - 任务完成趋势
@@ -146,6 +155,7 @@ function MyComponent() {
   - 可视化图表
 
 ### 4. Todo Calendar (日历视图)
+
 - **功能**: 日历形式的任务管理
 - **特性**:
   - 月度日历视图
@@ -154,6 +164,7 @@ function MyComponent() {
   - 日期范围搜索
 
 ### 5. Todo All (全部任务)
+
 - **功能**: 所有任务的列表管理
 - **特性**:
   - 表格形式展示
@@ -164,12 +175,14 @@ function MyComponent() {
 ## 依赖说明
 
 ### 核心依赖
+
 - `react`: React框架
 - `react-router-dom`: 路由管理
 - `dayjs`: 日期处理
 - `@arco-design/web-react`: UI组件库
 
 ### 内部依赖
+
 - `@life-toolkit/vo`: 数据模型定义
 - `@life-toolkit/tabs`: 自定义标签组件
 - `../../components`: 共享组件
@@ -178,18 +191,21 @@ function MyComponent() {
 ## 开发指南
 
 ### 添加新功能
+
 1. 在对应子模块中添加新组件
 2. 更新context如需要新的状态
 3. 添加相应的样式文件
 4. 更新路由配置
 
 ### 样式开发
+
 - 使用CSS Modules避免样式冲突
 - 遵循BEM命名规范
 - 优先使用Tailwind CSS类名
 - 复杂样式使用Less编写
 
 ### 状态管理
+
 - 局部状态使用useState
 - 跨组件状态使用context
 - 异步状态使用useEffect + useState
@@ -212,4 +228,4 @@ function MyComponent() {
 - [ ] 支持任务导入导出
 - [ ] 添加任务时间追踪
 - [ ] 支持子任务功能
-- [ ] 添加任务评论系统 
+- [ ] 添加任务评论系统

@@ -33,10 +33,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
   }
 
   exportVo(): TodoVO.TodoVo {
-    return this.exportWithoutRelationsVo();
-  }
-
-  exportWithoutRelationsVo(): TodoVO.TodoWithoutRelationsVo {
     return {
       id: this.id,
       // 重复配置相关字段
@@ -49,12 +45,11 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
       abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       createdAt: dayjs(this.createdAt).format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: dayjs(this.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
-
       planDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
 
-      repeat: {
+      repeatConfig: {
         currentDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
-        repeatStartDate: this.repeatStartDate ? dayjs(this.repeatStartDate).format('YYYY-MM-DD') : undefined,
+        repeatStartDate: dayjs(this.repeatStartDate).format('YYYY-MM-DD'),
         repeatMode: this.repeatMode,
         repeatConfig: this.repeatConfig,
         repeatEndMode: this.repeatEndMode,

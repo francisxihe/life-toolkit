@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写server DTO Model代码时
 globs:
 ---
+
 需要生成或修改DTO模型时
 
 # DTO Model 规范
@@ -43,24 +44,19 @@ export class {Module}ModelDto extends OmitType({Module}Dto, [
 
 ```typescript
 // entity-model.dto.ts
-import { BaseModelDto } from "../../../base/base-model.dto";
-import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
-import { Entity } from "../entity.entity";
-import { RelatedDto } from "../../related/dto";
+import { BaseModelDto } from '../../../base/base-model.dto';
+import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import { Entity } from '../entity.entity';
+import { RelatedDto } from '../../related/dto';
 
 // 基础DTO - 包含所有字段
-export class EntityDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Entity, ["related"] as const)
-) {
+export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, ['related'] as const)) {
   // 关联字段
   related?: RelatedDto;
 }
 
 // 模型DTO - 排除关联字段
-export class EntityModelDto extends OmitType(EntityDto, [
-  "related",
-] as const) {}
+export class EntityModelDto extends OmitType(EntityDto, ['related'] as const) {}
 ```
 
 ## 🧭 DTO 内置映射方法
@@ -77,16 +73,13 @@ export class EntityModelDto extends OmitType(EntityDto, [
 ### 映射模板
 
 ```typescript
-import { BaseModelDto } from "../../../base/base-model.dto";
-import { IntersectionType, OmitType } from "@life-toolkit/mapped-types";
-import dayjs from "dayjs";
-import type { Entity as EntityVO } from "@life-toolkit/vo";
-import { Entity } from "../entity.entity";
+import { BaseModelDto } from '../../../base/base-model.dto';
+import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
+import dayjs from 'dayjs';
+import type { Entity as EntityVO } from '@life-toolkit/vo';
+import { Entity } from '../entity.entity';
 
-export class EntityDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Entity, ["related"] as const)
-) {
+export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, ['related'] as const)) {
   related?: any;
 
   // Entity → DTO
@@ -133,13 +126,8 @@ export class EntityDto extends IntersectionType(
   static dtoListToListVo(list: EntityDto[]): EntityVO.EntityListVo {
     return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
-  
-  static dtoListToPageVo(
-    list: EntityDto[],
-    total: number,
-    pageNum: number,
-    pageSize: number
-  ): EntityVO.EntityPageVo {
+
+  static dtoListToPageVo(list: EntityDto[], total: number, pageNum: number, pageSize: number): EntityVO.EntityPageVo {
     return {
       list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
@@ -162,9 +150,7 @@ export class EntityDto extends IntersectionType(
 
 ```typescript
 // ✅ 推荐：使用 Mapped Types 复用类型定义
-export class EntityModelDto extends OmitType(EntityDto, [
-  "relationField",
-]) {}
+export class EntityModelDto extends OmitType(EntityDto, ['relationField']) {}
 
 // ❌ 避免：手动重复定义字段
 export class EntityModelDto {
@@ -179,13 +165,10 @@ export class EntityModelDto {
 
 ```typescript
 // 处理关联关系
-export class EntityDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Entity, ["category", "items"] as const)
-) {
+export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, ['category', 'items'] as const)) {
   /** 分类关联 */
   category?: CategoryDto;
-  
+
   /** 子项列表 */
   items?: ItemDto[];
 
@@ -195,16 +178,16 @@ export class EntityDto extends IntersectionType(
     this.status = entity.status;
     this.createdAt = entity.createdAt;
     this.updatedAt = entity.updatedAt;
-    
+
     // 关联对象映射
     if (entity.category) {
       this.category = new CategoryDto();
       this.category.importEntity(entity.category);
     }
-    
+
     // 关联列表映射
     if (entity.items?.length) {
-      this.items = entity.items.map(item => {
+      this.items = entity.items.map((item) => {
         const itemDto = new ItemDto();
         itemDto.importEntity(item);
         return itemDto;
@@ -225,23 +208,27 @@ export class EntityDto extends IntersectionType(
 ## ✅ 检查清单
 
 ### 基础结构
+
 - [ ] 文件命名符合规范 (`{module}-model.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}Dto`, `{Module}ModelDto`)
 - [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
 - [ ] 正确继承自 `BaseModelDto`
 
 ### 继承关系
+
 - [ ] 使用了合适的工具类型 (IntersectionType, OmitType等)
 - [ ] 避免了重复的字段定义
 - [ ] 继承链清晰合理
 
 ### 映射逻辑
+
 - [ ] 实现了 `importEntity()` 方法
 - [ ] 实现了 `exportVo()` 和 `exportWithoutRelationsVo()` 方法
 - [ ] 日期字段格式化正确
 - [ ] 关联对象处理合理
 
 ### 代码质量
+
 - [ ] 导入了必要的依赖
 - [ ] 避免了循环依赖
 - [ ] 注释清晰准确

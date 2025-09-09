@@ -1,5 +1,5 @@
-import { DtoField } from "../types";
-import { dtoAstParser } from "./ast-field-parser";
+import { DtoField } from '../types';
+import { dtoAstParser } from './ast-field-parser';
 
 /**
  * 解析类的字段定义 - 使用 AST 解析器
@@ -11,14 +11,14 @@ export function parseClassFields(classBody: string, className?: string): DtoFiel
       return dtoAstParser.parseClassFields(classBody, className);
     } else {
       // 构造完整的类定义用于 AST 解析
-      const fullClassContent = className 
+      const fullClassContent = className
         ? `export class ${className} {\n${classBody}\n}`
         : `export class TempClass {\n${classBody}\n}`;
-      
+
       return dtoAstParser.parseClassFields(fullClassContent, className || 'TempClass');
     }
   } catch (error) {
-    console.warn("AST解析字段失败，回退到正则表达式:", error);
+    console.warn('AST解析字段失败，回退到正则表达式:', error);
     return parseClassFieldsRegex(classBody);
   }
 }
@@ -67,7 +67,7 @@ function parseClassFieldsRegex(classBody: string): DtoField[] {
  */
 function parseFieldType(typeStr: string): { type: string; isArray: boolean } {
   const cleanType = typeStr.trim();
-  
+
   // 检查是否为数组类型
   if (cleanType.endsWith('[]')) {
     return {

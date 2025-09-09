@@ -1,7 +1,7 @@
 export enum OrdinalDayType {
-  DAY = "day",
-  WORKDAY = "workday",
-  REST_DAY = "restDay",
+  DAY = 'day',
+  WORKDAY = 'workday',
+  REST_DAY = 'restDay',
 }
 export enum OrdinalDay {
   FIRST = 1,

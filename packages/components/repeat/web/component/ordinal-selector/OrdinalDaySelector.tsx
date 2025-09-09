@@ -1,21 +1,21 @@
-import { Select } from "@arco-design/web-react";
-import { useLocaleContext } from "../useLocale";
-import { OrdinalDayType, OrdinalDay } from "../../../types";
+import { Select } from '@arco-design/web-react';
+import { useLocaleContext } from '../useLocale';
+import { OrdinalDayType, OrdinalDay } from '../../../types';
 
 export const OrdinalDayTypeMap = new Map<OrdinalDayType, string>([
-  [OrdinalDayType.DAY, "day"],
-  [OrdinalDayType.WORKDAY, "workday"],
-  [OrdinalDayType.REST_DAY, "restDay"],
+  [OrdinalDayType.DAY, 'day'],
+  [OrdinalDayType.WORKDAY, 'workday'],
+  [OrdinalDayType.REST_DAY, 'restDay'],
 ]);
 
 export const OrdinalMap = new Map<OrdinalDay, string>([
-  [OrdinalDay.FIRST, "first"],
-  [OrdinalDay.SECOND, "second"],
-  [OrdinalDay.THIRD, "third"],
-  [OrdinalDay.FOURTH, "fourth"],
-  [OrdinalDay.FIFTH, "fifth"],
-  [OrdinalDay.SECOND_LAST, "secondLast"],
-  [OrdinalDay.LAST, "last"],
+  [OrdinalDay.FIRST, 'first'],
+  [OrdinalDay.SECOND, 'second'],
+  [OrdinalDay.THIRD, 'third'],
+  [OrdinalDay.FOURTH, 'fourth'],
+  [OrdinalDay.FIFTH, 'fifth'],
+  [OrdinalDay.SECOND_LAST, 'secondLast'],
+  [OrdinalDay.LAST, 'last'],
 ]);
 
 export default function OrdinalDaySelector({
@@ -47,12 +47,10 @@ export default function OrdinalDaySelector({
       />
       <Select
         value={ordinalDayType}
-        options={Array.from(OrdinalDayTypeMap.entries()).map(
-          ([key, value]) => ({
-            value: key,
-            label: t[value],
-          })
-        )}
+        options={Array.from(OrdinalDayTypeMap.entries()).map(([key, value]) => ({
+          value: key,
+          label: t[value],
+        }))}
         onChange={(value) => {
           setOrdinalDayType(value);
         }}

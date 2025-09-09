@@ -1,3 +1,3 @@
-export * from "./mapping";
-export { default as webMapping } from "./mapping";
-export * from "./component";
+export * from './mapping';
+export { default as webMapping } from './mapping';
+export * from './component';

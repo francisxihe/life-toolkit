@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, In } from "typeorm";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In } from 'typeorm';
 import {
   CreateHabitDto,
   UpdateHabitDto,
@@ -10,9 +10,9 @@ import {
   Habit,
   Goal,
   Todo,
-} from "@life-toolkit/business-server";
-import { HabitRepository as _HabitRepository } from "@life-toolkit/business-server";
-import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
+} from '@life-toolkit/business-server';
+import { HabitRepository as _HabitRepository } from '@life-toolkit/business-server';
+import { HabitStatus, TodoStatus } from '@life-toolkit/enum';
 
 @Injectable()
 export class HabitRepository implements _HabitRepository {
@@ -81,10 +81,7 @@ export class HabitRepository implements _HabitRepository {
     const skip = (pageNum - 1) * pageSize;
 
     const query = this.buildQuery(filter);
-    const [habits, total] = await query
-      .skip(skip)
-      .take(pageSize)
-      .getManyAndCount();
+    const [habits, total] = await query.skip(skip).take(pageSize).getManyAndCount();
 
     return {
       list: habits.map((habit) => {
@@ -176,11 +173,7 @@ export class HabitRepository implements _HabitRepository {
     await this.habitRepository.update({ id: In(ids) }, updateData);
   }
 
-  async updateStatus(
-    id: string,
-    status: HabitStatus,
-    additionalData?: Record<string, any>
-  ): Promise<void> {
+  async updateStatus(id: string, status: HabitStatus, additionalData?: Record<string, any>): Promise<void> {
     const updateData = { status, ...additionalData };
     await this.habitRepository.update({ id }, updateData);
   }
@@ -220,25 +213,24 @@ export class HabitRepository implements _HabitRepository {
   }> {
     const activeTodos = await this.todoRepository.find({
       where: { habitId, status: TodoStatus.TODO },
-      order: { createdAt: "DESC" },
+      order: { createdAt: 'DESC' },
     });
 
     const completedTodos = await this.todoRepository.find({
       where: { habitId, status: TodoStatus.DONE },
-      order: { doneAt: "DESC" },
+      order: { doneAt: 'DESC' },
     });
 
     const abandonedTodos = await this.todoRepository.find({
       where: { habitId, status: TodoStatus.ABANDONED },
-      order: { abandonedAt: "DESC" },
+      order: { abandonedAt: 'DESC' },
     });
 
     return {
       activeTodos,
       completedTodos,
       abandonedTodos,
-      totalCount:
-        activeTodos.length + completedTodos.length + abandonedTodos.length,
+      totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
     };
   }
 
@@ -263,7 +255,7 @@ export class HabitRepository implements _HabitRepository {
 
     const recentTodos = await this.todoRepository.find({
       where: { habitId },
-      order: { createdAt: "DESC" },
+      order: { createdAt: 'DESC' },
       take: 10,
     });
 
@@ -272,61 +264,48 @@ export class HabitRepository implements _HabitRepository {
 
   // 构建查询条件的私有方法
   private buildQuery(filter: HabitFilterDto) {
-    let query = this.habitRepository.createQueryBuilder("habit");
+    let query = this.habitRepository.createQueryBuilder('habit');
 
     // 软删除过滤（与 Goal 仓储保持一致）
-    query = query.andWhere("habit.deletedAt IS NULL");
+    query = query.andWhere('habit.deletedAt IS NULL');
 
     // 目标过滤（当提供 goalId 时关联查询）
     if ((filter as any).goalId) {
-      query = query
-        .leftJoin("habit.goals", "goal")
-        .andWhere("goal.id = :goalId", { goalId: (filter as any).goalId });
+      query = query.leftJoin('habit.goals', 'goal').andWhere('goal.id = :goalId', { goalId: (filter as any).goalId });
     }
 
     // 状态过滤
-    if (
-      filter.status &&
-      Array.isArray(filter.status) &&
-      filter.status.length > 0
-    ) {
-      query = query.andWhere("habit.status IN (:...status)", {
+    if (filter.status && Array.isArray(filter.status) && filter.status.length > 0) {
+      query = query.andWhere('habit.status IN (:...status)', {
         status: filter.status,
       });
     }
 
     // 难度过滤
-    if (
-      filter.difficulty &&
-      Array.isArray(filter.difficulty) &&
-      filter.difficulty.length > 0
-    ) {
-      query = query.andWhere("habit.difficulty IN (:...difficulty)", {
+    if (filter.difficulty && Array.isArray(filter.difficulty) && filter.difficulty.length > 0) {
+      query = query.andWhere('habit.difficulty IN (:...difficulty)', {
         difficulty: filter.difficulty,
       });
     }
 
     // 重要程度（单值）
     if ((filter as any).importance !== undefined) {
-      query = query.andWhere("habit.importance = :importance", {
+      query = query.andWhere('habit.importance = :importance', {
         importance: (filter as any).importance,
       });
     }
 
     // 关键词搜索
     if (filter.keyword) {
-      query = query.andWhere(
-        "(habit.name LIKE :keyword OR habit.description LIKE :keyword)",
-        { keyword: `%${filter.keyword}%` }
-      );
+      query = query.andWhere('(habit.name LIKE :keyword OR habit.description LIKE :keyword)', {
+        keyword: `%${filter.keyword}%`,
+      });
     }
 
     // 标签搜索
     if (filter.tags) {
       // 确保 tags 是数组
-      const tagsArray = Array.isArray(filter.tags)
-        ? filter.tags
-        : [filter.tags];
+      const tagsArray = Array.isArray(filter.tags) ? filter.tags : [filter.tags];
       if (tagsArray.length > 0) {
         tagsArray.forEach((tag, index) => {
           query = query.andWhere(`habit.tags LIKE :tag${index}`, {
@@ -338,26 +317,26 @@ export class HabitRepository implements _HabitRepository {
 
     // 日期范围过滤
     if (filter.startDateStart) {
-      query = query.andWhere("habit.startDate >= :startDateStart", {
+      query = query.andWhere('habit.startDate >= :startDateStart', {
         startDateStart: filter.startDateStart,
       });
     }
     if (filter.startDateEnd) {
-      query = query.andWhere("habit.startDate <= :startDateEnd", {
+      query = query.andWhere('habit.startDate <= :startDateEnd', {
         startDateEnd: filter.startDateEnd,
       });
     }
     if (filter.endDataStart) {
-      query = query.andWhere("habit.targetDate >= :endDataStart", {
+      query = query.andWhere('habit.targetDate >= :endDataStart', {
         endDataStart: filter.endDataStart,
       });
     }
     if (filter.endDataEnd) {
-      query = query.andWhere("habit.targetDate <= :endDataEnd", {
+      query = query.andWhere('habit.targetDate <= :endDataEnd', {
         endDataEnd: filter.endDataEnd,
       });
     }
 
-    return query.orderBy("habit.updatedAt", "DESC");
+    return query.orderBy('habit.updatedAt', 'DESC');
   }
 }

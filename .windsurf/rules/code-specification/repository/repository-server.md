@@ -13,25 +13,19 @@ Server Repository 位于 `apps/server/src/business/{module}/` 目录中，负责
 ## 🏗️ 基础架构
 
 ### 文件结构
+
 ```
 apps/server/src/business/{module}/
 └── {module}.repository.ts     # Server Repository 实现
 ```
 
 ### 导入规范
+
 ```typescript
 // 1. 导入 NestJS 和 TypeORM 相关类
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/common";
-import {
-  Repository,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-  In,
-} from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/common';
+import { Repository, FindOptionsWhere, Between, MoreThan, LessThan, Like, In } from 'typeorm';
 
 // 2. 导入 Business Layer Interface 和类型
 import {
@@ -41,18 +35,19 @@ import {
   ModuleListFilterDto,
   ModuleDto,
   Module,
-} from "@life-toolkit/business-server";
+} from '@life-toolkit/business-server';
 
 // 3. 导入工具类
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 // 4. 导入枚举和类型
-import { ModuleStatus } from "@life-toolkit/enum";
+import { ModuleStatus } from '@life-toolkit/enum';
 ```
 
 ## 📋 实现规范
 
 ### 基础 Repository 实现
+
 ```typescript
 @Injectable()
 export class ModuleRepository {
@@ -67,22 +62,17 @@ export class ModuleRepository {
       ...createDto,
       status: ModuleStatus.PENDING,
       tags: createDto.tags || [],
-      planDate: createDto.planDate
-        ? dayjs(createDto.planDate).toDate()
-        : undefined,
+      planDate: createDto.planDate ? dayjs(createDto.planDate).toDate() : undefined,
     });
 
     const saved = await this.moduleRepository.save(module);
     return ModuleDto.importEntity(saved);
   }
 
-  async findOneByRepeatAndDate(
-    relatedId: string,
-    date: Date
-  ): Promise<ModuleDto | null> {
+  async findOneByRepeatAndDate(relatedId: string, date: Date): Promise<ModuleDto | null> {
     const day = dayjs(date);
-    const start = new Date(day.format("YYYY-MM-DD") + "T00:00:00");
-    const end = new Date(day.format("YYYY-MM-DD") + "T23:59:59");
+    const start = new Date(day.format('YYYY-MM-DD') + 'T00:00:00');
+    const end = new Date(day.format('YYYY-MM-DD') + 'T23:59:59');
     const existed = await this.moduleRepository.findOne({
       where: {
         relatedId,
@@ -92,18 +82,13 @@ export class ModuleRepository {
     return existed ? ModuleDto.importEntity(existed) : null;
   }
 
-  async createWithExtras(
-    createDto: CreateModuleDto,
-    extras: Partial<Module>
-  ): Promise<ModuleDto> {
+  async createWithExtras(createDto: CreateModuleDto, extras: Partial<Module>): Promise<ModuleDto> {
     const resource = this.moduleRepository.create({
       ...createDto,
       ...extras,
       status: ModuleStatus.ACTIVE,
       tags: createDto.tags || [],
-      planDate: createDto.planDate
-        ? dayjs(createDto.planDate).format("YYYY-MM-DD")
-        : undefined,
+      planDate: createDto.planDate ? dayjs(createDto.planDate).format('YYYY-MM-DD') : undefined,
     });
     await this.moduleRepository.save(resource);
     return this.findById(resource.id);
@@ -142,32 +127,25 @@ export class ModuleRepository {
   async update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto> {
     const resource = await this.moduleRepository.findOneBy({ id });
     if (!resource) {
-      throw new Error("Module not found");
+      throw new Error('Module not found');
     }
 
     await this.moduleRepository.update(id, {
       ...updateDto,
-      planDate: updateDto.planDate
-        ? dayjs(updateDto.planDate).toDate()
-        : undefined,
+      planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
     });
 
     return this.findById(id);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateDto: UpdateModuleDto
-  ): Promise<ModuleDto[]> {
+  async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ModuleDto[]> {
     if (!includeIds || includeIds.length === 0) return [];
 
     await this.moduleRepository.update(
       { id: In(includeIds) },
       {
         ...updateDto,
-        planDate: updateDto.planDate
-          ? dayjs(updateDto.planDate).toDate()
-          : undefined,
+        planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
       }
     );
 
@@ -193,14 +171,14 @@ export class ModuleRepository {
         relations: relations || [],
       });
       if (!resource) {
-        throw new Error("Module not found");
+        throw new Error('Module not found');
       }
 
       // 手动加载关联关系
       if (resource.relatedId) {
         const resourceWithRepeat = await this.moduleRepository.findOne({
           where: { id },
-          relations: ["repeat"],
+          relations: ['repeat'],
         });
         if (resourceWithRepeat?.repeat) {
           resource.repeat = resourceWithRepeat.repeat;
@@ -210,7 +188,7 @@ export class ModuleRepository {
       return resource as ModuleDto;
     } catch (error) {
       console.error(error);
-      throw new Error("Module not found");
+      throw new Error('Module not found');
     }
   }
 
@@ -224,33 +202,28 @@ export class ModuleRepository {
   }
 
   // 查询条件构建器
-  private buildWhere(
-    filter: ModulePageFiltersDto | ModuleListFilterDto
-  ): FindOptionsWhere<Module> {
+  private buildWhere(filter: ModulePageFiltersDto | ModuleListFilterDto): FindOptionsWhere<Module> {
     const where: FindOptionsWhere<Module> = {};
 
     // 日期范围条件
     if (filter.planDateStart && filter.planDateEnd) {
       where.planDate = Between(
-        new Date(filter.planDateStart + "T00:00:00"),
-        new Date(filter.planDateEnd + "T23:59:59")
+        new Date(filter.planDateStart + 'T00:00:00'),
+        new Date(filter.planDateEnd + 'T23:59:59')
       );
     } else if (filter.planDateStart) {
-      where.planDate = MoreThan(new Date(filter.planDateStart + "T00:00:00"));
+      where.planDate = MoreThan(new Date(filter.planDateStart + 'T00:00:00'));
     } else if (filter.planDateEnd) {
-      where.planDate = LessThan(new Date(filter.planDateEnd + "T23:59:59"));
+      where.planDate = LessThan(new Date(filter.planDateEnd + 'T23:59:59'));
     }
 
     // 完成时间范围条件
     if (filter.doneDateStart && filter.doneDateEnd) {
-      where.doneAt = Between(
-        new Date(filter.doneDateStart + "T00:00:00"),
-        new Date(filter.doneDateEnd + "T23:59:59")
-      );
+      where.doneAt = Between(new Date(filter.doneDateStart + 'T00:00:00'), new Date(filter.doneDateEnd + 'T23:59:59'));
     } else if (filter.doneDateStart) {
-      where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
+      where.doneAt = MoreThan(new Date(filter.doneDateStart + 'T00:00:00'));
     } else if (filter.doneDateEnd) {
-      where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
+      where.doneAt = LessThan(new Date(filter.doneDateEnd + 'T23:59:59'));
     }
 
     // 关键词搜索条件
@@ -291,16 +264,19 @@ export class ModuleRepository {
 ## 🎯 设计原则
 
 ### 1. 复杂查询支持
+
 - 支持多表关联查询
 - 实现复杂的过滤条件
 - 优化数据库查询性能
 
 ### 2. 事务管理
+
 - 支持数据库事务
 - 确保数据一致性
 - 处理并发访问控制
 
 ### 3. 关联关系处理
+
 - 处理实体间的关联关系
 - 支持懒加载和预加载
 - 优化关联查询性能
@@ -308,6 +284,7 @@ export class ModuleRepository {
 ## 📝 核心方法实现
 
 ### 创建方法实现
+
 ```typescript
 async create(createDto: CreateModuleDto): Promise<ModuleDto> {
   // 1. 创建实体对象
@@ -329,6 +306,7 @@ async create(createDto: CreateModuleDto): Promise<ModuleDto> {
 ```
 
 ### 查询条件构建器
+
 ```typescript
 private buildWhere(
   filter: ModulePageFiltersDto | ModuleListFilterDto
@@ -363,6 +341,7 @@ private buildWhere(
 ```
 
 ### 分页查询实现
+
 ```typescript
 async page(filter: ModulePageFiltersDto): Promise<{
   list: ModuleDto[];
@@ -391,6 +370,7 @@ async page(filter: ModulePageFiltersDto): Promise<{
 ```
 
 ### 关联关系处理
+
 ```typescript
 async findById(id: string, relations?: string[]): Promise<ModuleDto> {
   try {
@@ -426,6 +406,7 @@ async findById(id: string, relations?: string[]): Promise<ModuleDto> {
 ## 🔧 高级功能实现
 
 ### 事务管理
+
 ```typescript
 // 使用事务确保数据一致性
 async complexOperation(data: ComplexData): Promise<ModuleDto> {
@@ -450,6 +431,7 @@ async complexOperation(data: ComplexData): Promise<ModuleDto> {
 ```
 
 ### 复杂查询
+
 ```typescript
 // 复杂多表关联查询
 async findComplex(filter: ComplexFilter): Promise<ModuleDto[]> {
@@ -486,6 +468,7 @@ async findComplex(filter: ComplexFilter): Promise<ModuleDto[]> {
 ## 🚀 性能优化
 
 ### 1. 查询优化
+
 ```typescript
 // 使用索引优化查询
 const resources = await this.moduleRepository.find({
@@ -493,7 +476,7 @@ const resources = await this.moduleRepository.find({
     status: ModuleStatus.ACTIVE,
     planDate: Between(startDate, endDate),
   },
-  order: { createdAt: "DESC" },
+  order: { createdAt: 'DESC' },
   skip: (pageNum - 1) * pageSize,
   take: pageSize,
   // 缓存查询结果
@@ -502,6 +485,7 @@ const resources = await this.moduleRepository.find({
 ```
 
 ### 2. 批量操作优化
+
 ```typescript
 // 分批处理大量数据
 async batchProcess(items: ModuleDto[], batchSize: number = 100) {
@@ -521,6 +505,7 @@ async batchProcess(items: ModuleDto[], batchSize: number = 100) {
 ```
 
 ### 3. 连接池管理
+
 ```typescript
 // 合理使用连接池
 async findWithTimeout(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
@@ -538,29 +523,34 @@ async findWithTimeout(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
 在实现 Server Repository 时，请确认：
 
 ### 基础结构
+
 - [ ] 使用 `@Injectable()` 装饰器
 - [ ] 使用 `@InjectRepository()` 注入 Repository
 - [ ] 正确导入 Business Interface 和类型
 
 ### 实现规范
+
 - [ ] 实现所有 Interface 定义的方法
 - [ ] 正确处理日期格式转换 (dayjs)
 - [ ] 使用 TypeORM 查询构建器
 - [ ] 正确实现软删除逻辑
 
 ### 数据处理
+
 - [ ] 正确处理 DTO 到 Entity 的转换
 - [ ] 实现关联关系的加载
 - [ ] 正确处理批量操作
 - [ ] 确保数据类型一致性
 
 ### 性能优化
+
 - [ ] 优化查询语句
 - [ ] 合理使用索引
 - [ ] 实现分页查询
 - [ ] 使用事务确保数据一致性
 
 ### 错误处理
+
 - [ ] 实现异常处理机制
 - [ ] 提供有意义的错误信息
 - [ ] 处理并发访问冲突
@@ -571,17 +561,9 @@ async findWithTimeout(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
 ```typescript
 // apps/server/src/business/resource/resource.repository.ts
 
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/common";
-import {
-  Repository,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-  In,
-} from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/common';
+import { Repository, FindOptionsWhere, Between, MoreThan, LessThan, Like, In } from 'typeorm';
 import {
   CreateModuleDto,
   UpdateModuleDto,
@@ -589,9 +571,9 @@ import {
   ModuleListFilterDto,
   ModuleDto,
   Module,
-} from "@life-toolkit/business-server";
-import dayjs from "dayjs";
-import { ModuleStatus } from "@life-toolkit/enum";
+} from '@life-toolkit/business-server';
+import dayjs from 'dayjs';
+import { ModuleStatus } from '@life-toolkit/enum';
 
 @Injectable()
 export class ModuleRepository {
@@ -605,22 +587,17 @@ export class ModuleRepository {
       ...createDto,
       status: ModuleStatus.ACTIVE,
       tags: createDto.tags || [],
-      planDate: createDto.planDate
-        ? dayjs(createDto.planDate).format("YYYY-MM-DD")
-        : undefined,
+      planDate: createDto.planDate ? dayjs(createDto.planDate).format('YYYY-MM-DD') : undefined,
     });
 
     await this.moduleRepository.save(resource);
     return this.findById(resource.id);
   }
 
-  async findOneByRepeatAndDate(
-    relatedId: string,
-    date: Date
-  ): Promise<ModuleDto | null> {
+  async findOneByRepeatAndDate(relatedId: string, date: Date): Promise<ModuleDto | null> {
     const day = dayjs(date);
-    const start = new Date(day.format("YYYY-MM-DD") + "T00:00:00");
-    const end = new Date(day.format("YYYY-MM-DD") + "T23:59:59");
+    const start = new Date(day.format('YYYY-MM-DD') + 'T00:00:00');
+    const end = new Date(day.format('YYYY-MM-DD') + 'T23:59:59');
     const existed = await this.moduleRepository.findOne({
       where: {
         relatedId,
@@ -630,18 +607,13 @@ export class ModuleRepository {
     return existed ? ModuleDto.importEntity(existed) : null;
   }
 
-  async createWithExtras(
-    createDto: CreateModuleDto,
-    extras: Partial<Module>
-  ): Promise<ModuleDto> {
+  async createWithExtras(createDto: CreateModuleDto, extras: Partial<Module>): Promise<ModuleDto> {
     const resource = this.moduleRepository.create({
       ...createDto,
       ...extras,
       status: ModuleStatus.ACTIVE,
       tags: createDto.tags || [],
-      planDate: createDto.planDate
-        ? dayjs(createDto.planDate).format("YYYY-MM-DD")
-        : undefined,
+      planDate: createDto.planDate ? dayjs(createDto.planDate).format('YYYY-MM-DD') : undefined,
     });
     await this.moduleRepository.save(resource);
     return this.findById(resource.id);
@@ -680,32 +652,25 @@ export class ModuleRepository {
   async update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto> {
     const resource = await this.moduleRepository.findOneBy({ id });
     if (!resource) {
-      throw new Error("Module not found");
+      throw new Error('Module not found');
     }
 
     await this.moduleRepository.update(id, {
       ...updateDto,
-      planDate: updateDto.planDate
-        ? dayjs(updateDto.planDate).toDate()
-        : undefined,
+      planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
     });
 
     return this.findById(id);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateDto: UpdateModuleDto
-  ): Promise<ModuleDto[]> {
+  async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ModuleDto[]> {
     if (!includeIds || includeIds.length === 0) return [];
 
     await this.moduleRepository.update(
       { id: In(includeIds) },
       {
         ...updateDto,
-        planDate: updateDto.planDate
-          ? dayjs(updateDto.planDate).toDate()
-          : undefined,
+        planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
       }
     );
 
@@ -731,14 +696,14 @@ export class ModuleRepository {
         relations: relations || [],
       });
       if (!resource) {
-        throw new Error("Module not found");
+        throw new Error('Module not found');
       }
 
       // 手动加载related关系
       if (resource.relatedId) {
         const resourceWithRepeat = await this.moduleRepository.findOne({
           where: { id },
-          relations: ["repeat"],
+          relations: ['repeat'],
         });
         if (resourceWithRepeat?.repeat) {
           resource.repeat = resourceWithRepeat.repeat;
@@ -748,7 +713,7 @@ export class ModuleRepository {
       return resource as ModuleDto;
     } catch (error) {
       console.error(error);
-      throw new Error("Module not found");
+      throw new Error('Module not found');
     }
   }
 
@@ -761,46 +726,37 @@ export class ModuleRepository {
     await this.moduleRepository.softDelete({ relatedId: In(relatedIds) });
   }
 
-  private buildWhere(
-    filter: ModulePageFiltersDto | ModuleListFilterDto
-  ): FindOptionsWhere<Module> {
+  private buildWhere(filter: ModulePageFiltersDto | ModuleListFilterDto): FindOptionsWhere<Module> {
     const where: FindOptionsWhere<Module> = {};
 
     if (filter.planDateStart && filter.planDateEnd) {
       where.planDate = Between(
-        new Date(filter.planDateStart + "T00:00:00"),
-        new Date(filter.planDateEnd + "T23:59:59")
+        new Date(filter.planDateStart + 'T00:00:00'),
+        new Date(filter.planDateEnd + 'T23:59:59')
       );
     } else if (filter.planDateStart) {
-      where.planDate = MoreThan(new Date(filter.planDateStart + "T00:00:00"));
+      where.planDate = MoreThan(new Date(filter.planDateStart + 'T00:00:00'));
     } else if (filter.planDateEnd) {
-      where.planDate = LessThan(new Date(filter.planDateEnd + "T23:59:59"));
+      where.planDate = LessThan(new Date(filter.planDateEnd + 'T23:59:59'));
     }
 
     if (filter.doneDateStart && filter.doneDateEnd) {
-      where.doneAt = Between(
-        new Date(filter.doneDateStart + "T00:00:00"),
-        new Date(filter.doneDateEnd + "T23:59:59")
-      );
+      where.doneAt = Between(new Date(filter.doneDateStart + 'T00:00:00'), new Date(filter.doneDateEnd + 'T23:59:59'));
     } else if (filter.doneDateStart) {
-      where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
+      where.doneAt = MoreThan(new Date(filter.doneDateStart + 'T00:00:00'));
     } else if (filter.doneDateEnd) {
-      where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
+      where.doneAt = LessThan(new Date(filter.doneDateEnd + 'T23:59:59'));
     }
 
     if (filter.abandonedDateStart && filter.abandonedDateEnd) {
       where.abandonedAt = Between(
-        new Date(filter.abandonedDateStart + "T00:00:00"),
-        new Date(filter.abandonedDateEnd + "T23:59:59")
+        new Date(filter.abandonedDateStart + 'T00:00:00'),
+        new Date(filter.abandonedDateEnd + 'T23:59:59')
       );
     } else if (filter.abandonedDateStart) {
-      where.abandonedAt = MoreThan(
-        new Date(filter.abandonedDateStart + "T00:00:00")
-      );
+      where.abandonedAt = MoreThan(new Date(filter.abandonedDateStart + 'T00:00:00'));
     } else if (filter.abandonedDateEnd) {
-      where.abandonedAt = LessThan(
-        new Date(filter.abandonedDateEnd + "T23:59:59")
-      );
+      where.abandonedAt = LessThan(new Date(filter.abandonedDateEnd + 'T23:59:59'));
     }
 
     if (filter.keyword) {

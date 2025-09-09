@@ -7,7 +7,7 @@ export interface ControllerMethodMetadata {
   /** 方法名称 */
   methodName: string;
   /** HTTP 方法类型 */
-  httpMethod?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  httpMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   /** 路由路径 */
   path?: string;
   /** 方法描述 */
@@ -21,17 +21,12 @@ export interface ControllerMethodMetadata {
 }
 
 // 存储控制器方法元数据的 Map
-const CONTROLLER_METADATA = new Map<
-  string,
-  Map<string, ControllerMethodMetadata>
->();
+const CONTROLLER_METADATA = new Map<string, Map<string, ControllerMethodMetadata>>();
 
 /**
  * 获取控制器的所有方法元数据
  */
-export function getControllerMetadata(
-  controllerName: string
-): Map<string, ControllerMethodMetadata> {
+export function getControllerMetadata(controllerName: string): Map<string, ControllerMethodMetadata> {
   return CONTROLLER_METADATA.get(controllerName) || new Map();
 }
 
@@ -54,14 +49,8 @@ export function setControllerMethodMetadata(
  * 业务方法装饰器
  * 用于标记业务控制器中的方法
  */
-export function BusinessMethod(
-  options: Partial<ControllerMethodMetadata> = {}
-) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+export function BusinessMethod(options: Partial<ControllerMethodMetadata> = {}) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const controllerName = target.constructor.name;
     const metadata: ControllerMethodMetadata = {
       methodName: propertyKey,
@@ -79,7 +68,7 @@ export function BusinessMethod(
  */
 export function Get(path?: string, options?: { description?: string }) {
   return BusinessMethod({
-    httpMethod: "GET",
+    httpMethod: 'GET',
     path,
     ...options,
   });
@@ -90,7 +79,7 @@ export function Get(path?: string, options?: { description?: string }) {
  */
 export function Post(path?: string, options?: { description?: string }) {
   return BusinessMethod({
-    httpMethod: "POST",
+    httpMethod: 'POST',
     path,
     ...options,
   });
@@ -101,7 +90,7 @@ export function Post(path?: string, options?: { description?: string }) {
  */
 export function Put(path?: string, options?: { description?: string }) {
   return BusinessMethod({
-    httpMethod: "PUT",
+    httpMethod: 'PUT',
     path,
     ...options,
   });
@@ -112,7 +101,7 @@ export function Put(path?: string, options?: { description?: string }) {
  */
 export function Delete(path?: string, options?: { description?: string }) {
   return BusinessMethod({
-    httpMethod: "DELETE",
+    httpMethod: 'DELETE',
     path,
     ...options,
   });
@@ -123,7 +112,7 @@ export function Delete(path?: string, options?: { description?: string }) {
  */
 export function Patch(path?: string, options?: { description?: string }) {
   return BusinessMethod({
-    httpMethod: "PATCH",
+    httpMethod: 'PATCH',
     path,
     ...options,
   });
@@ -148,10 +137,10 @@ export function Controller(path?: string) {
     if (path) {
       Reflect.defineMetadata('controller:path', path, constructor);
     }
-    
+
     // 标记为控制器类
     Reflect.defineMetadata('controller:isController', true, constructor);
-    
+
     return constructor;
   };
 }
@@ -196,4 +185,4 @@ export function Query(name?: string) {
 }
 
 // 导出适配器辅助工具
-export * from "./adapter-helper";
+export * from './adapter-helper';

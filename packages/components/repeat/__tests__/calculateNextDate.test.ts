@@ -1,12 +1,5 @@
 import dayjs from 'dayjs';
-import { 
-  RepeatMode, 
-  RepeatEndMode, 
-  MonthlyType,
-  YearlyType,
-  TimeUnit,
-  WeekDay,
-} from '../types';
+import { RepeatMode, RepeatEndMode, MonthlyType, YearlyType, TimeUnit, WeekDay } from '../types';
 import { Repeat } from '../server/entity';
 
 describe('计算下一个重复日期', () => {
@@ -21,7 +14,7 @@ describe('计算下一个重复日期', () => {
       repeatMode: RepeatMode.NONE,
       repeatConfig: {},
       repeatEndMode: RepeatEndMode.FOREVER,
-      ...repeat
+      ...repeat,
     } as AnyRepeat;
 
     let nextDate: dayjs.Dayjs | null = null;
@@ -73,14 +66,14 @@ describe('计算下一个重复日期', () => {
   const getNextWeekday = (currentDate: dayjs.Dayjs): dayjs.Dayjs => {
     const nextDay = currentDate.add(1, 'day');
     const dayOfWeek = nextDay.day();
-    
+
     // 周日(0)加1天到周一，周六(6)加2天到周一
     if (dayOfWeek === 0) {
       return nextDay.add(1, 'day');
     } else if (dayOfWeek === 6) {
       return nextDay.add(2, 'day');
     }
-    
+
     return nextDay;
   };
 
@@ -88,12 +81,12 @@ describe('计算下一个重复日期', () => {
   const getNextWeekend = (currentDate: dayjs.Dayjs): dayjs.Dayjs => {
     const nextDay = currentDate.add(1, 'day');
     const dayOfWeek = nextDay.day();
-    
+
     // 如果不是周六(6)或周日(0)，计算到下一个周六的天数
     if (dayOfWeek !== 0 && dayOfWeek !== 6) {
       return nextDay.add(6 - dayOfWeek, 'day');
     }
-    
+
     return nextDay;
   };
 
@@ -102,11 +95,11 @@ describe('计算下一个重复日期', () => {
     if (!config || !config.weekdays || config.weekdays.length === 0) {
       return currentDate.add(7, 'day');
     }
-    
+
     const weekdays = config.weekdays.map(Number);
     // 将星期转换为dayjs的格式（dayjs: 0=周日, 1=周一, ..., 6=周六）
-    const dayjsWeekdays = weekdays.map((day: number) => day === 7 ? 0 : day);
-    
+    const dayjsWeekdays = weekdays.map((day: number) => (day === 7 ? 0 : day));
+
     // 找出下一个重复日期
     for (let daysToAdd = 1; daysToAdd <= 7; daysToAdd++) {
       const nextDate = currentDate.add(daysToAdd, 'day');
@@ -114,7 +107,7 @@ describe('计算下一个重复日期', () => {
         return nextDate;
       }
     }
-    
+
     // 如果没有找到匹配的星期几，返回一周后的日期
     return currentDate.add(7, 'day');
   };
@@ -124,28 +117,26 @@ describe('计算下一个重复日期', () => {
     if (!config) {
       return currentDate.add(1, 'month');
     }
-    
+
     const { monthlyType } = config;
-    
+
     if (monthlyType === MonthlyType.DAY) {
       // 按日期重复，例如每月15号
       const day = config[MonthlyType.DAY];
       const nextMonth = currentDate.add(1, 'month');
       const daysInMonth = nextMonth.daysInMonth();
-      
+
       // 确保日期不超过月份天数
       const targetDay = Math.min(day, daysInMonth);
       return nextMonth.date(targetDay);
-    } 
-    else if (monthlyType === MonthlyType.ORDINAL_WEEK) {
+    } else if (monthlyType === MonthlyType.ORDINAL_WEEK) {
       // 简化实现，实际场景中需要更复杂的计算
       return currentDate.add(1, 'month');
-    } 
-    else if (monthlyType === MonthlyType.ORDINAL_DAY) {
+    } else if (monthlyType === MonthlyType.ORDINAL_DAY) {
       // 简化实现，实际场景中需要更复杂的计算
       return currentDate.add(1, 'month');
     }
-    
+
     return currentDate.add(1, 'month');
   };
 
@@ -154,18 +145,17 @@ describe('计算下一个重复日期', () => {
     if (!config) {
       return currentDate.add(1, 'year');
     }
-    
+
     const { yearlyType } = config;
-    
+
     if (yearlyType === YearlyType.MONTH) {
       // 简化实现，实际场景中需要更复杂的计算
       return currentDate.add(1, 'year');
-    } 
-    else if (yearlyType === YearlyType.ORDINAL_WEEK) {
+    } else if (yearlyType === YearlyType.ORDINAL_WEEK) {
       // 简化实现，实际场景中需要更复杂的计算
       return currentDate.add(1, 'year');
     }
-    
+
     return currentDate.add(1, 'year');
   };
 
@@ -174,22 +164,22 @@ describe('计算下一个重复日期', () => {
     if (!config) {
       return currentDate.add(1, 'day');
     }
-    
+
     const { interval, intervalUnit } = config;
-    
+
     switch (intervalUnit) {
       case TimeUnit.DAY:
         return currentDate.add(interval || 1, 'day');
-      
+
       case TimeUnit.WEEK:
         return currentDate.add(interval || 1, 'week');
-      
+
       case TimeUnit.MONTH:
         return currentDate.add(interval || 1, 'month');
-      
+
       case TimeUnit.YEAR:
         return currentDate.add(interval || 1, 'year');
-      
+
       default:
         return currentDate.add(1, 'day');
     }
@@ -237,100 +227,100 @@ describe('计算下一个重复日期', () => {
   });
 
   it('处理 WEEKLY 模式带特定星期几', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.WEEKLY,
       repeatConfig: {
-        weekdays: [WeekDay.MONDAY, WeekDay.WEDNESDAY]
-      }
+        weekdays: [WeekDay.MONDAY, WeekDay.WEDNESDAY],
+      },
     };
-    
+
     // 从周四(15日)到下一个周一(19日)
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2023-06-19');
   });
 
   it('处理 MONTHLY 模式带特定日期', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.MONTHLY,
       repeatConfig: {
         monthlyType: MonthlyType.DAY,
-        day: 15
-      }
+        day: 15,
+      },
     };
-    
+
     // 从6月15日到7月15日
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2023-07-15');
   });
 
   it('处理 YEARLY 模式', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.YEARLY,
       repeatConfig: {
         yearlyType: YearlyType.MONTH,
         month: {
           monthlyType: MonthlyType.DAY,
-          day: 15
-        }
-      }
+          day: 15,
+        },
+      },
     };
-    
+
     // 从2023-06-15到2024-06-15
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM')).toBe('2024-06');
   });
 
   it('处理 CUSTOM 模式带天数间隔', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.CUSTOM,
       repeatConfig: {
         interval: 3,
-        intervalUnit: TimeUnit.DAY
-      }
+        intervalUnit: TimeUnit.DAY,
+      },
     };
-    
+
     // 从2023-06-15加3天
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2023-06-18');
   });
 
   it('处理 CUSTOM 模式带周间隔', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.CUSTOM,
       repeatConfig: {
         interval: 2,
         intervalUnit: TimeUnit.WEEK,
         week: {
-          weekdays: [WeekDay.MONDAY]
-        }
-      }
+          weekdays: [WeekDay.MONDAY],
+        },
+      },
     };
-    
+
     // 从2023-06-15加2周
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2023-06-29');
   });
 
   it('处理 CUSTOM 模式带月间隔', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.CUSTOM,
       repeatConfig: {
         interval: 3,
         intervalUnit: TimeUnit.MONTH,
         month: {
           monthlyType: MonthlyType.DAY,
-          day: 15
-        }
-      }
+          day: 15,
+        },
+      },
     };
-    
+
     // 从2023-06-15加3个月
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2023-09-15');
   });
 
   it('处理 CUSTOM 模式带年间隔', () => {
-    const repeat = { 
+    const repeat = {
       repeatMode: RepeatMode.CUSTOM,
       repeatConfig: {
         interval: 2,
@@ -339,14 +329,14 @@ describe('计算下一个重复日期', () => {
           yearlyType: YearlyType.MONTH,
           month: {
             monthlyType: MonthlyType.DAY,
-            day: 15
-          }
-        }
-      }
+            day: 15,
+          },
+        },
+      },
     };
-    
+
     // 从2023-06-15加2年
     const result = calculateNextDate(baseDate, repeat);
     expect(result?.format('YYYY-MM-DD')).toBe('2025-06-15');
   });
-}); 
+});

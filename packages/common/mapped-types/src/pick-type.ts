@@ -1,17 +1,9 @@
-import {
-  inheritPropertyInitializers,
-  inheritValidationMetadata,
-  inheritTransformationMetadata,
-} from "./helpers";
-import { RemoveFieldsWithType, Type } from "./types";
-import { MappedType } from "./interface";
+import { inheritPropertyInitializers, inheritValidationMetadata, inheritTransformationMetadata } from './helpers';
+import { RemoveFieldsWithType, Type } from './types';
+import { MappedType } from './interface';
 
-export function PickType<T, K extends keyof T>(
-  classRef: Type<T>,
-  keys: readonly K[]
-) {
-  const isInheritedPredicate = (propertyKey: string) =>
-    keys.includes(propertyKey as K);
+export function PickType<T, K extends keyof T>(classRef: Type<T>, keys: readonly K[]) {
+  const isInheritedPredicate = (propertyKey: string) => keys.includes(propertyKey as K);
 
   abstract class PickClassType {
     constructor() {
@@ -21,7 +13,5 @@ export function PickType<T, K extends keyof T>(
   inheritValidationMetadata(classRef, PickClassType, isInheritedPredicate);
   inheritTransformationMetadata(classRef, PickClassType, isInheritedPredicate);
 
-  return PickClassType as MappedType<
-    RemoveFieldsWithType<Pick<T, (typeof keys)[number]>, Function>
-  >;
+  return PickClassType as MappedType<RemoveFieldsWithType<Pick<T, (typeof keys)[number]>, Function>>;
 }

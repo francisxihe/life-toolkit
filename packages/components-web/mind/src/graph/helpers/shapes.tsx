@@ -103,7 +103,6 @@ const registerMindMapEdge = () => {
         },
       },
       zIndex: 0,
-    
     },
     true
   );

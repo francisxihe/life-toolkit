@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, Between } from "typeorm";
-import { Transaction } from "./entities/transaction.entity";
-import { Budget } from "./entities/budget.entity";
-import { User } from "../users/entities/user.entity";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Between } from 'typeorm';
+import { Transaction } from './entities/transaction.entity';
+import { Budget } from './entities/budget.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ExpensesService {
@@ -15,20 +15,15 @@ export class ExpensesService {
   ) {}
 
   /** 创建交易 */
-  async createTransaction(
-    createTransactionDto: Record<string, any>,
-    user: User
-  ): Promise<Transaction> {
+  async createTransaction(createTransactionDto: Record<string, any>, user: User): Promise<Transaction> {
     const transaction = this.transactionsRepository.create({
       ...createTransactionDto,
     });
 
-    const savedTransaction = await this.transactionsRepository.save(
-      transaction
-    );
+    const savedTransaction = await this.transactionsRepository.save(transaction);
 
     // Update related budget if exists
-    if (transaction.type === "expense") {
+    if (transaction.type === 'expense') {
       const budget = await this.budgetsRepository.findOne({
         where: {
           category: transaction.category,
@@ -46,10 +41,7 @@ export class ExpensesService {
   }
 
   /** 创建预算 */
-  async createBudget(
-    createBudgetDto: Record<string, any>,
-    user: User
-  ): Promise<Budget> {
+  async createBudget(createBudgetDto: Record<string, any>, user: User): Promise<Budget> {
     const budget = this.budgetsRepository.create({
       ...createBudgetDto,
     });
@@ -58,30 +50,30 @@ export class ExpensesService {
 
   async findAllTransactions(user: User): Promise<Transaction[]> {
     return this.transactionsRepository.find({
-      order: { date: "DESC" },
+      order: { date: 'DESC' },
     });
   }
 
   async findAllBudgets(user: User): Promise<Budget[]> {
-    return this.budgetsRepository.find({
-    });
+    return this.budgetsRepository.find({});
   }
 
   async getStats(user: User) {
     const transactions = await this.transactionsRepository.find({});
 
-    const totalIncome = transactions
-      .filter((t) => t.type === "income")
-      .reduce((sum, t) => sum + Number(t.amount), 0);
+    const totalIncome = transactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + Number(t.amount), 0);
 
     const totalExpenses = transactions
-      .filter((t) => t.type === "expense")
+      .filter((t) => t.type === 'expense')
       .reduce((sum, t) => sum + Number(t.amount), 0);
 
-    const categoryBreakdown = transactions.reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
-      return acc;
-    }, {} as Record<string, number>);
+    const categoryBreakdown = transactions.reduce(
+      (acc, t) => {
+        acc[t.category] = (acc[t.category] || 0) + Number(t.amount);
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     return {
       totalIncome,

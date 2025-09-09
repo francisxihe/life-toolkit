@@ -17,6 +17,7 @@ Repository 模式是数据访问层的核心设计模式，Life Toolkit 项目�
 ## 🏗️ 架构模式
 
 ### 三层 Repository 架构
+
 ```
 ┌─────────────────────────────────────┐
 │           Business Layer            │
@@ -55,18 +56,21 @@ Repository 模式是数据访问层的核心设计模式，Life Toolkit 项目�
 ## 文件结构规范
 
 ### Business Layer Module Repository Interface
+
 ```
 packages/business/server/src/{module}/
 └── {module}.repository.ts     # Repository Interface 定义
 ```
 
 ### Server Layer Module Repository Implementation
+
 ```
 apps/server/src/business/{module}/
 └── {module}.repository.ts     # TypeORM Repository 实现
 ```
 
 ### Desktop Layer Module Repository Implementation
+
 ```
 apps/desktop/src/database/{module}/
 └── {module}.repository.ts     # SQLite Repository 实现
@@ -75,15 +79,18 @@ apps/desktop/src/database/{module}/
 ## 设计原则
 
 ### 1. Interface 优先原则
+
 - **Business Layer** 负责定义数据访问契约
 - **Server/Desktop Layer** 负责实现具体数据访问逻辑
 - 确保跨平台数据访问的一致性
 
 ### 2. 平台适配原则
+
 - **Server**: 支持复杂查询、关联关系、事务管理
 - **Desktop**: 支持离线访问、轻量级查询、本地存储优化
 
 ### 3. 数据一致性原则
+
 - 统一的 DTO/VO 类型定义
 - 跨平台的数据映射逻辑
 - 业务规则的一致性保证
@@ -91,6 +98,7 @@ apps/desktop/src/database/{module}/
 ## 数据流向
 
 ### 创建操作
+
 ```mermaid
 graph TD
     A[Client Requests] --> B[Controller]
@@ -103,6 +111,7 @@ graph TD
 ```
 
 ### 查询操作
+
 ```mermaid
 graph TD
     A[Client Requests] --> B[Controller]
@@ -120,6 +129,7 @@ graph TD
 ## 核心接口规范
 
 ### 基础 CRUD 接口
+
 ```typescript
 export interface BaseRepository<TDto, TCreateModuleDto, TUpdateModuleDto, TFilterDto> {
   // 创建
@@ -145,6 +155,7 @@ export interface BaseRepository<TDto, TCreateModuleDto, TUpdateModuleDto, TFilte
 ```
 
 ### 分页查询接口
+
 ```typescript
 export interface PageResult<T> {
   list: T[];
@@ -164,6 +175,7 @@ export interface PageFilter {
 ## 实现策略
 
 ### Server Layer 实现策略
+
 - 使用 TypeORM Repository 模式
 - 支持复杂查询构建器
 - 处理实体关联关系
@@ -171,6 +183,7 @@ export interface PageFilter {
 - 优化数据库查询性能
 
 ### Desktop Layer 实现策略
+
 - 使用 TypeORM Repository 适配 SQLite
 - 实现本地数据缓存
 - 支持离线数据操作
@@ -178,6 +191,7 @@ export interface PageFilter {
 - 处理数据同步逻辑
 
 ### Business Layer 实现策略
+
 - 定义清晰的数据访问契约
 - 统一 DTO/VO 类型规范
 - 提供跨平台兼容的接口
@@ -186,6 +200,7 @@ export interface PageFilter {
 ## 数据映射规范
 
 ### Entity → DTO 映射
+
 ```typescript
 // 使用 DTO 内置方法进行映射
 class ModuleDto {
@@ -218,6 +233,7 @@ class ModuleDto {
 ## 查询构建规范
 
 ### 动态查询条件
+
 ```typescript
 // 支持灵活的查询条件构建
 private buildWhere(filter: FilterDto): FindOptionsWhere<Entity> {
@@ -243,14 +259,17 @@ private buildWhere(filter: FilterDto): FindOptionsWhere<Entity> {
 ```
 
 ## 性能优化
+
 ## 🚀 性能优化
 
 ### 索引策略
+
 - 常用查询字段添加索引
 - 复合索引优化多条件查询
 - 唯一索引保证数据约束
 
 ### 查询优化
+
 - 避免 N+1 查询问题
 - 使用分页查询限制数据量
 - 选择性加载关联数据
@@ -259,6 +278,7 @@ private buildWhere(filter: FilterDto): FindOptionsWhere<Entity> {
 ## ✅ 质量保证
 
 ### 代码规范检查
+
 - [ ] Repository Interface 定义完整
 - [ ] CRUD 方法实现齐全
 - [ ] 错误处理机制完善
@@ -266,12 +286,14 @@ private buildWhere(filter: FilterDto): FindOptionsWhere<Entity> {
 - [ ] 命名规范统一
 
 ### 性能检查
+
 - [ ] 查询语句优化
 - [ ] 索引使用合理
 - [ ] 关联查询优化
 - [ ] 分页查询实现
 
 ### 一致性检查
+
 - [ ] 跨平台接口一致
 - [ ] 数据映射正确
 - [ ] 业务规则统一

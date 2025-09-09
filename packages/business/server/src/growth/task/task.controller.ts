@@ -34,7 +34,9 @@ export class TaskController {
   }
 
   @Get('/find-by-filter', { description: '查询任务列表' })
-  async findByFilter(@Query() taskListFiltersVo?: TaskVO.TaskFilterVo): Promise<ResponseListVo<TaskVO.TaskWithoutRelationsVo>> {
+  async findByFilter(
+    @Query() taskListFiltersVo?: TaskVO.TaskFilterVo
+  ): Promise<ResponseListVo<TaskVO.TaskWithoutRelationsVo>> {
     const filter = new TaskFilterDto();
     if (taskListFiltersVo) filter.importListVo(taskListFiltersVo);
     const list = await this.taskService.findByFilter(filter);
@@ -42,7 +44,9 @@ export class TaskController {
   }
 
   @Get('/page', { description: '分页查询任务列表' })
-  async page(@Query() taskPageFiltersVo?: TaskVO.TaskPageFilterVo): Promise<ResponsePageVo<TaskVO.TaskWithoutRelationsVo>> {
+  async page(
+    @Query() taskPageFiltersVo?: TaskVO.TaskPageFilterVo
+  ): Promise<ResponsePageVo<TaskVO.TaskWithoutRelationsVo>> {
     const filter = new TaskPageFilterDto();
     if (taskPageFiltersVo) filter.importPageVo(taskPageFiltersVo);
     const { list, total, pageNum, pageSize } = await this.taskService.page(filter);

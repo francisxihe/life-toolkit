@@ -1,17 +1,16 @@
-import { RepeatEndMode } from "../../types";
-import { DatePicker, InputNumber, Select } from "@arco-design/web-react";
-import dayjs from "dayjs";
-import { useRepeatContext } from "./context";
+import { RepeatEndMode } from '../../types';
+import { DatePicker, InputNumber, Select } from '@arco-design/web-react';
+import dayjs from 'dayjs';
+import { useRepeatContext } from './context';
 
 export const repeatEndModeMap = new Map<RepeatEndMode, string>([
-  [RepeatEndMode.FOREVER, "repeat.end.forever"],
-  [RepeatEndMode.FOR_TIMES, "repeat.end.forTimes"],
-  [RepeatEndMode.TO_DATE, "repeat.end.toDate"],
+  [RepeatEndMode.FOREVER, 'repeat.end.forever'],
+  [RepeatEndMode.FOR_TIMES, 'repeat.end.forTimes'],
+  [RepeatEndMode.TO_DATE, 'repeat.end.toDate'],
 ]);
 
 export default function RepeatEndModeForm() {
-  const { repeatEndModeForm, handleChangeRepeatEndMode, t } =
-    useRepeatContext();
+  const { repeatEndModeForm, handleChangeRepeatEndMode, t } = useRepeatContext();
 
   return (
     <>
@@ -40,12 +39,10 @@ export default function RepeatEndModeForm() {
                 break;
             }
           }}
-          options={Array.from(repeatEndModeMap.entries()).map(
-            ([key, value]) => ({
-              value: key,
-              label: t[value],
-            })
-          )}
+          options={Array.from(repeatEndModeMap.entries()).map(([key, value]) => ({
+            value: key,
+            label: t[value],
+          }))}
         />
       </div>
 

@@ -11,9 +11,4 @@ export class BaseModelDto {
   deletedAt?: Date;
 }
 
-export const BaseModelDtoKeys = [
-  "id",
-  "createdAt",
-  "updatedAt",
-  "deletedAt",
-] as const;
+export const BaseModelDtoKeys = ['id', 'createdAt', 'updatedAt', 'deletedAt'] as const;

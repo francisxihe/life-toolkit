@@ -72,6 +72,7 @@ OPENAI_API_KEY=your-openai-api-key
 ### 前提条件
 
 1. **应用已构建**：
+
    ```bash
    pnpm build
    ```
@@ -101,37 +102,40 @@ make stop
 ### 生产环境
 
 1. **创建生产环境配置**：
+
    ```bash
    # 复制示例文件
    cp env.production.example .env.production.local
-   
+
    # 编辑配置文件
    vim .env.production.local
    ```
 
 2. **本地运行生产环境**：
+
    ```bash
    # 使用脚本（推荐）
    make prod-run
-   
+
    # 查看状态
    make prod-status
-   
+
    # 查看日志
    make prod-logs
-   
+
    # 停止
    make prod-stop
    ```
 
 3. **部署到远程服务器**：
+
    ```bash
    # 方法1：使用部署脚本（推荐）
    make prod-deploy-script
-   
+
    # 方法2：使用 Makefile 命令
    make prod-deploy
-   
+
    # 方法3：只保存镜像
    make prod-save
    ```
@@ -193,6 +197,7 @@ apps/server/
 ### 部署流程
 
 **远程部署流程**：
+
 1. 检查前提条件（dist目录、环境配置、Docker、SSH连接）
 2. 构建生产镜像并保存为tar文件
 3. 上传镜像和配置文件到远程服务器
@@ -200,6 +205,7 @@ apps/server/
 5. 清理本地临时文件
 
 **前提条件**：
+
 - 已配置SSH密钥到目标服务器
 - 目标服务器已安装Docker
 - 已创建`.env.production.local`文件
@@ -210,7 +216,7 @@ apps/server/
 
 - **认证模块** (`/auth`): 用户登录、注册、JWT验证
 - **用户模块** (`/users`): 用户信息管理
-- **成长模块** (`/growth`): 
+- **成长模块** (`/growth`):
   - 待办事项 (`/todo`)
   - 任务管理 (`/task`)
   - 目标管理 (`/goal`)
@@ -345,6 +351,7 @@ pnpm test:cov
 详细的生产环境部署指南请参考：[DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md)
 
 包含以下内容：
+
 - 🚀 远程服务器部署步骤
 - 🛠️ 远程服务器管理
 - 🔍 故障排除
@@ -360,4 +367,3 @@ pnpm test:cov
 5. 创建 Pull Request
 
 ---
-

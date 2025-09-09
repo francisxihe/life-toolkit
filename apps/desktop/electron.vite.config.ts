@@ -1,10 +1,10 @@
-import { defineConfig } from "electron-vite";
-import path from "path";
-import { fileURLToPath } from "url";
-import react from "@vitejs/plugin-react";
-import svgrPlugin from "@arco-plugins/vite-plugin-svgr";
-import tailwindcss from "@tailwindcss/vite";
-import { vitePluginForArco } from "@arco-plugins/vite-react";
+import { defineConfig } from 'electron-vite';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import react from '@vitejs/plugin-react';
+import svgrPlugin from '@arco-plugins/vite-plugin-svgr';
+import tailwindcss from '@tailwindcss/vite';
+import { vitePluginForArco } from '@arco-plugins/vite-react';
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -14,27 +14,27 @@ export default defineConfig({
   main: {
     resolve: {
       alias: {
-        "@business": path.resolve(currentDirPath, "../../packages/business/server/src"),
-        "@database": path.resolve(currentDirPath, "src/database"),
-        "@": path.resolve(currentDirPath, "src/main"),
+        '@business': path.resolve(currentDirPath, '../../packages/business/server/src'),
+        '@database': path.resolve(currentDirPath, 'src/database'),
+        '@': path.resolve(currentDirPath, 'src/main'),
       },
     },
     build: {
-      outDir: "dist/main",
+      outDir: 'dist/main',
       rollupOptions: {
         input: {
-          index: path.resolve(currentDirPath, "src/main/index.ts"),
+          index: path.resolve(currentDirPath, 'src/main/index.ts'),
         },
         external: [
-          "electron",
-          "electron-devtools-installer",
-          "sqlite3",
-          "typeorm",
-          "typeorm-naming-strategies",
-          "reflect-metadata",
-          "class-validator",
-          "class-transformer",
-          "uuid",
+          'electron',
+          'electron-devtools-installer',
+          'sqlite3',
+          'typeorm',
+          'typeorm-naming-strategies',
+          'reflect-metadata',
+          'class-validator',
+          'class-transformer',
+          'uuid',
           /^@life-toolkit\/components-repeat/,
           /^react-dnd/,
           /^dnd-core/,
@@ -42,50 +42,50 @@ export default defineConfig({
         ],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
-      sourcemap: process.env.NODE_ENV !== "production",
+      sourcemap: process.env.NODE_ENV !== 'production',
       // 监听整个 src 目录的变化
       watch:
-        process.env.NODE_ENV === "development"
+        process.env.NODE_ENV === 'development'
           ? {
               include: [
-                path.resolve(currentDirPath, "src/main/**/*"),
-                path.resolve(currentDirPath, "src/database/**/*"),
+                path.resolve(currentDirPath, 'src/main/**/*'),
+                path.resolve(currentDirPath, 'src/database/**/*'),
               ],
             }
           : undefined,
     },
     // 开发环境配置
     define: {
-      __DEV__: process.env.NODE_ENV === "development",
+      __DEV__: process.env.NODE_ENV === 'development',
     },
   },
   preload: {
     // 预加载脚本配置
     build: {
-      outDir: "dist/preload",
+      outDir: 'dist/preload',
       rollupOptions: {
         input: {
-          index: path.resolve(currentDirPath, "src/preload/index.ts"),
+          index: path.resolve(currentDirPath, 'src/preload/index.ts'),
         },
         external: [
-          "electron",
-          "sqlite3",
-          "typeorm",
-          "reflect-metadata",
-          "class-validator",
-          "class-transformer",
-          "uuid",
+          'electron',
+          'sqlite3',
+          'typeorm',
+          'reflect-metadata',
+          'class-validator',
+          'class-transformer',
+          'uuid',
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
         ],
         output: {
-          format: "cjs",
-          entryFileNames: "[name].cjs",
+          format: 'cjs',
+          entryFileNames: '[name].cjs',
         },
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
-      sourcemap: process.env.NODE_ENV !== "production",
+      sourcemap: process.env.NODE_ENV !== 'production',
     },
   },
   renderer: {
@@ -93,7 +93,7 @@ export default defineConfig({
       port: 8100,
     },
     // 渲染进程配置
-    root: path.resolve(currentDirPath, "src/render"),
+    root: path.resolve(currentDirPath, 'src/render'),
     plugins: [
       react(),
       tailwindcss(),
@@ -101,7 +101,7 @@ export default defineConfig({
         svgrOptions: {},
       }),
       vitePluginForArco({
-        theme: "@arco-themes/react-francis",
+        theme: '@arco-themes/react-francis',
         modifyVars: {
           // 'arcoblue-6': setting.themeColor,
         },
@@ -119,38 +119,25 @@ export default defineConfig({
       alias: [
         {
           find: /^@\/(.*)$/,
-          replacement: path.resolve(
-            currentDirPath,
-            "../../packages/business/web/src/$1"
-          ),
+          replacement: path.resolve(currentDirPath, '../../packages/business/web/src/$1'),
         },
         {
-          find: "@",
-          replacement: path.resolve(currentDirPath, "src/render"),
+          find: '@',
+          replacement: path.resolve(currentDirPath, 'src/render'),
         },
       ],
     },
     build: {
-      outDir: "dist/renderer",
+      outDir: 'dist/renderer',
       rollupOptions: {
-        input: path.resolve(currentDirPath, "src/render/index.html"),
-        external: [
-          /^react-dnd/,
-          /^dnd-core/,
-          /^immutability-helper/,
-        ],
+        input: path.resolve(currentDirPath, 'src/render/index.html'),
+        external: [/^react-dnd/, /^dnd-core/, /^immutability-helper/],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
-      sourcemap: process.env.NODE_ENV !== "production",
+      sourcemap: process.env.NODE_ENV !== 'production',
     },
     optimizeDeps: {
-      include: [
-        "react",
-        "react-dom",
-        "react-dnd",
-        "react-dnd-html5-backend",
-        "mitt",
-      ],
+      include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'mitt'],
       exclude: [],
     },
   },

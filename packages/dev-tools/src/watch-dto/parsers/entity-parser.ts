@@ -1,31 +1,31 @@
 import fs from 'fs';
 import path from 'path';
-import { DtoField } from "../types";
-import { dtoAstParser } from "./ast-field-parser";
-import { parseClassFields } from "./field-parser";
+import { DtoField } from '../types';
+import { dtoAstParser } from './ast-field-parser';
+import { parseClassFields } from './field-parser';
 
 /**
  * 从实体文件中解析 WithoutRelations 类的字段 - 使用 AST 解析
  */
 export function parseEntityFields(entityContent: string, entityName: string): DtoField[] {
   const withoutRelationsClassName = `${entityName}WithoutRelations`;
-  
+
   try {
     // 使用 AST 解析器
     return dtoAstParser.parseClassFields(entityContent, withoutRelationsClassName);
   } catch (error) {
-    console.warn("AST解析实体字段失败，回退到正则表达式:", error);
-    
+    console.warn('AST解析实体字段失败，回退到正则表达式:', error);
+
     // 回退到正则表达式解析
     const classMatch = entityContent.match(
       new RegExp(`export class ${withoutRelationsClassName}[\\s\\S]*?\\{([\\s\\S]*?)(?=\\n\\s*export|\\n\\s*$|$)`)
     );
-    
+
     if (classMatch) {
       const classBody = classMatch[1];
       return parseClassFields(classBody, withoutRelationsClassName);
     }
-    
+
     return [];
   }
 }
@@ -51,10 +51,10 @@ export function getEntityNameFromDto(dtoClassName: string): string {
 export function inferEntityNameFromDto(dtoClassName: string): string {
   // 移除常见的 DTO 后缀
   const withoutDto = dtoClassName.replace(/Dto$/, '');
-  
+
   // 移除常见的类型后缀 (Model, Filter, Form 等)
   const entityName = withoutDto.replace(/(Model|Filter|Form|Create|Update)$/, '');
-  
+
   return entityName;
 }
 

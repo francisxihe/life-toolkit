@@ -25,23 +25,23 @@ import { RepeatService } from '@life-toolkit/components-repeat/server/service';
 
 describe('RepeatService.calculateNextDate', () => {
   let service: RepeatService;
-  
+
   beforeEach(() => {
     // 初始化服务
     service = new RepeatService(/* 注入依赖 */);
   });
-  
+
   it('应该为每日重复计算正确的下一个日期', () => {
     const currentDate = dayjs('2023-06-15');
     const repeat = {
       repeatMode: RepeatMode.DAILY,
-      repeatConfig: {}
+      repeatConfig: {},
     };
-    
+
     const nextDate = service.calculateNextDate(currentDate, repeat);
     expect(nextDate.format('YYYY-MM-DD')).toBe('2023-06-16');
   });
-  
+
   // 添加更多测试用例...
 });
 ```
@@ -69,7 +69,7 @@ describe('TodoRepeatService.createNextTodo', () => {
   it('应该创建下一个待办事项', async () => {
     // 测试创建逻辑
   });
-  
+
   it('当已存在相同日期的待办时不应重复创建', async () => {
     // 测试重复检查
   });
@@ -89,15 +89,15 @@ describe('RepeatSelector', () => {
     render(<RepeatSelector lang="zh-CN" value={{}} onChange={() => {}} />);
     expect(screen.getByText('选择重复模式')).toBeInTheDocument();
   });
-  
+
   it('切换重复模式时应该调用onChange', () => {
     const onChange = jest.fn();
     render(<RepeatSelector lang="zh-CN" value={{}} onChange={onChange} />);
-    
+
     // 模拟选择操作
     const select = screen.getByPlaceholderText('选择重复模式');
     fireEvent.change(select, { target: { value: 'daily' } });
-    
+
     expect(onChange).toHaveBeenCalled();
   });
 });
@@ -167,4 +167,4 @@ npm test -- --coverage
 2. 对每个重复模式单独进行测试
 3. 包括边界情况和异常情况
 4. 不要依赖于当前日期，始终使用固定的测试日期
-5. 测试国际化支持（不同语言环境） 
+5. 测试国际化支持（不同语言环境）

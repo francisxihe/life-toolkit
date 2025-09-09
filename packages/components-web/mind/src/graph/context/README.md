@@ -17,28 +17,37 @@ context/
 ## 模块说明
 
 ### types.ts
+
 定义了 MindMap 相关的 TypeScript 类型：
+
 - `MindMapContextType`: Context 的类型定义
 - `MindMapProviderProps`: Provider 组件的属性类型
 
 ### utils.ts
+
 包含工具函数：
+
 - `generateId()`: 生成唯一节点 ID
 - `findNode()`: 在思维导图数据中查找指定节点
 - `findParentNode()`: 查找指定节点的父节点
 - `cloneMindMapData()`: 深拷贝思维导图数据
 
 ### hooks.ts
+
 包含自定义 Hooks：
+
 - `useNodeOperations()`: 节点操作相关的 Hook（增删改查）
 - `useGraphOperations()`: 图形操作相关的 Hook（缩放、居中等）
 
 ### MindMapContext.tsx
+
 核心 Context 组件：
+
 - `MindMapProvider`: Context Provider 组件
 - `useMindMapContext()`: 使用 Context 的自定义 Hook
 
 ### index.ts
+
 统一导出入口，方便其他模块导入使用。
 
 ## 使用方式

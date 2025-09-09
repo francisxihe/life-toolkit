@@ -1,2 +1,2 @@
-export * from "./calculateNextDate";
-export * from "../web/mapping";
+export * from './calculateNextDate';
+export * from '../web/mapping';

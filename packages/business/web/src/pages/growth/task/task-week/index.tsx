@@ -17,9 +17,15 @@ const weekStart = dayjs().startOf('week').format('YYYY-MM-DD');
 const weekEnd = dayjs().endOf('week').format('YYYY-MM-DD');
 
 export default function TaskWeek() {
-  const [weekTaskList, setWeekTaskList] = useState<TaskWithoutRelationsVo[]>([]);
-  const [weekDoneTaskList, setWeekDoneTaskList] = useState<TaskWithoutRelationsVo[]>([]);
-  const [expiredTaskList, setExpiredTaskList] = useState<TaskWithoutRelationsVo[]>([]);
+  const [weekTaskList, setWeekTaskList] = useState<TaskWithoutRelationsVo[]>(
+    [],
+  );
+  const [weekDoneTaskList, setWeekDoneTaskList] = useState<
+    TaskWithoutRelationsVo[]
+  >([]);
+  const [expiredTaskList, setExpiredTaskList] = useState<
+    TaskWithoutRelationsVo[]
+  >([]);
   const [weekAbandonedTaskList, setWeekAbandonedTaskList] = useState<
     TaskWithoutRelationsVo[]
   >([]);
@@ -61,7 +67,9 @@ export default function TaskWeek() {
     refreshData();
   }, []);
 
-  const [currentTask, setCurrentTask] = useState<TaskWithoutRelationsVo | null>(null);
+  const [currentTask, setCurrentTask] = useState<TaskWithoutRelationsVo | null>(
+    null,
+  );
 
   async function showTaskDetail(id: string) {
     flushSync(() => {

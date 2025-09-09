@@ -13,28 +13,32 @@ export function TodoPriorityMatrix({ todoList }: TodoPriorityMatrixProps) {
   // 按优先级分类任务
   const priorityMatrix = {
     urgent_important: todoList.filter(
-      (todo) => todo.importance === 1 && todo.urgency === 1 && todo.status === 'todo'
+      (todo) =>
+        todo.importance === 1 && todo.urgency === 1 && todo.status === 'todo',
     ),
     urgent_not_important: todoList.filter(
-      (todo) => todo.importance === 2 && todo.urgency === 1 && todo.status === 'todo'
+      (todo) =>
+        todo.importance === 2 && todo.urgency === 1 && todo.status === 'todo',
     ),
     not_urgent_important: todoList.filter(
-      (todo) => todo.importance === 1 && todo.urgency === 2 && todo.status === 'todo'
+      (todo) =>
+        todo.importance === 1 && todo.urgency === 2 && todo.status === 'todo',
     ),
     not_urgent_not_important: todoList.filter(
-      (todo) => todo.importance === 2 && todo.urgency === 2 && todo.status === 'todo'
+      (todo) =>
+        todo.importance === 2 && todo.urgency === 2 && todo.status === 'todo',
     ),
   };
 
-  const MatrixItem = ({ 
-    title, 
-    color, 
-    tasks, 
-    description 
-  }: { 
-    title: string; 
-    color: string; 
-    tasks: TodoVo[]; 
+  const MatrixItem = ({
+    title,
+    color,
+    tasks,
+    description,
+  }: {
+    title: string;
+    color: string;
+    tasks: TodoVo[];
     description: string;
   }) => (
     <div className="bg-fill-1 rounded-lg p-4 h-full">
@@ -46,7 +50,11 @@ export function TodoPriorityMatrix({ todoList }: TodoPriorityMatrixProps) {
           {title}
         </Text>
       </div>
-      <Text type="secondary" style={{ fontSize: 11 }} className="block mb-3 text-text-3">
+      <Text
+        type="secondary"
+        style={{ fontSize: 11 }}
+        className="block mb-3 text-text-3"
+      >
         {description}
       </Text>
       <div className="space-y-1">
@@ -58,7 +66,11 @@ export function TodoPriorityMatrix({ todoList }: TodoPriorityMatrixProps) {
           </div>
         ))}
         {tasks.length > 3 && (
-          <Text type="secondary" style={{ fontSize: 10 }} className="block text-center pt-1 text-text-3">
+          <Text
+            type="secondary"
+            style={{ fontSize: 10 }}
+            className="block text-center pt-1 text-text-3"
+          >
             +{tasks.length - 3} 更多
           </Text>
         )}
@@ -73,11 +85,15 @@ export function TodoPriorityMatrix({ todoList }: TodoPriorityMatrixProps) {
           <div className="w-5 h-5 bg-link rounded"></div>
         </div>
         <div>
-          <Title heading={5} className="!mb-0">优先级矩阵</Title>
-          <div className="text-sm text-text-3">基于艾森豪威尔矩阵的任务分类</div>
+          <Title heading={5} className="!mb-0">
+            优先级矩阵
+          </Title>
+          <div className="text-sm text-text-3">
+            基于艾森豪威尔矩阵的任务分类
+          </div>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-2 gap-3 h-64">
         <MatrixItem
           title="紧急重要"
@@ -106,4 +122,4 @@ export function TodoPriorityMatrix({ todoList }: TodoPriorityMatrixProps) {
       </div>
     </div>
   );
-} 
+}

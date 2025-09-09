@@ -21,7 +21,7 @@ export default class TaskService {
     try {
       // Task 模块暂时没有批量操作方法，需要逐个处理
       const results = await Promise.all(
-        params.includeIds?.map(id => TaskController.abandon(id)) || []
+        params.includeIds?.map((id) => TaskController.abandon(id)) || [],
       );
       Message.success('操作成功');
       return results;

@@ -3,9 +3,12 @@ module.exports = {
   testEnvironment: 'jsdom',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
-    '^.+\\.(ts|tsx)$': ['ts-jest', {
-      tsconfig: 'tsconfig.json',
-    }]
+    '^.+\\.(ts|tsx)$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+      },
+    ],
   },
   testRegex: '(/__tests__/.*\\.(test|spec))\\.(ts|tsx|js|jsx)$',
   moduleNameMapper: {
@@ -14,8 +17,5 @@ module.exports = {
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
-  collectCoverageFrom: [
-    'web/**/*.{ts,tsx}',
-    '!web/**/*.d.ts',
-  ],
-}; 
+  collectCoverageFrom: ['web/**/*.{ts,tsx}', '!web/**/*.d.ts'],
+};

@@ -1,1 +1,1 @@
-export { default as MiniTimer } from './MiniTimer'; 
+export { default as MiniTimer } from './MiniTimer';

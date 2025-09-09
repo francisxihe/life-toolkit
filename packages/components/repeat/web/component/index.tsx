@@ -1,11 +1,10 @@
-import { RepeatProvider, RepeatContextProps } from "./context";
-import { LocaleProvider } from "./useLocale";
-import { RepeatSelectorMain } from "./RepeatMain";
-import { RepeatModeForm, RepeatEndModeForm } from "../../types";
-
+import { RepeatProvider, RepeatContextProps } from './context';
+import { LocaleProvider } from './useLocale';
+import { RepeatSelectorMain } from './RepeatMain';
+import { RepeatModeForm, RepeatEndModeForm } from '../../types';
 
 export function RepeatSelector(props: {
-  lang: "en-US" | "zh-CN";
+  lang: 'en-US' | 'zh-CN';
   value: RepeatModeForm & RepeatEndModeForm;
   onChange: (value: RepeatModeForm & RepeatEndModeForm) => void;
 }) {
@@ -18,7 +17,7 @@ export function RepeatSelector(props: {
       <RepeatProvider
         value={value}
         onChange={(_value) => {
-          console.log("RepeatSelector onChange", _value);
+          console.log('RepeatSelector onChange', _value);
           props.onChange(_value);
         }}
       >

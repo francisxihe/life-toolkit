@@ -66,32 +66,32 @@ export function convertDtoFieldToVo(field: DtoField): string | null {
   if (!field.name || !field.type) return null;
 
   let voType = convertDtoTypeToVoType(field.type);
-  
+
   // 处理数组类型
   if (field.isArray && !voType.endsWith('[]')) {
     voType = `${voType}[]`;
   }
-  
+
   // 处理复杂对象类型，确保语法正确并转换内部的 DTO 类型
   if (voType.includes('{')) {
     // 转换对象类型中的 DTO 引用
     voType = voType.replace(/(\w+Dto)\[/g, (match, dtoType) => {
       return convertDtoTypeToVoType(dtoType) + '[';
     });
-    
+
     // 清理和格式化对象类型
     voType = voType
-      .replace(/\s+/g, ' ')  // 压缩空格
-      .replace(/{\s*;/g, '{ ')   // 移除开头的分号
-      .replace(/;\s*}/g, ' }')   // 确保分号和大括号格式正确
+      .replace(/\s+/g, ' ') // 压缩空格
+      .replace(/{\s*;/g, '{ ') // 移除开头的分号
+      .replace(/;\s*}/g, ' }') // 确保分号和大括号格式正确
       .trim();
-    
+
     // 修复常见的语法问题
     if (voType.includes('{;')) {
       voType = voType.replace('{;', '{');
     }
   }
-  
+
   const optional = field.optional ? '?' : '';
   return `${field.name}${optional}: ${voType};`;
 }

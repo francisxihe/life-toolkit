@@ -7,4 +7,4 @@
     "allowSyntheticDefaultImports": true
   },
   "include": ["electron.vite.config.ts"]
-} 
+}

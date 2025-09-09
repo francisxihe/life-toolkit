@@ -1,5 +1,5 @@
-import React from "react";
-import clsx from "clsx";
+import React from 'react';
+import clsx from 'clsx';
 
 export default function SiteIcon({
   id,
@@ -20,7 +20,7 @@ export default function SiteIcon({
       height={height}
       className={clsx(className)}
       onClick={onClick}
-      style={{ ...style, fill: "currentColor" }}
+      style={{ ...style, fill: 'currentColor' }}
     >
       <use href={`/icons.svg#${id}`} />
     </svg>

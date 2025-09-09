@@ -1,34 +1,29 @@
-import { Select } from "@arco-design/web-react";
-import RepeatEndModeForm from "./RepeatEndMode";
-import { RepeatMode } from "../../types";
-import { useRepeatContext } from "./context";
+import { Select } from '@arco-design/web-react';
+import RepeatEndModeForm from './RepeatEndMode';
+import { RepeatMode } from '../../types';
+import { useRepeatContext } from './context';
 import {
   RepeatConfigCustom,
   RepeatConfigMonthly,
   RepeatConfigWeekly,
   RepeatConfigYearly,
-} from "./repeat-config-editor";
+} from './repeat-config-editor';
 
 export const RepeatModeMap = new Map<RepeatMode, string>([
-  [RepeatMode.NONE, "repeat.mode.none"],
-  [RepeatMode.DAILY, "repeat.mode.daily"],
-  [RepeatMode.WEEKLY, "repeat.mode.weekly"],
-  [RepeatMode.WEEKDAYS, "repeat.mode.weekdays"],
-  [RepeatMode.WEEKEND, "repeat.mode.weekend"],
-  [RepeatMode.MONTHLY, "repeat.mode.monthly"],
-  [RepeatMode.WORKDAYS, "repeat.mode.workdays"],
-  [RepeatMode.REST_DAY, "repeat.mode.restDay"],
-  [RepeatMode.YEARLY, "repeat.mode.yearly"],
-  [RepeatMode.CUSTOM, "repeat.mode.custom"],
+  [RepeatMode.NONE, 'repeat.mode.none'],
+  [RepeatMode.DAILY, 'repeat.mode.daily'],
+  [RepeatMode.WEEKLY, 'repeat.mode.weekly'],
+  [RepeatMode.WEEKDAYS, 'repeat.mode.weekdays'],
+  [RepeatMode.WEEKEND, 'repeat.mode.weekend'],
+  [RepeatMode.MONTHLY, 'repeat.mode.monthly'],
+  [RepeatMode.WORKDAYS, 'repeat.mode.workdays'],
+  [RepeatMode.REST_DAY, 'repeat.mode.restDay'],
+  [RepeatMode.YEARLY, 'repeat.mode.yearly'],
+  [RepeatMode.CUSTOM, 'repeat.mode.custom'],
 ]);
 
 export function RepeatSelectorMain() {
-  const {
-    repeatModeForm,
-    handleChangeRepeatMode,
-    handleChangeRepeatConfig,
-    t,
-  } = useRepeatContext();
+  const { repeatModeForm, handleChangeRepeatMode, handleChangeRepeatConfig, t } = useRepeatContext();
 
   return (
     <div className="flex flex-col gap-4">
@@ -45,31 +40,19 @@ export function RepeatSelectorMain() {
       />
 
       {repeatModeForm.repeatMode === RepeatMode.WEEKLY && (
-        <RepeatConfigWeekly
-          repeatConfig={repeatModeForm.repeatConfig}
-          handleConfigChange={handleChangeRepeatConfig}
-        />
+        <RepeatConfigWeekly repeatConfig={repeatModeForm.repeatConfig} handleConfigChange={handleChangeRepeatConfig} />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.MONTHLY && (
-        <RepeatConfigMonthly
-          repeatConfig={repeatModeForm.repeatConfig}
-          handleConfigChange={handleChangeRepeatConfig}
-        />
+        <RepeatConfigMonthly repeatConfig={repeatModeForm.repeatConfig} handleConfigChange={handleChangeRepeatConfig} />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.YEARLY && (
-        <RepeatConfigYearly
-          repeatConfig={repeatModeForm.repeatConfig}
-          handleConfigChange={handleChangeRepeatConfig}
-        />
+        <RepeatConfigYearly repeatConfig={repeatModeForm.repeatConfig} handleConfigChange={handleChangeRepeatConfig} />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.CUSTOM && (
-        <RepeatConfigCustom
-          repeatConfig={repeatModeForm.repeatConfig}
-          handleConfigChange={handleChangeRepeatConfig}
-        />
+        <RepeatConfigCustom repeatConfig={repeatModeForm.repeatConfig} handleConfigChange={handleChangeRepeatConfig} />
       )}
 
       {repeatModeForm.repeatMode === RepeatMode.NONE || <RepeatEndModeForm />}

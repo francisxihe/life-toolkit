@@ -12,7 +12,8 @@ export type GoalFilterVo = {
   abandonedDateEnd?: string;
   id?: string;
   parentId?: string;
-} & BaseFilterVo & Partial<Pick<GoalVo, 'type' | 'importance' | 'status'>>;
+} & BaseFilterVo &
+  Partial<Pick<GoalVo, 'type' | 'importance' | 'status'>>;
 
 export type GoalPageFilterVo = GoalFilterVo & {
   pageNum: number;

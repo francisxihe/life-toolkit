@@ -5,12 +5,12 @@ import { Graph } from '@antv/x6';
 import { useMindMapContext } from '../context';
 
 export default function MiniMapContainer() {
-  const { minimapVisible } = useMindMapContext(); 
+  const { minimapVisible } = useMindMapContext();
   const [graph, setGraph] = useState<Graph | null>(null);
   const minimapRef = useRef<HTMLDivElement>(null);
   const minimapInstanceRef = useRef<MiniMap | null>(null);
   const isInitializedRef = useRef(false);
-  
+
   // 监听graph变化
   useEffect(() => {
     console.log('graphEventEmitter.onEmitGraph', graphEventEmitter);

@@ -24,17 +24,17 @@ export function getVoPathFromDto(dtoFilePath: string): string {
   // 转换为 packages/business/vo/growth/goal/goal-model.vo.ts
   const relativePath = path.relative(SERVER_BASE, dtoFilePath);
   const parts = relativePath.split(path.sep);
-  
+
   // 移除 dto 目录层级
   const dtoIndex = parts.indexOf('dto');
   if (dtoIndex !== -1) {
     parts.splice(dtoIndex, 1);
   }
-  
+
   // 替换文件扩展名
   const fileName = parts[parts.length - 1].replace('.dto.ts', '.vo.ts');
   parts[parts.length - 1] = fileName;
-  
+
   return path.join(ROOT, 'packages/business/vo', ...parts);
 }
 

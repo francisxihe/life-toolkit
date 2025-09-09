@@ -47,18 +47,18 @@ export class TodoController {
     return this.controller.detailWithRepeat(id);
   }
 
-  @Put("/done-with-repeat/batch")
+  @Put('/done-with-repeat/batch')
   async doneWithRepeatBatch(@Body() body: TodoVO.TodoFilterVo) {
     return this.controller.doneWithRepeatBatch(body);
   }
 
-  @Put("/abandon-with-repeat/:id")
-  async abandonWithRepeat(@Param("id") id: string) {
+  @Put('/abandon-with-repeat/:id')
+  async abandonWithRepeat(@Param('id') id: string) {
     return this.controller.abandonWithRepeat(id);
   }
 
-  @Put("/restore-with-repeat/:id")
-  async restoreWithRepeat(@Param("id") id: string) {
+  @Put('/restore-with-repeat/:id')
+  async restoreWithRepeat(@Param('id') id: string) {
     return this.controller.restoreWithRepeat(id);
   }
 }

@@ -43,7 +43,7 @@ export default function TaskDetailTodoList() {
             <TaskList
               taskList={currentGoal.taskList}
               onClickTask={async (id) => {
-                // 
+                //
               }}
               refreshTaskList={async () => {
                 await refreshGoalDetail(currentGoal.id);

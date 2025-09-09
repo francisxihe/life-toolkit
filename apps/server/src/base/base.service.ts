@@ -1,11 +1,6 @@
-import { BaseEntity } from "./base.entity";
-import {
-  DeepPartial,
-  Repository,
-  UpdateResult,
-  FindOptionsWhere,
-} from "typeorm";
-import { NotFoundException } from "@nestjs/common";
+import { BaseEntity } from './base.entity';
+import { DeepPartial, Repository, UpdateResult, FindOptionsWhere } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 
 export abstract class BaseService<T extends BaseEntity> {
   constructor(private readonly repository: Repository<T>) {}

@@ -176,7 +176,9 @@ class GraphEventEmitter {
     return () => this.emitter.off(GraphEventType.RESET_VIEW, listener);
   }
 
-  onToggleNodeCollapse(listener: (data: { nodeId: string; collapsed?: boolean }) => void): () => void {
+  onToggleNodeCollapse(
+    listener: (data: { nodeId: string; collapsed?: boolean }) => void
+  ): () => void {
     this.emitter.on(GraphEventType.TOGGLE_NODE_COLLAPSE, listener);
     return () => this.emitter.off(GraphEventType.TOGGLE_NODE_COLLAPSE, listener);
   }

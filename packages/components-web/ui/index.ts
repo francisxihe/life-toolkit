@@ -1,1 +1,1 @@
-export { default as SiteIcon } from './src/SiteIcon'; 
+export { default as SiteIcon } from './src/SiteIcon';

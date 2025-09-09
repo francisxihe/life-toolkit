@@ -1,22 +1,10 @@
-import dayjs from "dayjs";
-import { isArray, isString, isNumber } from "lodash";
-import {
-  RepeatModeForm,
-  RepeatEndModeForm,
-  RepeatEndMode,
-  RepeatMode,
-} from "../../types";
-import type { RepeatVo } from "../../vo";
-import {
-  isRepeatFormWeekly,
-  isRepeatFormMonthly,
-  isRepeatFormYearly,
-  isRepeatFormCustom,
-} from "./assertion";
+import dayjs from 'dayjs';
+import { isArray, isString, isNumber } from 'lodash';
+import { RepeatModeForm, RepeatEndModeForm, RepeatEndMode, RepeatMode } from '../../types';
+import type { RepeatVo } from '../../vo';
+import { isRepeatFormWeekly, isRepeatFormMonthly, isRepeatFormYearly, isRepeatFormCustom } from './assertion';
 
-export function voToForm(
-  repeatVo: RepeatVo
-): RepeatModeForm & RepeatEndModeForm {
+export function voToForm(repeatVo: RepeatVo): RepeatModeForm & RepeatEndModeForm {
   let repeatModeForm: RepeatModeForm;
 
   switch (repeatVo.repeatMode) {
@@ -33,11 +21,8 @@ export function voToForm(
 
     // 周期模式：需要特定 repeatConfig
     case RepeatMode.WEEKLY: {
-      if (
-        !isRepeatFormWeekly(repeatVo) ||
-        !isArray(repeatVo.repeatConfig?.weekdays)
-      ) {
-        throw new Error("repeatConfig.weekdays is required for WEEKLY mode");
+      if (!isRepeatFormWeekly(repeatVo) || !isArray(repeatVo.repeatConfig?.weekdays)) {
+        throw new Error('repeatConfig.weekdays is required for WEEKLY mode');
       }
       repeatModeForm = {
         repeatMode: RepeatMode.WEEKLY,
@@ -47,13 +32,8 @@ export function voToForm(
     }
 
     case RepeatMode.MONTHLY: {
-      if (
-        !isRepeatFormMonthly(repeatVo) ||
-        !isString(repeatVo.repeatConfig?.monthlyType)
-      ) {
-        throw new Error(
-          "repeatConfig.monthlyType is required for MONTHLY mode"
-        );
+      if (!isRepeatFormMonthly(repeatVo) || !isString(repeatVo.repeatConfig?.monthlyType)) {
+        throw new Error('repeatConfig.monthlyType is required for MONTHLY mode');
       }
       repeatModeForm = {
         repeatMode: RepeatMode.MONTHLY,
@@ -63,11 +43,8 @@ export function voToForm(
     }
 
     case RepeatMode.YEARLY: {
-      if (
-        !isRepeatFormYearly(repeatVo) ||
-        !isString(repeatVo.repeatConfig?.yearlyType)
-      ) {
-        throw new Error("repeatConfig.yearlyType is required for YEARLY mode");
+      if (!isRepeatFormYearly(repeatVo) || !isString(repeatVo.repeatConfig?.yearlyType)) {
+        throw new Error('repeatConfig.yearlyType is required for YEARLY mode');
       }
       repeatModeForm = {
         repeatMode: RepeatMode.YEARLY,
@@ -82,9 +59,7 @@ export function voToForm(
         !isNumber(repeatVo.repeatConfig?.interval) ||
         !isString(repeatVo.repeatConfig?.intervalUnit)
       ) {
-        throw new Error(
-          "repeatConfig.interval and intervalUnit are required for CUSTOM mode"
-        );
+        throw new Error('repeatConfig.interval and intervalUnit are required for CUSTOM mode');
       }
       repeatModeForm = {
         repeatMode: RepeatMode.CUSTOM,
@@ -106,7 +81,7 @@ export function voToForm(
       break;
     case RepeatEndMode.TO_DATE:
       if (!isString(repeatVo.repeatEndDate)) {
-        throw new Error("repeatEndDate is required");
+        throw new Error('repeatEndDate is required');
       }
       repeatEndModeForm = {
         repeatEndMode: repeatVo.repeatEndMode,
@@ -115,7 +90,7 @@ export function voToForm(
       break;
     case RepeatEndMode.FOR_TIMES:
       if (!isNumber(repeatVo.repeatTimes) || repeatVo.repeatTimes <= 0) {
-        throw new Error("repeatTimes is required");
+        throw new Error('repeatTimes is required');
       }
       repeatEndModeForm = {
         repeatEndMode: repeatVo.repeatEndMode,
@@ -128,7 +103,7 @@ export function voToForm(
 }
 
 export function formToVo(form: RepeatModeForm & RepeatEndModeForm): RepeatVo {
-  let repeatConfig: RepeatVo["repeatConfig"] | undefined;
+  let repeatConfig: RepeatVo['repeatConfig'] | undefined;
   switch (form.repeatMode) {
     case RepeatMode.NONE:
     case RepeatMode.DAILY:
@@ -152,7 +127,7 @@ export function formToVo(form: RepeatModeForm & RepeatEndModeForm): RepeatVo {
     case RepeatEndMode.FOREVER:
       break;
     case RepeatEndMode.TO_DATE:
-      repeatEndDate = form.repeatEndDate.format("YYYY-MM-DD");
+      repeatEndDate = form.repeatEndDate.format('YYYY-MM-DD');
       break;
     case RepeatEndMode.FOR_TIMES:
       repeatTimes = form.repeatTimes;

@@ -59,4 +59,4 @@ const Setting: React.FC<SettingProps> = ({ onConfirm, className }) => {
   );
 };
 
-export default Setting; 
+export default Setting;

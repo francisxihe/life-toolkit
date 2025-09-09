@@ -1,19 +1,15 @@
-import { FC, PropsWithChildren, useRef } from "react";
-import { useDrag, useDrop } from "react-dnd";
-import type { Identifier, XYCoord } from "dnd-core";
-import update from "immutability-helper";
-import { useTabs } from "./store";
+import { FC, PropsWithChildren, useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
+import type { Identifier, XYCoord } from 'dnd-core';
+import update from 'immutability-helper';
+import { useTabs } from './store';
 
 // 定义拖拽类型
 export const ItemTypes = {
-  Tab: "wtabs",
+  Tab: 'wtabs',
 };
 
-export interface TabProps
-  extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > {
+export interface TabProps extends React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   id: string;
   index?: number;
   /** Whether the Y axis can be dragged */
@@ -42,11 +38,7 @@ export const Tab: FC<PropsWithChildren<TabProps>> = ({
   const ref = useRef<HTMLDivElement>(null);
   const { state, setActiveKey, setData } = useTabs();
 
-  const [{ handlerId }, drop] = useDrop<
-    DragItem,
-    void,
-    { handlerId: Identifier | null }
-  >({
+  const [{ handlerId }, drop] = useDrop<DragItem, void, { handlerId: Identifier | null }>({
     accept: ItemTypes.Tab,
     collect(monitor) {
       return {
@@ -66,8 +58,7 @@ export const Tab: FC<PropsWithChildren<TabProps>> = ({
       // 确定屏幕上的矩形
       const hoverBoundingRect = ref.current.getBoundingClientRect();
       // 获取垂直中间
-      const hoverMiddleX =
-        (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
+      const hoverMiddleX = (hoverBoundingRect.right - hoverBoundingRect.left) / 2;
       // 确定鼠标位置
       const clientOffset = monitor.getClientOffset();
       // if (!clientOffset) return;
@@ -77,11 +68,7 @@ export const Tab: FC<PropsWithChildren<TabProps>> = ({
       // When dragging downwards, only move when the cursor is below 50%
       // When dragging upwards, only move when the cursor is above 50%
       // Dragging downwards
-      if (
-        dragIndex < hoverIndex &&
-        hoverClientX < hoverMiddleX &&
-        dragableY !== true
-      ) {
+      if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX && dragableY !== true) {
         return;
       }
       // Dragging upwards
@@ -136,7 +123,7 @@ export const Tab: FC<PropsWithChildren<TabProps>> = ({
       onClick={handleClick}
       ref={ref}
       style={{ ...props.style, opacity }}
-      className={`w-tabs-draggable-item ${state.activeKey === id ? "tabs-item-active" : ""} ${props.className || ""}`}
+      className={`w-tabs-draggable-item ${state.activeKey === id ? 'tabs-item-active' : ''} ${props.className || ''}`}
       data-handler-id={handlerId}
     >
       {children}

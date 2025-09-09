@@ -4,7 +4,6 @@ import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoDto } from './todo-model.dto';
 import { Todo } from '../todo.entity';
-import { CreateTodoRepeatDto } from './todo-repeat-form.dto';
 
 export class CreateTodoDto extends PickType(TodoDto, [
   'name',
@@ -17,18 +16,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
   'urgency',
   'tags',
   'taskId',
+  'repeatConfig',
 ] as const) {
-  repeat?: {
-    currentDate: CreateTodoRepeatDto['currentDate'];
-    repeatStartDate: CreateTodoRepeatDto['repeatStartDate'];
-    repeatMode: CreateTodoRepeatDto['repeatMode'];
-    repeatConfig: CreateTodoRepeatDto['repeatConfig'];
-    repeatEndMode: CreateTodoRepeatDto['repeatEndMode'];
-    repeatEndDate: CreateTodoRepeatDto['repeatEndDate'];
-    repeatTimes: CreateTodoRepeatDto['repeatTimes'];
-    repeatedTimes: CreateTodoRepeatDto['repeatedTimes'];
-  };
-
   importCreateVo(vo: TodoVO.CreateTodoVo) {
     this.name = vo.name;
     this.description = vo.description;

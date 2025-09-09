@@ -16,7 +16,7 @@ export function readFileSafe(filePath: string): string | null {
  */
 export function writeFileIfChanged(filePath: string, content: string): boolean {
   const existingContent = readFileSafe(filePath);
-  
+
   // 文件不存在，直接写入
   if (existingContent === null) {
     // 确保目录存在
@@ -27,12 +27,12 @@ export function writeFileIfChanged(filePath: string, content: string): boolean {
     fs.writeFileSync(filePath, content, 'utf8');
     return true;
   }
-  
+
   // 内容相同，跳过写入
   if (existingContent === content) {
     return false;
   }
-  
+
   // 内容不同，写入文件
   fs.writeFileSync(filePath, content, 'utf8');
   return true;

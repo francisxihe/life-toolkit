@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { DeepSeekService } from "./DeepSeek.service";
-import { AiController } from "./ai.controller";
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { DeepSeekService } from './DeepSeek.service';
+import { AiController } from './ai.controller';
 
 @Module({
   imports: [],

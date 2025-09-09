@@ -20,7 +20,4 @@ type RepeatFormToDate = {
   repeatEndDate: Dayjs;
 };
 
-export type RepeatEndModeForm =
-  | RepeatFormForever
-  | RepeatFormForTimes
-  | RepeatFormToDate;
+export type RepeatEndModeForm = RepeatFormForever | RepeatFormForTimes | RepeatFormToDate;

@@ -6,7 +6,8 @@ export type TodoRepeatFilterVo = {
   currentDateEnd?: string;
   abandonedDateStart?: string;
   abandonedDateEnd?: string;
-} & BaseFilterVo & Partial<Pick<TodoRepeatVo, 'importance' | 'urgency' | 'status'>>;
+} & BaseFilterVo &
+  Partial<Pick<TodoRepeatVo, 'importance' | 'urgency' | 'status'>>;
 
 export type TodoRepeatPageFilterVo = TodoRepeatFilterVo & {
   pageNum: number;

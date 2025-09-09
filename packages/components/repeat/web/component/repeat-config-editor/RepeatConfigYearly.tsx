@@ -1,17 +1,12 @@
-import {
-  RepeatFormYearly,
-  YearlyType,
-  MonthlyType,
-  WeekDay,
-} from "../../../types";
-import { Radio } from "@arco-design/web-react";
-import { OrdinalWeek } from "../../../types";
-import RepeatConfigMonthly from "./RepeatConfigMonthly";
-import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
+import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay } from '../../../types';
+import { Radio } from '@arco-design/web-react';
+import { OrdinalWeek } from '../../../types';
+import RepeatConfigMonthly from './RepeatConfigMonthly';
+import OrdinalWeekDaysSelector from '../ordinal-selector/OrdinalWeekDaysSelector';
 
 export default function RepeatConfigYearly(props: {
-  repeatConfig: RepeatFormYearly["repeatConfig"];
-  handleConfigChange: (repeatConfig: RepeatFormYearly["repeatConfig"]) => void;
+  repeatConfig: RepeatFormYearly['repeatConfig'];
+  handleConfigChange: (repeatConfig: RepeatFormYearly['repeatConfig']) => void;
 }) {
   const { repeatConfig: yearlyConfig, handleConfigChange } = props;
 
@@ -73,9 +68,7 @@ export default function RepeatConfigYearly(props: {
                 },
               });
             }}
-            ordinalWeekDays={
-              yearlyConfig[YearlyType.ORDINAL_WEEK].ordinalWeekdays
-            }
+            ordinalWeekDays={yearlyConfig[YearlyType.ORDINAL_WEEK].ordinalWeekdays}
             setOrdinalWeekDays={(value) => {
               handleConfigChange({
                 yearlyType: YearlyType.ORDINAL_WEEK,

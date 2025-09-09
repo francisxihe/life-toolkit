@@ -1,41 +1,30 @@
-import { RepeatMode } from "../../types";
-import type { RepeatVo } from "../../vo";
-import type {
-  RepeatFormWeekly,
-  RepeatFormMonthly,
-  RepeatFormYearly,
-  RepeatFormCustom,
-} from "../../types";
+import { RepeatMode } from '../../types';
+import type { RepeatVo } from '../../vo';
+import type { RepeatFormWeekly, RepeatFormMonthly, RepeatFormYearly, RepeatFormCustom } from '../../types';
 
-export function isRepeatFormWeekly(
-  repeatVo: RepeatVo
-): repeatVo is RepeatVo & {
+export function isRepeatFormWeekly(repeatVo: RepeatVo): repeatVo is RepeatVo & {
   repeatMode: RepeatMode.WEEKLY;
-  repeatConfig: RepeatFormWeekly["repeatConfig"];
+  repeatConfig: RepeatFormWeekly['repeatConfig'];
 } {
   return repeatVo.repeatMode === RepeatMode.WEEKLY;
 }
 
-export function isRepeatFormMonthly(
-  repeatVo: RepeatVo
-): repeatVo is RepeatVo & {
+export function isRepeatFormMonthly(repeatVo: RepeatVo): repeatVo is RepeatVo & {
   repeatMode: RepeatMode.MONTHLY;
-  repeatConfig: RepeatFormMonthly["repeatConfig"];
+  repeatConfig: RepeatFormMonthly['repeatConfig'];
 } {
   return repeatVo.repeatMode === RepeatMode.MONTHLY;
 }
 
-export function isRepeatFormYearly(
-  repeatVo: RepeatVo
-): repeatVo is RepeatVo & {
+export function isRepeatFormYearly(repeatVo: RepeatVo): repeatVo is RepeatVo & {
   repeatMode: RepeatMode.YEARLY;
-  repeatConfig: RepeatFormYearly["repeatConfig"];
+  repeatConfig: RepeatFormYearly['repeatConfig'];
 } {
   return repeatVo.repeatMode === RepeatMode.YEARLY;
 }
 
 export function isRepeatFormCustom(
   repeatVo: RepeatVo
-): repeatVo is RepeatVo & { repeatMode: RepeatMode.CUSTOM; repeatConfig: RepeatFormCustom["repeatConfig"] } {
+): repeatVo is RepeatVo & { repeatMode: RepeatMode.CUSTOM; repeatConfig: RepeatFormCustom['repeatConfig'] } {
   return repeatVo.repeatMode === RepeatMode.CUSTOM;
 }

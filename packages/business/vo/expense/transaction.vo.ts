@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { BaseEntityVo } from "../common";
+import { BaseEntityVo } from '../common';
 
-export type TransactionType = "income" | "expense";
+export type TransactionType = 'income' | 'expense';
 
 export interface TransactionModelVo {
   type: TransactionType;
@@ -12,21 +12,21 @@ export interface TransactionModelVo {
   tags: string[];
   transactionDateTime: string;
   recurring?: {
-    frequency: "daily" | "weekly" | "monthly" | "yearly";
+    frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
     interval: number;
   };
 }
 
 export type TransactionVo = BaseEntityVo & TransactionModelVo;
 
-export type CreateTransactionVo = Omit<TransactionModelVo, "recurring">;
+export type CreateTransactionVo = Omit<TransactionModelVo, 'recurring'>;
 
 export type Category = {
   id: string;
   name: string;
   type: TransactionType;
   icon?: string;
-}
+};
 
 export type TransactionFilters = {
   dateRange: {
@@ -36,8 +36,8 @@ export type TransactionFilters = {
   type?: TransactionType;
   categories: string[];
   tags: string[];
-  period: "all" | "daily" | "weekly" | "monthly" | "yearly";
-}
+  period: 'all' | 'daily' | 'weekly' | 'monthly' | 'yearly';
+};
 
 export type TransactionStats = {
   totalIncome: number;
@@ -49,4 +49,4 @@ export type TransactionStats = {
     previous: number;
     change: number;
   };
-}
+};

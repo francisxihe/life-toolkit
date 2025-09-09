@@ -1,12 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { In, Repository, TreeRepository, FindOptionsWhere } from "typeorm";
-import {
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskDto,
-  Task,
-} from "@life-toolkit/business-server";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { In, Repository, TreeRepository, FindOptionsWhere } from 'typeorm';
+import { CreateTaskDto, UpdateTaskDto, TaskDto, Task } from '@life-toolkit/business-server';
 
 @Injectable()
 export class TaskTreeRepository {
@@ -18,7 +13,6 @@ export class TaskTreeRepository {
   getTreeRepository(): TreeRepository<Task> {
     return this.taskRepository.manager.getTreeRepository(Task);
   }
-
 
   async findDescendantsTree(entity: Task) {
     const repo = this.getTreeRepository();
@@ -49,5 +43,4 @@ export class TaskTreeRepository {
     }
     return allIds;
   }
-
 }

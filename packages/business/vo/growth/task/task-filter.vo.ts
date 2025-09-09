@@ -12,7 +12,8 @@ export type TaskFilterVo = {
   abandonedDateEnd?: string;
   goalIds?: string[];
   id?: string;
-} & BaseFilterVo & Partial<Pick<TaskVo, 'importance' | 'urgency' | 'status'>>;
+} & BaseFilterVo &
+  Partial<Pick<TaskVo, 'importance' | 'urgency' | 'status'>>;
 
 export type TaskPageFilterVo = TaskFilterVo & {
   pageNum: number;

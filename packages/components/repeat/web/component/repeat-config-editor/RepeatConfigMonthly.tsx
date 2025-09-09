@@ -1,13 +1,13 @@
 import { Radio, Calendar } from '@arco-design/web-react';
-import { RepeatFormMonthly, MonthlyType, WeekDay } from "../../../types";
-import OrdinalDaySelector from "../ordinal-selector/OrdinalDaySelector";
-import OrdinalWeekDaysSelector from "../ordinal-selector/OrdinalWeekDaysSelector";
-import dayjs from "dayjs";
-import { OrdinalWeek, OrdinalDay, OrdinalDayType } from "../../../types";
+import { RepeatFormMonthly, MonthlyType, WeekDay } from '../../../types';
+import OrdinalDaySelector from '../ordinal-selector/OrdinalDaySelector';
+import OrdinalWeekDaysSelector from '../ordinal-selector/OrdinalWeekDaysSelector';
+import dayjs from 'dayjs';
+import { OrdinalWeek, OrdinalDay, OrdinalDayType } from '../../../types';
 
 export default function RepeatConfigMonthly(props: {
-  repeatConfig: RepeatFormMonthly["repeatConfig"];
-  handleConfigChange: (repeatConfig: RepeatFormMonthly["repeatConfig"]) => void;
+  repeatConfig: RepeatFormMonthly['repeatConfig'];
+  handleConfigChange: (repeatConfig: RepeatFormMonthly['repeatConfig']) => void;
 }) {
   const { repeatConfig: monthlyConfig, handleConfigChange } = props;
 
@@ -61,9 +61,7 @@ export default function RepeatConfigMonthly(props: {
           style={{ marginRight: 50 }}
           defaultValue={dayjs()}
           disabledDate={(date) => {
-            return (
-              date.isAfter(dayjs(), 'month') || date.isBefore(dayjs(), 'month')
-            );
+            return date.isAfter(dayjs(), 'month') || date.isBefore(dayjs(), 'month');
           }}
           onChange={(date) => {
             handleConfigChange({
@@ -88,9 +86,7 @@ export default function RepeatConfigMonthly(props: {
                 },
               })
             }
-            ordinalWeekDays={
-              monthlyConfig[MonthlyType.ORDINAL_WEEK].ordinalWeekdays
-            }
+            ordinalWeekDays={monthlyConfig[MonthlyType.ORDINAL_WEEK].ordinalWeekdays}
             setOrdinalWeekDays={(value) =>
               handleConfigChange({
                 ...monthlyConfig,

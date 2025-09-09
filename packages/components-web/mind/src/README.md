@@ -39,25 +39,27 @@
 ### 2. 职责分离
 
 #### 全局Context (`context/`)
+
 - **职责**: 管理思维导图的业务数据和业务逻辑
-- **状态**: 
+- **状态**:
   - `mindMapData`: 思维导图数据
   - `selectedNodeId`: 当前选中的节点ID
-- **操作**: 
+- **操作**:
   - `addChild`: 添加子节点
   - `addSibling`: 添加兄弟节点
   - `updateNode`: 更新节点
   - `deleteNode`: 删除节点
 
 #### 画布Context (`graph/context/`)
+
 - **职责**: 管理AntV X6画布相关的状态和操作
-- **状态**: 
+- **状态**:
   - `graph`: X6图形实例
   - `zoom`: 缩放级别
   - `position`: 画布位置
   - `graphRef`: 画布DOM引用
   - `containerRef`: 容器DOM引用
-- **操作**: 
+- **操作**:
   - `centerContent`: 居中内容
   - `zoomIn`: 放大
   - `zoomOut`: 缩小
@@ -83,13 +85,7 @@ import { MindMap } from '@/components/mind';
 function App() {
   const [data, setData] = useState(initialData);
 
-  return (
-    <MindMap
-      data={data}
-      onChange={setData}
-      showToolbar={true}
-    />
-  );
+  return <MindMap data={data} onChange={setData} showToolbar={true} />;
 }
 ```
 
@@ -104,10 +100,10 @@ function App() {
     hGap: 50,
     vGap: 25,
     enableShortcuts: true,
-    centerOnResize: true
+    centerOnResize: true,
   }}
-  onNodeClick={(nodeId) => console.log('Node clicked:', nodeId)}
-  onGraphReady={(graph) => console.log('Graph ready:', graph)}
+  onNodeClick={nodeId => console.log('Node clicked:', nodeId)}
+  onGraphReady={graph => console.log('Graph ready:', graph)}
   showToolbar={true}
 />
 ```
@@ -116,41 +112,41 @@ function App() {
 
 ### MindMap Props
 
-| 属性 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `data` | `MindMapData` | - | 思维导图数据 |
-| `onChange` | `(data: MindMapData) => void` | - | 数据变化回调 |
-| `options` | `Partial<MindMapOptions>` | `{}` | 配置选项 |
-| `onNodeClick` | `(nodeId: string) => void` | - | 节点点击回调 |
-| `onGraphReady` | `(graph: Graph) => void` | - | 画布就绪回调 |
-| `showToolbar` | `boolean` | `true` | 是否显示工具栏 |
-| `MindMapNode` | `React.ComponentType<any>` | - | 自定义节点组件 |
+| 属性           | 类型                          | 默认值 | 描述           |
+| -------------- | ----------------------------- | ------ | -------------- |
+| `data`         | `MindMapData`                 | -      | 思维导图数据   |
+| `onChange`     | `(data: MindMapData) => void` | -      | 数据变化回调   |
+| `options`      | `Partial<MindMapOptions>`     | `{}`   | 配置选项       |
+| `onNodeClick`  | `(nodeId: string) => void`    | -      | 节点点击回调   |
+| `onGraphReady` | `(graph: Graph) => void`      | -      | 画布就绪回调   |
+| `showToolbar`  | `boolean`                     | `true` | 是否显示工具栏 |
+| `MindMapNode`  | `React.ComponentType<any>`    | -      | 自定义节点组件 |
 
 ### MindMapOptions
 
-| 属性 | 类型 | 默认值 | 描述 |
-|------|------|--------|------|
-| `direction` | `'H' \| 'V'` | `'H'` | 布局方向（水平/垂直） |
-| `hGap` | `number` | `50` | 水平间距 |
-| `vGap` | `number` | `25` | 垂直间距 |
-| `enableShortcuts` | `boolean` | `true` | 是否启用快捷键 |
-| `centerOnResize` | `boolean` | `true` | 窗口大小变化时是否居中 |
+| 属性              | 类型         | 默认值 | 描述                   |
+| ----------------- | ------------ | ------ | ---------------------- |
+| `direction`       | `'H' \| 'V'` | `'H'`  | 布局方向（水平/垂直）  |
+| `hGap`            | `number`     | `50`   | 水平间距               |
+| `vGap`            | `number`     | `25`   | 垂直间距               |
+| `enableShortcuts` | `boolean`    | `true` | 是否启用快捷键         |
+| `centerOnResize`  | `boolean`    | `true` | 窗口大小变化时是否居中 |
 
 ### 快捷键
 
-| 快捷键 | 功能 |
-|--------|------|
-| `Tab` | 添加子节点 |
-| `Enter` | 添加兄弟节点 |
-| `Delete` / `Backspace` | 删除节点 |
-| `Space` | 折叠/展开节点 |
-| `Ctrl/Cmd + =` | 放大 |
-| `Ctrl/Cmd + -` | 缩小 |
-| `Ctrl/Cmd + 0` | 重置视图 |
-| `Ctrl/Cmd + Z` | 撤销 |
-| `Ctrl/Cmd + Y` | 重做 |
-| `Ctrl/Cmd + C` | 复制 |
-| `Ctrl/Cmd + V` | 粘贴 |
+| 快捷键                 | 功能          |
+| ---------------------- | ------------- |
+| `Tab`                  | 添加子节点    |
+| `Enter`                | 添加兄弟节点  |
+| `Delete` / `Backspace` | 删除节点      |
+| `Space`                | 折叠/展开节点 |
+| `Ctrl/Cmd + =`         | 放大          |
+| `Ctrl/Cmd + -`         | 缩小          |
+| `Ctrl/Cmd + 0`         | 重置视图      |
+| `Ctrl/Cmd + Z`         | 撤销          |
+| `Ctrl/Cmd + Y`         | 重做          |
+| `Ctrl/Cmd + C`         | 复制          |
+| `Ctrl/Cmd + V`         | 粘贴          |
 
 ## 数据结构
 
@@ -158,14 +154,14 @@ function App() {
 
 ```typescript
 interface MindMapData {
-  id: string;                    // 节点唯一标识
-  label: string;                 // 节点显示文本
-  width: number;                 // 节点宽度
-  height: number;                // 节点高度
-  type: ENodeType;              // 节点类型
-  collapsed?: boolean;           // 是否折叠
-  children?: MindMapData[];      // 子节点数组
-  [key: string]: any;           // 其他自定义属性
+  id: string; // 节点唯一标识
+  label: string; // 节点显示文本
+  width: number; // 节点宽度
+  height: number; // 节点高度
+  type: ENodeType; // 节点类型
+  collapsed?: boolean; // 是否折叠
+  children?: MindMapData[]; // 子节点数组
+  [key: string]: any; // 其他自定义属性
 }
 ```
 
@@ -173,9 +169,9 @@ interface MindMapData {
 
 ```typescript
 enum ENodeType {
-  topic = 'topic',              // 主题节点
-  topicBranch = 'topicBranch',  // 分支节点
-  topicChild = 'topicChild',    // 子节点
+  topic = 'topic', // 主题节点
+  topicBranch = 'topicBranch', // 分支节点
+  topicChild = 'topicChild', // 子节点
 }
 ```
 
@@ -187,13 +183,13 @@ enum ENodeType {
 
 ```typescript
 // 缩放操作
-graphEventEmitter.zoomIn();     // 放大
-graphEventEmitter.zoomOut();    // 缩小
-graphEventEmitter.resetView();  // 重置视图
+graphEventEmitter.zoomIn(); // 放大
+graphEventEmitter.zoomOut(); // 缩小
+graphEventEmitter.resetView(); // 重置视图
 
 // 内容操作
-graphEventEmitter.centerContent();   // 居中内容
-graphEventEmitter.fitToContent();    // 适应内容
+graphEventEmitter.centerContent(); // 居中内容
+graphEventEmitter.fitToContent(); // 适应内容
 
 // 节点操作
 graphEventEmitter.toggleNodeCollapse(nodeId, collapsed);
@@ -239,17 +235,12 @@ unsubscribe();
 // 创建自定义节点组件
 const CustomNode = ({ node, graph, isNodeCollapsed, toggleNodeCollapse }) => {
   const data = node.getData();
-  
+
   return (
     <div className={`mind-node ${data.type}`}>
-      <div className="node-content">
-        {data.label}
-      </div>
+      <div className="node-content">{data.label}</div>
       {data.children?.length > 0 && (
-        <button 
-          onClick={() => toggleNodeCollapse(graph, node.id)}
-          className="collapse-btn"
-        >
+        <button onClick={() => toggleNodeCollapse(graph, node.id)} className="collapse-btn">
           {isNodeCollapsed(graph, node.id) ? '+' : '-'}
         </button>
       )}
@@ -258,11 +249,7 @@ const CustomNode = ({ node, graph, isNodeCollapsed, toggleNodeCollapse }) => {
 };
 
 // 使用自定义节点
-<MindMap
-  data={data}
-  onChange={setData}
-  MindMapNode={CustomNode}
-/>
+<MindMap data={data} onChange={setData} MindMapNode={CustomNode} />;
 ```
 
 ## 最佳实践
@@ -337,12 +324,8 @@ function MindMapApp() {
         }}
         showToolbar={true}
       />
-      
-      {selectedNode && (
-        <div className="selected-info">
-          当前选中节点: {selectedNode}
-        </div>
-      )}
+
+      {selectedNode && <div className="selected-info">当前选中节点: {selectedNode}</div>}
     </div>
   );
 }
@@ -414,16 +397,18 @@ function AdvancedMindMapApp() {
 #### 1. 画布不显示或显示异常
 
 **可能原因：**
+
 - 容器尺寸为0或未设置
 - 数据格式不正确
 - 缺少必要的CSS样式
 
 **解决方案：**
+
 ```tsx
 // 确保容器有明确的尺寸
 <div style={{ width: '100%', height: '600px' }}>
   <MindMap data={data} onChange={setData} />
-</div>
+</div>;
 
 // 检查数据格式
 const validData = {
@@ -439,11 +424,13 @@ const validData = {
 #### 2. 快捷键不生效
 
 **可能原因：**
+
 - `enableShortcuts` 设置为 false
 - 焦点不在画布上
 - 与其他组件的快捷键冲突
 
 **解决方案：**
+
 ```tsx
 <MindMap
   data={data}
@@ -455,28 +442,28 @@ const validData = {
 #### 3. 节点点击事件不触发
 
 **可能原因：**
+
 - 节点被其他元素遮挡
 - 事件冒泡被阻止
 - 自定义节点组件未正确处理事件
 
 **解决方案：**
+
 ```tsx
 // 确保提供点击回调
-<MindMap
-  data={data}
-  onChange={setData}
-  onNodeClick={(nodeId) => console.log('点击节点:', nodeId)}
-/>
+<MindMap data={data} onChange={setData} onNodeClick={nodeId => console.log('点击节点:', nodeId)} />
 ```
 
 #### 4. 性能问题
 
 **可能原因：**
+
 - 节点数量过多
 - 频繁的数据更新
 - 未优化的重渲染
 
 **解决方案：**
+
 ```tsx
 // 使用 useMemo 优化数据处理
 const processedData = useMemo(() => {
@@ -492,6 +479,7 @@ const handleNodeClick = useCallback((nodeId: string) => {
 ### 调试技巧
 
 1. **启用开发模式日志**
+
 ```tsx
 // 在开发环境中启用详细日志
 if (process.env.NODE_ENV === 'development') {
@@ -500,6 +488,7 @@ if (process.env.NODE_ENV === 'development') {
 ```
 
 2. **检查图形实例状态**
+
 ```tsx
 const handleGraphReady = (graph: Graph) => {
   console.log('Graph nodes:', graph.getNodes().length);
@@ -508,6 +497,7 @@ const handleGraphReady = (graph: Graph) => {
 ```
 
 3. **监听事件系统**
+
 ```tsx
 // 监听所有画布事件
 graphEventEmitter.onZoomIn(() => console.log('Zoom in triggered'));

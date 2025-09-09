@@ -54,15 +54,15 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
   // 初始化图形
   useEffect(() => {
     if (!containerRef.current || !graphRef.current) return;
-    
+
     let newGraph: Graph | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
-    
+
     // 使用setTimeout延迟初始化，避免同步卸载问题
     const timerId = setTimeout(() => {
       if (!containerRef.current || !graphRef.current) return;
-      
+
       newGraph = initGraph(
         graphRef.current,
         containerRef.current.clientWidth,
@@ -125,11 +125,11 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     return () => {
       clearTimeout(timerId);
       if (timeoutId) clearTimeout(timeoutId);
-      
+
       if (resizeObserver) {
         resizeObserver.disconnect();
       }
-      
+
       if (newGraph) {
         // 确保在新的渲染周期处理卸载
         requestAnimationFrame(() => {

@@ -31,7 +31,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
       if (data.id === id) {
         return data;
       }
-      
+
       if (data.children) {
         for (const child of data.children) {
           const found = findNode(child, id);
@@ -40,7 +40,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
           }
         }
       }
-      
+
       return null;
     };
 
@@ -62,28 +62,28 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
 
   const handleSave = () => {
     if (!nodeId || !nodeLabel.trim()) return;
-    
+
     updateNode(nodeId, nodeLabel.trim());
     onClose();
   };
 
   const handleAddChild = () => {
     if (!nodeId) return;
-    
+
     addChild(nodeId, '新节点');
     onClose();
   };
 
   const handleAddSibling = () => {
     if (!nodeId || isRootNode) return;
-    
+
     addSibling(nodeId, '新节点');
     onClose();
   };
 
   const handleDelete = () => {
     if (!nodeId || isRootNode) return;
-    
+
     deleteNode(nodeId);
     onClose();
   };
@@ -106,9 +106,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
     >
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            节点内容
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">节点内容</label>
           <Input
             ref={inputRef}
             value={nodeLabel}
@@ -118,24 +116,24 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
             autoComplete="off"
           />
         </div>
-        
+
         <div className="flex flex-wrap gap-2 justify-end pt-4">
           <Button onClick={handleAddChild} type="secondary">
             添加子节点
           </Button>
-          
+
           {!isRootNode && (
             <>
               <Button onClick={handleAddSibling} type="secondary">
                 添加兄弟节点
               </Button>
-              
+
               <Button onClick={handleDelete} type="secondary" status="danger">
                 删除节点
               </Button>
             </>
           )}
-          
+
           <Button onClick={handleSave} type="primary">
             保存
           </Button>

@@ -1,7 +1,8 @@
 import { BaseEntityVo } from '../../common';
 import { TaskVo } from '../task/task-model.vo';
 import { TodoRepeatVo } from './todo-repeat-model.vo';
-import { TodoStatus, TodoSource } from '@life-toolkit/enum';
+import { TodoSource, TodoStatus } from '@life-toolkit/enum';
+import { HabitVo } from '../habit/habit-model.vo';
 
 export type TodoWithoutRelationsVo = {
   name: string;
@@ -22,7 +23,17 @@ export type TodoWithoutRelationsVo = {
 } & BaseEntityVo;
 
 export type TodoVo = TodoWithoutRelationsVo & {
+  repeatConfig?: {
+    currentDate: TodoRepeatVo['currentDate'];
+    repeatStartDate: TodoRepeatVo['repeatStartDate'];
+    repeatMode: TodoRepeatVo['repeatMode'];
+    repeatConfig: TodoRepeatVo['repeatConfig'];
+    repeatEndMode: TodoRepeatVo['repeatEndMode'];
+    repeatEndDate: TodoRepeatVo['repeatEndDate'];
+    repeatTimes: TodoRepeatVo['repeatTimes'];
+    repeatedTimes: TodoRepeatVo['repeatedTimes'];
+  };
   task?: TaskVo;
-  habit?: any;
+  habit?: HabitVo;
   repeat?: TodoRepeatVo;
 };

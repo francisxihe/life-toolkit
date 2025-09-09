@@ -156,7 +156,7 @@ export class TodoRepeatService {
     repeatFilter.currentDateEnd = todoFilter.planDateEnd;
 
     const repeatEntityList = await this.todoRepeatRepository.findByFilter(repeatFilter);
-    const results: TodoDto[] = []
+    const results: TodoDto[] = [];
 
     repeatEntityList.forEach((repeatEntity) => {
       const repeat = new TodoRepeatDto();
@@ -200,7 +200,7 @@ export class TodoRepeatService {
         if (rangeEnd && next.isAfter(rangeEnd, 'day')) break;
 
         const todoDto = this.generateTodo(repeat);
-        
+
         results.push(todoDto);
       }
     });

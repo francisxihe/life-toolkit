@@ -1,6 +1,9 @@
 import { HabitWithoutRelationsVo } from './habit-model.vo';
 
-export type CreateHabitVo = Pick<HabitVo, 'name' | 'description' | 'importance' | 'tags' | 'difficulty' | 'startDate' | 'targetDate'> & {
+export type CreateHabitVo = Pick<
+  HabitVo,
+  'name' | 'description' | 'importance' | 'tags' | 'difficulty' | 'startDate' | 'targetDate'
+> & {
   goalIds?: string[];
 };
 
