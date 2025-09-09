@@ -7,9 +7,6 @@ import { RepeatMode, RepeatConfig } from './repeat';
 import { RepeatEndMode } from './repeat-end';
 
 export interface Repeat {
-  /** 主键 */
-  id: string;
-
   /** 重复模式 */
   repeatMode: RepeatMode;
 
@@ -24,7 +21,4 @@ export interface Repeat {
 
   /** 重复次数 */
   repeatTimes?: number;
-
-  /** 已创建的重复次数 */
-  repeatedTimes?: number;
 }

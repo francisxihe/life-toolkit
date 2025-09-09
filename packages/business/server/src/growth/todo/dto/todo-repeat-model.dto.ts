@@ -18,7 +18,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
     this.repeatEndMode = entity.repeatEndMode;
     this.repeatEndDate = entity.repeatEndDate;
     this.repeatTimes = entity.repeatTimes;
-    this.repeatedTimes = entity.repeatedTimes;
     this.name = entity.name;
     this.description = entity.description;
     this.importance = entity.importance;
@@ -55,7 +54,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
         repeatEndMode: this.repeatEndMode,
         repeatEndDate: this.repeatEndDate,
         repeatTimes: this.repeatTimes,
-        repeatedTimes: this.repeatedTimes,
       },
     };
   }

@@ -238,7 +238,7 @@ export abstract class ModuleRepository {
     return ModuleDto.importEntity(saved);
   }
 
-  async findById(id: string): Promise<ModuleDto | null> {
+  async findWithRelations(id: string): Promise<ModuleDto | null> {
     const entity = await this.repo.findOne({ where: { id } });
     return entity ? ModuleDto.importEntity(entity) : null;
   }
@@ -287,7 +287,7 @@ export interface ModuleRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  findById(id: string, relations?: string[]): Promise<ModuleDto>;
+  findWithRelations(id: string, relations?: string[]): Promise<ModuleDto>;
 
   // 更新操作
   update(id: string, updateModuleDto: UpdateModuleDto): Promise<ModuleDto>;
@@ -332,7 +332,7 @@ export class ModuleRepository {
     });
 
     await this.moduleRepository.save(module);
-    return this.findById(module.id);
+    return this.findWithRelations(module.id);
   }
 
   async page(filter: ModulePageFiltersDto): Promise<{
@@ -490,7 +490,7 @@ export class ModuleService {
 
   async process(id: string): Promise<ModuleDto> {
     // 查找模块
-    const module = await this.moduleRepository.findById(id);
+    const module = await this.moduleRepository.findWithRelations(id);
 
     // 业务规则：只有激活状态的模块才能处理
     if (module.status !== EntityStatus.ACTIVE) {

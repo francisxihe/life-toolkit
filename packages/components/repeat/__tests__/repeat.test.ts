@@ -210,9 +210,9 @@ describe('RepeatService', () => {
     });
   });
 
-  describe('findById', () => {
+  describe('findWithRelations', () => {
     it('should find a repeat by id', async () => {
-      const result = await service.findById('test-id');
+      const result = await service.findWithRelations('test-id');
       expect(result).toBeDefined();
       expect(result.id).toBe('test-id');
     });
@@ -225,7 +225,7 @@ describe('RepeatService', () => {
       // @ts-ignore
       service = new RepeatService(mockRepository);
 
-      await expect(service.findById('non-existent')).rejects.toThrow('Repeat not found');
+      await expect(service.findWithRelations('non-existent')).rejects.toThrow('Repeat not found');
     });
   });
 });

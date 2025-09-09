@@ -19,7 +19,6 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
   'repeatEndMode',
   'repeatEndDate',
   'repeatTimes',
-  'repeatedTimes',
 ] as const) {
   importCreateVo(vo: TodoVO.CreateTodoVo) {
     if (!vo.repeatConfig) {
@@ -56,7 +55,6 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
     if (this.repeatEndMode !== undefined) todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined) todoRepeat.repeatEndDate = this.repeatEndDate;
     if (this.repeatTimes !== undefined) todoRepeat.repeatTimes = this.repeatTimes;
-    if (this.repeatedTimes !== undefined) todoRepeat.repeatedTimes = this.repeatedTimes;
     return todoRepeat;
   }
 }
@@ -99,7 +97,6 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     if (this.repeatEndMode === undefined) this.repeatEndMode = todoRepeat.repeatEndMode;
     if (this.repeatEndDate === undefined) this.repeatEndDate = todoRepeat.repeatEndDate;
     if (this.repeatTimes === undefined) this.repeatTimes = todoRepeat.repeatTimes;
-    if (this.repeatedTimes === undefined) this.repeatedTimes = todoRepeat.repeatedTimes;
     if (this.status === undefined) this.status = todoRepeat.status;
     if (this.abandonedAt === undefined) this.abandonedAt = todoRepeat.abandonedAt;
   }
@@ -113,7 +110,6 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     if (this.repeatEndMode !== undefined) todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined) todoRepeat.repeatEndDate = this.repeatEndDate;
     if (this.repeatTimes !== undefined) todoRepeat.repeatTimes = this.repeatTimes;
-    if (this.repeatedTimes !== undefined) todoRepeat.repeatedTimes = this.repeatedTimes;
     if (this.name !== undefined) todoRepeat.name = this.name;
     if (this.description !== undefined) todoRepeat.description = this.description;
     if (this.importance !== undefined) todoRepeat.importance = this.importance;

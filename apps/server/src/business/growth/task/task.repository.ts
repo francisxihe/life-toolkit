@@ -44,7 +44,7 @@ export class TaskRepository {
     await this.taskRepository.delete({ id: In(ids) });
   }
 
-  async findById(id: string, relations?: string[]): Promise<TaskDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<TaskDto> {
     const entity = await this.taskRepository.findOne({
       where: { id },
       relations: relations || ['children', 'parent', 'goal', 'todoList'],

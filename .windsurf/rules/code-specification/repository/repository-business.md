@@ -47,7 +47,7 @@ export interface ModuleRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  findById(id: string, relations?: string[]): Promise<ModuleDto>;
+  findWithRelations(id: string, relations?: string[]): Promise<ModuleDto>;
   findOneByRelatedAndDate(relatedId: string, date: Date): Promise<ModuleDto | null>;
 
   // 更新操作
@@ -128,7 +128,7 @@ page(filter: ModulePageFiltersDto): Promise<{
 }>;
 
 // 根据ID查询（支持关联查询）
-findById(id: string, relations?: string[]): Promise<ModuleDto>;
+findWithRelations(id: string, relations?: string[]): Promise<ModuleDto>;
 
 // 特殊条件查询
 findOneByRelatedAndDate(relatedId: string, date: Date): Promise<ModuleDto | null>;
@@ -256,13 +256,13 @@ import { Module } from './entities';
 ```typescript
 // ✅ 推荐：使用具体的类型定义
 export interface ModuleRepository {
-  findById(id: string): Promise<ModuleDto>;
+  findWithRelations(id: string): Promise<ModuleDto>;
   update(id: string, dto: UpdateModuleDto): Promise<ModuleDto>;
 }
 
 // ❌ 避免：使用 any 类型
 export interface BadRepository {
-  findById(id: any): Promise<any>;
+  findWithRelations(id: any): Promise<any>;
   update(id: any, data: any): Promise<any>;
 }
 ```
@@ -336,7 +336,7 @@ export interface ModuleRepository {
     pageNum: number;
     pageSize: number;
   }>;
-  findById(id: string, relations?: string[]): Promise<ModuleDto>;
+  findWithRelations(id: string, relations?: string[]): Promise<ModuleDto>;
   findOneByRelatedAndDate(relatedId: string, date: Date): Promise<ModuleDto | null>;
 
   // 更新操作

@@ -23,7 +23,6 @@ export class TodoDto extends TodoWithoutRelationsDto {
     repeatEndMode: TodoRepeatDto['repeatEndMode'];
     repeatEndDate: TodoRepeatDto['repeatEndDate'];
     repeatTimes: TodoRepeatDto['repeatTimes'];
-    repeatedTimes: TodoRepeatDto['repeatedTimes'];
   };
 
   importEntity(entity: Todo) {

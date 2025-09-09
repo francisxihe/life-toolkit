@@ -60,7 +60,7 @@ async create(createDto: CreateModuleDto): Promise<ModuleDto> {
     );
   }
 
-  return await this.moduleRepository.findById((module as any).id);
+  return await this.moduleRepository.findWithRelations((module as any).id);
 }
 ```
 
@@ -88,8 +88,8 @@ async page(
 }
 
 // 根据ID查找单个记录
-async findById(id: string): Promise<ModuleDto> {
-  return await this.moduleRepository.findById(id);
+async findWithRelations(id: string): Promise<ModuleDto> {
+  return await this.moduleRepository.findWithRelations(id);
 }
 ```
 
@@ -109,7 +109,7 @@ async update(id: string, updateDto: UpdateModuleDto): Promise<ModuleDto> {
     });
   }
 
-  return await this.moduleRepository.findById(id);
+  return await this.moduleRepository.findWithRelations(id);
 }
 ```
 
@@ -219,7 +219,7 @@ const relatedConfig = {
 
 ### 1. 方法命名约定
 
-- **基础操作**: `create`, `findByFilter`, `update`, `delete`, `findById`
+- **基础操作**: `create`, `findByFilter`, `update`, `delete`, `findWithRelations`
 - **查询变体**: `list` (简单查询), `page` (分页查询)
 - **状态变更**: `markDone`, `markAbandoned`, `restore`
 - **批量操作**: `batchChangeStatus`, `deleteByRelatedIds`
@@ -310,7 +310,7 @@ export class ModuleService {
       await this.moduleRepository.updateRelatedId((module as any).id, (related as any).id);
     }
 
-    return await this.moduleRepository.findById((module as any).id);
+    return await this.moduleRepository.findWithRelations((module as any).id);
   }
 
   async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
@@ -335,15 +335,15 @@ export class ModuleService {
       });
     }
 
-    return await this.moduleRepository.findById(id);
+    return await this.moduleRepository.findWithRelations(id);
   }
 
   async delete(id: string): Promise<boolean> {
     return await this.moduleRepository.delete(id);
   }
 
-  async findById(id: string): Promise<ModuleDto> {
-    return await this.moduleRepository.findById(id);
+  async findWithRelations(id: string): Promise<ModuleDto> {
+    return await this.moduleRepository.findWithRelations(id);
   }
 
   async deleteByRelatedIds(relatedIds: string[]): Promise<void> {

@@ -15,7 +15,6 @@ export type CreateTodoRepeatVo = Pick<
   | 'repeatEndMode'
   | 'repeatEndDate'
   | 'repeatTimes'
-  | 'repeatedTimes'
 >;
 
 export type UpdateTodoRepeatVo = Partial<CreateTodoRepeatVo>;

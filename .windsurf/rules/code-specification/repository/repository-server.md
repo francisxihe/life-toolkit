@@ -91,7 +91,7 @@ export class ModuleRepository {
       planDate: createDto.planDate ? dayjs(createDto.planDate).format('YYYY-MM-DD') : undefined,
     });
     await this.moduleRepository.save(resource);
-    return this.findById(resource.id);
+    return this.findWithRelations(resource.id);
   }
 
   async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
@@ -135,7 +135,7 @@ export class ModuleRepository {
       planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
     });
 
-    return this.findById(id);
+    return this.findWithRelations(id);
   }
 
   async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ModuleDto[]> {
@@ -164,7 +164,7 @@ export class ModuleRepository {
     await this.moduleRepository.delete(this.buildWhere(filter));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ModuleDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ModuleDto> {
     try {
       const resource = await this.moduleRepository.findOne({
         where: { id },
@@ -301,7 +301,7 @@ async create(createDto: CreateModuleDto): Promise<ModuleDto> {
   await this.moduleRepository.save(resource);
 
   // 3. 重新查询返回完整数据
-  return this.findById(resource.id);
+  return this.findWithRelations(resource.id);
 }
 ```
 
@@ -372,7 +372,7 @@ async page(filter: ModulePageFiltersDto): Promise<{
 ### 关联关系处理
 
 ```typescript
-async findById(id: string, relations?: string[]): Promise<ModuleDto> {
+async findWithRelations(id: string, relations?: string[]): Promise<ModuleDto> {
   try {
     // 1. 查询基础数据
     const resource = await this.moduleRepository.findOne({
@@ -425,7 +425,7 @@ async complexOperation(data: ComplexData): Promise<ModuleDto> {
     // 3. 更新资源状态
     await manager.update(Module, resource.id, { status: ModuleStatus.COMPLETED });
 
-    return this.findById(resource.id);
+    return this.findWithRelations(resource.id);
   });
 }
 ```
@@ -591,7 +591,7 @@ export class ModuleRepository {
     });
 
     await this.moduleRepository.save(resource);
-    return this.findById(resource.id);
+    return this.findWithRelations(resource.id);
   }
 
   async findOneByRepeatAndDate(relatedId: string, date: Date): Promise<ModuleDto | null> {
@@ -616,7 +616,7 @@ export class ModuleRepository {
       planDate: createDto.planDate ? dayjs(createDto.planDate).format('YYYY-MM-DD') : undefined,
     });
     await this.moduleRepository.save(resource);
-    return this.findById(resource.id);
+    return this.findWithRelations(resource.id);
   }
 
   async findByFilter(filter: ModuleListFilterDto): Promise<ModuleDto[]> {
@@ -660,7 +660,7 @@ export class ModuleRepository {
       planDate: updateDto.planDate ? dayjs(updateDto.planDate).toDate() : undefined,
     });
 
-    return this.findById(id);
+    return this.findWithRelations(id);
   }
 
   async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ModuleDto[]> {
@@ -689,7 +689,7 @@ export class ModuleRepository {
     await this.moduleRepository.delete(this.buildWhere(filter));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ModuleDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ModuleDto> {
     try {
       const resource = await this.moduleRepository.findOne({
         where: { id },

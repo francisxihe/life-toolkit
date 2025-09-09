@@ -29,7 +29,7 @@ export class TodoRepository {
 
     await this.todoRepository.save(todo);
 
-    return this.findById(todo.id);
+    return this.findWithRelations(todo.id);
   }
 
   async findByFilter(filter: TodoFilterDto): Promise<TodoDto[]> {
@@ -74,7 +74,7 @@ export class TodoRepository {
       planDate: updateTodoDto.planDate ? dayjs(updateTodoDto.planDate).toDate() : undefined,
     });
 
-    return this.findById(id);
+    return this.findWithRelations(id);
   }
 
   async batchUpdate(includeIds: string[], updateTodoDto: UpdateTodoDto): Promise<TodoDto[]> {
@@ -103,7 +103,7 @@ export class TodoRepository {
     await this.todoRepository.delete(this.buildWhere(filter));
   }
 
-  async findById(id: string, relations?: string[]): Promise<TodoDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<TodoDto> {
     try {
       const todo = await this.todoRepository.findOne({
         where: { id },

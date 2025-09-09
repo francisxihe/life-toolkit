@@ -45,7 +45,7 @@ export class TodoRepository extends BaseRepository<Todo, TodoFilterDto> implemen
           ade: dayjs(filter.abandonedDateEnd).tz('UTC').format('YYYY-MM-DD HH:mm:ss'),
         });
 
-      return qb;
+      return qb;   
     }
 
     super(AppDataSource.getRepository(Todo), buildQuery);

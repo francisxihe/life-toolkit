@@ -31,7 +31,6 @@ export type TodoVo = TodoWithoutRelationsVo & {
     repeatEndMode: TodoRepeatVo['repeatEndMode'];
     repeatEndDate: TodoRepeatVo['repeatEndDate'];
     repeatTimes: TodoRepeatVo['repeatTimes'];
-    repeatedTimes: TodoRepeatVo['repeatedTimes'];
   };
   task?: TaskVo;
   habit?: HabitVo;

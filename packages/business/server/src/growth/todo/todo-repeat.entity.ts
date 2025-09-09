@@ -40,13 +40,6 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   })
   repeatTimes?: number;
 
-  /** 已创建的重复次数 */
-  @Column({
-    type: 'int',
-    nullable: true,
-  })
-  repeatedTimes?: number;
-
   /** 模板名称 */
   @Column('varchar', { nullable: true })
   @IsString()

@@ -108,10 +108,10 @@ export class GoalController {
     return { result };
   }
 
-  @Get('findById/:id')
+  @Get('findWithRelations/:id')
   @Response()
-  async findById(@Param('id') id: string): Promise<GoalVO.GoalVo> {
-    const dto = await this.goalService.findById(id);
+  async findWithRelations(@Param('id') id: string): Promise<GoalVO.GoalVo> {
+    const dto = await this.goalService.findWithRelations(id);
     return dto.exportVo();
   }
 }

@@ -88,8 +88,8 @@ export class HabitController {
 
   @Get('detail/:id')
   @Response()
-  async findById(@Param('id') id: string) {
-    const habit = await this.habitService.findById(id);
+  async findWithRelations(@Param('id') id: string) {
+    const habit = await this.habitService.findWithRelations(id);
     return habit.exportVo();
   }
 

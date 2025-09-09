@@ -11,7 +11,6 @@ describe('工作日和节假日重复模式测试', () => {
     repeatEndMode: RepeatEndMode.FOREVER,
     repeatEndDate: undefined,
     repeatTimes: undefined,
-    repeatedTimes: undefined,
   });
 
   describe('工作日重复模式', () => {

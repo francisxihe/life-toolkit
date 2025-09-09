@@ -16,7 +16,7 @@ export class HabitStatusService {
   }
 
   async done(id: string): Promise<void> {
-    const habit = await this.habitRepository.findById(id);
+    const habit = await this.habitRepository.findWithRelations(id);
 
     // 业务规则验证
     if (!this.canMarkAsDone(habit)) {
@@ -29,7 +29,7 @@ export class HabitStatusService {
   }
 
   async abandon(id: string): Promise<void> {
-    const habit = await this.habitRepository.findById(id);
+    const habit = await this.habitRepository.findWithRelations(id);
 
     // 业务规则验证
     if (!this.canAbandon(habit)) {
@@ -40,7 +40,7 @@ export class HabitStatusService {
   }
 
   async restore(id: string): Promise<void> {
-    const habit = await this.habitRepository.findById(id);
+    const habit = await this.habitRepository.findWithRelations(id);
 
     // 业务规则验证
     if (!this.canRestore(habit)) {
@@ -51,7 +51,7 @@ export class HabitStatusService {
   }
 
   async pause(id: string): Promise<void> {
-    const habit = await this.habitRepository.findById(id);
+    const habit = await this.habitRepository.findWithRelations(id);
 
     // 业务规则验证
     if (!this.canPause(habit)) {
@@ -62,7 +62,7 @@ export class HabitStatusService {
   }
 
   async resume(id: string): Promise<void> {
-    const habit = await this.habitRepository.findById(id);
+    const habit = await this.habitRepository.findWithRelations(id);
 
     // 业务规则验证
     if (!this.canResume(habit)) {

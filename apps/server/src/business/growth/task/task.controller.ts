@@ -72,7 +72,7 @@ export class TaskController {
 
   @Get('detail/:id')
   @Response()
-  async findById(@Param('id') id: string) {
-    return await this.businessController.findById(id);
+  async findWithRelations(@Param('id') id: string) {
+    return await this.businessController.findWithRelations(id);
   }
 }

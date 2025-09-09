@@ -64,7 +64,7 @@ export function requiresIdParam(metadata: ControllerMethodMetadata): boolean {
   const path = metadata.path || '';
   return (
     path.includes(':id') ||
-    ['findById', 'update', 'remove', 'delete', 'abandon', 'restore'].includes(metadata.methodName)
+    ['findWithRelations', 'update', 'remove', 'delete', 'abandon', 'restore'].includes(metadata.methodName)
   );
 }
 

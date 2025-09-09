@@ -176,7 +176,7 @@ export class ModuleRepository {
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
     const resource = await this.repo.findOne({
       where: { id },
       relations: relations ?? ['relatedEntity', 'anotherEntity'],
@@ -351,7 +351,7 @@ async batchUpdate(
 
 ```typescript
 // 支持动态关联加载
-async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
   const resource = await this.repo.findOne({
     where: { id },
     relations: relations ?? ["relatedEntity", "anotherEntity"],
@@ -614,7 +614,7 @@ export class ModuleRepository {
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
     const resource = await this.repo.findOne({
       where: { id },
       relations: relations ?? ['relatedEntity', 'anotherEntity'],

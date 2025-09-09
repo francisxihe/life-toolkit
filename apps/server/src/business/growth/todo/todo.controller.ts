@@ -51,8 +51,8 @@ export class TodoController {
 
   @Get('detail/:id')
   @Response()
-  async findById(@Param('id') id: string) {
-    return this.controller.findById(id);
+  async findWithRelations(@Param('id') id: string) {
+    return this.controller.findWithRelations(id);
   }
 
   @Put('done/batch')

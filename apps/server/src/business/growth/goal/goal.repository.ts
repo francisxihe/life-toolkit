@@ -22,7 +22,7 @@ export class GoalRepository {
     return GoalDto.importEntity(savedEntity);
   }
 
-  async findById(id: string, relations?: string[]): Promise<GoalDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<GoalDto> {
     const entity = await this.goalRepository.findOne({
       where: { id },
       relations,

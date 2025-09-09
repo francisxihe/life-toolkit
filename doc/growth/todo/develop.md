@@ -786,8 +786,8 @@ interface TodoServiceImplementation {
       transaction: true;
     };
 
-    findById: {
-      signature: 'async findById(id: string): Promise<TodoDto>';
+    findWithRelations: {
+      signature: 'async findWithRelations(id: string): Promise<TodoDto>';
       description: '根据ID获取待办详情，包含关联的重复配置';
       business_logic: ['1. 调用TodoBaseService查询基础信息', '2. 加载关联的重复配置信息', '3. 返回完整的待办详情'];
       relations: ['repeat'];

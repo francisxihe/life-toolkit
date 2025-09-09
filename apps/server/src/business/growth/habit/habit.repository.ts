@@ -51,7 +51,7 @@ export class HabitRepository implements _HabitRepository {
     return dto;
   }
 
-  async findById(id: string, relations?: string[]): Promise<HabitDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<HabitDto> {
     const habit = await this.habitRepository.findOne({
       where: { id },
       relations,

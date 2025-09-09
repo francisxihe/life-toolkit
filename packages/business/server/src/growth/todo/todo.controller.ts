@@ -1,10 +1,15 @@
 import type { Todo as TodoVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
-import { TodoFilterDto, TodoPageFilterDto } from './dto';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@business/decorators';
+import {
+  TodoFilterDto,
+  TodoPageFilterDto,
+  CreateTodoRepeatDto,
+  UpdateTodoRepeatDto,
+  CreateTodoDto,
+  UpdateTodoDto,
+} from './dto';
 import { TodoService } from './todo.service';
 import { TodoRepeatService } from './todo-repeat.service';
-import { CreateTodoRepeatDto, UpdateTodoRepeatDto } from './dto/todo-repeat-form.dto';
-import { CreateTodoDto, UpdateTodoDto } from './dto';
-import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@business/decorators';
 
 @Controller('/todo')
 export class TodoController {
@@ -15,11 +20,11 @@ export class TodoController {
 
   @Post('/create', { description: '创建待办' })
   async create(@Body() createTodoVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoVo> {
-    if (createTodoVo.repeat) {
+    if (createTodoVo.repeatConfig) {
       const createTodoRepeatDto = new CreateTodoRepeatDto();
       createTodoRepeatDto.importCreateVo({
         ...createTodoVo,
-        repeat: createTodoVo.repeat,
+        repeatConfig: createTodoVo.repeatConfig,
       });
       const todoRepeatDto = await this.todoRepeatService.create(createTodoRepeatDto);
       return todoRepeatDto.exportVo();
@@ -37,13 +42,13 @@ export class TodoController {
 
   @Put('/update/:id', { description: '更新待办' })
   async update(@Param('id') id: string, @Body() updateVo: TodoVO.UpdateTodoVo): Promise<TodoVO.TodoVo> {
-    if (updateVo.repeat) {
+    if (updateVo.repeatConfig) {
       const updateTodoRepeatDto = new UpdateTodoRepeatDto();
       updateTodoRepeatDto.importUpdateVo({
         ...updateVo,
-        repeat: updateVo.repeat,
+        repeatConfig: updateVo.repeatConfig,
       });
-      const dto = await this.todoRepeatService.update(id, updateTodoRepeatDto);
+      const dto = await this.todoRepeatService.update(updateTodoRepeatDto);
       return dto.exportVo();
     }
     const updateDto = new UpdateTodoDto();

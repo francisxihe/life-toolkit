@@ -9,7 +9,6 @@ export type TodoRepeatWithoutRelationsVo = {
   repeatEndMode: RepeatEndMode;
   repeatEndDate?: string;
   repeatTimes?: number;
-  repeatedTimes?: number;
   name: string;
   description?: string;
   importance?: number;

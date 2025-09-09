@@ -5,8 +5,9 @@ import {
   TodoRepeatPageFilterDto,
   TodoRepeatFilterDto,
   TodoRepeatDto,
+  TodoFilterDto,
+  TodoDto,
 } from './dto';
-import { TodoFilterDto, TodoDto } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
 import { RepeatEndMode, Repeat as RepeatConfig } from '@life-toolkit/components-repeat/types';
 import { calculateNextDate } from '@life-toolkit/components-repeat/common/calculateNextDate';
@@ -23,43 +24,30 @@ export class TodoRepeatService {
   // ====== 基础 CRUD ======
 
   async create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
-    const todoRepeatEntity: Partial<TodoRepeat> = {
-      name: createTodoRepeatDto.name,
-      description: createTodoRepeatDto.description,
-      importance: createTodoRepeatDto.importance,
-      urgency: createTodoRepeatDto.urgency,
-      tags: createTodoRepeatDto.tags,
-      status: createTodoRepeatDto.status,
-      repeatStartDate: createTodoRepeatDto.repeatStartDate,
-      currentDate: createTodoRepeatDto.currentDate,
-      repeatMode: createTodoRepeatDto.repeatMode,
-      repeatConfig: createTodoRepeatDto.repeatConfig,
-      repeatEndMode: createTodoRepeatDto.repeatEndMode,
-      repeatEndDate: createTodoRepeatDto.repeatEndDate,
-      repeatTimes: createTodoRepeatDto.repeatTimes,
-      repeatedTimes: createTodoRepeatDto.repeatedTimes,
-    };
-    const entity = await this.todoRepeatRepository.create(todoRepeatEntity as TodoRepeat);
-    const foundEntity = await this.todoRepeatRepository.find(entity.id);
-    const todoRepeatDto = new TodoRepeatDto();
-    todoRepeatDto.importEntity(foundEntity);
-    return todoRepeatDto;
-  }
-
-  async delete(id: string): Promise<boolean> {
-    return await this.todoRepeatRepository.delete(id);
-  }
-
-  async update(id: string, updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
-    const todoRepeatUpdateEntity = updateTodoRepeatDto.exportUpdateEntity();
-    const entity = await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
+    const entity = await this.todoRepeatRepository.create(createTodoRepeatDto.exportCreateEntity());
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
     return todoRepeatDto;
   }
 
-  async findById(id: string): Promise<TodoRepeatDto> {
-    const entity = await this.todoRepeatRepository.find(id);
+  async delete(id: string): Promise<boolean> {
+    try {
+      await this.todoRepeatRepository.delete(id);
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async update(updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
+    const entity = await this.todoRepeatRepository.update(updateTodoRepeatDto.exportUpdateEntity());
+    const todoRepeatDto = new TodoRepeatDto();
+    todoRepeatDto.importEntity(entity);
+    return todoRepeatDto;
+  }
+
+  async findWithRelations(id: string): Promise<TodoRepeatDto> {
+    const entity = await this.todoRepeatRepository.findWithRelations(id);
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
     return todoRepeatDto;
@@ -132,12 +120,27 @@ export class TodoRepeatService {
     await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
   }
 
-  doneBatch(includeIds: string[]): Promise<any> {
+  async updateToNext(id: string): Promise<TodoRepeatDto> {
+    const todoRepeat = await this.todoRepeatRepository.find(id);
+    const currentDate = dayjs(todoRepeat.currentDate);
+    const repeatConfig = {
+      repeatMode: todoRepeat.repeatMode,
+      repeatConfig: todoRepeat.repeatConfig,
+      repeatEndMode: todoRepeat.repeatEndMode,
+      repeatEndDate: todoRepeat.repeatEndDate,
+      repeatTimes: todoRepeat.repeatTimes,
+    };
+
+    const nextDate = calculateNextDate(currentDate, repeatConfig);
+
+    if (!nextDate) {
+      throw new Error('No next date found');
+    }
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.status = TodoStatus.DONE;
-    const filterDto = new TodoRepeatFilterDto();
-    filterDto.includeIds = includeIds;
-    return this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
+    updateTodoRepeatDto.id = todoRepeat.id;
+    updateTodoRepeatDto.currentDate = nextDate.format('YYYY-MM-DD');
+
+    return await this.update(updateTodoRepeatDto);
   }
 
   /**
@@ -155,36 +158,37 @@ export class TodoRepeatService {
     repeatFilter.currentDateStart = todoFilter.planDateStart;
     repeatFilter.currentDateEnd = todoFilter.planDateEnd;
 
-    const repeatEntityList = await this.todoRepeatRepository.findByFilter(repeatFilter);
+    const todoRepeatList = await this.todoRepeatRepository.findByFilter(repeatFilter);
     const results: TodoDto[] = [];
 
-    repeatEntityList.forEach((repeatEntity) => {
-      const repeat = new TodoRepeatDto();
-      repeat.importEntity(repeatEntity);
+    for (const todoRepeat of todoRepeatList) {
+      const todoRepeatDto = new TodoRepeatDto();
+      todoRepeatDto.importEntity(todoRepeat);
       // 结束条件预处理
-      const endMode = repeat.repeatEndMode as RepeatEndMode | undefined;
-      const endDate = repeat.repeatEndDate ? dayjs(repeat.repeatEndDate) : undefined;
-      const maxTimes = repeat.repeatTimes ?? undefined;
-      const alreadyTimes = repeat.repeatedTimes ?? 0;
+      const endMode = todoRepeatDto.repeatEndMode as RepeatEndMode | undefined;
+      const endDate = todoRepeatDto.repeatEndDate ? dayjs(todoRepeatDto.repeatEndDate) : undefined;
+      const maxTimes = todoRepeatDto.repeatTimes ?? undefined;
 
       // 生成区间内的所有日期
-      const repeatCfg: RepeatConfig = {
-        repeatMode: repeat.repeatMode as any,
-        repeatConfig: repeat.repeatConfig as any,
-      } as RepeatConfig;
+      const repeatConfig: RepeatConfig = {
+        repeatMode: todoRepeatDto.repeatMode,
+        repeatConfig: todoRepeatDto.repeatConfig,
+        repeatEndMode: todoRepeatDto.repeatEndMode,
+        repeatEndDate: todoRepeatDto.repeatEndDate,
+        repeatTimes: todoRepeatDto.repeatTimes,
+      };
 
-      const baseDate = repeat.currentDate ?? repeat.repeatStartDate;
+      const baseDate = todoRepeatDto.currentDate ?? todoRepeatDto.repeatStartDate;
       let cursor = baseDate ? dayjs(baseDate).subtract(1, 'day') : dayjs(rangeStart).subtract(1, 'day');
-      let timesCount = alreadyTimes;
 
       while (true) {
-        const next = calculateNextDate(cursor, repeatCfg);
+        const next = calculateNextDate(cursor, repeatConfig);
         if (!next) break;
 
         // 次数限制（若设置 FOR_TIMES）
-        if (endMode === RepeatEndMode.FOR_TIMES && maxTimes !== undefined) {
-          if (timesCount >= maxTimes) break;
-          timesCount += 1;
+        if (endMode === RepeatEndMode.FOR_TIMES) {
+          const repeatTodo = await this.findWithRelations(todoRepeatDto.id);
+          if ((repeatTodo?.todos?.length ?? 0) >= (maxTimes || 0)) break;
         }
 
         // 终止日期限制
@@ -199,11 +203,11 @@ export class TodoRepeatService {
         if (rangeStart && next.isBefore(rangeStart, 'day')) continue;
         if (rangeEnd && next.isAfter(rangeEnd, 'day')) break;
 
-        const todoDto = this.generateTodo(repeat);
+        const todoDto = this.generateTodo(todoRepeatDto);
 
         results.push(todoDto);
       }
-    });
+    }
 
     return results;
   }

@@ -132,7 +132,7 @@ const filter: GoalPageFilterDto = {
 const pageResult = await goalController.page(filter);
 
 // 根据ID查询
-const goal = await goalController.findById('goal-id');
+const goal = await goalController.findWithRelations('goal-id');
 ```
 
 ### 状态操作
