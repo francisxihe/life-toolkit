@@ -121,14 +121,14 @@ export class TodoRepeatService {
   }
 
   async updateToNext(id: string): Promise<TodoRepeatDto> {
-    const todoRepeat = await this.todoRepeatRepository.find(id);
-    const currentDate = dayjs(todoRepeat.currentDate);
+    const todoRepeatDto = await this.findWithRelations(id);
+    const currentDate = dayjs(todoRepeatDto.currentDate);
     const repeatConfig = {
-      repeatMode: todoRepeat.repeatMode,
-      repeatConfig: todoRepeat.repeatConfig,
-      repeatEndMode: todoRepeat.repeatEndMode,
-      repeatEndDate: todoRepeat.repeatEndDate,
-      repeatTimes: todoRepeat.repeatTimes,
+      repeatMode: todoRepeatDto.repeatMode,
+      repeatConfig: todoRepeatDto.repeatConfig,
+      repeatEndMode: todoRepeatDto.repeatEndMode,
+      repeatEndDate: todoRepeatDto.repeatEndDate,
+      repeatTimes: todoRepeatDto.repeatTimes,
     };
 
     const nextDate = calculateNextDate(currentDate, repeatConfig);
@@ -137,10 +137,10 @@ export class TodoRepeatService {
       throw new Error('No next date found');
     }
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.id = todoRepeat.id;
+    updateTodoRepeatDto.id = todoRepeatDto.id;
     updateTodoRepeatDto.currentDate = nextDate.format('YYYY-MM-DD');
-
-    return await this.update(updateTodoRepeatDto);
+    await this.update(updateTodoRepeatDto);
+    return todoRepeatDto;
   }
 
   /**
@@ -206,6 +206,8 @@ export class TodoRepeatService {
         const todoDto = this.generateTodo(todoRepeatDto);
 
         results.push(todoDto);
+
+        break;
       }
     }
 

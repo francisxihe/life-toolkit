@@ -71,7 +71,7 @@ export class TodoWithoutRelations extends BaseEntity {
   /** 计划待办日期 */
   @Column('date')
   @IsISO8601()
-  planDate: Date = new Date();
+  planDate!: Date;
 
   /** 来源 */
   @Column({

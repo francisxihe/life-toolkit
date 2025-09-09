@@ -28,24 +28,26 @@ export class TodoRepository extends BaseRepository<Todo, TodoFilterDto> implemen
       if (filter.keyword) qb.andWhere('todo.name LIKE :kw', { kw: `%${filter.keyword}%` });
       if (filter.planDateStart) qb.andWhere('todo.planDate >= :ds', { ds: filter.planDateStart });
       if (filter.planDateEnd) qb.andWhere('todo.planDate <= :de', { de: filter.planDateEnd });
-      if (filter.doneDateStart)
+      if (filter.doneDateStart) {
         qb.andWhere('todo.doneAt >= :dds', {
-          dds: dayjs(filter.doneDateStart).tz('UTC').startOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          dds: dayjs(filter.doneDateStart).startOf('day').format('YYYY-MM-DD HH:mm:ss'),
         });
-      if (filter.doneDateEnd)
+      }
+      if (filter.doneDateEnd) {
         qb.andWhere('todo.doneAt <= :dde', {
-          dde: dayjs(filter.doneDateEnd).tz('UTC').endOf('day').format('YYYY-MM-DD HH:mm:ss'),
+          dde: dayjs(filter.doneDateEnd).endOf('day').format('YYYY-MM-DD HH:mm:ss'),
         });
+      }
       if (filter.abandonedDateStart)
         qb.andWhere('todo.abandonedAt >= :ads', {
-          ads: dayjs(filter.abandonedDateStart).tz('UTC').format('YYYY-MM-DD HH:mm:ss'),
+          ads: dayjs(filter.abandonedDateStart).format('YYYY-MM-DD HH:mm:ss'),
         });
       if (filter.abandonedDateEnd)
         qb.andWhere('todo.abandonedAt <= :ade', {
-          ade: dayjs(filter.abandonedDateEnd).tz('UTC').format('YYYY-MM-DD HH:mm:ss'),
+          ade: dayjs(filter.abandonedDateEnd).format('YYYY-MM-DD HH:mm:ss'),
         });
 
-      return qb;   
+      return qb;
     }
 
     super(AppDataSource.getRepository(Todo), buildQuery);

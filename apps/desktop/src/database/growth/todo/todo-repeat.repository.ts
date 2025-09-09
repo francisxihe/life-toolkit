@@ -16,14 +16,14 @@ export class TodoRepeatRepository
       }
       if (filter.importance !== undefined) {
         qb.andWhere('todoRepeat.importance = :importance', {
-          importance: filter.importance,
+          importance: filter.importance, 
         });
       }
       if (filter.urgency !== undefined) {
         qb.andWhere('todoRepeat.urgency = :urgency', { urgency: filter.urgency });
       }
       if (filter.keyword) {
-        qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` });
+        qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` }); 
       }
       if (filter.currentDateStart) {
         qb.andWhere('todoRepeat.currentDate >= :cds', {

@@ -15,8 +15,11 @@ export class CreateTodoDto extends PickType(TodoDto, [
   'importance',
   'urgency',
   'tags',
-  'taskId',
+  'source',
   'repeatConfig',
+  'taskId',
+  'repeatId',
+  'habitId',
 ] as const) {
   importCreateVo(vo: TodoVO.CreateTodoVo) {
     this.name = vo.name;
@@ -30,7 +33,7 @@ export class CreateTodoDto extends PickType(TodoDto, [
     this.taskId = vo.taskId;
   }
 
-  exportCreateEntity() {
+  exportCreateEntity(): Todo {
     const todo = new Todo();
 
     todo.name = this.name;
@@ -43,7 +46,9 @@ export class CreateTodoDto extends PickType(TodoDto, [
     todo.planStartAt = this.planStartAt;
     todo.planEndAt = this.planEndAt;
     todo.taskId = this.taskId;
-    todo.source = TodoSource.MANUAL;
+    todo.repeatId = this.repeatId;
+    todo.habitId = this.habitId;
+    todo.source = this.source ?? TodoSource.MANUAL;
 
     return todo;
   }

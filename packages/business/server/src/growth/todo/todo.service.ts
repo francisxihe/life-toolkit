@@ -13,7 +13,6 @@ import { Todo } from './todo.entity';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import { TodoRepeatService } from './todo-repeat.service';
 import dayjs from 'dayjs';
-import { calculateNextDate } from '@life-toolkit/components-repeat/common/calculateNextDate';
 
 export class TodoService {
   protected todoRepository: TodoRepository;
@@ -94,22 +93,11 @@ export class TodoService {
   // ====== 业务逻辑编排 ======
 
   async listWithRepeat(filter: TodoFilterDto): Promise<TodoDto[]> {
-    const todoEntities = await this.todoRepository.findByFilter(filter);
-    const todoDtoList = todoEntities.map((entity) => {
-      const todoDto = new TodoDto();
-      todoDto.importEntity(entity);
-      return todoDto;
-    });
+    const todoDtoList = await this.findByFilter(filter);
+
     const todoRepeatDtoList = await this.todoRepeatService.generateTodoByRepeat(filter);
 
-    // 合并并去重：优先保留普通待办；
-    const map = new Map<string, TodoDto>();
-    todoDtoList.forEach((todoDto) => map.set(todoDto.id, todoDto));
-    todoRepeatDtoList.forEach((todoRepeatDto) => {
-      if (!map.has(todoRepeatDto.id)) map.set(todoRepeatDto.id, todoRepeatDto);
-    });
-
-    return Array.from(map.values()).sort((a, b) => new Date(a.planDate).getTime() - new Date(b.planDate).getTime());
+    return [...todoDtoList, ...todoRepeatDtoList];
   }
 
   async detailWithRepeat(id: string): Promise<TodoDto> {
@@ -167,7 +155,6 @@ export class TodoService {
     if (todoRepeatIds.length > 0) {
       for (const id of todoRepeatIds) {
         const updateTodoRepeatDto = await this.todoRepeatService.updateToNext(id);
-
         // 创建一个新的已完成 todo
         const createTodoDto = new CreateTodoDto();
         createTodoDto.name = updateTodoRepeatDto.name;
@@ -175,18 +162,19 @@ export class TodoService {
         createTodoDto.importance = updateTodoRepeatDto.importance;
         createTodoDto.urgency = updateTodoRepeatDto.urgency;
         createTodoDto.tags = updateTodoRepeatDto.tags || [];
-        createTodoDto.planDate = dayjs(updateTodoRepeatDto.currentDate).toDate(); // 使用原来的 currentDate 作为计划日期
+        createTodoDto.planDate = dayjs(updateTodoRepeatDto.currentDate).toDate();
         createTodoDto.status = TodoStatus.DONE;
+        createTodoDto.repeatId = id;
+        createTodoDto.source = TodoSource.REPEAT;
 
         const newTodo = await this.todoRepository.create(createTodoDto.exportCreateEntity());
+
 
         // 手动设置完成相关字段和重复关联
         const updateNewTodo = new Todo();
         updateNewTodo.id = newTodo.id;
         updateNewTodo.status = TodoStatus.DONE;
         updateNewTodo.doneAt = new Date();
-        updateNewTodo.repeatId = id;
-        updateNewTodo.source = TodoSource.IS_REPEAT;
 
         const completedTodo = await this.todoRepository.update(updateNewTodo);
 

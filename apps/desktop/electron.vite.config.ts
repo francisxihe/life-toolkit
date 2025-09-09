@@ -50,6 +50,7 @@ export default defineConfig({
               include: [
                 path.resolve(currentDirPath, 'src/main/**/*'),
                 path.resolve(currentDirPath, 'src/database/**/*'),
+                path.resolve(currentDirPath, '../../packages/business/server/**/*'),
               ],
             }
           : undefined,

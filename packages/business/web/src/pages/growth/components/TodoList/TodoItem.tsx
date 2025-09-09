@@ -10,6 +10,7 @@ import { TodoService } from '../../service';
 import { TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
+import { TodoSource } from '@life-toolkit/enum';
 
 const { Paragraph } = Typography;
 
@@ -39,7 +40,7 @@ function TodoItem(props: TodoItemProps) {
             className={clsx(['flex items-center justify-between', 'leading-8'])}
           >
             <span className="text-text-1">
-              {todo.source && <SiteIcon id={'repeat'} />}
+              {todo.source === TodoSource.REPEAT && <SiteIcon id={'repeat'} />}
               {todo.name}
             </span>
             <div className="h-8 flex items-center">
