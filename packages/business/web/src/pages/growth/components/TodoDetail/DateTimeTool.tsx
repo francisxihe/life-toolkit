@@ -38,17 +38,18 @@ export default function DateTimeTool(props: {
   formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: RepeatVo | undefined;
+    repeatConfig: RepeatVo | undefined;
   };
   onChangeData: (formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: RepeatVo | undefined;
+    repeatConfig: RepeatVo | undefined;
   }) => void;
 }) {
   const { lang } = useContext(GlobalContext);
   const { formData, onChangeData } = props;
   const [mode, setMode] = useState<'month' | 'year'>('month');
+
   return (
     <Popover
       trigger="click"
@@ -142,11 +143,16 @@ export default function DateTimeTool(props: {
           <div className="px-3">
             <RepeatSelector
               lang={lang as 'en-US' | 'zh-CN'}
-              value={formData.repeat && webMapping.voToForm(formData.repeat)}
+              value={
+                formData.repeatConfig &&
+                webMapping.voToForm(formData.repeatConfig)
+              }
               onChange={(value) => {
                 onChangeData({
                   ...formData,
-                  repeat: webMapping.formToVo(value) as RepeatVo | undefined,
+                  repeatConfig: webMapping.formToVo(value) as
+                    | RepeatVo
+                    | undefined,
                 });
               }}
             />

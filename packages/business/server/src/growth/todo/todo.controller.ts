@@ -20,6 +20,7 @@ export class TodoController {
 
   @Post('/create', { description: '创建待办' })
   async create(@Body() createTodoVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoVo> {
+    console.log('--------------------', createTodoVo);
     if (createTodoVo.repeatConfig) {
       const createTodoRepeatDto = new CreateTodoRepeatDto();
       createTodoRepeatDto.importCreateVo({

@@ -17,7 +17,6 @@ export function RepeatSelector(props: {
       <RepeatProvider
         value={value}
         onChange={(_value) => {
-          console.log('RepeatSelector onChange', _value);
           props.onChange(_value);
         }}
       >

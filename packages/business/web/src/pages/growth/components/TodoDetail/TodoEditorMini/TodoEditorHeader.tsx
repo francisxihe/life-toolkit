@@ -18,14 +18,14 @@ export default function TodoEditorHeader() {
           formData={{
             date: dayjs(todoFormData.planDate),
             timeRange: todoFormData.planTimeRange,
-            repeat: todoFormData.repeat,
+            repeatConfig: todoFormData.repeatConfig,
           }}
           onChangeData={async (formData) => {
             setTodoFormData({
               ...todoFormData,
               planDate: formData.date.format('YYYY-MM-DD'),
               planTimeRange: formData.timeRange,
-              repeat: formData.repeat,
+              repeatConfig: formData.repeatConfig,
             });
             await onSubmit();
           }}

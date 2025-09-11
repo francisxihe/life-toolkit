@@ -15,10 +15,16 @@ export default function RepeatConfigCustom(props: {
       <div className="flex items-center gap-2">
         <span>每</span>
         <InputNumber
-          min={1}
           value={customConfig.interval}
-          onChange={(value) => handleConfigChange({ ...customConfig, interval: value })}
+          onChange={(value) => {
+            if (value === undefined || value === null) {
+              value = 1;
+            }
+            handleConfigChange({ ...customConfig, interval: value });
+          }}
           className="rounded-md w-20"
+          min={1}
+          max={999}
         />
         <Select
           value={customConfig.intervalUnit}

@@ -40,7 +40,7 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
 
   exportCreateEntity() {
     const todoRepeat = new TodoRepeat();
-    // 重复配置相关字段（来自 CreateRepeatDto）
+    
     if (this.name !== undefined) todoRepeat.name = this.name;
     if (this.description !== undefined) todoRepeat.description = this.description;
     if (this.importance !== undefined) todoRepeat.importance = this.importance;
@@ -55,6 +55,7 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
     if (this.repeatEndMode !== undefined) todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined) todoRepeat.repeatEndDate = this.repeatEndDate;
     if (this.repeatTimes !== undefined) todoRepeat.repeatTimes = this.repeatTimes;
+
     return todoRepeat;
   }
 }

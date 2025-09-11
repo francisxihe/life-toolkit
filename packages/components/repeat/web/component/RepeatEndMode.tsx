@@ -52,6 +52,9 @@ export default function RepeatEndModeForm() {
             value={repeatEndModeForm.repeatTimes}
             className="rounded-md w-full"
             onChange={(value) => {
+              if (value === undefined || value === null) {
+                value = 1;
+              }
               handleChangeRepeatEndMode({
                 repeatEndMode: RepeatEndMode.FOR_TIMES,
                 repeatTimes: value,
@@ -59,6 +62,8 @@ export default function RepeatEndModeForm() {
             }}
             prefix={<div>重复</div>}
             suffix={<div>次后结束</div>}
+            min={1}
+            max={999}
           />
         </div>
       )}

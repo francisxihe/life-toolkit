@@ -129,6 +129,9 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
       default:
         break;
     }
+
+    setRepeatModeForm(repeatModeFormRef.current);
+
     onChange({
       ...repeatModeFormRef.current,
       ...repeatEndModeFormRef.current,
@@ -137,6 +140,7 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
 
   const handleChangeRepeatEndMode = (repeatEndModeForm: RepeatEndModeForm) => {
     repeatEndModeFormRef.current = repeatEndModeForm;
+    console.log('repeatEndModeForm', repeatEndModeForm);
     setRepeatEndModeForm(repeatEndModeFormRef.current);
 
     onChange({
@@ -145,12 +149,14 @@ export const [RepeatProvider, useRepeatContext] = createInjectState<{
     });
   };
 
+  console.log('repeatModeForm', repeatModeForm);
+
   return {
     t,
     repeatModeForm,
+    repeatEndModeForm,
     handleChangeRepeatMode,
     handleChangeRepeatConfig,
-    repeatEndModeForm,
     handleChangeRepeatEndMode,
   };
 });

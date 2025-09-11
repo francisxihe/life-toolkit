@@ -11,7 +11,7 @@ export default class TodoMapping {
       urgency: todoVo.urgency,
       planDate: todoVo.planDate,
       planTimeRange: [todoVo.planStartAt, todoVo.planEndAt],
-      repeat: todoVo.repeat,
+      repeatConfig: todoVo.repeatConfig,
       source: todoVo.source,
     };
   }

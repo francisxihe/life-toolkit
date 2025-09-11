@@ -214,7 +214,7 @@ export class TodoRepeatService {
     return results;
   }
 
-  generateTodo(todoRepeat: TodoRepeatDto) {
+  generateTodo(todoRepeat: TodoRepeatDto): TodoDto {
     const todoDto = new TodoDto();
     todoDto.id = todoRepeat.id;
     todoDto.name = todoRepeat.name;

@@ -27,7 +27,7 @@ export default class TodoController {
   }
 
   static async listWithRepeat(params: TodoVO.TodoFilterVo) {
-    return request<TodoVO.TodoListVo>({ method: 'get' })(`/todo/list-with-repeat`, params);
+    return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/list-with-repeat`, params);
   }
 
   static async detailWithRepeat(id: string) {

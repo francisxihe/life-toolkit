@@ -66,14 +66,14 @@ function TodoCreatorMain(props: {
               formData={{
                 date: dayjs(todoFormData.planDate),
                 timeRange: todoFormData.planTimeRange as [string, string],
-                repeat: todoFormData.repeat,
+                repeatConfig: todoFormData.repeatConfig,
               }}
               onChangeData={(data) => {
                 const _formData = {
                   ...todoFormData,
                   planDate: data.date.format('YYYY-MM-DD'),
                   planTimeRange: data.timeRange,
-                  repeat: data.repeat,
+                  repeatConfig: data.repeatConfig,
                 };
                 setTodoFormData(_formData);
               }}
