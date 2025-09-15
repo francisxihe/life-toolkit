@@ -6,8 +6,6 @@ import {
   TodoPageFilterDto,
   TodoFilterDto,
   TodoDto,
-  TodoRepeatFilterDto,
-  UpdateTodoRepeatDto,
 } from './dto';
 import { Todo } from './todo.entity';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
@@ -168,7 +166,6 @@ export class TodoService {
         createTodoDto.source = TodoSource.REPEAT;
 
         const newTodo = await this.todoRepository.create(createTodoDto.exportCreateEntity());
-
 
         // 手动设置完成相关字段和重复关联
         const updateNewTodo = new Todo();

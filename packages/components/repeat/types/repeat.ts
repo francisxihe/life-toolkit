@@ -37,17 +37,17 @@ export enum MonthlyType {
   ORDINAL_DAY = 'ordinalDay',
 }
 
-type RepeatConfigOrdinalDay = {
+export type RepeatConfigOrdinalDay = {
   ordinalDay: OrdinalDay;
   ordinalDayType: OrdinalDayType;
 };
 
-type RepeatConfigOrdinalWeek = {
+export type RepeatConfigOrdinalWeek = {
   ordinalWeek: OrdinalWeek;
   ordinalWeekdays: WeekDay[];
 };
 
-type RepeatConfigMonthly =
+export type RepeatConfigMonthly =
   | {
       monthlyType: MonthlyType.DAY;
       [MonthlyType.DAY]: number;

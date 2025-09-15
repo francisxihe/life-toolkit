@@ -15,10 +15,6 @@
       "import": "./dist/common/index.js",
       "require": "./dist/common/index.js"
     },
-    "./common/calculateNextDate": {
-      "import": "./dist/common/calculateNextDate.js",
-      "require": "./dist/common/calculateNextDate.js"
-    },
     "./vo": "./vo/index.ts"
   },
   "files": [

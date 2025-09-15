@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { calculateNextDate } from '../common/calculateNextDate';
+import { calculateNextDate } from '../common';
 import { RepeatMode, RepeatEndMode } from '../types';
 import { Repeat } from '../server/entity';
 

@@ -16,7 +16,14 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   repeatMode!: RepeatMode;
 
   /** 重复配置 */
-  @Column({ type: 'text', nullable: true })
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: {
+      to: (value) => JSON.stringify(value),
+      from: (value) => JSON.parse(value),
+    },
+  })
   repeatConfig?: RepeatConfig;
 
   /** 重复结束模式 */

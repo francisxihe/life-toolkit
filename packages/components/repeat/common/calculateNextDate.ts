@@ -1,13 +1,32 @@
 import dayjs, { Dayjs } from 'dayjs';
-import { Repeat } from '../types';
+import { Repeat, RepeatFormWeekly, RepeatFormMonthly, RepeatFormYearly, RepeatFormCustom } from '../types';
 import { RepeatMode, OrdinalWeek, OrdinalDay, OrdinalDayType, MonthlyType, YearlyType, TimeUnit } from '../types';
 import { getNextWorkday, getNextRestDay } from 'chinese-holiday-calendar';
+import {
+  isRepeatFormWeeklyConfig,
+  isRepeatFormMonthlyConfig,
+  isRepeatFormYearlyConfig,
+  isRepeatFormCustomConfig,
+} from './assertion';
 
 /**
  * 根据重复配置计算下一个日期
  */
 export function calculateNextDate(currentDate: Dayjs, repeat: Repeat): Dayjs | null {
   let nextDate: Dayjs | null = null;
+
+  if (isRepeatFormWeeklyConfig(repeat)) {
+    nextDate = getNextWeeklyDate(currentDate, repeat.repeatConfig);
+  }
+  if (isRepeatFormMonthlyConfig(repeat)) {
+    nextDate = getNextMonthlyDate(currentDate, repeat.repeatConfig);
+  }
+  if (isRepeatFormYearlyConfig(repeat)) {
+    nextDate = getNextYearlyDate(currentDate, repeat.repeatConfig);
+  }
+  if (isRepeatFormCustomConfig(repeat)) {
+    nextDate = getNextCustomDate(currentDate, repeat.repeatConfig);
+  }
 
   switch (repeat.repeatMode) {
     case RepeatMode.DAILY:
@@ -24,26 +43,6 @@ export function calculateNextDate(currentDate: Dayjs, repeat: Repeat): Dayjs | n
       nextDate = getNextWeekend(currentDate);
       break;
 
-    case RepeatMode.WEEKLY:
-      // 每周指定星期几
-      nextDate = getNextWeeklyDate(currentDate, repeat.repeatConfig);
-      break;
-
-    case RepeatMode.MONTHLY:
-      // 每月重复
-      nextDate = getNextMonthlyDate(currentDate, repeat.repeatConfig);
-      break;
-
-    case RepeatMode.YEARLY:
-      // 每年重复
-      nextDate = getNextYearlyDate(currentDate, repeat.repeatConfig);
-      break;
-
-    case RepeatMode.CUSTOM:
-      // 自定义间隔
-      nextDate = getNextCustomDate(currentDate, repeat.repeatConfig);
-      break;
-
     case RepeatMode.WORKDAYS:
       // 获取下一个工作日
       nextDate = getNextWorkdayDate(currentDate);
@@ -56,7 +55,7 @@ export function calculateNextDate(currentDate: Dayjs, repeat: Repeat): Dayjs | n
 
     case RepeatMode.NONE:
     default:
-      return null;
+      break;
   }
 
   return nextDate;
@@ -72,7 +71,8 @@ function getNextWeekday(currentDate: Dayjs): Dayjs {
   // 周日(0)加1天到周一，周六(6)加2天到周一
   if (dayOfWeek === 0) {
     return nextDay.add(1, 'day');
-  } else if (dayOfWeek === 6) {
+  }
+  if (dayOfWeek === 6) {
     return nextDay.add(2, 'day');
   }
 
@@ -97,7 +97,7 @@ function getNextWeekend(currentDate: Dayjs): Dayjs {
 /**
  * 获取下一个每周重复的日期
  */
-function getNextWeeklyDate(currentDate: Dayjs, config: any): Dayjs {
+function getNextWeeklyDate(currentDate: Dayjs, config: RepeatFormWeekly['repeatConfig']): Dayjs {
   if (!config || !config.weekdays || config.weekdays.length === 0) {
     return currentDate.add(7, 'day');
   }
@@ -124,7 +124,7 @@ function getNextWeeklyDate(currentDate: Dayjs, config: any): Dayjs {
 /**
  * 获取下一个每月重复的日期
  */
-function getNextMonthlyDate(currentDate: Dayjs, config: any): Dayjs {
+function getNextMonthlyDate(currentDate: Dayjs, config: RepeatFormMonthly['repeatConfig']): Dayjs {
   if (!config) {
     return currentDate.add(1, 'month');
   }
@@ -140,7 +140,8 @@ function getNextMonthlyDate(currentDate: Dayjs, config: any): Dayjs {
     // 确保日期不超过月份天数
     const targetDay = Math.min(day, daysInMonth);
     return nextMonth.date(targetDay);
-  } else if (monthlyType === MonthlyType.ORDINAL_WEEK) {
+  }
+  if (monthlyType === MonthlyType.ORDINAL_WEEK) {
     // 按序数周重复，例如每月第一个周一
     const { ordinalWeek, ordinalWeekdays } = config[MonthlyType.ORDINAL_WEEK];
 
@@ -153,7 +154,8 @@ function getNextMonthlyDate(currentDate: Dayjs, config: any): Dayjs {
     const nextMonth = currentDate.add(1, 'month').startOf('month');
 
     return findOrdinalWeekday(nextMonth, targetWeekday, ordinalWeek);
-  } else if (monthlyType === MonthlyType.ORDINAL_DAY) {
+  }
+  if (monthlyType === MonthlyType.ORDINAL_DAY) {
     // 按序数日重复，例如每月最后一天
     const { ordinalDay, ordinalDayType } = config[MonthlyType.ORDINAL_DAY];
     const nextMonth = currentDate.add(1, 'month');
@@ -167,7 +169,7 @@ function getNextMonthlyDate(currentDate: Dayjs, config: any): Dayjs {
 /**
  * 获取下一个每年重复的日期
  */
-function getNextYearlyDate(currentDate: Dayjs, config: any): Dayjs {
+function getNextYearlyDate(currentDate: Dayjs, config: RepeatFormYearly['repeatConfig']): Dayjs {
   if (!config) {
     return currentDate.add(1, 'year');
   }
@@ -177,7 +179,8 @@ function getNextYearlyDate(currentDate: Dayjs, config: any): Dayjs {
   if (yearlyType === YearlyType.MONTH) {
     // 按月份和日期重复，例如每年5月15日
     return getNextMonthlyDate(currentDate.add(1, 'year').subtract(1, 'month'), config[YearlyType.MONTH]);
-  } else if (yearlyType === YearlyType.ORDINAL_WEEK) {
+  }
+  if (yearlyType === YearlyType.ORDINAL_WEEK) {
     // 按序数周重复，例如每年3月的第二个周二
     const { ordinalWeek, ordinalWeekdays } = config[YearlyType.ORDINAL_WEEK];
 
@@ -199,7 +202,7 @@ function getNextYearlyDate(currentDate: Dayjs, config: any): Dayjs {
 /**
  * 获取下一个自定义间隔的日期
  */
-function getNextCustomDate(currentDate: Dayjs, config: any): Dayjs {
+function getNextCustomDate(currentDate: Dayjs, config: RepeatFormCustom['repeatConfig']): Dayjs {
   if (!config) {
     return currentDate.add(1, 'day');
   }

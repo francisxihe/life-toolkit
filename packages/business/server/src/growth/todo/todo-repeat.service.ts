@@ -10,7 +10,7 @@ import {
 } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
 import { RepeatEndMode, Repeat as RepeatConfig } from '@life-toolkit/components-repeat/types';
-import { calculateNextDate } from '@life-toolkit/components-repeat/common/calculateNextDate';
+import { calculateNextDate, isValidDateForRepeat } from '@life-toolkit/components-repeat/common';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import dayjs from 'dayjs';
 
@@ -122,20 +122,38 @@ export class TodoRepeatService {
 
   async updateToNext(id: string): Promise<TodoRepeatDto> {
     const todoRepeatDto = await this.findWithRelations(id);
-    const currentDate = dayjs(todoRepeatDto.currentDate);
     const repeatConfig = {
       repeatMode: todoRepeatDto.repeatMode,
       repeatConfig: todoRepeatDto.repeatConfig,
       repeatEndMode: todoRepeatDto.repeatEndMode,
       repeatEndDate: todoRepeatDto.repeatEndDate,
       repeatTimes: todoRepeatDto.repeatTimes,
+      repeatStartDate: todoRepeatDto.repeatStartDate,
     };
+    let currentDate = dayjs(todoRepeatDto.currentDate);
+    let nextDate: dayjs.Dayjs;
 
-    const nextDate = calculateNextDate(currentDate, repeatConfig);
+    // 验证当前日期是否符合重复规则
+    const isCurrentDateValid = isValidDateForRepeat(currentDate, repeatConfig);
 
-    if (!nextDate) {
+    if (!isCurrentDateValid) {
+      // 如果当前日期不符合规则，找到下一个符合条件的日期
+      const validNextDate = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
+
+      if (!validNextDate) {
+        throw new Error('No valid next date found');
+      }
+      currentDate = validNextDate;
+    }
+
+    // 当前日期符合规则，计算下一个日期
+    const calculatedNextDate = calculateNextDate(currentDate, repeatConfig);
+
+    if (!calculatedNextDate) {
       throw new Error('No next date found');
     }
+    nextDate = calculatedNextDate;
+
     const updateTodoRepeatDto = new UpdateTodoRepeatDto();
     updateTodoRepeatDto.id = todoRepeatDto.id;
     updateTodoRepeatDto.currentDate = nextDate.format('YYYY-MM-DD');
@@ -164,13 +182,17 @@ export class TodoRepeatService {
     for (const todoRepeat of todoRepeatList) {
       const todoRepeatDto = new TodoRepeatDto();
       todoRepeatDto.importEntity(todoRepeat);
+
       // 结束条件预处理
       const endMode = todoRepeatDto.repeatEndMode as RepeatEndMode | undefined;
       const endDate = todoRepeatDto.repeatEndDate ? dayjs(todoRepeatDto.repeatEndDate) : undefined;
       const maxTimes = todoRepeatDto.repeatTimes ?? undefined;
 
       // 生成区间内的所有日期
-      const repeatConfig: RepeatConfig = {
+      const repeatConfig: RepeatConfig & {
+        repeatStartDate: string;
+      } = {
+        repeatStartDate: todoRepeatDto.repeatStartDate,
         repeatMode: todoRepeatDto.repeatMode,
         repeatConfig: todoRepeatDto.repeatConfig,
         repeatEndMode: todoRepeatDto.repeatEndMode,
@@ -178,43 +200,52 @@ export class TodoRepeatService {
         repeatTimes: todoRepeatDto.repeatTimes,
       };
 
-      const baseDate = todoRepeatDto.currentDate ?? todoRepeatDto.repeatStartDate;
-      let cursor = baseDate ? dayjs(baseDate).subtract(1, 'day') : dayjs(rangeStart).subtract(1, 'day');
+      // 确定生成待办的日期
+      let targetDate = todoRepeatDto.currentDate ? dayjs(todoRepeatDto.currentDate) : null;
 
-      while (true) {
-        const next = calculateNextDate(cursor, repeatConfig);
-        if (!next) break;
-
-        // 次数限制（若设置 FOR_TIMES）
-        if (endMode === RepeatEndMode.FOR_TIMES) {
-          const repeatTodo = await this.findWithRelations(todoRepeatDto.id);
-          if ((repeatTodo?.todos?.length ?? 0) >= (maxTimes || 0)) break;
-        }
-
-        // 终止日期限制
-        if (endMode === RepeatEndMode.TO_DATE && endDate && next.isAfter(endDate, 'day')) {
-          break;
-        }
-
-        // 推进游标
-        cursor = next;
-
-        // 跳过范围外
-        if (rangeStart && next.isBefore(rangeStart, 'day')) continue;
-        if (rangeEnd && next.isAfter(rangeEnd, 'day')) break;
-
-        const todoDto = this.generateTodo(todoRepeatDto);
-
-        results.push(todoDto);
-
-        break;
+      if (!targetDate) {
+        continue; // 没有当前日期，跳过
       }
+
+      // 如果当前日期不符合重复规则，找到下一个符合条件的日期
+      if (!isValidDateForRepeat(targetDate, repeatConfig)) {
+        const nextValidDate = calculateNextDate(targetDate.subtract(1, 'day'), repeatConfig);
+        if (!nextValidDate) {
+          continue; // 找不到下一个有效日期，跳过
+        }
+        targetDate = nextValidDate;
+      }
+
+      // 检查目标日期是否在查询范围内
+      if (rangeStart && targetDate.isBefore(rangeStart, 'day')) {
+        continue;
+      }
+      if (rangeEnd && targetDate.isAfter(rangeEnd, 'day')) {
+        continue;
+      }
+
+      // 次数限制检查（若设置 FOR_TIMES）
+      if (endMode === RepeatEndMode.FOR_TIMES) {
+        const repeatTodo = await this.findWithRelations(todoRepeatDto.id);
+        if ((repeatTodo?.todos?.length ?? 0) >= (maxTimes || 0)) {
+          continue;
+        }
+      }
+
+      // 终止日期限制检查
+      if (endMode === RepeatEndMode.TO_DATE && endDate && targetDate.isAfter(endDate, 'day')) {
+        continue;
+      }
+
+      // 生成目标日期的待办
+      const todoDto = this.generateTodo(todoRepeatDto, targetDate.toDate());
+      results.push(todoDto);
     }
 
     return results;
   }
 
-  generateTodo(todoRepeat: TodoRepeatDto): TodoDto {
+  generateTodo(todoRepeat: TodoRepeatDto, planDate?: Date): TodoDto {
     const todoDto = new TodoDto();
     todoDto.id = todoRepeat.id;
     todoDto.name = todoRepeat.name;
@@ -225,7 +256,7 @@ export class TodoRepeatService {
       tags: todoRepeat.tags || [],
       importance: todoRepeat.importance,
       urgency: todoRepeat.urgency,
-      planDate: dayjs(todoRepeat.currentDate).toDate(),
+      planDate: planDate || dayjs(todoRepeat.currentDate).toDate(),
       planStartAt: undefined,
       planEndAt: undefined,
       createdAt: new Date(),
