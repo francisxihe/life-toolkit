@@ -11,12 +11,12 @@ export default function RepeatConfigWeekly(props: {
   const { t } = useLocaleContext();
 
   return (
-    <div className="flex gap-2 items-center">
+    <div>
       <Select
         placeholder="选择周几"
         mode="multiple"
         value={repeatConfig.weekdays}
-        className="rounded-md w-full"
+        className={'repeat__select'}
         onChange={(value) => handleConfigChange({ ...repeatConfig, weekdays: value })}
         options={Array.from(WeekDayMap.entries()).map(([key, value]) => ({
           value: key,

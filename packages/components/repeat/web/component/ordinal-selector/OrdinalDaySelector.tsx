@@ -1,6 +1,6 @@
 import { Select } from '@arco-design/web-react';
 import { useLocaleContext } from '../useLocale';
-import { OrdinalDayType, OrdinalDay } from '../../../types';
+import { OrdinalDay, OrdinalDayType } from '../../../types';
 
 export const OrdinalDayTypeMap = new Map<OrdinalDayType, string>([
   [OrdinalDayType.DAY, 'day'],
@@ -8,7 +8,7 @@ export const OrdinalDayTypeMap = new Map<OrdinalDayType, string>([
   [OrdinalDayType.REST_DAY, 'restDay'],
 ]);
 
-export const OrdinalMap = new Map<OrdinalDay, string>([
+export const OrdinalDayMap = new Map<OrdinalDay, string>([
   [OrdinalDay.FIRST, 'first'],
   [OrdinalDay.SECOND, 'second'],
   [OrdinalDay.THIRD, 'third'],
@@ -32,10 +32,10 @@ export default function OrdinalDaySelector({
   const { t } = useLocaleContext();
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="repeat__horizontal-container">
       <Select
         value={ordinal}
-        options={Array.from(OrdinalMap.entries()).map(([key, value]) => {
+        options={Array.from(OrdinalDayMap.entries()).map(([key, value]) => {
           return {
             value: key,
             label: t[value],

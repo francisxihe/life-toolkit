@@ -1,0 +1,50 @@
+.repeat__vertical-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.repeat__vertical-container-sm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.repeat__horizontal-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repeat__label {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.repeat__radio-group {
+  width: 100%;
+  flex-shrink: 1;
+}
+
+.repeat__select {
+  border-radius: 0.375rem;
+  width: 100%;
+  flex-shrink: 1;
+}
+
+.repeat__input {
+  border-radius: 0.375rem;
+  width: 100%;
+  flex-shrink: 1;
+}
+
+.repeat__date-picker {
+  border-radius: 0.375rem;
+  width: 100%;
+  flex-shrink: 1;
+}
+
+.repeat__text-secondary {
+  font-size: 0.875rem;
+  color: var(--color-text-3);
+}

@@ -1,7 +1,7 @@
 import { Select } from '@arco-design/web-react';
-import { useLocaleContext } from '../useLocale';
 import { WeekDayMap } from '../constants';
-import { WeekDay, OrdinalWeek } from '../../../types';
+import { useLocaleContext } from '../useLocale';
+import { OrdinalWeek, WeekDay } from '../../../types';
 
 export const OrdinalMap = new Map<OrdinalWeek, string>([
   [OrdinalWeek.FIRST, 'first'],
@@ -44,7 +44,7 @@ export default function OrdinalWeekDaysSelector({
         placeholder="选择周几"
         mode="multiple"
         value={ordinalWeekDays}
-        className="rounded-md w-24"
+        className="repeat__select"
         onChange={(value) => setOrdinalWeekDays(value)}
         options={Array.from(WeekDayMap.entries()).map(([key, value]) => ({
           value: key,

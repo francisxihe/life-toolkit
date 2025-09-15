@@ -26,11 +26,11 @@ export function RepeatSelectorMain() {
   const { repeatModeForm, handleChangeRepeatMode, handleChangeRepeatConfig, t } = useRepeatContext();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={'repeat__vertical-container'}>
       <Select
         value={repeatModeForm.repeatMode}
         placeholder="选择重复模式"
-        className="rounded-md w-full"
+        className={'repeat__select'}
         allowClear
         onChange={handleChangeRepeatMode}
         options={Array.from(RepeatModeMap.entries()).map(([key, value]) => ({

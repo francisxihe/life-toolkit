@@ -1,8 +1,7 @@
-import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay } from '../../../types';
 import { Radio } from '@arco-design/web-react';
-import { OrdinalWeek } from '../../../types';
+import { RepeatFormYearly, YearlyType, MonthlyType, WeekDay, OrdinalWeek } from '../../../types';
 import RepeatConfigMonthly from './RepeatConfigMonthly';
-import OrdinalWeekDaysSelector from '../ordinal-selector/OrdinalWeekDaysSelector';
+import { OrdinalWeekDaysSelector } from '../ordinal-selector';
 
 export default function RepeatConfigYearly(props: {
   repeatConfig: RepeatFormYearly['repeatConfig'];
@@ -11,9 +10,9 @@ export default function RepeatConfigYearly(props: {
   const { repeatConfig: yearlyConfig, handleConfigChange } = props;
 
   return (
-    <div className="space-y-2">
+    <div className={'repeat__vertical-container-sm'}>
       <Radio.Group
-        className="w-full"
+        className={'repeat__radio-group'}
         type="button"
         value={yearlyConfig.yearlyType || YearlyType.MONTH}
         onChange={(value) => {
@@ -55,8 +54,8 @@ export default function RepeatConfigYearly(props: {
       )}
 
       {yearlyConfig.yearlyType === YearlyType.ORDINAL_WEEK && (
-        <div className="flex items-center gap-2">
-          <div className="text-sm flex-shrink-0">每年</div>
+        <div className={'repeat__horizontal-container'}>
+          <div className={'repeat__label'}>每年</div>
           <OrdinalWeekDaysSelector
             ordinal={yearlyConfig[YearlyType.ORDINAL_WEEK].ordinalWeek}
             setOrdinal={(value) => {

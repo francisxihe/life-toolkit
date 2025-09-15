@@ -11,8 +11,8 @@ export default function RepeatConfigCustom(props: {
   const { repeatConfig: customConfig, handleConfigChange } = props;
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-2">
+    <div className={'repeat__vertical-container'}>
+      <div className={'repeat__horizontal-container'}>
         <span>每</span>
         <InputNumber
           value={customConfig.interval}
@@ -22,14 +22,14 @@ export default function RepeatConfigCustom(props: {
             }
             handleConfigChange({ ...customConfig, interval: value });
           }}
-          className="rounded-md w-20"
+          className={'repeat__input'}
           min={1}
           max={999}
         />
         <Select
           value={customConfig.intervalUnit}
           onChange={(value) => handleConfigChange({ ...customConfig, intervalUnit: value })}
-          className="rounded-md w-20"
+          className={'repeat__select'}
           options={[
             { value: 'day', label: '天' },
             { value: 'week', label: '周' },

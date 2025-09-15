@@ -2,6 +2,7 @@ import { RepeatProvider, RepeatContextProps } from './context';
 import { LocaleProvider } from './useLocale';
 import { RepeatSelectorMain } from './RepeatMain';
 import { RepeatModeForm, RepeatEndModeForm } from '../../types';
+import './style.css';
 
 export function RepeatSelector(props: {
   lang: 'en-US' | 'zh-CN';

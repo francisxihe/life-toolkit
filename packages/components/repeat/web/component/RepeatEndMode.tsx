@@ -1,7 +1,7 @@
+import { Select, InputNumber, DatePicker } from '@arco-design/web-react';
 import { RepeatEndMode } from '../../types';
-import { DatePicker, InputNumber, Select } from '@arco-design/web-react';
-import dayjs from 'dayjs';
 import { useRepeatContext } from './context';
+import dayjs from 'dayjs';
 
 export const repeatEndModeMap = new Map<RepeatEndMode, string>([
   [RepeatEndMode.FOREVER, 'repeat.end.forever'],
@@ -14,11 +14,11 @@ export default function RepeatEndModeForm() {
 
   return (
     <>
-      <div className="text-sm text-text-3">
+      <div className={'repeat__text-secondary'}>
         <Select
           value={repeatEndModeForm.repeatEndMode}
           placeholder="结束重复"
-          className="rounded-md w-full"
+          className={'repeat__select'}
           allowClear
           onChange={(value) => {
             switch (value) {
@@ -47,10 +47,10 @@ export default function RepeatEndModeForm() {
       </div>
 
       {repeatEndModeForm.repeatEndMode === RepeatEndMode.FOR_TIMES && (
-        <div className="flex items-center gap-2">
+        <div className={'repeat__horizontal-container'}>
           <InputNumber
             value={repeatEndModeForm.repeatTimes}
-            className="rounded-md w-full"
+            className={'repeat__input'}
             onChange={(value) => {
               if (value === undefined || value === null) {
                 value = 1;
@@ -68,11 +68,11 @@ export default function RepeatEndModeForm() {
         </div>
       )}
       {repeatEndModeForm.repeatEndMode === RepeatEndMode.TO_DATE && (
-        <div className="text-sm text-text-3">
+        <div className={'repeat__text-secondary'}>
           <DatePicker
             value={repeatEndModeForm.repeatEndDate}
             placeholder="请选择重复结束日期"
-            className="rounded-md w-full"
+            className={'repeat__date-picker'}
             onChange={(value) => {
               handleChangeRepeatEndMode({
                 repeatEndMode: RepeatEndMode.TO_DATE,

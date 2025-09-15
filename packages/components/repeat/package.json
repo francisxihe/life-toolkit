@@ -37,10 +37,7 @@
   },
   "peerDependencies": {
     "@arco-design/web-react": "*",
-    "@nestjs/mapped-types": "*",
-    "class-validator": "*",
-    "react": "*",
-    "typeorm": "*"
+    "react": "*"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.4",

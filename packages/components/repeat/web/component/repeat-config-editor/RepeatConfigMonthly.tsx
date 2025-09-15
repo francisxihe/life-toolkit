@@ -1,8 +1,6 @@
-import { Radio, Calendar } from '@arco-design/web-react';
+import { Radio, Calendar, Select } from '@arco-design/web-react';
 import { RepeatFormMonthly, MonthlyType, WeekDay } from '../../../types';
-import OrdinalDaySelector from '../ordinal-selector/OrdinalDaySelector';
-import OrdinalWeekDaysSelector from '../ordinal-selector/OrdinalWeekDaysSelector';
-import dayjs from 'dayjs';
+import { OrdinalDaySelector, OrdinalWeekDaysSelector } from '../ordinal-selector';
 import { OrdinalWeek, OrdinalDay, OrdinalDayType } from '../../../types';
 
 export default function RepeatConfigMonthly(props: {
@@ -12,9 +10,9 @@ export default function RepeatConfigMonthly(props: {
   const { repeatConfig: monthlyConfig, handleConfigChange } = props;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className={'repeat__vertical-container-sm'}>
       <Radio.Group
-        className="w-full"
+        className={'repeat__radio-group'}
         type="button"
         value={monthlyConfig.monthlyType || MonthlyType.DAY}
         onChange={(value) => {
@@ -54,27 +52,27 @@ export default function RepeatConfigMonthly(props: {
       </Radio.Group>
 
       {monthlyConfig.monthlyType === MonthlyType.DAY && (
-        <Calendar
-          className="!w-full"
-          panel
-          headerRender={() => null}
-          style={{ marginRight: 50 }}
-          defaultValue={dayjs()}
-          disabledDate={(date) => {
-            return date.isAfter(dayjs(), 'month') || date.isBefore(dayjs(), 'month');
-          }}
-          onChange={(date) => {
+        <Select
+          className={'repeat__select'}
+          mode="multiple"
+          value={monthlyConfig[MonthlyType.DAY]}
+          options={Array.from({ length: 31 }, (_, index) => index + 1).map((value) => ({
+            value: `${value.toString()}日`,
+            label: value.toString(),
+          }))}
+          placeholder="选择日期"
+          onChange={(value) => {
             handleConfigChange({
               ...monthlyConfig,
-              [MonthlyType.DAY]: date.daysInMonth(),
+              [MonthlyType.DAY]: value,
             });
           }}
         />
       )}
 
       {monthlyConfig.monthlyType === MonthlyType.ORDINAL_WEEK && (
-        <div className="flex items-center gap-2">
-          <div className="text-sm flex-shrink-0">每月</div>
+        <div className={'repeat__horizontal-container'}>
+          <div className={'repeat__label'}>每月</div>
           <OrdinalWeekDaysSelector
             ordinal={monthlyConfig[MonthlyType.ORDINAL_WEEK].ordinalWeek}
             setOrdinal={(value) =>
