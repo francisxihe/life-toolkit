@@ -6,11 +6,9 @@ import { useState } from 'react';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
-import {
-  RepeatSelector,
-  webMapping,
-} from '@life-toolkit/components-repeat/web';
-import type { RepeatVo } from '@life-toolkit/components-repeat/vo';
+import { RepeatSelector } from '@life-toolkit/service-repeat-component';
+import { voToForm, formToVo } from '@life-toolkit/service-repeat-helpers';
+import type { RepeatVo } from '@life-toolkit/service-repeat-types';
 
 const { RangePicker } = TimePicker;
 
@@ -143,16 +141,11 @@ export default function DateTimeTool(props: {
           <div className="px-3">
             <RepeatSelector
               lang={lang as 'en-US' | 'zh-CN'}
-              value={
-                formData.repeatConfig &&
-                webMapping.voToForm(formData.repeatConfig)
-              }
+              value={formData.repeatConfig && voToForm(formData.repeatConfig)}
               onChange={(value) => {
                 onChangeData({
                   ...formData,
-                  repeatConfig: webMapping.formToVo(value) as
-                    | RepeatVo
-                    | undefined,
+                  repeatConfig: formToVo(value) as RepeatVo | undefined,
                 });
               }}
             />

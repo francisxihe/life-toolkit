@@ -1,0 +1,28 @@
+{
+  "name": "@life-toolkit/service-repeat-helpers",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "common",
+    "mapping"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "test": "jest"
+  },
+  "dependencies": {
+    "chinese-holiday-calendar": "0.0.1",
+    "@life-toolkit/service-repeat-types": "workspace:*",
+    "dayjs": "^1.11.10",
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {},
+  "devDependencies": {
+    "@types/lodash": "^4.17.20"
+  }
+}

@@ -21,7 +21,6 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@life-toolkit/vo$': '<rootDir>/../../packages/vo/src/index.ts',
-    '^@life-toolkit/components-repeat$': '<rootDir>/../../packages/components-repeat/src/index.ts',
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
   testTimeout: 30000,

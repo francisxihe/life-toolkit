@@ -33,7 +33,8 @@
     "class-transformer": "^0.5.1"
   },
   "devDependencies": {
-    "@life-toolkit/components-repeat": "workspace:*",
+    "@life-toolkit/service-repeat-helpers": "workspace:*",
+    "@life-toolkit/service-repeat-types": "workspace:*",
     "@life-toolkit/mapped-types": "workspace:*",
     "tsup": "^7.0.0",
     "ts-mixer": "^6.0.3"

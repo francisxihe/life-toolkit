@@ -7,6 +7,6 @@
     "@life-toolkit/enum": "workspace:*"
   },
   "peerDependencies": {
-    "@life-toolkit/components-repeat": "workspace:*"
+    "@life-toolkit/service-repeat-types": "workspace:*"
   }
 }

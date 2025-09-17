@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Entity, OneToMany, Column } from 'typeorm';
 import { Todo } from '../todo/todo.entity';
-import { RepeatMode, RepeatConfig, RepeatEndMode } from '@life-toolkit/components-repeat';
+import { RepeatMode, RepeatConfig, RepeatEndMode } from '@life-toolkit/service-repeat-types';
 import { TodoStatus } from '@life-toolkit/enum';
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';

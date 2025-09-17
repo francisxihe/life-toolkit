@@ -1,8 +1,6 @@
 import { TodoRepeatDto } from './todo-repeat-model.dto';
 import { PickType, IntersectionType, PartialType, OmitType } from '@life-toolkit/mapped-types';
 import { TodoRepeat } from '../todo-repeat.entity';
-import { TodoRepeatWithoutRelationsDto } from './todo-repeat-model.dto';
-import { CreateRepeatVo, UpdateRepeatVo } from '@life-toolkit/components-repeat/vo';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 
 export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [

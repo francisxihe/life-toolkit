@@ -72,12 +72,21 @@ importers:
       '@life-toolkit/business-web':
         specifier: workspace:*
         version: link:../../packages/business/web
+      '@life-toolkit/common-web-utils':
+        specifier: workspace:*
+        version: link:../../packages/common-web/utils
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
       '@life-toolkit/mapped-types':
         specifier: workspace:*
         version: link:../../packages/common/mapped-types
+      '@life-toolkit/service-repeat-helpers':
+        specifier: workspace:*
+        version: link:../../packages/service/repeat/helpers
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../../packages/service/repeat/types
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
@@ -372,12 +381,15 @@ importers:
         specifier: ^0.3.20
         version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
     devDependencies:
-      '@life-toolkit/components-repeat':
-        specifier: workspace:*
-        version: link:../../components/repeat
       '@life-toolkit/mapped-types':
         specifier: workspace:*
         version: link:../../common/mapped-types
+      '@life-toolkit/service-repeat-helpers':
+        specifier: workspace:*
+        version: link:../../service/repeat/helpers
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../../service/repeat/types
       ts-mixer:
         specifier: ^6.0.3
         version: 6.0.4
@@ -387,12 +399,12 @@ importers:
 
   packages/business/vo:
     dependencies:
-      '@life-toolkit/components-repeat':
-        specifier: workspace:*
-        version: link:../../components/repeat
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../enum
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../../service/repeat/types
 
   packages/business/web:
     dependencies:
@@ -408,9 +420,6 @@ importers:
       '@life-toolkit/api':
         specifier: workspace:*
         version: link:../api
-      '@life-toolkit/components-repeat':
-        specifier: workspace:*
-        version: link:../../components/repeat
       '@life-toolkit/components-web-mind':
         specifier: workspace:*
         version: link:../../components-web/mind
@@ -420,6 +429,15 @@ importers:
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../enum
+      '@life-toolkit/service-repeat-component':
+        specifier: workspace:*
+        version: link:../../service/repeat/component
+      '@life-toolkit/service-repeat-helpers':
+        specifier: workspace:*
+        version: link:../../service/repeat/helpers
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../../service/repeat/types
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../share/types
@@ -659,49 +677,6 @@ importers:
         specifier: ^18.2.0
         version: 18.3.23
 
-  packages/components/repeat:
-    dependencies:
-      '@arco-design/web-react':
-        specifier: '*'
-        version: 2.66.4(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@life-toolkit/common-web-utils':
-        specifier: workspace:*
-        version: link:../../common-web/utils
-      '@nestjs/mapped-types':
-        specifier: '*'
-        version: 2.1.0(@nestjs/common@10.4.20(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)(rxjs@7.8.2))(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.1.14)
-      chinese-holiday-calendar:
-        specifier: 0.0.1
-        version: 0.0.1
-      class-validator:
-        specifier: '*'
-        version: 0.14.2
-      dayjs:
-        specifier: ^1.11.10
-        version: 1.11.13
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      react:
-        specifier: '*'
-        version: 18.3.1
-      typeorm:
-        specifier: '*'
-        version: 0.3.26(mysql2@3.14.3)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.4)(@types/node@22.13.0)(typescript@5.9.2))
-    devDependencies:
-      '@testing-library/jest-dom':
-        specifier: ^6.1.4
-        version: 6.7.0
-      '@testing-library/react':
-        specifier: ^14.0.0
-        version: 14.3.1(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@types/lodash':
-        specifier: ^4.17.20
-        version: 4.17.20
-      jest-environment-jsdom:
-        specifier: ^29.0.0
-        version: 29.7.0
-
   packages/components/tabs:
     dependencies:
       dnd-core:
@@ -734,6 +709,61 @@ importers:
       tsx:
         specifier: ^4.16.2
         version: 4.20.5
+
+  packages/service/repeat/component:
+    dependencies:
+      '@arco-design/web-react':
+        specifier: '*'
+        version: 2.66.4(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@life-toolkit/common-web-utils':
+        specifier: workspace:*
+        version: link:../../../common-web/utils
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../types
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.13
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      react:
+        specifier: '*'
+        version: 18.3.1
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: ^6.1.4
+        version: 6.7.0
+      '@testing-library/react':
+        specifier: ^14.0.0
+        version: 14.3.1(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
+      jest-environment-jsdom:
+        specifier: ^29.0.0
+        version: 29.7.0
+
+  packages/service/repeat/helpers:
+    dependencies:
+      '@life-toolkit/service-repeat-types':
+        specifier: workspace:*
+        version: link:../types
+      chinese-holiday-calendar:
+        specifier: 0.0.1
+        version: 0.0.1
+      dayjs:
+        specifier: ^1.11.10
+        version: 1.11.13
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
+
+  packages/service/repeat/types: {}
 
   packages/share-web/helpers:
     dependencies:

@@ -7,7 +7,6 @@ import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
 import { TodoStatus } from '@life-toolkit/enum';
-import { RepeatVo } from '@life-toolkit/components-repeat/vo';
 import { CreateTodoVo } from '@life-toolkit/vo';
 
 export type TodoDetailProviderProps = {

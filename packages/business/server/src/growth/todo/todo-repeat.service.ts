@@ -9,8 +9,8 @@ import {
   TodoDto,
 } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
-import { RepeatEndMode, Repeat as RepeatConfig } from '@life-toolkit/components-repeat/types';
-import { calculateNextDate, isValidDateForRepeat } from '@life-toolkit/components-repeat/common';
+import { Repeat as RepeatConfig, calculateNextDate, isValidDate } from '@life-toolkit/service-repeat-helpers';
+import { RepeatEndMode } from '@life-toolkit/service-repeat-types';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import dayjs from 'dayjs';
 
@@ -134,7 +134,7 @@ export class TodoRepeatService {
     let nextDate: dayjs.Dayjs;
 
     // 验证当前日期是否符合重复规则
-    const isCurrentDateValid = isValidDateForRepeat(currentDate, repeatConfig);
+    const isCurrentDateValid = isValidDate(currentDate, repeatConfig);
 
     if (!isCurrentDateValid) {
       // 如果当前日期不符合规则，找到下一个符合条件的日期
@@ -189,9 +189,7 @@ export class TodoRepeatService {
       const maxTimes = todoRepeatDto.repeatTimes ?? undefined;
 
       // 生成区间内的所有日期
-      const repeatConfig: RepeatConfig & {
-        repeatStartDate: string;
-      } = {
+      const repeatConfig: RepeatConfig = {
         repeatStartDate: todoRepeatDto.repeatStartDate,
         repeatMode: todoRepeatDto.repeatMode,
         repeatConfig: todoRepeatDto.repeatConfig,
@@ -208,7 +206,7 @@ export class TodoRepeatService {
       }
 
       // 如果当前日期不符合重复规则，找到下一个符合条件的日期
-      if (!isValidDateForRepeat(targetDate, repeatConfig)) {
+      if (!isValidDate(targetDate, repeatConfig)) {
         const nextValidDate = calculateNextDate(targetDate.subtract(1, 'day'), repeatConfig);
         if (!nextValidDate) {
           continue; // 找不到下一个有效日期，跳过
