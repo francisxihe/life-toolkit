@@ -1,7 +1,7 @@
 import { Popover, Calendar, Select, TimePicker } from '@arco-design/web-react';
 import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { useState } from 'react';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';

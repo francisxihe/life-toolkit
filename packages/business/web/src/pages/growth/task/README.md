@@ -119,7 +119,7 @@ function MyComponent() {
 
 ### 内部依赖
 
-- `@life-toolkit/components-web-ui`: 布局容器
+- `@life-toolkit/components-ui`: 布局容器
 - `@/components/Button/CreateButton`: 创建按钮
 - `@/components/SiteIcon`: 图标组件
 - `life-toolkit/vo/growth`: 任务相关类型定义

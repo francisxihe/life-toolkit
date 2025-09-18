@@ -14,7 +14,7 @@ import {
 import styles from '../layout.module.less';
 import { IRoute } from '@/router/routes';
 import useRouter from '@/router/useRouter';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 
 const MenuItem = Menu.Item;
 const SubMenu = Menu.SubMenu;

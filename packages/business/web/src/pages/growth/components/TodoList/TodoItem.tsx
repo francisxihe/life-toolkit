@@ -5,7 +5,7 @@ import { isToday } from 'date-fns';
 import { FlexibleContainer } from 'francis-component-react';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { TodoService } from '../../service';
 import { TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';

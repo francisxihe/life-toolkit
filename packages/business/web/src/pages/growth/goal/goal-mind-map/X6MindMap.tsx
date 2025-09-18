@@ -5,7 +5,7 @@ import {
   createGoalConverter,
   exportUtils,
   MindMapData,
-} from '@life-toolkit/components-web-mind/src/index';
+} from '@life-toolkit/components-mind/src/index';
 import {
   Button,
   Space,

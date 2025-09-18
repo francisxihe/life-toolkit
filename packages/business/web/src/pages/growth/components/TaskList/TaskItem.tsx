@@ -4,7 +4,7 @@ import { Tag, Typography, Popover, Button } from '@arco-design/web-react';
 import { isToday } from 'date-fns';
 import { FlexibleContainer } from 'francis-component-react';
 import IconSelector from '../../components/IconSelector';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { TaskService } from '../../service';
 import { TaskWithoutRelationsVo } from '@life-toolkit/vo';

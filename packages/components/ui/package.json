@@ -1,5 +1,5 @@
 {
-  "name": "@life-toolkit/components-web-ui",
+  "name": "@life-toolkit/components-ui",
   "version": "1.0.0",
   "private": true,
   "main": "index.ts",
