@@ -9,8 +9,8 @@ import {
   TodoDto,
 } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
-import { Repeat as RepeatConfig, calculateNextDate, isValidDate } from '@life-toolkit/service-repeat-helpers';
-import { RepeatEndMode } from '@life-toolkit/service-repeat-types';
+import { Repeat as RepeatConfig, calculateNextDate, isValidDate } from 'francis-helper-repeat';
+import { RepeatEndMode } from 'francis-types-repeat';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import dayjs from 'dayjs';
 

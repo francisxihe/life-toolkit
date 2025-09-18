@@ -6,9 +6,9 @@ import { useState } from 'react';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
-import { RepeatSelector } from '@life-toolkit/service-repeat-component';
-import { voToForm, formToVo } from '@life-toolkit/service-repeat-helpers';
-import type { RepeatVo } from '@life-toolkit/service-repeat-types';
+import { RepeatSelector } from 'francis-component-react';
+import { voToForm, formToVo } from 'francis-helper-repeat';
+import type { RepeatVo } from 'francis-types-repeat';
 
 const { RangePicker } = TimePicker;
 

@@ -2,6 +2,7 @@
   "name": "@life-toolkit/business-server",
   "version": "0.0.2",
   "description": "业务服务器",
+  "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "exports": {
@@ -33,8 +34,8 @@
     "class-transformer": "^0.5.1"
   },
   "devDependencies": {
-    "@life-toolkit/service-repeat-helpers": "workspace:*",
-    "@life-toolkit/service-repeat-types": "workspace:*",
+    "francis-helper-repeat": "0.0.6",
+    "francis-types-repeat": "0.0.1",
     "@life-toolkit/mapped-types": "workspace:*",
     "tsup": "^7.0.0",
     "ts-mixer": "^6.0.3"

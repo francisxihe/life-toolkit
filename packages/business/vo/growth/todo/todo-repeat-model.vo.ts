@@ -1,6 +1,6 @@
 import { BaseEntityVo } from '../../common';
 import { TodoVo } from '../todo/todo-model.vo';
-import { RepeatMode, RepeatConfig, RepeatEndMode } from '@life-toolkit/service-repeat-types';
+import { RepeatMode, RepeatConfig, RepeatEndMode } from 'francis-types-repeat';
 import { TodoStatus } from '@life-toolkit/enum';
 
 export type TodoRepeatWithoutRelationsVo = {

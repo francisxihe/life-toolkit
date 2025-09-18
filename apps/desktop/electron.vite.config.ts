@@ -17,7 +17,11 @@ export default defineConfig({
         '@business': path.resolve(currentDirPath, '../../packages/business/server/src'),
         '@database': path.resolve(currentDirPath, 'src/database'),
         '@': path.resolve(currentDirPath, 'src/main'),
+        '@life-toolkit/enum': path.resolve(currentDirPath, '../../packages/business/enum/index.ts'),
+        '@life-toolkit/vo': path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
+        '@life-toolkit/mapped-types': path.resolve(currentDirPath, '../../packages/common/mapped-types/src/index.ts'),
       },
+      extensions: ['.ts', '.js', '.json'],
     },
     build: {
       outDir: 'dist/main',
@@ -35,11 +39,14 @@ export default defineConfig({
           'class-validator',
           'class-transformer',
           'uuid',
-          /^@life-toolkit\/service-repeat-helpers/,
-          /^@life-toolkit\/service-repeat-types/,
+          /^francis-types-repeat/,
+          /^francis-helper-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
+          'chinese-holiday-calendar',
+          // 只保留必要的外部依赖，让 @life-toolkit 包被正确打包
+          '@life-toolkit/electron-typeorm',
         ],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
@@ -127,20 +134,46 @@ export default defineConfig({
           find: '@',
           replacement: path.resolve(currentDirPath, 'src/render'),
         },
+        {
+          find: '@life-toolkit/enum',
+          replacement: path.resolve(currentDirPath, '../../packages/business/enum/index.ts'),
+        },
+        {
+          find: '@life-toolkit/vo',
+          replacement: path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
+        },
+        {
+          find: '@life-toolkit/mapped-types',
+          replacement: path.resolve(currentDirPath, '../../packages/common/mapped-types/src/index.ts'),
+        },
+        {
+          find: '@life-toolkit/common-web-utils',
+          replacement: path.resolve(currentDirPath, '../../packages/common-web/utils/src/index.ts'),
+        },
+        {
+          find: /^lodash$/,
+          replacement: 'lodash-es',
+        },
       ],
     },
     build: {
       outDir: 'dist/renderer',
       rollupOptions: {
         input: path.resolve(currentDirPath, 'src/render/index.html'),
-        external: [/^react-dnd/, /^dnd-core/, /^immutability-helper/],
+        external: [
+          /^react-dnd/,
+          /^dnd-core/,
+          /^immutability-helper/,
+          'chinese-holiday-calendar',
+          /^francis-helper-repeat/,
+        ],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== 'production',
     },
     optimizeDeps: {
-      include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'mitt'],
-      exclude: [],
+      include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'mitt', 'lodash-es'],
+      exclude: ['@life-toolkit/common-web-utils', 'chinese-holiday-calendar', 'francis-helper-repeat'],
     },
   },
 });
