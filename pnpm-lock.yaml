@@ -78,9 +78,6 @@ importers:
       '@life-toolkit/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
-      '@life-toolkit/mapped-types':
-        specifier: workspace:*
-        version: link:../../packages/common/mapped-types
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
@@ -96,6 +93,9 @@ importers:
       francis-helper-repeat:
         specifier: 0.0.6
         version: 0.0.6
+      francis-mapped-types:
+        specifier: 0.0.1
+        version: 0.0.1
       francis-types-repeat:
         specifier: 0.0.1
         version: 0.0.1
@@ -378,12 +378,15 @@ importers:
         specifier: ^0.3.20
         version: 0.3.26(mysql2@3.15.0)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@22.13.0)(typescript@5.9.2))
     devDependencies:
-      '@life-toolkit/mapped-types':
+      '@life-toolkit/enum':
         specifier: workspace:*
-        version: link:../../common/mapped-types
+        version: link:../enum
       francis-helper-repeat:
         specifier: 0.0.6
         version: 0.0.6
+      francis-mapped-types:
+        specifier: 0.0.1
+        version: 0.0.1
       francis-types-repeat:
         specifier: 0.0.1
         version: 0.0.1
@@ -5535,6 +5538,9 @@ packages:
 
   francis-helper-repeat@0.0.6:
     resolution: {integrity: sha512-nzGTN0NTqnmhQgCPogQrWmx/FToRIpzgjqxStEW/A/gGGcL1k0aH/ZZ6lUG5CknuEeqexPMs9Zmq6qyQzNmuDA==}
+
+  francis-mapped-types@0.0.1:
+    resolution: {integrity: sha512-T1g8lZaCczwsBSYYwbZnGS7DRXELLYoyTbpSqnzgRxqxjaozSb7LLMqaPFpFmtM+d6SCPCGqtPmsL7YZWWMnOg==}
 
   francis-types-repeat@0.0.1:
     resolution: {integrity: sha512-NLZwrk5PUFjTdm1k4CREg8QrW+VS9sdxRE3HiITcKwW7+lp9xE6W6gGDerAFbqGNfg2LddhJXtDWwu/ZEmjobA==}
@@ -15553,6 +15559,10 @@ snapshots:
       dayjs: 1.11.18
       francis-types-repeat: 0.0.1
       lodash: 4.17.21
+
+  francis-mapped-types@0.0.1:
+    dependencies:
+      class-transformer: 0.5.1
 
   francis-types-repeat@0.0.1: {}
 

@@ -104,7 +104,7 @@ import {
   OmitType, // 排除特定字段
   PartialType, // 所有字段变为可选
   IntersectionType, // 合并多个类型
-} from '@life-toolkit/mapped-types';
+} from 'francis-mapped-types';
 ```
 
 ### 2. 继承链设计
@@ -220,7 +220,7 @@ export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, [
 
 - [ ] 文件命名符合规范 (`{module}-{type}.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}{Type}Dto`)
-- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 使用了合适的 Mapped Types (`francis-mapped-types`)
 - [ ] 导入了必要的验证装饰器
 
 ### 继承关系

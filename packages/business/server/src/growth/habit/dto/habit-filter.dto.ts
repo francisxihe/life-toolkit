@@ -1,6 +1,6 @@
 import { PageFilterDto } from '../../../common';
 import { HabitDto } from './habit-model.dto';
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsDateString, IsBoolean } from 'class-validator';
 import { HabitFilterVo, HabitPageFilterVo } from '@life-toolkit/vo';
 import { HabitStatus, Importance, Difficulty } from '@life-toolkit/enum';
@@ -29,8 +29,6 @@ export class HabitFilterDto extends IntersectionType(
   @IsDateString()
   @IsOptional()
   endDateEnd?: string;
-
-  excludeIds?: string[];
 
   /** 习惯ID */
   @IsString()

@@ -9,7 +9,7 @@ import {
   TodoDto,
 } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
-import { Repeat as RepeatConfig, calculateNextDate, isValidDate } from 'francis-helper-repeat';
+import { calculateNextDate, isValidDate } from 'francis-helper-repeat';
 import { RepeatEndMode } from 'francis-types-repeat';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import dayjs from 'dayjs';
@@ -24,6 +24,9 @@ export class TodoRepeatService {
   // ====== 基础 CRUD ======
 
   async create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
+    // 在创建前，确保 currentDate 符合重复规则
+    createTodoRepeatDto = this.fixCurrentDate(createTodoRepeatDto);
+
     const entity = await this.todoRepeatRepository.create(createTodoRepeatDto.exportCreateEntity());
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
@@ -121,7 +124,7 @@ export class TodoRepeatService {
   }
 
   async updateToNext(id: string): Promise<TodoRepeatDto> {
-    const todoRepeatDto = await this.findWithRelations(id);
+    let todoRepeatDto = await this.findWithRelations(id);
     const repeatConfig = {
       repeatMode: todoRepeatDto.repeatMode,
       repeatConfig: todoRepeatDto.repeatConfig,
@@ -130,21 +133,11 @@ export class TodoRepeatService {
       repeatTimes: todoRepeatDto.repeatTimes,
       repeatStartDate: todoRepeatDto.repeatStartDate,
     };
+    // 验证当前日期是否符合重复规则
+    todoRepeatDto = this.fixCurrentDate(todoRepeatDto);
+
     let currentDate = dayjs(todoRepeatDto.currentDate);
     let nextDate: dayjs.Dayjs;
-
-    // 验证当前日期是否符合重复规则
-    const isCurrentDateValid = isValidDate(currentDate, repeatConfig);
-
-    if (!isCurrentDateValid) {
-      // 如果当前日期不符合规则，找到下一个符合条件的日期
-      const validNextDate = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
-
-      if (!validNextDate) {
-        throw new Error('No valid next date found');
-      }
-      currentDate = validNextDate;
-    }
 
     // 当前日期符合规则，计算下一个日期
     const calculatedNextDate = calculateNextDate(currentDate, repeatConfig);
@@ -180,7 +173,7 @@ export class TodoRepeatService {
     const results: TodoDto[] = [];
 
     for (const todoRepeat of todoRepeatList) {
-      const todoRepeatDto = new TodoRepeatDto();
+      let todoRepeatDto = new TodoRepeatDto();
       todoRepeatDto.importEntity(todoRepeat);
 
       // 结束条件预处理
@@ -188,30 +181,13 @@ export class TodoRepeatService {
       const endDate = todoRepeatDto.repeatEndDate ? dayjs(todoRepeatDto.repeatEndDate) : undefined;
       const maxTimes = todoRepeatDto.repeatTimes ?? undefined;
 
-      // 生成区间内的所有日期
-      const repeatConfig: RepeatConfig = {
-        repeatStartDate: todoRepeatDto.repeatStartDate,
-        repeatMode: todoRepeatDto.repeatMode,
-        repeatConfig: todoRepeatDto.repeatConfig,
-        repeatEndMode: todoRepeatDto.repeatEndMode,
-        repeatEndDate: todoRepeatDto.repeatEndDate,
-        repeatTimes: todoRepeatDto.repeatTimes,
-      };
+      todoRepeatDto = this.fixCurrentDate(todoRepeatDto);
 
       // 确定生成待办的日期
       let targetDate = todoRepeatDto.currentDate ? dayjs(todoRepeatDto.currentDate) : null;
 
       if (!targetDate) {
         continue; // 没有当前日期，跳过
-      }
-
-      // 如果当前日期不符合重复规则，找到下一个符合条件的日期
-      if (!isValidDate(targetDate, repeatConfig)) {
-        const nextValidDate = calculateNextDate(targetDate.subtract(1, 'day'), repeatConfig);
-        if (!nextValidDate) {
-          continue; // 找不到下一个有效日期，跳过
-        }
-        targetDate = nextValidDate;
       }
 
       // 检查目标日期是否在查询范围内
@@ -264,5 +240,33 @@ export class TodoRepeatService {
       status: TodoStatus.TODO,
     });
     return todoDto;
+  }
+
+  fixCurrentDate<T extends TodoRepeatDto | CreateTodoRepeatDto>(todoRepeatDto: T): T {
+    // 在创建前，确保 currentDate 符合重复规则
+    if (todoRepeatDto.currentDate) {
+      const repeatConfig = {
+        repeatMode: todoRepeatDto.repeatMode,
+        repeatConfig: todoRepeatDto.repeatConfig,
+        repeatEndMode: todoRepeatDto.repeatEndMode,
+        repeatEndDate: todoRepeatDto.repeatEndDate,
+        repeatTimes: todoRepeatDto.repeatTimes,
+        repeatStartDate: todoRepeatDto.repeatStartDate,
+      };
+
+      const currentDate = dayjs(todoRepeatDto.currentDate);
+      const isCurrentDateValid = isValidDate(currentDate, repeatConfig);
+
+      if (!isCurrentDateValid) {
+        // 如果当前日期不符合规则，找到下一个符合条件的日期
+        const validNextDate = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
+
+        if (validNextDate) {
+          todoRepeatDto.currentDate = validNextDate.format('YYYY-MM-DD');
+        }
+      }
+    }
+
+    return todoRepeatDto;
   }
 }

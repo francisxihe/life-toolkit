@@ -19,7 +19,7 @@ DTO Form 是用于表单操作的对象，主要包含创建DTO和更新DTO。�
 #### 基础模板
 
 ```typescript
-import { PartialType, IntersectionType, PickType, OmitType } from "@life-toolkit/mapped-types";
+import { PartialType, IntersectionType, PickType, OmitType } from "francis-mapped-types";
 import { IsOptional, IsArray, IsString, IsEnum } from "class-validator";
 import { {Module}Dto } from "./{module}-model.dto";
 import { {Entity} } from "../{entity}.entity";
@@ -66,7 +66,7 @@ export class Update{Module}Dto extends IntersectionType(
 
 ```typescript
 // entity-form.dto.ts
-import { PartialType, PickType, IntersectionType, OmitType } from '@life-toolkit/mapped-types';
+import { PartialType, PickType, IntersectionType, OmitType } from 'francis-mapped-types';
 import { IsOptional, IsArray, IsString, IsNumber, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { EntityDto } from './entity-model.dto';
@@ -126,7 +126,7 @@ import {
   OmitType, // 排除特定字段
   PartialType, // 所有字段变为可选
   IntersectionType, // 合并多个类型
-} from '@life-toolkit/mapped-types';
+} from 'francis-mapped-types';
 ```
 
 ### 2. 类型组合策略
@@ -443,7 +443,7 @@ export class CreateUserDto extends PickType(UserDto, ['email', 'password']) {
 
 - [ ] 文件命名符合规范 (`{module}-form.dto.ts`)
 - [ ] 类命名符合规范 (`Create{Module}Dto`, `Update{Module}Dto`)
-- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 使用了合适的 Mapped Types (`francis-mapped-types`)
 - [ ] 导入了必要的验证装饰器
 
 ### 继承关系

@@ -21,7 +21,7 @@
     "@life-toolkit/business-server": "workspace:*",
     "@life-toolkit/business-web": "workspace:*",
     "@life-toolkit/enum": "workspace:*",
-    "@life-toolkit/mapped-types": "workspace:*",
+    "francis-mapped-types": "0.0.1",
     "@life-toolkit/share-types": "workspace:*",
     "@life-toolkit/common-web-utils": "workspace:*",
     "francis-helper-repeat": "0.0.6",

@@ -8,5 +8,6 @@
     "strict": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "tailwind.config.ts", "config"]
+  "include": ["vite.config.ts", "tailwind.config.ts", "config"],
+  "exclude": []
 }

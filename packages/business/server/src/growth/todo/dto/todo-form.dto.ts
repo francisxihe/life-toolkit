@@ -1,4 +1,4 @@
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { TodoSource, TodoStatus } from '@life-toolkit/enum';
 import { Todo as TodoVO } from '@life-toolkit/vo';
 import dayjs from 'dayjs';

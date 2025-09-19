@@ -23,7 +23,7 @@ import { IsOptional, IsString, IsArray, IsEnum } from "class-validator";
 import { Type } from "class-transformer";
 import { PageFilterDto } from "../../../common/filter";
 import { {Module}Dto } from "./{module}-model.dto";
-import { PickType, IntersectionType, PartialType } from "@life-toolkit/mapped-types";
+import { PickType, IntersectionType, PartialType } from "francis-mapped-types";
 import { {Module}ListFiltersVo, {Module}PageFiltersVo } from "@life-toolkit/vo";
 
 // 列表过滤DTO - 选择可过滤的字段
@@ -99,7 +99,7 @@ import { IsOptional, IsString, IsArray, IsEnum, IsNumber } from 'class-validator
 import { Type } from 'class-transformer';
 import { PageFilterDto } from '../../../common/filter';
 import { EntityDto } from './entity-model.dto';
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { EntityListFiltersVo, EntityPageFiltersVo } from '@life-toolkit/vo';
 import { EntityStatus, EntityType } from '../entity.entity';
 
@@ -580,7 +580,7 @@ export class EntityPageFiltersDto extends IntersectionType(PageFilterDto, Entity
 
 - [ ] 文件命名符合规范 (`{module}-filter.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}ListFilterDto`, `{Module}PageFiltersDto`)
-- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 使用了合适的 Mapped Types (`francis-mapped-types`)
 - [ ] 导入了必要的验证装饰器
 
 ### 继承关系

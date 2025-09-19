@@ -1,6 +1,6 @@
 import { Habit, HabitWithoutRelations } from '../habit.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import { OmitType, IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
 import { GoalDto } from '../../goal';
@@ -53,8 +53,14 @@ export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelatio
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startAt: this.startDate ? dayjs(this.startDate).format('YYYY-MM-DD HH:mm:ss') : undefined,
-      endAt: this.targetDate ? dayjs(this.targetDate).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      startDate: dayjs(this.startDate).format('YYYY-MM-DD HH:mm:ss'),
+      targetDate: dayjs(this.targetDate).format('YYYY-MM-DD HH:mm:ss'),
+      tags: this.tags,
+      difficulty: this.difficulty,
+      importance: this.importance,
+      completedCount: this.completedCount,
+      currentStreak: this.currentStreak,
+      longestStreak: this.longestStreak,
     };
   }
 

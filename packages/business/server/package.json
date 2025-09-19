@@ -36,7 +36,8 @@
   "devDependencies": {
     "francis-helper-repeat": "0.0.6",
     "francis-types-repeat": "0.0.1",
-    "@life-toolkit/mapped-types": "workspace:*",
+    "francis-mapped-types": "0.0.1",
+    "@life-toolkit/enum": "workspace:*",
     "tsup": "^7.0.0",
     "ts-mixer": "^6.0.3"
   },

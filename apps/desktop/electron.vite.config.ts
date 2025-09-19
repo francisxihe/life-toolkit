@@ -19,7 +19,6 @@ export default defineConfig({
         '@': path.resolve(currentDirPath, 'src/main'),
         '@life-toolkit/enum': path.resolve(currentDirPath, '../../packages/business/enum/index.ts'),
         '@life-toolkit/vo': path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
-        '@life-toolkit/mapped-types': path.resolve(currentDirPath, '../../packages/common/mapped-types/src/index.ts'),
       },
       extensions: ['.ts', '.js', '.json'],
     },
@@ -143,13 +142,10 @@ export default defineConfig({
           replacement: path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
         },
         {
-          find: '@life-toolkit/mapped-types',
-          replacement: path.resolve(currentDirPath, '../../packages/common/mapped-types/src/index.ts'),
-        },
-        {
           find: '@life-toolkit/common-web-utils',
           replacement: path.resolve(currentDirPath, '../../packages/common-web/utils/src/index.ts'),
         },
+        // TODO 临时处理，后续需要修改
         {
           find: /^lodash$/,
           replacement: 'lodash-es',

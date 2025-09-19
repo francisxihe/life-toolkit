@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { IntersectionType } from '@life-toolkit/mapped-types';
+import { IntersectionType } from 'francis-mapped-types';
 import { TodoRepeat, TodoRepeatWithoutRelations } from '../todo-repeat.entity';
 import { Todo } from '../../todo/todo.entity';
 import type { Todo as TodoVO } from '@life-toolkit/vo';

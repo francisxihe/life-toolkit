@@ -1,6 +1,6 @@
 import { PageFilterDto } from '../../../common';
 import { TodoDto } from './todo-model.dto';
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { TodoFilterVo, TodoPageFilterVo } from '@life-toolkit/vo';
 import { BaseFilterDto, importBaseVo } from '@business/common';
 import { TodoSource } from '@life-toolkit/enum';

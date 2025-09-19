@@ -57,7 +57,7 @@ export class TaskService {
     const allIds = await this.taskTreeRepository.computeDescendantIds(taskToDelete);
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
+    // await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
     return true;
   }
 
@@ -84,7 +84,7 @@ export class TaskService {
     }
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
+    // await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {

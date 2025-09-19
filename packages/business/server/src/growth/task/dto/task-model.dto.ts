@@ -1,6 +1,6 @@
 import { Task, TaskWithoutRelations } from '../task.entity';
 import { BaseModelDto } from '@business/common/base-model.dto';
-import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import { OmitType, IntersectionType } from 'francis-mapped-types';
 import { GoalDto } from '../../goal';
 import { TrackTimeDto } from '../../track-time';
 import { TodoDto } from '../../todo';
@@ -82,6 +82,7 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
       parent: this.parent?.exportVo(),
       goal: this.goal?.exportVo(),
       todoList: this.todoList?.map((todo) => todo.exportVo()),
+      tags: [],
     };
   }
 

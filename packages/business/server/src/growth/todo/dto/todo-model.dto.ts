@@ -1,5 +1,5 @@
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { IntersectionType } from '@life-toolkit/mapped-types';
+import { IntersectionType } from 'francis-mapped-types';
 import { Todo, TodoWithoutRelations } from '../todo.entity';
 import { TaskDto } from '../../task';
 import { HabitDto } from '../../habit';

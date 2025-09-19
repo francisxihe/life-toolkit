@@ -20,7 +20,7 @@ DTO Model 是用于数据模型定义的对象，主要包含基础模型DTO和�
 
 ```typescript
 import { BaseModelDto } from "../../../base/base-model.dto";
-import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
+import { OmitType, IntersectionType } from "francis-mapped-types";
 import { {Entity} } from "../{entity}.entity";
 
 // 基础DTO - 包含所有字段
@@ -45,7 +45,7 @@ export class {Module}ModelDto extends OmitType({Module}Dto, [
 ```typescript
 // entity-model.dto.ts
 import { BaseModelDto } from '../../../base/base-model.dto';
-import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import { OmitType, IntersectionType } from 'francis-mapped-types';
 import { Entity } from '../entity.entity';
 import { RelatedDto } from '../../related/dto';
 
@@ -74,7 +74,7 @@ export class EntityModelDto extends OmitType(EntityDto, ['related'] as const) {}
 
 ```typescript
 import { BaseModelDto } from '../../../base/base-model.dto';
-import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
+import { IntersectionType, OmitType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { Entity as EntityVO } from '@life-toolkit/vo';
 import { Entity } from '../entity.entity';
@@ -211,7 +211,7 @@ export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, [
 
 - [ ] 文件命名符合规范 (`{module}-model.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}Dto`, `{Module}ModelDto`)
-- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 使用了合适的 Mapped Types (`francis-mapped-types`)
 - [ ] 正确继承自 `BaseModelDto`
 
 ### 继承关系

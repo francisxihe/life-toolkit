@@ -1,4 +1,4 @@
-import { HabitWithoutRelationsVo } from './habit-model.vo';
+import { HabitVo } from './habit-model.vo';
 
 export type CreateHabitVo = Pick<
   HabitVo,

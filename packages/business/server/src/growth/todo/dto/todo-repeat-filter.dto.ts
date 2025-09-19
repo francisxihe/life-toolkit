@@ -1,6 +1,6 @@
 import { PageFilterDto } from '../../../common';
 import { TodoRepeatDto } from './todo-repeat-model.dto';
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { BaseFilterDto, importBaseVo } from '@business/common';
 
 export class TodoRepeatFilterDto extends IntersectionType(

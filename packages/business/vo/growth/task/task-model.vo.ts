@@ -8,7 +8,6 @@ export type TaskWithoutRelationsVo = {
   name: string;
   status: TaskStatus;
   estimateTime?: string;
-  trackTimeIds: string[];
   description?: string;
   importance?: number;
   urgency?: number;

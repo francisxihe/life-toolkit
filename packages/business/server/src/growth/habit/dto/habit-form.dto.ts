@@ -1,4 +1,4 @@
-import { PartialType, IntersectionType, PickType } from '@life-toolkit/mapped-types';
+import { PartialType, IntersectionType, PickType } from 'francis-mapped-types';
 import { IsOptional, IsArray, IsString } from 'class-validator';
 import { HabitDto } from './habit-model.dto';
 import { Habit } from '../habit.entity';
@@ -26,11 +26,11 @@ export class CreateHabitDto extends PickType(HabitDto, [
     this.importance = vo.importance;
     this.tags = vo.tags || [];
     this.difficulty = vo.difficulty as any;
-    if (vo.startAt) {
-      this.startDate = dayjs(vo.startAt).toDate();
+    if (vo.startDate) {
+      this.startDate = dayjs(vo.startDate).toDate();
     }
-    if (vo.endAt) {
-      this.targetDate = dayjs(vo.endAt).toDate();
+    if (vo.targetDate) {
+      this.targetDate = dayjs(vo.targetDate).toDate();
     }
     this.goalIds = vo.goalIds;
   }
@@ -57,13 +57,12 @@ export class UpdateHabitDto extends IntersectionType(
     if (vo.importance !== undefined) this.importance = vo.importance;
     if (vo.tags !== undefined) this.tags = vo.tags || [];
     if (vo.difficulty !== undefined) this.difficulty = vo.difficulty as any;
-    if (vo.startAt !== undefined) {
-      this.startDate = vo.startAt ? dayjs(vo.startAt).toDate() : undefined;
+    if (vo.startDate !== undefined) {
+      this.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : undefined;
     }
-    if (vo.endAt !== undefined) {
-      this.targetDate = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
+    if (vo.targetDate !== undefined) {
+      this.targetDate = vo.targetDate ? dayjs(vo.targetDate).toDate() : undefined;
     }
-    if (vo.status !== undefined) this.status = vo.status as any;
   }
 
   appendToUpdateEntity(entity: Habit) {

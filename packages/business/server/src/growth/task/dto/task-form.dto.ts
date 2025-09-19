@@ -1,6 +1,6 @@
 import { Task } from '../task.entity';
 import { TaskDto } from './task-model.dto';
-import { IntersectionType, PartialType, PickType, OmitType } from '@life-toolkit/mapped-types';
+import { IntersectionType, PartialType, PickType, OmitType } from 'francis-mapped-types';
 import { IsOptional, IsArray, IsString, IsNumber, IsEnum, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TaskStatus } from '@life-toolkit/enum';

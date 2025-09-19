@@ -1,5 +1,5 @@
 import { TodoRepeatDto } from './todo-repeat-model.dto';
-import { PickType, IntersectionType, PartialType, OmitType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType, OmitType } from 'francis-mapped-types';
 import { TodoRepeat } from '../todo-repeat.entity';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 
