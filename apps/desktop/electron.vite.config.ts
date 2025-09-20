@@ -156,13 +156,7 @@ export default defineConfig({
       outDir: 'dist/renderer',
       rollupOptions: {
         input: path.resolve(currentDirPath, 'src/render/index.html'),
-        external: [
-          /^react-dnd/,
-          /^dnd-core/,
-          /^immutability-helper/,
-          'chinese-holiday-calendar',
-          /^francis-helper-repeat/,
-        ],
+        external: [/^react-dnd/, /^dnd-core/, /^immutability-helper/],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== 'production',
