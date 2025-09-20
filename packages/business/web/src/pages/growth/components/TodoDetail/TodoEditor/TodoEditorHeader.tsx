@@ -25,12 +25,7 @@ export default function TodoEditorHeader() {
               ...todoFormData,
               planDate: formData.date.format('YYYY-MM-DD'),
               planTimeRange: formData.timeRange,
-              repeatConfig: formData.repeatConfig as
-                | 'none'
-                | 'daily'
-                | 'weekly'
-                | 'monthly',
-              // | 'yearly',
+              repeatConfig: formData.repeatConfig,
             });
             await onSubmit();
           }}

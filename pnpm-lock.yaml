@@ -81,15 +81,30 @@ importers:
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
+      balanced-match:
+        specifier: ^1.0.2
+        version: 1.0.2
+      brace-expansion:
+        specifier: ^1.1.11
+        version: 1.1.12
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
       class-validator:
         specifier: ^0.14.0
         version: 0.14.2
+      concat-map:
+        specifier: ^0.0.1
+        version: 0.0.1
+      define-data-property:
+        specifier: ^1.1.4
+        version: 1.1.4
       electron-ipc-restful:
         specifier: 0.0.1
-        version: 0.0.1(electron@36.9.1)
+        version: 0.0.1(electron@36.0.0)
+      es-errors:
+        specifier: ^1.3.0
+        version: 1.3.0
       francis-helper-repeat:
         specifier: 0.0.6
         version: 0.0.6
@@ -99,9 +114,51 @@ importers:
       francis-types-repeat:
         specifier: 0.0.1
         version: 0.0.1
+      fs.realpath:
+        specifier: ^1.0.0
+        version: 1.0.0
+      function-bind:
+        specifier: ^1.1.2
+        version: 1.1.2
+      get-intrinsic:
+        specifier: ^1.2.4
+        version: 1.3.0
+      glob:
+        specifier: ^7.2.3
+        version: 7.2.3
+      gopd:
+        specifier: ^1.0.1
+        version: 1.2.0
+      has-property-descriptors:
+        specifier: ^1.0.2
+        version: 1.0.2
+      has-proto:
+        specifier: ^1.0.3
+        version: 1.2.0
+      has-symbols:
+        specifier: ^1.0.3
+        version: 1.1.0
+      inflight:
+        specifier: ^1.0.6
+        version: 1.0.6
+      inherits:
+        specifier: ^2.0.4
+        version: 2.0.4
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
+      minimatch:
+        specifier: ^3.1.2
+        version: 3.1.2
+      once:
+        specifier: ^1.4.0
+        version: 1.4.0
+      path-is-absolute:
+        specifier: ^1.0.1
+        version: 1.0.1
+      path-scurry:
+        specifier: ^1.10.1
+        version: 1.11.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -111,9 +168,27 @@ importers:
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
+      safe-buffer:
+        specifier: ^5.2.1
+        version: 5.2.1
       sqlite3:
         specifier: ^5.1.6
         version: 5.1.7
+      to-buffer:
+        specifier: ^1.1.1
+        version: 1.2.1
+      tslib:
+        specifier: ^2.6.2
+        version: 2.8.1
+      typed-array-buffer:
+        specifier: ^1.0.3
+        version: 1.0.3
+      typed-array-byte-length:
+        specifier: ^1.0.1
+        version: 1.0.3
+      typed-array-byte-offset:
+        specifier: ^1.0.2
+        version: 1.0.4
       typeorm:
         specifier: ^0.3.17
         version: 0.3.26(mysql2@3.15.0)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@22.13.0)(typescript@5.9.2))
@@ -123,6 +198,12 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
+      which-typed-array:
+        specifier: ^1.1.15
+        version: 1.1.19
+      wrappy:
+        specifier: ^1.0.2
+        version: 1.0.2
     devDependencies:
       '@arco-plugins/vite-plugin-svgr':
         specifier: ^0.7.2
@@ -155,8 +236,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       electron:
-        specifier: ^36.0.0
-        version: 36.9.1
+        specifier: 36.0.0
+        version: 36.0.0
       electron-builder:
         specifier: ^26.0.12
         version: 26.0.12(electron-builder-squirrel-windows@26.0.12(dmg-builder@26.0.12))
@@ -595,16 +676,6 @@ importers:
       react:
         specifier: '*'
         version: 18.3.1
-
-  packages/common/mapped-types:
-    dependencies:
-      class-transformer:
-        specifier: ^0.5.1
-        version: 0.5.1
-    devDependencies:
-      tsup:
-        specifier: ^7.0.0
-        version: 7.3.0(@swc/core@1.13.5)(postcss@8.5.6)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@22.13.0)(typescript@5.9.2))(typescript@5.9.2)
 
   packages/components/mind:
     dependencies:
@@ -5077,8 +5148,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@36.9.1:
-    resolution: {integrity: sha512-Dx39Df33PA68xYp/wBIVa/OgUhUhaNc1H+gufjOfPONfOO2fcFnS6Z0Tr+5js1riYnfreAf2LRNROTtfv2HFyA==}
+  electron@36.0.0:
+    resolution: {integrity: sha512-MhBL5tgzqLsiw++YXxzXRvF5s90gelcEZP4Upz/aaRmmoscmCw/EtimxMSH6EPnKt+8KwBY9RVAdlcffFPYkyw==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -14826,9 +14897,9 @@ snapshots:
       tslib: 2.8.1
       unzip-crx-3: 0.2.0
 
-  electron-ipc-restful@0.0.1(electron@36.9.1):
+  electron-ipc-restful@0.0.1(electron@36.0.0):
     dependencies:
-      electron: 36.9.1
+      electron: 36.0.0
       find-my-way: 7.7.0
       reflect-metadata: 0.1.14
 
@@ -14875,7 +14946,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@36.9.1:
+  electron@36.0.0:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.13.0

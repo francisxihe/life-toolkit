@@ -20,7 +20,6 @@ export class TodoController {
 
   @Post('/create', { description: '创建待办' })
   async create(@Body() createTodoVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoVo> {
-    console.log('--------------------', createTodoVo);
     if (createTodoVo.repeatConfig) {
       const createTodoRepeatDto = new CreateTodoRepeatDto();
       createTodoRepeatDto.importCreateVo({
@@ -49,11 +48,13 @@ export class TodoController {
         ...updateVo,
         repeatConfig: updateVo.repeatConfig,
       });
+      updateTodoRepeatDto.id = id;
       const dto = await this.todoRepeatService.update(updateTodoRepeatDto);
       return dto.exportVo();
     }
     const updateDto = new UpdateTodoDto();
     updateDto.importUpdateVo(updateVo);
+    updateDto.id = id;
     const dto = await this.todoService.update(updateDto);
     return dto.exportVo();
   }
