@@ -8,8 +8,6 @@
   "scripts": {
     "dev": "electron-vite dev",
     "build": "NODE_ENV=production electron-vite build --mode production",
-    "package": "electron-builder",
-    "build:mac": "NODE_ENV=production electron-vite build --mode production && electron-builder --mac --dir",
     "pack-win": "node scripts/pack-with-polyfills.cjs win",
     "pack-mac": "node scripts/pack-with-polyfills.cjs mac",
     "pack-linux": "node scripts/pack-with-polyfills.cjs linux",
@@ -100,7 +98,7 @@
       "buildResources": "assets",
       "output": "release"
     },
-    "asar": true,
+    "asar": false,
     "nodeGypRebuild": false,
     "npmRebuild": false,
     "mac": {
