@@ -3,10 +3,10 @@
 import { Typography, Popover, Button } from '@arco-design/web-react';
 import { FlexibleContainer } from 'francis-component-react';
 import IconSelector from '../IconSelector';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { GoalService } from '../../service';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import clsx from 'clsx';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
 

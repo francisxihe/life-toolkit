@@ -1,8 +1,8 @@
-import { TaskService as _TaskService } from "@life-toolkit/business-server";
-import { TaskRepository } from "./task.repository";
-import { TaskTreeRepository } from "./task-tree.repository";
-import { TodoRepository } from "../todo/todo.repository";
-import { TodoRepeatRepository } from "../todo/todo-repeat.repository";
+import { TaskService as _TaskService } from '@life-toolkit/business-server';
+import { TaskRepository } from './task.repository';
+import { TaskTreeRepository } from './task-tree.repository';
+import { TodoRepository } from '../todo/todo.repository';
+import { TodoRepeatRepository } from '../todo/todo-repeat.repository';
 
 export class TaskService extends _TaskService {
   constructor() {

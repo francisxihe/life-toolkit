@@ -1,12 +1,19 @@
 {
   "name": "@life-toolkit/vo",
   "version": "0.0.1",
+  "type": "module",
   "main": "index.ts",
   "types": "index.ts",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "require": "./index.ts"
+    }
+  },
   "dependencies": {
     "@life-toolkit/enum": "workspace:*"
   },
   "peerDependencies": {
-    "@life-toolkit/components-repeat": "workspace:*"
+    "francis-helper-repeat": "0.0.6"
   }
 }

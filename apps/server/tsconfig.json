@@ -18,6 +18,9 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "paths": {
       "@/*": ["src/*"],
       "@life-toolkit/vo": ["../../packages/business/vo/src/index.ts"],

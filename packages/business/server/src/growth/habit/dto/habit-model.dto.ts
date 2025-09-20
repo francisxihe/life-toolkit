@@ -1,12 +1,14 @@
-import { Habit } from '../habit.entity';
+import { Habit, HabitWithoutRelations } from '../habit.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { OmitType, IntersectionType } from '@life-toolkit/mapped-types';
+import { OmitType, IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
-import type { Habit as HabitVO } from '@life-toolkit/vo';
+import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@life-toolkit/vo';
 import { GoalDto } from '../../goal';
 import { TodoDto } from '../../todo';
 
-export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['goals', 'todos'] as const)) {
+export class HabitWithoutRelationsDto extends IntersectionType(BaseModelDto, HabitWithoutRelations) {}
+
+export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelationsDto) {
   goals?: GoalDto[];
   todos?: TodoDto[];
 
@@ -20,7 +22,7 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
     this.difficulty = entity.difficulty;
     this.startDate = entity.startDate;
     this.targetDate = entity.targetDate;
-    
+
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.goals) {
       this.goals = entity.goals.map((goal) => {
@@ -46,33 +48,44 @@ export class HabitDto extends IntersectionType(BaseModelDto, OmitType(Habit, ['g
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): HabitVO.HabitModelVo {
+  exportWithoutRelationsVo(): HabitVO.HabitWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startAt: this.startDate ? dayjs(this.startDate).format('YYYY-MM-DD HH:mm:ss') : undefined,
-      endAt: this.targetDate ? dayjs(this.targetDate).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      startDate: dayjs(this.startDate).format('YYYY-MM-DD HH:mm:ss'),
+      targetDate: dayjs(this.targetDate).format('YYYY-MM-DD HH:mm:ss'),
+      tags: this.tags,
+      difficulty: this.difficulty,
+      importance: this.importance,
+      completedCount: this.completedCount,
+      currentStreak: this.currentStreak,
+      longestStreak: this.longestStreak,
     };
   }
 
   // DTO → 业务完整 VO
   exportVo(): HabitVO.HabitVo {
     return {
-      ...this.exportModelVo(),
+      ...this.exportWithoutRelationsVo(),
       goals: this.goals?.map((goal) => goal.exportVo()),
       todos: this.todos?.map((todo) => todo.exportVo()),
     };
   }
 
   // 列表/分页辅助
-  static dtoListToListVo(list: HabitDto[]): HabitVO.HabitListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+  static dtoListToListVo(list: HabitDto[]): ResponseListVo<HabitVO.HabitWithoutRelationsVo> {
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
 
-  static dtoListToPageVo(list: HabitDto[], total: number, pageNum: number, pageSize: number): HabitVO.HabitPageVo {
+  static dtoListToPageVo(
+    list: HabitDto[],
+    total: number,
+    pageNum: number,
+    pageSize: number
+  ): ResponsePageVo<HabitVO.HabitWithoutRelationsVo> {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,

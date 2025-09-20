@@ -8,7 +8,7 @@ type PermissionWrapperProps = AuthParams & {
 };
 
 const PermissionWrapper = (
-  props: React.PropsWithChildren<PermissionWrapperProps>
+  props: React.PropsWithChildren<PermissionWrapperProps>,
 ) => {
   const { backup, requiredPermissions, oneOfPerm } = props;
   const userInfo = useSelector((state: GlobalState) => state.userInfo);
@@ -16,7 +16,7 @@ const PermissionWrapper = (
   const hasPermission = useMemo(() => {
     return authentication(
       { requiredPermissions, oneOfPerm },
-      userInfo.permissions
+      userInfo.permissions,
     );
   }, [oneOfPerm, requiredPermissions, userInfo.permissions]);
 

@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写server Controller代码时
 globs:
 ---
+
 # Server Adapter Controller 开发规范
 
 ## 📋 概述
@@ -12,6 +13,7 @@ Server Adapter Controller 是Server端的适配层，负责将NestJS的HTTP请�
 ## 🏗️ 职责定位
 
 ### 核心职责
+
 - **HTTP接口适配**: 处理HTTP请求和响应
 - **路由定义**: 定义RESTful API路由
 - **参数验证**: 验证请求参数和路径参数
@@ -19,12 +21,14 @@ Server Adapter Controller 是Server端的适配层，负责将NestJS的HTTP请�
 - **响应格式化**: 格式化HTTP响应
 
 ### 设计原则
+
 - **薄适配层**: 只做适配，不包含业务逻辑
 - **标准REST**: 遵循RESTful API设计规范
 - **统一异常**: 统一HTTP异常处理和响应格式
 - **参数验证**: 严格的参数验证和类型检查
 
 ## 📁 文件位置
+
 ```
 apps/server/src/business/{module}/
 ├── {module}.controller.ts        # Server适配控制器
@@ -34,6 +38,7 @@ apps/server/src/business/{module}/
 ## 🎯 标准模板
 
 ### 基础Controller模板
+
 ```typescript
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from "@nestjs/common";
 import { {Module}Controller } from "@life-toolkit/business-server";
@@ -63,7 +68,7 @@ export class {Module}ServerController {
    * 分页查询{资源名称}列表
    */
   @Get("page")
-  async page(@Query() filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
+  async page(@Query() filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}ResponsePageVo> {
     return await this.{module}Controller.page(filter);
   }
 
@@ -132,6 +137,7 @@ export class {Module}ServerController {
 ```
 
 ### NestJS模块定义模板
+
 ```typescript
 import { Module } from "@nestjs/common";
 import { {Module}ServerController } from "./{module}.controller";
@@ -152,11 +158,13 @@ export class {Module}Module {}
 ## 📝 使用指南
 
 ### 占位符替换规则
+
 - `{Module}` → 模块名，如：`Todo`, `Goal`, `Habit`
 - `{module}` → 模块名小写，如：`todo`, `goal`, `habit`
 - `{资源名称}` → 中文资源名，如：`待办事项`, `目标`, `习惯`
 
 ### 导入路径说明
+
 ```typescript
 // Server适配层使用包路径导入核心业务控制器
 import { {Module}Controller } from "@life-toolkit/business-server";
@@ -167,6 +175,7 @@ import { Controller, Get, Post, Put, Delete, Body, Param, Query } from "@nestjs/
 ```
 
 ### 路由设计规范
+
 ```typescript
 @Controller("{module}")  // 控制器路由前缀
 export class {Module}ServerController {
@@ -192,27 +201,28 @@ export class {Module}ServerController {
 ## 🔍 最佳实践
 
 ### 1. 保持适配层轻薄
+
 ```typescript
 // ✅ 推荐做法 - 只做适配，不包含业务逻辑
-@Controller("todo")
+@Controller('todo')
 export class TodoServerController {
   constructor(private readonly todoController: TodoController) {}
 
-  @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  @Post('create')
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 直接调用核心业务控制器
     return await this.todoController.create(createVo);
   }
 }
 
 // ❌ 避免的做法 - 在适配层添加业务逻辑
-@Controller("todo")
+@Controller('todo')
 export class TodoServerController {
-  @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  @Post('create')
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // ❌ 不应该在适配层做参数验证
     if (!createVo.title) {
-      throw new BadRequestException("标题不能为空");
+      throw new BadRequestException('标题不能为空');
     }
 
     // ❌ 不应该在适配层做业务处理
@@ -223,15 +233,16 @@ export class TodoServerController {
 ```
 
 ### 2. 统一异常处理
-```typescript
-import { BadRequestException, NotFoundException, InternalServerErrorException } from "@nestjs/common";
 
-@Controller("todo")
+```typescript
+import { BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+
+@Controller('todo')
 export class TodoServerController {
   constructor(private readonly todoController: TodoController) {}
 
-  @Get("detail/:id")
-  async findDetail(@Param("id") id: string): Promise<TodoVO.TodoVo> {
+  @Get('detail/:id')
+  async findDetail(@Param('id') id: string): Promise<TodoVO.TodoVo> {
     try {
       return await this.todoController.findDetail(id);
     } catch (error) {
@@ -239,35 +250,36 @@ export class TodoServerController {
       if (error instanceof NotFoundException) {
         throw new NotFoundException(`{资源名称}不存在`);
       }
-      throw new InternalServerErrorException("查询{资源名称}详情失败");
+      throw new InternalServerErrorException('查询{资源名称}详情失败');
     }
   }
 }
 ```
 
 ### 3. 参数验证和转换
-```typescript
-import { Body, Param, Query, BadRequestException } from "@nestjs/common";
 
-@Controller("todo")
+```typescript
+import { Body, Param, Query, BadRequestException } from '@nestjs/common';
+
+@Controller('todo')
 export class TodoServerController {
-  @Post("create")
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  @Post('create')
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // HTTP参数验证可以在这里进行
     return await this.todoController.create(createVo);
   }
 
-  @Get("detail/:id")
-  async findDetail(@Param("id") id: string): Promise<TodoVO.TodoVo> {
+  @Get('detail/:id')
+  async findDetail(@Param('id') id: string): Promise<TodoVO.TodoVo> {
     // 路径参数验证
     if (!id || id.trim().length === 0) {
-      throw new BadRequestException("ID不能为空");
+      throw new BadRequestException('ID不能为空');
     }
 
     return await this.todoController.findDetail(id);
   }
 
-  @Get("page")
+  @Get('page')
   async page(@Query() filter: TodoPageFilterDto): Promise<TodoVO.TodoPageVo> {
     // 查询参数处理
     const pageNum = Math.max(1, filter.pageNum || 1);
@@ -281,23 +293,27 @@ export class TodoServerController {
 ## 📋 检查清单
 
 ### 文件结构检查
+
 - [ ] 文件位置正确：`apps/server/src/business/{module}/{module}.controller.ts`
 - [ ] 模块文件存在：`{module}.module.ts`
 - [ ] 导入路径正确：使用包路径导入核心控制器
 
 ### 代码质量检查
+
 - [ ] 类名符合规范：`{Module}ServerController`
 - [ ] 使用正确的NestJS装饰器
 - [ ] 方法参数装饰器正确（@Body, @Param, @Query）
 - [ ] 添加完整的JSDoc注释
 
 ### HTTP规范检查
+
 - [ ] 路由设计符合RESTful规范
 - [ ] HTTP方法使用正确（GET, POST, PUT, DELETE）
 - [ ] 控制器路由前缀正确
 - [ ] 参数验证适当
 
 ### 异常处理检查
+
 - [ ] 统一异常处理机制
 - [ ] 业务异常正确转换
 - [ ] HTTP状态码正确
@@ -305,4 +321,4 @@ export class TodoServerController {
 
 ---
 
-*此文档为Server Adapter Controller开发规范，NestJS HTTP接口适配指南。*
+_此文档为Server Adapter Controller开发规范，NestJS HTTP接口适配指南。_

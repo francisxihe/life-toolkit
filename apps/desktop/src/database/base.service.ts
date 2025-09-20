@@ -13,7 +13,7 @@ export abstract class BaseService<T extends BaseEntity> {
     return await this.repository.save(entity);
   }
 
-  async findById(id: string): Promise<T | null> {
+  async findWithRelations(id: string): Promise<T | null> {
     return await this.repository.findOne({
       where: { id } as unknown as FindOptionsWhere<T>,
     });

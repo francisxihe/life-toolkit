@@ -1,10 +1,8 @@
-import { GoalModelVo } from "./goal-model.vo";
+import { GoalWithoutRelationsVo } from './goal-model.vo';
 
-export type CreateGoalVo = Omit<
-  GoalModelVo,
-  "doneAt" | "abandonedAt" | "status" | "children"
-> & {
-  parentId?: string;
-};
+export type CreateGoalVo = Pick<
+  GoalWithoutRelationsVo,
+  'name' | 'type' | 'startAt' | 'endAt' | 'description' | 'importance' | 'difficulty' | 'status' | 'parentId'
+>;
 
 export type UpdateGoalVo = Partial<CreateGoalVo>;

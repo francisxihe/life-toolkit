@@ -4,7 +4,7 @@ import { FlexibleContainer } from 'francis-component-react';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 import { useTodoContext } from '../context';

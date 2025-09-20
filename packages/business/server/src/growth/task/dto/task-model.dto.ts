@@ -1,17 +1,16 @@
-import { Task, TaskModel } from "../task.entity";
-import { BaseModelDto } from "@business/common/base-model.dto";
-import { OmitType, IntersectionType } from "@life-toolkit/mapped-types";
-import { GoalDto } from "../../goal";
-import { TrackTimeDto } from "../../track-time";
-import { TodoDto } from "../../todo";
-import dayjs from "dayjs";
-import { BaseMapper } from "@business/common/base.mapper";
-import type { Task as TaskVO } from "@life-toolkit/vo";
+import { Task, TaskWithoutRelations } from '../task.entity';
+import { BaseModelDto } from '@business/common/base-model.dto';
+import { OmitType, IntersectionType } from 'francis-mapped-types';
+import { GoalDto } from '../../goal';
+import { TrackTimeDto } from '../../track-time';
+import { TodoDto } from '../../todo';
+import dayjs from 'dayjs';
+import { BaseMapper } from '@business/common/base.mapper';
+import type { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@life-toolkit/vo';
 
-export class TaskDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Task, ["children", "parent", "goal", "todoList"] as const)
-) {
+export class TaskWithoutRelationsDto extends TaskWithoutRelations {}
+
+export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelationsDto) {
   children?: TaskDto[];
   parent?: TaskDto;
   goal?: GoalDto;
@@ -33,7 +32,7 @@ export class TaskDto extends IntersectionType(
     this.tags = entity.tags;
     this.importance = entity.importance;
     this.urgency = entity.urgency;
-    
+
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.parent) {
       const parentDto = new TaskDto();
@@ -75,43 +74,28 @@ export class TaskDto extends IntersectionType(
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startAt: this.startAt
-        ? dayjs(this.startAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      endAt: this.endAt
-        ? dayjs(this.endAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      doneAt: this.doneAt
-        ? dayjs(this.doneAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      abandonedAt: this.abandonedAt
-        ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
+      startAt: this.startAt ? dayjs(this.startAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      endAt: this.endAt ? dayjs(this.endAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       children: this.children?.map((child) => child.exportVo()) || [],
       parent: this.parent?.exportVo(),
       goal: this.goal?.exportVo(),
       todoList: this.todoList?.map((todo) => todo.exportVo()),
+      tags: [],
     };
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): TaskVO.TaskModelVo {
+  exportWithoutRelationsVo(): TaskVO.TaskWithoutRelationsVo {
     return {
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startAt: this.startAt
-        ? dayjs(this.startAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      endAt: this.endAt
-        ? dayjs(this.endAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      doneAt: this.doneAt
-        ? dayjs(this.doneAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
-      abandonedAt: this.abandonedAt
-        ? dayjs(this.abandonedAt).format("YYYY-MM-DD HH:mm:ss")
-        : undefined,
+      startAt: this.startAt ? dayjs(this.startAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      endAt: this.endAt ? dayjs(this.endAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       estimateTime: this.estimateTime,
       importance: this.importance,
       urgency: this.urgency,
@@ -120,29 +104,21 @@ export class TaskDto extends IntersectionType(
   }
 
   // 列表/分页辅助
-  static dtoListToListVo(list: TaskDto[]): TaskVO.TaskListVo {
-    return { list: list.map((d) => d.exportModelVo()) };
+  static dtoListToListVo(list: TaskDto[]): ResponseListVo<TaskVO.TaskWithoutRelationsVo> {
+    return { list: list.map((d) => d.exportWithoutRelationsVo()) };
   }
-  
+
   static dtoListToPageVo(
     list: TaskDto[],
     total: number,
     pageNum: number,
     pageSize: number
-  ): TaskVO.TaskPageVo {
+  ): ResponsePageVo<TaskVO.TaskWithoutRelationsVo> {
     return {
-      list: list.map((d) => d.exportModelVo()),
+      list: list.map((d) => d.exportWithoutRelationsVo()),
       total,
       pageNum,
       pageSize,
     };
   }
 }
-
-export class TaskModelDto extends OmitType(TaskDto, [
-  "children",
-  "parent",
-  "goal",
-  "trackTimeList",
-  "todoList",
-] as const) {}

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from 'electron-ipc-restful';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
 import { TodoController as _TodoController } from '@life-toolkit/business-server';
 import { todoService, todoRepeatService } from './todo.service';
@@ -37,26 +37,6 @@ export class TodoController {
     return this.controller.page(query);
   }
 
-  @Put('/done-batch')
-  async doneBatch(@Body() body: TodoVO.TodoFilterVo) {
-    return this.controller.doneBatch(body);
-  }
-
-  @Put('/abandon/:id')
-  async abandon(@Param('id') id: string) {
-    return this.controller.abandon(id);
-  }
-
-  @Put('/restore/:id')
-  async restore(@Param('id') id: string) {
-    return this.controller.restore(id);
-  }
-
-  @Put('/done/:id')
-  async done(@Param('id') id: string) {
-    return this.controller.done(id);
-  }
-
   @Get('/list-with-repeat')
   async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo) {
     return this.controller.listWithRepeat(query);
@@ -65,5 +45,20 @@ export class TodoController {
   @Get('/detail-with-repeat/:id')
   async detailWithRepeat(@Param('id') id: string) {
     return this.controller.detailWithRepeat(id);
+  }
+
+  @Put('/done-with-repeat/batch')
+  async doneWithRepeatBatch(@Body() body: TodoVO.TodoFilterVo) {
+    return this.controller.doneWithRepeatBatch(body);
+  }
+
+  @Put('/abandon-with-repeat/:id')
+  async abandonWithRepeat(@Param('id') id: string) {
+    return this.controller.abandonWithRepeat(id);
+  }
+
+  @Put('/restore-with-repeat/:id')
+  async restoreWithRepeat(@Param('id') id: string) {
+    return this.controller.restoreWithRepeat(id);
   }
 }

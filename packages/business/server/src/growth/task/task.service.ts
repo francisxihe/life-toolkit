@@ -1,12 +1,5 @@
 import { TaskRepository, TaskTreeRepository } from './task.repository';
-import {
-  CreateTaskDto,
-  UpdateTaskDto,
-  TaskPageFilterDto,
-  TaskFilterDto,
-  TaskDto,
-  TaskWithTrackTimeDto,
-} from './dto';
+import { CreateTaskDto, UpdateTaskDto, TaskPageFilterDto, TaskFilterDto, TaskDto } from './dto';
 import { Task } from './task.entity';
 import { TaskStatus } from '@life-toolkit/enum';
 import { TodoService, TodoRepository, TodoRepeatRepository } from '../todo';
@@ -64,7 +57,7 @@ export class TaskService {
     const allIds = await this.taskTreeRepository.computeDescendantIds(taskToDelete);
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
+    // await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
     return true;
   }
 
@@ -91,7 +84,7 @@ export class TaskService {
     }
     const todoService = new TodoService(this.todoRepository, this.todoRepeatRepository);
     await todoService.deleteByTaskIds(allIds);
-    await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
+    // await this.taskRepository.softDeleteByFilter({ includeIds: allIds });
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<TaskDto> {
@@ -143,10 +136,10 @@ export class TaskService {
     return TaskDto.importEntity(entity);
   }
 
-  async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
+  async taskWithRelations(taskId: string): Promise<TaskDto> {
     const entity = await this.taskRepository.findWithRelations(taskId);
     const base = TaskDto.importEntity(entity);
-    const result = new TaskWithTrackTimeDto();
+    const result = new TaskDto();
     Object.assign(result, base);
     result.trackTimeList = [];
     return result;

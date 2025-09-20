@@ -19,7 +19,7 @@ export const tailwindClassGroups: TailwindClassGroup[] = [
       'tw-left-',
       'tw-right-',
       'tw-bottom-',
-    ]
+    ],
   },
   {
     type: 'flexbox',
@@ -31,7 +31,7 @@ export const tailwindClassGroups: TailwindClassGroup[] = [
       'tw-gap-',
       'tw-space-',
       'tw-self-',
-    ]
+    ],
   },
   {
     type: 'typography',
@@ -41,7 +41,7 @@ export const tailwindClassGroups: TailwindClassGroup[] = [
       'tw-leading-',
       'tw-tracking-',
       'tw-whitespace-',
-    ]
+    ],
   },
   {
     type: 'visual',
@@ -53,17 +53,12 @@ export const tailwindClassGroups: TailwindClassGroup[] = [
       'tw-z-',
       'tw-transform',
       'tw-transition',
-    ]
+    ],
   },
   {
     type: 'interactive',
-    patterns: [
-      'hover:',
-      'focus:',
-      'active:',
-      'disabled:',
-    ]
-  }
+    patterns: ['hover:', 'focus:', 'active:', 'disabled:'],
+  },
 ];
 
 export function groupTailwindClasses(classString: string): string[] {
@@ -77,10 +72,10 @@ export function groupTailwindClasses(classString: string): string[] {
     other: [],
   };
 
-  classes.forEach(cls => {
+  classes.forEach((cls) => {
     let matched = false;
     for (const group of tailwindClassGroups) {
-      if (group.patterns.some(pattern => cls.startsWith(pattern))) {
+      if (group.patterns.some((pattern) => cls.startsWith(pattern))) {
         groupedClasses[group.type].push(cls);
         matched = true;
         break;
@@ -92,11 +87,11 @@ export function groupTailwindClasses(classString: string): string[] {
   });
 
   return Object.values(groupedClasses)
-    .filter(group => group.length > 0)
-    .map(group => group.join(' '));
+    .filter((group) => group.length > 0)
+    .map((group) => group.join(' '));
 }
 
 // 判断是否需要使用数组形式
 export function shouldUseArrayFormat(classString: string): boolean {
   return classString.length > 50 || classString.split(' ').length > 3;
-} 
+}

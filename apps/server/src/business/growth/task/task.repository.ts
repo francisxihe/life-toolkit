@@ -1,27 +1,17 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import {
-  Repository,
-  In,
-  FindOptionsWhere,
-  Between,
-  MoreThan,
-  LessThan,
-  Like,
-  IsNull,
-  Not,
-} from "typeorm";
-import { TrackTime } from "../track-time";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, In, FindOptionsWhere, Between, MoreThan, LessThan, Like, IsNull, Not } from 'typeorm';
+import { TrackTime } from '../track-time';
 import {
   CreateTaskDto,
   UpdateTaskDto,
   TaskPageFilterDto,
   TaskFilterDto,
   TaskDto,
-  TaskWithTrackTimeDto,
+  taskWithRelationsDto,
   Task,
-} from "@life-toolkit/business-server";
-import { TaskStatus } from "@life-toolkit/enum";
+} from '@life-toolkit/business-server';
+import { TaskStatus } from '@life-toolkit/enum';
 
 @Injectable()
 export class TaskRepository {
@@ -54,29 +44,25 @@ export class TaskRepository {
     await this.taskRepository.delete({ id: In(ids) });
   }
 
-  async findById(id: string, relations?: string[]): Promise<TaskDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<TaskDto> {
     const entity = await this.taskRepository.findOne({
       where: { id },
-      relations: relations || ["children", "parent", "goal", "todoList"],
+      relations: relations || ['children', 'parent', 'goal', 'todoList'],
     });
-    if (!entity) throw new NotFoundException("Task not found");
+    if (!entity) throw new NotFoundException('Task not found');
     return TaskDto.importEntity(entity);
   }
 
-  async findByFilter(
-    filter: TaskFilterDto & { excludeIds?: string[] }
-  ): Promise<TaskDto[]> {
+  async findByFilter(filter: TaskFilterDto & { excludeIds?: string[] }): Promise<TaskDto[]> {
     const where: FindOptionsWhere<Task> = this.buildWhere(filter as any);
     if (filter.excludeIds && filter.excludeIds.length) {
       where.id = Not(In(filter.excludeIds));
     }
     const entities = await this.taskRepository.find({
       where,
-      relations: ["children", "goal"],
+      relations: ['children', 'goal'],
     });
-    return entities
-      .filter((t) => !t.parent)
-      .map((t) => TaskDto.importEntity(t));
+    return entities.filter((t) => !t.parent).map((t) => TaskDto.importEntity(t));
   }
 
   async page(
@@ -92,16 +78,16 @@ export class TaskRepository {
     return { list: list.map((t) => TaskDto.importEntity(t)), total, pageNum, pageSize };
   }
 
-  async taskWithTrackTime(taskId: string): Promise<TaskWithTrackTimeDto> {
+  async taskWithRelations(taskId: string): Promise<taskWithRelationsDto> {
     const task = await this.taskRepository.findOne({
       where: { id: taskId },
-      relations: ["children", "parent", "goal", "todoList"],
+      relations: ['children', 'parent', 'goal', 'todoList'],
     });
-    if (!task) throw new NotFoundException("Task not found");
+    if (!task) throw new NotFoundException('Task not found');
 
-    const dto = new TaskWithTrackTimeDto();
+    const dto = new taskWithRelationsDto();
     dto.importEntity(task);
-    
+
     if (task.trackTimeIds?.length) {
       const trackTimes = await this.trackTimeRepository.findBy({
         id: In(task.trackTimeIds),
@@ -110,19 +96,14 @@ export class TaskRepository {
     } else {
       dto.trackTimeList = [];
     }
-    
+
     return dto;
   }
 
-
-  async updateStatus(
-    id: string,
-    status: TaskStatus,
-    dateField: keyof Task
-  ): Promise<void> {
+  async updateStatus(id: string, status: TaskStatus, dateField: keyof Task): Promise<void> {
     const task = await this.taskRepository.findOneBy({ id });
     if (!task) {
-      throw new NotFoundException("Task not found");
+      throw new NotFoundException('Task not found');
     }
     await this.taskRepository.update(id, {
       status,
@@ -146,36 +127,26 @@ export class TaskRepository {
     const where: FindOptionsWhere<Task> = {};
 
     if (filter.doneDateStart && filter.doneDateEnd) {
-      where.doneAt = Between(
-        new Date(filter.doneDateStart + "T00:00:00"),
-        new Date(filter.doneDateEnd + "T23:59:59")
-      );
+      where.doneAt = Between(new Date(filter.doneDateStart + 'T00:00:00'), new Date(filter.doneDateEnd + 'T23:59:59'));
     } else if (filter.doneDateStart) {
-      where.doneAt = MoreThan(new Date(filter.doneDateStart + "T00:00:00"));
+      where.doneAt = MoreThan(new Date(filter.doneDateStart + 'T00:00:00'));
     } else if (filter.doneDateEnd) {
-      where.doneAt = LessThan(new Date(filter.doneDateEnd + "T23:59:59"));
+      where.doneAt = LessThan(new Date(filter.doneDateEnd + 'T23:59:59'));
     }
 
     if (filter.abandonedDateStart && filter.abandonedDateEnd) {
       where.abandonedAt = Between(
-        new Date(filter.abandonedDateStart + "T00:00:00"),
-        new Date(filter.abandonedDateEnd + "T23:59:59")
+        new Date(filter.abandonedDateStart + 'T00:00:00'),
+        new Date(filter.abandonedDateEnd + 'T23:59:59')
       );
     } else if (filter.abandonedDateStart) {
-      where.abandonedAt = MoreThan(
-        new Date(filter.abandonedDateStart + "T00:00:00")
-      );
+      where.abandonedAt = MoreThan(new Date(filter.abandonedDateStart + 'T00:00:00'));
     } else if (filter.abandonedDateEnd) {
-      where.abandonedAt = LessThan(
-        new Date(filter.abandonedDateEnd + "T23:59:59")
-      );
+      where.abandonedAt = LessThan(new Date(filter.abandonedDateEnd + 'T23:59:59'));
     }
 
     if (filter.startDateStart && filter.startDateEnd) {
-      where.startAt = Between(
-        new Date(filter.startDateStart),
-        new Date(filter.startDateEnd)
-      );
+      where.startAt = Between(new Date(filter.startDateStart), new Date(filter.startDateEnd));
     } else if (filter.startDateStart) {
       where.startAt = MoreThan(new Date(filter.startDateStart));
     } else if (filter.startDateEnd) {
@@ -183,10 +154,7 @@ export class TaskRepository {
     }
 
     if (filter.endDateStart && filter.endDateEnd) {
-      where.endAt = Between(
-        new Date(filter.endDateStart),
-        new Date(filter.endDateEnd)
-      );
+      where.endAt = Between(new Date(filter.endDateStart), new Date(filter.endDateEnd));
     } else if (filter.endDateStart) {
       where.endAt = MoreThan(new Date(filter.endDateStart));
     } else if (filter.endDateEnd) {

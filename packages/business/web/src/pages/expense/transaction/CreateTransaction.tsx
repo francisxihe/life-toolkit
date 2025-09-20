@@ -10,7 +10,7 @@ import { DEFAULT_CATEGORIES } from '../constants';
 import { TagEditor } from '../../../components/TagSelector';
 import { useEffect, useRef } from 'react';
 import { openModal } from '@/hooks/OpenModal';
-import { CreateTransactionVo } from '@life-toolkit/vo/expense';
+import { CreateTransactionVo } from '@life-toolkit/vo';
 
 const FormItem = Form.Item;
 

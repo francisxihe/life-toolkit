@@ -19,7 +19,7 @@ const Flip: React.FC<FlipProps> = ({ total, current }) => {
 
     if (current !== before) {
       setIsPlay(true);
-      
+
       // 动画结束后重置状态
       timerRef.current = setTimeout(() => {
         setBefore(current);
@@ -69,4 +69,4 @@ const Flip: React.FC<FlipProps> = ({ total, current }) => {
   );
 };
 
-export default Flip; 
+export default Flip;

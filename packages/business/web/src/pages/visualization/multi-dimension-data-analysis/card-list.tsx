@@ -161,7 +161,7 @@ function CardList() {
     cardInfo.map((item) => ({
       ...item,
       chartType: item.type,
-    }))
+    })),
   );
 
   const getData = async () => {
@@ -178,7 +178,7 @@ function CardList() {
 
     setLoading(true);
     const result = await Promise.all(requestList).finally(() =>
-      setLoading(false)
+      setLoading(false),
     );
     setData(result);
   };

@@ -4,7 +4,7 @@ import { IMPORTANCE_MAP } from '../../constants';
 import { useGoalAllContext } from './context';
 import { useEffect, useState } from 'react';
 import { GoalService } from '../../service';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import { ColumnProps } from '@arco-design/web-react/lib/Table/interface';
 import { useGoalDetail } from '../../components/GoalDetail';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';

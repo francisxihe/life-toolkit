@@ -38,7 +38,7 @@ function ColorPanel() {
                 const rgbStr = getRgbStr(l);
                 document.body.style.setProperty(
                   `--arcoblue-${index + 1}`,
-                  rgbStr
+                  rgbStr,
                 );
               });
             }}

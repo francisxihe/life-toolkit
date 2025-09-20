@@ -12,6 +12,6 @@ export const useEventCallback = <A extends any[], R>(fn: Fn<A, R>): Fn<A, R> => 
         const { current } = ref;
         return current && current(...args);
       },
-    [],
+    []
   );
 };

@@ -16,6 +16,7 @@ export default function TodoEditorMain() {
         size="small"
         className="!text-text-1 !bg-transparent !border-none mb-1"
         onChange={(value) => {
+          console.log(value);
           setTodoFormData({ name: value });
         }}
         onBlur={() => {

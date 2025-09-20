@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写business Controller代码时
 globs:
 ---
+
 # Business Controller 开发规范
 
 ## 📋 概述
@@ -12,6 +13,7 @@ Business Controller 是核心业务逻辑层，负责实现业务规则、数据
 ## 🏗️ 职责定位
 
 ### 核心职责
+
 - **业务逻辑处理**: 实现核心业务规则和流程
 - **数据转换**: VO ↔ DTO 数据格式转换
 - **异常处理**: 统一异常处理和业务规则验证
@@ -19,12 +21,14 @@ Business Controller 是核心业务逻辑层，负责实现业务规则、数据
 - **批量操作**: 批量业务操作的处理
 
 ### 设计原则
+
 - **纯业务逻辑**: 不依赖具体框架和技术栈
 - **可复用性**: 业务逻辑可在多个平台间复用
 - **可测试性**: 核心业务逻辑易于单元测试
 - **单一职责**: 每个方法职责明确，功能单一
 
 ## 📁 文件位置
+
 ```
 packages/business/server/src/{module}/
 ├── {module}.controller.ts         # 核心业务控制器
@@ -36,6 +40,7 @@ packages/business/server/src/{module}/
 ## 🎯 标准模板
 
 ### 基础Controller模板
+
 ```typescript
 import type { {Module} as {Module}VO } from "@life-toolkit/vo";
 import { {Module}Service } from "./{module}.service";
@@ -65,7 +70,7 @@ export class {Module}Controller {
   /**
    * 分页查询{资源名称}列表
    */
-  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}PageVo> {
+  async page(filter: {Module}PageFilterDto): Promise<{Module}VO.{Module}ResponsePageVo> {
     const { list, total } = await this.{module}Service.page(filter);
     return {Module}Dto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
@@ -132,11 +137,13 @@ export class {Module}Controller {
 ## 📝 使用指南
 
 ### 占位符替换规则
+
 - `{Module}` → 模块名，如：`Todo`, `Goal`, `Habit`
 - `{module}` → 模块名小写，如：`todo`, `goal`, `habit`
 - `{资源名称}` → 中文资源名，如：`待办事项`, `目标`, `习惯`
 
 ### 导入路径说明
+
 ```typescript
 // 相对路径导入 - Business层使用相对路径
 import { {Module}Service } from "./{module}.service";
@@ -149,6 +156,7 @@ import {
 ```
 
 ### 扩展方法模板
+
 ```typescript
 /**
  * 导出{资源名称}
@@ -179,10 +187,11 @@ async statistics(filter: {Module}StatisticsFilterDto): Promise<{Module}VO.Statis
 ## 🔍 最佳实践
 
 ### 1. 保持业务纯净
+
 ```typescript
 // ✅ 推荐做法 - 只关注业务逻辑
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 1. 数据转换
     const createDto = CreateTodoDto.importVo(createVo);
 
@@ -196,8 +205,8 @@ export class TodoController {
 
 // ❌ 避免的做法 - 包含HTTP相关逻辑
 export class TodoController {
-  @Post("create") // ❌ 不应该有HTTP装饰器
-  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  @Post('create') // ❌ 不应该有HTTP装饰器
+  async create(@Body() createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // ❌ HTTP相关逻辑不应该出现在Business层
     return await this.todoService.create(createVo);
   }
@@ -205,11 +214,12 @@ export class TodoController {
 ```
 
 ### 2. 统一异常处理
+
 ```typescript
 // 让Service层抛出具体的业务异常
 // Business Controller层只负责数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     try {
       const createDto = CreateTodoDto.importVo(createVo);
       const dto = await this.todoService.create(createDto); // Service会抛出业务异常
@@ -223,10 +233,11 @@ export class TodoController {
 ```
 
 ### 3. 数据转换规范化
+
 ```typescript
 // 使用专门的Mapper进行数据转换
 export class TodoController {
-  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoModelVo> {
+  async create(createVo: TodoVO.CreateTodoVo): Promise<TodoVO.TodoWithoutRelationsVo> {
     // 1. VO转DTO
     const createDto = CreateTodoDto.importVo(createVo);
 
@@ -242,17 +253,20 @@ export class TodoController {
 ## 📋 检查清单
 
 ### 文件结构检查
+
 - [ ] 文件位置正确：`packages/business/server/src/{module}/{module}.controller.ts`
 - [ ] 相关文件存在：service、dto、mapper等
 - [ ] 导入路径正确：使用相对路径
 
 ### 代码质量检查
+
 - [ ] 类名符合规范：`{Module}Controller`
 - [ ] 没有框架相关装饰器（@Controller, @Get等）
 - [ ] 方法参数和返回值类型明确
 - [ ] 添加完整的JSDoc注释
 
 ### 业务逻辑检查
+
 - [ ] 数据转换正确：VO ↔ DTO
 - [ ] 异常处理适当：不捕获具体异常类型
 - [ ] 方法职责单一：不包含多重业务逻辑
@@ -260,4 +274,4 @@ export class TodoController {
 
 ---
 
-*此文档为Business Controller开发规范，核心业务逻辑实现指南。*
+_此文档为Business Controller开发规范，核心业务逻辑实现指南。_

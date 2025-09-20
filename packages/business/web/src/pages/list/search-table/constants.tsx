@@ -20,7 +20,7 @@ const ContentIcon = [
 
 export function getColumns(
   t: any,
-  callback: (record: Record<string, any>, type: string) => Promise<void>
+  callback: (record: Record<string, any>, type: string) => Promise<void>,
 ) {
   return [
     {

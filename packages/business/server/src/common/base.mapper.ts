@@ -1,7 +1,7 @@
-import { BaseEntity } from "./base.entity";
-import { BaseModelDto } from "./base-model.dto";
-import { BaseModelVo } from "@life-toolkit/vo";
-import dayjs from "dayjs";
+import { BaseEntity } from './base.entity';
+import { BaseModelDto } from './base-model.dto';
+import { BaseEntityVo } from '@life-toolkit/vo';
+import dayjs from 'dayjs';
 export class BaseMapper {
   static entityToDto(entity: BaseEntity): BaseModelDto {
     return {
@@ -21,11 +21,11 @@ export class BaseMapper {
     return entity;
   }
 
-  static dtoToVo(dto: BaseModelDto): BaseModelVo {
+  static dtoToVo(dto: BaseModelDto): BaseEntityVo {
     return {
       id: dto.id,
-      createdAt: dayjs(dto.createdAt).format("YYYY/MM/DD HH:mm:ss"),
-      updatedAt: dayjs(dto.updatedAt).format("YYYY/MM/DD HH:mm:ss"),
+      createdAt: dayjs(dto.createdAt).format('YYYY/MM/DD HH:mm:ss'),
+      updatedAt: dayjs(dto.updatedAt).format('YYYY/MM/DD HH:mm:ss'),
     };
   }
 }

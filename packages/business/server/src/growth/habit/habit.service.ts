@@ -1,14 +1,8 @@
-import { HabitRepository } from "./habit.repository";
-import { TodoRepository } from "../todo/todo.repository";
-import {
-  CreateHabitDto,
-  UpdateHabitDto,
-  HabitFilterDto,
-  HabitPageFilterDto,
-  HabitDto,
-} from "./dto";
-import { Habit } from "./habit.entity";
-import { HabitStatus, TodoStatus } from "@life-toolkit/enum";
+import { HabitRepository } from './habit.repository';
+import { TodoRepository } from '../todo/todo.repository';
+import { CreateHabitDto, UpdateHabitDto, HabitFilterDto, HabitPageFilterDto, HabitDto } from './dto';
+import { Habit } from './habit.entity';
+import { HabitStatus, TodoStatus } from '@life-toolkit/enum';
 
 export class HabitService {
   habitRepository: HabitRepository;
@@ -52,7 +46,7 @@ export class HabitService {
     if (updateHabitDto.currentStreak !== undefined) habitUpdate.currentStreak = updateHabitDto.currentStreak;
     if (updateHabitDto.longestStreak !== undefined) habitUpdate.longestStreak = updateHabitDto.longestStreak;
     if (updateHabitDto.completedCount !== undefined) habitUpdate.completedCount = updateHabitDto.completedCount;
-    
+
     const entity = await this.habitRepository.update(habitUpdate);
     return HabitDto.importEntity(entity);
   }
@@ -64,20 +58,18 @@ export class HabitService {
 
   async findByFilter(filter: HabitFilterDto): Promise<HabitDto[]> {
     const entities = await this.habitRepository.findByFilter(filter);
-    return entities.map(entity => HabitDto.importEntity(entity));
+    return entities.map((entity) => HabitDto.importEntity(entity));
   }
-
 
   async page(
     filter: HabitPageFilterDto
   ): Promise<{ list: HabitDto[]; total: number; pageNum: number; pageSize: number }> {
-    const { list, total, pageNum, pageSize } =
-      await this.habitRepository.page(filter);
-    return { 
-      list: list.map(entity => HabitDto.importEntity(entity)), 
-      total, 
-      pageNum, 
-      pageSize 
+    const { list, total, pageNum, pageSize } = await this.habitRepository.page(filter);
+    return {
+      list: list.map((entity) => HabitDto.importEntity(entity)),
+      total,
+      pageNum,
+      pageSize,
     };
   }
 
@@ -107,13 +99,13 @@ export class HabitService {
     const activeFilter = { habitId, status: [TodoStatus.TODO] };
     const completedFilter = { habitId, status: [TodoStatus.DONE] };
     const abandonedFilter = { habitId, status: [TodoStatus.ABANDONED] };
-    
+
     const [activeTodos, completedTodos, abandonedTodos] = await Promise.all([
       this.todoRepository.findByFilter(activeFilter as any),
       this.todoRepository.findByFilter(completedFilter as any),
-      this.todoRepository.findByFilter(abandonedFilter as any)
+      this.todoRepository.findByFilter(abandonedFilter as any),
     ]);
-    
+
     const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
     return { activeTodos, completedTodos, abandonedTodos, totalCount };
   }
@@ -129,15 +121,15 @@ export class HabitService {
   }> {
     const habitEntity = await this.habitRepository.find(habitId);
     const habit = HabitDto.importEntity(habitEntity);
-    
+
     // 使用TodoRepository查询分析数据
     const [allTodos, completedTodos, abandonedTodos, recentTodos] = await Promise.all([
       this.todoRepository.findByFilter({ habitId } as any),
       this.todoRepository.findByFilter({ habitId, status: [TodoStatus.DONE] } as any),
       this.todoRepository.findByFilter({ habitId, status: [TodoStatus.ABANDONED] } as any),
-      this.todoRepository.findByFilter({ habitId } as any) // 这里需要添加排序和限制逻辑
+      this.todoRepository.findByFilter({ habitId } as any), // 这里需要添加排序和限制逻辑
     ]);
-    
+
     // 对最近的todos进行排序和限制（取最新的10条）
     const sortedRecentTodos = recentTodos
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
@@ -158,31 +150,19 @@ export class HabitService {
   }
 
   async abandon(id: string): Promise<void> {
-    await this.update(
-      id,
-      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED })
-    );
+    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED }));
   }
 
   async restore(id: string): Promise<void> {
-    await this.update(
-      id,
-      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
-    );
+    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE }));
   }
 
   async pauseHabit(id: string): Promise<void> {
-    await this.update(
-      id,
-      Object.assign(new UpdateHabitDto(), { status: HabitStatus.PAUSED })
-    );
+    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.PAUSED }));
   }
 
   async resumeHabit(id: string): Promise<void> {
-    await this.update(
-      id,
-      Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE })
-    );
+    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE }));
   }
 
   async completeHabit(id: string): Promise<void> {

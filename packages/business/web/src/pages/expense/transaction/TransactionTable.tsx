@@ -5,7 +5,7 @@ import { Table, Tag } from '@arco-design/web-react';
 import type { ColumnProps } from '@arco-design/web-react/es/Table/interface';
 import { useExpenses } from '../context';
 import { DEFAULT_CATEGORIES } from '../constants';
-import type { TransactionVo } from '@life-toolkit/vo/expense';
+import type { TransactionVo } from '@life-toolkit/vo';
 
 export default function TransactionTable() {
   const { transactionList } = useExpenses();

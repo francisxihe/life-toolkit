@@ -3,7 +3,7 @@ export interface MethodDecoratorInfo {
   name: string;
   verb: string;
   path: string;
-  paramStyle: "none" | "id" | "id+body" | "query" | "body";
+  paramStyle: 'none' | 'id' | 'id+body' | 'query' | 'body';
   description?: string;
   paramTypes?: {
     idType?: string;

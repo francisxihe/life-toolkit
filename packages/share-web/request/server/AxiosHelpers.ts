@@ -1,7 +1,7 @@
-import { AxiosInstance } from "axios";
-import { getEmbedAccessToken } from "./helper";
-import { debounce } from "lodash-es";
-import { Message } from "@arco-design/web-react";
+import { AxiosInstance } from 'axios';
+import { getEmbedAccessToken } from './helper';
+import { debounce } from 'lodash-es';
+import { Message } from '@arco-design/web-react';
 
 const debouncedError = debounce(Message.error, 500);
 
@@ -12,7 +12,7 @@ const debouncedError = debounce(Message.error, 500);
 export function responseSuccessHandler(response: any) {
   const resData = response.data;
 
-  if (response?.config.responseType === "blob") {
+  if (response?.config.responseType === 'blob') {
     // 如果是下载文件，返回结果是 Blob
     return Promise.resolve(resData);
   }
@@ -21,7 +21,7 @@ export function responseSuccessHandler(response: any) {
     return Promise.resolve(resData.data);
   }
 
-  console.error("http request error: ", response);
+  console.error('http request error: ', response);
   return Promise.reject(resData);
 }
 
@@ -35,36 +35,31 @@ export function responseErrorHandler(error: any) {
       // debouncedError('登录已超时，请重新登陆');
       // httpUnauthorizedToLogin();
     } else if (error.response.data.code == 21) {
-      debouncedError("token 校验错误");
-    } else if (
-      error.response.data.code == 40100 ||
-      error.response.data.code == 40200
-    ) {
-      debouncedError("用户名或密码错误");
+      debouncedError('token 校验错误');
+    } else if (error.response.data.code == 40100 || error.response.data.code == 40200) {
+      debouncedError('用户名或密码错误');
     } else if (error.response.data.code == 40400) {
-      debouncedError("验证码错误");
+      debouncedError('验证码错误');
     } else if (error.response.data.code == 40300) {
-      debouncedError(
-        error.response.data.message || "仅允许没有绑定其他方式的账号使用"
-      );
+      debouncedError(error.response.data.message || '仅允许没有绑定其他方式的账号使用');
     } else if (error.response.data.code == 40198) {
-      debouncedError("用户登录频繁，请一分钟后重试");
+      debouncedError('用户登录频繁，请一分钟后重试');
     } else if (error.response.data.code == 40199) {
-      debouncedError("密码错误次数超限，请一分钟后重试");
+      debouncedError('密码错误次数超限，请一分钟后重试');
     } else if (error.response.data.code == 40210) {
-      debouncedError("密码已失效，请联系管理员处理");
+      debouncedError('密码已失效，请联系管理员处理');
     } else if (error.response.data.code == 40220) {
-      debouncedError("手机号错误");
+      debouncedError('手机号错误');
     }
 
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
   }
 
-  let errorText = "";
+  let errorText = '';
   if (error.response && error.response.data) {
     errorText = error.response.data.message || error.response.data.msg;
   } else {
-    errorText = "未知错误";
+    errorText = '未知错误';
   }
 
   switch (error.response && error.response.code) {
@@ -72,20 +67,20 @@ export function responseErrorHandler(error: any) {
       handleAuthError(error);
       break;
     case 404:
-      errorText = "资源不存在";
+      errorText = '资源不存在';
       break;
     case 500:
     case 501:
     case 502:
     case 503:
     case 504:
-      errorText = "服务器异常";
+      errorText = '服务器异常';
       break;
     // 其他错误，直接抛出错误提示
     default:
   }
 
-  console.error("请求状态非 200", error);
+  console.error('请求状态非 200', error);
 
   return Promise.reject(error);
 }

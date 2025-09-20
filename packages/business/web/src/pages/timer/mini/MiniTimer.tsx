@@ -11,7 +11,6 @@ import { getTimeArr } from '../utils';
 import styles from './MiniTimer.module.css';
 import { useTimerContext } from '../context';
 
-
 const MiniTimer: React.FC = () => {
   const {
     countdown,

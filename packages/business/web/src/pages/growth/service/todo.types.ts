@@ -1,4 +1,4 @@
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo';
 
 export type TodoFormData = {
   name: string;
@@ -9,6 +9,9 @@ export type TodoFormData = {
   urgency?: number;
   planDate: string;
   planTimeRange?: [string, string];
-  repeat?: TodoVo['repeat'];
+  repeatConfig?: TodoVo['repeatConfig'];
+  source?: TodoVo['source'];
+  repeatId?: string;
   taskId?: string;
+  habitId?: string;
 };

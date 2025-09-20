@@ -1,4 +1,3 @@
-
 import { HabitStatus, Difficulty } from '@life-toolkit/enum';
 
 export const HABIT_STATUS_OPTIONS = [

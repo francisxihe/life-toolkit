@@ -3,6 +3,7 @@ trigger: model_decision
 description: 编写server DTO代码时
 globs:
 ---
+
 需要生成或修改DTO时
 
 # DTO 规范总览
@@ -56,16 +57,19 @@ packages/business/server/src/growth/{module}/dto/
 本规范包含以下子规范，请根据具体需求参考对应规范：
 
 ### 1. DTO Model 规范 (@dto-model.mdc)
+
 - 基础模型DTO和简化模型DTO的定义
 - Entity→DTO、DTO→VO的映射逻辑
 - 关联数据处理和类型安全设计
 
 ### 2. DTO Form 规范 (@dto-form.mdc)
+
 - 创建DTO和更新DTO的定义
 - 表单验证规则和字段映射
 - 关联数据处理和嵌套DTO设计
 
 ### 3. DTO Filter 规范 (@dto-filter.mdc)
+
 - 列表过滤DTO和分页过滤DTO的定义
 - 查询条件验证和VO映射逻辑
 - 复杂过滤模式和性能优化
@@ -76,18 +80,18 @@ packages/business/server/src/growth/{module}/dto/
 
 ```typescript
 // 重新导出所有DTO
-export * from "./{module}-model.dto";
-export * from "./{module}-form.dto";
-export * from "./{module}-filter.dto";
+export * from './{module}-model.dto';
+export * from './{module}-form.dto';
+export * from './{module}-filter.dto';
 ```
 
 ### 实际项目示例
 
 ```typescript
 // index.ts
-export * from "./entity-filter.dto";
-export * from "./entity-form.dto";
-export * from "./entity-model.dto";
+export * from './entity-filter.dto';
+export * from './entity-form.dto';
+export * from './entity-model.dto';
 ```
 
 ## 🔧 通用工具和最佳实践
@@ -100,7 +104,7 @@ import {
   OmitType, // 排除特定字段
   PartialType, // 所有字段变为可选
   IntersectionType, // 合并多个类型
-} from "@life-toolkit/mapped-types";
+} from 'francis-mapped-types';
 ```
 
 ### 2. 继承链设计
@@ -119,21 +123,34 @@ PageFilterDto → {Module}PageFiltersDto
 
 ```typescript
 import {
-  IsString, IsNumber, IsBoolean, IsEnum, IsArray,
-  IsOptional, IsISO8601, IsInt, IsEmail, IsUrl,
-  Min, Max, Length, IsDateString
-} from "class-validator";
-import { Type } from "class-transformer";
+  IsString,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+  IsArray,
+  IsOptional,
+  IsISO8601,
+  IsInt,
+  IsEmail,
+  IsUrl,
+  Min,
+  Max,
+  Length,
+  IsDateString,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 ```
 
 ## 🎯 最佳实践
 
 ### 职责分离原则
+
 - **Model DTO**: 数据结构定义，包含所有字段，用于内部传输和API响应
 - **Form DTO**: 表单操作验证，包含创建和更新所需的字段
 - **Filter DTO**: 查询条件验证，包含列表和分页的过滤参数
 
 ### 类型安全优先
+
 ```typescript
 // ✅ 推荐：使用 Mapped Types 复用类型定义
 export class UpdateEntityDto extends PartialType(CreateEntityDto) {}
@@ -149,7 +166,7 @@ export class UpdateEntityDto {
 ## 🧭 映射逻辑合并至 DTO
 
 - 将 Entity→DTO、DTO→VO、VO→DTO 的转换统一放入对应 DTO 文件中
-- 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportModelVo()`、`exportVo()`
+- 建议在具体 DTO 类中实现：`importEntity(entity)`、`exportWithoutRelationsVo()`、`exportVo()`
 - 列表/分页导出可提供静态辅助：`dtoListToListVo(dtoList)`、`dtoListToPageVo(dtoList, total, pageNum, pageSize)`
 - 关联对象仅做浅拷贝或调用对方 DTO 的导出方法，避免递归与循环引用
 - DTO 内部字段的日期保持为 Date；导出 VO 时统一用 dayjs 格式化为字符串
@@ -157,10 +174,7 @@ export class UpdateEntityDto {
 ### 映射模板示例
 
 ```typescript
-export class EntityDto extends IntersectionType(
-  BaseModelDto,
-  OmitType(Entity, ["related"] as const)
-) {
+export class EntityDto extends IntersectionType(BaseModelDto, OmitType(Entity, ['related'] as const)) {
   related?: any;
 
   // Entity → DTO
@@ -180,7 +194,7 @@ export class EntityDto extends IntersectionType(
   }
 
   // DTO → 列表项 VO（简化）
-  exportModelVo(): EntityVO.EntityItemVo {
+  exportWithoutRelationsVo(): EntityVO.EntityItemVo {
     return {
       ...BaseMapper.dtoToVo(this),
     } as EntityVO.EntityItemVo;
@@ -203,18 +217,21 @@ export class EntityDto extends IntersectionType(
 在创建或修改DTO时，请确认以下事项：
 
 ### 基础结构
+
 - [ ] 文件命名符合规范 (`{module}-{type}.dto.ts`)
 - [ ] 类命名符合规范 (`{Module}{Type}Dto`)
-- [ ] 使用了合适的 Mapped Types (`@life-toolkit/mapped-types`)
+- [ ] 使用了合适的 Mapped Types (`francis-mapped-types`)
 - [ ] 导入了必要的验证装饰器
 
 ### 继承关系
+
 - [ ] 正确继承自 `BaseModelDto`
 - [ ] 使用了合适的工具类型 (PickType, OmitType, PartialType等)
 - [ ] 避免了重复的字段定义
 - [ ] 继承链清晰合理
 
 ### 验证规则
+
 - [ ] 所有字段都有适当的验证装饰器
 - [ ] 可选字段使用了 `@IsOptional()`
 - [ ] 数字字段使用了 `@Type(() => Number)`
@@ -224,12 +241,14 @@ export class EntityDto extends IntersectionType(
 - [ ] 字符串数组使用了 `@IsString({ each: true })`
 
 ### 字段设计
+
 - [ ] 字段类型定义正确
 - [ ] 关联字段处理合理（使用ID列表或嵌套DTO）
 - [ ] 过滤条件完整且实用
 - [ ] 默认值设置合理
 
 ### 代码质量
+
 - [ ] 导入了必要的依赖
 - [ ] 避免了循环依赖
 - [ ] 注释清晰准确

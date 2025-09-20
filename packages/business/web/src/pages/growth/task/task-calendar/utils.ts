@@ -152,7 +152,7 @@ const tzOffset = (timestamp, timezone) => {
     fixedHour,
     filled[4],
     filled[5],
-    0
+    0,
   );
   let asTS = +timestamp;
   const over = asTS % 1000;
@@ -188,7 +188,7 @@ export function timezoneToOffset(inputTs: number, timezone: string) {
   return fixOffset(
     inputTs,
     tzOffset(new Date().getTime(), timezone),
-    timezone
+    timezone,
   )[1];
 }
 
@@ -204,7 +204,7 @@ export function toTimezone(
   time: Dayjs,
   utcOffset?: number,
   timezone?: string,
-  local?: boolean
+  local?: boolean,
 ): Dayjs {
   if (!time || (isUndefined(utcOffset) && !timezone)) {
     return time;
@@ -226,7 +226,7 @@ export function toTimezone(
 export function toLocal(
   time: Dayjs,
   utcOffset?: number,
-  timezone?: string
+  timezone?: string,
 ): Dayjs {
   return toTimezone(time, utcOffset, timezone, true);
 }
@@ -248,7 +248,7 @@ export function getDayjsValue(
   time,
   format: string | string[],
   utcOffset?: number,
-  timezone?: string
+  timezone?: string,
 ) {
   if (!time) {
     return undefined;
@@ -306,7 +306,7 @@ export function getSortedDayjsArray(values?: Dayjs[]) {
 
 export function isDayjsChange(
   prevValue: Dayjs | undefined,
-  currentValue: Dayjs | undefined
+  currentValue: Dayjs | undefined,
 ) {
   if (currentValue === undefined && prevValue === undefined) {
     return false;
@@ -320,7 +320,7 @@ export function isDayjsChange(
 
 export function isDayjsArrayChange(
   prevValue: Dayjs[] | undefined,
-  currentValue: Dayjs[] | undefined
+  currentValue: Dayjs[] | undefined,
 ) {
   if (currentValue === undefined && prevValue === undefined) {
     return false;
@@ -338,7 +338,7 @@ export function isDayjsArrayChange(
 export function isValidTimeString(
   str: string,
   format: string | string[],
-  index?: number
+  index?: number,
 ) {
   return (
     typeof str === 'string' &&

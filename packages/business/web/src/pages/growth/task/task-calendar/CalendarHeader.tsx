@@ -1,7 +1,4 @@
-import {
-  IconLeft,
-  IconRight,
-} from '@arco-design/web-react/icon';
+import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import { dayjs } from './utils';
 import { useCalendarContext } from './context';
 import { Radio, Button } from '@arco-design/web-react';

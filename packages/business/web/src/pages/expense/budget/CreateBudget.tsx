@@ -10,7 +10,7 @@ import {
 import { BUDGET_PERIODS, DEFAULT_CATEGORIES } from '../constants';
 import { useState, useRef } from 'react';
 import { openModal } from '@/hooks/OpenModal';
-import { CreateBudgetVo } from '@life-toolkit/vo/expense';
+import { CreateBudgetVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 
 const FormItem = Form.Item;
@@ -101,7 +101,7 @@ export function useCreateBudget({
           }}
         />
       ),
-      onOk:async () => {
+      onOk: async () => {
         onConfirm(formDataRef.current as CreateBudgetVo);
       },
     });

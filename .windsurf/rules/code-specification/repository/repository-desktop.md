@@ -13,16 +13,18 @@ Desktop Repository 位于 `apps/desktop/src/database/{module}/` 目录中，负�
 ## 🏗️ 基础架构
 
 ### 文件结构
+
 ```
 apps/desktop/src/database/{module}/
 └── {module}.repository.ts     # Desktop Repository 实现
 ```
 
 ### 导入规范
+
 ```typescript
 // 1. 导入 TypeORM 相关类
-import { Repository } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { Repository } from 'typeorm';
+import { AppDataSource } from '../../database.config';
 
 // 2. 导入 Business Layer Interface 和类型
 import {
@@ -33,45 +35,44 @@ import {
   ModuleDto,
   ModuleMapper,
   Module,
-} from "@life-toolkit/business-server";
+} from '@life-toolkit/business-server';
 
 // 3. 导入枚举和类型
-import { ModuleStatus } from "@life-toolkit/enum";
+import { ModuleStatus } from '@life-toolkit/enum';
 ```
 
 ## 📋 实现规范
 
 ### 基础 Repository 实现
+
 ```typescript
 export class ModuleRepository {
   private repo: Repository<Module> = AppDataSource.getRepository(Resource);
 
   // 查询条件构建器
   private buildQuery(filter: ModuleListFilterDto) {
-    const qb = this.repo
-      .createQueryBuilder("module")
-      .leftJoinAndSelect("module.related", "related");
+    const qb = this.repo.createQueryBuilder('module').leftJoinAndSelect('module.related', 'related');
 
     // 动态条件构建
     if (filter.status !== undefined) {
-      qb.andWhere("module.status = :status", { status: filter.status });
+      qb.andWhere('module.status = :status', { status: filter.status });
     }
     if (filter.importance !== undefined) {
-      qb.andWhere("module.importance = :importance", {
+      qb.andWhere('module.importance = :importance', {
         importance: filter.importance,
       });
     }
     if (filter.keyword) {
-      qb.andWhere("module.title LIKE :kw", { kw: `%${filter.keyword}%` });
+      qb.andWhere('module.title LIKE :kw', { kw: `%${filter.keyword}%` });
     }
     if (filter.planDateStart) {
-      qb.andWhere("module.planDate >= :ds", { ds: filter.planDateStart });
+      qb.andWhere('module.planDate >= :ds', { ds: filter.planDateStart });
     }
     if (filter.planDateEnd) {
-      qb.andWhere("module.planDate <= :de", { de: filter.planDateEnd });
+      qb.andWhere('module.planDate <= :de', { de: filter.planDateEnd });
     }
     if (filter.relatedId) {
-      qb.andWhere("module.relatedId = :relatedId", { relatedId: filter.relatedId });
+      qb.andWhere('module.relatedId = :relatedId', { relatedId: filter.relatedId });
     }
 
     return qb;
@@ -92,10 +93,7 @@ export class ModuleRepository {
     return ModuleDto.importEntity(saved);
   }
 
-  async createWithExtras(
-    createDto: CreateModuleDto,
-    extras: Partial<Resource>
-  ): Promise<ResourceDto> {
+  async createWithExtras(createDto: CreateModuleDto, extras: Partial<Resource>): Promise<ResourceDto> {
     const entity = this.repo.create({
       name: createDto.name,
       description: createDto.description,
@@ -116,7 +114,7 @@ export class ModuleRepository {
 
   async findByFilter(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
+    const list = await qb.orderBy('resource.createdAt', 'DESC').getMany();
     return list.map((item) => ModuleDto.importEntity(item));
   }
 
@@ -132,7 +130,7 @@ export class ModuleRepository {
     const [list, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
-      .orderBy("resource.createdAt", "DESC")
+      .orderBy('resource.createdAt', 'DESC')
       .getManyAndCount();
 
     return {
@@ -145,26 +143,21 @@ export class ModuleRepository {
 
   async update(id: string, updateDto: UpdateModuleDto): Promise<ResourceDto> {
     const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error("Resource not found");
+    if (!entity) throw new Error('Resource not found');
 
     updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleDto.importEntity(saved);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateDto: UpdateModuleDto
-  ): Promise<ResourceDto[]> {
+  async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ResourceDto[]> {
     await this.repo.update(includeIds, updateDto);
     const qb = this.repo
-      .createQueryBuilder("resource")
-      .leftJoinAndSelect("resource.relatedEntity", "relatedEntity")
-      .leftJoinAndSelect("resource.anotherEntity", "anotherEntity");
+      .createQueryBuilder('resource')
+      .leftJoinAndSelect('resource.relatedEntity', 'relatedEntity')
+      .leftJoinAndSelect('resource.anotherEntity', 'anotherEntity');
 
-    const list = await qb
-      .where("resource.id IN (:...ids)", { ids: includeIds })
-      .getMany();
+    const list = await qb.where('resource.id IN (:...ids)', { ids: includeIds }).getMany();
 
     return list.map((item) => ModuleDto.importEntity(item));
   }
@@ -175,20 +168,20 @@ export class ModuleRepository {
   }
 
   async deleteByFilter(filter: ModulePageFiltersDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder("resource");
+    const qb = this.repo.createQueryBuilder('resource');
     if (filter.relatedIds && filter.relatedIds.length > 0) {
-      qb.where("resource.relatedId IN (:...ids)", { ids: filter.relatedIds });
+      qb.where('resource.relatedId IN (:...ids)', { ids: filter.relatedIds });
     }
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
     const resource = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ["relatedEntity", "anotherEntity"],
+      relations: relations ?? ['relatedEntity', 'anotherEntity'],
     });
-    if (!resource) throw new Error("Resource not found");
+    if (!resource) throw new Error('Resource not found');
     return ModuleDto.importEntity(resource);
   }
 
@@ -202,10 +195,7 @@ export class ModuleRepository {
     if (items.length) await this.repo.softRemove(items);
   }
 
-  async findOneByRepeatAndDate(
-    repeatId: string,
-    date: Date
-  ): Promise<ResourceDto | null> {
+  async findOneByRepeatAndDate(repeatId: string, date: Date): Promise<ResourceDto | null> {
     const resource = await this.repo.findOne({
       where: { repeatId, planDate: date },
     });
@@ -217,16 +207,19 @@ export class ModuleRepository {
 ## 🎯 设计原则
 
 ### 1. 轻量级查询优化
+
 - 优先考虑本地存储的性能特点
 - 简化复杂查询逻辑
 - 优化数据加载策略
 
 ### 2. 离线数据支持
+
 - 支持本地数据缓存
 - 处理数据同步逻辑
 - 实现冲突解决机制
 
 ### 3. 资源管理优化
+
 - 控制内存使用
 - 实现数据分页加载
 - 优化大数据集处理
@@ -234,6 +227,7 @@ export class ModuleRepository {
 ## 📝 核心方法实现
 
 ### 查询条件构建器
+
 ```typescript
 private buildQuery(filter: ModuleListFilterDto) {
   const qb = this.repo
@@ -270,6 +264,7 @@ private buildQuery(filter: ModuleListFilterDto) {
 ```
 
 ### 创建方法实现
+
 ```typescript
 async create(createDto: CreateModuleDto): Promise<ResourceDto> {
   // 1. 使用 DTO 创建实体
@@ -296,6 +291,7 @@ async create(createDto: CreateModuleDto): Promise<ResourceDto> {
 ```
 
 ### 分页查询实现
+
 ```typescript
 async page(filter: ModulePageFiltersDto): Promise<{
   list: ResourceDto[];
@@ -326,6 +322,7 @@ async page(filter: ModulePageFiltersDto): Promise<{
 ```
 
 ### 批量更新实现
+
 ```typescript
 async batchUpdate(
   includeIds: string[],
@@ -351,9 +348,10 @@ async batchUpdate(
 ## 🔧 高级功能实现
 
 ### 关联查询处理
+
 ```typescript
 // 支持动态关联加载
-async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
   const resource = await this.repo.findOne({
     where: { id },
     relations: relations ?? ["relatedEntity", "anotherEntity"],
@@ -368,6 +366,7 @@ async findById(id: string, relations?: string[]): Promise<ResourceDto> {
 ```
 
 ### 软删除实现
+
 ```typescript
 async softDeleteByRelatedIds(relatedIds: string[]): Promise<void> {
   if (!relatedIds || relatedIds.length === 0) return;
@@ -387,16 +386,18 @@ async softDeleteByRelatedIds(relatedIds: string[]): Promise<void> {
 ## 🚀 性能优化
 
 ### 1. 查询优化
+
 ```typescript
 // 使用索引优化查询
 const qb = this.repo
-  .createQueryBuilder("resource")
-  .where("resource.status = :status", { status })
-  .andWhere("resource.planDate BETWEEN :start AND :end", { start, end })
-  .orderBy("resource.createdAt", "DESC");
+  .createQueryBuilder('resource')
+  .where('resource.status = :status', { status })
+  .andWhere('resource.planDate BETWEEN :start AND :end', { start, end })
+  .orderBy('resource.createdAt', 'DESC');
 ```
 
 ### 2. 批量操作优化
+
 ```typescript
 // 使用事务确保数据一致性
 await this.repo.manager.transaction(async (manager) => {
@@ -406,6 +407,7 @@ await this.repo.manager.transaction(async (manager) => {
 ```
 
 ### 3. 内存管理
+
 ```typescript
 // 分批处理大数据集
 const batchSize = 100;
@@ -420,28 +422,33 @@ for (let i = 0; i < includeIds.length; i += batchSize) {
 在实现 Desktop Repository 时，请确认：
 
 ### 基础结构
+
 - [ ] 文件路径符合规范 (`apps/desktop/src/database/{module}/{module}.repository.ts`)
 - [ ] 正确导入 Business Interface 和类型
 - [ ] 实现了所有 Interface 定义的方法
 
 ### 实现规范
+
 - [ ] 使用 TypeORM Repository 模式
 - [ ] 正确实现查询条件构建器
 - [ ] 实现了分页查询逻辑
 - [ ] 正确处理批量操作
 
 ### 数据映射
+
 - [ ] 在 DTO 中进行 Entity/DTO 转换
 - [ ] 正确处理关联关系
 - [ ] 实现软删除逻辑
 
 ### 性能优化
+
 - [ ] 优化查询语句
 - [ ] 合理使用索引
 - [ ] 控制内存使用
 - [ ] 处理大数据集
 
 ### 错误处理
+
 - [ ] 实现异常处理机制
 - [ ] 提供有意义的错误信息
 - [ ] 确保数据一致性
@@ -451,8 +458,8 @@ for (let i = 0; i < includeIds.length; i += batchSize) {
 ```typescript
 // apps/desktop/src/database/resource/resource.repository.ts
 
-import { Repository, In } from "typeorm";
-import { AppDataSource } from "../../database.config";
+import { Repository, In } from 'typeorm';
+import { AppDataSource } from '../../database.config';
 import {
   CreateModuleDto,
   UpdateModuleDto,
@@ -461,46 +468,46 @@ import {
   ResourceDto,
   ModuleMapper,
   Resource,
-} from "@life-toolkit/business-server";
-import { ModuleStatus, ResourceType } from "@life-toolkit/enum";
+} from '@life-toolkit/business-server';
+import { ModuleStatus, ResourceType } from '@life-toolkit/enum';
 
 export class ModuleRepository {
   private repo: Repository<Module> = AppDataSource.getRepository(Resource);
 
   private buildQuery(filter: ModuleListFilterDto) {
     const qb = this.repo
-      .createQueryBuilder("resource")
-      .leftJoinAndSelect("resource.relatedEntity", "relatedEntity")
-      .leftJoinAndSelect("resource.anotherEntity", "anotherEntity");
+      .createQueryBuilder('resource')
+      .leftJoinAndSelect('resource.relatedEntity', 'relatedEntity')
+      .leftJoinAndSelect('resource.anotherEntity', 'anotherEntity');
 
     if (filter.status !== undefined) {
-      qb.andWhere("resource.status = :status", { status: filter.status });
+      qb.andWhere('resource.status = :status', { status: filter.status });
     }
     if (filter.importance !== undefined) {
-      qb.andWhere("resource.importance = :importance", {
+      qb.andWhere('resource.importance = :importance', {
         importance: filter.importance,
       });
     }
     if (filter.urgency !== undefined) {
-      qb.andWhere("resource.urgency = :urgency", { urgency: filter.urgency });
+      qb.andWhere('resource.urgency = :urgency', { urgency: filter.urgency });
     }
     if (filter.relatedId) {
-      qb.andWhere("resource.relatedId = :relatedId", { relatedId: filter.relatedId });
+      qb.andWhere('resource.relatedId = :relatedId', { relatedId: filter.relatedId });
     }
     if (filter.keyword) {
-      qb.andWhere("resource.name LIKE :kw", { kw: `%${filter.keyword}%` });
+      qb.andWhere('resource.name LIKE :kw', { kw: `%${filter.keyword}%` });
     }
     if (filter.planDateStart) {
-      qb.andWhere("resource.planDate >= :ds", { ds: filter.planDateStart });
+      qb.andWhere('resource.planDate >= :ds', { ds: filter.planDateStart });
     }
     if (filter.planDateEnd) {
-      qb.andWhere("resource.planDate <= :de", { de: filter.planDateEnd });
+      qb.andWhere('resource.planDate <= :de', { de: filter.planDateEnd });
     }
     if (filter.doneDateStart) {
-      qb.andWhere("resource.doneAt >= :dds", { dds: filter.doneDateStart });
+      qb.andWhere('resource.doneAt >= :dds', { dds: filter.doneDateStart });
     }
     if (filter.doneDateEnd) {
-      qb.andWhere("resource.doneAt <= :dde", { dde: filter.doneDateEnd });
+      qb.andWhere('resource.doneAt <= :dde', { dde: filter.doneDateEnd });
     }
 
     return qb;
@@ -524,10 +531,7 @@ export class ModuleRepository {
     return ModuleDto.importEntity(saved);
   }
 
-  async createWithExtras(
-    createDto: CreateModuleDto,
-    extras: Partial<Resource>
-  ): Promise<ResourceDto> {
+  async createWithExtras(createDto: CreateModuleDto, extras: Partial<Resource>): Promise<ResourceDto> {
     const entity = this.repo.create({
       name: createDto.name,
       description: createDto.description,
@@ -548,7 +552,7 @@ export class ModuleRepository {
 
   async findByFilter(filter: ModuleListFilterDto): Promise<ResourceDto[]> {
     const qb = this.buildQuery(filter);
-    const list = await qb.orderBy("resource.createdAt", "DESC").getMany();
+    const list = await qb.orderBy('resource.createdAt', 'DESC').getMany();
     return list.map((item) => ModuleDto.importEntity(item));
   }
 
@@ -564,7 +568,7 @@ export class ModuleRepository {
     const [list, total] = await qb
       .skip((pageNum - 1) * pageSize)
       .take(pageSize)
-      .orderBy("resource.createdAt", "DESC")
+      .orderBy('resource.createdAt', 'DESC')
       .getManyAndCount();
 
     return {
@@ -577,26 +581,21 @@ export class ModuleRepository {
 
   async update(id: string, updateDto: UpdateModuleDto): Promise<ResourceDto> {
     const entity = await this.repo.findOne({ where: { id } });
-    if (!entity) throw new Error("Resource not found");
+    if (!entity) throw new Error('Resource not found');
 
     updateDto.appendToUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleDto.importEntity(saved);
   }
 
-  async batchUpdate(
-    includeIds: string[],
-    updateDto: UpdateModuleDto
-  ): Promise<ResourceDto[]> {
+  async batchUpdate(includeIds: string[], updateDto: UpdateModuleDto): Promise<ResourceDto[]> {
     await this.repo.update(includeIds, updateDto);
     const qb = this.repo
-      .createQueryBuilder("resource")
-      .leftJoinAndSelect("resource.relatedEntity", "relatedEntity")
-      .leftJoinAndSelect("resource.anotherEntity", "anotherEntity");
+      .createQueryBuilder('resource')
+      .leftJoinAndSelect('resource.relatedEntity', 'relatedEntity')
+      .leftJoinAndSelect('resource.anotherEntity', 'anotherEntity');
 
-    const list = await qb
-      .where("resource.id IN (:...ids)", { ids: includeIds })
-      .getMany();
+    const list = await qb.where('resource.id IN (:...ids)', { ids: includeIds }).getMany();
 
     return list.map((item) => ModuleDto.importEntity(item));
   }
@@ -607,20 +606,20 @@ export class ModuleRepository {
   }
 
   async deleteByFilter(filter: ModulePageFiltersDto): Promise<void> {
-    const qb = this.repo.createQueryBuilder("resource");
+    const qb = this.repo.createQueryBuilder('resource');
     if (filter.relatedIds && filter.relatedIds.length > 0) {
-      qb.where("resource.relatedId IN (:...ids)", { ids: filter.relatedIds });
+      qb.where('resource.relatedId IN (:...ids)', { ids: filter.relatedIds });
     }
     const list = await qb.getMany();
     if (list.length) await this.repo.delete(list.map((x) => x.id));
   }
 
-  async findById(id: string, relations?: string[]): Promise<ResourceDto> {
+  async findWithRelations(id: string, relations?: string[]): Promise<ResourceDto> {
     const resource = await this.repo.findOne({
       where: { id },
-      relations: relations ?? ["relatedEntity", "anotherEntity"],
+      relations: relations ?? ['relatedEntity', 'anotherEntity'],
     });
-    if (!resource) throw new Error("Resource not found");
+    if (!resource) throw new Error('Resource not found');
     return ModuleDto.importEntity(resource);
   }
 
@@ -634,10 +633,7 @@ export class ModuleRepository {
     if (items.length) await this.repo.softRemove(items);
   }
 
-  async findOneByRepeatAndDate(
-    repeatId: string,
-    date: Date
-  ): Promise<ResourceDto | null> {
+  async findOneByRepeatAndDate(repeatId: string, date: Date): Promise<ResourceDto | null> {
     const resource = await this.repo.findOne({
       where: { repeatId, planDate: date },
     });

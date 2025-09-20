@@ -30,7 +30,7 @@ const filterData = (
     'filterType[]'?: string[];
     'createdTime[]'?: string[];
     'status[]'?: string;
-  } = {}
+  } = {},
 ) => {
   const {
     id,
@@ -51,12 +51,12 @@ const filterData = (
   }
   if (contentType) {
     result = result.filter((item) =>
-      contentType.includes(item.contentType.toString())
+      contentType.includes(item.contentType.toString()),
     );
   }
   if (filterType) {
     result = result.filter((item) =>
-      filterType.includes(item.filterType.toString())
+      filterType.includes(item.filterType.toString()),
     );
   }
   if (createdTime && createdTime.length === 2) {

@@ -1,8 +1,8 @@
-import { Inject, Injectable, forwardRef } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository, TreeRepository, In } from "typeorm";
-import { Task } from "@life-toolkit/business-server";
-import { TodoService } from "../todo/todo.service";
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, TreeRepository, In } from 'typeorm';
+import { Task } from '@life-toolkit/business-server';
+import { TodoService } from '../todo/todo.service';
 @Injectable()
 export class TaskTreeService {
   constructor(
@@ -32,11 +32,11 @@ export class TaskTreeService {
     }
     const parentTask = await treeRepo.findOne({
       where: { id: parentId },
-      relations: ["children"],
+      relations: ['children'],
     });
 
     if (!parentTask) {
-      throw new Error("Parent task not found");
+      throw new Error('Parent task not found');
     }
 
     parentTask.children.push(task);
@@ -61,7 +61,7 @@ export class TaskTreeService {
     };
 
     const allIds: string[] = [];
-    
+
     if (Array.isArray(task)) {
       for (const t of task) {
         const descendantsTree = await treeRepo.findDescendantsTree(t);

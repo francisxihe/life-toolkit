@@ -1,11 +1,13 @@
+import dayjs from 'dayjs';
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { IntersectionType, OmitType } from '@life-toolkit/mapped-types';
-import { TodoRepeat } from '../todo-repeat.entity';
+import { IntersectionType } from 'francis-mapped-types';
+import { TodoRepeat, TodoRepeatWithoutRelations } from '../todo-repeat.entity';
 import { Todo } from '../../todo/todo.entity';
 import type { Todo as TodoVO } from '@life-toolkit/vo';
-import dayjs from 'dayjs';
 
-export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoRepeat, ['todos'] as const)) {
+export class TodoRepeatWithoutRelationsDto extends TodoRepeatWithoutRelations {}
+
+export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWithoutRelationsDto) {
   todos?: Todo[];
 
   importEntity(entity: TodoRepeat) {
@@ -16,7 +18,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoR
     this.repeatEndMode = entity.repeatEndMode;
     this.repeatEndDate = entity.repeatEndDate;
     this.repeatTimes = entity.repeatTimes;
-    this.repeatedTimes = entity.repeatedTimes;
     this.name = entity.name;
     this.description = entity.description;
     this.importance = entity.importance;
@@ -31,10 +32,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoR
   }
 
   exportVo(): TodoVO.TodoVo {
-    return this.exportModelVo();
-  }
-
-  exportModelVo(): TodoVO.TodoModelVo {
     return {
       id: this.id,
       // 重复配置相关字段
@@ -47,21 +44,17 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, OmitType(TodoR
       abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       createdAt: dayjs(this.createdAt).format('YYYY-MM-DD HH:mm:ss'),
       updatedAt: dayjs(this.updatedAt).format('YYYY-MM-DD HH:mm:ss'),
-
       planDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
 
-      repeat: {
-        repeatStartDate: this.repeatStartDate ? dayjs(this.repeatStartDate).format('YYYY-MM-DD') : undefined,
+      repeatConfig: {
         currentDate: dayjs(this.currentDate).format('YYYY-MM-DD'),
+        repeatStartDate: dayjs(this.repeatStartDate).format('YYYY-MM-DD'),
         repeatMode: this.repeatMode,
         repeatConfig: this.repeatConfig,
         repeatEndMode: this.repeatEndMode,
         repeatEndDate: this.repeatEndDate,
         repeatTimes: this.repeatTimes,
-        repeatedTimes: this.repeatedTimes,
       },
     };
   }
 }
-
-export class TodoRepeatModelDto extends OmitType(TodoRepeatDto, ['todos'] as const) {}

@@ -4142,7 +4142,7 @@ packages:
     resolution: {integrity: sha512-NUdh0aDavY2og7IbBPenWqR9exH+E26Sv8e0/eTe1tltDGZL+GtBkDAnnyBtmekfK6/Dq3MkcGtzXFEd1LQrtg==}
     engines: {node: '>= 0.4'}
 
-  string.prototype.repeat@1.0.0:
+  string.prototype.repeatConfig@1.0.0:
     resolution: {integrity: sha512-0u/TldDbKD8bFCQ/4f5+mNRrXwZ8hg2w7ZR8wa16e8z9XpePWl3eGEcUD0OXpEH/VJH/2G3gjUtR3ZOiBe2S/w==}
 
   string.prototype.trim@1.2.9:
@@ -7933,7 +7933,7 @@ snapshots:
       resolve: 2.0.0-next.5
       semver: 6.3.1
       string.prototype.matchall: 4.0.11
-      string.prototype.repeat: 1.0.0
+      string.prototype.repeatConfig: 1.0.0
 
   eslint-rule-composer@0.3.0: {}
 
@@ -9588,7 +9588,7 @@ snapshots:
       set-function-name: 2.0.2
       side-channel: 1.0.6
 
-  string.prototype.repeat@1.0.0:
+  string.prototype.repeatConfig@1.0.0:
     dependencies:
       define-properties: 1.2.1
       es-abstract: 1.23.5

@@ -1,15 +1,14 @@
-import { BaseModelVo } from "../common/model.vo";
+import { BaseEntityVo } from '../common';
 
 export interface BudgetModelVo {
   category: string;
   amount: number;
-  period: "monthly" | "yearly";
+  period: 'monthly' | 'yearly';
   startDate: string;
   endDate?: string;
   spent: number;
 }
 
-export type BudgetVo = BaseModelVo & BudgetModelVo;
+export type BudgetVo = BaseEntityVo & BudgetModelVo;
 
-
-export type CreateBudgetVo = Omit<BudgetModelVo, "spent">;
+export type CreateBudgetVo = Omit<BudgetModelVo, 'spent'>;

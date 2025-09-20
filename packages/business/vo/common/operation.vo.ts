@@ -7,7 +7,3 @@ export interface OperationBatchResultVo {
   result: 'success' | 'failed';
   message?: string;
 }
-
-export type OperationByIdListVo = {
-  includeIds: string[];
-};

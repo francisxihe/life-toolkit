@@ -1,10 +1,10 @@
 import dayjs, { Dayjs } from 'dayjs';
 import { useCalendarContext } from './context';
-import { TaskVo } from '@life-toolkit/vo/growth';
+import { TaskVo } from '@life-toolkit/vo';
 import { useTaskDetail } from '../../components/TaskDetail';
 import { useState, useMemo } from 'react';
 import clsx from 'clsx';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { TaskStatus } from '@life-toolkit/enum';
 
 function TaskItem({ task }: { task: TaskVo }) {

@@ -48,7 +48,7 @@
 }
 
 .flip .item .up::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 87px;
   left: 0;
@@ -184,4 +184,4 @@
   100% {
     opacity: 0;
   }
-} 
+}

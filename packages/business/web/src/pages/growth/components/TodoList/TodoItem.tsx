@@ -5,30 +5,17 @@ import { isToday } from 'date-fns';
 import { FlexibleContainer } from 'francis-component-react';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
+import { TodoSource } from '@life-toolkit/enum';
 
 const { Paragraph } = Typography;
 
 export type TodoItemProps = {
-  todo: {
-    id: TodoVo['id'];
-    name: TodoVo['name'];
-    description?: TodoVo['description'];
-    status?: TodoVo['status'];
-    tags?: TodoVo['tags'];
-    importance?: TodoVo['importance'];
-    urgency?: TodoVo['urgency'];
-    planDate?: TodoVo['planDate'];
-    planStartAt?: TodoVo['planStartAt'];
-    planEndAt?: TodoVo['planEndAt'];
-    repeat?: TodoVo['repeat'];
-    doneAt?: TodoVo['doneAt'];
-    abandonedAt?: TodoVo['abandonedAt'];
-  };
+  todo: TodoWithoutRelationsVo;
   onClickTodo: (id: string) => Promise<void>;
   refreshTodoList: () => Promise<void>;
   TriggerCheckbox: React.ReactNode;
@@ -52,8 +39,10 @@ function TodoItem(props: TodoItemProps) {
           <div
             className={clsx(['flex items-center justify-between', 'leading-8'])}
           >
-            <span className="text-text-1">{todo.name}</span>
-
+            <span className="text-text-1">
+              {todo.source === TodoSource.IS_REPEAT && <SiteIcon id={'repeat'} />}
+              {todo.name}
+            </span>
             <div className="h-8 flex items-center">
               <Popover
                 trigger="click"

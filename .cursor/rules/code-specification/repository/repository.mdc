@@ -128,7 +128,7 @@ export interface BaseRepository<TDto, TCreateModuleDto, TUpdateModuleDto, TFilte
   // 查询
   findByFilter(filterModuleListFilterDto): Promise<TDto[]>;
   page(filterModuleListFilterDto & PageFilter): Promise<PageModuleDto>>;
-  findById(id: string, relations?: string[]): Promise<TDto>;
+  findWithRelations(id: string, relations?: string[]): Promise<TDto>;
   findOneBy(condition: any): Promise<TDto | null>;
 
   // 更新

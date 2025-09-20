@@ -11,7 +11,6 @@ export class ExcelController {
   // async uploadFile(@UploadedFile() file: Express.Multer.File) {
   //   return this.excelService.processExcelFile(file);
   // }
-
   @Get()
   async getData(@Query('search') search: string) {
     return this.excelService.getData(search);

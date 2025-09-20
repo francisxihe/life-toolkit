@@ -3,7 +3,7 @@
 import { Input, Select, Popover } from '@arco-design/web-react';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TodoFormData } from '../../service';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import IconSelector from '../IconSelector';
 import DateTimeTool from './DateTimeTool';
 import dayjs from 'dayjs';
@@ -61,14 +61,15 @@ function TodoCreatorMain(props: {
               formData={{
                 date: dayjs(todoFormData.planDate),
                 timeRange: todoFormData.planTimeRange as [string, string],
-                repeat: todoFormData.repeat,
+                repeatConfig: todoFormData.repeatConfig,
               }}
               onChangeData={(data) => {
                 const _formData = {
                   ...todoFormData,
                   planDate: data.date.format('YYYY-MM-DD'),
                   planTimeRange: data.timeRange,
-                  repeat: data.repeat as TodoFormData['repeat'],
+                  repeatConfig:
+                    data.repeatConfig as TodoFormData['repeatConfig'],
                 };
                 setTodoFormData(_formData);
               }}

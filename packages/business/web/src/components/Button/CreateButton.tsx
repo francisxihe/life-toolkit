@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from '@arco-design/web-react';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 
 export function CreateButton({ ...props }: ButtonProps) {
   return (

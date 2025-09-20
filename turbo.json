@@ -46,11 +46,6 @@
       "cache": false,
       "persistent": true,
       "inputs": ["apps/server/**/*.ts", "apps/web/**/*.ts"]
-    },
-    "sync:entity": {
-      "cache": false,
-      "persistent": true,
-      "inputs": ["apps/supporter/**/*.ts"]
     }
   }
 }

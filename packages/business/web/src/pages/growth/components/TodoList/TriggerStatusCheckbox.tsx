@@ -1,11 +1,13 @@
-import { Checkbox, Modal } from '@arco-design/web-react';
+import { Checkbox } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo';
+import { TodoSource } from '@life-toolkit/enum';
 
 export default function TriggerStatusCheckbox(props: {
   todo: {
     status: TodoVo['status'];
+    source: TodoVo['source'];
     id: string;
   };
   type: 'todo' | 'sub-todo';
@@ -29,8 +31,13 @@ export default function TriggerStatusCheckbox(props: {
             await restore();
             return;
           }
-          await TodoService.batchDoneTodo({
-            includeIds: [todo.id],
+          await TodoService.doneBatchTodo({
+            todoWithRepeatList: [
+              {
+                id: todo.id,
+                source: todo.source,
+              },
+            ],
           });
           await props.onChange();
         }}

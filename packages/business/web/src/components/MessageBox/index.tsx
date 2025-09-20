@@ -57,7 +57,7 @@ function DropContent() {
   useEffect(() => {
     const groupData: { [key: string]: MessageListType } = groupBy(
       sourceData,
-      'type'
+      'type',
     );
     setGroupData(groupData);
   }, [sourceData]);

@@ -13,7 +13,7 @@ import {
   Typography,
 } from '@arco-design/web-react';
 import { HabitController } from '@life-toolkit/api';
-import { CreateHabitVo, GoalVo } from '@life-toolkit/vo/growth';
+import { CreateHabitVo, GoalVo } from '@life-toolkit/vo';
 import { Difficulty } from '@life-toolkit/enum';
 import dayjs from 'dayjs';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';

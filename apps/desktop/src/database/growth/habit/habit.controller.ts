@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from 'electron-ipc-restful';
 import type { Habit as HabitVO } from '@life-toolkit/vo';
 import { HabitController as _HabitController } from '@life-toolkit/business-server';
 import { habitService } from './habit.service';
@@ -52,7 +52,7 @@ export class HabitController {
     return this.controller.getHabitAnalytics(id);
   }
 
-  @Put('/done-batch')
+  @Put('/done/batch')
   async doneBatch(@Body() body: { includeIds?: string[] }) {
     return this.controller.doneBatch(body);
   }

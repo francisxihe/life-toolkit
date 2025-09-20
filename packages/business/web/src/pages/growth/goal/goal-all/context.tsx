@@ -10,7 +10,11 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { GoalVo, GoalModelVo, GoalPageFilterVo } from '@life-toolkit/vo/growth';
+import {
+  GoalVo,
+  GoalWithoutRelationsVo,
+  GoalPageFilterVo,
+} from '@life-toolkit/vo';
 import { GoalService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';
@@ -35,14 +39,14 @@ function useSyncState<T>(
 
 export const [GoalAllProvider, useGoalAllContext] = createInjectState<{
   ContextType: {
-    goalList: GoalModelVo[];
+    goalList: GoalWithoutRelationsVo[];
     filters: GoalPageFilterVo;
     setFilters: Dispatch<SetStateAction<GoalPageFilterVo>>;
     clearFilters: () => Promise<void>;
     getGoalPage: () => Promise<void>;
   };
 }>(() => {
-  const [goalList, setGoalList] = useState<GoalModelVo[]>([]);
+  const [goalList, setGoalList] = useState<GoalWithoutRelationsVo[]>([]);
 
   const [filters, setFilters, filtersRef] = useSyncState<GoalPageFilterVo>({
     keyword: undefined,

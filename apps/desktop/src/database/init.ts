@@ -14,7 +14,7 @@ export async function initDB(): Promise<void> {
       console.log('数据库已经初始化，跳过重复初始化');
       return;
     }
-    
+
     console.log('正在初始化数据库...');
     await initializeDatabase();
     console.log('数据库初始化成功');
@@ -32,9 +32,9 @@ export async function closeDB(): Promise<void> {
   if (isClosing || !AppDataSource.isInitialized) {
     return;
   }
-  
+
   isClosing = true;
-  
+
   try {
     console.log('正在关闭数据库连接...');
     await closeDatabase();
@@ -57,7 +57,7 @@ export function setupDatabaseCleanup(): void {
     if (!isQuitting && AppDataSource.isInitialized) {
       isQuitting = true;
       event.preventDefault();
-      
+
       closeDB().finally(() => {
         app.quit();
       });

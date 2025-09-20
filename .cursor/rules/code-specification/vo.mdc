@@ -52,7 +52,7 @@ packages/vo/example/module/
 - **完整模型**: `[Module]Vo` (包含关联数据)
 - **表单VO**: `Create[Module]Vo`, `Update[Module]Vo`
 - **过滤VO**: `[Module]ListFiltersVo`, `[Module]PageFiltersVo`
-- **结果VO**: `[Module]ListVo`, `[Module]PageVo`
+- **结果VO**: `[Module]ListVo`, `[Module]ResponsePageVo`
 
 ## 🎯 标准VO类型定义
 

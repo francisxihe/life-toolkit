@@ -37,7 +37,7 @@ function MessageItem(props: MessageItemProps) {
             <div
               className={cs(
                 styles['message-item-actions-item'],
-                styles['message-item-actions-collect']
+                styles['message-item-actions-collect'],
               )}
             >
               <IconStar />

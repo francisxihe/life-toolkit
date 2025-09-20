@@ -18,7 +18,7 @@ function PopularContent() {
     setLoading(true);
     axios
       .get(
-        `/api/workplace/popular-contents?page=${page}&pageSize=5&category=${type}`
+        `/api/workplace/popular-contents?page=${page}&pageSize=5&category=${type}`,
       )
       .then((res) => {
         setData(res.data.list);

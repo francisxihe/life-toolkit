@@ -1,8 +1,8 @@
-import "reflect-metadata";
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { ValidationPipe } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import 'reflect-metadata';
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,22 +18,22 @@ async function bootstrap() {
   // 启用 CORS
   app.enableCors({
     origin: true, // 允许所有来源
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
   });
 
-  app.use("api/docs-json", (req: unknown, res: any) => {
-    res.setHeader("Content-Type", "application/json");
+  app.use('api/docs-json', (req: unknown, res: any) => {
+    res.setHeader('Content-Type', 'application/json');
     res.send(document);
   });
 
   // 从配置服务获取端口
   const configService = app.get(ConfigService);
-  const port = configService.get("PORT");
+  const port = configService.get('PORT');
 
   await app.listen(port);
-  console.log("========", process.env.NODE_ENV);
+  console.log('========', process.env.NODE_ENV);
   console.log(`Application is running on: http://localhost:${port}`);
 }
 bootstrap();
