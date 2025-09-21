@@ -130,7 +130,6 @@ export default function DateTimeTool(props: {
               step={{ minute: 5 }}
               allowClear
               onChange={(time) => {
-                console.log(time);
                 onChangeData({
                   ...formData,
                   timeRange: [time[0], time[1]],

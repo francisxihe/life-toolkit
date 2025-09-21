@@ -17,6 +17,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["apps/**/*", "packages/**/*"],
-  "exclude": ["node_modules", "*.md"]
+  "include": ["apps/**/*.ts", "apps/**/*.tsx", "apps/**/*.js", "apps/**/*.jsx", "packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.js", "packages/**/*.jsx"],
+  "exclude": ["node_modules", "**/*.md", "**/*.markdown", "**/README.md", "**/readme.md", "**/*README*.md", "**/*.spec.ts", "**/*.test.ts", "dist", "build", "coverage"]
 }
