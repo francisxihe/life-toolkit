@@ -11,7 +11,7 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../database/init';
-import { initIpcRouter } from './ipc-handlers'; 
+import { initIpcRouter } from './ipc-handlers';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === 'development';

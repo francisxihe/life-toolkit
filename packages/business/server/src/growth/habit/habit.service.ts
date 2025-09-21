@@ -15,41 +15,23 @@ export class HabitService {
 
   // ====== 基础 CRUD ======
   async create(createHabitDto: CreateHabitDto): Promise<HabitDto> {
-    const habitEntity: Partial<Habit> = {
-      name: createHabitDto.name,
-      description: createHabitDto.description,
-      importance: createHabitDto.importance,
-      tags: createHabitDto.tags,
-      difficulty: createHabitDto.difficulty,
-      startDate: createHabitDto.startDate,
-      targetDate: createHabitDto.targetDate,
-    };
-    const entity = await this.habitRepository.create(habitEntity as Habit);
-    return HabitDto.importEntity(entity);
+    const entity = await this.habitRepository.create(createHabitDto.exportCreateEntity());
+    const habitDto = new HabitDto();
+    habitDto.importEntity(entity);
+    return habitDto;
   }
 
   async delete(id: string): Promise<void> {
     await this.habitRepository.delete(id);
   }
 
-  async update(id: string, updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
-    const habitUpdate = new Habit();
-    habitUpdate.id = id;
-    if (updateHabitDto.name !== undefined) habitUpdate.name = updateHabitDto.name;
-    if (updateHabitDto.description !== undefined) habitUpdate.description = updateHabitDto.description;
-    if (updateHabitDto.status !== undefined) habitUpdate.status = updateHabitDto.status;
-    if (updateHabitDto.importance !== undefined) habitUpdate.importance = updateHabitDto.importance;
-    if (updateHabitDto.tags !== undefined) habitUpdate.tags = updateHabitDto.tags;
-    if (updateHabitDto.difficulty !== undefined) habitUpdate.difficulty = updateHabitDto.difficulty;
-    if (updateHabitDto.startDate !== undefined) habitUpdate.startDate = updateHabitDto.startDate;
-    if (updateHabitDto.targetDate !== undefined) habitUpdate.targetDate = updateHabitDto.targetDate;
-    if (updateHabitDto.currentStreak !== undefined) habitUpdate.currentStreak = updateHabitDto.currentStreak;
-    if (updateHabitDto.longestStreak !== undefined) habitUpdate.longestStreak = updateHabitDto.longestStreak;
-    if (updateHabitDto.completedCount !== undefined) habitUpdate.completedCount = updateHabitDto.completedCount;
-
-    const entity = await this.habitRepository.update(habitUpdate);
-    return HabitDto.importEntity(entity);
+  async update(updateHabitDto: UpdateHabitDto): Promise<HabitDto> {
+    const entity = await this.habitRepository.update(updateHabitDto.exportUpdateEntity());
+    const habitDto = new HabitDto();
+    habitDto.importEntity(entity);
+    return habitDto;
   }
+
 
   async find(id: string): Promise<HabitDto> {
     const entity = await this.habitRepository.find(id);
@@ -74,20 +56,7 @@ export class HabitService {
   }
 
   //  ====== 业务逻辑编排 ======
-  async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
-    const entity = await this.habitRepository.find(id);
-    if (increment) {
-      entity.currentStreak = (entity.currentStreak || 0) + 1;
-      entity.completedCount = (entity.completedCount || 0) + 1;
-      if (entity.currentStreak > (entity.longestStreak || 0)) {
-        entity.longestStreak = entity.currentStreak;
-      }
-    } else {
-      entity.currentStreak = 0;
-    }
-    const updatedEntity = await this.habitRepository.update(entity);
-    return HabitDto.importEntity(updatedEntity);
-  }
+ 
 
   async getHabitTodos(habitId: string): Promise<{
     activeTodos: any[];

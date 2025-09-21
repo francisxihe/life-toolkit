@@ -13,6 +13,7 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
   importEntity(entity: TodoRepeat) {
     Object.assign(this, BaseMapper.entityToDto(entity));
     // 重复配置相关字段
+    this.repeatStartDate = entity.repeatStartDate;
     this.repeatMode = entity.repeatMode;
     this.repeatConfig = entity.repeatConfig;
     this.repeatEndMode = entity.repeatEndMode;
@@ -23,7 +24,6 @@ export class TodoRepeatDto extends IntersectionType(BaseModelDto, TodoRepeatWith
     this.importance = entity.importance;
     this.urgency = entity.urgency;
     this.tags = entity.tags;
-    this.repeatStartDate = entity.repeatStartDate;
     this.currentDate = entity.currentDate;
     this.status = entity.status;
     this.abandonedAt = entity.abandonedAt;

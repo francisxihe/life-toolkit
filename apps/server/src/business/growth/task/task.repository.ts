@@ -35,7 +35,7 @@ export class TaskRepository {
   async update(id: string, updateTaskDto: UpdateTaskDto): Promise<void> {
     const exists = await this.taskRepository.findOne({ where: { id } });
     if (!exists) throw new NotFoundException(`Task not found: ${id}`);
-    updateTaskDto.appendToUpdateEntity(exists);
+    updateTaskDto.exportUpdateEntity(exists);
     await this.taskRepository.save(exists);
   }
 

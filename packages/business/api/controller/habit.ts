@@ -26,10 +26,6 @@ export default class HabitController {
     return request<ResponsePageVo<HabitVO.HabitWithoutRelationsVo>>({ method: 'get' })(`/habit/page`, body);
   }
 
-  static async updateStreak(id: string, body: { completed?: boolean }) {
-    return request<any>({ method: 'put' })(`/habit/update-streak/${id}`, body);
-  }
-
   static async getHabitTodos(id: string) {
     return request<any>({ method: 'get' })(`/habit/get-habit-todos/${id}`);
   }

@@ -12,8 +12,11 @@ export type CreateTodoVo = Pick<
   | 'importance'
   | 'urgency'
   | 'tags'
-  | 'taskId'
+  | 'source'
   | 'repeatConfig'
+  | 'taskId'
+  | 'repeatId'
+  | 'habitId'
 >;
 
 export type UpdateTodoVo = Partial<CreateTodoVo>;

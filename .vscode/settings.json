@@ -1,16 +1,12 @@
 {
-    "cSpell.words": [
-        "antv",
-        "Mindmap",
-        "uuidv"
-    ],
-    "[markdown]": {
-      "editor.quickSuggestions": {
-        "comments": "off",
-        "strings": "off",
-        "other": "off"
-      },
-      "editor.suggestOnTriggerCharacters": false,
-      "editor.wordBasedSuggestions": "off"
-    }
+  "cSpell.words": ["antv", "Mindmap", "uuidv"],
+  "[markdown]": {
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
+    "editor.suggestOnTriggerCharacters": false,
+    "editor.wordBasedSuggestions": "off"
+  }
 }

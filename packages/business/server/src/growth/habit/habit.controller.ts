@@ -54,11 +54,6 @@ export class HabitController {
     return HabitDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Put('/update-streak/:id', { description: '更新习惯 streak' })
-  async updateStreak(@Param('id') id: string, @Body() body?: { completed?: boolean }): Promise<any> {
-    return await this.habitService.updateStreak(id, body?.completed as any);
-  }
-
   @Get('/get-habit-todos/:id', { description: '查询习惯的待办事项' })
   async getHabitTodos(@Param('id') id: string): Promise<any> {
     return await this.habitService.getHabitTodos(id);

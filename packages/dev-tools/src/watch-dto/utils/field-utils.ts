@@ -45,8 +45,8 @@ export function isImportMethod(fieldName: string): boolean {
     'importUpdateEntity',
     'exportCreateEntity',
     'exportUpdateEntity',
-    'appendToCreateEntity',
-    'appendToUpdateEntity',
+    'exportCreateEntity',
+    'exportUpdateEntity',
     'importListVo',
     'importPageVo',
   ].includes(fieldName);

@@ -178,30 +178,6 @@ export class HabitRepository implements _HabitRepository {
     await this.habitRepository.update({ id }, updateData);
   }
 
-  async updateStreak(id: string, increment: boolean): Promise<HabitDto> {
-    const habit = await this.habitRepository.findOne({ where: { id } });
-    if (!habit) {
-      throw new NotFoundException(`习惯记录不存在，ID: ${id}`);
-    }
-
-    if (increment) {
-      habit.currentStreak += 1;
-      habit.completedCount += 1;
-
-      // 更新最长连续天数
-      if (habit.currentStreak > habit.longestStreak) {
-        habit.longestStreak = habit.currentStreak;
-      }
-    } else {
-      habit.currentStreak = 0;
-    }
-
-    const savedHabit = await this.habitRepository.save(habit);
-    const dto = new HabitDto();
-    dto.importEntity(savedHabit);
-    return dto;
-  }
-
   /**
    * 获取习惯关联的待办事项（按状态分组）
    */

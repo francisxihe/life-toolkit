@@ -38,7 +38,7 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
 
   exportCreateEntity() {
     const todoRepeat = new TodoRepeat();
-    
+
     if (this.name !== undefined) todoRepeat.name = this.name;
     if (this.description !== undefined) todoRepeat.description = this.description;
     if (this.importance !== undefined) todoRepeat.importance = this.importance;
