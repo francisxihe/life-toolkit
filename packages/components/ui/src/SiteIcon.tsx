@@ -14,6 +14,11 @@ export default function SiteIcon({
   height?: number;
   className?: string;
 } & React.SVGAttributes<SVGSVGElement>) {
+  // 在 Electron 环境中使用相对路径，在 Web 环境中使用绝对路径
+  const iconPath = typeof window !== 'undefined' && (window as any).electronAPI 
+    ? './icons.svg' 
+    : '/icons.svg';
+    
   return (
     <svg
       width={width}
@@ -22,7 +27,7 @@ export default function SiteIcon({
       onClick={onClick}
       style={{ ...style, fill: 'currentColor' }}
     >
-      <use href={`/icons.svg#${id}`} />
+      <use href={`${iconPath}#${id}`} />
     </svg>
   );
 }
