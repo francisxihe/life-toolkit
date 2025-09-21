@@ -99,11 +99,4 @@ export class HabitController {
     const result = await this.habitService.getHabitTodos(id);
     return result;
   }
-
-  @Get('analytics/:id')
-  @Response()
-  async getHabitAnalytics(@Param('id') id: string) {
-    const result = await this.habitService.getHabitAnalytics(id);
-    return result;
-  }
 }

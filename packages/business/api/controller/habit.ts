@@ -30,10 +30,6 @@ export default class HabitController {
     return request<any>({ method: 'get' })(`/habit/get-habit-todos/${id}`);
   }
 
-  static async getHabitAnalytics(id: string) {
-    return request<any>({ method: 'get' })(`/habit/get-habit-analytics/${id}`);
-  }
-
   static async doneBatch(body: { includeIds?: string[] }) {
     return request<any[]>({ method: 'put' })(`/habit/done/batch`, body);
   }
@@ -44,13 +40,5 @@ export default class HabitController {
 
   static async restore(id: string) {
     return request<void>({ method: 'put' })(`/habit/restore/${id}`);
-  }
-
-  static async pauseHabit(id: string) {
-    return request<void>({ method: 'put' })(`/habit/pause-habit/${id}`);
-  }
-
-  static async resumeHabit(id: string) {
-    return request<void>({ method: 'put' })(`/habit/resume-habit/${id}`);
   }
 }

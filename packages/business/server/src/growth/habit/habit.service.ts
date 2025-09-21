@@ -32,10 +32,16 @@ export class HabitService {
     return habitDto;
   }
 
-
   async find(id: string): Promise<HabitDto> {
     const entity = await this.habitRepository.find(id);
     return HabitDto.importEntity(entity);
+  }
+
+  async findWithRelations(id: string): Promise<HabitDto> {
+    const entity = await this.habitRepository.findWithRelations(id);
+    const habitDto = new HabitDto();
+    habitDto.importEntity(entity);
+    return habitDto;
   }
 
   async findByFilter(filter: HabitFilterDto): Promise<HabitDto[]> {
@@ -56,7 +62,6 @@ export class HabitService {
   }
 
   //  ====== 业务逻辑编排 ======
- 
 
   async getHabitTodos(habitId: string): Promise<{
     activeTodos: any[];
@@ -79,68 +84,11 @@ export class HabitService {
     return { activeTodos, completedTodos, abandonedTodos, totalCount };
   }
 
-  async getHabitAnalytics(habitId: string): Promise<{
-    totalTodos: number;
-    completedTodos: number;
-    abandonedTodos: number;
-    completionRate: number;
-    currentStreak: number;
-    longestStreak: number;
-    recentTodos: any[];
-  }> {
-    const habitEntity = await this.habitRepository.find(habitId);
-    const habit = HabitDto.importEntity(habitEntity);
-
-    // 使用TodoRepository查询分析数据
-    const [allTodos, completedTodos, abandonedTodos, recentTodos] = await Promise.all([
-      this.todoRepository.findByFilter({ habitId } as any),
-      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.DONE] } as any),
-      this.todoRepository.findByFilter({ habitId, status: [TodoStatus.ABANDONED] } as any),
-      this.todoRepository.findByFilter({ habitId } as any), // 这里需要添加排序和限制逻辑
-    ]);
-
-    // 对最近的todos进行排序和限制（取最新的10条）
-    const sortedRecentTodos = recentTodos
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      .slice(0, 10);
-
-    const totalTodos = allTodos.length;
-    const completionRate = totalTodos > 0 ? (completedTodos.length / totalTodos) * 100 : 0;
-
-    return {
-      totalTodos,
-      completedTodos: completedTodos.length,
-      abandonedTodos: abandonedTodos.length,
-      completionRate,
-      currentStreak: habit.currentStreak,
-      longestStreak: habit.longestStreak,
-      recentTodos: sortedRecentTodos,
-    };
-  }
-
   async abandon(id: string): Promise<void> {
-    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED }));
+    await this.update(Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED }));
   }
 
   async restore(id: string): Promise<void> {
-    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE }));
-  }
-
-  async pauseHabit(id: string): Promise<void> {
-    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.PAUSED }));
-  }
-
-  async resumeHabit(id: string): Promise<void> {
-    await this.update(id, Object.assign(new UpdateHabitDto(), { status: HabitStatus.ACTIVE }));
-  }
-
-  async completeHabit(id: string): Promise<void> {
-    await this.update(
-      id,
-      Object.assign(new UpdateHabitDto(), {
-        status: HabitStatus.COMPLETED,
-        targetDate: new Date(),
-      })
-    );
+    await this.update(Object.assign(new UpdateHabitDto(), { status: HabitStatus.IN_PROGRESS }));
   }
 }

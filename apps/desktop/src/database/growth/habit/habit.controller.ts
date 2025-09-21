@@ -42,11 +42,6 @@ export class HabitController {
     return this.controller.getHabitTodos(id);
   }
 
-  @Get('/get-habit-analytics/:id')
-  async getHabitAnalytics(@Param('id') id: string) {
-    return this.controller.getHabitAnalytics(id);
-  }
-
   @Put('/done/batch')
   async doneBatch(@Body() body: { includeIds?: string[] }) {
     return this.controller.doneBatch(body);
@@ -60,15 +55,5 @@ export class HabitController {
   @Put('/restore/:id')
   async restore(@Param('id') id: string) {
     return this.controller.restore(id);
-  }
-
-  @Put('/pause-habit/:id')
-  async pauseHabit(@Param('id') id: string) {
-    return this.controller.pauseHabit(id);
-  }
-
-  @Put('/resume-habit/:id')
-  async resumeHabit(@Param('id') id: string) {
-    return this.controller.resumeHabit(id);
   }
 }

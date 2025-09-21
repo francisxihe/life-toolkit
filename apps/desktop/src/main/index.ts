@@ -88,7 +88,7 @@ function createWindow() {
 
   // 加载默认URL
   if (isDev) {
-    mainWindow.loadURL(DEFAULT_URL + '#/growth/todo/todo-today');
+    mainWindow.loadURL(DEFAULT_URL + '#/growth/habit/habit-list');
   } else {
     // 生产环境直接加载 index.html，路由由前端处理
     mainWindow.loadURL(DEFAULT_URL);

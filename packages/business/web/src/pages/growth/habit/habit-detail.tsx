@@ -77,14 +77,6 @@ export const HabitDetailPage: React.FC = () => {
             await HabitController.doneBatchHabit({ includeIds: [habit.id] });
             Message.success('习惯已完成');
             break;
-          case 'pause':
-            await HabitController.pauseHabit(habit.id);
-            Message.success('习惯已暂停');
-            break;
-          case 'resume':
-            await HabitController.resumeHabit(habit.id);
-            Message.success('习惯已恢复');
-            break;
           case 'abandon':
             await HabitController.abandonHabit(habit.id);
             Message.success('习惯已放弃');

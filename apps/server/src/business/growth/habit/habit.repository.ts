@@ -209,35 +209,7 @@ export class HabitRepository implements _HabitRepository {
       totalCount: activeTodos.length + completedTodos.length + abandonedTodos.length,
     };
   }
-
-  /**
-   * 获取习惯分析所需的基础数据（纯数据库查询）
-   */
-  async getHabitAnalyticsData(habitId: string): Promise<{
-    totalTodos: number;
-    completedTodos: number;
-    abandonedTodos: number;
-    recentTodos: Todo[];
-  }> {
-    const totalTodos = await this.todoRepository.count({ where: { habitId } });
-
-    const completedTodos = await this.todoRepository.count({
-      where: { habitId, status: TodoStatus.DONE },
-    });
-
-    const abandonedTodos = await this.todoRepository.count({
-      where: { habitId, status: TodoStatus.ABANDONED },
-    });
-
-    const recentTodos = await this.todoRepository.find({
-      where: { habitId },
-      order: { createdAt: 'DESC' },
-      take: 10,
-    });
-
-    return { totalTodos, completedTodos, abandonedTodos, recentTodos };
-  }
-
+  
   // 构建查询条件的私有方法
   private buildQuery(filter: HabitFilterDto) {
     let query = this.habitRepository.createQueryBuilder('habit');

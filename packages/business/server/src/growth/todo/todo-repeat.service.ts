@@ -65,15 +65,6 @@ export class TodoRepeatService {
     });
   }
 
-  async list(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
-    const entities = await this.todoRepeatRepository.findByFilter(filter);
-    return entities.map((entity) => {
-      const todoRepeatDto = new TodoRepeatDto();
-      todoRepeatDto.importEntity(entity);
-      return todoRepeatDto;
-    });
-  }
-
   async page(filter: TodoRepeatPageFilterDto): Promise<{
     list: TodoRepeatDto[];
     total: number;
