@@ -37,16 +37,6 @@ export class HabitController {
     return this.controller.page(body);
   }
 
-  @Get('/get-habit-todos/:id')
-  async getHabitTodos(@Param('id') id: string) {
-    return this.controller.getHabitTodos(id);
-  }
-
-  @Put('/done/batch')
-  async doneBatch(@Body() body: { includeIds?: string[] }) {
-    return this.controller.doneBatch(body);
-  }
-
   @Put('/abandon/:id')
   async abandon(@Param('id') id: string) {
     return this.controller.abandon(id);

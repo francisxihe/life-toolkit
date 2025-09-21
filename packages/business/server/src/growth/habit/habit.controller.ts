@@ -55,11 +55,6 @@ export class HabitController {
     return HabitDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Get('/get-habit-todos/:id', { description: '查询习惯的待办事项' })
-  async getHabitTodos(@Param('id') id: string): Promise<any> {
-    return await this.habitService.getHabitTodos(id);
-  }
-
   @Put('/abandon/:id', { description: '废弃习惯' })
   async abandon(@Param('id') id: string): Promise<void> {
     return await this.habitService.abandon(id);

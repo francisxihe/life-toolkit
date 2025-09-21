@@ -62,28 +62,6 @@ export class HabitService {
   }
 
   //  ====== 业务逻辑编排 ======
-
-  async getHabitTodos(habitId: string): Promise<{
-    activeTodos: any[];
-    completedTodos: any[];
-    abandonedTodos: any[];
-    totalCount: number;
-  }> {
-    // 使用TodoRepository的findAll方法查询不同状态的todos
-    const activeFilter = { habitId, status: [TodoStatus.TODO] };
-    const completedFilter = { habitId, status: [TodoStatus.DONE] };
-    const abandonedFilter = { habitId, status: [TodoStatus.ABANDONED] };
-
-    const [activeTodos, completedTodos, abandonedTodos] = await Promise.all([
-      this.todoRepository.findByFilter(activeFilter as any),
-      this.todoRepository.findByFilter(completedFilter as any),
-      this.todoRepository.findByFilter(abandonedFilter as any),
-    ]);
-
-    const totalCount = activeTodos.length + completedTodos.length + abandonedTodos.length;
-    return { activeTodos, completedTodos, abandonedTodos, totalCount };
-  }
-
   async abandon(id: string): Promise<void> {
     await this.update(Object.assign(new UpdateHabitDto(), { status: HabitStatus.ABANDONED }));
   }
