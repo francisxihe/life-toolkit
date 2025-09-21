@@ -128,9 +128,9 @@ export default function DateTimeTool(props: {
               className="w-full rounded-md"
               format="HH:mm"
               step={{ minute: 5 }}
-              disableConfirm
               allowClear
               onChange={(time) => {
+                console.log(time);
                 onChangeData({
                   ...formData,
                   timeRange: [time[0], time[1]],
