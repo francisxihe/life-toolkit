@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoalVo } from '@life-toolkit/vo/growth';
+import { GoalVo } from '@life-toolkit/vo';
 import {
   MindMap,
   createGoalConverter,
   exportUtils,
   MindMapData,
-} from '@life-toolkit/components-web-mind/src/index';
+} from '@life-toolkit/components-mind/src/index';
 import {
   Button,
   Space,

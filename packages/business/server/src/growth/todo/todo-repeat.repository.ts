@@ -1,5 +1,5 @@
 import { TodoRepeat } from './todo-repeat.entity';
-import { TodoRepeatListFilterDto } from './dto';
+import { TodoRepeatFilterDto } from './dto';
 import { BaseRepository } from '@business/common';
 
-export interface TodoRepeatRepository extends BaseRepository<TodoRepeat, TodoRepeatListFilterDto> {}
+export interface TodoRepeatRepository extends BaseRepository<TodoRepeat, TodoRepeatFilterDto> {}

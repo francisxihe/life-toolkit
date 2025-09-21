@@ -1,7 +1,7 @@
-import { Repository } from "typeorm";
-import { BaseService } from "../base.service";
-import { User } from "./user.entity";
-import { AppDataSource } from "../database.config";
+import { Repository } from 'typeorm';
+import { BaseService } from '../base.service';
+import { User } from './user.entity';
+import { AppDataSource } from '../database.config';
 
 export class UserService extends BaseService<User> {
   constructor() {
@@ -14,11 +14,7 @@ export class UserService extends BaseService<User> {
     });
   }
 
-  async createUser(userData: {
-    username: string;
-    password: string;
-    name?: string;
-  }): Promise<User> {
+  async createUser(userData: { username: string; password: string; name?: string }): Promise<User> {
     return await this.create(userData);
   }
 
@@ -33,7 +29,10 @@ export class UserService extends BaseService<User> {
     return count > 0;
   }
 
-  async page(pageNum: number, pageSize: number): Promise<{
+  async page(
+    pageNum: number,
+    pageSize: number
+  ): Promise<{
     data: User[];
     total: number;
     pageNum: number;
@@ -53,11 +52,7 @@ export class UserService extends BaseService<User> {
     };
   }
 
-  async list(filter?: {
-    username?: string;
-    name?: string;
-    keyword?: string;
-  }): Promise<User[]> {
+  async list(filter?: { username?: string; name?: string; keyword?: string }): Promise<User[]> {
     if (!filter) {
       return await this.findByFilter();
     }
@@ -73,7 +68,9 @@ export class UserService extends BaseService<User> {
     }
 
     if (filter.keyword) {
-      queryBuilder.andWhere('(user.username LIKE :keyword OR user.name LIKE :keyword)', { keyword: `%${filter.keyword}%` });
+      queryBuilder.andWhere('(user.username LIKE :keyword OR user.name LIKE :keyword)', {
+        keyword: `%${filter.keyword}%`,
+      });
     }
 
     return await queryBuilder.orderBy('user.createdAt', 'DESC').getMany();

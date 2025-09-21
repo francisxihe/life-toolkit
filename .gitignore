@@ -14,6 +14,7 @@ coverage
 out/
 build
 dist
+release
 
 # vite
 .vite/
@@ -41,7 +42,6 @@ yarn-error.log*
 
 # IDE
 .idea
-.vscode
 
 # vercel
 .vercel

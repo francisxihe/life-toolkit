@@ -11,7 +11,7 @@ import {
   Empty,
 } from '@arco-design/web-react';
 import { HabitController } from '@life-toolkit/api';
-import { HabitVo } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo';
 import { HABIT_STATUS_OPTIONS } from './constants';
 import { HabitStatus } from '@life-toolkit/enum';
 
@@ -46,23 +46,30 @@ export const HabitStatisticsPage: React.FC = () => {
 
   // 计算统计数据
   const calculateStatistics = useCallback(() => {
-    const filteredHabits = selectedHabitId === 'all' 
-      ? habits 
-      : habits.filter(habit => habit.id === selectedHabitId);
+    const filteredHabits =
+      selectedHabitId === 'all'
+        ? habits
+        : habits.filter((habit) => habit.id === selectedHabitId);
 
     // 状态分布
-    const statusDistribution = HABIT_STATUS_OPTIONS.map(status => ({
+    const statusDistribution = HABIT_STATUS_OPTIONS.map((status) => ({
       status: status.label,
-      count: filteredHabits.filter(habit => habit.status === status.value).length,
+      count: filteredHabits.filter((habit) => habit.status === status.value)
+        .length,
       color: status.color,
     }));
 
     // 完成率统计
-    const completionStats = filteredHabits.map(habit => {
-      const completionRate = habit.completedCount && habit.currentStreak 
-        ? Math.round((habit.completedCount / (habit.currentStreak + habit.completedCount)) * 100)
-        : 0;
-      
+    const completionStats = filteredHabits.map((habit) => {
+      const completionRate =
+        habit.completedCount && habit.currentStreak
+          ? Math.round(
+              (habit.completedCount /
+                (habit.currentStreak + habit.completedCount)) *
+                100,
+            )
+          : 0;
+
       return {
         name: habit.name,
         completionRate,
@@ -74,10 +81,28 @@ export const HabitStatisticsPage: React.FC = () => {
 
     // 连续天数分布
     const streakDistribution = [
-      { range: '1-7天', count: filteredHabits.filter(h => (h.currentStreak || 0) >= 1 && (h.currentStreak || 0) <= 7).length },
-      { range: '8-30天', count: filteredHabits.filter(h => (h.currentStreak || 0) >= 8 && (h.currentStreak || 0) <= 30).length },
-      { range: '31-90天', count: filteredHabits.filter(h => (h.currentStreak || 0) >= 31 && (h.currentStreak || 0) <= 90).length },
-      { range: '90天以上', count: filteredHabits.filter(h => (h.currentStreak || 0) > 90).length },
+      {
+        range: '1-7天',
+        count: filteredHabits.filter(
+          (h) => (h.currentStreak || 0) >= 1 && (h.currentStreak || 0) <= 7,
+        ).length,
+      },
+      {
+        range: '8-30天',
+        count: filteredHabits.filter(
+          (h) => (h.currentStreak || 0) >= 8 && (h.currentStreak || 0) <= 30,
+        ).length,
+      },
+      {
+        range: '31-90天',
+        count: filteredHabits.filter(
+          (h) => (h.currentStreak || 0) >= 31 && (h.currentStreak || 0) <= 90,
+        ).length,
+      },
+      {
+        range: '90天以上',
+        count: filteredHabits.filter((h) => (h.currentStreak || 0) > 90).length,
+      },
     ];
 
     return {
@@ -85,11 +110,21 @@ export const HabitStatisticsPage: React.FC = () => {
       completionStats,
       streakDistribution,
       totalHabits: filteredHabits.length,
-      activeHabits: filteredHabits.filter(h => h.status === HabitStatus.ACTIVE).length,
-      completedHabits: filteredHabits.filter(h => h.status === HabitStatus.COMPLETED).length,
-      averageCompletion: completionStats.length > 0 
-        ? Math.round(completionStats.reduce((sum, stat) => sum + stat.completionRate, 0) / completionStats.length)
-        : 0,
+      activeHabits: filteredHabits.filter(
+        (h) => h.status === HabitStatus.ACTIVE,
+      ).length,
+      completedHabits: filteredHabits.filter(
+        (h) => h.status === HabitStatus.COMPLETED,
+      ).length,
+      averageCompletion:
+        completionStats.length > 0
+          ? Math.round(
+              completionStats.reduce(
+                (sum, stat) => sum + stat.completionRate,
+                0,
+              ) / completionStats.length,
+            )
+          : 0,
     };
   }, [habits, selectedHabitId]);
 
@@ -124,7 +159,7 @@ export const HabitStatisticsPage: React.FC = () => {
               style={{ width: 200 }}
             >
               <Option value="all">全部习惯</Option>
-              {habits.map(habit => (
+              {habits.map((habit) => (
                 <Option key={habit.id} value={habit.id}>
                   {habit.name}
                 </Option>
@@ -198,9 +233,12 @@ export const HabitStatisticsPage: React.FC = () => {
               <Card title="习惯状态分布">
                 <div className="space-y-3">
                   {statistics.statusDistribution.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
                       <div className="flex items-center">
-                        <span 
+                        <span
                           className="w-3 h-3 rounded-full mr-2"
                           style={{ backgroundColor: item.color }}
                         />
@@ -217,7 +255,10 @@ export const HabitStatisticsPage: React.FC = () => {
               <Card title="连续天数分布">
                 <div className="space-y-3">
                   {statistics.streakDistribution.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center">
+                    <div
+                      key={index}
+                      className="flex justify-between items-center"
+                    >
                       <Text>{item.range}</Text>
                       <Text className="font-medium">{item.count}个习惯</Text>
                     </div>
@@ -248,17 +289,27 @@ export const HabitStatisticsPage: React.FC = () => {
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="border p-3">{stat.name}</td>
                             <td className="border p-3 text-center">
-                              <span className={`font-medium ${
-                                stat.completionRate >= 80 ? 'text-green-600' :
-                                stat.completionRate >= 60 ? 'text-orange-600' :
-                                'text-red-600'
-                              }`}>
+                              <span
+                                className={`font-medium ${
+                                  stat.completionRate >= 80
+                                    ? 'text-green-600'
+                                    : stat.completionRate >= 60
+                                      ? 'text-orange-600'
+                                      : 'text-red-600'
+                                }`}
+                              >
                                 {stat.completionRate}%
                               </span>
                             </td>
-                            <td className="border p-3 text-center">{stat.currentStreak}天</td>
-                            <td className="border p-3 text-center">{stat.longestStreak}天</td>
-                            <td className="border p-3 text-center">{stat.completedCount}次</td>
+                            <td className="border p-3 text-center">
+                              {stat.currentStreak}天
+                            </td>
+                            <td className="border p-3 text-center">
+                              {stat.longestStreak}天
+                            </td>
+                            <td className="border p-3 text-center">
+                              {stat.completedCount}次
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -278,4 +329,4 @@ export const HabitStatisticsPage: React.FC = () => {
   );
 };
 
-export default HabitStatisticsPage; 
+export default HabitStatisticsPage;

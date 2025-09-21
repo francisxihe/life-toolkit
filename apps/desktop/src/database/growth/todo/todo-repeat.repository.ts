@@ -1,14 +1,14 @@
 import { AppDataSource } from '../../database.config';
-import { TodoRepeatListFilterDto, TodoRepeat } from '@life-toolkit/business-server';
+import { TodoRepeatFilterDto, TodoRepeat } from '@life-toolkit/business-server';
 import { TodoRepeatRepository as _TodoRepeatRepository } from '@life-toolkit/business-server';
 import { BaseRepository } from '../../common/base';
 
 export class TodoRepeatRepository
-  extends BaseRepository<TodoRepeat, TodoRepeatListFilterDto>
+  extends BaseRepository<TodoRepeat, TodoRepeatFilterDto>
   implements _TodoRepeatRepository
 {
   constructor() {
-    function buildQuery(filter: TodoRepeatListFilterDto) {
+    function buildQuery(filter: TodoRepeatFilterDto) {
       const qb = this.repo.createQueryBuilder('todoRepeat').leftJoinAndSelect('todoRepeat.todos', 'todos');
 
       if (filter.status !== undefined) {
@@ -16,14 +16,14 @@ export class TodoRepeatRepository
       }
       if (filter.importance !== undefined) {
         qb.andWhere('todoRepeat.importance = :importance', {
-          importance: filter.importance,
+          importance: filter.importance, 
         });
       }
       if (filter.urgency !== undefined) {
         qb.andWhere('todoRepeat.urgency = :urgency', { urgency: filter.urgency });
       }
       if (filter.keyword) {
-        qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` });
+        qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` }); 
       }
       if (filter.currentDateStart) {
         qb.andWhere('todoRepeat.currentDate >= :cds', {

@@ -1,24 +1,38 @@
-import { BaseModelVo } from '../../common/model.vo';
+import { BaseEntityVo } from '../../common';
 import { TaskVo } from '../task/task-model.vo';
-import { RepeatVo } from '@life-toolkit/components-repeat/vo';
-import { TodoStatus } from '@life-toolkit/enum';
+import { TodoRepeatVo } from './todo-repeat-model.vo';
+import { TodoSource, TodoStatus } from '@life-toolkit/enum';
+import { HabitVo } from '../habit/habit-model.vo';
 
-export type TodoModelVo = {
+export type TodoWithoutRelationsVo = {
   name: string;
   status: TodoStatus;
-  planDate: string;
   description?: string;
-  tags?: string[];
   importance?: number;
   urgency?: number;
-  planStartAt?: string;
-  planEndAt?: string;
-  repeat?: RepeatVo;
+  tags: string[];
   doneAt?: string;
   abandonedAt?: string;
-} & BaseModelVo;
+  planStartAt?: string;
+  planEndAt?: string;
+  planDate: string;
+  source?: TodoSource;
+  taskId?: string;
+  repeatId?: string;
+  habitId?: string;
+} & BaseEntityVo;
 
-export type TodoVo = TodoModelVo & {
-  /** 关联的任务 */
+export type TodoVo = TodoWithoutRelationsVo & {
+  repeatConfig?: {
+    currentDate: TodoRepeatVo['currentDate'];
+    repeatStartDate: TodoRepeatVo['repeatStartDate'];
+    repeatMode: TodoRepeatVo['repeatMode'];
+    repeatConfig: TodoRepeatVo['repeatConfig'];
+    repeatEndMode: TodoRepeatVo['repeatEndMode'];
+    repeatEndDate: TodoRepeatVo['repeatEndDate'];
+    repeatTimes: TodoRepeatVo['repeatTimes'];
+  };
   task?: TaskVo;
+  habit?: HabitVo;
+  repeat?: TodoRepeatVo;
 };

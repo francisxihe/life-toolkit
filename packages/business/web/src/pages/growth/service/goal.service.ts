@@ -5,10 +5,8 @@ import type {
   GoalPageFilterVo,
   GoalFilterVo,
   UpdateGoalVo,
-  GoalModelVo,
-  GoalVo,
-} from '@life-toolkit/vo/growth';
-import { OperationByIdListVo } from '@life-toolkit/vo';
+  GoalWithoutRelationsVo,
+} from '@life-toolkit/vo';
 import { useState, useEffect } from 'react';
 
 export default class GoalService {
@@ -21,7 +19,7 @@ export default class GoalService {
     }
   }
 
-  static async batchDoneGoal(params: OperationByIdListVo) {
+  static async doneBatchGoal(params: GoalFilterVo) {
     try {
       const res = await GoalController.doneBatch(params);
       Message.success('操作成功');
@@ -107,7 +105,7 @@ export default class GoalService {
   }
 
   static useGoalList = (params: GoalFilterVo = {}) => {
-    const [goalList, setGoalList] = useState<GoalModelVo[]>([]);
+    const [goalList, setGoalList] = useState<GoalWithoutRelationsVo[]>([]);
     const [loading, setLoading] = useState(false);
 
     const fetchGoalList = async () => {

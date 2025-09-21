@@ -25,7 +25,7 @@ import {
   IconClose,
 } from '@arco-design/web-react/icon';
 import { HabitController } from '@life-toolkit/api';
-import { HabitVo } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo';
 import { HABIT_STATUS_OPTIONS } from './constants';
 import { useHabitContext } from './context';
 import { HabitStatus } from '@life-toolkit/enum';
@@ -74,7 +74,7 @@ export const HabitDetailPage: React.FC = () => {
 
         switch (action) {
           case 'complete':
-            await HabitController.batchDoneHabit({ includeIds: [habit.id] });
+            await HabitController.doneBatchHabit({ includeIds: [habit.id] });
             Message.success('习惯已完成');
             break;
           case 'pause':

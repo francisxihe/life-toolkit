@@ -29,10 +29,7 @@ export class ExcelService {
   async getData(search?: string) {
     if (search) {
       // Using stored procedure for search
-      const result = await this.dataSource.query(
-        'CALL search_excel_data(?)',
-        [search]
-      );
+      const result = await this.dataSource.query('CALL search_excel_data(?)', [search]);
       return result[0];
     }
     return this.excelRepository.find({
@@ -51,7 +48,7 @@ export class ExcelService {
     const wb = utils.book_new();
     utils.book_append_sheet(wb, ws, 'Data');
 
-    const buffer = writeFile(wb, "demo.xlsx", { type: "buffer" });
+    const buffer = writeFile(wb, 'demo.xlsx', { type: 'buffer' });
     return buffer;
   }
 

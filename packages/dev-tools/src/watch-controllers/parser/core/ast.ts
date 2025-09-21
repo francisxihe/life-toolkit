@@ -8,13 +8,13 @@ import {
   ScriptTarget,
   ModuleKind,
   StringLiteral,
-} from "ts-morph";
+} from 'ts-morph';
 
 export interface ASTMethodDecoratorInfo {
   name: string;
   verb: string;
   path: string;
-  paramStyle: "none" | "id" | "id+body" | "query" | "body";
+  paramStyle: 'none' | 'id' | 'id+body' | 'query' | 'body';
   description?: string;
   paramTypes?: {
     idType?: string;
@@ -47,7 +47,7 @@ export class TypeScriptASTParser {
   }
 
   // 解析TypeScript文件内容，返回AST
-  parseContent(content: string, filePath: string = "temp.ts"): SourceFile {
+  parseContent(content: string, filePath: string = 'temp.ts'): SourceFile {
     return this.project.createSourceFile(filePath, content, {
       overwrite: true,
     });
@@ -71,16 +71,14 @@ export class TypeScriptASTParser {
 
     return constructor.getParameters().map((param) => {
       const typeNode = param.getTypeNode();
-      return typeNode?.getText() || "any";
+      return typeNode?.getText() || 'any';
     });
   }
 
   // 获取类的所有方法名
   parseMethodNames(content: string, className?: string): string[] {
     const sourceFile = this.parseContent(content);
-    const classDeclaration = className
-      ? sourceFile.getClass(className)
-      : sourceFile.getClasses()[0];
+    const classDeclaration = className ? sourceFile.getClass(className) : sourceFile.getClasses()[0];
 
     if (!classDeclaration) return [];
 
@@ -88,14 +86,9 @@ export class TypeScriptASTParser {
   }
 
   // 解析控制器信息（包含类装饰器和方法装饰器）
-  parseControllerInfo(
-    content: string,
-    className?: string
-  ): ASTControllerInfo | null {
+  parseControllerInfo(content: string, className?: string): ASTControllerInfo | null {
     const sourceFile = this.parseContent(content);
-    const classDeclaration = className
-      ? sourceFile.getClass(className)
-      : sourceFile.getClasses()[0];
+    const classDeclaration = className ? sourceFile.getClass(className) : sourceFile.getClasses()[0];
 
     if (!classDeclaration) return null;
 
@@ -112,28 +105,23 @@ export class TypeScriptASTParser {
     });
 
     return {
-      className: classDeclaration.getName() || "UnknownController",
+      className: classDeclaration.getName() || 'UnknownController',
       basePath,
       methods: methodMap,
     };
   }
 
   // 解析方法装饰器信息（保持向后兼容）
-  parseMethodDecorators(
-    content: string,
-    className?: string
-  ): Map<string, ASTMethodDecoratorInfo> {
+  parseMethodDecorators(content: string, className?: string): Map<string, ASTMethodDecoratorInfo> {
     const controllerInfo = this.parseControllerInfo(content, className);
     return controllerInfo?.methods || new Map();
   }
 
   // 解析方法装饰器信息
-  private parseMethodDecorator(
-    method: MethodDeclaration
-  ): ASTMethodDecoratorInfo | null {
+  private parseMethodDecorator(method: MethodDeclaration): ASTMethodDecoratorInfo | null {
     const decorators = method.getDecorators();
     const httpDecorator = decorators.find((decorator) =>
-      ["Get", "Post", "Put", "Delete"].includes(decorator.getName())
+      ['Get', 'Post', 'Put', 'Delete'].includes(decorator.getName())
     );
 
     if (!httpDecorator) return null;
@@ -164,13 +152,9 @@ export class TypeScriptASTParser {
   }
 
   // 解析Controller装饰器
-  private parseControllerDecorator(
-    classDeclaration: ClassDeclaration
-  ): string | undefined {
+  private parseControllerDecorator(classDeclaration: ClassDeclaration): string | undefined {
     const decorators = classDeclaration.getDecorators();
-    const controllerDecorator = decorators.find(
-      (decorator) => decorator.getName() === "Controller"
-    );
+    const controllerDecorator = decorators.find((decorator) => decorator.getName() === 'Controller');
 
     if (!controllerDecorator) return undefined;
 
@@ -203,14 +187,11 @@ export class TypeScriptASTParser {
     }
 
     // 第二个参数可能是配置对象
-    if (
-      args.length > 1 &&
-      args[1].getKind() === SyntaxKind.ObjectLiteralExpression
-    ) {
+    if (args.length > 1 && args[1].getKind() === SyntaxKind.ObjectLiteralExpression) {
       const configObj = args[1];
       const descProperty = configObj
         .getChildrenOfKind(SyntaxKind.PropertyAssignment)
-        .find((prop) => prop.getName() === "description");
+        .find((prop) => prop.getName() === 'description');
 
       if (descProperty) {
         const initializer = descProperty.getInitializer();
@@ -240,24 +221,24 @@ export class TypeScriptASTParser {
     parameters: any[],
     path: string
   ): {
-    style: "none" | "id" | "id+body" | "query" | "body";
+    style: 'none' | 'id' | 'id+body' | 'query' | 'body';
     types: { idType?: string; bodyType?: string; queryType?: string };
   } {
     if (parameters.length === 0) {
-      return { style: "none", types: {} };
+      return { style: 'none', types: {} };
     }
 
-    const hasIdParam = path.includes("/:id");
+    const hasIdParam = path.includes('/:id');
     const types: { idType?: string; bodyType?: string; queryType?: string } = {};
 
     // 分析参数类型
     parameters.forEach((param) => {
       const paramName = param.getName();
-      const paramType = param.getTypeNode()?.getText() || "any";
+      const paramType = param.getTypeNode()?.getText() || 'any';
 
-      if (paramName === "id") {
+      if (paramName === 'id') {
         types.idType = paramType;
-      } else if (paramName.includes("query") || paramName.includes("params")) {
+      } else if (paramName.includes('query') || paramName.includes('params')) {
         types.queryType = paramType;
       } else {
         types.bodyType = paramType;
@@ -266,33 +247,26 @@ export class TypeScriptASTParser {
 
     // 确定参数样式
     if (hasIdParam && parameters.length > 1) {
-      return { style: "id+body", types };
+      return { style: 'id+body', types };
     } else if (hasIdParam) {
-      return { style: "id", types };
-    } else if (
-      parameters.some(
-        (p) => p.getName().includes("query") || p.getName().includes("params")
-      )
-    ) {
-      return { style: "query", types };
+      return { style: 'id', types };
+    } else if (parameters.some((p) => p.getName().includes('query') || p.getName().includes('params'))) {
+      return { style: 'query', types };
     } else {
-      return { style: "body", types };
+      return { style: 'body', types };
     }
   }
 
   // 获取类体范围（用于兼容现有API）
-  getClassBodyRange(
-    content: string,
-    className: string
-  ): { start: number; end: number } | null {
+  getClassBodyRange(content: string, className: string): { start: number; end: number } | null {
     const sourceFile = this.parseContent(content);
     const classDeclaration = sourceFile.getClass(className);
     if (!classDeclaration) return null;
 
     // 获取类声明的开始和结束位置
     const classText = classDeclaration.getText();
-    const openBraceIndex = classText.indexOf("{");
-    const closeBraceIndex = classText.lastIndexOf("}");
+    const openBraceIndex = classText.indexOf('{');
+    const closeBraceIndex = classText.lastIndexOf('}');
 
     if (openBraceIndex === -1 || closeBraceIndex === -1) return null;
 

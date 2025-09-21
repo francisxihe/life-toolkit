@@ -10,7 +10,10 @@ export const isElectronEnv = (): boolean => {
 };
 
 // 获取应用信息
-export const getAppInfo = async (): Promise<{ version: string; platform: string }> => {
+export const getAppInfo = async (): Promise<{
+  version: string;
+  platform: string;
+}> => {
   if (isElectronEnv()) {
     return await window.electronAPI.getAppInfo();
   }
@@ -33,7 +36,10 @@ export const readFile = async (filePath: string): Promise<FileResult> => {
 // 事件监听辅助函数
 export type EventCallback = (data: any) => void;
 
-export const listenToEvent = (channel: string, callback: EventCallback): boolean => {
+export const listenToEvent = (
+  channel: string,
+  callback: EventCallback,
+): boolean => {
   if (isElectronEnv()) {
     return window.electronAPI.on(channel, callback);
   }
@@ -54,7 +60,7 @@ const electronBridge = {
   getAppInfo,
   readFile,
   listenToEvent,
-  removeEventListener
+  removeEventListener,
 };
 
-export default electronBridge; 
+export default electronBridge;

@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { HabitVo } from '@life-toolkit/vo/growth/habit';
+import { HabitVo } from '@life-toolkit/vo';
 
 export interface HabitContextType {
   selectedHabit: HabitVo | null;
@@ -16,7 +16,9 @@ export const HabitContext = createContext<HabitContextType>({
 export const useHabitContext = () => {
   const context = useContext(HabitContext);
   if (!context) {
-    throw new Error('useHabitContext must be used within a HabitContext.Provider');
+    throw new Error(
+      'useHabitContext must be used within a HabitContext.Provider',
+    );
   }
   return context;
-}; 
+};

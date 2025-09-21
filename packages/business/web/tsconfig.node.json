@@ -8,5 +8,6 @@
     "strict": true,
     "types": ["node"]
   },
-  "include": ["tailwind.config.ts", "config"]
+  "include": ["tailwind.config.ts", "config"],
+  "exclude": ["**/*.md"]
 }

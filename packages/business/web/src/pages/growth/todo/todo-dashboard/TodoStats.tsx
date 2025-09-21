@@ -15,7 +15,7 @@ export function TodoStats() {
     const completed = todoList.filter((todo) => todo.status === 'done').length;
     const pending = total - completed;
     const highPriority = todoList.filter(
-      (todo) => todo.importance === 1 && todo.urgency === 1
+      (todo) => todo.importance === 1 && todo.urgency === 1,
     ).length;
 
     return { total, completed, pending, highPriority };
@@ -25,28 +25,52 @@ export function TodoStats() {
     <Row gutter={[16, 16]}>
       <Col span={6}>
         <Card className="bg-bg-2 border-border-1">
-          <Title heading={6} className="text-text-1">Total Tasks</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-text-1">{stats.total}</Text>
+          <Title heading={6} className="text-text-1">
+            Total Tasks
+          </Title>
+          <Text
+            style={{ fontSize: 24, fontWeight: 600 }}
+            className="text-text-1"
+          >
+            {stats.total}
+          </Text>
         </Card>
       </Col>
       <Col span={6}>
         <Card className="bg-bg-2 border-border-1">
-          <Title heading={6} className="text-text-1">Completed</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-success">
+          <Title heading={6} className="text-text-1">
+            Completed
+          </Title>
+          <Text
+            style={{ fontSize: 24, fontWeight: 600 }}
+            className="text-success"
+          >
             {stats.completed}
           </Text>
         </Card>
       </Col>
       <Col span={6}>
         <Card className="bg-bg-2 border-border-1">
-          <Title heading={6} className="text-text-1">Pending</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-warning">{stats.pending}</Text>
+          <Title heading={6} className="text-text-1">
+            Pending
+          </Title>
+          <Text
+            style={{ fontSize: 24, fontWeight: 600 }}
+            className="text-warning"
+          >
+            {stats.pending}
+          </Text>
         </Card>
       </Col>
       <Col span={6}>
         <Card className="bg-bg-2 border-border-1">
-          <Title heading={6} className="text-text-1">High Priority</Title>
-          <Text style={{ fontSize: 24, fontWeight: 600 }} className="text-danger">
+          <Title heading={6} className="text-text-1">
+            High Priority
+          </Title>
+          <Text
+            style={{ fontSize: 24, fontWeight: 600 }}
+            className="text-danger"
+          >
             {stats.highPriority}
           </Text>
         </Card>

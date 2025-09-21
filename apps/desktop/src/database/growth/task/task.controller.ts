@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@life-toolkit/electron-ipc-router';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from 'electron-ipc-restful';
 import type { Task as TaskVO } from '@life-toolkit/vo';
 import { TaskController as _TaskController } from '@life-toolkit/business-server';
 import { taskService } from './task.service';
@@ -37,9 +37,9 @@ export class TaskController {
     return this.controller.page(body);
   }
 
-  @Get('/task-with-track-time/:id')
-  async taskWithTrackTime(@Param('id') id: string) {
-    return this.controller.taskWithTrackTime(id);
+  @Get('/task-with-relations/:id')
+  async taskWithRelations(@Param('id') id: string) {
+    return this.controller.taskWithRelations(id);
   }
 
   @Put('/abandon/:id')

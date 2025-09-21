@@ -16,7 +16,10 @@ export default async ({ mode }: { mode: string }) => {
       alias: [
         {
           find: /^@\/(.*)$/,
-          replacement: path.resolve(__dirname, '../../packages/business/web/src/$1'),
+          replacement: path.resolve(
+            __dirname,
+            '../../packages/business/web/src/$1',
+          ),
         },
         {
           find: '@',

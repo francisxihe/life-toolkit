@@ -3,15 +3,15 @@
 import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import { TodoFormData, TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
-import { TodoVo, TodoModelVo } from '@life-toolkit/vo/growth';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import dayjs from 'dayjs';
 import { TodoMapping } from '../../service';
 import { TodoStatus } from '@life-toolkit/enum';
-import { RepeatVo } from '@life-toolkit/components-repeat/types';
+import { CreateTodoVo } from '@life-toolkit/vo';
 
 export type TodoDetailProviderProps = {
   children: React.ReactNode;
-  todo?: TodoVo | TodoModelVo;
+  todo?: TodoVo | TodoWithoutRelationsVo;
   initialFormData?: Partial<TodoFormData>;
   mode: 'editor' | 'creator';
   size?: 'small' | 'default';
@@ -23,7 +23,7 @@ export type CurrentTodo = {
   planDate: string;
   planStartAt?: string;
   planEndAt?: string;
-  repeat?: TodoVo['repeat'];
+  repeatConfig?: TodoVo['repeatConfig'];
   importance?: number;
   urgency?: number;
   tags?: string[];
@@ -77,16 +77,16 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
   async function handleCreate() {
     const form = todoFormDataRef.current;
     if (!form.name) return;
-    let repeat: RepeatVo | undefined;
-    if (form.repeat) {
-      repeat = {
+    let repeatConfig: CreateTodoVo['repeatConfig'];
+    if (form.repeatConfig) {
+      repeatConfig = {
         currentDate: dayjs(form.planDate).format('YYYY-MM-DD'),
         repeatStartDate: dayjs(form.planDate).format('YYYY-MM-DD'),
-        repeatMode: form.repeat.repeatMode,
-        repeatConfig: form.repeat.repeatConfig,
-        repeatEndMode: form.repeat.repeatEndMode,
-        repeatTimes: form.repeat.repeatTimes,
-        repeatEndDate: form.repeat.repeatEndDate,
+        repeatMode: form.repeatConfig.repeatMode,
+        repeatConfig: form.repeatConfig.repeatConfig,
+        repeatEndMode: form.repeatConfig.repeatEndMode,
+        repeatTimes: form.repeatConfig.repeatTimes,
+        repeatEndDate: form.repeatConfig.repeatEndDate,
       };
     }
     try {
@@ -99,7 +99,8 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
         urgency: form.urgency,
         tags: form.tags,
         description: form.description,
-        repeat,
+        status: TodoStatus.TODO,
+        repeatConfig,
       });
       todoFormDataRef.current = defaultFormData;
       setTodoFormData(todoFormDataRef.current);

@@ -1,9 +1,9 @@
 import { PageFilterDto } from '../../../common';
 import { TodoRepeatDto } from './todo-repeat-model.dto';
-import { PickType, IntersectionType, PartialType } from '@life-toolkit/mapped-types';
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { BaseFilterDto, importBaseVo } from '@business/common';
 
-export class TodoRepeatListFilterDto extends IntersectionType(
+export class TodoRepeatFilterDto extends IntersectionType(
   BaseFilterDto,
   PartialType(PickType(TodoRepeatDto, ['importance', 'urgency', 'status'] as const))
 ) {
@@ -20,7 +20,7 @@ export class TodoRepeatListFilterDto extends IntersectionType(
   }
 }
 
-export class TodoRepeatPageFiltersDto extends IntersectionType(PageFilterDto, TodoRepeatListFilterDto) {
+export class TodoRepeatPageFilterDto extends IntersectionType(PageFilterDto, TodoRepeatFilterDto) {
   importPageVo(filterVo: any) {
     importVo(filterVo, this);
     this.pageNum = filterVo.pageNum;
@@ -28,7 +28,7 @@ export class TodoRepeatPageFiltersDto extends IntersectionType(PageFilterDto, To
   }
 }
 
-function importVo(filterVo: any, filterDto: TodoRepeatListFilterDto) {
+function importVo(filterVo: any, filterDto: TodoRepeatFilterDto) {
   importBaseVo(filterVo, filterDto);
   filterDto.importance = filterVo.importance;
   filterDto.urgency = filterVo.urgency;

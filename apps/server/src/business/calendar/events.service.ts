@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Event } from "./event.entity";
-import * as ical from "ical-generator";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Event } from './event.entity';
+import * as ical from 'ical-generator';
 
 @Injectable()
 export class EventsService {
@@ -30,7 +30,7 @@ export class EventsService {
 
   async generateICS(): Promise<string> {
     const events = await this.eventsRepository.find();
-    const calendar = ical.default({ name: "My Calendar" });
+    const calendar = ical.default({ name: 'My Calendar' });
 
     events.forEach((event) => {
       const startDate = new Date(`${event.date}T${event.startTime}`);

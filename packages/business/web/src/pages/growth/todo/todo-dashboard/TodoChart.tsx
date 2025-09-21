@@ -17,7 +17,7 @@ interface TodoChartProps {
 
 export function TodoChart({ data, loading }: TodoChartProps) {
   // 转换数据格式以适配图表
-  const chartData = data.flatMap(item => [
+  const chartData = data.flatMap((item) => [
     {
       date: item.date,
       value: item.completed,
@@ -37,11 +37,13 @@ export function TodoChart({ data, loading }: TodoChartProps) {
           <div className="w-5 h-5 bg-primary rounded"></div>
         </div>
         <div>
-          <Title heading={5} className="!mb-0">任务趋势</Title>
+          <Title heading={5} className="!mb-0">
+            任务趋势
+          </Title>
           <div className="text-sm text-text-3">最近7天的任务创建和完成情况</div>
         </div>
       </div>
-      
+
       <div className="h-80">
         <Spin loading={loading} style={{ width: '100%', height: '100%' }}>
           <Chart
@@ -69,13 +71,10 @@ export function TodoChart({ data, loading }: TodoChartProps) {
                 return <CustomTooltip title={title} data={items} />;
               }}
             </Tooltip>
-            <Legend 
-              position="top"
-              marker={{ symbol: 'circle' }}
-            />
+            <Legend position="top" marker={{ symbol: 'circle' }} />
           </Chart>
         </Spin>
       </div>
     </div>
   );
-} 
+}

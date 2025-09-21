@@ -30,44 +30,39 @@ const initialState: TabsState = {
 
 const TabsContext = createContext<TabsContextValue | null>(null);
 
-export const TabsProvider: React.FC<React.PropsWithChildren<{ init?: Partial<TabsState> }>> = ({ 
-  children, 
-  init 
-}) => {
+export const TabsProvider: React.FC<React.PropsWithChildren<{ init?: Partial<TabsState> }>> = ({ children, init }) => {
   const [state, setState] = useState<TabsState>({
     ...initialState,
     ...init,
   });
 
   const setActiveKey = useCallback((key: string) => {
-    setState(prev => ({ ...prev, activeKey: key }));
+    setState((prev) => ({ ...prev, activeKey: key }));
   }, []);
 
   const setData = useCallback((data: TabItem[]) => {
-    setState(prev => ({ ...prev, data }));
+    setState((prev) => ({ ...prev, data }));
   }, []);
 
   const addTab = useCallback((tab: TabItem) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       data: [...prev.data, tab],
     }));
   }, []);
 
   const removeTab = useCallback((id: string) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      data: prev.data.filter(item => item.id !== id),
+      data: prev.data.filter((item) => item.id !== id),
       activeKey: prev.activeKey === id ? '' : prev.activeKey,
     }));
   }, []);
 
   const updateTab = useCallback((id: string, tab: Partial<TabItem>) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      data: prev.data.map(item => 
-        item.id === id ? { ...item, ...tab } : item
-      ),
+      data: prev.data.map((item) => (item.id === id ? { ...item, ...tab } : item)),
     }));
   }, []);
 
@@ -80,11 +75,7 @@ export const TabsProvider: React.FC<React.PropsWithChildren<{ init?: Partial<Tab
     updateTab,
   };
 
-  return (
-    <TabsContext.Provider value={value}>
-      {children}
-    </TabsContext.Provider>
-  );
+  return <TabsContext.Provider value={value}>{children}</TabsContext.Provider>;
 };
 
 export const useTabs = () => {

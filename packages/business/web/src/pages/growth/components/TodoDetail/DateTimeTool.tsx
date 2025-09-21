@@ -1,16 +1,14 @@
 import { Popover, Calendar, Select, TimePicker } from '@arco-design/web-react';
 import { IconLeft, IconRight } from '@arco-design/web-react/icon';
 import dayjs, { Dayjs } from 'dayjs';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 import { useState } from 'react';
 import { GlobalContext } from '@/context';
 import { useContext } from 'react';
 import clsx from 'clsx';
-import {
-  RepeatSelector,
-  webMapping,
-} from '@life-toolkit/components-repeat/web';
-import type { RepeatVo } from '@life-toolkit/components-repeat/vo';
+import { RepeatSelector } from 'francis-component-react';
+import { voToForm, formToVo } from 'francis-helper-repeat';
+import type { RepeatVo } from 'francis-types-repeat';
 
 const { RangePicker } = TimePicker;
 
@@ -38,17 +36,18 @@ export default function DateTimeTool(props: {
   formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: RepeatVo | undefined;
+    repeatConfig: RepeatVo | undefined;
   };
   onChangeData: (formData: {
     date: Dayjs;
     timeRange: [string | undefined, string | undefined];
-    repeat: RepeatVo | undefined;
+    repeatConfig: RepeatVo | undefined;
   }) => void;
 }) {
   const { lang } = useContext(GlobalContext);
   const { formData, onChangeData } = props;
   const [mode, setMode] = useState<'month' | 'year'>('month');
+
   return (
     <Popover
       trigger="click"
@@ -129,7 +128,6 @@ export default function DateTimeTool(props: {
               className="w-full rounded-md"
               format="HH:mm"
               step={{ minute: 5 }}
-              disableConfirm
               allowClear
               onChange={(time) => {
                 onChangeData({
@@ -142,11 +140,11 @@ export default function DateTimeTool(props: {
           <div className="px-3">
             <RepeatSelector
               lang={lang as 'en-US' | 'zh-CN'}
-              value={formData.repeat && webMapping.voToForm(formData.repeat)}
+              value={formData.repeatConfig && voToForm(formData.repeatConfig)}
               onChange={(value) => {
                 onChangeData({
                   ...formData,
-                  repeat: webMapping.formToVo(value) as RepeatVo | undefined,
+                  repeatConfig: formToVo(value) as RepeatVo | undefined,
                 });
               }}
             />

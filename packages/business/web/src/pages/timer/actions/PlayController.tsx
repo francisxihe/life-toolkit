@@ -10,7 +10,7 @@ interface PlayControllerProps {
 const PlayController: React.FC<PlayControllerProps> = ({
   state,
   setState,
-  className
+  className,
 }) => {
   const handleClick = () => {
     setState(!state);
@@ -35,4 +35,4 @@ const PlayController: React.FC<PlayControllerProps> = ({
   );
 };
 
-export default PlayController; 
+export default PlayController;

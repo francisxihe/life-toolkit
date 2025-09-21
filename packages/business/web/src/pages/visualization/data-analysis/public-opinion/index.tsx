@@ -34,7 +34,7 @@ function PublicOpinion() {
       ...item,
       chartType: item.type as 'line' | 'pie' | 'interval',
       title: t[`dataAnalysis.publicOpinion.${item.key}`],
-    }))
+    })),
   );
 
   const getData = async () => {
@@ -49,7 +49,7 @@ function PublicOpinion() {
       };
     });
     const result = await Promise.all(requestList).finally(() =>
-      setLoading(false)
+      setLoading(false),
     );
     setData(result);
   };

@@ -11,7 +11,8 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   }
 
   async create(goal: Entity): Promise<Entity> {
-    return await this.repo.save(goal);
+    const saved = await this.repo.save(goal);
+    return this.find(saved.id);
   }
 
   async delete(id: Entity['id']): Promise<DeleteResult> {
@@ -26,20 +27,20 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   async softDelete(id: Entity['id']): Promise<DeleteResult> {
     return await this.repo.softDelete(id);
   }
- 
+
   async softDeleteByFilter(filter: FilterDto): Promise<DeleteResult> {
     const qb = this.buildQuery(filter);
     return await qb.softDelete().execute();
   }
 
-  async update(goalUpdate: Entity): Promise<Entity> {
-    const saved = await this.repo.save(goalUpdate);
-    return saved;
+  async update(updateEntity: Entity): Promise<Entity> {
+    const saved = await this.repo.save(updateEntity);
+    return this.find(saved.id);
   }
 
-  async updateByFilter(filter: FilterDto, goalUpdate: Entity): Promise<UpdateResult> {
+  async updateByFilter(filter: FilterDto, updateEntity: Entity): Promise<UpdateResult> {
     const qb = this.buildQuery(filter);
-    return await qb.update(goalUpdate as any).execute();
+    return await qb.update(updateEntity as any).execute();
   }
 
   async find(id: Entity['id']): Promise<Entity> {

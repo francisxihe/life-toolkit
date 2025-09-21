@@ -12,6 +12,7 @@
   "scripts": {
     "dev": "turbo run dev --filter=life-toolkit-server & turbo run dev --filter=life-toolkit-web",
     "build": "turbo run build",
+    "build:desktop": "turbo run build --filter=life-toolkit-desktop",
     "clean": "turbo run clean",
     "predeploy": "npm run build",
     "pre-commit": "turbo run pre-commit",

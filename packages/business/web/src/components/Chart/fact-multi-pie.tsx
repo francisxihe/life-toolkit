@@ -31,7 +31,7 @@ function FactMultiPie(props: FactMultiPieProps) {
               innerRadius: 0.7,
             },
           });
-          view
+          (view
             .interval()
             .adjust('stack')
             .position('value')
@@ -56,7 +56,7 @@ function FactMultiPie(props: FactMultiPieProps) {
                 textAlign: 'center',
               },
               offsetY: 10,
-            });
+            }));
           view.interaction('element-single-selected');
         }}
       />

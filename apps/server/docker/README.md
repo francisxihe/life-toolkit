@@ -27,6 +27,7 @@ docker/
 ### 开发环境
 
 1. **使用 Makefile（推荐）**：
+
    ```bash
    # 在 apps/server 目录下执行
    make run        # 构建并运行开发环境
@@ -35,6 +36,7 @@ docker/
    ```
 
 2. **使用脚本**：
+
    ```bash
    # 在 apps/server 目录下执行
    ./docker/scripts/run-docker.sh
@@ -49,6 +51,7 @@ docker/
 ### 生产环境
 
 1. **使用 Makefile（推荐）**：
+
    ```bash
    # 在 apps/server 目录下执行
    make prod-run      # 运行生产环境
@@ -97,7 +100,9 @@ make clean-image
 ## 📋 环境变量
 
 ### 开发环境
+
 创建 `.env.development.local` 文件：
+
 ```env
 DB_HOST=host.docker.internal
 DB_PORT=3306
@@ -108,7 +113,9 @@ JWT_SECRET=your-jwt-secret
 ```
 
 ### 生产环境
+
 创建 `.env.production.local` 文件：
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -123,6 +130,7 @@ JWT_SECRET=your-production-jwt-secret
 ## 🛠️ 常用命令
 
 ### 查看状态
+
 ```bash
 make status           # 开发环境状态
 make prod-status      # 生产环境状态
@@ -130,6 +138,7 @@ make prod-remote-status  # 远程服务器状态
 ```
 
 ### 查看日志
+
 ```bash
 make logs             # 开发环境日志
 make prod-logs        # 生产环境日志
@@ -137,6 +146,7 @@ make prod-remote-logs # 远程服务器日志
 ```
 
 ### 清理
+
 ```bash
 make clean            # 清理开发环境
 make prod-clean       # 清理生产环境
@@ -175,4 +185,4 @@ make help
 
 # 查看脚本帮助
 ./docker/scripts/build-amd64-image.sh --help
-``` 
+```

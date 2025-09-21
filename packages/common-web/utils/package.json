@@ -3,6 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "main": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
   "dependencies": {},
   "peerDependencies": {
     "react": "*"

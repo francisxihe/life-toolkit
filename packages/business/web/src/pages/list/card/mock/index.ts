@@ -42,7 +42,7 @@ const getQualityCard = () => {
       {
         title: () =>
           `${Mock.Random.pick(qualityCategory)}-${Mock.Random.pick(
-            qualityName
+            qualityName,
           )}`,
         time: () =>
           dayjs()

@@ -1,6 +1,6 @@
 import { Popover } from '@arco-design/web-react';
 import clsx from 'clsx';
-import { SiteIcon } from '@life-toolkit/components-web-ui';
+import { SiteIcon } from '@life-toolkit/components-ui';
 
 function TrackTime(props: {
   trackTimeList: {

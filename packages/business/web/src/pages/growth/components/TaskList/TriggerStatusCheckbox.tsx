@@ -1,7 +1,7 @@
 import { Checkbox, Modal } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TaskService } from '../../service';
-import { TaskVo } from '@life-toolkit/vo/growth';
+import { TaskVo } from '@life-toolkit/vo';
 
 export default function TriggerStatusCheckbox(props: {
   todo: {
@@ -34,7 +34,7 @@ export default function TriggerStatusCheckbox(props: {
           });
 
           if (todoSubTaskList.length === 0) {
-            await TaskService.batchDoneTask({
+            await TaskService.doneBatchTask({
               includeIds: [todo.id],
             });
             await props.onChange();
@@ -45,7 +45,7 @@ export default function TriggerStatusCheckbox(props: {
             title: '完成任务',
             content: `完成任务后，将自动完成其所有子任务。`,
             onOk: async () => {
-              await TaskService.batchDoneTask({
+              await TaskService.doneBatchTask({
                 includeIds: [
                   todo.id,
                   ...todoSubTaskList.map((subTask) => subTask.id),

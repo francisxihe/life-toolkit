@@ -1,4 +1,4 @@
-import type { TodoVo, UpdateTodoVo } from '@life-toolkit/vo/growth';
+import type { TodoVo, UpdateTodoVo } from '@life-toolkit/vo';
 import type { TodoFormData } from './todo.types';
 
 export default class TodoMapping {
@@ -11,7 +11,8 @@ export default class TodoMapping {
       urgency: todoVo.urgency,
       planDate: todoVo.planDate,
       planTimeRange: [todoVo.planStartAt, todoVo.planEndAt],
-      repeat: todoVo.repeat,
+      repeatConfig: todoVo.repeatConfig,
+      source: todoVo.source,
     };
   }
 

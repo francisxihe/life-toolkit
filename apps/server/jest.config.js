@@ -21,20 +21,15 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@life-toolkit/vo$': '<rootDir>/../../packages/vo/src/index.ts',
-    '^@life-toolkit/components-repeat$': '<rootDir>/../../packages/components-repeat/src/index.ts',
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
   testTimeout: 30000,
   setupFilesAfterEnv: ['<rootDir>/test/setup.ts'],
   globalSetup: '<rootDir>/test/global-setup.ts',
   globalTeardown: '<rootDir>/test/global-teardown.ts',
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/',
-    '/coverage/',
-  ],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
   verbose: true,
   detectOpenHandles: true,
   forceExit: true,
   maxWorkers: 1,
-}; 
+};

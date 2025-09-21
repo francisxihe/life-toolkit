@@ -20,7 +20,7 @@
 }
 
 .mini-time-display {
-  font-family: "SF Mono", Monaco, Inconsolata, "Roboto Mono", monospace;
+  font-family: 'SF Mono', Monaco, Inconsolata, 'Roboto Mono', monospace;
   font-size: 24px;
   font-weight: 600;
   color: #fff;
@@ -65,13 +65,13 @@
     padding: 12px;
     min-width: 160px;
   }
-  
+
   .mini-time-display {
     font-size: 20px;
   }
-  
+
   .mini-btn {
     font-size: 16px;
     padding: 4px;
   }
-} 
+}

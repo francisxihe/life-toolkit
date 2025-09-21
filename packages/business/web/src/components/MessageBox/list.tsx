@@ -33,7 +33,7 @@ interface MessageListProps {
   onItemClick?: (item: MessageItemData, index: number) => void;
   onAllBtnClick?: (
     unReadData: MessageItemData[],
-    data: MessageItemData[]
+    data: MessageItemData[],
   ) => void;
 }
 

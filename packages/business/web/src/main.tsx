@@ -6,7 +6,7 @@ import zhCN from '@arco-design/web-react/es/locale/zh-CN';
 import enUS from '@arco-design/web-react/es/locale/en-US';
 import './style/tailwind.css';
 import './style/global.less';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import rootReducer from './store';
 import { GlobalContext } from './context';
 import checkLogin from './utils/checkLogin';
@@ -93,7 +93,7 @@ export default function LifeToolkitApp() {
   };
 
   return (
-    <BrowserRouter
+    <HashRouter
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
@@ -119,7 +119,7 @@ export default function LifeToolkitApp() {
           </GlobalContext.Provider>
         </Provider>
       </ConfigProvider>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

@@ -1,5 +1,5 @@
-import { IsOptional, IsNumber } from "class-validator";
-import { Type } from "class-transformer";
+import { IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class PageDto {
   @IsOptional()

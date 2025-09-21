@@ -1,12 +1,4 @@
-export function createResponse<T>({
-  message,
-  data,
-  code,
-}: {
-  message: string;
-  data: T | null;
-  code: number;
-}) {
+export function createResponse<T>({ message, data, code }: { message: string; data: T | null; code: number }) {
   return {
     message,
     data,
@@ -22,7 +14,7 @@ export class ResponseDto<T> {
   static success<T>({ data }: { data: T }) {
     return createResponse<T>({
       code: 200,
-      message: "SUCCESS",
+      message: 'SUCCESS',
       data,
     });
   }
@@ -64,7 +56,7 @@ export class PaginationResponseDto<T> {
       pageSize: number;
     }>({
       code: 200,
-      message: "SUCCESS",
+      message: 'SUCCESS',
       data: {
         list,
         total,

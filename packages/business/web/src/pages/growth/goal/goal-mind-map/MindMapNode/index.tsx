@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ReactShape } from '@antv/x6-react-shape';
-import { ENodeType } from '@life-toolkit/components-web-mind/src/types';
+import { ENodeType } from '@life-toolkit/components-mind/src/types';
 import { IconPlusCircle, IconMinusCircle } from '@arco-design/web-react/icon';
 import GoalEditor from '../../../components/GoalDetail/GoalEditor';
 import { openDrawer } from '@/layout/Drawer';

@@ -3,7 +3,7 @@
 import { Input, Select, Grid, DatePicker } from '@arco-design/web-react';
 import { IconSearch } from '@arco-design/web-react/icon';
 import { IMPORTANCE_MAP } from '../../constants';
-import { GoalPageFilterVo } from '@life-toolkit/vo/growth';
+import { GoalPageFilterVo } from '@life-toolkit/vo';
 import { useGoalAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
 import { GoalType, GoalStatus } from '@life-toolkit/enum';

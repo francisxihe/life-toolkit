@@ -1,11 +1,7 @@
-import { ResponseDto, PaginationResponseDto } from "@/helpers/response";
+import { ResponseDto, PaginationResponseDto } from '@/helpers/response';
 
 export function Response() {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -34,11 +30,7 @@ export function Response() {
 }
 
 export function PageResponse(data: any) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {

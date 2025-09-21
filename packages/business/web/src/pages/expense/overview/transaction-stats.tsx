@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Card, Grid } from "@arco-design/web-react";
-import { useExpenses } from "../context";
-import { IconArrowRise, IconArrowFall } from "@arco-design/web-react/icon";
+import { Card, Grid } from '@arco-design/web-react';
+import { useExpenses } from '../context';
+import { IconArrowRise, IconArrowFall } from '@arco-design/web-react/icon';
 
 const GridItem = Grid.Col;
 
@@ -43,7 +43,7 @@ export function TransactionStats() {
           </div>
           <div
             className={`text-2xl font-bold ${
-              stats.netAmount >= 0 ? "text-green-600" : "text-red-600"
+              stats.netAmount >= 0 ? 'text-green-600' : 'text-red-600'
             }`}
           >
             ${stats.netAmount.toFixed(2)}

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { GoalService } from './goal.service';
-import type { Goal as GoalVO } from '@life-toolkit/vo';
+import type { Goal as GoalVO, ResponsePageVo, ResponseListVo } from '@life-toolkit/vo';
 import { GoalPageFilterDto, GoalFilterDto, CreateGoalDto, UpdateGoalDto, GoalDto } from '@life-toolkit/business-server';
 import { Response } from '@/decorators/response.decorator';
 
@@ -13,10 +13,10 @@ export class GoalController {
    */
   @Post('create')
   @Response()
-  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalModelVo> {
+  async create(@Body() createVo: GoalVO.CreateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const createDto = CreateGoalDto.importVo(createVo);
     const dto = await this.goalService.create(createDto);
-    return dto.exportModelVo();
+    return dto.exportWithoutRelationsVo();
   }
 
   /**
@@ -24,7 +24,7 @@ export class GoalController {
    */
   @Get('page')
   @Response()
-  async page(@Query() filter: GoalPageFilterDto): Promise<GoalVO.GoalPageVo> {
+  async page(@Query() filter: GoalPageFilterDto): Promise<ResponsePageVo<GoalVO.GoalWithoutRelationsVo>> {
     const { list, total } = await this.goalService.page(filter);
     return GoalDto.dtoListToPageVo(list, total, filter.pageNum || 1, filter.pageSize || 10);
   }
@@ -34,7 +34,7 @@ export class GoalController {
    */
   @Get('list')
   @Response()
-  async list(@Query() filter: GoalFilterDto): Promise<GoalVO.GoalListVo> {
+  async list(@Query() filter: GoalFilterDto): Promise<ResponseListVo<GoalVO.GoalWithoutRelationsVo>> {
     const goalList = await this.goalService.findByFilter(filter);
     return GoalDto.dtoListToListVo(goalList);
   }
@@ -64,10 +64,10 @@ export class GoalController {
    */
   @Put('update/:id')
   @Response()
-  async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalModelVo> {
+  async update(@Param('id') id: string, @Body() updateVo: GoalVO.UpdateGoalVo): Promise<GoalVO.GoalWithoutRelationsVo> {
     const updateDto = UpdateGoalDto.importVo(updateVo);
     const dto = await this.goalService.update(id, updateDto);
-    return dto.exportModelVo();
+    return dto.exportWithoutRelationsVo();
   }
 
   /**
@@ -108,10 +108,10 @@ export class GoalController {
     return { result };
   }
 
-  @Get('findById/:id')
+  @Get('findWithRelations/:id')
   @Response()
-  async findById(@Param('id') id: string): Promise<GoalVO.GoalVo> {
-    const dto = await this.goalService.findById(id);
+  async findWithRelations(@Param('id') id: string): Promise<GoalVO.GoalVo> {
+    const dto = await this.goalService.findWithRelations(id);
     return dto.exportVo();
   }
 }

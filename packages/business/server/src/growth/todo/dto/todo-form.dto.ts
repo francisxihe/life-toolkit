@@ -1,27 +1,26 @@
-import {
-  PickType,
-  IntersectionType,
-  PartialType,
-} from "@life-toolkit/mapped-types";
-import { TodoSource, TodoStatus } from "@life-toolkit/enum";
-import { Todo as TodoVO } from "@life-toolkit/vo";
-import dayjs from "dayjs";
-import { TodoDto } from "./todo-model.dto";
-import { Todo } from "../todo.entity";
+import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
+import { TodoSource, TodoStatus } from '@life-toolkit/enum';
+import { Todo as TodoVO } from '@life-toolkit/vo';
+import dayjs from 'dayjs';
+import { TodoDto } from './todo-model.dto';
+import { Todo } from '../todo.entity';
 
 export class CreateTodoDto extends PickType(TodoDto, [
-  "name",
-  "description",
-  "status",
-  "planDate",
-  "planStartAt",
-  "planEndAt",
-  "importance",
-  "urgency",
-  "tags",
+  'name',
+  'description',
+  'status',
+  'planDate',
+  'planStartAt',
+  'planEndAt',
+  'importance',
+  'urgency',
+  'tags',
+  'source',
+  'repeatConfig',
+  'taskId',
+  'repeatId',
+  'habitId',
 ] as const) {
-  taskId?: string;
-
   importCreateVo(vo: TodoVO.CreateTodoVo) {
     this.name = vo.name;
     this.description = vo.description;
@@ -29,16 +28,12 @@ export class CreateTodoDto extends PickType(TodoDto, [
     this.importance = vo.importance;
     this.urgency = vo.urgency;
     this.planDate = dayjs(vo.planDate).toDate();
-    this.planStartAt = vo.planStartAt
-      ? dayjs(vo.planStartAt).format("HH:mm:ss")
-      : undefined;
-    this.planEndAt = vo.planEndAt
-      ? dayjs(vo.planEndAt).format("HH:mm:ss")
-      : undefined;
+    this.planStartAt = vo.planStartAt ? dayjs(vo.planStartAt).format('HH:mm:ss') : undefined;
+    this.planEndAt = vo.planEndAt ? dayjs(vo.planEndAt).format('HH:mm:ss') : undefined;
     this.taskId = vo.taskId;
   }
 
-  exportCreateEntity() {
+  exportCreateEntity(): Todo {
     const todo = new Todo();
 
     todo.name = this.name;
@@ -51,7 +46,9 @@ export class CreateTodoDto extends PickType(TodoDto, [
     todo.planStartAt = this.planStartAt;
     todo.planEndAt = this.planEndAt;
     todo.taskId = this.taskId;
-    todo.source = TodoSource.MANUAL;
+    todo.repeatId = this.repeatId;
+    todo.habitId = this.habitId;
+    todo.source = this.source ?? TodoSource.MANUAL;
 
     return todo;
   }
@@ -59,8 +56,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
 
 export class UpdateTodoDto extends IntersectionType(
   PartialType(CreateTodoDto),
-  PickType(Todo, ["id"] as const),
-  PickType(TodoDto, ["doneAt", "abandonedAt"] as const)
+  PickType(Todo, ['id'] as const),
+  PickType(TodoDto, ['doneAt', 'abandonedAt'] as const)
 ) {
   importUpdateVo(vo: TodoVO.UpdateTodoVo) {
     this.name = vo.name;
@@ -76,7 +73,7 @@ export class UpdateTodoDto extends IntersectionType(
     if (this.id === undefined) {
       this.id = todo.id;
     } else if (this.id !== todo.id) {
-      throw new Error("ID不匹配");
+      throw new Error('ID不匹配');
     }
     if (this.name === undefined) this.name = todo.name;
     if (this.description === undefined) this.description = todo.description;

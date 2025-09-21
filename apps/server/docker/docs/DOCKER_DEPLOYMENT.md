@@ -15,11 +15,11 @@
 
 ## 📜 脚本功能总览
 
-| 脚本名称 | 主要功能 | 使用场景 |
-|---------|---------|---------|
-| `run-docker-prod.sh` | 构建镜像、保存镜像、运行容器 | 本地开发和构建 |
-| `load-and-run-docker.sh` | 保存运行中的容器为镜像文件 | 保存容器当前状态 |
-| `load-image-and-run.sh` | 加载镜像文件并运行容器 | 服务端部署 |
+| 脚本名称                 | 主要功能                     | 使用场景         |
+| ------------------------ | ---------------------------- | ---------------- |
+| `run-docker-prod.sh`     | 构建镜像、保存镜像、运行容器 | 本地开发和构建   |
+| `load-and-run-docker.sh` | 保存运行中的容器为镜像文件   | 保存容器当前状态 |
+| `load-image-and-run.sh`  | 加载镜像文件并运行容器       | 服务端部署       |
 
 ## 🛠️ 使用方法
 
@@ -46,6 +46,7 @@ cd apps/server
 #### 输出文件
 
 保存的镜像文件位于 `docker-images/` 目录：
+
 ```
 docker-images/
 └── life-toolkit-server_production_YYYYMMDD_HHMMSS.tar.gz
@@ -127,12 +128,14 @@ scp docker-images/life-toolkit-server_production_*.tar.gz user@server:/path/to/s
 ### 使用场景
 
 1. **macOS → Linux 服务器**:
+
    ```bash
    # 在 macOS 上保存容器为 linux/amd64 镜像
    ./load-and-run-docker.sh container_id -a linux/amd64
    ```
 
 2. **开发环境 → 生产环境**:
+
    ```bash
    # 确保生产环境兼容性
    ./load-and-run-docker.sh container_id -a linux/amd64
@@ -240,7 +243,7 @@ services:
     image: life-toolkit-server:production
     container_name: life-toolkit-server-prod
     ports:
-      - "3000:3000"
+      - '3000:3000'
     env_file:
       - .env.production.local
     restart: unless-stopped
@@ -256,7 +259,7 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
@@ -286,28 +289,31 @@ docker-compose down
 ### 常见问题
 
 1. **镜像构建失败**
+
    ```bash
    # 检查 dist 目录是否存在
    ls -la dist/
-   
+
    # 重新构建应用
    pnpm build
    ```
 
 2. **容器启动失败**
+
    ```bash
    # 查看容器日志
    docker logs life-toolkit-server-prod
-   
+
    # 检查环境变量
    docker exec life-toolkit-server-prod env
    ```
 
 3. **数据库连接失败**
+
    ```bash
    # 检查数据库服务状态
    docker ps | grep mysql
-   
+
    # 测试数据库连接
    mysql -h DB_HOST -u DB_USERNAME -p
    ```
@@ -374,4 +380,4 @@ docker images | grep life-toolkit-server
 - [Docker 官方文档](https://docs.docker.com/)
 - [Docker Compose 文档](https://docs.docker.com/compose/)
 - [NestJS 部署指南](https://docs.nestjs.com/techniques/deployment)
-- [Life Toolkit 项目文档](../../README.md) 
+- [Life Toolkit 项目文档](../../README.md)

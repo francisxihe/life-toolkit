@@ -18,7 +18,9 @@ interface FileOperationResult {
 const ElectronDemo: React.FC = () => {
   const [isElectron, setIsElectron] = useState<boolean>(false);
   const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
-  const [fileResult, setFileResult] = useState<FileOperationResult | null>(null);
+  const [fileResult, setFileResult] = useState<FileOperationResult | null>(
+    null,
+  );
   const [filePath, setFilePath] = useState<string>('/tmp/test.txt');
   const [notification, setNotification] = useState<string>('');
 
@@ -27,45 +29,45 @@ const ElectronDemo: React.FC = () => {
     const checkElectron = async () => {
       const isInElectron = electronBridge.isElectronEnv();
       setIsElectron(isInElectron);
-      
+
       if (isInElectron) {
         // 获取应用信息
         const info = await electronBridge.getAppInfo();
         setAppInfo(info);
-        
+
         // 设置通知监听
         electronBridge.listenToEvent('notification', (data) => {
           setNotification(`收到通知: ${data.message}`);
         });
       }
     };
-    
+
     checkElectron();
-    
+
     // 组件卸载时移除事件监听
     return () => {
       electronBridge.removeEventListener('notification');
     };
   }, []);
-  
+
   // 处理文件操作
   const handleFileOperation = async () => {
     if (!filePath.trim()) {
       alert('请输入文件路径');
       return;
     }
-    
+
     const result = await electronBridge.readFile(filePath);
     setFileResult(result);
   };
-  
+
   return (
     <div className="electron-demo p-6 border rounded-lg shadow-md">
       <h2 className="text-xl font-bold mb-4">Electron功能演示</h2>
-      
+
       <div className="mb-4">
         <p className="mb-2">
-          <strong>环境检测:</strong> 
+          <strong>环境检测:</strong>
           {isElectron ? (
             <span className="text-green-600">在Electron环境中运行</span>
           ) : (
@@ -73,7 +75,7 @@ const ElectronDemo: React.FC = () => {
           )}
         </p>
       </div>
-      
+
       {appInfo && (
         <div className="mb-4">
           <h3 className="font-semibold mb-2">应用信息:</h3>
@@ -81,7 +83,7 @@ const ElectronDemo: React.FC = () => {
           <p>平台: {appInfo.platform}</p>
         </div>
       )}
-      
+
       <div className="mb-4">
         <h3 className="font-semibold mb-2">文件操作:</h3>
         <div className="flex gap-2 mb-2">
@@ -100,23 +102,23 @@ const ElectronDemo: React.FC = () => {
             读取文件
           </button>
         </div>
-        
+
         {fileResult && (
-          <div className={`p-3 rounded ${fileResult.success ? 'bg-green-100' : 'bg-red-100'}`}>
+          <div
+            className={`p-3 rounded ${fileResult.success ? 'bg-green-100' : 'bg-red-100'}`}
+          >
             <p>{fileResult.message}</p>
           </div>
         )}
       </div>
-      
+
       {notification && (
         <div className="mb-4">
           <h3 className="font-semibold mb-2">通知:</h3>
-          <div className="p-3 bg-yellow-100 rounded">
-            {notification}
-          </div>
+          <div className="p-3 bg-yellow-100 rounded">{notification}</div>
         </div>
       )}
-      
+
       {!isElectron && (
         <div className="mt-6 p-4 bg-gray-100 rounded">
           <p className="text-gray-700">
@@ -128,4 +130,4 @@ const ElectronDemo: React.FC = () => {
   );
 };
 
-export default ElectronDemo; 
+export default ElectronDemo;

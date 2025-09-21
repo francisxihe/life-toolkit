@@ -1,6 +1,6 @@
 import { Select, Grid } from '@arco-design/web-react';
 import { TableFilter } from '@/components/Layout/TableFilter';
-import { HabitPageFilterVo } from '@life-toolkit/vo/growth/habit';
+import { HabitPageFilterVo } from '@life-toolkit/vo';
 import { useState } from 'react';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { useHabitListContext } from './context';

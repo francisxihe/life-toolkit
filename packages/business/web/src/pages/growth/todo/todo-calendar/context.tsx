@@ -2,7 +2,7 @@ import { createInjectState } from '@/utils/createInjectState';
 import { useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo/growth';
+import { TodoVo } from '@life-toolkit/vo';
 
 export const [CalendarProvider, useCalendarContext] = createInjectState<{
   ContextType: {

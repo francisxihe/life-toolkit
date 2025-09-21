@@ -10,7 +10,12 @@ interface CountdownProps {
   setRefresh: (refresh: boolean) => void;
 }
 
-const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRefresh }) => {
+const Countdown: React.FC<CountdownProps> = ({
+  countdown,
+  state,
+  refresh,
+  setRefresh,
+}) => {
   const [nCountdown, setNCountdown] = useState<number>(countdown);
   const [timeArr, setTimeArr] = useState<number[]>(getTimeArr(countdown));
   const timeHandleRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,7 +39,7 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
       if (timeHandleRef.current) {
         clearTimeout(timeHandleRef.current);
       }
-      
+
       const currentCountdown = nCountdownRef.current;
       if (currentCountdown <= 0) {
         setNCountdown(0);
@@ -45,13 +50,14 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
 
       timeMarkRef.current = new Date();
       timeHandleRef.current = setTimeout(() => {
-        const diffTime = new Date().getTime() - (timeMarkRef.current?.getTime() || 0);
+        const diffTime =
+          new Date().getTime() - (timeMarkRef.current?.getTime() || 0);
         const newCountdown = currentCountdown - Math.floor(diffTime / 1000);
         const finalCountdown = Math.max(0, newCountdown);
-        
+
         setNCountdown(finalCountdown);
         setTimeArr(getTimeArr(finalCountdown));
-        
+
         if (finalCountdown > 0) {
           tick(); // 递归调用
         } else {
@@ -109,4 +115,4 @@ const Countdown: React.FC<CountdownProps> = ({ countdown, state, refresh, setRef
   );
 };
 
-export default Countdown; 
+export default Countdown;

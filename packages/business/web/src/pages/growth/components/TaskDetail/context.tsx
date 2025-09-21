@@ -4,10 +4,10 @@ import { useState, useEffect, Dispatch, useRef, useCallback } from 'react';
 import type {
   TaskVo,
   UpdateTaskVo,
-  GoalModelVo,
-  TaskModelVo,
+  GoalWithoutRelationsVo,
+  TaskWithoutRelationsVo,
   CreateTaskVo,
-} from '@life-toolkit/vo/growth';
+} from '@life-toolkit/vo';
 import {
   TaskFormData,
   TaskService,
@@ -18,7 +18,7 @@ import { createInjectState } from '@/utils/createInjectState';
 
 export type TaskDetailContextProps = {
   children: React.ReactNode;
-  task?: TaskVo | TaskModelVo;
+  task?: TaskVo | TaskWithoutRelationsVo;
   initialFormData?: Partial<TaskFormData>;
   mode: 'editor' | 'creator';
   size?: 'small' | 'default';
@@ -30,8 +30,8 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   ContextType: {
     currentTask: TaskVo;
     taskFormData: TaskFormData;
-    goalList: GoalModelVo[];
-    taskList: TaskModelVo[];
+    goalList: GoalWithoutRelationsVo[];
+    taskList: TaskWithoutRelationsVo[];
     loading: boolean;
     size: 'small' | 'default';
     setTaskFormData: Dispatch<React.SetStateAction<TaskFormData>>;

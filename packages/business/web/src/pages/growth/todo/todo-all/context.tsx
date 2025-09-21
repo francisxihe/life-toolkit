@@ -10,7 +10,7 @@ import {
   useRef,
   useEffect,
 } from 'react';
-import { TodoVo, TodoPageFilterVo } from '@life-toolkit/vo/growth';
+import { TodoVo, TodoPageFilterVo } from '@life-toolkit/vo';
 import { TodoService } from '../../service';
 import { createInjectState } from '@/utils/createInjectState';
 import { TodoStatus } from '@life-toolkit/enum';
