@@ -29,11 +29,7 @@ export default class TodoController {
   static async listWithRepeat(params: TodoVO.TodoFilterVo) {
     return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/list-with-repeat`, params);
   }
-
-  static async detailWithRepeat(id: string) {
-    return request<TodoVO.TodoVo>({ method: 'get' })(`/todo/detail-with-repeat/${id}`);
-  }
-
+  
   static async doneWithRepeatBatch(body: TodoVO.TodoFilterVo) {
     return request<any>({ method: 'put' })(`/todo/done-with-repeat/batch`, body);
   }
@@ -44,5 +40,13 @@ export default class TodoController {
 
   static async restoreWithRepeat(id: string) {
     return request<boolean>({ method: 'put' })(`/todo/restore-with-repeat/${id}`);
+  }
+
+  static async updateWithRepeat(id: string, body: TodoVO.UpdateTodoVo) {
+    return request<TodoVO.TodoVo>({ method: "put" })(`/todo/update-with-repeat/${id}`, body);
+  }
+
+  static async detailWithRepeat(id: string, body: any) {
+    return request<TodoVO.TodoVo>({ method: "get" })(`/todo/detail-with-repeat/${id}`, body);
   }
 }

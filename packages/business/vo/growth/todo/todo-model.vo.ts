@@ -13,8 +13,8 @@ export type TodoWithoutRelationsVo = {
   tags: string[];
   doneAt?: string;
   abandonedAt?: string;
-  planStartAt?: string;
-  planEndAt?: string;
+  planStartTime?: string;
+  planEndTime?: string;
   planDate: string;
   source?: TodoSource;
   taskId?: string;

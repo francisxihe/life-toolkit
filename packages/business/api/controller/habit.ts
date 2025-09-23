@@ -26,10 +26,6 @@ export default class HabitController {
     return request<ResponsePageVo<HabitVO.HabitWithoutRelationsVo>>({ method: 'get' })(`/habit/page`, body);
   }
 
-  static async doneBatch(body: { includeIds?: string[] }) {
-    return request<any[]>({ method: 'put' })(`/habit/done/batch`, body);
-  }
-
   static async abandon(id: string) {
     return request<void>({ method: 'put' })(`/habit/abandon/${id}`);
   }

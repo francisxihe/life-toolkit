@@ -10,7 +10,7 @@ export default class TodoMapping {
       importance: todoVo.importance,
       urgency: todoVo.urgency,
       planDate: todoVo.planDate,
-      planTimeRange: [todoVo.planStartAt, todoVo.planEndAt],
+      planTimeRange: [todoVo.planStartTime, todoVo.planEndTime],
       repeatConfig: todoVo.repeatConfig,
       source: todoVo.source,
     };
@@ -19,8 +19,8 @@ export default class TodoMapping {
   static formDataToUpdateVo(formData: TodoFormData): UpdateTodoVo {
     return {
       ...formData,
-      planStartAt: formData.planTimeRange?.[0],
-      planEndAt: formData.planTimeRange?.[1],
+      planStartTime: formData.planTimeRange?.[0],
+      planEndTime: formData.planTimeRange?.[1],
     };
   }
 }

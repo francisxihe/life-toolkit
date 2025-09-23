@@ -335,8 +335,8 @@ erDiagram
         array tags
         datetime doneAt
         datetime abandonedAt
-        time planStartAt
-        time planEndAt
+        time planStartTime
+        time planEndTime
         date planDate
         string taskId FK
         string repeatId FK
@@ -439,12 +439,12 @@ interface TodoEntityStructure {
       required: true;
       description: '计划执行日期';
     };
-    planStartAt: {
+    planStartTime: {
       type: 'time';
       required: false;
       description: '计划开始时间';
     };
-    planEndAt: {
+    planEndTime: {
       type: 'time';
       required: false;
       description: '计划结束时间';
@@ -494,7 +494,7 @@ interface TodoEntityStructure {
   constraints: [
     'CHECK (importance >= 1 AND importance <= 5)',
     'CHECK (urgency >= 1 AND urgency <= 5)',
-    'CHECK (planStartAt < planEndAt OR planStartAt IS NULL OR planEndAt IS NULL)',
+    'CHECK (planStartTime < planEndTime OR planStartTime IS NULL OR planEndTime IS NULL)',
   ];
 }
 ```
@@ -1018,8 +1018,8 @@ interface TodoFormComponent {
     'importance - 重要程度(1-5)',
     'urgency - 紧急程度(1-5)',
     'planDate - 计划日期(必填)',
-    'planStartAt - 计划开始时间(可选)',
-    'planEndAt - 计划结束时间(可选)',
+    'planStartTime - 计划开始时间(可选)',
+    'planEndTime - 计划结束时间(可选)',
     'tags - 标签列表(必填)',
     'repeat - 重复配置(可选)',
   ];

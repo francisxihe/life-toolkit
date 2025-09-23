@@ -288,11 +288,11 @@ abandonedAt?: Date;
 
 /** 计划开始时间 - 可选 */
 @Column("time", { nullable: true })
-planStartAt?: string;
+planStartTime?: string;
 
 /** 计划结束时间 - 可选 */
 @Column("time", { nullable: true })
-planEndAt?: string;
+planEndTime?: string;
 ```
 
 #### 数组字段

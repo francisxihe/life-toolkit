@@ -5,7 +5,7 @@ import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
 import { flushSync } from 'react-dom';
-import { TodoVo } from '@life-toolkit/vo';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import { useTodoContext } from '../context';
 import { TodoStatus } from '@life-toolkit/enum';
 
@@ -49,7 +49,7 @@ export default function TodoWeek() {
     setWeekAbandonedTodoList(abandonedTodos);
 
     if (currentTodo) {
-      showTodoDetail(currentTodo.id);
+      showTodoDetail(currentTodo);
     }
   }
 
@@ -59,11 +59,12 @@ export default function TodoWeek() {
 
   const [currentTodo, setCurrentTodo] = useState<TodoVo | null>(null);
 
-  async function showTodoDetail(id: string) {
+  async function showTodoDetail(_todo: TodoWithoutRelationsVo) {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodoDetailWithRepeat(id);
+    const todo = await TodoService.getTodoDetailWithRepeat(_todo.id, _todo);
+
     setCurrentTodo(todo);
   }
 
@@ -98,8 +99,8 @@ export default function TodoWeek() {
                 >
                   <TodoList
                     todoList={expiredTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -115,8 +116,8 @@ export default function TodoWeek() {
                 >
                   <TodoList
                     todoList={weekTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -132,8 +133,8 @@ export default function TodoWeek() {
                 >
                   <TodoList
                     todoList={weekDoneTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -149,8 +150,8 @@ export default function TodoWeek() {
                 >
                   <TodoList
                     todoList={weekAbandonedTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();

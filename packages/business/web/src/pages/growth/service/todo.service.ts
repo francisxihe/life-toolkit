@@ -13,9 +13,12 @@ export default class TodoService {
    * @param todoId 任务ID
    * @returns 任务详情
    */
-  static async getTodoDetailWithRepeat(todoId: string) {
+  static async getTodoDetailWithRepeat(
+    todoId: string,
+    { source }: { source?: string } = {},
+  ) {
     try {
-      return TodoController.detailWithRepeat(todoId);
+      return TodoController.detailWithRepeat(todoId, { source });
     } catch (error) {
       Message.error(error.message);
     }
@@ -106,6 +109,29 @@ export default class TodoService {
   static async updateTodo(id: string, todo: UpdateTodoVo, silent = true) {
     try {
       const res = await TodoController.update(id, todo);
+      if (!silent) {
+        Message.success('操作成功');
+      }
+      return res;
+    } catch (error) {
+      Message.error(error.message);
+    }
+  }
+
+  /**
+   * 更新待办及重复待办
+   * @param id 待办ID
+   * @param todo 待办详情
+   * @param silent 是否静默
+   * @returns 操作结果
+   */
+  static async updateWithRepeatTodo(
+    id: string,
+    todo: UpdateTodoVo,
+    silent = true,
+  ) {
+    try {
+      const res = await TodoController.updateWithRepeat(id, todo);
       if (!silent) {
         Message.success('操作成功');
       }

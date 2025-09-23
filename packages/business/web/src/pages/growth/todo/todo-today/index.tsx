@@ -4,7 +4,7 @@ import { FlexibleContainer } from 'francis-component-react';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 import { useTodoContext } from '../context';
@@ -50,7 +50,7 @@ export default function TodoToday() {
     setTodayAbandonedTodoList(abandonedTodos);
 
     if (currentTodo) {
-      showTodoDetail(currentTodo.id);
+      showTodoDetail(currentTodo);
     }
   }
 
@@ -60,11 +60,11 @@ export default function TodoToday() {
 
   const [currentTodo, setCurrentTodo] = useState<TodoVo | null>(null);
 
-  async function showTodoDetail(id: string) {
+  async function showTodoDetail(_todo: TodoWithoutRelationsVo) {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodoDetailWithRepeat(id);
+    const todo = await TodoService.getTodoDetailWithRepeat(_todo.id, _todo);
     setCurrentTodo(todo);
   }
 
@@ -93,8 +93,8 @@ export default function TodoToday() {
                 >
                   <TodoList
                     todoList={expiredTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -110,8 +110,8 @@ export default function TodoToday() {
                 >
                   <TodoList
                     todoList={todayTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -127,8 +127,8 @@ export default function TodoToday() {
                 >
                   <TodoList
                     todoList={todayDoneTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();
@@ -144,8 +144,8 @@ export default function TodoToday() {
                 >
                   <TodoList
                     todoList={todayAbandonedTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
+                    onClickTodo={async (todo) => {
+                      await showTodoDetail(todo);
                     }}
                     refreshTodoList={async () => {
                       await refreshData();

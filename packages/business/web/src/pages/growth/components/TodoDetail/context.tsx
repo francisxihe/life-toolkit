@@ -21,8 +21,8 @@ export type TodoDetailProviderProps = {
 export type CurrentTodo = {
   id: string;
   planDate: string;
-  planStartAt?: string;
-  planEndAt?: string;
+  planStartTime?: string;
+  planEndTime?: string;
   repeatConfig?: TodoVo['repeatConfig'];
   importance?: number;
   urgency?: number;
@@ -54,15 +54,18 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
 
   const todoFormDataRef = useRef<TodoFormData>(todoFormData);
 
-  const refreshTodoDetail = async (id: string) => {
-    const todo = await TodoService.getTodoDetailWithRepeat(id);
+  const refreshTodoDetail = async (
+    id: string,
+    _todo: TodoVo | TodoWithoutRelationsVo,
+  ) => {
+    const todo = await TodoService.getTodoDetailWithRepeat(id, _todo);
     setCurrentTodo(todo);
     todoFormDataRef.current = TodoMapping.voToFormData(todo);
     setTodoFormData(todoFormDataRef.current);
   };
 
   const initTodoFormData = useCallback(async () => {
-    await refreshTodoDetail(props.todo.id);
+    await refreshTodoDetail(props.todo.id, props.todo);
   }, [props.todo]);
 
   useEffect(() => {
@@ -93,8 +96,8 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
       await TodoService.createTodo({
         name: form.name,
         planDate: form.planDate,
-        planStartAt: form.planTimeRange?.[0] || undefined,
-        planEndAt: form.planTimeRange?.[1] || undefined,
+        planStartTime: form.planTimeRange?.[0] || undefined,
+        planEndTime: form.planTimeRange?.[1] || undefined,
         importance: form.importance,
         urgency: form.urgency,
         tags: form.tags,
@@ -112,7 +115,7 @@ export const [TodoDetailProvider, useTodoDetailContext] = createInjectState<{
 
   async function handleUpdate() {
     const data = TodoMapping.formDataToUpdateVo(todoFormDataRef.current);
-    await TodoService.updateTodo(currentTodo.id, data);
+    await TodoService.updateWithRepeatTodo(currentTodo.id, data);
   }
 
   const onSubmit = async () => {

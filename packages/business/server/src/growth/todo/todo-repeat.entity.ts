@@ -52,6 +52,14 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   @Column('date', { nullable: true })
   repeatStartDate!: string;
 
+  /** 计划待办开始时间 */
+  @Column('time', { nullable: true })
+  planStartTime?: string;
+
+  /** 计划待办结束时间 */
+  @Column('time', { nullable: true })
+  planEndTime?: string;
+
   /** 当前执行到的重复日期 */
   @Column('date', { nullable: true })
   currentDate!: string;
