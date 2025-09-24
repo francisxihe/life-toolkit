@@ -15,7 +15,7 @@ export default class TodoService {
    */
   static async getTodoDetailWithRepeat(todoId: string) {
     try {
-      return TodoController.detailWithRepeat(todoId);
+      return TodoController.detailMixRepeat(todoId);
     } catch (error) {
       Message.error(error.message);
     }
@@ -122,7 +122,7 @@ export default class TodoService {
    */
   static async getTodoListWithRepeat(params: TodoFilterVo = {}) {
     try {
-      return TodoController.listWithRepeat(params);
+      return TodoController.listMixRepeat(params);
     } catch (error) {
       Message.error(error.message);
     }

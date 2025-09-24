@@ -26,12 +26,12 @@ export default class TodoController {
     return request<ResponsePageVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/page`, params);
   }
 
-  static async listWithRepeat(params: TodoVO.TodoFilterVo) {
-    return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/list-with-repeat`, params);
+  static async listMixRepeat(params: TodoVO.TodoFilterVo) {
+    return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/list-mixed-repeat`, params);
   }
 
-  static async detailWithRepeat(id: string) {
-    return request<TodoVO.TodoVo>({ method: 'get' })(`/todo/detail-with-repeat/${id}`);
+  static async detailMixRepeat(id: string) {
+    return request<TodoVO.TodoVo>({ method: 'get' })(`/todo/detail-mix-repeat/${id}`);
   }
 
   static async doneWithRepeatBatch(body: TodoVO.TodoFilterVo) {

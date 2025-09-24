@@ -37,14 +37,14 @@ export class TodoController {
     return this.controller.page(query);
   }
 
-  @Get('/list-with-repeat')
-  async listWithRepeat(@Query() query?: TodoVO.TodoFilterVo) {
-    return this.controller.listWithRepeat(query);
+  @Get('/list-mixed-repeat')
+  async listMixRepeat(@Query() query?: TodoVO.TodoFilterVo) {
+    return this.controller.listMixRepeat(query);
   }
 
-  @Get('/detail-with-repeat/:id')
-  async detailWithRepeat(@Param('id') id: string) {
-    return this.controller.detailWithRepeat(id);
+  @Get('/detail-mix-repeat/:id')
+  async detailMixRepeat(@Param('id') id: string) {
+    return this.controller.detailMixRepeat(id);
   }
 
   @Put('/done-with-repeat/batch')
