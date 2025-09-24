@@ -10,8 +10,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
   'description',
   'status',
   'planDate',
-  'planStartAt',
-  'planEndAt',
+  'planStartTime',
+  'planEndTime',
   'importance',
   'urgency',
   'tags',
@@ -28,8 +28,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
     this.importance = vo.importance;
     this.urgency = vo.urgency;
     this.planDate = dayjs(vo.planDate).toDate();
-    this.planStartAt = vo.planStartAt ? dayjs(vo.planStartAt).format('HH:mm:ss') : undefined;
-    this.planEndAt = vo.planEndAt ? dayjs(vo.planEndAt).format('HH:mm:ss') : undefined;
+    this.planStartTime = vo.planStartTime ? dayjs(vo.planStartTime).format('HH:mm:ss') : undefined;
+    this.planEndTime = vo.planEndTime ? dayjs(vo.planEndTime).format('HH:mm:ss') : undefined;
     this.taskId = vo.taskId;
   }
 
@@ -43,8 +43,8 @@ export class CreateTodoDto extends PickType(TodoDto, [
     todo.urgency = this.urgency;
     todo.tags = this.tags;
     todo.planDate = this.planDate;
-    todo.planStartAt = this.planStartAt;
-    todo.planEndAt = this.planEndAt;
+    todo.planStartTime = this.planStartTime;
+    todo.planEndTime = this.planEndTime;
     todo.taskId = this.taskId;
     todo.repeatId = this.repeatId;
     todo.habitId = this.habitId;
@@ -67,6 +67,8 @@ export class UpdateTodoDto extends IntersectionType(
     this.urgency = vo.urgency;
     this.planDate = dayjs(vo.planDate).toDate();
     this.taskId = vo.taskId;
+    this.planStartTime = vo.planStartTime;
+    this.planEndTime = vo.planEndTime;
   }
 
   importUpdateEntity(todo: Todo) {
@@ -79,8 +81,8 @@ export class UpdateTodoDto extends IntersectionType(
     if (this.description === undefined) this.description = todo.description;
     if (this.status === undefined) this.status = todo.status;
     if (this.planDate === undefined) this.planDate = todo.planDate;
-    if (this.planStartAt === undefined) this.planStartAt = todo.planStartAt;
-    if (this.planEndAt === undefined) this.planEndAt = todo.planEndAt;
+    if (this.planStartTime === undefined) this.planStartTime = todo.planStartTime;
+    if (this.planEndTime === undefined) this.planEndTime = todo.planEndTime;
     if (this.importance === undefined) this.importance = todo.importance;
     if (this.urgency === undefined) this.urgency = todo.urgency;
     if (this.tags === undefined) this.tags = todo.tags;
@@ -96,8 +98,8 @@ export class UpdateTodoDto extends IntersectionType(
     if (this.description !== undefined) todo.description = this.description;
     if (this.status !== undefined) todo.status = this.status;
     if (this.planDate !== undefined) todo.planDate = this.planDate;
-    if (this.planStartAt !== undefined) todo.planStartAt = this.planStartAt;
-    if (this.planEndAt !== undefined) todo.planEndAt = this.planEndAt;
+    if (this.planStartTime !== undefined) todo.planStartTime = this.planStartTime;
+    if (this.planEndTime !== undefined) todo.planEndTime = this.planEndTime;
     if (this.importance !== undefined) todo.importance = this.importance;
     if (this.urgency !== undefined) todo.urgency = this.urgency;
     if (this.tags !== undefined) todo.tags = this.tags;

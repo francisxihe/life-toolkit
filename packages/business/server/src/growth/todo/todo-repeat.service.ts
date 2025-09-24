@@ -43,6 +43,7 @@ export class TodoRepeatService {
   }
 
   async update(updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
+    console.log('========updateTodoRepeatDto', updateTodoRepeatDto);
     const entity = await this.todoRepeatRepository.update(updateTodoRepeatDto.exportUpdateEntity());
     const todoRepeatDto = new TodoRepeatDto();
     todoRepeatDto.importEntity(entity);
@@ -57,15 +58,6 @@ export class TodoRepeatService {
   }
 
   async findByFilter(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
-    const entities = await this.todoRepeatRepository.findByFilter(filter);
-    return entities.map((entity) => {
-      const todoRepeatDto = new TodoRepeatDto();
-      todoRepeatDto.importEntity(entity);
-      return todoRepeatDto;
-    });
-  }
-
-  async list(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
     const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
       const todoRepeatDto = new TodoRepeatDto();
@@ -231,8 +223,8 @@ export class TodoRepeatService {
       importance: todoRepeat.importance,
       urgency: todoRepeat.urgency,
       planDate: planDate || dayjs(todoRepeat.currentDate).toDate(),
-      planStartAt: undefined,
-      planEndAt: undefined,
+      planStartTime: todoRepeat.planStartTime,
+      planEndTime: todoRepeat.planEndTime,
       createdAt: new Date(),
       updatedAt: new Date(),
       repeat: todoRepeat,

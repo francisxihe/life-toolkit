@@ -11,8 +11,12 @@ export class CreateHabitDto extends PickType(HabitDto, [
   'importance',
   'tags',
   'difficulty',
-  'startDate',
-  'targetDate',
+  'repeatStartDate',
+  'repeatEndDate',
+  'repeatTimes',
+  'repeatMode',
+  'repeatConfig',
+  'repeatEndMode',
 ] as const) {
   /** 目标ID列表 */
   @IsArray()
@@ -26,30 +30,46 @@ export class CreateHabitDto extends PickType(HabitDto, [
     this.importance = vo.importance;
     this.tags = vo.tags || [];
     this.difficulty = vo.difficulty as any;
-    if (vo.startDate) {
-      this.startDate = dayjs(vo.startDate).toDate();
-    }
-    if (vo.targetDate) {
-      this.targetDate = dayjs(vo.targetDate).toDate();
-    }
+    this.repeatStartDate = dayjs(vo.repeatStartDate).format('YYYY-MM-DD');
+    this.repeatEndDate = dayjs(vo.repeatEndDate).format('YYYY-MM-DD');
+    this.repeatTimes = vo.repeatTimes;
+    this.repeatMode = vo.repeatMode;
+    this.repeatConfig = vo.repeatConfig;
+    this.repeatEndMode = vo.repeatEndMode;
     this.goalIds = vo.goalIds;
   }
 
-  appendToCreateEntity(entity: Habit) {
+  exportCreateEntity() {
+    const entity = new Habit();
+
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
     if (this.tags !== undefined) entity.tags = this.tags;
     if (this.difficulty !== undefined) entity.difficulty = this.difficulty;
-    if (this.startDate !== undefined) entity.startDate = this.startDate;
-    if (this.targetDate !== undefined) entity.targetDate = this.targetDate;
+    if (this.repeatStartDate !== undefined) entity.repeatStartDate = this.repeatStartDate;
+    if (this.repeatEndDate !== undefined) entity.repeatEndDate = this.repeatEndDate;
+    if (this.repeatTimes !== undefined) entity.repeatTimes = this.repeatTimes;
+    if (this.repeatMode !== undefined) entity.repeatMode = this.repeatMode;
+    if (this.repeatConfig !== undefined) entity.repeatConfig = this.repeatConfig;
+    if (this.repeatEndMode !== undefined) entity.repeatEndMode = this.repeatEndMode;
+
+    return entity;
   }
 }
 
 export class UpdateHabitDto extends IntersectionType(
   PartialType(CreateHabitDto),
   PickType(Habit, ['id'] as const),
-  PickType(HabitDto, ['status', 'currentStreak', 'longestStreak', 'completedCount'] as const)
+  PickType(HabitDto, [
+    'status',
+    'repeatStartDate',
+    'repeatEndDate',
+    'repeatTimes',
+    'repeatMode',
+    'repeatConfig',
+    'repeatEndMode',
+  ] as const)
 ) {
   importUpdateVo(vo: HabitVO.UpdateHabitVo) {
     if (vo.name !== undefined) this.name = vo.name;
@@ -57,15 +77,21 @@ export class UpdateHabitDto extends IntersectionType(
     if (vo.importance !== undefined) this.importance = vo.importance;
     if (vo.tags !== undefined) this.tags = vo.tags || [];
     if (vo.difficulty !== undefined) this.difficulty = vo.difficulty as any;
-    if (vo.startDate !== undefined) {
-      this.startDate = vo.startDate ? dayjs(vo.startDate).toDate() : undefined;
+    if (vo.repeatStartDate !== undefined) {
+      this.repeatStartDate = dayjs(vo.repeatStartDate).format('YYYY-MM-DD');
     }
-    if (vo.targetDate !== undefined) {
-      this.targetDate = vo.targetDate ? dayjs(vo.targetDate).toDate() : undefined;
+    if (vo.repeatEndDate !== undefined) {
+      this.repeatEndDate = dayjs(vo.repeatEndDate).format('YYYY-MM-DD');
     }
+    if (vo.repeatTimes !== undefined) this.repeatTimes = vo.repeatTimes;
+    if (vo.repeatMode !== undefined) this.repeatMode = vo.repeatMode;
+    if (vo.repeatConfig !== undefined) this.repeatConfig = vo.repeatConfig;
+    if (vo.repeatEndMode !== undefined) this.repeatEndMode = vo.repeatEndMode;
   }
 
-  appendToUpdateEntity(entity: Habit) {
+  exportUpdateEntity() {
+    const entity = new Habit();
+
     if (!entity.id) entity.id = this.id;
     else if (entity.id !== this.id) throw new Error('ID不匹配');
     if (this.name !== undefined) entity.name = this.name;
@@ -73,11 +99,14 @@ export class UpdateHabitDto extends IntersectionType(
     if (this.importance !== undefined) entity.importance = this.importance;
     if (this.tags !== undefined) entity.tags = this.tags;
     if (this.difficulty !== undefined) entity.difficulty = this.difficulty;
-    if (this.startDate !== undefined) entity.startDate = this.startDate;
-    if (this.targetDate !== undefined) entity.targetDate = this.targetDate;
+    if (this.repeatStartDate !== undefined) entity.repeatStartDate = this.repeatStartDate;
+    if (this.repeatEndDate !== undefined) entity.repeatEndDate = this.repeatEndDate;
+    if (this.repeatTimes !== undefined) entity.repeatTimes = this.repeatTimes;
+    if (this.repeatMode !== undefined) entity.repeatMode = this.repeatMode;
+    if (this.repeatConfig !== undefined) entity.repeatConfig = this.repeatConfig;
+    if (this.repeatEndMode !== undefined) entity.repeatEndMode = this.repeatEndMode;
     if (this.status !== undefined) entity.status = this.status;
-    if (this.currentStreak !== undefined) entity.currentStreak = this.currentStreak;
-    if (this.longestStreak !== undefined) entity.longestStreak = this.longestStreak;
-    if (this.completedCount !== undefined) entity.completedCount = this.completedCount;
+
+    return entity;
   }
 }

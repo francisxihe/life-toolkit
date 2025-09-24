@@ -102,8 +102,8 @@ export class ModuleRepository {
       urgency: createDto.urgency,
       tags: createDto.tags,
       planDate: createDto.planDate,
-      planStartAt: createDto.planStartAt,
-      planEndAt: createDto.planEndAt,
+      planStartTime: createDto.planStartTime,
+      planEndTime: createDto.planEndTime,
       relatedId: createDto.relatedId,
       type: ResourceType.MANUAL,
       ...extras,
@@ -145,7 +145,7 @@ export class ModuleRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error('Resource not found');
 
-    updateDto.appendToUpdateEntity(entity);
+    updateDto.exportUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleDto.importEntity(saved);
   }
@@ -276,8 +276,8 @@ async create(createDto: CreateModuleDto): Promise<ResourceDto> {
     urgency: createDto.urgency,
     tags: createDto.tags,
     planDate: createDto.planDate,
-    planStartAt: createDto.planStartAt,
-    planEndAt: createDto.planEndAt,
+    planStartTime: createDto.planStartTime,
+    planEndTime: createDto.planEndTime,
     relatedId: createDto.relatedId,
     type: ResourceType.MANUAL,
   });
@@ -522,8 +522,8 @@ export class ModuleRepository {
       urgency: createDto.urgency,
       tags: createDto.tags,
       planDate: createDto.planDate,
-      planStartAt: createDto.planStartAt,
-      planEndAt: createDto.planEndAt,
+      planStartTime: createDto.planStartTime,
+      planEndTime: createDto.planEndTime,
       relatedId: createDto.relatedId,
       type: ResourceType.MANUAL,
     });
@@ -540,8 +540,8 @@ export class ModuleRepository {
       urgency: createDto.urgency,
       tags: createDto.tags,
       planDate: createDto.planDate,
-      planStartAt: createDto.planStartAt,
-      planEndAt: createDto.planEndAt,
+      planStartTime: createDto.planStartTime,
+      planEndTime: createDto.planEndTime,
       relatedId: createDto.relatedId,
       type: ResourceType.MANUAL,
       ...extras,
@@ -583,7 +583,7 @@ export class ModuleRepository {
     const entity = await this.repo.findOne({ where: { id } });
     if (!entity) throw new Error('Resource not found');
 
-    updateDto.appendToUpdateEntity(entity);
+    updateDto.exportUpdateEntity(entity);
     const saved = await this.repo.save(entity);
     return ModuleDto.importEntity(saved);
   }

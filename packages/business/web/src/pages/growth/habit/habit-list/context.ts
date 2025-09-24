@@ -83,7 +83,7 @@ export const [HabitListProvider, useHabitListContext] = createInjectState<{
   // 获取目标列表
   const fetchGoals = useCallback(async () => {
     try {
-      const response = await GoalController.getGoalList({});
+      const response = await GoalController.findByFilter({});
       setGoals(
         response.list.map((goal) => ({
           ...goal,

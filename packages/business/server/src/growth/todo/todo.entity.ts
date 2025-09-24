@@ -62,11 +62,11 @@ export class TodoWithoutRelations extends BaseEntity {
 
   /** 计划待办开始时间 */
   @Column('time', { nullable: true })
-  planStartAt?: string;
+  planStartTime?: string;
 
   /** 计划待办结束时间 */
   @Column('time', { nullable: true })
-  planEndAt?: string;
+  planEndTime?: string;
 
   /** 计划待办日期 */
   @Column('date')

@@ -2,7 +2,17 @@ import { HabitVo } from './habit-model.vo';
 
 export type CreateHabitVo = Pick<
   HabitVo,
-  'name' | 'description' | 'importance' | 'tags' | 'difficulty' | 'startDate' | 'targetDate'
+  | 'name'
+  | 'description'
+  | 'importance'
+  | 'tags'
+  | 'difficulty'
+  | 'repeatStartDate'
+  | 'repeatEndDate'
+  | 'repeatTimes'
+  | 'repeatMode'
+  | 'repeatConfig'
+  | 'repeatEndMode'
 > & {
   goalIds?: string[];
 };

@@ -10,8 +10,8 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
     this.buildQuery = buildQuery;
   }
 
-  async create(goal: Entity): Promise<Entity> {
-    const saved = await this.repo.save(goal);
+  async create(entity: Entity): Promise<Entity> {
+    const saved = await this.repo.save(entity);
     return this.find(saved.id);
   }
 
@@ -34,6 +34,7 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   }
 
   async update(updateEntity: Entity): Promise<Entity> {
+    console.log('========updateEntity', updateEntity);
     const saved = await this.repo.save(updateEntity);
     return this.find(saved.id);
   }

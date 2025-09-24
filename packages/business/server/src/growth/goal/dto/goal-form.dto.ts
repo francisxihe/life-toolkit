@@ -31,7 +31,7 @@ export class CreateGoalDto extends PickType(GoalWithoutRelationsDto, [
     this.endAt = vo.endAt ? dayjs(vo.endAt).toDate() : undefined;
   }
 
-  appendToCreateEntity(entity: Goal) {
+  exportCreateEntity(entity: Goal) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.type !== undefined) entity.type = this.type;
     if (this.startAt !== undefined) entity.startAt = this.startAt;
@@ -69,7 +69,7 @@ export class UpdateGoalDto extends IntersectionType(
   }
 
   /** 修改UpdateEntity */
-  appendToUpdateEntity(entity: Goal) {
+  exportUpdateEntity(entity: Goal) {
     if (!entity.id) entity.id = this.id;
     else if (entity.id !== this.id) throw new Error('ID不匹配');
     if (this.name !== undefined) entity.name = this.name;

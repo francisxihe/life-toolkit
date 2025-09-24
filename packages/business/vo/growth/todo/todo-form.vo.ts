@@ -7,13 +7,16 @@ export type CreateTodoVo = Pick<
   | 'description'
   | 'status'
   | 'planDate'
-  | 'planStartAt'
-  | 'planEndAt'
+  | 'planStartTime'
+  | 'planEndTime'
   | 'importance'
   | 'urgency'
   | 'tags'
-  | 'taskId'
+  | 'source'
   | 'repeatConfig'
+  | 'taskId'
+  | 'repeatId'
+  | 'habitId'
 >;
 
 export type UpdateTodoVo = Partial<CreateTodoVo>;

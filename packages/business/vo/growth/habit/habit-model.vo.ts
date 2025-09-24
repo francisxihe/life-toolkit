@@ -10,11 +10,12 @@ export type HabitWithoutRelationsVo = {
   importance?: Importance;
   tags: string[];
   difficulty: Difficulty;
-  startDate: string;
-  targetDate?: string;
-  currentStreak: number;
-  longestStreak: number;
-  completedCount: number;
+  repeatMode: RepeatMode;
+  repeatConfig?: RepeatConfig;
+  repeatEndMode: RepeatEndMode;
+  repeatEndDate?: string;
+  repeatTimes?: number;
+  repeatStartDate: string;
 } & BaseEntityVo;
 
 export type HabitVo = HabitWithoutRelationsVo & {

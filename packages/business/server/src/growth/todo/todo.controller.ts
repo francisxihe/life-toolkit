@@ -10,6 +10,7 @@ import {
 } from './dto';
 import { TodoService } from './todo.service';
 import { TodoRepeatService } from './todo-repeat.service';
+import { TodoSource } from '@life-toolkit/enum';
 
 @Controller('/todo')
 export class TodoController {
@@ -42,16 +43,6 @@ export class TodoController {
 
   @Put('/update/:id', { description: '更新待办' })
   async update(@Param('id') id: string, @Body() updateVo: TodoVO.UpdateTodoVo): Promise<TodoVO.TodoVo> {
-    if (updateVo.repeatConfig) {
-      const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-      updateTodoRepeatDto.importUpdateVo({
-        ...updateVo,
-        repeatConfig: updateVo.repeatConfig,
-      });
-      updateTodoRepeatDto.id = id;
-      const dto = await this.todoRepeatService.update(updateTodoRepeatDto);
-      return dto.exportVo();
-    }
     const updateDto = new UpdateTodoDto();
     updateDto.importUpdateVo(updateVo);
     updateDto.id = id;
@@ -88,6 +79,25 @@ export class TodoController {
     };
   }
 
+  @Put('/update-with-repeat/:id', { description: '更新待办' })
+  async updateWithRepeat(@Param('id') id: string, @Body() updateVo: TodoVO.UpdateTodoVo): Promise<TodoVO.TodoVo> {
+    if (updateVo.source === TodoSource.IS_REPEAT) {
+      const updateTodoRepeatDto = new UpdateTodoRepeatDto();
+      updateTodoRepeatDto.importUpdateVo({
+        ...updateVo,
+        repeatConfig: updateVo.repeatConfig,
+      });
+      updateTodoRepeatDto.id = id;
+      const dto = await this.todoRepeatService.update(updateTodoRepeatDto);
+      return dto.exportVo();
+    }
+    const updateDto = new UpdateTodoDto();
+    updateDto.importUpdateVo(updateVo);
+    updateDto.id = id;
+    const dto = await this.todoService.update(updateDto);
+    return dto.exportVo();
+  }
+
   @Put('/done-with-repeat/batch', { description: '批量完成待办' })
   async doneWithRepeatBatch(@Body() body: TodoVO.TodoFilterVo): Promise<any> {
     const filter = new TodoFilterDto();
@@ -116,8 +126,12 @@ export class TodoController {
     };
   }
 
-  @Get('/detail-mix-repeat/:id', { description: '查询待办及其重复信息' })
-  async detailMixRepeat(@Param('id') id: string): Promise<TodoVO.TodoVo> {
-    return (await this.todoService.detailMixRepeat(id)).exportVo();
+  @Get('/find-mix-repeat/:id', { description: '查询待办及其重复信息' })
+  async findMixRepeat(@Param('id') id: string, @Query() query?: { source?: string }): Promise<TodoVO.TodoVo> {
+    const source = query?.source;
+    if (source === TodoSource.IS_REPEAT) {
+      return (await this.todoRepeatService.findWithRelations(id)).exportVo();
+    }
+    return (await this.todoService.findWithRelations(id)).exportVo();
   }
 }

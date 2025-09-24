@@ -47,10 +47,10 @@ export class HabitRepository extends BaseRepository<Habit, HabitFilterDto> imple
         });
       }
 
-      const keyword = filter.keyword; 
+      const keyword = filter.keyword;
       if (keyword) {
         qb = qb.andWhere('(habit.name LIKE :kw OR habit.description LIKE :kw)', {
-          kw: `%${keyword}%`, 
+          kw: `%${keyword}%`,
         });
       }
 

@@ -1,12 +1,6 @@
 import { TodoRepository } from './todo.repository';
 import { TodoRepeatRepository } from './todo-repeat.repository';
-import {
-  CreateTodoDto,
-  UpdateTodoDto,
-  TodoPageFilterDto,
-  TodoFilterDto,
-  TodoDto,
-} from './dto';
+import { CreateTodoDto, UpdateTodoDto, TodoPageFilterDto, TodoFilterDto, TodoDto } from './dto';
 import { Todo } from './todo.entity';
 import { TodoStatus, TodoSource } from '@life-toolkit/enum';
 import { TodoRepeatService } from './todo-repeat.service';
@@ -98,7 +92,7 @@ export class TodoService {
     return [...todoDtoList, ...todoRepeatDtoList];
   }
 
-  async detailMixRepeat(id: string): Promise<TodoDto> {
+  async findMixRepeat(id: string): Promise<TodoDto> {
     try {
       const entity = await this.todoRepository.find(id);
       if (entity) {

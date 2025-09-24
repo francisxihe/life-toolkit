@@ -38,7 +38,7 @@ export class CreateTaskDto extends PickType(TaskDto, [
     if (vo.parentId !== undefined) this.parentId = vo.parentId;
   }
 
-  appendToCreateEntity(entity: Task) {
+  exportCreateEntity(entity: Task) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.tags !== undefined) entity.tags = this.tags;
@@ -71,7 +71,7 @@ export class UpdateTaskDto extends IntersectionType(
     if (vo.parentId !== undefined) this.parentId = vo.parentId;
   }
 
-  appendToUpdateEntity(entity: Task) {
+  exportUpdateEntity(entity: Task) {
     if (!entity.id) entity.id = this.id;
     else if (entity.id !== this.id) throw new Error('ID不匹配');
     if (this.name !== undefined) entity.name = this.name;

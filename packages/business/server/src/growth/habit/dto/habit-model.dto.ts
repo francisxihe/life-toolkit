@@ -20,8 +20,12 @@ export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelatio
     this.status = entity.status;
     this.importance = entity.importance;
     this.difficulty = entity.difficulty;
-    this.startDate = entity.startDate;
-    this.targetDate = entity.targetDate;
+    this.repeatStartDate = entity.repeatStartDate;
+    this.repeatEndDate = entity.repeatEndDate;
+    this.repeatTimes = entity.repeatTimes;
+    this.repeatMode = entity.repeatMode;
+    this.repeatConfig = entity.repeatConfig;
+    this.repeatEndMode = entity.repeatEndMode;
 
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.goals) {
@@ -53,14 +57,15 @@ export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelatio
       ...BaseMapper.dtoToVo(this),
       name: this.name,
       status: this.status,
-      startDate: dayjs(this.startDate).format('YYYY-MM-DD HH:mm:ss'),
-      targetDate: dayjs(this.targetDate).format('YYYY-MM-DD HH:mm:ss'),
       tags: this.tags,
       difficulty: this.difficulty,
       importance: this.importance,
-      completedCount: this.completedCount,
-      currentStreak: this.currentStreak,
-      longestStreak: this.longestStreak,
+      repeatStartDate: this.repeatStartDate,
+      repeatMode: this.repeatMode,
+      repeatConfig: this.repeatConfig,
+      repeatEndMode: this.repeatEndMode,
+      repeatEndDate: this.repeatEndDate,
+      repeatTimes: this.repeatTimes,
     };
   }
 
