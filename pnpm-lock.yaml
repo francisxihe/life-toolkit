@@ -81,30 +81,15 @@ importers:
       '@life-toolkit/share-types':
         specifier: workspace:*
         version: link:../../packages/share/types
-      balanced-match:
-        specifier: ^1.0.2
-        version: 1.0.2
-      brace-expansion:
-        specifier: ^1.1.11
-        version: 1.1.12
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
       class-validator:
         specifier: ^0.14.0
         version: 0.14.2
-      concat-map:
-        specifier: ^0.0.1
-        version: 0.0.1
-      define-data-property:
-        specifier: ^1.1.4
-        version: 1.1.4
       electron-ipc-restful:
         specifier: 0.0.1
         version: 0.0.1(electron@36.0.0)
-      es-errors:
-        specifier: ^1.3.0
-        version: 1.3.0
       francis-helper-repeat:
         specifier: 0.0.6
         version: 0.0.6
@@ -114,51 +99,9 @@ importers:
       francis-types-repeat:
         specifier: 0.0.1
         version: 0.0.1
-      fs.realpath:
-        specifier: ^1.0.0
-        version: 1.0.0
-      function-bind:
-        specifier: ^1.1.2
-        version: 1.1.2
-      get-intrinsic:
-        specifier: ^1.2.4
-        version: 1.3.0
-      glob:
-        specifier: ^7.2.3
-        version: 7.2.3
-      gopd:
-        specifier: ^1.0.1
-        version: 1.2.0
-      has-property-descriptors:
-        specifier: ^1.0.2
-        version: 1.0.2
-      has-proto:
-        specifier: ^1.0.3
-        version: 1.2.0
-      has-symbols:
-        specifier: ^1.0.3
-        version: 1.1.0
-      inflight:
-        specifier: ^1.0.6
-        version: 1.0.6
-      inherits:
-        specifier: ^2.0.4
-        version: 2.0.4
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
-      minimatch:
-        specifier: ^3.1.2
-        version: 3.1.2
-      once:
-        specifier: ^1.4.0
-        version: 1.4.0
-      path-is-absolute:
-        specifier: ^1.0.1
-        version: 1.0.1
-      path-scurry:
-        specifier: ^1.10.1
-        version: 1.11.1
       react:
         specifier: ^18.2.0
         version: 18.3.1
@@ -168,27 +111,9 @@ importers:
       reflect-metadata:
         specifier: ^0.1.13
         version: 0.1.14
-      safe-buffer:
-        specifier: ^5.2.1
-        version: 5.2.1
       sqlite3:
         specifier: ^5.1.6
         version: 5.1.7
-      to-buffer:
-        specifier: ^1.1.1
-        version: 1.2.1
-      tslib:
-        specifier: ^2.6.2
-        version: 2.8.1
-      typed-array-buffer:
-        specifier: ^1.0.3
-        version: 1.0.3
-      typed-array-byte-length:
-        specifier: ^1.0.1
-        version: 1.0.3
-      typed-array-byte-offset:
-        specifier: ^1.0.2
-        version: 1.0.4
       typeorm:
         specifier: ^0.3.17
         version: 0.3.26(mysql2@3.15.0)(reflect-metadata@0.1.14)(sqlite3@5.1.7)(ts-node@10.9.2(@swc/core@1.13.5)(@types/node@22.13.0)(typescript@5.9.2))
@@ -198,12 +123,6 @@ importers:
       uuid:
         specifier: ^9.0.0
         version: 9.0.1
-      which-typed-array:
-        specifier: ^1.1.15
-        version: 1.1.19
-      wrappy:
-        specifier: ^1.0.2
-        version: 1.0.2
     devDependencies:
       '@arco-plugins/vite-plugin-svgr':
         specifier: ^0.7.2
@@ -259,6 +178,40 @@ importers:
       vite-plugin-swc:
         specifier: ^0.0.2
         version: 0.0.2(@swc/core@1.13.5)(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.44.0))
+
+  apps/mobile:
+    dependencies:
+      '@tauri-apps/api':
+        specifier: ^2
+        version: 2.8.0
+      '@tauri-apps/plugin-opener':
+        specifier: ^2
+        version: 2.5.0
+      react:
+        specifier: ^18.0.2
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.2
+        version: 18.3.1(react@18.3.1)
+    devDependencies:
+      '@tauri-apps/cli':
+        specifier: ^2
+        version: 2.8.4
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.3.24
+      '@types/react-dom':
+        specifier: ^18.0.0
+        version: 18.3.7(@types/react@18.3.24)
+      '@vitejs/plugin-react':
+        specifier: ^4.0.0
+        version: 4.7.0(vite@5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.44.0))
+      typescript:
+        specifier: ^5.1.3
+        version: 5.9.2
+      vite:
+        specifier: 5.4.15
+        version: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.44.0)
 
   apps/server:
     dependencies:
@@ -3201,6 +3154,88 @@ packages:
     resolution: {integrity: sha512-0PmqLQ010N58SbMTJ7BVJ4I2xopiQn/5i6nlb4JmxzQf8zcS5+m2Cv6tqh+sfDwtIdjoEnOvwsGQ1hkUi8QEHQ==}
     peerDependencies:
       vite: 5.4.15
+
+  '@tauri-apps/api@2.8.0':
+    resolution: {integrity: sha512-ga7zdhbS2GXOMTIZRT0mYjKJtR9fivsXzsyq5U3vjDL0s6DTMwYRm0UHNjzTY5dh4+LSC68Sm/7WEiimbQNYlw==}
+
+  '@tauri-apps/cli-darwin-arm64@2.8.4':
+    resolution: {integrity: sha512-BKu8HRkYV01SMTa7r4fLx+wjgtRK8Vep7lmBdHDioP6b8XH3q2KgsAyPWfEZaZIkZ2LY4SqqGARaE9oilNe0oA==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@tauri-apps/cli-darwin-x64@2.8.4':
+    resolution: {integrity: sha512-imb9PfSd/7G6VAO7v1bQ2A3ZH4NOCbhGJFLchxzepGcXf9NKkfun157JH9mko29K6sqAwuJ88qtzbKCbWJTH9g==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@tauri-apps/cli-linux-arm-gnueabihf@2.8.4':
+    resolution: {integrity: sha512-Ml215UnDdl7/fpOrF1CNovym/KjtUbCuPgrcZ4IhqUCnhZdXuphud/JT3E8X97Y03TZ40Sjz8raXYI2ET0exzw==}
+    engines: {node: '>= 10'}
+    cpu: [arm]
+    os: [linux]
+
+  '@tauri-apps/cli-linux-arm64-gnu@2.8.4':
+    resolution: {integrity: sha512-pbcgBpMyI90C83CxE5REZ9ODyIlmmAPkkJXtV398X3SgZEIYy5TACYqlyyv2z5yKgD8F8WH4/2fek7+jH+ZXAw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@tauri-apps/cli-linux-arm64-musl@2.8.4':
+    resolution: {integrity: sha512-zumFeaU1Ws5Ay872FTyIm7z8kfzEHu8NcIn8M6TxbJs0a7GRV21KBdpW1zNj2qy7HynnpQCqjAYXTUUmm9JAOw==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@tauri-apps/cli-linux-riscv64-gnu@2.8.4':
+    resolution: {integrity: sha512-qiqbB3Zz6IyO201f+1ojxLj65WYj8mixL5cOMo63nlg8CIzsP23cPYUrx1YaDPsCLszKZo7tVs14pc7BWf+/aQ==}
+    engines: {node: '>= 10'}
+    cpu: [riscv64]
+    os: [linux]
+    libc: [glibc]
+
+  '@tauri-apps/cli-linux-x64-gnu@2.8.4':
+    resolution: {integrity: sha512-TaqaDd9Oy6k45Hotx3pOf+pkbsxLaApv4rGd9mLuRM1k6YS/aw81YrsMryYPThrxrScEIUcmNIHaHsLiU4GMkw==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@tauri-apps/cli-linux-x64-musl@2.8.4':
+    resolution: {integrity: sha512-ot9STAwyezN8w+bBHZ+bqSQIJ0qPZFlz/AyscpGqB/JnJQVDFQcRDmUPFEaAtt2UUHSWzN3GoTJ5ypqLBp2WQA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@tauri-apps/cli-win32-arm64-msvc@2.8.4':
+    resolution: {integrity: sha512-+2aJ/g90dhLiOLFSD1PbElXX3SoMdpO7HFPAZB+xot3CWlAZD1tReUFy7xe0L5GAR16ZmrxpIDM9v9gn5xRy/w==}
+    engines: {node: '>= 10'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@tauri-apps/cli-win32-ia32-msvc@2.8.4':
+    resolution: {integrity: sha512-yj7WDxkL1t9Uzr2gufQ1Hl7hrHuFKTNEOyascbc109EoiAqCp0tgZ2IykQqOZmZOHU884UAWI1pVMqBhS/BfhA==}
+    engines: {node: '>= 10'}
+    cpu: [ia32]
+    os: [win32]
+
+  '@tauri-apps/cli-win32-x64-msvc@2.8.4':
+    resolution: {integrity: sha512-XuvGB4ehBdd7QhMZ9qbj/8icGEatDuBNxyYHbLKsTYh90ggUlPa/AtaqcC1Fo69lGkTmq9BOKrs1aWSi7xDonA==}
+    engines: {node: '>= 10'}
+    cpu: [x64]
+    os: [win32]
+
+  '@tauri-apps/cli@2.8.4':
+    resolution: {integrity: sha512-ejUZBzuQRcjFV+v/gdj/DcbyX/6T4unZQjMSBZwLzP/CymEjKcc2+Fc8xTORThebHDUvqoXMdsCZt8r+hyN15g==}
+    engines: {node: '>= 10'}
+    hasBin: true
+
+  '@tauri-apps/plugin-opener@2.5.0':
+    resolution: {integrity: sha512-B0LShOYae4CZjN8leiNDbnfjSrTwoZakqKaWpfoH6nXiJwt6Rgj6RnVIffG3DoJiKsffRhMkjmBV9VeilSb4TA==}
 
   '@tippyjs/react@4.2.6':
     resolution: {integrity: sha512-91RicDR+H7oDSyPycI13q3b7o4O60wa2oRbjlz2fyRLmHImc4vyDwuUP8NtZaN0VARJY5hybvDYrFzhY9+Lbyw==}
@@ -8893,7 +8928,7 @@ packages:
       '@swc/core': '>=1.2.50'
       '@swc/wasm': '>=1.2.50'
       '@types/node': 22.13.0
-      typescript: '>=2.7'
+      typescript: 4.6.4
     peerDependenciesMeta:
       '@swc/core':
         optional: true
@@ -12121,6 +12156,59 @@ snapshots:
       '@tailwindcss/oxide': 4.1.13
       tailwindcss: 4.1.13
       vite: 5.4.15(@types/node@22.13.0)(less@4.4.1)(lightningcss@1.30.1)(terser@5.44.0)
+
+  '@tauri-apps/api@2.8.0': {}
+
+  '@tauri-apps/cli-darwin-arm64@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-darwin-x64@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-arm-gnueabihf@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-arm64-gnu@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-arm64-musl@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-riscv64-gnu@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-x64-gnu@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-linux-x64-musl@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-win32-arm64-msvc@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-win32-ia32-msvc@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli-win32-x64-msvc@2.8.4':
+    optional: true
+
+  '@tauri-apps/cli@2.8.4':
+    optionalDependencies:
+      '@tauri-apps/cli-darwin-arm64': 2.8.4
+      '@tauri-apps/cli-darwin-x64': 2.8.4
+      '@tauri-apps/cli-linux-arm-gnueabihf': 2.8.4
+      '@tauri-apps/cli-linux-arm64-gnu': 2.8.4
+      '@tauri-apps/cli-linux-arm64-musl': 2.8.4
+      '@tauri-apps/cli-linux-riscv64-gnu': 2.8.4
+      '@tauri-apps/cli-linux-x64-gnu': 2.8.4
+      '@tauri-apps/cli-linux-x64-musl': 2.8.4
+      '@tauri-apps/cli-win32-arm64-msvc': 2.8.4
+      '@tauri-apps/cli-win32-ia32-msvc': 2.8.4
+      '@tauri-apps/cli-win32-x64-msvc': 2.8.4
+
+  '@tauri-apps/plugin-opener@2.5.0':
+    dependencies:
+      '@tauri-apps/api': 2.8.0
 
   '@tippyjs/react@4.2.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
