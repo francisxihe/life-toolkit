@@ -2,6 +2,8 @@ import 'reflect-metadata';
 import { Entity, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Difficulty, HabitStatus, Importance } from '@life-toolkit/enum';
 import { BaseEntity } from '@business/common';
+import { RepeatMode, RepeatEndMode } from 'francis-types-repeat';
+import type { RepeatConfig } from 'francis-types-repeat';
 import { Goal } from '../goal';
 import { Todo } from '../todo';
 
@@ -42,25 +44,48 @@ export class HabitWithoutRelations extends BaseEntity {
   })
   difficulty!: Difficulty;
 
+  /** 习惯模式 */
+  @Column({
+    type: 'varchar',
+    length: 20,
+  })
+  repeatMode!: RepeatMode;
+
+  /** 习惯配置 */
+  @Column({
+    type: 'text',
+    nullable: true,
+    transformer: {
+      to: (value) => JSON.stringify(value),
+      from: (value) => JSON.parse(value),
+    },
+  })
+  repeatConfig?: RepeatConfig;
+
+  /** 习惯结束模式 */
+  @Column({
+    type: 'varchar',
+    length: 20,
+  })
+  repeatEndMode!: RepeatEndMode;
+
+  /** 习惯结束日期 */
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  repeatEndDate?: string;
+
+  /** 习惯次数 */
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  repeatTimes?: number;
+
   /** 习惯开始日期 */
-  @Column('date')
-  startDate: Date = new Date();
-
-  /** 习惯目标日期（可选，如果设置了，则表示到此日期为止完成习惯） */
   @Column('date', { nullable: true })
-  targetDate?: Date;
-
-  /** 当前连续天数 */
-  @Column('int', { default: 0 })
-  currentStreak: number = 0;
-
-  /** 最长连续天数 */
-  @Column('int', { default: 0 })
-  longestStreak: number = 0;
-
-  /** 累计完成次数 */
-  @Column('int', { default: 0 })
-  completedCount: number = 0;
+  repeatStartDate!: string;
 }
 
 @Entity('habit')

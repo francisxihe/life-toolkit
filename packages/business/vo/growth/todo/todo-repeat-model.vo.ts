@@ -9,13 +9,13 @@ export type TodoRepeatWithoutRelationsVo = {
   repeatEndMode: RepeatEndMode;
   repeatEndDate?: string;
   repeatTimes?: number;
+  repeatStartDate: string;
+  currentDate: string;
   name: string;
   description?: string;
   importance?: number;
   urgency?: number;
   tags?: string[];
-  repeatStartDate: string;
-  currentDate: string;
   status: TodoStatus;
   abandonedAt?: string;
 } & BaseEntityVo;

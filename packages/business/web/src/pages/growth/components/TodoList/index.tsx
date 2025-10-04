@@ -1,12 +1,12 @@
 'use client';
 
-import { TodoVo } from '@life-toolkit/vo';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import TriggerStatusCheckbox from './TriggerStatusCheckbox';
 import TodoItem from './TodoItem';
 
 function TodoList(props: {
   todoList: TodoVo[];
-  onClickTodo: (id: string) => Promise<void>;
+  onClickTodo: (todo: TodoWithoutRelationsVo) => Promise<void>;
   refreshTodoList: () => Promise<void>;
 }) {
   return (

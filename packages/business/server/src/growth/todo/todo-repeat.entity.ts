@@ -48,6 +48,22 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   })
   repeatTimes?: number;
 
+  /** 重复开始日期 */
+  @Column('date', { nullable: true })
+  repeatStartDate!: string;
+
+  /** 计划待办开始时间 */
+  @Column('time', { nullable: true })
+  planStartTime?: string;
+
+  /** 计划待办结束时间 */
+  @Column('time', { nullable: true })
+  planEndTime?: string;
+
+  /** 当前执行到的重复日期 */
+  @Column('date', { nullable: true })
+  currentDate!: string;
+
   /** 模板名称 */
   @Column('varchar', { nullable: true })
   @IsString()
@@ -80,14 +96,6 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   @IsString({ each: true })
   @IsOptional()
   tags?: string[];
-
-  /** 重复开始日期 */
-  @Column('date', { nullable: true })
-  repeatStartDate!: string;
-
-  /** 当前执行到的重复日期 */
-  @Column('date', { nullable: true })
-  currentDate!: string;
 
   /** 状态（模板整体状态） */
   @Column({ type: 'varchar', length: 20, nullable: true })

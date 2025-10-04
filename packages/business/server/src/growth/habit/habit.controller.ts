@@ -23,8 +23,9 @@ export class HabitController {
   @Put('/update/:id', { description: '更新习惯' })
   async update(@Param('id') id: string, @Body() updateHabitVo: HabitVO.UpdateHabitVo): Promise<HabitVO.HabitVo> {
     const updateDto = new UpdateHabitDto();
+    updateDto.id = id;
     updateDto.importUpdateVo(updateHabitVo);
-    const dto = await this.habitService.update(id, updateDto);
+    const dto = await this.habitService.update(updateDto);
     return dto.exportVo();
   }
 
@@ -54,26 +55,6 @@ export class HabitController {
     return HabitDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
 
-  @Put('/update-streak/:id', { description: '更新习惯 streak' })
-  async updateStreak(@Param('id') id: string, @Body() body?: { completed?: boolean }): Promise<any> {
-    return await this.habitService.updateStreak(id, body?.completed as any);
-  }
-
-  @Get('/get-habit-todos/:id', { description: '查询习惯的待办事项' })
-  async getHabitTodos(@Param('id') id: string): Promise<any> {
-    return await this.habitService.getHabitTodos(id);
-  }
-
-  @Get('/get-habit-analytics/:id', { description: '查询习惯的分析数据' })
-  async getHabitAnalytics(@Param('id') id: string): Promise<any> {
-    return await this.habitService.getHabitAnalytics(id);
-  }
-
-  @Put('/done/batch', { description: '批量完成习惯' })
-  async doneBatch(@Body() body?: { includeIds?: string[] }): Promise<any[]> {
-    return await Promise.all((body?.includeIds ?? []).map((id: string) => this.habitService.completeHabit(id)));
-  }
-
   @Put('/abandon/:id', { description: '废弃习惯' })
   async abandon(@Param('id') id: string): Promise<void> {
     return await this.habitService.abandon(id);
@@ -82,15 +63,5 @@ export class HabitController {
   @Put('/restore/:id', { description: '恢复习惯' })
   async restore(@Param('id') id: string): Promise<void> {
     return await this.habitService.restore(id);
-  }
-
-  @Put('/pause-habit/:id', { description: '暂停习惯' })
-  async pauseHabit(@Param('id') id: string): Promise<void> {
-    return await this.habitService.pauseHabit(id);
-  }
-
-  @Put('/resume-habit/:id', { description: '恢复习惯' })
-  async resumeHabit(@Param('id') id: string): Promise<void> {
-    return await this.habitService.resumeHabit(id);
   }
 }

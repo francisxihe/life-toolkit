@@ -97,24 +97,4 @@ export default class HabitService {
       Message.error(error.message);
     }
   }
-
-  static async pauseHabit(id: string) {
-    try {
-      const res = await HabitController.pauseHabit(id);
-      Message.success('已暂停该习惯');
-      return res;
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
-
-  static async resumeHabit(id: string) {
-    try {
-      const res = await HabitController.resumeHabit(id);
-      Message.success('已恢复该习惯');
-      return res;
-    } catch (error) {
-      Message.error(error.message);
-    }
-  }
 }

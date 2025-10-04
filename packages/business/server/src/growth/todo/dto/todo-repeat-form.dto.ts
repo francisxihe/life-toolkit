@@ -17,6 +17,8 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
   'repeatEndMode',
   'repeatEndDate',
   'repeatTimes',
+  'planStartTime',
+  'planEndTime',
 ] as const) {
   importCreateVo(vo: TodoVO.CreateTodoVo) {
     if (!vo.repeatConfig) {
@@ -34,11 +36,13 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
     this.repeatEndMode = vo.repeatConfig.repeatEndMode;
     this.repeatEndDate = vo.repeatConfig.repeatEndDate;
     this.repeatTimes = vo.repeatConfig.repeatTimes;
+    this.planStartTime = vo.planStartTime;
+    this.planEndTime = vo.planEndTime;
   }
 
   exportCreateEntity() {
     const todoRepeat = new TodoRepeat();
-    
+
     if (this.name !== undefined) todoRepeat.name = this.name;
     if (this.description !== undefined) todoRepeat.description = this.description;
     if (this.importance !== undefined) todoRepeat.importance = this.importance;
@@ -53,6 +57,8 @@ export class CreateTodoRepeatDto extends PickType(TodoRepeatDto, [
     if (this.repeatEndMode !== undefined) todoRepeat.repeatEndMode = this.repeatEndMode;
     if (this.repeatEndDate !== undefined) todoRepeat.repeatEndDate = this.repeatEndDate;
     if (this.repeatTimes !== undefined) todoRepeat.repeatTimes = this.repeatTimes;
+    if (this.planStartTime !== undefined) todoRepeat.planStartTime = this.planStartTime;
+    if (this.planEndTime !== undefined) todoRepeat.planEndTime = this.planEndTime;
 
     return todoRepeat;
   }
@@ -75,6 +81,8 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     this.repeatEndMode = vo.repeatConfig?.repeatEndMode;
     this.repeatEndDate = vo.repeatConfig?.repeatEndDate;
     this.repeatTimes = vo.repeatConfig?.repeatTimes;
+    this.planStartTime = vo.planStartTime;
+    this.planEndTime = vo.planEndTime;
   }
 
   importUpdateEntity(todoRepeat: TodoRepeat) {
@@ -98,6 +106,8 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     if (this.repeatTimes === undefined) this.repeatTimes = todoRepeat.repeatTimes;
     if (this.status === undefined) this.status = todoRepeat.status;
     if (this.abandonedAt === undefined) this.abandonedAt = todoRepeat.abandonedAt;
+    if (this.planStartTime === undefined) this.planStartTime = todoRepeat.planStartTime;
+    if (this.planEndTime === undefined) this.planEndTime = todoRepeat.planEndTime;
   }
 
   exportUpdateEntity() {
@@ -118,6 +128,8 @@ export class UpdateTodoRepeatDto extends IntersectionType(
     if (this.currentDate !== undefined) todoRepeat.currentDate = this.currentDate;
     if (this.status !== undefined) todoRepeat.status = this.status;
     if (this.abandonedAt !== undefined) todoRepeat.abandonedAt = this.abandonedAt;
+    if (this.planStartTime !== undefined) todoRepeat.planStartTime = this.planStartTime;
+    if (this.planEndTime !== undefined) todoRepeat.planEndTime = this.planEndTime;
     return todoRepeat;
   }
 }

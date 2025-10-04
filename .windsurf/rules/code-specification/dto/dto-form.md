@@ -39,7 +39,7 @@ export class Create{Module}Dto extends PickType({Module}Dto, [
   relationIds?: string[];
 
   /** 应用到实体的辅助方法（可选） */
-  appendToCreateEntity(entity: {Entity}) {
+  exportCreateEntity(entity: {Entity}) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     if (this.status !== undefined) entity.status = this.status;
@@ -54,7 +54,7 @@ export class Update{Module}Dto extends IntersectionType(
   PickType({Module}Dto, ["completedAt", "cancelledAt"] as const)
 ) {
   /** 应用到实体的辅助方法（可选） */
-  appendToUpdateEntity(entity: {Entity}) {
+  exportUpdateEntity(entity: {Entity}) {
     if (this.name !== undefined) entity.name = this.name;
     if (this.description !== undefined) entity.description = this.description;
     // ... 其他字段映射
@@ -87,7 +87,7 @@ export class CreateEntityDto extends PickType(EntityDto, [
   @IsOptional()
   relatedId?: string;
 
-  appendToCreateEntity(entity: Entity) {
+  exportCreateEntity(entity: Entity) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -104,7 +104,7 @@ export class UpdateEntityDto extends IntersectionType(
   PickType(Entity, ['id'] as const),
   PickType(EntityDto, ['completedAt'] as const)
 ) {
-  appendToUpdateEntity(entity: Entity) {
+  exportUpdateEntity(entity: Entity) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.description !== undefined) entity.description = this.description;
     if (this.importance !== undefined) entity.importance = this.importance;
@@ -306,7 +306,7 @@ export class CreateArticleDto extends PickType(ArticleDto, ['title', 'content', 
   @IsOptional()
   categoryIds?: string[];
 
-  appendToCreateEntity(entity: Article) {
+  exportCreateEntity(entity: Article) {
     if (this.title !== undefined) entity.title = this.title;
     if (this.content !== undefined) entity.content = this.content;
     if (this.authorId !== undefined) entity.authorId = this.authorId;
@@ -394,7 +394,7 @@ export class CreateOrderDto extends PickType(OrderDto, ['items', 'userId']) {
   @IsOptional()
   itemIds?: string[];
 
-  appendToCreateEntity(entity: Order) {
+  exportCreateEntity(entity: Order) {
     // 映射基本字段
     if (this.userId !== undefined) entity.userId = this.userId;
 
@@ -467,7 +467,7 @@ export class CreateUserDto extends PickType(UserDto, ['email', 'password']) {
 - [ ] 字段类型定义正确
 - [ ] 关联字段处理合理（使用ID列表或嵌套DTO）
 - [ ] 默认值设置合理
-- [ ] 实现了 `appendToCreateEntity()` 和 `appendToUpdateEntity()` 方法
+- [ ] 实现了 `exportCreateEntity()` 和 `exportUpdateEntity()` 方法
 
 ### 代码质量
 

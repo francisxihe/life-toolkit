@@ -16,7 +16,7 @@ const { Paragraph } = Typography;
 
 export type TodoItemProps = {
   todo: TodoWithoutRelationsVo;
-  onClickTodo: (id: string) => Promise<void>;
+  onClickTodo: (todo: TodoWithoutRelationsVo) => Promise<void>;
   refreshTodoList: () => Promise<void>;
   TriggerCheckbox: React.ReactNode;
 };
@@ -30,7 +30,7 @@ function TodoItem(props: TodoItemProps) {
           {props.TriggerCheckbox}
         </FlexibleContainer.Fixed>
         <FlexibleContainer.Shrink
-          onClick={() => props.onClickTodo(todo.id)}
+          onClick={() => props.onClickTodo(todo)}
           className={clsx([
             'cursor-pointer border-b',
             'after:content-[""] after:block after:h-1 after:w-full',
@@ -40,7 +40,9 @@ function TodoItem(props: TodoItemProps) {
             className={clsx(['flex items-center justify-between', 'leading-8'])}
           >
             <span className="text-text-1">
-              {todo.source === TodoSource.IS_REPEAT && <SiteIcon id={'repeat'} />}
+              {todo.source === TodoSource.IS_REPEAT && (
+                <SiteIcon id={'repeat'} />
+              )}
               {todo.name}
             </span>
             <div className="h-8 flex items-center">
@@ -122,9 +124,9 @@ function TodoItem(props: TodoItemProps) {
                 }
               >
                 {todo.planDate}
-                {todo.planStartAt && todo.planEndAt && (
+                {todo.planStartTime && todo.planEndTime && (
                   <>
-                    {todo.planStartAt}-{todo.planEndAt}
+                    {todo.planStartTime}-{todo.planEndTime}
                   </>
                 )}
               </span>

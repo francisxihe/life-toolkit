@@ -7,7 +7,6 @@ export type HabitFilterVo = {
   startDateEnd?: string;
   endDateStart?: string;
   endDateEnd?: string;
-  excludeIds?: string[];
   id?: string;
   goalId?: string;
 } & BaseFilterVo &

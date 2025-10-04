@@ -26,35 +26,11 @@ export default class HabitController {
     return request<ResponsePageVo<HabitVO.HabitWithoutRelationsVo>>({ method: 'get' })(`/habit/page`, body);
   }
 
-  static async updateStreak(id: string, body: { completed?: boolean }) {
-    return request<any>({ method: 'put' })(`/habit/update-streak/${id}`, body);
-  }
-
-  static async getHabitTodos(id: string) {
-    return request<any>({ method: 'get' })(`/habit/get-habit-todos/${id}`);
-  }
-
-  static async getHabitAnalytics(id: string) {
-    return request<any>({ method: 'get' })(`/habit/get-habit-analytics/${id}`);
-  }
-
-  static async doneBatch(body: { includeIds?: string[] }) {
-    return request<any[]>({ method: 'put' })(`/habit/done/batch`, body);
-  }
-
   static async abandon(id: string) {
     return request<void>({ method: 'put' })(`/habit/abandon/${id}`);
   }
 
   static async restore(id: string) {
     return request<void>({ method: 'put' })(`/habit/restore/${id}`);
-  }
-
-  static async pauseHabit(id: string) {
-    return request<void>({ method: 'put' })(`/habit/pause-habit/${id}`);
-  }
-
-  static async resumeHabit(id: string) {
-    return request<void>({ method: 'put' })(`/habit/resume-habit/${id}`);
   }
 }

@@ -4,7 +4,7 @@ import { FlexibleContainer } from 'francis-component-react';
 import { Collapse, Divider } from '@arco-design/web-react';
 import styles from './style.module.less';
 import { TodoService } from '../../service';
-import { TodoVo } from '@life-toolkit/vo';
+import { TodoVo, TodoWithoutRelationsVo } from '@life-toolkit/vo';
 import { flushSync } from 'react-dom';
 import clsx from 'clsx';
 import { useTodoContext } from '../context';
@@ -50,7 +50,7 @@ export default function TodoToday() {
     setTodayAbandonedTodoList(abandonedTodos);
 
     if (currentTodo) {
-      showTodoDetail(currentTodo.id);
+      showTodoDetail(currentTodo);
     }
   }
 
@@ -60,119 +60,116 @@ export default function TodoToday() {
 
   const [currentTodo, setCurrentTodo] = useState<TodoVo | null>(null);
 
-  async function showTodoDetail(id: string) {
+  async function showTodoDetail(_todo: TodoWithoutRelationsVo) {
     flushSync(() => {
       setCurrentTodo(null);
     });
-    const todo = await TodoService.getTodoDetailWithRepeat(id);
-    setCurrentTodo(todo);
+    setCurrentTodo(_todo);
   }
 
   return (
-    <>
-      <Shrink className="flex" direction="vertical">
-        <Shrink className="py-2" direction="horizontal">
-          <Fixed>
-            <TodoCreatorMini
+    <Shrink className="flex" direction="vertical">
+      <Shrink className="py-2" direction="horizontal">
+        <Fixed>
+          <TodoCreatorMini
+            afterSubmit={async () => {
+              refreshData();
+            }}
+          />
+        </Fixed>
+        <Shrink absolute overflowY="auto">
+          <Collapse
+            defaultActiveKey={['expired', 'today']}
+            className={clsx(styles['custom-collapse'])}
+            bordered={false}
+          >
+            {expiredTodoList.length > 0 && (
+              <Collapse.Item
+                header="已过期"
+                name="expired"
+                contentStyle={{ padding: 0 }}
+              >
+                <TodoList
+                  todoList={expiredTodoList}
+                  onClickTodo={async (todo) => {
+                    await showTodoDetail(todo);
+                  }}
+                  refreshTodoList={async () => {
+                    await refreshData();
+                  }}
+                />
+              </Collapse.Item>
+            )}
+            {todayTodoList.length > 0 && (
+              <Collapse.Item
+                header="今天"
+                name="today"
+                contentStyle={{ padding: 0 }}
+              >
+                <TodoList
+                  todoList={todayTodoList}
+                  onClickTodo={async (todo) => {
+                    await showTodoDetail(todo);
+                  }}
+                  refreshTodoList={async () => {
+                    await refreshData();
+                  }}
+                />
+              </Collapse.Item>
+            )}
+            {todayDoneTodoList.length > 0 && (
+              <Collapse.Item
+                header="已完成"
+                name="done"
+                contentStyle={{ padding: 0 }}
+              >
+                <TodoList
+                  todoList={todayDoneTodoList}
+                  onClickTodo={async (todo) => {
+                    await showTodoDetail(todo);
+                  }}
+                  refreshTodoList={async () => {
+                    await refreshData();
+                  }}
+                />
+              </Collapse.Item>
+            )}
+            {todayAbandonedTodoList.length > 0 && (
+              <Collapse.Item
+                header="已放弃"
+                name="abandoned"
+                contentStyle={{ padding: 0 }}
+              >
+                <TodoList
+                  todoList={todayAbandonedTodoList}
+                  onClickTodo={async (todo) => {
+                    await showTodoDetail(todo);
+                  }}
+                  refreshTodoList={async () => {
+                    await refreshData();
+                  }}
+                />
+              </Collapse.Item>
+            )}
+          </Collapse>
+        </Shrink>
+      </Shrink>
+      {currentTodo && (
+        <>
+          <Divider type="vertical" className="!h-full" />
+          <Shrink className="w-1/2 py-2">
+            <TodoEditor
+              todo={currentTodo}
+              onClose={async () => {
+                showTodoDetail(null);
+              }}
               afterSubmit={async () => {
                 refreshData();
               }}
             />
-          </Fixed>
-          <Shrink absolute overflowY="auto">
-            <Collapse
-              defaultActiveKey={['expired', 'today']}
-              className={clsx(styles['custom-collapse'])}
-              bordered={false}
-            >
-              {expiredTodoList.length > 0 && (
-                <Collapse.Item
-                  header="已过期"
-                  name="expired"
-                  contentStyle={{ padding: 0 }}
-                >
-                  <TodoList
-                    todoList={expiredTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
-                    }}
-                    refreshTodoList={async () => {
-                      await refreshData();
-                    }}
-                  />
-                </Collapse.Item>
-              )}
-              {todayTodoList.length > 0 && (
-                <Collapse.Item
-                  header="今天"
-                  name="today"
-                  contentStyle={{ padding: 0 }}
-                >
-                  <TodoList
-                    todoList={todayTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
-                    }}
-                    refreshTodoList={async () => {
-                      await refreshData();
-                    }}
-                  />
-                </Collapse.Item>
-              )}
-              {todayDoneTodoList.length > 0 && (
-                <Collapse.Item
-                  header="已完成"
-                  name="done"
-                  contentStyle={{ padding: 0 }}
-                >
-                  <TodoList
-                    todoList={todayDoneTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
-                    }}
-                    refreshTodoList={async () => {
-                      await refreshData();
-                    }}
-                  />
-                </Collapse.Item>
-              )}
-              {todayAbandonedTodoList.length > 0 && (
-                <Collapse.Item
-                  header="已放弃"
-                  name="abandoned"
-                  contentStyle={{ padding: 0 }}
-                >
-                  <TodoList
-                    todoList={todayAbandonedTodoList}
-                    onClickTodo={async (id) => {
-                      await showTodoDetail(id);
-                    }}
-                    refreshTodoList={async () => {
-                      await refreshData();
-                    }}
-                  />
-                </Collapse.Item>
-              )}
-            </Collapse>
           </Shrink>
-        </Shrink>
-        {currentTodo && (
-          <>
-            <Divider type="vertical" className="!h-full" />{' '}
-            <Shrink className="w-1/2 py-2">
-              <TodoEditor
-                todo={currentTodo}
-                onClose={async () => {
-                  showTodoDetail(null);
-                }}
-                afterSubmit={async () => {
-                  refreshData();
-                }}
-              />
-            </Shrink>
-          </>
-        )}
-      </Shrink>
-    </>
+        </>
+      )}
+    </Shrink>
   );
 }
