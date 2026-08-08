@@ -25,13 +25,12 @@
 
 .checkbox {
   height: 100%;
-  align-items: flex-start;
   padding-top: 3px;
 }
 
 .statusIndicator {
   width: 3px;
-  height: 34px;
+  height: 28px;
   flex: 0 0 3px;
   border-radius: var(--sue-border-radius-sm);
   background: var(--sue-color-primary);
@@ -54,25 +53,12 @@
   color: var(--sue-color-primary);
 }
 
-.header,
-.action,
-.meta,
-.tags {
-  display: flex;
-  align-items: center;
-}
-
 .header {
   min-width: 0;
-  justify-content: space-between;
-  gap: 12px;
 }
 
 .title {
-  display: flex;
   min-width: 0;
-  align-items: center;
-  gap: 5px;
   overflow: hidden;
   color: var(--sue-color-text);
   font-weight: 500;
@@ -93,9 +79,7 @@
 }
 
 .meta {
-  flex-wrap: wrap;
   min-height: 24px;
-  gap: 8px;
   margin-top: 6px;
   color: var(--sue-color-text-tertiary);
   font-size: 12px;
@@ -107,11 +91,6 @@
 
 .overdue {
   color: var(--sue-color-error);
-}
-
-.tags {
-  flex-wrap: wrap;
-  gap: 4px;
 }
 
 .executionActions {

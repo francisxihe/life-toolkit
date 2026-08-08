@@ -19,10 +19,11 @@ export default function TabsPage(props: {
   return (
     <Flex vertical container="full" className={styles.page}>
       <Flex container="fixed" className={styles.tabBar}>
-        <Flex container="fill" className={styles.tabs}>
+        <Flex container="fill" className={styles.tabs} align="center" gap={4}>
           {props.tabs.map((tab) => (
-            <div
+            <Flex
               key={tab.path}
+              align="center"
               className={clsx(styles.tab, {
                 [styles.tabActive]: location.pathname === tab.path,
               })}
@@ -31,11 +32,15 @@ export default function TabsPage(props: {
               }}
             >
               {tab.name}
-            </div>
+            </Flex>
           ))}
         </Flex>
         {props.extra && (
-          <Flex container="fixed" justify="end" align="center">
+          <Flex
+            container="fixed"
+            justify="end"
+            align="center"
+          >
             {props.extra}
           </Flex>
         )}

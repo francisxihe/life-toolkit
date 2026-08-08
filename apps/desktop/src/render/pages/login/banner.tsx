@@ -1,5 +1,5 @@
 import React from 'react';
-import { Carousel } from '@sue/design-web-react';
+import { Carousel, Flex } from '@sue/design-web-react';
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import styles from './style/index.module.less';
@@ -30,7 +30,12 @@ export default function LoginBanner() {
     <Carousel className={styles.carousel} animation="fade">
       {data.map((item, index) => (
         <div key={`${index}`}>
-          <div className={styles['carousel-item']}>
+          <Flex
+            vertical
+            justify="center"
+            align="center"
+            className={styles['carousel-item']}
+          >
             <div className={styles['carousel-title']}>{item.slogan}</div>
             <div className={styles['carousel-sub-title']}>{item.subSlogan}</div>
             <img
@@ -38,7 +43,7 @@ export default function LoginBanner() {
               className={styles['carousel-image']}
               src={item.image}
             />
-          </div>
+          </Flex>
         </div>
       ))}
     </Carousel>

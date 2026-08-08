@@ -164,7 +164,7 @@ export default function TodoForm(props: TodoFormProps) {
   }
 
   return (
-    <div className={styles.container}>
+    <Flex vertical className={styles.container}>
       <Form
         form={form}
         layout="vertical"
@@ -381,12 +381,12 @@ export default function TodoForm(props: TodoFormProps) {
         )}
       </Form>
 
-      <div className={styles.footer}>
+      <Flex className={styles.footer} justify="flex-end" gap={8}>
         <Button onClick={() => props.onClose?.()}>取消</Button>
         <Button type="primary" onClick={handleSubmit}>
           确认
         </Button>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }

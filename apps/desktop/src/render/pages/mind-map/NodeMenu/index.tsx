@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Dropdown, Menu, CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined } from '@sue/design-web-react';
+import { Menu, Flex, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@sue/design-web-react';
 
 import styles from './style.module.less';
 
@@ -134,10 +134,10 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
               className={item.className}
               onClick={item.onClick}
             >
-              <div className={styles['menu-item']}>
+              <Flex className={styles['menu-item']} align="center" gap={8}>
                 {item.icon}
                 <span>{item.label}</span>
-              </div>
+              </Flex>
             </Menu.Item>
           );
         })}

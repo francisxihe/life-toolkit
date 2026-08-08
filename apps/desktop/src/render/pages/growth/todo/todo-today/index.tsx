@@ -6,32 +6,52 @@ import { TodoService } from '@true-north/web-service';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
 import { TodoStatus } from '@true-north/enum';
 import { useTodoDetail } from '../../components';
-import DayAgendaCalendar, { formatDayAgendaTitle } from '../../components/DayAgenda';
+import DayAgendaCalendar, {
+  formatDayAgendaTitle,
+} from '../../components/DayAgenda';
 import { useDayAgendaDate } from '../../components/DayAgenda/context';
 import TodoAgendaSections from '../components/TodoAgendaSections';
 import { onTodoChanged } from '../../events';
 
 export default function TodoToday() {
-  const { selectedDate, setSelectedDate, visibleMonth, setVisibleMonth } = useDayAgendaDate();
+  const { selectedDate, setSelectedDate, visibleMonth, setVisibleMonth } =
+    useDayAgendaDate();
   const [scheduledTodos, setScheduledTodos] = useState<TodoVo[]>([]);
   const [doneTodos, setDoneTodos] = useState<TodoVo[]>([]);
   const [expiredTodos, setExpiredTodos] = useState<TodoVo[]>([]);
   const [abandonedTodos, setAbandonedTodos] = useState<TodoVo[]>([]);
-  const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>({});
+  const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>(
+    {},
+  );
   const selectedDateText = selectedDate.format('YYYY-MM-DD');
   const isSelectedToday = selectedDate.isSame(dayjs(), 'day');
 
   const refreshData = useCallback(async () => {
     const [scheduledTodo, doneResponse, abandonedResponse] = await Promise.all([
-      TodoService.list({ status: TodoStatus.TODO, planDateStart: selectedDateText, planDateEnd: selectedDateText }),
-      TodoService.list({ status: TodoStatus.DONE, doneDateStart: selectedDateText, doneDateEnd: selectedDateText }),
-      TodoService.list({ status: TodoStatus.ABANDONED, abandonedDateStart: selectedDateText, abandonedDateEnd: selectedDateText }),
+      TodoService.list({
+        status: TodoStatus.TODO,
+        planDateStart: selectedDateText,
+        planDateEnd: selectedDateText,
+      }),
+      TodoService.list({
+        status: TodoStatus.DONE,
+        doneDateStart: selectedDateText,
+        doneDateEnd: selectedDateText,
+      }),
+      TodoService.list({
+        status: TodoStatus.ABANDONED,
+        abandonedDateStart: selectedDateText,
+        abandonedDateEnd: selectedDateText,
+      }),
     ]);
 
     let expired: TodoVo[] = [];
     if (isSelectedToday) {
       const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-      const expiredTodo = await TodoService.list({ status: TodoStatus.TODO, planDateEnd: yesterday });
+      const expiredTodo = await TodoService.list({
+        status: TodoStatus.TODO,
+        planDateEnd: yesterday,
+      });
       expired = [...(expiredTodo?.list || [])].sort((a, b) =>
         (a.planStartTime || '').localeCompare(b.planStartTime || ''),
       );
@@ -73,10 +93,14 @@ export default function TodoToday() {
     void refreshCalendarCounts();
   }, [refreshCalendarCounts]);
 
-  useEffect(() => onTodoChanged(() => {
-    void refreshData();
-    void refreshCalendarCounts();
-  }), [refreshCalendarCounts, refreshData]);
+  useEffect(
+    () =>
+      onTodoChanged(() => {
+        void refreshData();
+        void refreshCalendarCounts();
+      }),
+    [refreshCalendarCounts, refreshData],
+  );
 
   const { openEditDrawer } = useTodoDetail();
 
@@ -90,36 +114,36 @@ export default function TodoToday() {
   }
 
   return (
-    <Flex vertical container="full" className={styles.page}>
-      <div className={styles.layout}>
-        <aside className={styles.sidebar}>
-          <DayAgendaCalendar
-            value={selectedDate}
-            onChange={setSelectedDate}
-            visibleMonth={visibleMonth}
-            onVisibleMonthChange={setVisibleMonth}
-            itemCounts={calendarCounts}
+    <Flex container="full">
+      <Flex vertical container="fixed" className={styles.sidebar}>
+        <DayAgendaCalendar
+          value={selectedDate}
+          onChange={setSelectedDate}
+          visibleMonth={visibleMonth}
+          onVisibleMonthChange={setVisibleMonth}
+          itemCounts={calendarCounts}
+        />
+      </Flex>
+      <Flex vertical container="fill" className={styles.main}>
+        <Flex container="fixed" align="center" className={styles.toolbar}>
+          <h1 className={styles.title}>{formatDayAgendaTitle(selectedDate)}</h1>
+        </Flex>
+        <Flex container="fill" className={styles.content}>
+          <TodoAgendaSections
+            groups={[
+              ...(isSelectedToday
+                ? [{ key: 'expired', label: '已过期', todoList: expiredTodos }]
+                : []),
+              { key: 'scheduled', label: '未完成', todoList: scheduledTodos },
+              { key: 'done', label: '已完成', todoList: doneTodos },
+              { key: 'abandoned', label: '已放弃', todoList: abandonedTodos },
+            ]}
+            emptyLabel="当天没有待办"
+            onClickTodo={showTodoDetail}
+            refreshTodoList={refreshData}
           />
-        </aside>
-        <main className={styles.main}>
-          <header className={styles.toolbar}>
-            <h1 className={styles.title}>{formatDayAgendaTitle(selectedDate)}</h1>
-          </header>
-          <div className={styles.content}>
-            <TodoAgendaSections
-              groups={[
-                ...(isSelectedToday ? [{ key: 'expired', label: '已过期', todoList: expiredTodos }] : []),
-                { key: 'scheduled', label: '未完成', todoList: scheduledTodos },
-                { key: 'done', label: '已完成', todoList: doneTodos },
-                { key: 'abandoned', label: '已放弃', todoList: abandonedTodos },
-              ]}
-              emptyLabel="当天没有待办"
-              onClickTodo={showTodoDetail}
-              refreshTodoList={refreshData}
-            />
-          </div>
-        </main>
-      </div>
+        </Flex>
+      </Flex>
     </Flex>
   );
 }

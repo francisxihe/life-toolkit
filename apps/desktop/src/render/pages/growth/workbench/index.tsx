@@ -199,7 +199,11 @@ export default function Workbench() {
                     </Flex>
                     <Button type="text" icon={<RightOutlined />} aria-label={`查看 ${todo.name}`} onClick={() => navigate('/growth/todo/todo-all')} />
                   </Flex>
-                )) : <div className={styles.empty}>今天没有待处理的待办。</div>}
+                )) : (
+                  <Flex align="center" className={styles.empty}>
+                    今天没有待处理的待办。
+                  </Flex>
+                )}
               </Flex>
             </Card>
           </Col>
@@ -225,7 +229,11 @@ export default function Workbench() {
                       onOpenDetail={() => navigate(`/growth/habit/habit-detail/${habit.id}`)}
                     />
                   </Flex>
-                )) : <div className={styles.empty}>还没有进行中的习惯。</div>}
+                )) : (
+                  <Flex align="center" className={styles.empty}>
+                    还没有进行中的习惯。
+                  </Flex>
+                )}
               </Flex>
             </Card>
           </Col>

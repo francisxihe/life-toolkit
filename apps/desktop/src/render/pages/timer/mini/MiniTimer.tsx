@@ -1,5 +1,5 @@
 import { FullscreenExitOutlined, FullscreenOutlined, PauseCircleOutlined, PlayCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { ReloadOutlined } from '@sue/design-web-react';
+import { Flex, ReloadOutlined } from '@sue/design-web-react';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 
 import { getTimeArr } from '../utils';
@@ -115,9 +115,9 @@ const MiniTimer: React.FC = () => {
 
   return (
     <div className={styles['mini-timer']}>
-      <div className={styles['mini-timer-content']}>
+      <Flex vertical align="center" gap={12}>
         <div className={styles['mini-time-display']}>{formatTime(timeArr)}</div>
-        <div className={styles['mini-controls']}>
+        <Flex gap={8} align="center">
           <button
             className={styles['mini-btn']}
             onClick={toggleFocus}
@@ -133,8 +133,8 @@ const MiniTimer: React.FC = () => {
           <button className={styles['mini-btn']} onClick={toggleMiniMode}>
             <PlusCircleOutlined />
           </button>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
     </div>
   );
 };

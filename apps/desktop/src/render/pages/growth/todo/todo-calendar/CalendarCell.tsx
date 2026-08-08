@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import { Flex } from '@sue/design-web-react';
 import { useCalendarContext } from './context';
 import { TodoVo } from '@true-north/vo';
 import { TodoStatus } from '@true-north/enum';
@@ -71,17 +72,18 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
       >
         <div className={styles.cellDate}>{cellDate.date()}</div>
         <>
-            <div className={styles.cellItems}>
+            <Flex vertical gap={2}>
               {todayTodoList.map((todo) => (
                 <TodoItem key={todo.id} todo={todo} />
               ))}
-            </div>
+            </Flex>
             {showAddTaskDate?.isSame(cellDate) && (
               <div className={styles.cellCreate}>
-                <div
+                <Flex
+                  align="center"
+                  gap={4}
                   className={clsx([
                     'w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]',
-                    'flex items-center gap-1',
                     'text-text-2 truncate cursor-pointer',
                     'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
                   ])}
@@ -101,7 +103,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                 >
                   <SiteIcon id="add" className="w-3 h-3" />
                   添加待办
-                </div>
+                </Flex>
               </div>
             )}
         </>

@@ -137,15 +137,15 @@ function Navbar() {
   };
 
   return (
-    <Flex vertical={false} className={styles.navbar} justify="space-between">
-      <div className={styles.left}>
-        <div className={styles.logo}>
+    <Flex className={styles.navbar} justify="space-between">
+      <Flex align="center">
+        <Flex align="center" className={styles.logo}>
           <Logo />
           <div className={styles['logo-name']}>{t['title']}</div>
-        </div>
-      </div>
-      <ul className={styles.right}>
-        <li>
+        </Flex>
+      </Flex>
+      <Flex component="ul" className={styles.right}>
+        <Flex component="li" align="center">
           <Dropdown
             trigger={['hover']}
             placement="bottomRight"
@@ -166,18 +166,18 @@ function Navbar() {
               <IconButton icon={<GlobalOutlined />} />
             </span>
           </Dropdown>
-        </li>
-        <li>
+        </Flex>
+        <Flex component="li" align="center">
           <MessageBox>
             <IconButton icon={<NotificationOutlined />} />
           </MessageBox>
-        </li>
-        <li>
+        </Flex>
+        <Flex component="li" align="center">
           <Tooltip title="打开专注计时">
             <IconButton icon={<ClockCircleOutlined />} onClick={() => openFocusTimer()} />
           </Tooltip>
-        </li>
-        <li>
+        </Flex>
+        <Flex component="li" align="center">
           <Tooltip
             title={
               theme === 'light'
@@ -190,9 +190,9 @@ function Navbar() {
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             />
           </Tooltip>
-        </li>
+        </Flex>
         {userInfo && (
-          <li>
+          <Flex component="li" align="center">
             <Dropdown
               menu={userMenu}
               placement="bottomRight"
@@ -206,9 +206,9 @@ function Navbar() {
                 )}
               </Avatar>
             </Dropdown>
-          </li>
+          </Flex>
         )}
-      </ul>
+      </Flex>
     </Flex>
   );
 }

@@ -12,7 +12,7 @@ export default function GoalAside() {
   const { openCreateDrawer } = useGoalDetail();
 
   return (
-    <Flex vertical container="full" className={styles.aside}>
+    <Flex vertical container="full" gap={12} className={styles.aside}>
       {/* 头部工具栏 */}
       <Flex
         container="fixed"

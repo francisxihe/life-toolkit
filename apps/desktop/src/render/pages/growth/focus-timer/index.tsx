@@ -282,19 +282,19 @@ function FocusTimerOverlay({
               />
             )}
           </Flex>
-          <div className={styles.clock}>
-            <div className={styles.clockContainer}>
+          <Flex align="center" justify="center" className={styles.clock}>
+            <Flex align="center">
               <Flip total={9} current={timeArr[0]} />
               <Flip total={9} current={timeArr[1]} />
-              <div className={styles.colon} />
+              <Flex vertical justify="space-around" className={styles.colon} />
               <Flip total={5} current={timeArr[2]} />
               <Flip total={9} current={timeArr[3]} />
-              <div className={styles.colon} />
+              <Flex vertical justify="space-around" className={styles.colon} />
               <Flip total={5} current={timeArr[4]} />
               <Flip total={9} current={timeArr[5]} />
-            </div>
-          </div>
-          <div className={styles.fullscreenActions}>
+            </Flex>
+          </Flex>
+          <Flex align="center" gap={8} className={styles.fullscreenActions}>
             <Tooltip title="重置计时">
               <Button shape="circle" icon={<ReloadOutlined />} aria-label="重置计时" onClick={onReset} />
             </Tooltip>
@@ -313,7 +313,7 @@ function FocusTimerOverlay({
             <Tooltip title="最小化">
               <Button shape="circle" icon={<CompressOutlined />} aria-label="最小化计时器" onClick={onToggleFullScreen} />
             </Tooltip>
-          </div>
+          </Flex>
         </div>
       </div>
     );

@@ -34,7 +34,7 @@ export default function HabitListTable() {
   }
 
   return (
-    <Flex vertical className={styles.wrapper}>
+    <Flex vertical gap={16} className={styles.wrapper}>
       <Row gutter={[16, 16]}>
         {habits.map((habit) => (
           <Col key={habit.id} xs={24} md={12} xl={8}>

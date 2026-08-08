@@ -6,15 +6,15 @@
 }
 
 .drawerBody { min-height: 560px; overflow: hidden; }
-.asideContent { display: flex; height: 100%; flex-direction: column; }
+.asideContent { height: 100%; }
 .asideToolbar { padding: 16px; border-bottom: 1px solid var(--sue-color-border-secondary); }
 .createButton { width: 100%; }
 .treeArea { min-height: 0; flex: 1; padding: 8px; overflow: auto; }
 .taskTree { width: 100%; }
-.treeTitle { display: flex; width: 100%; min-width: 0; align-items: center; justify-content: space-between; gap: 8px; }
+.treeTitle { width: 100%; min-width: 0; }
 .treeName { min-width: 0; overflow: hidden; color: var(--sue-color-text); text-overflow: ellipsis; white-space: nowrap; }
 .treeNameDone { color: var(--sue-color-text-tertiary); text-decoration: line-through; }
-.treeTag { display: flex; flex: 0 0 auto; align-items: center; }
+.treeTag { flex: 0 0 auto; }
 .statusTag { padding: 1px 5px; border-radius: var(--sue-border-radius-sm); font-size: 11px; line-height: 18px; }
 .statusTodo { color: var(--sue-color-text-secondary); background: var(--sue-color-fill-tertiary); }
 .statusDoing { color: var(--sue-color-primary); background: var(--sue-color-primary-bg); }
@@ -24,12 +24,11 @@
 .detailHeader { width: 100%; min-height: 64px; padding: 0 20px; border-bottom: 1px solid var(--sue-color-border-secondary); }
 .titleWrap { min-width: 0; }
 .title { margin: 0; overflow: hidden; color: var(--sue-color-text); font-size: 18px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.actions { height: 100%; align-items: center; gap: 8px; }
+.actions { height: 100%; }
 .detailContent { min-width: 0; overflow: auto; }
 .tabs { width: 100%; min-width: 0; }
 .tabs :global(.sue-tabs-nav) { margin: 0; padding: 0 20px; }
 .tabBody { padding: 20px; }
-.overview { display: flex; flex-direction: column; gap: 16px; }
 .infoCard { padding: 16px; border: 1px solid var(--sue-color-border-secondary); border-radius: var(--sue-border-radius); background: var(--sue-color-bg-container); }
 .infoTitle { margin: 0 0 12px; color: var(--sue-color-text); font-size: 14px; font-weight: 600; }
 .infoGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; color: var(--sue-color-text); font-size: 13px; }

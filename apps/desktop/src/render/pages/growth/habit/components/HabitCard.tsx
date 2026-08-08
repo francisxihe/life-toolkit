@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Card,
   Button,
-  Space,
+  Flex,
   Progress,
   Dropdown,
   Menu,
@@ -108,26 +108,31 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         </Dropdown>,
       ]}
     >
-      <div className={styles.header}>
+      <Flex
+        align="flex-start"
+        justify="space-between"
+        gap={12}
+        className={styles.header}
+      >
         <div className={styles.titleBlock}>
           <span className={styles.title}>{habit.name}</span>
         </div>
         <Badge status={statusConfig?.color as any} text={statusConfig?.label} className={styles.status} />
-      </div>
+      </Flex>
 
-      <div className={styles.body}>
+      <Flex vertical gap={10}>
         {goalLabel ? <p className={styles.goalLabel}>{goalLabel}</p> : null}
         <p className={styles.repeatLabel}>执行规则：{formatHabitRepeatLabel(habit)}</p>
-        <div className={styles.progressHeader}>
+        <Flex align="center" justify="space-between" className={styles.progressHeader}>
           <span>当前连续</span>
           <strong>{habit.currentStreak || 0} 天</strong>
-        </div>
+        </Flex>
         <Progress percent={Math.min(100, (habit.currentStreak || 0) * 7)} showInfo={false} />
-      </div>
+      </Flex>
 
       {(onComplete || onIncomplete || onEdit) && (
         <div className={styles.footer}>
-          <Space className={styles.footerActions}>
+          <Flex gap={8} className={styles.footerActions}>
             {onComplete && (
               <Button
                 type="primary"
@@ -149,7 +154,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
                 编辑
               </Button>
             )}
-          </Space>
+          </Flex>
         </div>
       )}
       {onResume && (

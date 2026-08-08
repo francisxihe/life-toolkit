@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Card, Form, Select, Input, Space, Button, message, Row, Col } from '@sue/design-web-react';
+import { Card, Form, Select, Input, Space, Button, message, Row, Col, Flex } from '@sue/design-web-react';
 
 import { FormInstance } from '@sue/design-web-react';
 import axios from 'axios';
@@ -250,7 +250,10 @@ function GroupForm() {
           </Form.Item>
         </Card>
       </Form>
-      <div className={styles.actions}>
+      <Flex
+        className={styles.actions}
+        style={{ flexDirection: 'row-reverse' }}
+      >
         <Space>
           <Button onClick={handleReset} size="large">
             {t['groupForm.reset']}
@@ -264,7 +267,7 @@ function GroupForm() {
             {t['groupForm.submit']}
           </Button>
         </Space>
-      </div>
+      </Flex>
     </div>);
 
 }

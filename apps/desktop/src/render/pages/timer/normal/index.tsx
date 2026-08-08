@@ -1,5 +1,5 @@
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { MinusCircleOutlined, ReloadOutlined } from '@sue/design-web-react';
+import { Flex, MinusCircleOutlined, ReloadOutlined } from '@sue/design-web-react';
 import Countdown from './Countdown';
 import Flip from './Flip';
 import { getTimeArr } from '../utils';
@@ -29,7 +29,7 @@ const NormalTimer: React.FC = () => {
 
   return (
     <>
-      <div className={styles['clock']}>
+      <Flex className={styles['clock']} justify="center" align="center">
         {relatedTaskId && <div className="text-white text-center mb-2">关联任务：{relatedTaskId}</div>}
         <Countdown
           refresh={clockRefresh}
@@ -38,7 +38,7 @@ const NormalTimer: React.FC = () => {
           state={clockState}
           onComplete={completeFocus}
         />
-      </div>
+      </Flex>
       <div className={styles['actions']}>
         <PlayController
           className={clsx(styles['action'], 'action-play')}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import cs from 'clsx';
-import { Button } from '@sue/design-web-react';
+import { Button, Flex } from '@sue/design-web-react';
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import styles from './style/index.module.less';
@@ -39,9 +39,13 @@ function Security() {
   return (
     <div className={styles['security']}>
       {data.map((item, index) => (
-        <div className={styles['security-item']} key={index}>
+        <Flex key={index}>
           <span className={styles['security-item-title']}>{item.title}</span>
-          <div className={styles['security-item-content']}>
+          <Flex
+            className={styles['security-item-content']}
+            flex={1}
+            justify="space-between"
+          >
             <span
               className={cs({
                 [`${styles['security-item-placeholder']}`]: !item.value,
@@ -57,8 +61,8 @@ function Security() {
                   : t['userSetting.btn.set']}
               </Button>
             </span>
-          </div>
-        </div>
+          </Flex>
+        </Flex>
       ))}
     </div>
   );

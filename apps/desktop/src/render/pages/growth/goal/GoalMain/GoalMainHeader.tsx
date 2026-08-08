@@ -195,6 +195,8 @@ const GoalMainHeader: React.FC = () => {
       {/* 右侧：状态 Tag + 操作区 */}
       <Flex
         container="fixed"
+        align="center"
+        gap={8}
         className={styles.actions}
       >
         {selectedGoal && (

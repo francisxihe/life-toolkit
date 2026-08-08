@@ -179,13 +179,13 @@ export default function TaskToday() {
             itemCounts={calendarCounts}
           />
         </aside>
-        <main className={styles.main}>
-          <header className={styles.toolbar}>
+        <Flex vertical container="fill" className={styles.main}>
+          <Flex container="fixed" align="center" className={styles.toolbar}>
             <h1 className={styles.title}>
               {formatDayAgendaTitle(selectedDate)}
             </h1>
-          </header>
-          <div className={styles.content}>
+          </Flex>
+          <Flex container="fill" className={styles.content}>
             {hasItems ? (
               <Collapse
                 defaultActiveKey={['expired', 'scheduled', 'done', 'abandoned']}
@@ -199,8 +199,8 @@ export default function TaskToday() {
             ) : (
               <Empty description="当天没有任务" className={styles.empty} />
             )}
-          </div>
-        </main>
+          </Flex>
+        </Flex>
       </div>
     </Flex>
   );

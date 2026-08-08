@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Flex } from '@sue/design-web-react';
 import FlipItem from './Flip';
 import { getTimeArr } from '../utils';
 import styles from './style.module.less';
@@ -106,16 +107,16 @@ const Countdown: React.FC<CountdownProps> = ({
   }, [stopTimer]);
 
   return (
-    <div className={styles['clock-container']}>
+    <Flex align="center">
       <FlipItem total={9} current={timeArr[0]} />
       <FlipItem total={9} current={timeArr[1]} />
-      <div className={styles['colon']}></div>
+      <Flex vertical justify="space-around" className={styles['colon']} />
       <FlipItem total={5} current={timeArr[2]} />
       <FlipItem total={9} current={timeArr[3]} />
-      <div className={styles['colon']}></div>
+      <Flex vertical justify="space-around" className={styles['colon']} />
       <FlipItem total={5} current={timeArr[4]} />
       <FlipItem total={9} current={timeArr[5]} />
-    </div>
+    </Flex>
   );
 };
 

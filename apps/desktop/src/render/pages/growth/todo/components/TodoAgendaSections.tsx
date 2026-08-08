@@ -1,3 +1,4 @@
+import { Flex } from '@sue/design-web-react';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
 import TodoList from '../../components/TodoList';
 import styles from './TodoAgendaSections.module.less';
@@ -19,18 +20,26 @@ export default function TodoAgendaSections(props: TodoAgendaSectionsProps) {
   const visibleGroups = props.groups.filter((group) => group.todoList.length > 0);
 
   if (visibleGroups.length === 0) {
-    return <div className={styles.empty}>{props.emptyLabel}</div>;
+    return (
+      <Flex className={styles.empty} align="center" justify="center">
+        {props.emptyLabel}
+      </Flex>
+    );
   }
 
   return (
     <div className={styles.sections}>
       {visibleGroups.map((group) => (
         <section className={styles.section} key={group.key}>
-          <header className={styles.sectionHeader}>
+          <Flex
+            component="header"
+            className={styles.sectionHeader}
+            align="baseline"
+          >
             <h2 className={styles.sectionTitle}>
               {group.label} ({group.todoList.length})
             </h2>
-          </header>
+          </Flex>
           <TodoList
             todoList={group.todoList}
             onClickTodo={props.onClickTodo}

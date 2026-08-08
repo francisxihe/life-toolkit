@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tree, Button, Empty, PlusOutlined } from '@sue/design-web-react';
+import { Tree, Button, Empty, Flex, PlusOutlined } from '@sue/design-web-react';
 
 import { useTaskDetailContext } from './context';
 import { TaskVo } from '@true-north/vo';
@@ -33,7 +33,12 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
       return {
         key: task.id,
         title: (
-          <div className={styles.treeTitle}>
+          <Flex
+            align="center"
+            justify="space-between"
+            gap={8}
+            className={styles.treeTitle}
+          >
             <span
               className={clsx(
                 styles.treeName,
@@ -42,10 +47,10 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
             >
               {task.name}
             </span>
-            <div className={styles.treeTag}>
+            <Flex align="center" className={styles.treeTag}>
               {getStatusTag(task.status)}
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         ),
         children: children.map(convertToTreeNode),
         isLeaf: children.length === 0,
@@ -117,7 +122,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
   }, [currentTaskId, taskTree]);
 
   return (
-    <div className={styles.asideContent}>
+    <Flex vertical className={styles.asideContent}>
       {/* 搜索和操作栏 */}
       <div className={styles.asideToolbar}>
         <Button
@@ -155,7 +160,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
           <Empty description="暂无任务数据" />
         )}
       </div>
-    </div>
+    </Flex>
   );
 };
 

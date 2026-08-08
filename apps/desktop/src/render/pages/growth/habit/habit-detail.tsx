@@ -4,6 +4,7 @@ import {
   Card,
   Button,
   Drawer,
+  Flex,
   Space,
   Tag,
   Progress,
@@ -170,18 +171,18 @@ export const HabitDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className={styles.loading}>
+      <Flex align="center" justify="center" className={styles.loading}>
         <Spin size={40} />
-      </div>);
-
+      </Flex>
+    );
   }
 
   if (!habit) {
     return (
-      <div className={styles.emptyState}>
+      <Flex align="center" justify="center" className={styles.emptyState}>
         <span>习惯不存在或已被删除</span>
-      </div>);
-
+      </Flex>
+    );
   }
 
   return (

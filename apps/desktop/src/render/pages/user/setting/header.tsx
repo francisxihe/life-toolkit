@@ -1,6 +1,6 @@
 import { CameraOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
-import { Button, Avatar, Upload, Descriptions, Tag, Skeleton, PlusOutlined } from '@sue/design-web-react';
+import { Avatar, Upload, Descriptions, Tag, Skeleton, PlusOutlined, Flex } from '@sue/design-web-react';
 
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
@@ -26,7 +26,7 @@ export default function Info({
 
   const loadingNode = <Skeleton paragraph={{ rows: 1 }} animation />;
   return (
-    <div className={styles['info-wrapper']}>
+    <Flex>
       <Upload showUploadList={false} onChange={onAvatarChange}>
         {loading ?
         loadingImg :
@@ -94,6 +94,6 @@ export default function Info({
         }]
         }>
       </Descriptions>
-    </div>);
+    </Flex>);
 
 }

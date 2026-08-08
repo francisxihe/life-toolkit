@@ -25,9 +25,9 @@ interface MessageListProps {
   unReadData: MessageItemData[];
   onItemClick?: (item: MessageItemData, index: number) => void;
   onAllBtnClick?: (
-  unReadData: MessageItemData[],
-  data: MessageItemData[])
-  => void;
+    unReadData: MessageItemData[],
+    data: MessageItemData[],
+  ) => void;
 }
 
 function MessageList(props: MessageListProps) {
@@ -45,56 +45,59 @@ function MessageList(props: MessageListProps) {
 
   return (
     <div>
-      {data.length === 0 ?
-      <Flex
-        vertical
-        align="center"
-        justify="center"
-        gap={16}
-        className="p-6 text-center">
-
+      {data.length === 0 ? (
+        <Flex
+          vertical
+          align="center"
+          justify="center"
+          gap={16}
+          className="p-6 text-center"
+        >
           <Empty description={null} />
           <div className="text-title-1 font-medium">404</div>
           <div className="text-text-3">{t['message.empty.tips']}</div>
-        </Flex> :
-
-      data.map((item, index) =>
-      <div
-        key={item.id}
-        style={{
-          padding: '12px 0',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          opacity: item.status ? 0.5 : 1,
-          borderTop:
-          index > 0 ? '1px solid var(--color-border-2, #e5e6eb)' : undefined
-        }}>
-
+        </Flex>
+      ) : (
+        data.map((item, index) => (
+          <Flex
+            key={item.id}
+            vertical
+            gap={8}
+            style={{
+              padding: '12px 0',
+              opacity: item.status ? 0.5 : 1,
+              borderTop:
+                index > 0
+                  ? '1px solid var(--color-border-2, #e5e6eb)'
+                  : undefined,
+            }}
+          >
             <div
-          style={{ cursor: 'pointer' }}
-          onClick={() => {
-            onItemClick(item, index);
-          }}>
-
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                onItemClick(item, index);
+              }}
+            >
               <Flex gap={12} align="flex-start">
-                {item.avatar &&
-            <Avatar shape="circle" size={36}>
+                {item.avatar && (
+                  <Avatar shape="circle" size={36}>
                     <img src={item.avatar} />
                   </Avatar>
-            }
+                )}
                 <Flex vertical gap={4} style={{ minWidth: 0, flex: 1 }}>
-                  <div className={styles['message-title']}>
+                  <Flex
+                    align="center"
+                    justify="space-between"
+                    className={styles['message-title']}
+                  >
                     <Space size={4}>
                       <span>{item.title}</span>
-                      <span className="text-text-3">
-                        {item.subTitle}
-                      </span>
+                      <span className="text-text-3">{item.subTitle}</span>
                     </Space>
-                    {item.tag && item.tag.text ?
-                <Tag color={item.tag.color}>{item.tag.text}</Tag> :
-                null}
-                  </div>
+                    {item.tag && item.tag.text ? (
+                      <Tag color={item.tag.color}>{item.tag.text}</Tag>
+                    ) : null}
+                  </Flex>
                   <div>
                     <p className="truncate" style={{ marginBottom: 0 }}>
                       {item.content}
@@ -106,26 +109,23 @@ function MessageList(props: MessageListProps) {
                 </Flex>
               </Flex>
             </div>
-          </div>
-      )
-      }
-      <div
-        className={styles.footer}
-        style={{ borderTop: '1px solid var(--color-border-2, #e5e6eb)' }}>
-
-        <div className={styles['footer-item']}>
+          </Flex>
+        ))
+      )}
+      <Flex className={styles.footer}>
+        <Flex flex={1} justify="center" className={styles['footer-item']}>
           <Button type="link" size="small" onClick={onAllBtnClick}>
             {t['message.allRead']}
           </Button>
-        </div>
-        <div className={styles['footer-item']}>
+        </Flex>
+        <Flex flex={1} justify="center" className={styles['footer-item']}>
           <Button type="link" size="small">
             {t['message.seeMore']}
           </Button>
-        </div>
-      </div>
-    </div>);
-
+        </Flex>
+      </Flex>
+    </div>
+  );
 }
 
 export default MessageList;

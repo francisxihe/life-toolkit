@@ -1,4 +1,5 @@
 import dayjs, { Dayjs } from 'dayjs';
+import { Flex } from '@sue/design-web-react';
 import { useCalendarContext } from './context';
 import { TaskVo } from '@true-north/vo';
 import { useTaskDetail } from '../../components/TaskDetail';
@@ -77,11 +78,11 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
       >
         <div className={styles.cellDate}>{cellDate.date()}</div>
         <>
-            <div className={styles.cellItems}>
+            <Flex vertical gap={2}>
               {todayTaskList.map((task) => (
                 <TaskItem key={task.id} task={task} />
               ))}
-            </div>
+            </Flex>
             {(showAddTaskDate?.isSame(cellDate) ||
               createTaskPopoverVisible) && (
               <div className={styles.cellCreate}>
@@ -98,17 +99,18 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                     },
                   }}
                 >
-                  <div
+                  <Flex
+                    align="center"
+                    gap={4}
                     className={clsx([
                       'w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]',
-                      'flex items-center gap-1',
                       'text-text-2 truncate cursor-pointer',
                       'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
                     ])}
                   >
                     <SiteIcon id="add" className="w-3 h-3" />
                     添加任务
-                  </div>
+                  </Flex>
                 </CreateTaskPopover>
               </div>
             )}

@@ -61,12 +61,14 @@ function PageLayout() {
                 <div className={styles['menu-wrapper']}>
                   <Navigate collapsed={collapsed} locale={locale} />
                 </div>
-                <div
+                <Flex
                   className={styles['collapse-btn']}
+                  align="center"
+                  justify="center"
                   onClick={toggleCollapse}
                 >
                   {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                </div>
+                </Flex>
               </Aside>
             </Flex>
             <Flex

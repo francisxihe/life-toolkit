@@ -201,6 +201,8 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
         {/* 右侧：状态 Tag + 操作区 */}
         <Flex
           container="fixed"
+          align="center"
+          gap={8}
           className={styles.actions}
         >
           {/* 状态 Tag（只读） */}
@@ -237,7 +239,7 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
               label: '概览',
               children: (
                 <div className={styles.tabBody}>
-                  <div className={styles.overview}>
+                  <Flex vertical gap={16}>
                     {/* 基础信息 */}
                     <section className={styles.infoCard}>
                       <h3 className={styles.infoTitle}>
@@ -292,7 +294,7 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
                         )}
                       </div>
                     </section>
-                  </div>
+                  </Flex>
                 </div>
               ),
             },

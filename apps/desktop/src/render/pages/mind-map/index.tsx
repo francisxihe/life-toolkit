@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Spin } from '@sue/design-web-react';
+import { Flex, Spin } from '@sue/design-web-react';
 import X6MindMap from './X6MindMap';
 import clsx from 'clsx';
 import { GoalMindMapContextProvider, useGoalMindMapContext } from './context';
@@ -28,14 +28,13 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
           }}
         />
       ) : (
-        <div
-          className={clsx(
-            'w-full h-full',
-            'flex items-center justify-center text-gray-500',
-          )}
+        <Flex
+          align="center"
+          justify="center"
+          className={clsx('w-full h-full', 'text-gray-500')}
         >
           暂无目标数据
-        </div>
+        </Flex>
       )}
     </Spin>
   );

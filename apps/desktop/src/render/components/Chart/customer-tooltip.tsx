@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge } from '@sue/design-web-react';
+import { Badge, Flex } from '@sue/design-web-react';
 
 import styles from './style/index.module.less';
 
@@ -20,23 +20,27 @@ function CustomTooltip(props: TooltipProps) {
   return (
     <div className={styles['customer-tooltip']}>
       <div className={styles['customer-tooltip-title']}>
-        <span style={{ fontWeight: "bold" }}>{props.title}</span>
+        <span style={{ fontWeight: 'bold' }}>{props.title}</span>
       </div>
       <div>
-        {props.data.map((item, index) =>
-        <div className={styles['customer-tooltip-item']} key={index}>
+        {props.data.map((item, index) => (
+          <Flex
+            className={styles['customer-tooltip-item']}
+            justify="space-between"
+            key={index}
+          >
             <div>
               <Badge color={color || item.color} />
               {name || item.name}
             </div>
             <div>
-              <span style={{ fontWeight: "bold" }}>{formatter(item.value)}</span>
+              <span style={{ fontWeight: 'bold' }}>{formatter(item.value)}</span>
             </div>
-          </div>
-        )}
+          </Flex>
+        ))}
       </div>
-    </div>);
-
+    </div>
+  );
 }
 
 export default CustomTooltip;

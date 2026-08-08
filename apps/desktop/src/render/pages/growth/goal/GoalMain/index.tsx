@@ -38,17 +38,17 @@ const GoalDetail: React.FC = () => {
 
   if (!selectedGoalId) {
     return (
-      <div className={styles.emptyState}>
+      <Flex align="center" justify="center" className={styles.emptyState}>
         <Empty description="请从左侧选择一个目标查看详情" />
-      </div>
+      </Flex>
     );
   }
 
   if (!selectedGoal) {
     return (
-      <div className={styles.emptyState}>
+      <Flex align="center" justify="center" className={styles.emptyState}>
         <Spin size={40} />
-      </div>
+      </Flex>
     );
   }
 

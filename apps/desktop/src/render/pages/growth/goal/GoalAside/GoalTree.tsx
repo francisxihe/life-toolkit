@@ -124,6 +124,8 @@ const GoalTreePanel: React.FC = ({}) => {
         >
           <Flex
             container="full"
+            align="center"
+            justify="space-between"
             className={styles['tree-node']}
           >
             <Flex container="fixed" className={styles.treeStatus}>

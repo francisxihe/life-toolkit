@@ -48,11 +48,17 @@ function TaskItem(props: TaskItemProps) {
           })}
           aria-hidden="true"
         />
-        <button type="button" className={styles.executionContent} onClick={() => void props.onClickTask(task.id)}>
-          <span className={styles.title}>{task.name}</span>
-          <span className={styles.executionMeta}>
-            {[planRange, task.description].filter(Boolean).join(' · ') || '打开详情'}
-          </span>
+        <button
+          type="button"
+          className={styles.executionContent}
+          onClick={() => void props.onClickTask(task.id)}
+        >
+          <Flex vertical gap={2}>
+            <span className={styles.title}>{task.name}</span>
+            <span className={styles.executionMeta}>
+              {[planRange, task.description].filter(Boolean).join(' · ') || '打开详情'}
+            </span>
+          </Flex>
         </button>
         <Flex className={styles.executionActions} align="center" gap={8} container="fixed">
           {task.importance ? (
@@ -62,13 +68,13 @@ function TaskItem(props: TaskItemProps) {
             <IconSelector map={URGENCY_MAP} iconName="urgency" value={task.urgency} readonly />
           ) : null}
           {task.tags?.length > 0 && (
-            <div className={styles.tags}>
+            <Flex wrap gap={4}>
               {task.tags.map((tag, index) => (
                 <Tag key={index} color="blue">
                   {tag}
                 </Tag>
               ))}
-            </div>
+            </Flex>
           )}
           {isActive && (
             <Tooltip title="完成">
