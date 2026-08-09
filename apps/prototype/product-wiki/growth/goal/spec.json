@@ -108,6 +108,15 @@
       "productStatus": "deprecated",
       "prototypeCoverage": "none",
       "reference": "growth.goal.view.dashboard"
+    },
+    {
+      "id": "ai-decomposition",
+      "name": "AI 拆解",
+      "prototypePage": "goal",
+      "scenario": "基于当前目标生成可采纳的分层建议",
+      "reference": "growth.goal.view.ai-decomposition",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
     }
   ],
   "rules": [
@@ -153,6 +162,34 @@
       "reference": "growth.goal.rule.priority-inheritance",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-generation",
+      "name": "AI 建议生成",
+      "entities": [
+        "goal"
+      ],
+      "description": "正式产品由已接入的模型结合当前目标上下文生成建议；原型仅演示交互与建议形态，不作为生成算法规格。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-generation",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
+    },
+    {
+      "id": "ai-decompose-adopt",
+      "name": "AI 建议采纳",
+      "entities": [
+        "goal"
+      ],
+      "description": "用户可单条或批量采纳建议以创建子目标、任务、待办或习惯；存在冲突的建议不可采纳；已采纳建议不可重复创建。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-adopt",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
     }
   ],
   "references": [
@@ -181,8 +218,20 @@
       "heading": "### 目标健康面板"
     },
     {
+      "id": "growth.goal.view.ai-decomposition",
+      "heading": "### AI 拆解"
+    },
+    {
       "id": "growth.goal.interaction",
       "heading": "## 交互语义"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-generation",
+      "heading": "### AI 建议生成"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-adopt",
+      "heading": "### AI 建议采纳"
     },
     {
       "id": "growth.goal.rule.time-frame",

@@ -14,6 +14,8 @@ import { Todo } from '../growth/todo/todo.entity';
 import { TodoRepeat } from '../growth/todo/todo-repeat.entity';
 import { Repeat } from '../growth/repeat/repeat.entity';
 import { TrackTime } from '../growth/track-time/entity';
+import { AiRun } from '../ai/run/ai-run.entity';
+import { AiSuggestionCache } from '../ai/cache/ai-suggestion-cache.entity';
 
 const getDatabasePath = () => {
   if (process.env.NODE_ENV === 'development') {
@@ -34,7 +36,7 @@ export const AppDataSource = new DataSource({
   database: databasePath,
   synchronize: true,
   logging: process.env.NODE_ENV === 'development' ? ['error'] : undefined,
-  entities: [User, Goal, Task, Todo, TodoRepeat, Repeat, Habit, TrackTime],
+  entities: [User, Goal, Task, Todo, TodoRepeat, Repeat, Habit, TrackTime, AiRun, AiSuggestionCache],
   migrations: [],
   subscribers: [],
   namingStrategy: new SnakeNamingStrategy(),

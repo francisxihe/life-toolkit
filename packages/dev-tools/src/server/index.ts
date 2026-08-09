@@ -2,7 +2,12 @@ import express from 'express';
 import path from 'path';
 import { createApiSyncEngine } from '../watch-controller/target-api/sync-engine';
 import { createWebServiceSyncEngine } from '../watch-controller/target-web-service/sync-engine';
-import { CONTROLLER_SOURCE_PATH, CONTROLLER_API_TARGET_PATH, CONTROLLER_WEB_SERVICE_TARGET_PATH } from '../constants';
+import {
+  CONTROLLER_SOURCE_PATH,
+  AI_CONTROLLER_SOURCE_PATH,
+  CONTROLLER_API_TARGET_PATH,
+  CONTROLLER_WEB_SERVICE_TARGET_PATH,
+} from '../constants';
 import { existsSync } from 'fs';
 
 const app = express();
@@ -13,12 +18,17 @@ app.use(express.static(path.join(process.cwd(), 'dist')));
 
 /** growth 模块列表（相对 CONTROLLER_SOURCE_PATH = .../service/growth） */
 const GROWTH_CONTROLLERS = [
-  { name: 'todo', path: 'todo' },
-  { name: 'goal', path: 'goal' },
-  { name: 'habit', path: 'habit' },
-  { name: 'task', path: 'task' },
-  { name: 'track-time', path: 'track-time' },
+  { name: 'todo', path: 'todo', module: 'growth' as const },
+  { name: 'goal', path: 'goal', module: 'growth' as const },
+  { name: 'habit', path: 'habit', module: 'growth' as const },
+  { name: 'task', path: 'task', module: 'growth' as const },
+  { name: 'track-time', path: 'track-time', module: 'growth' as const },
 ];
+
+/** AI 模块（源根为 service/ai） */
+const AI_CONTROLLERS = [{ name: 'ai', path: '', module: 'ai' as const }];
+
+const ALL_CONTROLLERS = [...GROWTH_CONTROLLERS, ...AI_CONTROLLERS];
 
 // 辅助函数：生成控制器类名
 function generateControllerClassName(name: string): string {
@@ -30,17 +40,20 @@ function generateControllerClassName(name: string): string {
   );
 }
 
-function routeControllerPath(modulePath: string, name: string) {
-  return path.join(CONTROLLER_SOURCE_PATH, modulePath, `${name}.route-controller.ts`);
+function routeControllerPath(module: 'growth' | 'ai', modulePath: string, name: string) {
+  const root = module === 'ai' ? AI_CONTROLLER_SOURCE_PATH : CONTROLLER_SOURCE_PATH;
+  return modulePath
+    ? path.join(root, modulePath, `${name}.route-controller.ts`)
+    : path.join(root, `${name}.route-controller.ts`);
 }
 
 // 辅助函数：查找 API 控制器对
 function findApiControllerPairs() {
   const pairs = [];
 
-  for (const controller of GROWTH_CONTROLLERS) {
+  for (const controller of ALL_CONTROLLERS) {
     const className = generateControllerClassName(controller.name);
-    const sourcePath = routeControllerPath(controller.path, controller.name);
+    const sourcePath = routeControllerPath(controller.module, controller.path, controller.name);
     const targetPath = path.join(CONTROLLER_API_TARGET_PATH, `${controller.name}.ts`);
 
     if (existsSync(sourcePath) && existsSync(targetPath)) {
@@ -60,10 +73,14 @@ function findApiControllerPairs() {
 function findWebServiceControllerPairs() {
   const pairs = [];
 
-  for (const controller of GROWTH_CONTROLLERS) {
+  for (const controller of ALL_CONTROLLERS) {
     const className = generateControllerClassName(controller.name).replace('Controller', 'Service');
-    const sourcePath = routeControllerPath(controller.path, controller.name);
-    const targetPath = path.join(CONTROLLER_WEB_SERVICE_TARGET_PATH, 'growth', `${controller.name}.service.ts`);
+    const sourcePath = routeControllerPath(controller.module, controller.path, controller.name);
+    const targetPath = path.join(
+      CONTROLLER_WEB_SERVICE_TARGET_PATH,
+      controller.module,
+      `${controller.name}.service.ts`
+    );
 
     if (existsSync(sourcePath) && existsSync(targetPath)) {
       pairs.push({

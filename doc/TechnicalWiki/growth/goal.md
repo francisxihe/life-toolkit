@@ -31,4 +31,8 @@
 | 删除影响提示 | 已落地 | GoalService 汇总直接子目标、关联任务、目标关联 Todo 与习惯；存在影响时拒绝删除并返回可展示摘要。 |
 | 详情操作区 | 已落地 | Goal 详情固定为概览、子目标、关联任务三 Tab；右上方提供只读状态 Tag、编辑/删除/放弃菜单及完成/恢复主操作。 |
 
-版本内设计、接口新增和验收见 [v0.1.0 TDD](../../v0.1.0/TDD.md)。
+### AI 拆解（消费方）
+
+目标详情「AI 拆解」的**模型调用与建议生成**属于 AI 平台域，不在 `/goal/*` CRUD 内实现。参见 [TechnicalWiki · AI](../ai/README.md)、[capabilities · goal.decompose](../ai/capabilities.md)。采纳创建仍使用本模块既有 create 接口。版本差异与验收见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+
+版本内 Goal CRUD 设计见 [v0.1.0 TDD](../../v0.1.0/TDD.md)。

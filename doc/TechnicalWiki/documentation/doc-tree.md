@@ -28,6 +28,7 @@ doc/{version}/
 doc/
 ├── TechnicalWiki/
 │   ├── growth/                         # Growth 域代码实现、DTO/VO 和路由入口
+│   ├── ai/                             # AI 平台域（Settings/Runner/Capability）
 ├── {version}/
 │   ├── README.md
 │   ├── PRD.md
@@ -49,7 +50,7 @@ doc/
 | --- | --- | --- |
 | 产品 SSOT | [apps/prototype/product-wiki](../../../apps/prototype/product-wiki/README.md) | 产品架构、业务规范 |
 | 技术 SSOT | [TechnicalWiki/TechnicalWiki.md](../TechnicalWiki.md) | 工程架构、代码规范 |
-| 版本交付 | `doc/{version}/`（示例 [v0.1.0](../../v0.1.0/PRD.md)） | 本版本 PRD/TDD |
+| 版本交付 | `doc/{version}/`（示例 [v0.1.0](../../v0.1.0/PRD.md)、[v0.2.0](../../v0.2.0/PRD.md)） | 本版本 PRD/TDD |
 
 域级产品蓝图（如 Growth）见 [apps/prototype/product-wiki/growth](../../../apps/prototype/product-wiki/growth/README.md)，**不**使用 `doc/growth/` 等独立 PRD/TDD 目录。
 

@@ -1,6 +1,33 @@
 {
   "changes": [
     {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "目标详情提供 AI 拆解抽屉：展示分析摘要与子目标/任务/待办/习惯建议，支持勾选、冲突提示与已采纳态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:view:ai-decomposition", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 拆解", "reference": "growth.goal.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "正式产品由已接入的模型结合目标上下文生成建议；原型仅演示交互与建议形态；模型不可用时明确失败而非静默假建议。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:rule:ai-decompose-generation", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议生成", "reference": "growth.goal.rule.ai-decompose-generation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "支持单条采纳、批量确认采纳与编辑后采纳；冲突建议不可采纳，已采纳不可重复创建；待办须关联当前目标。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议采纳", "reference": "growth.goal.rule.ai-decompose-adopt" }
+    },
+    {
       "version": "v0.1.0",
       "date": "2026-08-08",
       "event": "introduced",

@@ -32,6 +32,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | [documentation/TDD-guide.md](./documentation/TDD-guide.md) | 技术设计文档写作规范 |
 | [documentation/ProductWiki-guide.md](./documentation/ProductWiki-guide.md) | ProductWiki 写作规范 |
 | [growth/README.md](./growth/README.md) | Growth 技术基线、路由与原型对齐边界 |
+| [ai/README.md](./ai/README.md) | AI 平台域（设计基线）：Settings、Runner、Capability、目标拆解与聊天预留 |
 
 ### 开发规范
 
@@ -68,7 +69,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | --- | --- |
 | [apps/prototype/product-wiki/global/README.md](../../apps/prototype/product-wiki/global/README.md) | 产品全局 SSOT |
 | [doc/TechnicalWiki/TechnicalWiki.md](./TechnicalWiki.md) | 技术全局 SSOT |
-| `doc/{version}/`（如 [v0.1.0](../v0.1.0/)） | 本版本 PRD/TDD（唯一交付落点） |
+| `doc/{version}/`（如 [v0.1.0](../v0.1.0/)、[v0.2.0](../v0.2.0/)） | 本版本 PRD/TDD（唯一交付落点） |
 
 ---
 

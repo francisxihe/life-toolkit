@@ -1,5 +1,5 @@
-import { CONTROLLER_SOURCE_PATH, CONTROLLER_WEB_SERVICE_TARGET_PATH } from '../../constants';
-import { readdirSync, statSync } from 'fs';
+import { CONTROLLER_SOURCE_ROOTS, CONTROLLER_WEB_SERVICE_TARGET_PATH } from '../../constants';
+import { existsSync, readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 /**
@@ -9,39 +9,34 @@ import { join } from 'path';
 export function findAllControllerPairs(): Array<{ sourcePath: string; targetPath: string; className: string }> {
   const pairs: Array<{ sourcePath: string; targetPath: string; className: string }> = [];
 
-  try {
-    const findControllerFiles = (dir: string, basePath: string): string[] => {
-      const files: string[] = [];
-      const items = readdirSync(dir);
+  const findControllerFiles = (dir: string, basePath: string): string[] => {
+    if (!existsSync(dir)) return [];
+    const files: string[] = [];
+    const items = readdirSync(dir);
 
-      for (const item of items) {
-        const fullPath = join(dir, item);
-        const stat = statSync(fullPath);
+    for (const item of items) {
+      const fullPath = join(dir, item);
+      const stat = statSync(fullPath);
 
-        if (stat.isDirectory()) {
-          files.push(...findControllerFiles(fullPath, basePath));
-        } else if (item.endsWith('.route-controller.ts')) {
-          const relativePath = fullPath.replace(basePath, '').replace(/^\//, '');
-          files.push(relativePath);
-        }
+      if (stat.isDirectory()) {
+        files.push(...findControllerFiles(fullPath, basePath));
+      } else if (item.endsWith('.route-controller.ts')) {
+        const relativePath = fullPath.replace(basePath, '').replace(/^[\\/]/, '');
+        files.push(relativePath);
       }
+    }
 
-      return files;
-    };
+    return files;
+  };
 
-    const sourceFiles = findControllerFiles(CONTROLLER_SOURCE_PATH, CONTROLLER_SOURCE_PATH);
-
-    for (const sourceFile of sourceFiles) {
-      const sourcePath = join(CONTROLLER_SOURCE_PATH, sourceFile);
-
-      // 转换路径：goal/goal.route-controller.ts -> growth/goal.service.ts
-      const pathParts = sourceFile.split('/');
-      if (pathParts.length >= 1) {
-        // CONTROLLER_SOURCE_PATH 已是 .../service/growth，相对路径为 todo/todo.route-controller.ts
-        const fileName = pathParts[pathParts.length - 1];
+  try {
+    for (const { root, module } of CONTROLLER_SOURCE_ROOTS) {
+      const sourceFiles = findControllerFiles(root, root);
+      for (const sourceFile of sourceFiles) {
+        const sourcePath = join(root, sourceFile);
+        const fileName = sourceFile.split(/[\\/]/).pop() || '';
         const serviceName = fileName.replace('.route-controller.ts', '.service.ts');
-        const targetPath = join(CONTROLLER_WEB_SERVICE_TARGET_PATH, 'growth', serviceName);
-
+        const targetPath = join(CONTROLLER_WEB_SERVICE_TARGET_PATH, module, serviceName);
         const className = extractServiceClassNameFromPath(sourceFile);
 
         pairs.push({
@@ -62,7 +57,7 @@ export function findAllControllerPairs(): Array<{ sourcePath: string; targetPath
  * 从文件路径提取 Service 类名
  */
 export function extractServiceClassNameFromPath(relativePath: string): string {
-  const fileName = relativePath.split('/').pop() || '';
+  const fileName = relativePath.split(/[\\/]/).pop() || '';
   const baseName = fileName.replace('.route-controller.ts', '');
   return (
     baseName
