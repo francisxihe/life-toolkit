@@ -2690,7 +2690,7 @@ packages:
     resolution: {integrity: sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==}
 
   '@sue/design-web-react@0.0.3-beta':
-    resolution: {integrity: sha512-na8a88UDkULRrUuY/Qfo9apc7JYxjyCCJMNkUDHuACaYkOK38GwS7aMRmi7oJsx61UFfXTaJns4zQILZDcXjlg==, tarball: https://packages.aliyun.com/69f800449b7ce0afb00bda0e/npm/npm-registry/@sue/design-web-react/-/@sue/design-web-react-0.0.3-beta.tgz}
+    resolution: {integrity: sha512-hOBQ1TTdP2X1NQue5oG+vUAMwx2kazEPAFybSYoc26KqSapBWHs11yW6JCKKz7z3E8EyoYT9lc4v9axPWALAiA==, tarball: https://packages.aliyun.com/69f800449b7ce0afb00bda0e/npm/npm-registry/@sue/design-web-react/-/@sue/design-web-react-0.0.3-beta.tgz}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'

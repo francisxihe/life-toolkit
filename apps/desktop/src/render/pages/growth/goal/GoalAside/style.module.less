@@ -1,64 +1,95 @@
-.aside { padding: 16px 0; }
-.toolbar { width: 100%; padding: 0 16px; }
-.divider { margin: 0 !important; border-color: var(--sue-color-border-secondary) !important; }
-.treeArea { min-width: 0; padding: 0 8px 0 16px; overflow: auto; }
-.footer { width: 100%; padding: 0 16px; }
-.createButton { width: 100%; }
-.treeStatus { height: 100%; }
-.treeLoading { width: 100%; }
-.goalTree { width: 100%; }
-.goalTree :global(.sue-tree-treenode), .goalTree :global(.sue-tree-node-content-wrapper), .goalTree :global(.sue-tree-title) { width: 100%; }
-.goalTree :global(.sue-tree-title) { display: block; }
-
-.tree-node {
-  width: 100%;
-  height: 22px;
-  padding: 0 8px;
-  border-radius: var(--sue-border-radius-sm);
-
-  transition: background-color 0.2s;
-
-  &:hover {
-    .node-action {
-      opacity: 1;
-    }
-  }
-
-  .node-title {
-    flex: 1;
-    font-size: 14px;
-    color: var(--sue-color-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .node-action {
-    opacity: 0;
-    transition: opacity 0.2s;
-    margin-left: 8px;
-    color: var(--sue-color-text-tertiary);
-
-    &:hover {
-      color: var(--sue-color-primary);
-      background-color: var(--sue-color-primary-bg);
-    }
-  }
+.aside {
+  padding: 12px 0 16px;
 }
 
-// 全局样式覆盖
+.header {
+  width: 100%;
+  padding: 0 16px;
+  min-height: 32px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--sue-color-text);
+}
+
+.filters {
+  width: 100%;
+  padding: 0 16px;
+}
+
+.filterPanel {
+  width: 100%;
+}
+
+.filterControl {
+  width: 100%;
+}
+
+.treeArea {
+  min-width: 0;
+  padding: 0 8px 0 12px;
+  overflow: auto;
+}
+
+.treeLoading {
+  width: 100%;
+}
+
+.goalTree {
+  width: 100%;
+}
+
+.goalTree :global(.sue-tree-treenode),
+.goalTree :global(.sue-tree-node-content-wrapper),
+.goalTree :global(.sue-tree-title) {
+  width: 100%;
+}
+
+.goalTree :global(.sue-tree-title) {
+  display: block;
+}
+
+.goalTree :global(.sue-tree-node-selected) .treeNode,
+.goalTree :global(.sue-tree-node-selected) .treeGoalLabel {
+  color: var(--sue-color-primary);
+}
+
+.goalTree :global(.sue-tree-node-content-wrapper-selected) {
+  background: var(--sue-color-primary-bg) !important;
+}
+
+.treeNode {
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 8px;
+  border-radius: var(--sue-border-radius-sm);
+  overflow: hidden;
+}
+
+.treeGoalLabel {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--sue-color-text);
+  line-height: 1.4;
+}
+
+.treeTimeRange {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
 :global {
-  .sue-tree-node-selected {
-    .goal-tree-panel .tree-node {
-      background-color: var(--sue-color-primary-bg) !important;
-
-      .node-title {
-        color: var(--sue-color-primary) !important;
-        font-weight: 500 !important;
-      }
-    }
-  }
-
   .sue-tree-node:hover {
     background-color: transparent !important;
   }

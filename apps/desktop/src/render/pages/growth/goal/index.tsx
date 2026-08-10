@@ -2,9 +2,7 @@
 
 import { GoalProvider } from './context';
 import React, { useState } from 'react';
-import { Layout, Tabs } from '@sue/design-web-react';
-import { useGoalContext } from './context';
-import { useGoalDetail } from '../components/GoalDetail';
+import { Flex, Layout, Tabs } from '@sue/design-web-react';
 import GoalMain from './GoalMain';
 import GoalAside from './GoalAside';
 import GoalMindMap from '@/pages/mind-map';
@@ -17,27 +15,18 @@ interface GoalTreeViewProps {
 }
 
 const GoalTreeView: React.FC<GoalTreeViewProps> = () => {
-  const { refreshData } = useGoalContext();
-  const { openCreateDrawer } = useGoalDetail();
-
   return (
-    <Layout
-      className={styles.treeLayout}
-    >
+    <Flex container="full" className={styles.treeLayout}>
       {/* 左侧目标树 */}
-      <Sider
-        width={320}
-        className={styles.sider}
-        theme="light"
-      >
+      <Flex container="fixed" className={styles.sider}>
         <GoalAside />
-      </Sider>
+      </Flex>
 
       {/* 右侧详情面板 */}
-      <Content className={styles.content}>
+      <Flex container="fill" className={styles.content}>
         <GoalMain />
-      </Content>
-    </Layout>
+      </Flex>
+    </Flex>
   );
 };
 
@@ -45,30 +34,29 @@ export default function Goal() {
   const [activeTab, setActiveTab] = useState('tree');
 
   return (
-    <div className={styles.page}>
+    <Flex vertical container="full" className={styles.page}>
       <Tabs
         activeKey={activeTab}
         onChange={setActiveTab}
         className={styles.tabs}
+        tabBarStyle={{ padding: '0 16px' }}
         items={[
           {
             key: 'tree',
             label: '目标树',
             children: (
-              <div className={styles.tabContent}>
-                <GoalProvider>
-                  <GoalTreeView />
-                </GoalProvider>
-              </div>
+              <GoalProvider>
+                <GoalTreeView />
+              </GoalProvider>
             ),
           },
           {
             key: 'mindmap',
             label: '目标脑图',
-            children: <GoalMindMap className={styles.tabContent} />,
+            children: <GoalMindMap />,
           },
         ]}
       />
-    </div>
+    </Flex>
   );
 }

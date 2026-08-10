@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ReactShape } from '@antv/x6-react-shape';
 import { ENodeType } from '@true-north/components-mind/src/types';
 
-import GoalEditor from '@/pages/growth/components/GoalDetail/GoalEditor';
 import styles from './style.module.less';
 import clsx from 'clsx';
 import { handleEditNode } from '../helpers';
@@ -147,12 +146,28 @@ const MindMapNode: React.FC<CustomNodeProps> = ({
   };
 
   const nodeRef = useRef<HTMLDivElement>(null);
+  const lastSizeRef = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
-    if (nodeRef.current) {
-      node.setSize(nodeRef.current.clientWidth, nodeRef.current.clientHeight);
-    }
-  }, [nodeRef.current]);
+    const el = nodeRef.current;
+    if (!el || !node) return;
+
+    const applySize = () => {
+      const width = el.clientWidth;
+      const height = el.clientHeight;
+      if (
+        width > 0 &&
+        height > 0 &&
+        (Math.abs(width - lastSizeRef.current.width) > 1 ||
+          Math.abs(height - lastSizeRef.current.height) > 1)
+      ) {
+        lastSizeRef.current = { width, height };
+        node.setSize(width, height);
+      }
+    };
+
+    applySize();
+  }, [node, label, type, isSelected]);
 
   return (
     <div
@@ -182,9 +197,6 @@ const MindMapNode: React.FC<CustomNodeProps> = ({
       {hasChildren && (
         <div
           className={getClassName(`__collapsed-button`)}
-          style={{
-            color: type === ENodeType.topic ? '#4E86E4' : '#69B1FF',
-          }}
           onClick={onClickCollapsedButton}
         >
           {isCollapsed ? (

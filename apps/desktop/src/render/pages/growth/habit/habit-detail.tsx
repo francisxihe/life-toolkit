@@ -29,6 +29,7 @@ import { HABIT_STATUS_OPTIONS } from './constants';
 import { useHabitContext } from './context';
 import { HabitStatus, TodoRelatedType } from '@true-north/enum';
 import { DIFFICULTY_MAP } from '../constants';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from './components/CreateHabit';
 import { emitHabitChanged } from '../events';
 import styles from './style.module.less';
@@ -134,6 +135,7 @@ export const HabitDetailPage: React.FC = () => {
       const instance = Drawer.open({
         title: '编辑习惯',
         size: 800,
+        styles: drawerPaddedBodyStyles,
         content: (
           <CreateHabit
             habit={habit}

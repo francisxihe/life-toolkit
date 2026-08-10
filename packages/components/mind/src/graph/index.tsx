@@ -48,25 +48,34 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
 
   // 从画布context获取画布相关状态
   const { graph, setGraph, zoom, position, zoomIn, zoomOut, graphRef } = useMindMapGraphContext();
+  const hostRef = useRef<HTMLDivElement>(null);
 
   const mergedOptions = { ...DEFAULT_MIND_MAP_OPTIONS, ...options };
 
   // 初始化图形
   useEffect(() => {
-    if (!containerRef.current || !graphRef.current) return;
+    if (!containerRef.current || !graphRef.current || !hostRef.current) return;
 
     let newGraph: Graph | null = null;
     let resizeObserver: ResizeObserver | null = null;
     let timeoutId: NodeJS.Timeout | null = null;
+    const hostEl = hostRef.current;
 
     // 使用setTimeout延迟初始化，避免同步卸载问题
     const timerId = setTimeout(() => {
-      if (!containerRef.current || !graphRef.current) return;
+      if (!containerRef.current || !graphRef.current || !hostEl) return;
+
+      const containerW = containerRef.current.clientWidth;
+      const containerH = containerRef.current.clientHeight;
+      const hostW = hostEl.clientWidth;
+      const hostH = hostEl.clientHeight;
+      const initW = hostW > 0 ? hostW : containerW;
+      const initH = hostH > 0 ? hostH : containerH;
 
       newGraph = initGraph(
         graphRef.current,
-        containerRef.current.clientWidth,
-        containerRef.current.clientHeight
+        initW,
+        initH
       );
 
       newGraph.zoomTo(zoom);
@@ -108,29 +117,26 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
         setSelectedNodeId(null);
       });
 
-      // 监听容器大小变化
+      // 只监听外层 host（布局尺寸），不监听 scroller/graph 内部，避免 autoResize 放大循环
+      let lastSize = { width: 0, height: 0 };
       resizeObserver = new ResizeObserver(entries => {
         for (const entry of entries) {
-          if (entry && entry.contentRect && graphRef.current && newGraph) {
-            // 获取容器的当前尺寸
+          if (entry && entry.contentRect && newGraph) {
             const { width, height } = entry.contentRect;
-
-            // 防止尺寸过小
-            if (width > 200 && height > 200) {
+            if (
+              width > 0 &&
+              height > 0 &&
+              (Math.abs(width - lastSize.width) > 1 ||
+                Math.abs(height - lastSize.height) > 1)
+            ) {
+              lastSize = { width, height };
               newGraph.resize(width, height);
-
-              if (mergedOptions.centerOnResize) {
-                newGraph.centerContent();
-              }
             }
           }
         }
       });
 
-      // 只监听容器自身
-      if (containerRef.current) {
-        resizeObserver.observe(containerRef.current.parentElement!);
-      }
+      resizeObserver.observe(hostEl);
 
       // 延迟发送graph实例，确保组件已完全渲染
       timeoutId = setTimeout(() => {
@@ -162,12 +168,10 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
     };
   }, [
     mergedOptions.enableShortcuts,
-    mergedOptions.centerOnResize,
     onNodeClick,
     onGraphReady,
     setGraph,
     setSelectedNodeId,
-    zoom,
   ]);
 
   // 初始化图形
@@ -319,14 +323,10 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
       };
 
       traverse(result);
-      console.log(`Created ${cells.length} cells`);
       setTimeout(() => {
         graph.resetCells(cells);
+        graph.centerContent();
       }, 0);
-
-      // 居中内容
-      graph.centerContent();
-      console.log('Mind map rendered successfully');
     } catch (error) {
       console.error('Error rendering mind map:', error);
     }
@@ -358,12 +358,23 @@ const InternalMindMapGraph: React.FC<MindMapGraphProps> = ({
 
   return (
     <div
-      ref={graphRef}
+      ref={hostRef}
       style={{
         width: '100%',
         height: '100%',
+        minHeight: 0,
+        position: 'relative',
+        overflow: 'hidden',
       }}
-    />
+    >
+      <div
+        ref={graphRef}
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      />
+    </div>
   );
 };
 

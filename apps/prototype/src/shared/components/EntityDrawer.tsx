@@ -38,6 +38,7 @@ import type {
 import { asTodoRepeat } from '../repeat';
 import { validateGoalHierarchy, validateTaskHierarchy } from '../lifecycle';
 import { canFocusTodo, isTodoPlanRange, statusLabel } from '../utils';
+import { drawerPaddedBodyStyles } from '../drawerStyles';
 import styles from './EntityDrawer.module.css';
 
 type Props = {
@@ -98,6 +99,7 @@ export function EntityDrawer({
       onClose={onClose}
       size="large"
       destroyOnHidden
+      styles={drawerPaddedBodyStyles}
       extra={
         <div data-product-ref={productReference}>
           <Button type="primary" onClick={submit}>
