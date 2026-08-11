@@ -115,8 +115,8 @@ export const growthRoutes: IRoute = {
   children: [
     workbenchRoutes,
     todoRoutes,
-    goalRoutes,
     taskRoutes,
     habitRoutes,
+    goalRoutes,
   ],
 };

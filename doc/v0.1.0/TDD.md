@@ -31,7 +31,7 @@ scope:
 | Todo 状态精简 | `pages/todo/`、`EntityDrawer` | 仍有 `in_progress` 与 `/todo/start|/pause` | 三态 + 删除 start/pause + 数据迁移 |
 | Todo 区间专注 / TrackTime 待办关联 | `FocusTimer`、待办列表/抽屉 | TrackTime 仅 `TASK`；待办无专注入口 | `TrackTimeRelatedType.TODO`、入口与只读历史 |
 
-非范围：Habit 产品扩展；全局 FocusTimer 内「选择待办」联合选择器（本期以待办入口预填为主）；服务端因时间点拒绝 create。
+非范围：Habit 产品扩展；服务端因时间点拒绝 create。
 
 ## 目标与任务实现设计
 
@@ -61,10 +61,12 @@ scope:
 ### TrackTime：待办关联与 FocusTimer
 
 - `TrackTimeRelatedType` 增加 `TODO = 'todo'`；create/related 查询支持待办 id。
-- `FocusTimerProvider.open` 支持 `{ relatedType, relatedId }` 或等价的任务/待办预关联；结束时 `TrackTimeController.create` 写入对应关联；**不**调用待办状态接口。
+- `FocusTimerProvider.open` 支持任务/待办预关联（`{ taskId, todoId, label? }`）；`relatedLocked = Boolean(taskId || todoId)` 由入口显式决定，不用当前 `todoId` 推断。
+- 未锁定时：`loadTimerData` 并行加载未完成任务与 `TodoStatus.TODO` 待办，Select 分组可搜索（`task:<id>` / `todo:<id>`），清空为独立专注；迷你与全屏复用同一选择/锁定逻辑。
+- 锁定时只读展示 `任务 · {name}` / `待办 · {name}`，无 Select；结束时 `TrackTimeController.create` 写入对应关联；**不**调用待办状态接口。
 - 待办列表/详情：当 `status === todo` 且 `planStartTime !== planEndTime` 时展示「开始专注」；时间点隐藏入口。
 - 待办详情只读加载 `GET /trackTime/related/todo/:id`；时间点待办同样可读。
-- 顶栏唤起可继续只选任务；不强制全局选择器支持待办。服务端不因时间点拒绝 `relatedType=todo` 的 create。
+- 服务端不因时间点拒绝 `relatedType=todo` 的 create。
 
 ### 数据、VO 与迁移
 

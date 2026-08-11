@@ -318,7 +318,7 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
               children: (
                 <Flex vertical gap={12} className={styles.tabBody}>
                   <Flex justify="end">
-                    <Button type="primary" onClick={() => openFocusTimer(task.id)}>
+                    <Button type="primary" onClick={() => openFocusTimer({ taskId: task.id, label: task.name })}>
                       打开计时器
                     </Button>
                   </Flex>

@@ -1,13 +1,19 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Card, Flex, Select, Space, Tooltip, message } from '@sue/design-web-react';
 import { CompressOutlined, ExpandOutlined, PauseCircleOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { TaskStatus, TrackTimeRelatedType } from '@true-north/enum';
-import { TaskService, TrackTimeController } from '@true-north/web-service';
+import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
+import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
 import styles from './style.module.less';
 
 const DEFAULT_DURATION = 25 * 60;
+const SELECT_POPUP_Z_INDEX = 2100;
+
+const RELATED_PREFIX = {
+  task: 'task:',
+  todo: 'todo:',
+} as const;
 
 export type FocusTimerOpenOptions = {
   taskId?: string;
@@ -21,7 +27,8 @@ type FocusTimerContextValue = {
   open: FocusTimerOpenFn;
 };
 
-type TaskOption = { value: string; label: string };
+type RelatedOption = { value: string; label: string };
+type RelatedOptionGroup = { label: string; options: RelatedOption[] };
 
 const FocusTimerContext = createContext<FocusTimerContextValue | null>(null);
 
@@ -49,25 +56,52 @@ function normalizeOpenOptions(related?: string | FocusTimerOpenOptions): FocusTi
   return related;
 }
 
+function toSelectValue(taskId?: string, todoId?: string) {
+  if (todoId) return `${RELATED_PREFIX.todo}${todoId}`;
+  if (taskId) return `${RELATED_PREFIX.task}${taskId}`;
+  return undefined;
+}
+
+function parseSelectValue(value?: string): { taskId?: string; todoId?: string } {
+  if (!value) return {};
+  if (value.startsWith(RELATED_PREFIX.todo)) {
+    return { todoId: value.slice(RELATED_PREFIX.todo.length) };
+  }
+  if (value.startsWith(RELATED_PREFIX.task)) {
+    return { taskId: value.slice(RELATED_PREFIX.task.length) };
+  }
+  return {};
+}
+
 export function FocusTimerProvider({ children }: { children: React.ReactNode }) {
   const [visible, setVisible] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [taskId, setTaskId] = useState<string>();
   const [todoId, setTodoId] = useState<string>();
+  const [relatedLocked, setRelatedLocked] = useState(false);
   const [lockedLabel, setLockedLabel] = useState<string>();
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [startedAt, setStartedAt] = useState<number>();
-  const [taskOptions, setTaskOptions] = useState<TaskOption[]>([]);
+  const [relatedOptions, setRelatedOptions] = useState<RelatedOptionGroup[]>([]);
 
   const loadTimerData = useCallback(async () => {
     try {
-      const taskResult = await TaskService.findByFilter({});
-      setTaskOptions(
-        (taskResult?.list || [])
-          .filter((task) => task.status !== TaskStatus.DONE && task.status !== TaskStatus.ABANDONED)
-          .map((task) => ({ value: task.id, label: task.name })),
-      );
+      const [taskResult, todoResult] = await Promise.all([
+        TaskService.findByFilter({}),
+        TodoService.list({ status: TodoStatus.TODO }),
+      ]);
+      const taskOptions = (taskResult?.list || [])
+        .filter((task) => task.status !== TaskStatus.DONE && task.status !== TaskStatus.ABANDONED)
+        .map((task) => ({ value: `${RELATED_PREFIX.task}${task.id}`, label: task.name }));
+      const todoOptions = (todoResult?.list || []).map((todo) => ({
+        value: `${RELATED_PREFIX.todo}${todo.id}`,
+        label: todo.name,
+      }));
+      setRelatedOptions([
+        { label: '任务', options: taskOptions },
+        { label: '待办', options: todoOptions },
+      ]);
     } catch (error) {
       console.error('加载专注计时器数据失败:', error);
       message.error('加载专注计时器数据失败');
@@ -76,9 +110,18 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
 
   const open = useCallback((related?: string | FocusTimerOpenOptions) => {
     const options = normalizeOpenOptions(related);
-    setTodoId(options.todoId);
-    setTaskId(options.todoId ? undefined : options.taskId);
-    setLockedLabel(options.todoId ? options.label || '待办专注' : undefined);
+    const nextTodoId = options.todoId;
+    const nextTaskId = options.todoId ? undefined : options.taskId;
+    setTodoId(nextTodoId);
+    setTaskId(nextTaskId);
+    setRelatedLocked(Boolean(options.taskId || options.todoId));
+    setLockedLabel(
+      nextTodoId
+        ? options.label || '待办专注'
+        : nextTaskId
+          ? options.label || '任务专注'
+          : undefined,
+    );
     setVisible(true);
     setFullScreen(false);
     void loadTimerData();
@@ -166,10 +209,34 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
     setFullScreen(false);
   };
 
+  const onSelectRelated = useCallback((value?: string) => {
+    const next = parseSelectValue(value);
+    setTaskId(next.taskId);
+    setTodoId(next.todoId);
+    setLockedLabel(undefined);
+  }, []);
+
   const contextValue = useMemo(() => ({ open }), [open]);
-  const taskName = todoId
-    ? lockedLabel || '待办专注'
-    : taskOptions.find((task) => task.value === taskId)?.label || '独立专注';
+
+  const flatOptions = useMemo(
+    () => relatedOptions.flatMap((group) => group.options),
+    [relatedOptions],
+  );
+
+  const relatedName = useMemo(() => {
+    if (relatedLocked && lockedLabel) return lockedLabel;
+    const selected = flatOptions.find((option) => option.value === toSelectValue(taskId, todoId));
+    if (selected) return selected.label;
+    if (todoId) return lockedLabel || '待办专注';
+    if (taskId) return lockedLabel || '任务专注';
+    return '独立专注';
+  }, [flatOptions, lockedLabel, relatedLocked, taskId, todoId]);
+
+  const lockedDisplay = todoId
+    ? `待办 · ${relatedName}`
+    : taskId
+      ? `任务 · ${relatedName}`
+      : relatedName;
 
   return (
     <FocusTimerContext.Provider value={contextValue}>
@@ -178,19 +245,16 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
         <FocusTimerOverlay
           elapsed={elapsed}
           fullScreen={fullScreen}
-          lockedToTodo={Boolean(todoId)}
+          relatedLocked={relatedLocked}
+          relatedName={relatedName}
+          lockedDisplay={lockedDisplay}
           running={running}
-          taskId={taskId}
-          taskName={taskName}
-          taskOptions={taskOptions}
+          selectValue={toSelectValue(taskId, todoId)}
+          relatedOptions={relatedOptions}
           onClose={close}
           onFinish={finish}
           onReset={reset}
-          onSetTaskId={(value) => {
-            setTaskId(value);
-            setTodoId(undefined);
-            setLockedLabel(undefined);
-          }}
+          onSelectRelated={onSelectRelated}
           onToggleFullScreen={() => setFullScreen((value) => !value)}
           onToggleRunning={toggleRunning}
         />
@@ -199,32 +263,68 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
   );
 }
 
+function RelatedSelector({
+  relatedLocked,
+  lockedDisplay,
+  selectValue,
+  relatedOptions,
+  className,
+  onSelectRelated,
+}: {
+  relatedLocked: boolean;
+  lockedDisplay: string;
+  selectValue?: string;
+  relatedOptions: RelatedOptionGroup[];
+  className: string;
+  onSelectRelated: (value?: string) => void;
+}) {
+  if (relatedLocked) {
+    return <span className={styles.taskName}>{lockedDisplay}</span>;
+  }
+  return (
+    <Select
+      allowClear
+      showSearch
+      optionFilterProp="label"
+      className={className}
+      classNames={{ popup: { root: styles.selectPopup } }}
+      styles={{ popup: { root: { zIndex: SELECT_POPUP_Z_INDEX } } }}
+      value={selectValue}
+      placeholder="搜索任务或待办（可选）"
+      options={relatedOptions}
+      onChange={(value) => onSelectRelated(value as string | undefined)}
+    />
+  );
+}
+
 function FocusTimerOverlay({
   elapsed,
   fullScreen,
-  lockedToTodo,
+  relatedLocked,
+  relatedName,
+  lockedDisplay,
   running,
-  taskId,
-  taskName,
-  taskOptions,
+  selectValue,
+  relatedOptions,
   onClose,
   onFinish,
   onReset,
-  onSetTaskId,
+  onSelectRelated,
   onToggleFullScreen,
   onToggleRunning,
 }: {
   elapsed: number;
   fullScreen: boolean;
-  lockedToTodo: boolean;
+  relatedLocked: boolean;
+  relatedName: string;
+  lockedDisplay: string;
   running: boolean;
-  taskId?: string;
-  taskName: string;
-  taskOptions: TaskOption[];
+  selectValue?: string;
+  relatedOptions: RelatedOptionGroup[];
   onClose: () => void;
   onFinish: () => void;
   onReset: () => void;
-  onSetTaskId: (value?: string) => void;
+  onSelectRelated: (value?: string) => void;
   onToggleFullScreen: () => void;
   onToggleRunning: () => void;
 }) {
@@ -247,16 +347,14 @@ function FocusTimerOverlay({
       </Tooltip>
     </Space>
   );
-  const selector = lockedToTodo ? (
-    <span className={styles.taskName}>待办 · {taskName}</span>
-  ) : (
-    <Select
-      allowClear
-      className={styles.taskSelector}
-      value={taskId}
-      placeholder="选择任务（可选）"
-      options={taskOptions}
-      onChange={(value) => onSetTaskId(value as string | undefined)}
+  const selector = (
+    <RelatedSelector
+      relatedLocked={relatedLocked}
+      lockedDisplay={lockedDisplay}
+      selectValue={selectValue}
+      relatedOptions={relatedOptions}
+      className={fullScreen ? styles.fullscreenTaskSelector : styles.taskSelector}
+      onSelectRelated={onSelectRelated}
     />
   );
 
@@ -267,20 +365,9 @@ function FocusTimerOverlay({
           <Flex className={styles.fullscreenHeader} align="center" justify="space-between">
             <div>
               <h1>专注计时</h1>
-              <p>{taskName}</p>
+              <p>{relatedName}</p>
             </div>
-            {lockedToTodo ? (
-              <span className={styles.taskName}>待办 · {taskName}</span>
-            ) : (
-              <Select
-                allowClear
-                className={styles.fullscreenTaskSelector}
-                value={taskId}
-                placeholder="选择任务（可选）"
-                options={taskOptions}
-                onChange={(value) => onSetTaskId(value as string | undefined)}
-              />
-            )}
+            {selector}
           </Flex>
           <Flex align="center" justify="center" className={styles.clock}>
             <Flex align="center">
@@ -331,7 +418,7 @@ function FocusTimerOverlay({
         </Flex>
         {selector}
         <Flex className={styles.miniBody} align="center" justify="space-between" gap={12}>
-          <Flex vertical gap={2}><b className={styles.miniTime}>{formatSeconds(remaining)}</b><span className={styles.taskName}>{taskName}</span></Flex>
+          <Flex vertical gap={2}><b className={styles.miniTime}>{formatSeconds(remaining)}</b><span className={styles.taskName}>{relatedName}</span></Flex>
           {controls}
         </Flex>
         <Button type="link" className={styles.finishButton} onClick={onFinish}>结束并记录</Button>

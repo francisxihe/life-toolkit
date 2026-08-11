@@ -1,8 +1,7 @@
-import { Form, Input, Select, Button, DatePicker, InputNumber } from '@sue/design-web-react';
+import { Form, Input, Select, Button, DatePicker, InputNumber, Modal } from '@sue/design-web-react';
 import { DEFAULT_CATEGORIES } from '../constants';
 import { TagEditor } from '@/components/TagSelector';
 import { useEffect, useRef } from 'react';
-import { openModal } from '@/hooks/OpenModal';
 import { CreateTransactionVo } from '@true-north/vo';
 
 const FormItem = Form.Item;
@@ -111,7 +110,9 @@ export function useCreateTransaction({
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;
-    openModal({
+    Modal.confirm({
+      icon: null,
+      closable: true,
       title: <div className="text-body-3">添加交易</div>,
       content: (
         <TransactionForm

@@ -1,5 +1,12 @@
-import React from 'react';
-import { Button, Divider, Flex, PlusOutlined } from '@sue/design-web-react';
+import React, { useMemo, useState } from 'react';
+import {
+  Button,
+  Flex,
+  Tooltip,
+  CloseOutlined,
+  PlusOutlined,
+} from '@sue/design-web-react';
+import { SlidersHorizontal } from 'lucide-react';
 
 import GoalFilters from './GoalFilters';
 import GoalTree from './GoalTree';
@@ -8,41 +15,85 @@ import { useGoalDetail } from '../../components/GoalDetail';
 import styles from './style.module.less';
 
 export default function GoalAside() {
-  const { refreshData } = useGoalContext();
+  const { refreshData, searchValue, filters, clearFilters, setSearchValue } =
+    useGoalContext();
   const { openCreateDrawer } = useGoalDetail();
+  const [filtersExpanded, setFiltersExpanded] = useState(false);
+
+  const hasFilters = useMemo(() => {
+    return Boolean(
+      searchValue ||
+        filters.status?.length ||
+        filters.type ||
+        filters.importance ||
+        filters.difficulty ||
+        filters.dateRange?.length,
+    );
+  }, [searchValue, filters]);
+
+  const handleClearFilters = () => {
+    clearFilters();
+    setSearchValue('');
+  };
 
   return (
     <Flex vertical container="full" gap={12} className={styles.aside}>
-      {/* 头部工具栏 */}
       <Flex
         container="fixed"
-        className={styles.toolbar}
+        className={styles.header}
+        justify="space-between"
+        align="center"
       >
-        <GoalFilters />
+        <span className={styles.title}>目标树</span>
+        <Flex container="fixed" align="center" gap={0}>
+          {hasFilters && (
+            <Tooltip title="清空筛选">
+              <Button
+                type="text"
+                size="small"
+                icon={<CloseOutlined />}
+                aria-label="清空筛选"
+                onClick={handleClearFilters}
+              />
+            </Tooltip>
+          )}
+          <Tooltip title={filtersExpanded ? '收起筛选' : '展开筛选'}>
+            <Button
+              type={hasFilters ? 'primary' : 'text'}
+              size="small"
+              icon={<SlidersHorizontal size={14} />}
+              aria-label={filtersExpanded ? '收起筛选' : '展开筛选'}
+              aria-expanded={filtersExpanded}
+              onClick={() => setFiltersExpanded((value) => !value)}
+            />
+          </Tooltip>
+          <Tooltip title="新建目标">
+            <Button
+              type="text"
+              size="small"
+              icon={<PlusOutlined />}
+              aria-label="新建目标"
+              onClick={() =>
+                openCreateDrawer({
+                  title: '新建目标',
+                  contentProps: {
+                    afterSubmit: refreshData,
+                  },
+                })
+              }
+            />
+          </Tooltip>
+        </Flex>
       </Flex>
 
-      <Divider className={styles.divider} />
+      {filtersExpanded && (
+        <Flex container="fixed" className={styles.filters}>
+          <GoalFilters />
+        </Flex>
+      )}
 
       <Flex container="fill" className={styles.treeArea}>
         <GoalTree />
-      </Flex>
-
-      <Flex container="fixed" className={styles.footer}>
-        <Button
-          className={styles.createButton}
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() =>
-            openCreateDrawer({
-              title: '新建目标',
-              contentProps: {
-                afterSubmit: refreshData,
-              },
-            })
-          }
-        >
-          新建
-        </Button>
       </Flex>
     </Flex>
   );

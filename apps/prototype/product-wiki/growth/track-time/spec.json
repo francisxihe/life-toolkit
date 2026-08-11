@@ -32,7 +32,7 @@
           "name": "关联待办",
           "type": "reference",
           "required": false,
-          "description": "专注记录可关联一个待办；与关联任务互斥。从待办入口预填关联时使用。",
+          "description": "专注记录可关联一个待办；与关联任务互斥。顶栏联合选择或待办入口预填时使用。",
           "productStatus": "roadmap",
           "prototypeCoverage": "complete"
         },
@@ -53,7 +53,7 @@
       "id": "focus",
       "name": "专注计时",
       "prototypePage": "global-focus-timer",
-      "scenario": "从顶栏、任务或待办唤起全局计时，并在迷你与全屏模式间切换",
+      "scenario": "从顶栏、任务或待办唤起全局计时；顶栏可搜索选择任务或待办，任务/待办入口锁定关联；迷你与全屏可切换",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete",
       "reference": "growth.track-time.overview"
@@ -80,7 +80,7 @@
       "entities": [
         "track-time"
       ],
-      "description": "专注记录可独立存在，也可归属一个待办；与任务关联互斥。结束专注不改变待办状态。",
+      "description": "专注记录可独立存在，也可归属一个待办；与任务关联互斥。顶栏计时可搜索选择待办；任务/待办入口锁定预填关联。结束专注不改变待办状态。",
       "views": [
         "focus"
       ],

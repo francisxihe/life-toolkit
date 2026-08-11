@@ -1,13 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, message, Tag, Dropdown, Menu, Button, Breadcrumb, Flex, CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, RightOutlined } from '@sue/design-web-react';
+import React, { useEffect } from 'react';
+import {
+  Modal,
+  message,
+  Tag,
+  Dropdown,
+  Button,
+  Breadcrumb,
+  Flex,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+  RightOutlined,
+} from '@sue/design-web-react';
 
 import { GoalController, GoalService } from '@true-north/web-service';
 import { useGoalContext } from '../context';
+import { useGoalDetail } from '../../components/GoalDetail';
 import { GoalStatus } from '@true-north/enum';
 import styles from './style.module.less';
-import GoalAiDecomposition from '../GoalAiDecomposition';
 
-// 状态配置映射
 const STATUS_CONFIG = {
   [GoalStatus.TODO]: {
     label: '待开始',
@@ -28,25 +41,21 @@ const STATUS_CONFIG = {
 };
 
 const GoalMainHeader: React.FC = () => {
-  const [aiOpen, setAiOpen] = useState(false);
   const {
     selectedGoal,
     fetchGoalDetail,
     refreshData,
     selectedGoalId,
     setSelectedGoalId,
-    isEditing,
-    setIsEditing,
   } = useGoalContext();
+  const { openEditDrawer } = useGoalDetail();
 
-  // 构建面包屑路径
   const buildBreadcrumbPath = () => {
     if (!selectedGoal) return [];
 
     const path = [];
     let current = selectedGoal;
 
-    // 从当前目标向上追溯到根目标
     while (current) {
       path.unshift({
         id: current.id,
@@ -61,21 +70,25 @@ const GoalMainHeader: React.FC = () => {
 
   const breadcrumbPath = buildBreadcrumbPath();
 
-  // 当选中的目标ID变化时，获取详情
   useEffect(() => {
     if (selectedGoalId) {
       fetchGoalDetail(selectedGoalId);
-      setIsEditing(false); // 切换目标时退出编辑模式
     }
   }, [selectedGoalId]);
 
-  // 编辑完成后的回调
-  const handleEditComplete = async () => {
-    setIsEditing(false);
-    await refreshData();
+  const handleEdit = () => {
+    if (!selectedGoal) return;
+    openEditDrawer({
+      title: '编辑目标',
+      contentProps: {
+        goalId: selectedGoal.id,
+        afterSubmit: async () => {
+          await refreshData();
+        },
+      },
+    });
   };
 
-  // 标记完成
   const handleComplete = async () => {
     if (!selectedGoal) return;
 
@@ -109,7 +122,6 @@ const GoalMainHeader: React.FC = () => {
     }
   };
 
-  // 放弃目标
   const handleAbandon = () => {
     if (!selectedGoal) return;
 
@@ -130,7 +142,6 @@ const GoalMainHeader: React.FC = () => {
     });
   };
 
-  // 删除目标
   const handleDelete = () => {
     if (!selectedGoal) return;
 
@@ -151,22 +162,37 @@ const GoalMainHeader: React.FC = () => {
     });
   };
 
-  // 渲染操作菜单
-  const renderActionMenu = () => (
-    <Menu>
-      <Menu.Item key="edit" onClick={() => setIsEditing(true)}>
-        <EditOutlined /> 编辑
-      </Menu.Item>
-      {selectedGoal && (selectedGoal.status === GoalStatus.TODO || selectedGoal.status === GoalStatus.DOING) && (
-        <Menu.Item key="abandon" onClick={handleAbandon}>
-          <CloseOutlined /> 放弃
-        </Menu.Item>
-      )}
-      <Menu.Item key="delete" onClick={handleDelete} className={styles.dangerAction}>
-        <DeleteOutlined /> 删除
-      </Menu.Item>
-    </Menu>
-  );
+  const canAbandon =
+    selectedGoal &&
+    (selectedGoal.status === GoalStatus.TODO ||
+      selectedGoal.status === GoalStatus.DOING);
+
+  const menuItems = [
+    {
+      key: 'edit',
+      label: '编辑',
+      icon: <EditOutlined />,
+      onClick: handleEdit,
+    },
+    ...(canAbandon
+      ? [
+          {
+            key: 'abandon',
+            label: '放弃',
+            icon: <CloseOutlined />,
+            onClick: handleAbandon,
+          },
+        ]
+      : []),
+    {
+      key: 'delete',
+      label: '删除',
+      icon: <DeleteOutlined />,
+      danger: true,
+      className: styles.dangerAction,
+      onClick: handleDelete,
+    },
+  ];
 
   return (
     <Flex
@@ -175,9 +201,13 @@ const GoalMainHeader: React.FC = () => {
       justify="space-between"
       align="center"
     >
-      {/* 左侧：面包屑导航 */}
       <Flex container="fill" className={styles.breadcrumb} align="center">
         <Breadcrumb
+          styles={{
+            item: {
+              fontSize: 16,
+            },
+          }}
           separator={<RightOutlined />}
           items={breadcrumbPath.map((item, index) => ({
             key: item.id,
@@ -189,19 +219,9 @@ const GoalMainHeader: React.FC = () => {
             },
           }))}
         />
-
       </Flex>
 
-      {/* 右侧：状态 Tag + 操作区 */}
-      <Flex
-        container="fixed"
-        align="center"
-        gap={8}
-        className={styles.actions}
-      >
-        {selectedGoal && (
-          <Button onClick={() => setAiOpen(true)}>AI 拆解</Button>
-        )}
+      <Flex container="fixed" align="center" gap={8} className={styles.actions}>
         {selectedGoal && (
           <Tag color={STATUS_CONFIG[selectedGoal.status]?.color}>
             {STATUS_CONFIG[selectedGoal.status]?.label}
@@ -209,32 +229,37 @@ const GoalMainHeader: React.FC = () => {
         )}
 
         <Dropdown
-          popupRender={() => renderActionMenu()}
+          trigger={['click']}
           placement="bottomRight"
+          menu={{ items: menuItems }}
         >
-          <Button icon={<EllipsisOutlined />} />
+          <Button
+            type="text"
+            icon={<EllipsisOutlined />}
+            aria-label="目标更多操作"
+          />
         </Dropdown>
 
-        {/* 主要状态操作 */}
-        {selectedGoal && (selectedGoal.status === GoalStatus.TODO || selectedGoal.status === GoalStatus.DOING) && (
-          <Button
-            type="primary"
-            size="default"
-            status="success"
-            icon={<CheckOutlined />}
-            onClick={handleComplete}
-          >
-            已完成
-          </Button>
-        )}
+        {selectedGoal &&
+          (selectedGoal.status === GoalStatus.TODO ||
+            selectedGoal.status === GoalStatus.DOING) && (
+            <Button
+              type="primary"
+              icon={<CheckOutlined />}
+              onClick={handleComplete}
+            >
+              标记完成
+            </Button>
+          )}
 
-        {selectedGoal && (selectedGoal.status === GoalStatus.DONE || selectedGoal.status === GoalStatus.ABANDONED) && (
-          <Button type="primary" onClick={handleRestore}>
-            恢复
-          </Button>
-        )}
+        {selectedGoal &&
+          (selectedGoal.status === GoalStatus.DONE ||
+            selectedGoal.status === GoalStatus.ABANDONED) && (
+            <Button type="primary" onClick={handleRestore}>
+              恢复目标
+            </Button>
+          )}
       </Flex>
-      <GoalAiDecomposition open={aiOpen} goal={selectedGoal} onClose={() => setAiOpen(false)} onSaved={refreshData} />
     </Flex>
   );
 };

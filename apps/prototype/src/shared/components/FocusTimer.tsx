@@ -7,9 +7,16 @@ import type { FocusSession, Task, Todo } from '../types';
 import styles from './FocusTimer.module.css';
 
 const FOCUS_SECONDS = 25 * 60;
+const SELECT_POPUP_Z_INDEX = 2100;
+
+const RELATED_PREFIX = {
+  task: 'task:',
+  todo: 'todo:',
+} as const;
 
 type Props = {
   open: boolean;
+  relatedLocked?: boolean;
   initialTaskId?: string;
   initialTodoId?: string;
   tasks: Task[];
@@ -21,8 +28,26 @@ type Props = {
   updateTask: (id: string, patch: Partial<Task>) => void;
 };
 
+function toSelectValue(taskId?: string, todoId?: string) {
+  if (todoId) return `${RELATED_PREFIX.todo}${todoId}`;
+  if (taskId) return `${RELATED_PREFIX.task}${taskId}`;
+  return undefined;
+}
+
+function parseSelectValue(value?: string): { taskId?: string; todoId?: string } {
+  if (!value) return {};
+  if (value.startsWith(RELATED_PREFIX.todo)) {
+    return { todoId: value.slice(RELATED_PREFIX.todo.length) };
+  }
+  if (value.startsWith(RELATED_PREFIX.task)) {
+    return { taskId: value.slice(RELATED_PREFIX.task.length) };
+  }
+  return {};
+}
+
 export function FocusTimer({
   open,
+  relatedLocked = false,
   initialTaskId,
   initialTodoId,
   tasks,
@@ -40,15 +65,29 @@ export function FocusTimer({
   const [running, setRunning] = useState(false);
   const task = tasks.find((item) => item.id === taskId);
   const todo = todos.find((item) => item.id === todoId);
-  const lockedToTodo = Boolean(todoId);
-  const taskOptions = useMemo(
-    () =>
-      tasks
-        .filter((item) => item.status !== 'done' && item.status !== 'abandoned')
-        .map((item) => ({ value: item.id, label: item.title })),
-    [tasks],
+  const relatedOptions = useMemo(
+    () => [
+      {
+        label: '任务',
+        options: tasks
+          .filter((item) => item.status !== 'done' && item.status !== 'abandoned')
+          .map((item) => ({ value: `${RELATED_PREFIX.task}${item.id}`, label: item.title })),
+      },
+      {
+        label: '待办',
+        options: todos
+          .filter((item) => item.status === 'todo')
+          .map((item) => ({ value: `${RELATED_PREFIX.todo}${item.id}`, label: item.title })),
+      },
+    ],
+    [tasks, todos],
   );
   const relatedTitle = todo?.title || task?.title || '独立专注';
+  const lockedDisplay = todoId
+    ? `待办 · ${todo?.title || '已删除待办'}`
+    : taskId
+      ? `任务 · ${task?.title || '已删除任务'}`
+      : relatedTitle;
 
   useEffect(() => {
     if (!initialTodoId && !initialTaskId) return;
@@ -106,18 +145,23 @@ export function FocusTimer({
     if (running) return setMode('mini');
     onClose();
   };
-  const selector = lockedToTodo ? (
-    <span className={styles.taskName}>待办 · {todo?.title || '已删除待办'}</span>
+  const selector = relatedLocked ? (
+    <span className={styles.taskName}>{lockedDisplay}</span>
   ) : (
     <Select
       allowClear
+      showSearch
+      optionFilterProp="label"
       className={styles.taskSelect}
-      value={taskId}
-      placeholder="选择任务（可选）"
-      options={taskOptions}
+      classNames={{ popup: { root: styles.selectPopup } }}
+      styles={{ popup: { root: { zIndex: SELECT_POPUP_Z_INDEX } } }}
+      value={toSelectValue(taskId, todoId)}
+      placeholder="搜索任务或待办（可选）"
+      options={relatedOptions}
       onChange={(value) => {
-        setTaskId(value as string | undefined);
-        setTodoId(undefined);
+        const next = parseSelectValue(value as string | undefined);
+        setTaskId(next.taskId);
+        setTodoId(next.todoId);
       }}
     />
   );

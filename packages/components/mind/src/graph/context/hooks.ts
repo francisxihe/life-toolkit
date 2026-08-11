@@ -72,7 +72,7 @@ export const useGraphOperations = ({
     if (graph) {
       setZoom(0.8);
       setPosition({ x: 0, y: 0 });
-      graph.zoom(0.8);
+      graph.zoomTo(0.8);
       graph.centerContent();
     }
   }, [graph, setZoom, setPosition]);

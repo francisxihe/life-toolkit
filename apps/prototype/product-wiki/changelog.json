@@ -92,6 +92,15 @@
     },
     {
       "version": "v0.1.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "顶栏联合选择支持待办；入口锁定预填，结束专注仍不改变待办状态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:rule:todo-optional", "scope": "rule", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "待办可选关联", "reference": "growth.track-time.rule.todo-optional" }
+    },
+    {
+      "version": "v0.1.0",
       "date": "2026-08-08",
       "event": "introduced",
       "summary": "仅区间计划待办可从待办入口管理计时；时间点待办入口隐藏，已有记录只读。",
@@ -104,6 +113,15 @@
       "date": "2026-08-08",
       "event": "changed",
       "summary": "专注模块依赖待办，并从顶栏、任务或待办唤起全局计时。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:view:focus", "scope": "view", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "专注计时", "reference": "growth.track-time.overview" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "顶栏唤起可搜索选择任务或待办；任务/待办入口锁定预填关联。",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete",
       "feature": { "key": "growth.track-time:view:focus", "scope": "view", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "专注计时", "reference": "growth.track-time.overview" }

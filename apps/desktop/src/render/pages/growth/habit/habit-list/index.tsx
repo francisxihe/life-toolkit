@@ -5,6 +5,7 @@ import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
 import { Button, Drawer, Flex, PlusOutlined } from '@sue/design-web-react';
 
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from '../components/CreateHabit';
 import styles from './style.module.less';
 
@@ -14,6 +15,7 @@ export const HabitListPage: React.FC = () => {
     const instance = Drawer.open({
       title: '新增习惯',
       size: 800,
+      styles: drawerPaddedBodyStyles,
       content: (
         <CreateHabit
           goals={goals}

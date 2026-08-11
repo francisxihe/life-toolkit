@@ -3,6 +3,7 @@
 import { Drawer } from '@sue/design-web-react';
 import type { TodoFormData } from '@true-north/web-service';
 import type { TodoVo } from '@true-north/vo';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { TodoDetailProvider } from './context';
 import TodoForm from './features/TodoForm';
 
@@ -57,6 +58,7 @@ export function useTodoDetail() {
       ...rest,
       title: '编辑待办',
       size: 800,
+      styles: drawerPaddedBodyStyles,
       content: (
         <TodoEditor
           {...contentProps}
@@ -78,6 +80,7 @@ export function useTodoDetail() {
       ...rest,
       title: '新建待办',
       size: 800,
+      styles: drawerPaddedBodyStyles,
       content: (
         <TodoCreator
           {...contentProps}

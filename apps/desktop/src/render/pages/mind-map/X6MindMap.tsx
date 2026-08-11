@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { GoalVo } from '@true-north/vo';
 import {
   MindMap,
   createGoalConverter,
-  exportUtils,
   MindMapData,
 } from '@true-north/components-mind/src/index';
-import { message } from '@sue/design-web-react';
 import MindMapNode from './MindMapNode';
 import MenuManager, { MenuManagerRef } from './NodeMenu/MenuManager';
 import { useGoalMindMapContext } from './context';
@@ -17,6 +15,7 @@ import {
   handleDeleteNode,
   handleEditNode,
 } from './helpers';
+import styles from './style.module.less';
 
 interface X6MindMapProps {
   goalTree: GoalVo[];
@@ -32,100 +31,77 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
   const { fetchGoalTree } = useGoalMindMapContext();
   const [mindMapData, setMindMapData] = useState<MindMapData | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const graphRef = useRef<any>(null);
-  const initializedRef = useRef<boolean>(false);
   const menuManagerRef = useRef<MenuManagerRef>(null);
+  const fetchGoalTreeRef = useRef(fetchGoalTree);
+  const onShowMenuRef = useRef<
+    | ((
+        nodeId: string,
+        nodeType: string,
+        position: { x: number; y: number },
+      ) => void)
+    | null
+  >(null);
 
-  // 当goalTree变化时转换数据
+  fetchGoalTreeRef.current = fetchGoalTree;
+
   useEffect(() => {
     if (goalTree && goalTree.length > 0) {
       const converter = createGoalConverter();
-      const data = converter.convert(goalTree);
-      setMindMapData(data);
+      setMindMapData(converter.convert(goalTree));
     } else {
       setMindMapData(null);
     }
   }, [goalTree]);
 
-  // 防止缩放问题，只初始化一次尺寸
-  useEffect(() => {
-    if (!initializedRef.current && containerRef.current) {
-      // 设置固定尺寸
-      containerRef.current.style.width = '100%';
-      containerRef.current.style.height = '100%';
-      initializedRef.current = true;
-    }
+  const handleShowMenu = useCallback(
+    (
+      nodeId: string,
+      nodeType: string,
+      position: { x: number; y: number },
+    ) => {
+      menuManagerRef.current?.showMenu(nodeId, nodeType, position);
+    },
+    [],
+  );
+
+  onShowMenuRef.current = handleShowMenu;
+
+  const StableMindMapNode = useMemo(() => {
+    return function BoundMindMapNode(props: any) {
+      return (
+        <MindMapNode
+          {...props}
+          fetchGoalTree={() => fetchGoalTreeRef.current()}
+          onShowMenu={(
+            nodeId: string,
+            nodeType: string,
+            position: { x: number; y: number },
+          ) => onShowMenuRef.current?.(nodeId, nodeType, position)}
+        />
+      );
+    };
   }, []);
 
-  // 保存图形实例的引用
-  const handleGraphInstance = (graph: any) => {
-    graphRef.current = graph;
-  };
-
-  // 处理全屏
-  const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
-  // 处理导出
-  const handleExport = () => {
-    if (graphRef.current) {
-      exportUtils.exportToPNG(graphRef.current, 'goal-mind-map');
-      message.success('已导出PNG图片');
-    }
-  };
-
-  // 显示节点菜单
-  const handleShowMenu = (
-    nodeId: string,
-    nodeType: string,
-    position: { x: number; y: number },
-  ) => {
-    menuManagerRef.current?.showMenu(nodeId, nodeType, position);
-  };
-
-  // 菜单操作处理函数已移至 helpers.tsx
-
   return (
-    <div
-      ref={containerRef}
-      className="w-full h-full relative"
-      style={{ minHeight: '600px', minWidth: '300px', overflow: 'hidden' }}
-    >
-      {/* 思维导图内容 */}
+    <div ref={containerRef} className={styles.mapHost}>
       {mindMapData ? (
         <MindMap
           data={mindMapData}
           options={{
             editable: false,
             enableShortcuts: true,
-            centerOnResize: true,
+            centerOnResize: false,
             hGap: 50,
             vGap: 25,
           }}
           showToolbar={showToolbar}
-          onGraphReady={handleGraphInstance}
-          MindMapNode={(props: any) => {
-            return (
-              <MindMapNode
-                {...props}
-                fetchGoalTree={fetchGoalTree}
-                onShowMenu={handleShowMenu}
-              />
-            );
-          }}
+          onNodeClick={onNodeClick}
+          MindMapNode={StableMindMapNode}
         />
       ) : (
-        <div className="flex items-center justify-center h-full text-gray-500">
-          暂无目标数据
-        </div>
+        <div className={styles.empty}>暂无目标数据</div>
       )}
 
-      {/* 节点菜单管理器 */}
       <MenuManager
         ref={menuManagerRef}
         onEdit={async (nodeId: string) => {

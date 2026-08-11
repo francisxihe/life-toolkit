@@ -25,6 +25,7 @@ import { AiService, GoalService, HabitService, TaskService, TodoService } from '
 import { createDefaultRepeatSetting } from '@true-north/components-repeat';
 import { RepeatEndMode, RepeatMode } from '@true-north/components-repeat/types';
 import dayjs from 'dayjs';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import styles from './style.module.less';
 
 type SuggestionKind = 'goal' | 'task' | 'todo' | 'habit';
@@ -223,7 +224,14 @@ export default function GoalAiDecomposition({
   };
 
   return (
-    <Drawer open={open} title="AI 拆解" size="large" onClose={onClose} destroyOnHidden>
+    <Drawer
+      open={open}
+      title="AI 拆解"
+      size="large"
+      onClose={onClose}
+      destroyOnHidden
+      styles={drawerPaddedBodyStyles}
+    >
       <Flex vertical gap={16}>
         <Flex className={styles.aiControls} justify="space-between" align="center" wrap="wrap" gap={12}>
           <Space wrap>

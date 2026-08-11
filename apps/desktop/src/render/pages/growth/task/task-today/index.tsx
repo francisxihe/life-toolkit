@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
-import { Collapse, Empty, Flex } from '@sue/design-web-react';
+import { Flex } from '@sue/design-web-react';
 import { TaskService } from '@true-north/web-service';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
-import TaskList from '../../components/TaskList';
 import DayAgendaCalendar, {
   formatDayAgendaTitle,
 } from '../../components/DayAgenda';
 import { useDayAgendaDate } from '../../components/DayAgenda/context';
 import { openTaskDetailDrawer } from '../detail/TaskDetailDrawer';
+import TaskAgendaSections from '../components/TaskAgendaSections';
 import styles from './style.module.less';
 import { onTaskChanged } from '../../events';
 
@@ -152,21 +152,6 @@ export default function TaskToday() {
     [refreshCalendarCounts, refreshData],
   );
 
-  const renderGroup = (key: keyof TaskGroups, label: string) =>
-    groups[key].length ? (
-      <Collapse.Panel header={`${label} (${groups[key].length})`} key={key}>
-        <TaskList
-          taskList={groups[key]}
-          onClickTask={async (id) => {
-            openTaskDetailDrawer({ taskId: id, onRefresh: refreshData });
-          }}
-          refreshTaskList={refreshData}
-        />
-      </Collapse.Panel>
-    ) : null;
-
-  const hasItems = Object.values(groups).some((group) => group.length > 0);
-
   return (
     <Flex vertical container="full" className={styles.page}>
       <div className={styles.layout}>
@@ -186,19 +171,35 @@ export default function TaskToday() {
             </h1>
           </Flex>
           <Flex container="fill" className={styles.content}>
-            {hasItems ? (
-              <Collapse
-                defaultActiveKey={['expired', 'scheduled', 'done', 'abandoned']}
-                className={styles.collapse}
-              >
-                {isSelectedToday && renderGroup('expired', '已过期')}
-                {renderGroup('scheduled', '未完成')}
-                {renderGroup('done', '已完成')}
-                {renderGroup('abandoned', '已放弃')}
-              </Collapse>
-            ) : (
-              <Empty description="当天没有任务" className={styles.empty} />
-            )}
+            <TaskAgendaSections
+              groups={[
+                ...(isSelectedToday
+                  ? [
+                      {
+                        key: 'expired',
+                        label: '已过期',
+                        taskList: groups.expired,
+                      },
+                    ]
+                  : []),
+                {
+                  key: 'scheduled',
+                  label: '未完成',
+                  taskList: groups.scheduled,
+                },
+                { key: 'done', label: '已完成', taskList: groups.done },
+                {
+                  key: 'abandoned',
+                  label: '已放弃',
+                  taskList: groups.abandoned,
+                },
+              ]}
+              emptyLabel="当天没有任务"
+              onClickTask={async (id) => {
+                openTaskDetailDrawer({ taskId: id, onRefresh: refreshData });
+              }}
+              refreshTaskList={refreshData}
+            />
           </Flex>
         </Flex>
       </div>

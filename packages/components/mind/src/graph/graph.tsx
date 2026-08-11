@@ -27,6 +27,7 @@ export function initGraph(graphRef: HTMLDivElement, width: number, height: numbe
     },
     mousewheel: {
       enabled: true,
+      modifiers: ['ctrl', 'meta'],
       zoomAtMousePosition: true,
       minScale: 0.5,
       maxScale: 3,

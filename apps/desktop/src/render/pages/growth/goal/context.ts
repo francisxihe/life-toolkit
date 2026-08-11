@@ -25,9 +25,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
     setFilters: (filters: GoalFilters) => void;
     clearFilters: () => void;
 
-    isEditing: boolean;
-    setIsEditing: (editing: boolean) => void;
-
     loading: boolean;
     goalTree: GoalVo[];
     selectedGoal: GoalVo | null;
@@ -46,8 +43,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
   const clearFilters = useCallback(() => {
     setFilters({});
   }, []);
-
-  const [isEditing, setIsEditing] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [goalTree, setGoalTree] = useState<GoalVo[]>([]);
@@ -168,9 +163,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
     filters,
     setFilters,
     clearFilters,
-
-    isEditing,
-    setIsEditing,
 
     loading,
     goalTree,
