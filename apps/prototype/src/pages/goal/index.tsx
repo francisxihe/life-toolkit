@@ -241,7 +241,13 @@ export function GoalsPage({
                         children: <Flex vertical gap={16}>
                           <Flex align="center" justify="space-between" wrap="wrap" gap={8}>
                             <Space><PriorityTag importance={current.importance} /><small className={styles.timeRange} data-product-ref={productRef('growth.goal.rule.time-frame')}>{`时间范围：${current.start} 至 ${current.end}`}</small></Space>
-                            <Button icon={<Sparkles size={15} />} onClick={onOpenAiDecomposition}>AI 拆解</Button>
+                            <Button
+                              icon={<Sparkles size={15} />}
+                              data-product-ref={productRef('growth.goal.view.ai-decomposition')}
+                              onClick={onOpenAiDecomposition}
+                            >
+                              AI 拆解
+                            </Button>
                           </Flex>
                           <p className={styles.goalDescription}>{current.description}</p>
                           <Row gutter={[16, 16]}>

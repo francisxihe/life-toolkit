@@ -13,9 +13,3 @@
 .mapRoot { color: var(--sue-color-primary); }
 .mapBranch small { color: var(--sue-color-text-tertiary); }
 .mapBranch span { padding: 5px 7px; border-radius: var(--sue-border-radius-sm); color: var(--sue-color-text-secondary); background: var(--sue-color-fill-tertiary); font-size: 12px; }
-.aiAlert { margin: 18px 0; }
-.aiControls { padding-bottom: 4px; }
-.aiSuggestions h3 { margin: 8px 0 4px; font-size: 16px; }
-.aiSuggestions p { margin: 0 0 6px; color: var(--sue-color-text-secondary); }
-.aiSuggestions small { color: var(--sue-color-text-tertiary); }
-.accepted { opacity: .62; }

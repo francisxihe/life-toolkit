@@ -15,6 +15,7 @@ type TaskDetailContextValue = {
   onFocusTask: (task: Task) => void;
   onClose: () => void;
   notify: (text: string) => void;
+  onOpenAiDecomposition: () => void;
 };
 
 const TaskDetailContext = createContext<TaskDetailContextValue | null>(null);

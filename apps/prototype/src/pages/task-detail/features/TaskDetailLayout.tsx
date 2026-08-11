@@ -1,6 +1,7 @@
 import { Alert, Button, Card, Descriptions, Dropdown, Flex, Modal, Space, Tabs } from '@sue/design-web-react';
-import { Check, Ellipsis, RotateCcw } from 'lucide-react';
+import { Check, Ellipsis, RotateCcw, Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { productRef } from '../../../product-wiki';
 import { PriorityTag, StateTag } from '../../../shared/components';
 import { taskDeleteBlocker, taskRootSubtree, validateTaskHierarchy } from '../../../shared/lifecycle';
 import type { Task, TaskStatus } from '../../../shared/types';
@@ -11,7 +12,21 @@ import styles from '../style.module.css';
 
 export function TaskDetailLayout() {
   const context = useTaskDetailContext();
-  const { currentTask, tasks, todos, goals, setSelectedTaskId, updateTask, createTask, deleteTask, setDrawer, onFocusTask, onClose, notify } = context;
+  const {
+    currentTask,
+    tasks,
+    todos,
+    goals,
+    setSelectedTaskId,
+    updateTask,
+    createTask,
+    deleteTask,
+    setDrawer,
+    onFocusTask,
+    onClose,
+    notify,
+    onOpenAiDecomposition,
+  } = context;
   const [creatingChild, setCreatingChild] = useState(false);
   const [childTitle, setChildTitle] = useState('');
   const [childError, setChildError] = useState('');
@@ -81,11 +96,40 @@ export function TaskDetailLayout() {
       <Flex vertical className={styles.detailMain} container="fill">
         <Flex className={styles.detailHeader} align="center" justify="space-between">
           <h2>{currentTask.title}</h2>
-          <Space><StateTag status={currentTask.status} /><Dropdown placement="bottomRight" trigger={['click']} menu={{ items: [
-            { key: 'edit', label: '编辑', onClick: () => setDrawer({ kind: 'task', id: currentTask.id }) },
-            { key: 'abandon', label: '放弃', disabled: currentTask.status === 'abandoned', onClick: () => Modal.confirm({ title: '放弃任务', content: '放弃后可通过恢复任务重新激活。', onOk: () => updateStatus('abandoned') }) },
-            { key: 'delete', label: '删除', danger: true, onClick: requestDelete },
-          ] }}><Button type="text" aria-label="任务更多操作" icon={<Ellipsis size={17} />} /></Dropdown>{primary}</Space>
+          <Space>
+            <StateTag status={currentTask.status} />
+            <Button
+              icon={<Sparkles size={15} />}
+              data-product-ref={productRef('growth.task.view.ai-decomposition')}
+              onClick={onOpenAiDecomposition}
+            >
+              AI 拆解
+            </Button>
+            <Dropdown
+              placement="bottomRight"
+              trigger={['click']}
+              menu={{
+                items: [
+                  { key: 'edit', label: '编辑', onClick: () => setDrawer({ kind: 'task', id: currentTask.id }) },
+                  {
+                    key: 'abandon',
+                    label: '放弃',
+                    disabled: currentTask.status === 'abandoned',
+                    onClick: () =>
+                      Modal.confirm({
+                        title: '放弃任务',
+                        content: '放弃后可通过恢复任务重新激活。',
+                        onOk: () => updateStatus('abandoned'),
+                      }),
+                  },
+                  { key: 'delete', label: '删除', danger: true, onClick: requestDelete },
+                ],
+              }}
+            >
+              <Button type="text" aria-label="任务更多操作" icon={<Ellipsis size={17} />} />
+            </Dropdown>
+            {primary}
+          </Space>
         </Flex>
         <Tabs className={styles.detailTabs} items={[
           { key: 'overview', label: '概览', children: <Overview task={currentTask} goals={goals} /> },

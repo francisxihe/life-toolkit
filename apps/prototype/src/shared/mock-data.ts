@@ -1,4 +1,4 @@
-import { FolderKanban, Grid2X2, ListTodo, Target, TrendingUp } from 'lucide-react';
+import { FolderKanban, Grid2X2, ListTodo, Sparkles, Target, TrendingUp } from 'lucide-react';
 import growthFixtures from '../fixtures/growth.json';
 import { productEnumValues } from '../product-wiki';
 import type { Goal, GoalType, Habit, NavigationItem, Task, Todo } from './types';
@@ -15,6 +15,7 @@ export const nav: NavigationItem[] = [
   { id: 'task', path: '/tasks', label: '任务', icon: FolderKanban },
   { id: 'todo', path: '/todos', label: '待办事项', icon: ListTodo },
   { id: 'habit', path: '/habits', label: '习惯', icon: TrendingUp },
+  { id: 'ai', path: '/ai', label: 'AI', icon: Sparkles },
 ];
 
 export const initialGoals = growthFixtures.goals as unknown as Goal[];

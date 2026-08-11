@@ -112,11 +112,11 @@
     {
       "id": "ai-decomposition",
       "name": "AI 拆解",
-      "prototypePage": "goal",
-      "scenario": "基于当前目标生成可采纳的分层建议",
+      "prototypePage": "ai-session",
+      "scenario": "从目标详情发起 AI 会话；工作台审阅建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
       "reference": "growth.goal.view.ai-decomposition",
       "productStatus": "roadmap",
-      "prototypeCoverage": "partial"
+      "prototypeCoverage": "complete"
     }
   ],
   "rules": [
@@ -169,7 +169,7 @@
       "entities": [
         "goal"
       ],
-      "description": "正式产品由已接入的模型结合当前目标上下文生成建议；原型仅演示交互与建议形态，不作为生成算法规格。",
+      "description": "正式产品由已接入的模型结合当前目标上下文生成建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态，不作为生成算法规格。",
       "views": [
         "ai-decomposition"
       ],
@@ -183,11 +183,25 @@
       "entities": [
         "goal"
       ],
-      "description": "用户可单条或批量采纳建议以创建子目标、任务、待办或习惯；存在冲突的建议不可采纳；已采纳建议不可重复创建。",
+      "description": "工作台内单条或批量采纳以当前预览创建实体；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
       "views": [
         "ai-decomposition"
       ],
       "reference": "growth.goal.rule.ai-decompose-adopt",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-followup",
+      "name": "对已选建议追问",
+      "entities": [
+        "goal"
+      ],
+      "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-followup",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete"
     }
@@ -232,6 +246,10 @@
     {
       "id": "growth.goal.rule.ai-decompose-adopt",
       "heading": "### AI 建议采纳"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-followup",
+      "heading": "### 对已选建议追问"
     },
     {
       "id": "growth.goal.rule.time-frame",

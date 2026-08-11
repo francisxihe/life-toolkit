@@ -18,5 +18,7 @@ pnpm --filter true-north-prototype product-wiki:check
 - [待办管理](./growth/todo/README.md)
 - [习惯管理](./growth/habit/README.md)
 - [专注与时间追踪](./growth/track-time/README.md)
+- [AI 能力](./ai/README.md)
+- [AI 会话](./ai/session/README.md)
 
 工程实现、接口和数据传输模型见 [TechnicalWiki](../../../doc/TechnicalWiki/TechnicalWiki.md)。

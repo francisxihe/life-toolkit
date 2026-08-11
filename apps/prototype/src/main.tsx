@@ -8,7 +8,7 @@ import { Button, ConfigProvider, Flex, Menu, Space, Tag, message } from '@sue/de
 import { EntityDrawer, FocusTimer } from './shared/components';
 import { productRef } from './product-wiki';
 import { bootstrapPrototypeInspectorBridge } from '../prototype-inspector/bridge';
-import { AiDecompositionDrawer } from './pages/goal/AiDecompositionDrawer';
+import { AiSessionPage } from './pages/ai-session';
 import { GoalsPage } from './pages/goal';
 import { MindMapPage } from './pages/goal/MindMapPage';
 import { Workbench } from './pages/workbench';
@@ -77,7 +77,6 @@ function App() {
   const [focusRelatedLocked, setFocusRelatedLocked] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState('g3');
   const [drawer, setDrawer] = useState<DrawerState>(null);
-  const [aiDecompositionOpen, setAiDecompositionOpen] = useState(false);
   const [taskDetailId, setTaskDetailId] = useState<string>();
   const currentNav = nav.find((item) => item.path === location.pathname)
     || nav.find((item) => location.pathname.startsWith(`${item.path}/`))
@@ -349,13 +348,34 @@ function App() {
                     updateGoal={updateGoal}
                     deleteGoal={deleteGoal}
                     onOpenTaskDetail={setTaskDetailId}
-                    onOpenAiDecomposition={() => setAiDecompositionOpen(true)}
+                    onOpenAiDecomposition={() => navigate(`/ai?goalId=${selectedGoal}`)}
                   />
                 }
               />
               <Route
                 path="/goals/mindmap"
                 element={<MindMapPage goals={goals} tasks={tasks} />}
+              />
+              <Route
+                path="/ai"
+                element={
+                  <AiSessionPage
+                    goals={goals}
+                    tasks={tasks}
+                    todos={todos}
+                    habits={habits}
+                    setDrawer={setDrawer}
+                    saveEntity={saveEntity}
+                    onOpenGoal={(goalId) => {
+                      setSelectedGoal(goalId);
+                      navigate('/goals');
+                    }}
+                    onOpenTask={(taskId) => {
+                      setTaskDetailId(taskId);
+                      navigate('/tasks');
+                    }}
+                  />
+                }
               />
               <Route
                 path="/tasks"
@@ -396,7 +416,26 @@ function App() {
           </main>
         </Flex>
       </Flex>
-      {taskDetailId && <TaskDetailDrawer taskId={taskDetailId} goals={goals} tasks={tasks} todos={todos} updateTask={updateTask} createTask={createTask} deleteTask={deleteTask} setDrawer={setDrawer} onFocusTask={(task) => openFocusTimer({ taskId: task.id })} onClose={() => setTaskDetailId(undefined)} notify={notify} />}
+      {taskDetailId && (
+        <TaskDetailDrawer
+          taskId={taskDetailId}
+          goals={goals}
+          tasks={tasks}
+          todos={todos}
+          updateTask={updateTask}
+          createTask={createTask}
+          deleteTask={deleteTask}
+          setDrawer={setDrawer}
+          onFocusTask={(task) => openFocusTimer({ taskId: task.id })}
+          onClose={() => setTaskDetailId(undefined)}
+          notify={notify}
+          onOpenAiDecomposition={() => {
+            const id = taskDetailId;
+            setTaskDetailId(undefined);
+            navigate(`/ai?taskId=${id}`);
+          }}
+        />
+      )}
       {drawer && (
         <EntityDrawer
           drawer={drawer}
@@ -411,17 +450,6 @@ function App() {
           onFocusTodo={(todo) => openFocusTimer({ todoId: todo.id })}
         />
       )}
-      <AiDecompositionDrawer
-        open={aiDecompositionOpen}
-        goalId={selectedGoal}
-        goals={goals}
-        tasks={tasks}
-        todos={todos}
-        habits={habits}
-        setDrawer={setDrawer}
-        saveEntity={saveEntity}
-        onClose={() => setAiDecompositionOpen(false)}
-      />
       <FocusTimer
         open={focusTimerOpen}
         relatedLocked={focusRelatedLocked}

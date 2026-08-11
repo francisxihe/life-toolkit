@@ -15,6 +15,7 @@ type Props = {
   onFocusTask: (task: Task) => void;
   onClose: () => void;
   notify: (text: string) => void;
+  onOpenAiDecomposition: () => void;
 };
 
 export function TaskDetailDrawer({ taskId, onClose, ...props }: Props) {

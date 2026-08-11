@@ -31,7 +31,7 @@
 | 原型能力 | 技术归属 | 当前基线 | 对齐说明 |
 | --- | --- | --- | --- |
 | 工作台 | render 聚合页 | 已组合目标、任务、待办、习惯和专注投入指标 | 习惯区需就地完成/未完成（调用 Todo done/abandon），视觉对齐原型。 |
-| 目标管理 | `service/growth/goal` | 树、CRUD、关联查询、受控状态流转已存在；AI 拆解入口与本地建议 UI 存在，真实模型见 AI 域 | CRUD/状态维持 Desktop；v0.2.0 将拆解生成迁到 [AI](../ai/README.md)。见 [Goal](./goal.md)。 |
+| 目标管理 | `service/growth/goal` | 树、CRUD、关联查询、受控状态流转已存在；详情仍有拆解抽屉（待迁），真实模型 Capability 已在 AI 域 | CRUD/状态维持 Desktop；v0.2.0 将入口改为绑定会话、审阅迁到会话工作台，见 [AI](../ai/README.md)、[Goal](./goal.md)。 |
 | 任务管理 | `service/growth/task` | 当前任务、月历、全部任务和详情抽屉已接入 | 能力维持 Desktop；列表/分组视觉对齐原型；分组中间项文案为「未完成」。见 [Task](./task.md)。 |
 | 待办管理 | `service/growth/todo` | 当前待办、月历、全部待办、批量完成；`repeat_todo` 投影与物化 | 关联收拢为 `relatedType`+`relatedId`；见 [Todo](./todo.md)。 |
 | 习惯管理 | `service/growth/habit` | 列表、详情、创建/编辑、暂停/恢复、放弃和周期待办打卡 | 规则挂共享 `repeat`；打卡走 Todo 结算。见 [Habit](./habit.md)。 |

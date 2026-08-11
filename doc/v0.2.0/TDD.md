@@ -8,25 +8,28 @@ document_meta:
   version: 'v0.2.0'
   status: 'draft'
   created_date: '2026-08-09'
-  last_updated: '2026-08-09'
+  last_updated: '2026-08-11'
   owner: 'Growth Squad'
   target_audience: ['frontend_developer', 'desktop_service_developer', 'tester']
 
 scope:
   product_change_source: 'apps/prototype/product-wiki/changelog.json'
-  included_modules: ['growth.goal', 'ai.platform']
-  supplemental_contract: '密钥主进程配置文件写死；生成与采纳分离；openai_compatible；聊天仅文档留白、零实现'
+  included_modules: ['ai.session', 'growth.goal', 'growth.task', 'ai.platform']
+  supplemental_contract: '密钥主进程配置文件写死；会话壳 + 目标/任务工作台拆解；任务建议仅子任务+待办；生成与采纳分离；openai_compatible；无设置页与流式'
 ```
 
-桌面分层与数据流参见 [TechnicalWiki · 架构](../TechnicalWiki/architecture/overview.md)。AI 平台长期设计参见 [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)（`status: design`）。产品规则参见 ProductWiki · [目标管理](../../apps/prototype/product-wiki/growth/goal/README.md)。本版产品范围见 [PRD](./PRD.md)。
+桌面分层与数据流参见 [TechnicalWiki · 架构](../TechnicalWiki/architecture/overview.md)。AI 平台长期设计参见 [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)。产品规则参见 ProductWiki · [AI 会话](../../apps/prototype/product-wiki/ai/session/README.md)、[目标管理](../../apps/prototype/product-wiki/growth/goal/README.md)、[任务管理](../../apps/prototype/product-wiki/growth/task/README.md)。本版产品范围见 [PRD](./PRD.md)。
 
 ## 范围追溯
 
 | ProductWiki 变更 | 产品引用与原型 | 当前桌面端现状 | v0.2.0 交付 |
 | --- | --- | --- | --- |
-| 引入 AI 拆解视图 | `growth.goal.view.ai-decomposition`；原型 `AiDecompositionDrawer.tsx` | 详情有「AI 拆解」入口与本地模板建议抽屉 | 抽屉改调真实 decompose；交互对齐原型（冲突/已采纳/批量确认等） |
-| AI 建议生成规则 | `growth.goal.rule.ai-decompose-generation` | 本地 `useMemo` 模板，无 Provider | 主进程 Capability + OpenAI-compatible；配置来自主进程写死文件 |
-| AI 建议采纳规则 | `growth.goal.rule.ai-decompose-adopt` | 可 create 四类实体；待办未挂 GOAL；缺已采纳/冲突 | 采纳对齐规则；todo 使用 `relatedType=GOAL` |
+| 引入并改版目标 AI 拆解 | `growth.goal.view.ai-decomposition`；`GoalDecomposeWorkspace` | 详情抽屉 `GoalAiDecomposition.tsx` | 去掉详情抽屉；绑定会话 + 工作台 |
+| 目标建议生成/采纳/追问 | `growth.goal.rule.ai-decompose-*` | 抽屉采纳 | 预览草稿、置灰、对已选追问 |
+| 引入任务 AI 拆解 | `growth.task.view.ai-decomposition`；`TaskDecomposeWorkspace` | 无 | 任务详情入口；`task.decompose` 工作台；建议仅子任务+待办 |
+| 任务建议生成/采纳/追问 | `growth.task.rule.ai-decompose-*` | 无 | 与目标工作台同一套交互；桌面 Capability **本版可后置**（原型已覆盖） |
+| AI 会话壳 / 分发 | `ai.session.view.*`；`workspace-dispatch` | 无 `/ai` | 三栏壳；`goal.decompose` + `task.decompose` |
+| 目标/任务绑定发起 | `goal-bound-start` / `task-bound-start`；`?goalId=` / `?taskId=` | 无 | ensure 绑定会话；不自动打开工作台 |
 
 查询变更：
 
@@ -36,28 +39,35 @@ pnpm --silent --filter true-north-prototype product-wiki:version -- v0.2.0 --jso
 
 ## 原型评审与决策
 
-- 结论：原型抽屉可作为**交互与建议卡片信息架构**指导；本地四条模板**不得**作为正式生成算法或条数硬规格。
-- 阻断项已收敛：正式路径必须走真实模型；未接入模型不得静默假 AI。
+- 结论：原型 `/ai` 三栏与工作台分发可作为**交互与信息架构**指导；本地假建议**不得**作为正式生成算法。
+- 阻断项已收敛：正式路径必须走真实模型；交互载体为会话工作台，**替换**抽屉。
 
 | 问题与证据 | 方案比较 | 已确认决策 | 风险与后续 |
 | --- | --- | --- | --- |
-| 原型用本地假建议 | A 本地启发式 / B 真实模型（无本地兜底）+ SQLite 上下文缓存 | **B** | 依赖主进程配置中的端点与 Key；打开抽屉可命中缓存 |
-| 后续要聊天 | A 单接口硬编码 / B 平台 + Capability | **B**；聊天**仅文档留白，本版零实现**（不建表/目录/IPC） | 二期再立项会话模型 |
-| 密钥与设置 | A 设置页 + safeStorage / B 配置文件写死 | **B（本版）**；配置抽象便于日后换成 A | 密钥勿提交真实生产机密到公共仓库；开发用本地改配置 |
+| 抽屉 vs 会话工作台 | A 保留抽屉 / B 会话壳 + 工作台（对齐 ProductWiki） | **B**；桌面现有抽屉视为待迁移差距 | 迁移期避免双入口并存 |
+| 工作台是否默认打开 | A 发起后自动打开最后一块 / B 仅用户点选后打开 | **B**（含从目标发起） | 需空态文案引导点选 |
+| 生成落点 | A 仅抽屉本地态 / B 写入助手消息 workspace 块 | **B**；仍调 `goal.decompose` Capability | 消息 parts 需稳定 schema |
+| 会话持久化 | A 仅内存 / B SQLite Conversation + Message | **B**（本版） | 无云同步 |
+| 密钥与设置 | A 设置页 / B 配置文件写死 | **B（本版）** | 密钥勿提交真实生产机密 |
+| 流式对话 | A 本版 stream / B 请求-响应 REST | **B**；流式后置 | — |
 | 待办关联目标 | 原型 `goalId` / 桌面 `relatedType` | 采纳待办写 `relatedType=GOAL` + `relatedId` | — |
-| 「编辑后采纳」 | Creator 预填 / 行内改标题 | 行内改标题必须有；能接 Creator 则接 | Creator 预填可后补 |
+| 编辑与采纳 | 「编辑后采纳」即创建 / 「编辑」仅缓存预览 | **编辑写回工作台块预览草稿；采纳读当前预览创建**；四类建议同一套 | 草稿需随工作台块载荷或本地态持久到消息刷新前可用 |
+| 对已选追问 | 直接发送 / 预填确认 | **预填会话输入框并聚焦，用户确认后发送**；不自动打开工作台 | 摘要含类型、标题与当前预览字段 |
+| 任务拆解建议类型 | 与目标相同四类 / 仅子任务+待办 | **仅子任务 + 待办** | 原型 fixture 非生成规格 |
+| 任务 Capability | 本版与目标一并落地 / 会话壳后置 | **产品与原型本版交付**；桌面 `task.decompose` Capability 可随会话壳一并后置，记为差距 | 复用 Runner/配置 |
 
 ## 现状与差距
 
 | 能力 | 现状 | 目标 |
 | --- | --- | --- |
-| AI 配置 | 无 | `ai.config.ts` 写死 baseUrl/model/apiKey（主进程） |
-| Provider / Runner | 无 | OpenAI-compatible + CompletionRunner + AiRun |
-| Goal decompose | 渲染层模板 | `POST /ai/capabilities/goal/decompose` |
-| 拆解 UI | 简化抽屉 | 对齐原型：摘要、impact、冲突、已采纳、批量 Modal、重新生成 |
-| 采纳 todo | 未挂目标 | `relatedType=GOAL` |
-| Settings UI / settings IPC | 无 | **本版不做** |
-| Chat | 无 | **本版不做任何实现**（仅架构文档留白） |
+| AI 配置 / Provider / Runner / AiRun / 缓存 | 已落地 | 保留；工作台与绑定发起复用 |
+| Goal decompose Capability | 已落地 | 发起会话时写入消息块；工作台可 `forceRefresh` 再生成 |
+| 拆解 UI | 目标详情抽屉 | 迁到 `GoalDecomposeWorkspace`；去掉详情抽屉 |
+| AI 会话壳 | 无 | `/ai` 三栏：列表 / 对话 / 工作台容器 |
+| Conversation / Message | 无 | SQLite + IPC CRUD；`refType`/`refId`；`parts`（文本 + workspace） |
+| 目标绑定发起 | 无 | `?goalId=` → ensure 绑定会话 + decompose 块 |
+| 任务绑定发起 / 任务拆解工作台 | 原型已有；桌面无 | `?taskId=` → `task.decompose`；建议仅子任务+待办；桌面 Capability/IPC **待实现差距** |
+| Settings UI / stream | 无 | **本版不做** |
 
 ## 技术设计
 
@@ -67,15 +77,15 @@ pnpm --silent --filter true-north-prototype product-wiki:version -- v0.2.0 --jso
 
 | 层 | 路径 / 职责 |
 | --- | --- |
-| Enum / VO | AI 相关枚举；`packages/business/vo/ai/*`（GoalDecompose、AiRun 导出所需 VO；**无** Settings/Conversation VO） |
-| web-service | `controller/ai.ts`（decompose）+ Service 客户端；走生成流程 |
-| main IPC | `ai.route-controller.ts`；注册于 `ipc-handlers.ts` |
-| Platform | `ai.config.ts`、`provider/`、`completion/`、`prompt/`、`capability/goal-decompose`、`run/`、`context/goal-context.builder.ts` |
-| Render | 重写 `GoalAiDecomposition.tsx` + 样式；入口 `GoalMainHeader`；**无** AI 设置 Tab |
+| Enum / VO | 既有 AI enum；新增 Conversation / Message VO；GoalDecompose 保持 |
+| web-service | 既有 `controller/ai.ts`（decompose）；新增会话相关 client |
+| main IPC | 既有 `ai.route-controller.ts`（decompose）；新增会话 RouteController；注册于 `ipc-handlers.ts` |
+| Platform | 保留 config/provider/completion/prompt/capability/run/cache/context；新增 `conversation/`（Entity/Repository/Service） |
+| Render | 新增 `/ai` 会话页；工作台 registry 挂载 `goal.decompose` / `task.decompose`；目标与任务详情入口改为导航；**移除**详情抽屉主路径 |
 
-**禁止本版落地：** `conversation/` 目录、Conversation/Message Entity、`/ai/settings*`、设置页、stream preload。
+Growth Goal/Task CRUD **不**新增 AI 生成路由。
 
-Growth Goal CRUD **不**新增 AI 生成路由。参见 [growth/goal.md](../TechnicalWiki/growth/goal.md)。
+Conversation.`refType` 支持 `goal` \| `task`。工作台块类型：`goal.decompose`、`task.decompose`。
 
 ### 配置（本版冻结）
 
@@ -95,17 +105,22 @@ export const aiConfig = {
 
 ### 数据模型（本版冻结）
 
-**AiRun（SQLite）**：每次**实际打模型**的 decompose 写审计；缓存命中不新建 AiRun。字段见 platform.md。本版可不做 Runs UI。
+**Conversation（SQLite）**：`title`、`refType?`（本版仅 `goal`）、`refId?`、`updatedAt`。
 
-**AiSuggestionCache（SQLite）**：按 capability + goal 存最近一次成功建议与上下文指纹；打开抽屉命中则跳过 Provider。
+**Message（SQLite）**：`conversationId`、`role`（`user` \| `assistant`）、`parts`（JSON：文本块 + 工作台块）、`createdAt`。
 
-**不做：** Conversation、Message、settings 持久化文件、safeStorage、本地启发式建议。
+工作台块至少含：`type`（本版 `goal.decompose`）、载荷（建议快照——含用户编辑后的预览草稿或可再拉取的 run/cache 引用）、展示用摘要。预览草稿写回后，采纳与「对已选追问」均读当前预览。
+
+**AiRun / AiSuggestionCache**：沿用既有；绑定发起与工作台刷新仍写审计/缓存。
+
+**不做：** settings 持久化、safeStorage、stream 通道、本地启发式建议。
 
 ### IPC 与 VO（本版必须实现）
 
 | 方法 | 路径 | 请求 / 响应 |
 | --- | --- | --- |
-| POST | `/ai/capabilities/goal/decompose` | `GoalDecomposeRequestVo` → `GoalDecomposeResponseVo` |
+| POST | `/ai/capabilities/goal/decompose` | `GoalDecomposeRequestVo` → `GoalDecomposeResponseVo`（既有） |
+| GET/POST/… | `/ai/conversations*`（具体形状实现期按生成流程定） | 列表、创建、按 id 取消息、追加追问、目标绑定发起（ensure + 产出拆解块） |
 
 `AiSuggestionVo` 等见 [capabilities.md](../TechnicalWiki/ai/capabilities.md)。
 
@@ -124,19 +139,19 @@ export const aiConfig = {
 | 冲突 | 直接子目标标题包含关系或规范化后相等 → `conflict` |
 | 主进程创建实体 | **禁止** |
 | 建议缓存 | SQLite `ai_suggestion_cache`；按目标 + `promptContext` sha256；命中则跳过 Provider |
-| forceRefresh | 打开抽屉 `false`；「重新生成」`true`（强制打模型并覆盖缓存） |
+| forceRefresh | 绑定发起默认 `false`；工作台内强制刷新 `true` |
 | 本地启发式 | **不做** |
 
-### 前端：GoalAiDecomposition
+### 前端：AI 会话与工作台
 
-- 打开 → `decompose({ forceRefresh: false })`；重新生成 → `forceRefresh: true`；loading / 按 `code` 映射文案。
-- `NOT_CONFIGURED` → 提示主进程 AI 配置不可用（不链设置页）。
-- 展示 analysisSummary、reason、impact、planned、importance、conflict。
-- 勾选、单条采纳、批量确认 Modal、已采纳态、冲突禁用。
-- 标题可编辑后采纳。
-- 采纳字段：goal `parentId`；task `goalId`；todo `relatedType=GOAL` + `relatedId`；habit `goalIds`。
-- **无**「使用本地建议」；失败仅重试/重新生成。
-- 补齐建议卡片样式。
+- 路由 `/ai`：三栏壳；无选中会话时中间/右侧空态。
+- 目标详情「AI 拆解」→ `/ai?goalId=…`；任务详情「AI 拆解」→ `/ai?taskId=…`；**不**打开抽屉。
+- 绑定发起：ensure 会话 → 用户发起消息 + 助手消息（含对应 workspace 块）→ **不**自动激活工作台。
+- 点选工作台块 → `WorkspaceHost` 按 `goal.decompose` / `task.decompose` 挂载。
+- **编辑 / 采纳 / 对已选追问**：目标与任务工作台同一套；任务建议仅 `task`/`todo`。
+- 目标采纳字段：goal `parentId`；task `goalId`；todo `relatedType=GOAL` + `relatedId`；habit `goalIds`。
+- 任务采纳字段：子任务 `parentId=当前任务`；待办 `taskId=当前任务`（桌面若用 `relatedType` 则对齐任务关联约定）。
+- 切换会话：关闭右侧工作台。
 
 ### 与代码生成流程
 
@@ -145,24 +160,23 @@ export const aiConfig = {
 
 ## 实施顺序与验收
 
-1. Enum/VO + `ai.config.ts` + provider + runner + AiRun entity + 注册 DB/IPC。
-2. `GoalDecomposeCapability` + context builder + prompt + decompose 路由。
-3. 重写拆解 UI + 采纳字段修复 + 样式。
-4. 联调；入库后将 TechnicalWiki/ai 与代码对齐。
+1. Conversation / Message Entity + VO + 会话 IPC + DB 注册（`refType` 含 goal/task）。
+2. `/ai` 三栏壳对齐原型。
+3. 目标绑定发起 + `goal.decompose` 工作台（迁现有 Capability）。
+4. 任务绑定发起 + `task.decompose` 工作台（Capability 可后置；原型已齐）。
+5. 去掉目标详情抽屉主路径；联调。
 
 | 场景 | 验收结果 |
 | --- | --- |
-| 配置缺项 / 空 Key | decompose 返回 `NOT_CONFIGURED`；无未标注假 AI |
-| 错误 Key / URL | 明确 `PROVIDER_HTTP` 等错误 |
-| 配置正确 | 结构化建议；AiRun 成功记录；写入缓存 |
-| 二次打开（上下文不变） | 命中缓存；无新 Provider 调用；runId 与首次相同 |
-| 上下文变化后再开 | 指纹 miss，重新打模型 |
-| 冲突子目标 | conflict，不可勾选/采纳 |
-| 采纳待办 | `relatedType=GOAL` 可查 |
-| 批量采纳 | Modal 确认后创建 |
-| 重新生成 | 新 AiRun、新 runId、缓存被覆盖 |
-| 无本地建议 UI | 无「使用本地建议」按钮/Tag |
-| 聊天 / 设置页 | **不存在**相关 UI、表、IPC |
+| 从目标发起 | 打开/新建绑定会话；有目标拆解块；右侧默认空 |
+| 从任务发起 | 打开/新建绑定会话；有任务拆解块；建议仅为子任务/待办 |
+| 点选工作台块 | 右侧挂载对应拆解工作台 |
+| 切换会话 | 右侧关闭 |
+| 编辑保存 | 不创建实体；预览更新 |
+| 采纳后 | 「已采纳」+ 预览置灰 |
+| 对已选追问 | 预填 composer；发送后不自动打开工作台 |
+| 无详情抽屉 | 目标/任务详情不再打开拆解抽屉 |
+| 设置页 / 流式 | **不存在** |
 
 验证命令：
 
@@ -173,14 +187,16 @@ pnpm --filter true-north-prototype product-wiki:check
 
 ## 非范围
 
-- 聊天（任意实现，含空表/空目录）
 - AI 设置 UI、`/ai/settings*`、safeStorage
 - 流式渲染、tool-calling、RAG、非 OpenAI-compatible Provider
 - 工作台/任务/待办页其它 AI 入口
+- 会话页能力专用工具栏（如顶栏「重新生成拆解」）
 
 ## 相关文档
 
 - [PRD](./PRD.md)
 - [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)
 - [TechnicalWiki · Goal](../TechnicalWiki/growth/goal.md)
+- [ProductWiki · AI 会话](../../apps/prototype/product-wiki/ai/session/README.md)
 - [ProductWiki · 目标管理](../../apps/prototype/product-wiki/growth/goal/README.md)
+- [ProductWiki · 任务管理](../../apps/prototype/product-wiki/growth/task/README.md)

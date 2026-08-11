@@ -3,7 +3,7 @@
 ```yaml
 document_meta:
   status: 'design'
-  last_updated: '2026-08-09'
+  last_updated: '2026-08-11'
 ```
 
 参见 [AI 域总览](./README.md)。通用 Desktop 分层不在此复述。
@@ -129,25 +129,46 @@ interface AiCapability<I, O> {
 | `CONTEXT_NOT_FOUND` | 如 goalId 不存在 |
 | `INTERNAL` | 其它 |
 
-## 7. 聊天等后续能力（仅架构留白，零实现）
+## 7. 会话与消息（设计基线）
 
-后续多轮聊天应复用本平台的配置抽象、Provider、Runner、AiRun，并可能新增 Conversation/Message、REST 会话 IPC、preload 流式通道。
+产品语义参见 ProductWiki · [AI 会话](../../../apps/prototype/product-wiki/ai/session/README.md)。本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
 
-**本版与当前基线明确不做：**
+会话壳复用平台配置、Provider、Runner、AiRun；结构化结果经 Capability 生成后写入消息中的工作台块，由渲染层按类型挂载工作台。
 
-- 不建 Conversation/Message 表或 Entity
-- 不新增 `conversation/` 目录代码
-- 不定义/实现聊天 VO、IPC、stream 通道
-- 不在 enum/VO 中提前落地聊天专用类型（除非实现期为 `AiCapabilityKey` 等预留枚举空位且无运行逻辑）
+### Conversation
 
-文档中保留扩展原则即可，避免半吊子实现。
+| 字段 | 说明 |
+| --- | --- |
+| title | 展示标题 |
+| refType / refId | 可选业务关联；当前仅 `goal` + goalId |
+| updatedAt | 最近消息或状态变更时间 |
+
+### Message
+
+| 字段 | 说明 |
+| --- | --- |
+| conversationId | 所属会话 |
+| role | `user` / `assistant` |
+| parts | JSON 数组：文本块与工作台块（工作台块含 `type` 与载荷） |
+| createdAt | 创建时间 |
+
+### 约定
+
+- 工作台默认不自动打开；仅用户点选消息中的块后挂载；切换会话关闭工作台。
+- 从目标发起：ensure 绑定会话，写入发起消息与含拆解块的助手消息，**不**自动打开工作台。
+- 本版工作台类型仅 `goal.decompose`。
+
+### 仍后置（不预埋）
+
+- AI 设置 UI、`safeStorage`、`/ai/settings*`
+- preload 流式通道、tool-calling、RAG
 
 ## 8. 目录草案（v0.2.0 落地范围）
 
 ```
 apps/desktop/src/service/ai/
   ai.config.ts           # 写死 baseUrl / model / apiKey 等
-  ai.route-controller.ts # 本版仅 decompose 等必要路由
+  ai.route-controller.ts # decompose + 会话必要路由
   provider/
   completion/
   prompt/
@@ -155,6 +176,7 @@ apps/desktop/src/service/ai/
   cache/                 # ai_suggestion_cache（目标+上下文指纹）
   run/
   context/               # goal-context.builder
+  conversation/          # Conversation / Message Entity、Repository、Service
 ```
 
 主进程注册：`initIpcRouter` 增加 AI route-controller。密钥与网络仅出现在该树内。

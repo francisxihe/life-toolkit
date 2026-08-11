@@ -3,7 +3,7 @@
 ```yaml
 document_meta:
   status: 'design'
-  last_updated: '2026-08-09'
+  last_updated: '2026-08-11'
 ```
 
 产品语义参见 ProductWiki · [目标管理 · AI 拆解](../../../apps/prototype/product-wiki/growth/goal/README.md)。平台抽象参见 [platform.md](./platform.md)。
@@ -28,14 +28,14 @@ document_meta:
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | goalId | string | 当前目标 |
-| forceRefresh | boolean? | `true` 时跳过缓存，强制调用模型并覆盖缓存；打开抽屉默认 `false`，「重新生成」传 `true` |
+| forceRefresh | boolean? | `true` 时跳过缓存，强制调用模型并覆盖缓存；绑定发起默认 `false`，工作台内强制刷新传 `true` |
 
 **响应** `GoalDecomposeResponseVo`
 
 | 字段 | 类型 | 说明 |
 | --- | --- | --- |
 | runId | string | 对应 AiRun（缓存命中时为生成时的 runId） |
-| analysisSummary | string | 抽屉 Alert 文案 |
+| analysisSummary | string | 工作台分析摘要文案 |
 | suggestions | AiSuggestionVo[] | 建议列表 |
 
 **AiSuggestionVo**
@@ -88,8 +88,6 @@ document_meta:
 - 平台错误码见 [platform.md](./platform.md)。
 - **无本地启发式建议**；失败时仅展示错误与重试/重新生成，禁止静默降级为假 AI。
 
-## 2. 后续 Capability（如 `chat`）— 仅留白
+## 2. 后续 Capability
 
-后续聊天等能力应作为**新 Capability** 挂在同一平台上，复用配置抽象、Provider、Runner、AiRun；会话持久化与流式通道在立项时再设计。
-
-**本版零实现：** 不建表、不建目录、不写 VO/IPC/UI、不预埋半成品代码。扩展原则见 [platform.md §7](./platform.md)。
+新业务能力应作为**新 Capability** 挂在同一平台上，复用配置抽象、Provider、Runner、AiRun；结果可通过会话消息中的工作台块交付（见 [platform.md §7](./platform.md)）。流式、工具调用、RAG 等未立项能力不预埋半成品代码。

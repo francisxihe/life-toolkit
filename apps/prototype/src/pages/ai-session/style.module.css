@@ -1,0 +1,209 @@
+.shell {
+  display: flex;
+  height: calc(100vh - 96px);
+  min-height: 560px;
+  border: 1px solid var(--sue-color-border-secondary);
+  border-radius: var(--sue-border-radius);
+  background: var(--sue-color-bg-container);
+  overflow: hidden;
+}
+
+.sessionList {
+  width: 240px;
+  flex: 0 0 240px;
+  border-right: 1px solid var(--sue-color-border-secondary);
+  background: var(--sue-color-bg-layout);
+}
+
+.sessionListHeader {
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.sessionListBody {
+  overflow: auto;
+  height: calc(100% - 52px);
+  padding: 8px;
+}
+
+.sessionItem {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--sue-border-radius-sm);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sessionItem:hover {
+  background: var(--sue-color-fill-tertiary);
+}
+
+.sessionItemActive {
+  background: var(--sue-color-primary-bg) !important;
+  color: var(--sue-color-primary);
+}
+
+.sessionTitle {
+  display: block;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sessionMeta {
+  display: block;
+  margin-top: 4px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.conversationHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.conversationBody {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.conversationEmpty {
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+  margin-top: 80px;
+}
+
+.messageRow {
+  display: flex;
+  margin-bottom: 12px;
+}
+
+.messageRowUser {
+  justify-content: flex-end;
+}
+
+.messageRowAssistant {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--sue-color-fill-tertiary);
+}
+
+.bubbleUser {
+  background: var(--sue-color-primary-bg);
+  color: var(--sue-color-primary);
+}
+
+.bubbleText {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.entityLink {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sue-color-primary, #1677ff);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.entityLink:hover {
+  opacity: 0.85;
+}
+
+.workspaceChip {
+  margin-top: 8px;
+}
+
+.conversationComposer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--sue-color-border-secondary);
+}
+
+.workspaceHost {
+  width: 400px;
+  flex: 0 0 400px;
+  border-left: 1px solid var(--sue-color-border-secondary);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: var(--sue-color-bg-container);
+}
+
+.workspaceHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+  font-weight: 500;
+}
+
+.workspaceBody {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+.emptyWorkspace {
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+  margin-top: 72px;
+  line-height: 1.7;
+}
+
+.aiAlert {
+  margin: 0 0 12px;
+}
+
+.aiControls {
+  margin-bottom: 12px;
+}
+
+.aiSuggestions h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+
+.aiSuggestions p {
+  margin: 0 0 6px;
+  color: var(--sue-color-text-secondary);
+}
+
+.aiSuggestions small {
+  color: var(--sue-color-text-tertiary);
+}
+
+.accepted {
+  opacity: 0.62;
+}
+
+.acceptedPreview {
+  color: var(--sue-color-text-tertiary);
+}
+
+.acceptedPreview h3,
+.acceptedPreview p,
+.acceptedPreview small {
+  color: inherit;
+}

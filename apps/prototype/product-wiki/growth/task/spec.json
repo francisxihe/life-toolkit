@@ -111,10 +111,19 @@
       "id": "detail",
       "name": "任务详情",
       "prototypePage": "task",
-      "scenario": "独立运营任务及其关联对象",
+      "scenario": "独立运营任务及其关联对象；可发起 AI 拆解",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete",
       "reference": "growth.task.view.detail"
+    },
+    {
+      "id": "ai-decomposition",
+      "name": "AI 拆解",
+      "prototypePage": "ai-session",
+      "scenario": "从任务详情发起 AI 会话；工作台审阅子任务与待办建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
+      "reference": "growth.task.view.ai-decomposition",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
     }
   ],
   "rules": [
@@ -147,6 +156,48 @@
         "calendar"
       ],
       "reference": "growth.task.rule.time-inheritance",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-generation",
+      "name": "AI 建议生成",
+      "entities": [
+        "task"
+      ],
+      "description": "正式产品由已接入的模型结合当前任务上下文生成子任务与待办建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-generation",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
+    },
+    {
+      "id": "ai-decompose-adopt",
+      "name": "AI 建议采纳",
+      "entities": [
+        "task"
+      ],
+      "description": "工作台内单条或批量采纳以当前预览创建子任务或待办；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-adopt",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-followup",
+      "name": "对已选建议追问",
+      "entities": [
+        "task"
+      ],
+      "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-followup",
       "productStatus": "roadmap",
       "prototypeCoverage": "complete"
     }
@@ -185,8 +236,24 @@
       "heading": "### 任务详情"
     },
     {
+      "id": "growth.task.view.ai-decomposition",
+      "heading": "### AI 拆解"
+    },
+    {
       "id": "growth.task.interaction",
       "heading": "## 交互语义"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-generation",
+      "heading": "### AI 建议生成"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-adopt",
+      "heading": "### AI 建议采纳"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-followup",
+      "heading": "### 对已选建议追问"
     },
     {
       "id": "growth.task.rule.single-parent",

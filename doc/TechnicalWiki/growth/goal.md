@@ -33,6 +33,6 @@
 
 ### AI 拆解（消费方）
 
-目标详情「AI 拆解」的**模型调用与建议生成**属于 AI 平台域，不在 `/goal/*` CRUD 内实现。参见 [TechnicalWiki · AI](../ai/README.md)、[capabilities · goal.decompose](../ai/capabilities.md)。采纳创建仍使用本模块既有 create 接口。版本差异与验收见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+目标详情「AI 拆解」仅**发起**绑定该目标的 AI 会话；**模型调用与建议生成**属于 AI 平台域，不在 `/goal/*` CRUD 内实现；审阅与采纳在会话页右侧工作台完成，不再使用详情抽屉。参见 [TechnicalWiki · AI](../ai/README.md)、[capabilities · goal.decompose](../ai/capabilities.md)。采纳创建仍使用本模块既有 create 接口。版本差异与验收见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
 
 版本内 Goal CRUD 设计见 [v0.1.0 TDD](../../v0.1.0/TDD.md)。
