@@ -1,7 +1,6 @@
-import { Form, Input, Select, Space, Button, InputNumber, DatePicker } from '@sue/design-web-react';
+import { Form, Input, Select, Space, Button, InputNumber, DatePicker, Modal } from '@sue/design-web-react';
 import { BUDGET_PERIODS, DEFAULT_CATEGORIES } from '../constants';
 import { useState, useRef } from 'react';
-import { openModal } from '@/hooks/OpenModal';
 import { CreateBudgetVo } from '@true-north/vo';
 import dayjs from 'dayjs';
 
@@ -83,7 +82,9 @@ export function useCreateBudget({
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;
-    openModal({
+    Modal.confirm({
+      icon: null,
+      closable: true,
       title: <div className="text-body-3">添加预算</div>,
       content: (
         <CreateBudget

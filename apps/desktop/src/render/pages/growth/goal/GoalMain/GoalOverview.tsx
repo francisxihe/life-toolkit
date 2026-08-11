@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Flex, Row, Space, Statistic, Tag } from '@sue/design-web-react';
 import dayjs from 'dayjs';
+import { Sparkles } from 'lucide-react';
 import { useGoalContext } from '../context';
 import { useGoalDetailContext } from '../../components/GoalDetail/context';
 import { HabitService } from '@true-north/web-service';
@@ -63,7 +64,7 @@ const GoalOverview: React.FC = () => {
           {importance && <Tag color={importance.color}>{importance.label}</Tag>}
           <small className={styles.timeRange}>{`时间范围：${start} 至 ${end}`}</small>
         </Space>
-        <Button onClick={() => setAiOpen(true)}>AI 拆解</Button>
+        <Button icon={<Sparkles size={15} />} onClick={() => setAiOpen(true)}>AI 拆解</Button>
       </Flex>
 
       {goal.description ? (

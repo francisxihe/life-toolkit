@@ -1,8 +1,7 @@
-import { Checkbox } from '@sue/design-web-react';
+import { Checkbox, Modal } from '@sue/design-web-react';
 import styles from './style.module.less';
 import { TodoService } from '@true-north/web-service';
 import { TodoVo } from '@true-north/vo';
-import { openModal } from '@/hooks/OpenModal';
 import DoneTimeConform from './DoneTimeConform';
 import { useRef } from 'react';
 import { emitTodoChanged } from '../../events';
@@ -21,7 +20,9 @@ export default function TriggerTodoStatus(props: {
       new Date(todo.planDate + ' ' + (todo.planEndTime || '23:59:59')) <
       new Date()
     ) {
-      openModal({
+      Modal.confirm({
+        icon: null,
+        closable: true,
         title: '确认完成时间',
         content: (
           <DoneTimeConform
