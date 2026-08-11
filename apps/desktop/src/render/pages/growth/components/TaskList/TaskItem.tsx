@@ -99,7 +99,7 @@ function TaskItem(props: TaskItemProps) {
                 aria-label={`为${task.name}开始专注`}
                 onClick={(event) => {
                   event.stopPropagation();
-                  openFocusTimer(task.id);
+                  openFocusTimer({ taskId: task.id, label: task.name });
                 }}
               />
             </Tooltip>

@@ -2,11 +2,12 @@
   position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 20;
+  z-index: 2100;
   width: 340px;
   box-shadow: var(--sue-box-shadow-secondary);
 }
 .taskSelect { width: 100%; }
+.selectPopup { z-index: 2100; }
 .miniBody { min-width: 0; }
 .miniTime, .fullTimer { font-variant-numeric: tabular-nums; }
 .miniTime { font-size: 28px; line-height: 1; }
@@ -20,7 +21,7 @@
 .fullscreen {
   position: fixed;
   inset: 0;
-  z-index: 30;
+  z-index: 2100;
   overflow: auto;
   background: var(--sue-color-bg-layout);
 }

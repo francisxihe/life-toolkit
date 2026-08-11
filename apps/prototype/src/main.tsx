@@ -74,6 +74,7 @@ function App() {
   const [focusTimerOpen, setFocusTimerOpen] = useState(false);
   const [focusTimerTaskId, setFocusTimerTaskId] = useState<string>();
   const [focusTimerTodoId, setFocusTimerTodoId] = useState<string>();
+  const [focusRelatedLocked, setFocusRelatedLocked] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState('g3');
   const [drawer, setDrawer] = useState<DrawerState>(null);
   const [aiDecompositionOpen, setAiDecompositionOpen] = useState(false);
@@ -105,6 +106,7 @@ function App() {
   const openFocusTimer = useCallback((related?: { taskId?: string; todoId?: string }) => {
     setFocusTimerTaskId(related?.taskId);
     setFocusTimerTodoId(related?.todoId);
+    setFocusRelatedLocked(Boolean(related?.taskId || related?.todoId));
     setFocusTimerOpen(true);
   }, []);
   const clearFocusRelated = useCallback(() => {
@@ -422,12 +424,16 @@ function App() {
       />
       <FocusTimer
         open={focusTimerOpen}
+        relatedLocked={focusRelatedLocked}
         initialTaskId={focusTimerTaskId}
         initialTodoId={focusTimerTodoId}
         tasks={tasks}
         todos={todos}
         sessions={sessions}
-        onClose={() => setFocusTimerOpen(false)}
+        onClose={() => {
+          setFocusTimerOpen(false);
+          setFocusRelatedLocked(false);
+        }}
         onRelatedSelected={clearFocusRelated}
         setSessions={setSessions}
         updateTask={updateTask}
