@@ -99,11 +99,8 @@ export class TodoController {
   }
 
   @Put('/abandon/:relatedType/:id', { description: '废弃待办' })
-  async abandon(@Param('relatedType') relatedType: TodoRelatedType, @Param('id') id: string): Promise<boolean> {
-    if (relatedType === TodoRelatedType.IS_REPEAT) {
-      return await this.todoRepeatService.abandon(id);
-    }
-    return await this.todoService.abandon(id);
+  async abandon(@Param('relatedType') relatedType: TodoRelatedType, @Param('id') id: string): Promise<any> {
+    return await this.todoService.abandon(relatedType, id);
   }
 
   @Put('/restore/:relatedType/:id', { description: '恢复待办' })

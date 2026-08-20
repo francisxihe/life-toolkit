@@ -1,13 +1,14 @@
 'use client';
 
-import { Input, Select, Button, Space, DatePicker, Row, Col, SearchOutlined } from '@sue/design-web-react';
+import { Input, Select, DatePicker, Row, Col, SearchOutlined } from '@sue/design-web-react';
+import dayjs from 'dayjs';
 
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
-import { TagSelector } from '@/components/TagSelector';
 import { TaskPageFilterVo } from '@true-north/vo';
 import { useTaskAllContext } from './context';
 import { TableFilter } from '@/components/Layout/TableFilter';
 import { TaskStatus } from '@true-north/enum';
+import GoalTreeSelector from '../../components/GoalTreeSelector';
 
 const DatePickerRange = DatePicker.RangePicker;
 
@@ -30,10 +31,10 @@ export function TaskFilters() {
             prefix={<SearchOutlined />}
             placeholder="关键字"
             value={filters.keyword}
-            onChange={(value) => {
+            onChange={(event) => {
               setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
-                keyword: value,
+                keyword: event.target.value,
               }));
             }}
           />
@@ -41,15 +42,28 @@ export function TaskFilters() {
         <Col span={12}>
           <DatePickerRange
             placeholder={['计划开始日期', '计划结束日期']}
-            value={[filters.startDateStart, filters.startDateEnd]}
+            value={filters.startDateStart && filters.startDateEnd ? [dayjs(filters.startDateStart), dayjs(filters.startDateEnd)] : undefined}
             className="w-full"
             onChange={(value) => {
               setFilters((prev: TaskPageFilterVo) => ({
                 ...prev,
-                startDateStart: value[0],
-                startDateEnd: value[1],
+                startDateStart: value?.[0]?.format('YYYY-MM-DD'),
+                startDateEnd: value?.[1]?.format('YYYY-MM-DD'),
               }));
             }}
+          />
+        </Col>
+        <Col span={6}>
+          <GoalTreeSelector
+            value={filters.goalIds?.[0]}
+            onChange={(value) => {
+              setFilters((prev: TaskPageFilterVo) => ({
+                ...prev,
+                goalIds: value ? [value] : undefined,
+              }));
+            }}
+            allowClear
+            placeholder="关联目标"
           />
         </Col>
         <Col span={6}>
@@ -105,21 +119,10 @@ export function TaskFilters() {
             placeholder="任务状态"
           >
             <Select.Option value={TaskStatus.TODO}>未完成</Select.Option>
+            <Select.Option value={TaskStatus.DOING}>进行中</Select.Option>
             <Select.Option value={TaskStatus.DONE}>已完成</Select.Option>
             <Select.Option value={TaskStatus.ABANDONED}>已放弃</Select.Option>
           </Select>
-        </Col>
-        <Col span={6}>
-          <TagSelector
-            multiple={true}
-            value={filters.tags}
-            onChange={(value) => {
-              setFilters((prev: TaskPageFilterVo) => ({
-                ...prev,
-                tags: value,
-              }));
-            }}
-          />
         </Col>
       </Row>
     </TableFilter>

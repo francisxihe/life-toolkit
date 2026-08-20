@@ -10,6 +10,14 @@ import {
   DashboardOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
+import {
+  FolderKanban,
+  Grid2X2,
+  ListTodo,
+  Sparkles,
+  Target,
+  TrendingUp,
+} from 'lucide-react';
 import SiteIcon from '@/components/SiteIcon';
 import styles from '../layout.module.less';
 
@@ -17,8 +25,18 @@ export function getIconFromKey(key: string): React.ReactNode {
   switch (key) {
     case '/growth':
       return <SiteIcon id="calendar-sidebar" className={styles.icon} />;
+    case '/growth/workbench':
+      return <Grid2X2 size={16} className={styles.icon} />;
     case '/growth/todo':
-      return <SiteIcon id="list-sidebar" className={styles.icon} />;
+      return <ListTodo size={16} className={styles.icon} />;
+    case '/growth/task':
+      return <FolderKanban size={16} className={styles.icon} />;
+    case '/growth/habit':
+      return <TrendingUp size={16} className={styles.icon} />;
+    case '/growth/goal':
+      return <Target size={16} className={styles.icon} />;
+    case '/ai':
+      return <Sparkles size={16} className={styles.icon} />;
     case '/dashboard':
       return <DashboardOutlined className={styles.icon} />;
     case '/list':

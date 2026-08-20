@@ -86,4 +86,6 @@ function importVo(filterVo: TaskFilterVo, filterDto: TaskFilterDto) {
   if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
   if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   if (filterVo.abandonedDateEnd) filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
+  if (filterVo.goalIds !== undefined) filterDto.goalIds = filterVo.goalIds;
+  if (filterVo.id !== undefined) filterDto.id = filterVo.id;
 }

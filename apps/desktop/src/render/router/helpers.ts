@@ -2,8 +2,8 @@ const mod = import.meta.glob('../pages/**/*.tsx');
 
 /**
  * 移除路径中的动态路由参数
- * @param path 原始路径，如 '/growth/task/detail/:id'
- * @returns 处理后的路径，如 '/growth/task/detail'
+ * @param path 原始路径，如 '/growth/goal/detail/:id'
+ * @returns 处理后的路径，如 '/growth/goal/detail'
  */
 function removeDynamicParams(path: string): string {
   return path

@@ -1,156 +1,149 @@
-import { TodoList, TodoCreatorMini, TodoEditor } from '../../components';
-import { useEffect, useState } from 'react';
-import { Collapse, Divider, Flex } from '@sue/design-web-react';
+import { useCallback, useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { Flex } from '@sue/design-web-react';
 import styles from './style.module.less';
 import { TodoService } from '@true-north/web-service';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
-import { flushSync } from 'react-dom';
-import clsx from 'clsx';
-import { useTodoHooks } from '../hooks';
 import { TodoStatus } from '@true-north/enum';
+import { useTodoDetail } from '../../components';
+import DayAgendaCalendar, {
+  formatDayAgendaTitle,
+} from '../../components/DayAgenda';
+import { useDayAgendaDate } from '../../components/DayAgenda/context';
+import TodoAgendaSections from '../components/TodoAgendaSections';
+import { onTodoChanged } from '../../events';
 
 export default function TodoToday() {
-  const { today, yesterday } = useTodoHooks();
-  const [todayTodoList, setTodayTodoList] = useState<TodoVo[]>([]);
-  const [todayDoneTodoList, setTodayDoneTodoList] = useState<TodoVo[]>([]);
-  const [expiredTodoList, setExpiredTodoList] = useState<TodoVo[]>([]);
-  const [todayAbandonedTodoList, setTodayAbandonedTodoList] = useState<
-    TodoVo[]
-  >([]);
+  const { selectedDate, setSelectedDate, visibleMonth, setVisibleMonth } =
+    useDayAgendaDate();
+  const [scheduledTodos, setScheduledTodos] = useState<TodoVo[]>([]);
+  const [doneTodos, setDoneTodos] = useState<TodoVo[]>([]);
+  const [expiredTodos, setExpiredTodos] = useState<TodoVo[]>([]);
+  const [abandonedTodos, setAbandonedTodos] = useState<TodoVo[]>([]);
+  const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>(
+    {},
+  );
+  const selectedDateText = selectedDate.format('YYYY-MM-DD');
+  const isSelectedToday = selectedDate.isSame(dayjs(), 'day');
 
-  async function refreshData() {
-    const { list: todos } = await TodoService.list({
-      status: TodoStatus.TODO,
-      planDateStart: today,
-      planDateEnd: today,
-    });
-    setTodayTodoList(todos);
+  const refreshData = useCallback(async () => {
+    const [scheduledTodo, doneResponse, abandonedResponse] = await Promise.all([
+      TodoService.list({
+        status: TodoStatus.TODO,
+        planDateStart: selectedDateText,
+        planDateEnd: selectedDateText,
+      }),
+      TodoService.list({
+        status: TodoStatus.DONE,
+        doneDateStart: selectedDateText,
+        doneDateEnd: selectedDateText,
+      }),
+      TodoService.list({
+        status: TodoStatus.ABANDONED,
+        abandonedDateStart: selectedDateText,
+        abandonedDateEnd: selectedDateText,
+      }),
+    ]);
 
-    const { list: doneTodos } = await TodoService.list({
-      status: TodoStatus.DONE,
-      doneDateStart: today,
-      doneDateEnd: today,
-    });
-    setTodayDoneTodoList(doneTodos);
-
-    const { list: expiredTodos } = await TodoService.list({
-      status: TodoStatus.TODO,
-      planDateEnd: yesterday,
-    });
-    setExpiredTodoList(expiredTodos);
-
-    const { list: abandonedTodos } = await TodoService.list({
-      status: TodoStatus.ABANDONED,
-      abandonedDateStart: today,
-      abandonedDateEnd: today,
-    });
-    setTodayAbandonedTodoList(abandonedTodos);
-
-    if (currentTodo) {
-      showTodoDetail(currentTodo);
+    let expired: TodoVo[] = [];
+    if (isSelectedToday) {
+      const yesterday = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      const expiredTodo = await TodoService.list({
+        status: TodoStatus.TODO,
+        planDateEnd: yesterday,
+      });
+      expired = [...(expiredTodo?.list || [])].sort((a, b) =>
+        (a.planStartTime || '').localeCompare(b.planStartTime || ''),
+      );
     }
-  }
+
+    setScheduledTodos(
+      [...(scheduledTodo?.list || [])].sort((a, b) =>
+        (a.planStartTime || '').localeCompare(b.planStartTime || ''),
+      ),
+    );
+    setDoneTodos(doneResponse?.list || []);
+    setExpiredTodos(expired);
+    setAbandonedTodos(abandonedResponse?.list || []);
+  }, [isSelectedToday, selectedDateText]);
+
+  const refreshCalendarCounts = useCallback(async () => {
+    const visibleStart = visibleMonth.startOf('month').startOf('week');
+    const visibleEnd = visibleMonth.endOf('month').endOf('week');
+    const response = await TodoService.list({
+      status: TodoStatus.TODO,
+      planDateStart: visibleStart.format('YYYY-MM-DD'),
+      planDateEnd: visibleEnd.format('YYYY-MM-DD'),
+    });
+    const todoList = response?.list || [];
+    const counts = todoList.reduce<Record<string, number>>((result, todo) => {
+      const dateKey = dayjs(todo.planDate).format('YYYY-MM-DD');
+      result[dateKey] = (result[dateKey] || 0) + 1;
+      return result;
+    }, {});
+
+    setCalendarCounts(counts);
+  }, [visibleMonth]);
 
   useEffect(() => {
-    refreshData();
-  }, []);
+    void refreshData();
+  }, [refreshData]);
 
-  const [currentTodo, setCurrentTodo] = useState<TodoVo | null>(null);
+  useEffect(() => {
+    void refreshCalendarCounts();
+  }, [refreshCalendarCounts]);
 
-  async function showTodoDetail(_todo: TodoWithoutRelationsVo) {
-    flushSync(() => {
-      setCurrentTodo(null);
+  useEffect(
+    () =>
+      onTodoChanged(() => {
+        void refreshData();
+        void refreshCalendarCounts();
+      }),
+    [refreshCalendarCounts, refreshData],
+  );
+
+  const { openEditDrawer } = useTodoDetail();
+
+  async function showTodoDetail(todo: TodoWithoutRelationsVo) {
+    openEditDrawer({
+      contentProps: {
+        todo: todo as TodoVo,
+        afterSubmit: refreshData,
+      },
     });
-    setCurrentTodo(_todo);
   }
 
   return (
-    <Flex container="fill" className="flex">
-      <Flex vertical container="fill" className="py-2">
-        <Flex container="fixed" className="w-full">
-          <TodoCreatorMini
-            afterSubmit={async () => {
-              refreshData();
-            }}
+    <Flex container="full">
+      <Flex vertical container="fixed" className={styles.sidebar}>
+        <DayAgendaCalendar
+          value={selectedDate}
+          onChange={setSelectedDate}
+          visibleMonth={visibleMonth}
+          onVisibleMonthChange={setVisibleMonth}
+          itemCounts={calendarCounts}
+        />
+      </Flex>
+      <Flex vertical container="fill" className={styles.main}>
+        <Flex container="fixed" align="center" className={styles.toolbar}>
+          <h1 className={styles.title}>{formatDayAgendaTitle(selectedDate)}</h1>
+        </Flex>
+        <Flex container="fill" className={styles.content}>
+          <TodoAgendaSections
+            groups={[
+              ...(isSelectedToday
+                ? [{ key: 'expired', label: '已过期', todoList: expiredTodos }]
+                : []),
+              { key: 'scheduled', label: '未完成', todoList: scheduledTodos },
+              { key: 'done', label: '已完成', todoList: doneTodos },
+              { key: 'abandoned', label: '已放弃', todoList: abandonedTodos },
+            ]}
+            emptyLabel="当天没有待办"
+            onClickTodo={showTodoDetail}
+            refreshTodoList={refreshData}
           />
         </Flex>
-        <Flex container="fill" className="overflow-y-auto">
-          <Collapse
-            defaultActiveKey={['expired', 'today']}
-            className={clsx(styles['custom-collapse'])}
-            bordered={false}
-          >
-            {expiredTodoList.length > 0 && (
-              <Collapse.Panel header="已过期" key="expired">
-                <TodoList
-                  todoList={expiredTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Panel>
-            )}
-            {todayTodoList.length > 0 && (
-              <Collapse.Panel header="今天" key="today">
-                <TodoList
-                  todoList={todayTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Panel>
-            )}
-            {todayDoneTodoList.length > 0 && (
-              <Collapse.Panel header="已完成" key="done">
-                <TodoList
-                  todoList={todayDoneTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Panel>
-            )}
-            {todayAbandonedTodoList.length > 0 && (
-              <Collapse.Panel header="已放弃" key="abandoned">
-                <TodoList
-                  todoList={todayAbandonedTodoList}
-                  onClickTodo={async (todo) => {
-                    await showTodoDetail(todo);
-                  }}
-                  refreshTodoList={async () => {
-                    await refreshData();
-                  }}
-                />
-              </Collapse.Panel>
-            )}
-          </Collapse>
-        </Flex>
       </Flex>
-      {currentTodo && (
-        <>
-          <Divider type="vertical" className="!h-full" />
-          <Flex container="fill" className="w-1/2 py-2">
-            <TodoEditor
-              todo={currentTodo}
-              onClose={async () => {
-                showTodoDetail(null);
-              }}
-              afterSubmit={async () => {
-                refreshData();
-              }}
-            />
-          </Flex>
-        </>
-      )}
     </Flex>
   );
 }

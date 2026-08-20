@@ -5,13 +5,12 @@ import { useSelector } from 'react-redux';
 import useLocale from '@/utils/useLocale';
 import locale from './locale';
 import CodeBlock from './code-block';
-import styles from './style/index.module.less';
 export default function Welcome() {
   const t = useLocale(locale);
   const userInfo = useSelector((state: any) => state.userInfo) || {};
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
+    <div>
+      <div className="bg-bg-2 p-5">
         <h5 className="text-title-1 font-medium" style={{ marginTop: 0 }}>
           {t['welcome.title.welcome']}
         </h5>

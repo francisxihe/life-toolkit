@@ -1,159 +1,83 @@
-import React from 'react';
-import { Button, Space, Tag, Progress, Table } from '@sue/design-web-react';
-
-import { HabitWithoutRelationsVo } from '@true-north/vo';
-import { HabitStatus, Difficulty } from '@true-north/enum';
-import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
-import { useHabitContext } from '../context';
-import { HabitListProvider, useHabitListContext } from './context';
+import { Button, Col, Empty, Flex, Row, Spin } from '@sue/design-web-react';
+import { useNavigate } from 'react-router-dom';
+import { HabitStatus } from '@true-north/enum';
+import { HabitVo } from '@true-north/vo';
+import HabitCard from '../components/HabitCard';
+import { useHabitListContext } from './context';
+import styles from './HabitListTable.module.less';
 
 export default function HabitListTable() {
+  const navigate = useNavigate();
   const {
     habits,
     loading,
     pagination,
     handlePageChange,
     handleHabitComplete,
-    handleHabitDelete
+    handleHabitIncomplete,
+    handleHabitDelete,
   } = useHabitListContext();
+  const canPrevious = pagination.current > 1;
+  const canNext = pagination.current * pagination.pageSize < pagination.total;
+  const goalLabel = (habit: (typeof habits)[number]) =>
+    ((habit as HabitVo).goals || []).map((goal) => goal.name).join(' · ');
 
-  // 表格列配置
-  const columns = [
-  {
-    title: '习惯名称',
-    dataIndex: 'name',
-    key: 'name',
-    width: 200,
-    render: (name: string, record: HabitWithoutRelationsVo) =>
-    <div>
-          <div className="font-medium">{name}</div>
-          {record.description &&
-      <span className="text-text-3 text-sm">
-              {record.description}
-            </span>
-      }
-        </div>
-
-  },
-  {
-    title: '状态',
-    dataIndex: 'status',
-    key: 'status',
-    width: 100,
-    render: (status: HabitStatus) => {
-      const statusConfig = HABIT_STATUS_OPTIONS.find(
-        (option) => option.value === status
-      );
-      return <Tag color={statusConfig?.color}>{statusConfig?.label}</Tag>;
-    }
-  },
-  {
-    title: '难度',
-    dataIndex: 'difficulty',
-    key: 'difficulty',
-    width: 100,
-    render: (difficulty: Difficulty) => {
-      const difficultyConfig = HABIT_DIFFICULTY_OPTIONS.find(
-        (option) => option.value === difficulty
-      );
-      return difficultyConfig ?
-      <Tag color={difficultyConfig.color} size="small">
-            {difficultyConfig.label}
-          </Tag> :
-      null;
-    }
-  },
-  {
-    title: '完成率',
-    dataIndex: 'completionRate',
-    key: 'completionRate',
-    width: 150,
-    render: (_: any, record: HabitWithoutRelationsVo) => {
-      const completionRate =
-      record.completedCount && record.currentStreak ?
-      Math.round(
-        record.completedCount / (
-        record.currentStreak + record.completedCount) *
-        100
-      ) :
-      0;
-      return (
-        <div>
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-sm font-medium">{completionRate}%</span>
-            </div>
-            <Progress percent={completionRate} size="small" />
-          </div>);
-
-    }
-  },
-  {
-    title: '当前连续',
-    dataIndex: 'currentStreak',
-    key: 'currentStreak',
-    width: 100,
-    align: 'center' as const,
-    render: (currentStreak: number) =>
-    <div className="text-lg font-bold text-blue-600">
-          {currentStreak || 0}
-        </div>
-
-  },
-  {
-    title: '最长连续',
-    dataIndex: 'longestStreak',
-    key: 'longestStreak',
-    width: 100,
-    align: 'center' as const,
-    render: (longestStreak: number) =>
-    <div className="text-lg font-bold text-green-600">
-          {longestStreak || 0}
-        </div>
-
-  },
-  {
-    title: '操作',
-    key: 'actions',
-    width: 150,
-    render: (_: any, record: HabitWithoutRelationsVo) =>
-    <Space>
-          {record.status === HabitStatus.ACTIVE &&
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => handleHabitComplete(record.id)}>
-
-              完成
-            </Button>
-      }
-          <Button
-        size="small"
-        onClick={() => handleHabitDelete(record.id)}
-        status="danger">
-
-            删除
-          </Button>
-        </Space>
-
-  }];
+  if (loading && !habits.length) {
+    return (
+      <Flex className={styles.loading} align="center" justify="center">
+        <Spin />
+      </Flex>
+    );
+  }
+  if (!habits.length) {
+    return <Empty className={styles.empty} description="暂无习惯，开始建立一个可持续的行动吧" />;
+  }
 
   return (
-    <Table
-      columns={columns}
-      data={habits}
-      loading={loading}
-      pagination={{
-        current: pagination.current,
-        pageSize: pagination.pageSize,
-        total: pagination.total,
-        onChange: handlePageChange,
-        showTotal: (total, range) =>
-        `第 ${range[0]}-${range[1]} 项，共 ${total} 项`,
-        showJumper: true,
-        sizeCanChange: true,
-        sizeOptions: [12, 24, 48]
-      }}
-      rowKey="id"
-      scroll={{ x: 900 }} />);
-
+    <Flex vertical gap={16} className={styles.wrapper}>
+      <Row gutter={[16, 16]}>
+        {habits.map((habit) => (
+          <Col key={habit.id} xs={24} md={12} xl={8}>
+            <HabitCard
+              habit={habit}
+              goalLabel={goalLabel(habit)}
+              onComplete={
+                habit.status === HabitStatus.ACTIVE && habit.cycleTodoId
+                  ? () => handleHabitComplete(habit.id)
+                  : undefined
+              }
+              onIncomplete={
+                habit.status === HabitStatus.ACTIVE && habit.cycleTodoId
+                  ? () => handleHabitIncomplete(habit.id)
+                  : undefined
+              }
+              onDelete={() => handleHabitDelete(habit.id)}
+              onEdit={() => navigate(`/growth/habit/habit-detail/${habit.id}`)}
+            />
+          </Col>
+        ))}
+      </Row>
+      <Flex className={styles.pagination} align="center" justify="space-between">
+        <span>
+          第 {pagination.current} 页，共 {pagination.total} 个习惯
+        </span>
+        <Flex gap={8}>
+          <Button
+            size="small"
+            disabled={!canPrevious}
+            onClick={() => handlePageChange(pagination.current - 1, pagination.pageSize)}
+          >
+            上一页
+          </Button>
+          <Button
+            size="small"
+            disabled={!canNext}
+            onClick={() => handlePageChange(pagination.current + 1, pagination.pageSize)}
+          >
+            下一页
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
 }

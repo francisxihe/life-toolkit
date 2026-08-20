@@ -19,13 +19,16 @@ import { TaskStatus } from '@true-north/enum';
 
 function useSyncState<T>(
   initialValue: T,
-): [T, (newValue: T) => void, React.MutableRefObject<T>] {
+): [T, Dispatch<SetStateAction<T>>, React.MutableRefObject<T>] {
   const [state, setState] = useState<T>(initialValue);
   const stateRef = useRef<T>(state);
 
-  const setSyncState = (newValue: T) => {
-    setState(newValue);
+  const setSyncState: Dispatch<SetStateAction<T>> = (nextValue) => {
+    const newValue = typeof nextValue === 'function'
+      ? (nextValue as (previousValue: T) => T)(stateRef.current)
+      : nextValue;
     stateRef.current = newValue;
+    setState(newValue);
   };
 
   useEffect(() => {
@@ -38,49 +41,92 @@ function useSyncState<T>(
 export const [TaskAllProvider, useTaskAllContext] = createInjectState<{
   ContextType: {
     taskList: TaskWithoutRelationsVo[];
+    total: number;
+    loading: boolean;
     getTaskPage: () => Promise<void>;
     filters: TaskPageFilterVo;
     setFilters: Dispatch<SetStateAction<TaskPageFilterVo>>;
+    setPage: (pageNum: number, pageSize?: number) => void;
     clearFilters: () => Promise<void>;
   };
 }>(() => {
   const [taskList, setTaskList] = useState<TaskWithoutRelationsVo[]>([]);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  const [filters, setFilters, filtersRef] = useSyncState<TaskPageFilterVo>({
+  const [filters, setFiltersState, filtersRef] = useSyncState<TaskPageFilterVo>({
     keyword: '',
     importance: undefined,
     urgency: undefined,
-    status: TaskStatus.TODO,
-    startAt: undefined,
-    endAt: undefined,
+    status: undefined,
+    startDateStart: undefined,
+    startDateEnd: undefined,
+    endDateStart: undefined,
+    endDateEnd: undefined,
     doneDateStart: undefined,
     doneDateEnd: undefined,
     abandonedDateStart: undefined,
     abandonedDateEnd: undefined,
-    tags: [],
+    pageNum: 1,
+    pageSize: 10,
   });
 
-  async function getTaskPage() {
-    const { list, total } = await TaskService.page(filtersRef.current);
-    setTaskList(list);
-  }
+  const getTaskPage = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await TaskService.page(filtersRef.current);
+      setTaskList(response?.list ?? []);
+      setTotal(response?.total ?? 0);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const setFilters: Dispatch<SetStateAction<TaskPageFilterVo>> = (nextFilters) => {
+    setFiltersState((currentFilters) => ({
+      ...(typeof nextFilters === 'function'
+        ? nextFilters(currentFilters)
+        : nextFilters),
+      pageNum: 1,
+    }));
+  };
+
+  const setPage = (pageNum: number, pageSize = filtersRef.current.pageSize) => {
+    setFiltersState((currentFilters) => ({
+      ...currentFilters,
+      pageNum,
+      pageSize,
+    }));
+  };
 
   const clearFilters = async () => {
-    setFilters({
+    setFiltersState({
       keyword: '',
       importance: undefined,
       urgency: undefined,
       status: undefined,
-      startAt: undefined,
-      endAt: undefined,
+      startDateStart: undefined,
+      startDateEnd: undefined,
+      endDateStart: undefined,
+      endDateEnd: undefined,
       doneDateStart: undefined,
       doneDateEnd: undefined,
       abandonedDateStart: undefined,
       abandonedDateEnd: undefined,
-      tags: [],
+      pageNum: 1,
+      pageSize: 10,
     });
     await getTaskPage();
   };
 
-  return { taskList, getTaskPage, filters, setFilters, clearFilters };
+  return {
+    taskList,
+    total,
+    loading,
+    getTaskPage,
+    filters,
+    setFilters,
+    setPage,
+    clearFilters,
+  };
 });

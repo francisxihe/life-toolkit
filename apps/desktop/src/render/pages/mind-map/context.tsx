@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { GoalVo } from '@true-north/vo';
 import { GoalService } from '@true-north/web-service';
 import { message } from '@sue/design-web-react';
-import { GoalType, GoalStatus } from '@true-north/enum';
+import { GoalType } from '@true-north/enum';
 import { createInjectState } from '@true-north/common-web-utils';
 import { Modal } from '@sue/design-web-react';
 
@@ -24,9 +24,7 @@ export const [GoalMindMapContextProvider, useGoalMindMapContext] =
     const fetchGoalTree = async () => {
       setLoading(true);
       try {
-        const data = await GoalService.getTree({
-          status: GoalStatus.TODO,
-        });
+        const data = await GoalService.getTree({});
         setGoalTree(data);
       } catch (error) {
         console.error('获取目标数据失败:', error);

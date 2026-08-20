@@ -1,27 +1,27 @@
 import React from 'react';
 import {
   Card,
-  Tag,
   Button,
-  Space,
+  Flex,
   Progress,
   Dropdown,
   Menu,
   Badge,
   CheckOutlined,
-  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
 } from '@sue/design-web-react';
-import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { HabitWithoutRelationsVo } from '@true-north/vo';
-import { HabitStatus } from '@true-north/enum';
-import { HABIT_STATUS_OPTIONS, HABIT_DIFFICULTY_OPTIONS } from '../constants';
+import { HABIT_STATUS_OPTIONS } from '../constants';
+import { formatHabitRepeatLabel } from '../formatHabitRepeatLabel';
+import styles from './HabitCard.module.less';
 
 interface HabitCardProps {
   habit: HabitWithoutRelationsVo;
+  goalLabel?: string;
   onComplete?: () => void;
+  onIncomplete?: () => void;
   onPause?: () => void;
   onResume?: () => void;
   onAbandon?: () => void;
@@ -31,208 +31,141 @@ interface HabitCardProps {
 
 export const HabitCard: React.FC<HabitCardProps> = ({
   habit,
+  goalLabel,
   onComplete,
+  onIncomplete,
   onPause,
   onResume,
   onAbandon,
   onDelete,
-  onEdit
+  onEdit,
 }) => {
-  // 获取状态配置
-  const statusConfig = HABIT_STATUS_OPTIONS.find(
-    (option) => option.value === habit.status
-  );
-  const difficultyConfig = HABIT_DIFFICULTY_OPTIONS.find(
-    (option) => option.value === habit.difficulty
-  );
+  const statusConfig = HABIT_STATUS_OPTIONS.find((option) => option.value === habit.status);
 
-  // 计算完成率
-  const completionRate =
-  habit.completedCount && habit.currentStreak ?
-  Math.round(
-    habit.completedCount / (
-    habit.currentStreak + habit.completedCount) *
-    100
-  ) :
-  0;
-
-  // 渲染操作菜单
   const renderActionMenu = () => {
     const menuItems = [];
 
-    if (habit.status === HabitStatus.ACTIVE) {
+    if (onComplete) {
       menuItems.push(
         <Menu.Item key="complete" onClick={onComplete}>
           <CheckOutlined /> 标记完成
         </Menu.Item>,
-        <Menu.Item key="pause" onClick={onPause}>
-          <PauseOutlined /> 暂停习惯
-        </Menu.Item>
       );
     }
-
-    if (habit.status === HabitStatus.PAUSED) {
+    if (onIncomplete) {
+      menuItems.push(
+        <Menu.Item key="incomplete" onClick={onIncomplete}>
+          标记未完成
+        </Menu.Item>,
+      );
+    }
+    if (onResume) {
       menuItems.push(
         <Menu.Item key="resume" onClick={onResume}>
-          <CaretRightOutlined /> 恢复习惯
-        </Menu.Item>
+          恢复习惯
+        </Menu.Item>,
       );
     }
-
-    if (
-    habit.status === HabitStatus.ACTIVE ||
-    habit.status === HabitStatus.PAUSED)
-    {
+    if (onPause) {
+      menuItems.push(
+        <Menu.Item key="pause" onClick={onPause}>
+          暂停习惯
+        </Menu.Item>,
+      );
+    }
+    if (onAbandon) {
       menuItems.push(
         <Menu.Item key="abandon" onClick={onAbandon}>
-          <CloseOutlined /> 放弃习惯
-        </Menu.Item>
+          放弃习惯
+        </Menu.Item>,
       );
     }
-
-    menuItems.push(
-      <Menu.Item key="edit" onClick={onEdit}>
-        <EditOutlined /> 编辑习惯
-      </Menu.Item>,
-      <Menu.Item key="delete" onClick={onDelete} className="text-red-500">
-        <DeleteOutlined /> 删除习惯
-      </Menu.Item>
-    );
+    if (onEdit) {
+      menuItems.push(
+        <Menu.Item key="edit" onClick={onEdit}>
+          <EditOutlined /> 编辑习惯
+        </Menu.Item>,
+      );
+    }
+    if (onDelete) {
+      menuItems.push(
+        <Menu.Item key="delete" onClick={onDelete} className={styles.dangerAction}>
+          <DeleteOutlined /> 删除习惯
+        </Menu.Item>,
+      );
+    }
 
     return <Menu>{menuItems}</Menu>;
   };
 
   return (
     <Card
-      className="habit-card h-full"
+      className={styles.card}
       hoverable
       actions={[
-      <Dropdown
-        key="more"
-        dropdownRender={() => renderActionMenu()}
-        placement="bottomRight">
-
+        <Dropdown key="more" popupRender={() => renderActionMenu()} placement="bottomRight">
           <Button type="text" icon={<EllipsisOutlined />} />
-        </Dropdown>]
-      }>
-
-      {/* 卡片头部 */}
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex-1">
-          <span className="font-medium text-base line-clamp-2">
-            {habit.name}
-          </span>
-          {habit.description &&
-          <p
-            className="text-sm text-gray-500 mt-1 line-clamp-2"
-            style={{ marginBottom: 0 }}>
-
-              {habit.description}
-            </p>
-          }
+        </Dropdown>,
+      ]}
+    >
+      <Flex
+        align="flex-start"
+        justify="space-between"
+        gap={12}
+        className={styles.header}
+      >
+        <div className={styles.titleBlock}>
+          <span className={styles.title}>{habit.name}</span>
         </div>
-        <Badge
-          status={statusConfig?.color as any}
-          text={statusConfig?.label}
-          className="ml-2" />
+        <Badge status={statusConfig?.color as any} text={statusConfig?.label} className={styles.status} />
+      </Flex>
 
-      </div>
+      <Flex vertical gap={10}>
+        {goalLabel ? <p className={styles.goalLabel}>{goalLabel}</p> : null}
+        <p className={styles.repeatLabel}>执行规则：{formatHabitRepeatLabel(habit)}</p>
+        <Flex align="center" justify="space-between" className={styles.progressHeader}>
+          <span>当前连续</span>
+          <strong>{habit.currentStreak || 0} 天</strong>
+        </Flex>
+        <Progress percent={Math.min(100, (habit.currentStreak || 0) * 7)} showInfo={false} />
+      </Flex>
 
-      {/* 标签和难度 */}
-      <div className="flex flex-wrap gap-1 mb-3">
-        {difficultyConfig &&
-        <Tag color={difficultyConfig.color} size="small">
-            {difficultyConfig.label}
-          </Tag>
-        }
-        {habit.importance &&
-        <Tag color="blue" size="small">
-            重要度: {habit.importance}
-          </Tag>
-        }
-        {habit.tags?.slice(0, 2).map((tag, index) =>
-        <Tag key={index} size="small">
-            {tag}
-          </Tag>
-        )}
-        {habit.tags && habit.tags.length > 2 &&
-        <Tag size="small">+{habit.tags.length - 2}</Tag>
-        }
-      </div>
-
-      {/* 进度信息 */}
-      <div className="space-y-2">
-        {/* 完成率 */}
-        <div>
-          <div className="flex justify-between items-center mb-1">
-            <span className="text-sm">完成率</span>
-            <span className="text-sm font-medium">{completionRate}%</span>
-          </div>
-          <Progress percent={completionRate} size="small" />
+      {(onComplete || onIncomplete || onEdit) && (
+        <div className={styles.footer}>
+          <Flex gap={8} className={styles.footerActions}>
+            {onComplete && (
+              <Button
+                type="primary"
+                size="small"
+                icon={<CheckOutlined />}
+                onClick={onComplete}
+                className={styles.completeButton}
+              >
+                完成
+              </Button>
+            )}
+            {onIncomplete && (
+              <Button size="small" onClick={onIncomplete}>
+                未完成
+              </Button>
+            )}
+            {onEdit && (
+              <Button type="link" size="small" onClick={onEdit}>
+                编辑
+              </Button>
+            )}
+          </Flex>
         </div>
-
-        {/* 统计信息 */}
-        <div className="grid grid-cols-2 gap-2 text-center">
-          <div className="bg-gray-50 rounded p-2">
-            <div className="text-lg font-bold text-blue-600">
-              {habit.currentStreak || 0}
-            </div>
-            <div className="text-xs text-gray-500">当前连续</div>
-          </div>
-          <div className="bg-gray-50 rounded p-2">
-            <div className="text-lg font-bold text-green-600">
-              {habit.longestStreak || 0}
-            </div>
-            <div className="text-xs text-gray-500">最长连续</div>
-          </div>
-        </div>
-
-        {/* 时间信息 */}
-        <div className="text-xs text-gray-500 space-y-1">
-          {habit.startAt &&
-          <div>开始时间: {new Date(habit.startAt).toLocaleDateString()}</div>
-          }
-          {habit.endAt &&
-          <div>目标时间: {new Date(habit.endAt).toLocaleDateString()}</div>
-          }
-        </div>
-      </div>
-
-      {/* 快捷操作按钮 */}
-      {habit.status === HabitStatus.ACTIVE &&
-      <div className="mt-3 pt-3 border-t border-gray-100">
-          <Space className="w-full">
-            <Button
-            type="primary"
-            size="small"
-            icon={<CheckOutlined />}
-            onClick={onComplete}
-            className="flex-1">
-
-              完成
-            </Button>
-            <Button size="small" icon={<PauseOutlined />} onClick={onPause}>
-              暂停
-            </Button>
-          </Space>
-        </div>
-      }
-
-      {habit.status === HabitStatus.PAUSED &&
-      <div className="mt-3 pt-3 border-t border-gray-100">
-          <Button
-          type="primary"
-          size="small"
-          icon={<CaretRightOutlined />}
-          onClick={onResume}
-          className="w-full">
-
+      )}
+      {onResume && (
+        <div className={styles.footer}>
+          <Button type="primary" size="small" onClick={onResume} className={styles.fullButton}>
             恢复习惯
           </Button>
         </div>
-      }
-    </Card>);
-
+      )}
+    </Card>
+  );
 };
 
 export default HabitCard;

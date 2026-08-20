@@ -1,11 +1,13 @@
 import dayjs, { Dayjs } from 'dayjs';
+import { Flex } from '@sue/design-web-react';
 import { useCalendarContext } from './context';
 import { TodoVo } from '@true-north/vo';
 import { TodoStatus } from '@true-north/enum';
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import clsx from 'clsx';
 import { useTodoDetail } from '../../components';
 import SiteIcon from '@/components/SiteIcon';
+import styles from './style.module.less';
 
 function TodoItem({ todo }: { todo: TodoVo }) {
   const { getTodoList } = useCalendarContext();
@@ -41,7 +43,6 @@ function TodoItem({ todo }: { todo: TodoVo }) {
 export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const {
     todoList,
-    calendarMode,
     pageShowDate,
     showAddTaskDate,
     getTodoList,
@@ -54,61 +55,58 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
     );
   }, [cellDate, todoList]);
 
-  const {
-    CreatePopover: CreateTodoPopover,
-    createPopoverVisible: createTodoPopoverVisible,
-  } = useTodoDetail();
+  const { openCreateDrawer } = useTodoDetail();
 
   return (
-    <div className={`!text-body-3 text-text-1 h-full`}>
+    <div className={styles.cell}>
       <div
-        className={`p-1 h-full ${
+        className={clsx(styles.cellContent, {
+          [styles.cellOutsideMonth]:
           cellDate.isBefore(pageShowDate, 'month') ||
-          cellDate.isAfter(pageShowDate, 'month')
-            ? 'opacity-50'
-            : ''
-        }`}
+          cellDate.isAfter(pageShowDate, 'month'),
+        })}
         onMouseEnter={() => {
           setShowAddTaskDate(cellDate);
         }}
+        onMouseLeave={() => setShowAddTaskDate(null)}
       >
-        <div className={`leading-[24px]`}>{cellDate.date()}</div>
-        {calendarMode === 'month' && (
-          <>
-            <div className="mt-1 flex flex-col gap-0.5">
+        <div className={styles.cellDate}>{cellDate.date()}</div>
+        <>
+            <Flex vertical gap={2}>
               {todayTodoList.map((todo) => (
                 <TodoItem key={todo.id} todo={todo} />
               ))}
-            </div>
-            {(showAddTaskDate?.isSame(cellDate) ||
-              createTodoPopoverVisible) && (
-              <CreateTodoPopover
-                creatorProps={{
-                  showSubmitButton: true,
-                  initialFormData: {
-                    planDate: cellDate.format('YYYY-MM-DD'),
-                  },
-                  afterSubmit: async () => {
-                    getTodoList();
-                  },
-                }}
-              >
-                <div
+            </Flex>
+            {showAddTaskDate?.isSame(cellDate) && (
+              <div className={styles.cellCreate}>
+                <Flex
+                  align="center"
+                  gap={4}
                   className={clsx([
-                    'mt-1',
-                    `w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]`,
-                    'flex items-center gap-1',
+                    'w-full text-body-1 px-1.5 leading-[20px] rounded-[2px]',
                     'text-text-2 truncate cursor-pointer',
                     'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
                   ])}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openCreateDrawer({
+                      contentProps: {
+                        initialFormData: {
+                          planDate: cellDate.format('YYYY-MM-DD'),
+                        },
+                        afterSubmit: async () => {
+                          await getTodoList();
+                        },
+                      },
+                    });
+                  }}
                 >
                   <SiteIcon id="add" className="w-3 h-3" />
                   添加待办
-                </div>
-              </CreateTodoPopover>
+                </Flex>
+              </div>
             )}
-          </>
-        )}
+        </>
       </div>
     </div>
   );

@@ -42,5 +42,5 @@ export default function BudgetTable() {
     },
   ];
 
-  return <Table columns={columns} data={budgetList} rowKey="id" />;
+  return <Table columns={columns} dataSource={budgetList} rowKey="id" />;
 }

@@ -1,4 +1,4 @@
-import { Form, Input, Checkbox, Button, Space, LockOutlined, UserOutlined } from '@sue/design-web-react';
+import { Form, Input, Checkbox, Button, Space, Flex, LockOutlined, UserOutlined } from '@sue/design-web-react';
 import { FormInstance } from '@sue/design-web-react';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -45,7 +45,7 @@ export default function LoginForm() {
     });
   }
   function onSubmitClick() {
-    formRef.current.validate().then((values) => {
+    formRef.current.validateFields().then((values) => {
       login(values);
     });
   }
@@ -72,7 +72,7 @@ export default function LoginForm() {
         initialValues={{ userName: 'admin', password: 'admin' }}>
 
         <Form.Item
-          field="userName"
+          name="userName"
           rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}>
 
           <Input
@@ -82,7 +82,7 @@ export default function LoginForm() {
 
         </Form.Item>
         <Form.Item
-          field="password"
+          name="password"
           rules={[{ required: true, message: t['login.form.password.errMsg'] }]}>
 
           <Input.Password
@@ -92,12 +92,12 @@ export default function LoginForm() {
 
         </Form.Item>
         <Space size={16} direction="vertical">
-          <div className={styles['login-form-password-actions']}>
-            <Checkbox checked={rememberPassword} onChange={setRememberPassword}>
+          <Flex justify="space-between">
+            <Checkbox checked={rememberPassword} onChange={(event) => setRememberPassword(event.target.checked)}>
               {t['login.form.rememberPassword']}
             </Checkbox>
             <a style={{ color: "var(--color-primary-6)" }}>{t['login.form.forgetPassword']}</a>
-          </div>
+          </Flex>
           <Button type="primary" long onClick={onSubmitClick} loading={loading}>
             {t['login.form.login']}
           </Button>

@@ -1,10 +1,49 @@
-import { Drawer, Popover } from '@sue/design-web-react';
-import { useState } from 'react';
-import TodoEditor, { TodoEditorProps } from './TodoEditor';
-import TodoCreatorMini, { TodoCreatorMiniProps } from './TodoCreatorMini';
-import TodoCreator, { TodoCreatorProps } from './TodoCreator';
+'use client';
 
-export { TodoEditor, TodoCreator, TodoCreatorMini };
+import { Drawer } from '@sue/design-web-react';
+import type { TodoFormData } from '@true-north/web-service';
+import type { TodoVo } from '@true-north/vo';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
+import { TodoDetailProvider } from './context';
+import TodoForm from './features/TodoForm';
+
+export type TodoEditorProps = {
+  todo: TodoVo;
+  onClose?: () => void;
+  afterSubmit: () => Promise<void>;
+};
+
+export type TodoCreatorProps = {
+  initialFormData?: Partial<TodoFormData>;
+  onClose?: () => Promise<void>;
+  afterSubmit?: () => Promise<void>;
+};
+
+export function TodoEditor(props: TodoEditorProps) {
+  return (
+    <TodoDetailProvider
+      todo={props.todo}
+      mode="editor"
+      afterSubmit={props.afterSubmit}
+    >
+      <TodoForm onClose={props.onClose} />
+    </TodoDetailProvider>
+  );
+}
+
+export function TodoCreator(props: TodoCreatorProps) {
+  return (
+    <TodoDetailProvider
+      mode="creator"
+      initialFormData={props.initialFormData}
+      afterSubmit={props.afterSubmit}
+    >
+      <TodoForm onClose={props.onClose} />
+    </TodoDetailProvider>
+  );
+}
+
+export { formatTodoPlanTime, isTodoPlanRange } from './planTime';
 
 type DrawerOptions = Omit<Parameters<typeof Drawer.open>[0], 'content'>;
 
@@ -19,7 +58,7 @@ export function useTodoDetail() {
       ...rest,
       title: '编辑待办',
       size: 800,
-      footer: null,
+      styles: drawerPaddedBodyStyles,
       content: (
         <TodoEditor
           {...contentProps}
@@ -41,7 +80,7 @@ export function useTodoDetail() {
       ...rest,
       title: '新建待办',
       size: 800,
-      footer: null,
+      styles: drawerPaddedBodyStyles,
       content: (
         <TodoCreator
           {...contentProps}
@@ -53,52 +92,8 @@ export function useTodoDetail() {
     });
   };
 
-  const [createPopoverVisible, setCreatePopoverVisible] = useState(false);
-
-  const CreatePopover = ({
-    children,
-    creatorProps,
-  }: {
-    children: React.ReactNode;
-    creatorProps: TodoCreatorMiniProps;
-  }) => {
-    return (
-      <Popover
-        trigger="click"
-        open={createPopoverVisible}
-        onOpenChange={(visible) => {
-          setCreatePopoverVisible(visible);
-        }}
-        placement="bottomLeft"
-        style={{
-          maxWidth: 'unset',
-        }}
-        content={
-          <div className="w-[400px] p-2">
-            <TodoCreatorMini
-              {...creatorProps}
-              onClose={async () => {
-                await creatorProps.onClose?.();
-                setCreatePopoverVisible(false);
-              }}
-            />
-          </div>
-        }
-      >
-        <span
-          className="cursor-pointer"
-          onClick={() => setCreatePopoverVisible(true)}
-        >
-          {children}
-        </span>
-      </Popover>
-    );
-  };
-
   return {
     openEditDrawer,
     openCreateDrawer,
-    CreatePopover,
-    createPopoverVisible,
   };
 }

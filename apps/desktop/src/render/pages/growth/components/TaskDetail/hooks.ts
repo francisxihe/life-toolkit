@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Importance } from '@true-north/enum';
-import { IMPORTANCE_MAP } from '../../constants';
+import dayjs from 'dayjs';
+import { Difficulty } from '@true-north/enum';
+import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { TaskFormData } from '@true-north/web-service';
 import { TaskVo, GoalVo } from '@true-north/vo';
 
@@ -28,14 +29,14 @@ export const useTaskFormConstraints = (
     }
 
     // 重要程度约束：子任务重要程度不能高于父任务/目标
-    const parentImportanceLevel = Object.values(Importance).indexOf(
-      parent.importance,
-    );
+    if (parent.importance === undefined) return [...IMPORTANCE_MAP.keys()];
+    return [...IMPORTANCE_MAP.keys()].filter((importance) => importance <= parent.importance!);
+  }, [parentTask, parentGoal]);
 
-    return [...IMPORTANCE_MAP.keys()].filter((importance) => {
-      const currentLevel = Object.values(Importance).indexOf(importance);
-      return currentLevel >= parentImportanceLevel; // 数值越大，重要程度越低
-    });
+  const allowedDifficulty = useMemo(() => {
+    const parent = parentTask || parentGoal;
+    if (!parent?.difficulty) return [...DIFFICULTY_MAP.keys()];
+    return [...DIFFICULTY_MAP.keys()].filter((difficulty) => difficulty <= parent.difficulty!);
   }, [parentTask, parentGoal]);
 
   function updateByConstraints(taskFormData: TaskFormData) {
@@ -48,24 +49,24 @@ export const useTaskFormConstraints = (
     if (parent.startAt && parent.endAt && taskFormData.planTimeRange) {
       const [taskStart, taskEnd] = taskFormData.planTimeRange;
       if (
-        (taskStart && taskStart < parent.startAt) ||
-        (taskEnd && taskEnd > parent.endAt)
+        (taskStart && dayjs(taskStart).isBefore(dayjs(parent.startAt))) ||
+        (taskEnd && dayjs(taskEnd).isAfter(dayjs(parent.endAt)))
       ) {
         updates.planTimeRange = [undefined, undefined];
       }
     }
 
     // 检查重要程度是否符合约束
-    const parentImportanceLevel = Object.values(Importance).indexOf(
-      parent.importance,
-    );
-
-    const currentImportanceLevel = Object.values(Importance).indexOf(
-      taskFormData.importance,
-    );
-
-    if (currentImportanceLevel < parentImportanceLevel) {
+    if (
+      parent.importance !== undefined &&
+      taskFormData.importance !== undefined &&
+      taskFormData.importance > parent.importance
+    ) {
       updates.importance = parent.importance;
+    }
+
+    if (parent.difficulty && taskFormData.difficulty && taskFormData.difficulty > parent.difficulty) {
+      updates.difficulty = parent.difficulty as Difficulty;
     }
 
     return updates;
@@ -74,6 +75,7 @@ export const useTaskFormConstraints = (
   return {
     allowedDateRange,
     allowedImportance,
+    allowedDifficulty,
     updateByConstraints,
   };
 };

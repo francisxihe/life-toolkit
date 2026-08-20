@@ -3,17 +3,17 @@ import React from 'react';
 
 interface PlayControllerProps {
   state: boolean;
-  setState: (state: boolean) => void;
+  onToggle: () => void;
   className?: string;
 }
 
 const PlayController: React.FC<PlayControllerProps> = ({
   state,
-  setState,
+  onToggle,
   className,
 }) => {
   const handleClick = () => {
-    setState(!state);
+    onToggle();
   };
 
   return (

@@ -26,10 +26,10 @@ const Setting: React.FC<SettingProps> = ({ onConfirm, className }) => {
     onConfirm(form);
   };
 
-  const handleInputChange = (value: string) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
       ...form,
-      countdown: Number(value),
+      countdown: Number(event.target.value),
     });
   };
 
@@ -42,7 +42,7 @@ const Setting: React.FC<SettingProps> = ({ onConfirm, className }) => {
       />
       <Modal
         title="基本设置"
-        visible={settingVisible}
+        open={settingVisible}
         onOk={onOkModal}
         onCancel={() => setSettingVisible(false)}
       >

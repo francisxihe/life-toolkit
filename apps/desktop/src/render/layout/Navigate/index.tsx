@@ -107,7 +107,8 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
 
   const [selectedKeys, setSelectedKeys] =
     useState<string[]>(defaultSelectedKeys);
-  const [openKeys, setOpenKeys] = useState<string[]>(defaultOpenKeys);
+  const [inlineOpenKeys, setInlineOpenKeys] = useState<string[]>(defaultOpenKeys);
+  const [popupOpenKeys, setPopupOpenKeys] = useState<string[]>([]);
 
   const menuItems = useMemo(() => {
     routeMap.current.clear();
@@ -182,11 +183,14 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
     const matchingKey = findMatchingMenuKey(pathname);
     const newSelectedKeys = [matchingKey];
 
-    // 构建需要展开的父级菜单
-    const newOpenKeys = buildDefaultOpenKeys(matchingKey);
-
     setSelectedKeys(newSelectedKeys);
-    setOpenKeys([...new Set([...openKeys, ...newOpenKeys])]);
+    if (!collapsed) {
+      // 构建需要展开的父级菜单
+      const newOpenKeys = buildDefaultOpenKeys(matchingKey);
+      setInlineOpenKeys((currentKeys) => [
+        ...new Set([...currentKeys, ...newOpenKeys]),
+      ]);
+    }
   }
 
   useEffect(() => {
@@ -200,13 +204,22 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
       mode="inline"
       inlineCollapsed={collapsed}
       items={menuItems}
+      triggerSubMenuAction="click"
       onClick={({ key }) => {
+        if (collapsed) {
+          setPopupOpenKeys([]);
+        }
         to(String(key));
       }}
       selectedKeys={selectedKeys}
-      openKeys={openKeys}
+      openKeys={collapsed ? popupOpenKeys : inlineOpenKeys}
       onOpenChange={(keys) => {
-        setOpenKeys(keys as string[]);
+        const nextKeys = keys as string[];
+        if (collapsed) {
+          setPopupOpenKeys(nextKeys);
+          return;
+        }
+        setInlineOpenKeys(nextKeys);
       }}
     />
   );

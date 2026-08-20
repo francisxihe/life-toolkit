@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
   Button,
+  Drawer,
+  Flex,
   Space,
   Tag,
   Progress,
@@ -21,12 +23,16 @@ import {
   LeftOutlined,
 } from '@sue/design-web-react';
 import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
-import { HabitService } from '@true-north/web-service';
+import { HabitService, TodoController, GoalController } from '@true-north/web-service';
 import { HabitVo } from '@true-north/vo';
 import { HABIT_STATUS_OPTIONS } from './constants';
 import { useHabitContext } from './context';
-import { HabitStatus } from '@true-north/enum';
+import { HabitStatus, TodoRelatedType } from '@true-north/enum';
 import { DIFFICULTY_MAP } from '../constants';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
+import { CreateHabit } from './components/CreateHabit';
+import { emitHabitChanged } from '../events';
+import styles from './style.module.less';
 
 export const HabitDetailPage: React.FC = () => {
   const { id } = useParams<{id: string;}>();
@@ -43,7 +49,7 @@ export const HabitDetailPage: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await HabitService.getHabitDetail(id);
+      const response = await HabitService.find(id);
       setHabit(response);
     } catch (error) {
       console.error('获取习惯详情失败:', error);
@@ -67,11 +73,20 @@ export const HabitDetailPage: React.FC = () => {
 
         switch (action) {
           case 'complete':
-            await HabitService.doneBatchHabit({ includeIds: [habit.id] });
-            message.success('习惯已完成');
+            if (!habit.cycleTodoId) throw new Error('当前没有可结算的习惯待办');
+            await TodoController.done(TodoRelatedType.HABIT, habit.cycleTodoId);
+            message.success('本次打卡已完成');
+            break;
+          case 'pause':
+            await HabitService.pause(habit.id);
+            message.success('习惯已暂停');
+            break;
+          case 'resume':
+            await HabitService.activate(habit.id);
+            message.success('习惯已开始');
             break;
           case 'abandon':
-            await HabitService.abandonHabit(habit.id);
+            await HabitService.abandon(habit.id);
             message.success('习惯已放弃');
             break;
           default:
@@ -80,6 +95,7 @@ export const HabitDetailPage: React.FC = () => {
 
         fetchHabitDetail();
         refreshHabits();
+        emitHabitChanged();
       } catch (error) {
         console.error(`${action}习惯失败:`, error);
         message.error(`${action}习惯失败`);
@@ -99,10 +115,11 @@ export const HabitDetailPage: React.FC = () => {
       content: '删除后无法恢复，确定要删除这个习惯吗？',
       onOk: async () => {
         try {
-          await HabitService.deleteHabit(habit.id);
+          await HabitService.delete(habit.id);
           message.success('习惯已删除');
-          navigate('/growth/habits');
+          navigate('/growth/habit/habit-list');
           refreshHabits();
+          emitHabitChanged();
         } catch (error) {
           console.error('删除习惯失败:', error);
           message.error('删除习惯失败');
@@ -110,6 +127,33 @@ export const HabitDetailPage: React.FC = () => {
       }
     });
   }, [habit, navigate, refreshHabits]);
+
+  const handleEdit = useCallback(async () => {
+    if (!habit) return;
+    try {
+      const response = await GoalController.findByFilter({});
+      const instance = Drawer.open({
+        title: '编辑习惯',
+        size: 800,
+        styles: drawerPaddedBodyStyles,
+        content: (
+          <CreateHabit
+            habit={habit}
+            goals={response.list}
+            onSuccess={async () => {
+              await fetchHabitDetail();
+              refreshHabits();
+              instance.destroy();
+            }}
+            onCancel={() => instance.destroy()}
+          />
+        ),
+      });
+    } catch (error) {
+      console.error('获取目标列表失败:', error);
+      message.error('无法打开习惯编辑');
+    }
+  }, [fetchHabitDetail, habit, refreshHabits]);
 
   // 获取状态配置
   const statusConfig = habit ?
@@ -129,29 +173,29 @@ export const HabitDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <Flex align="center" justify="center" className={styles.loading}>
         <Spin size={40} />
-      </div>);
-
+      </Flex>
+    );
   }
 
   if (!habit) {
     return (
-      <div className="text-center py-8">
+      <Flex align="center" justify="center" className={styles.emptyState}>
         <span>习惯不存在或已被删除</span>
-      </div>);
-
+      </Flex>
+    );
   }
 
   return (
-    <div className="habit-detail-page">
+    <div className={styles.legacyPage}>
       {/* 页面头部 */}
       <Card className="mb-4">
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-4">
             <Button
               icon={<LeftOutlined />}
-              onClick={() => navigate('/growth/habits')}>
+              onClick={() => navigate('/growth/habit/habit-list')}>
 
               返回
             </Button>
@@ -193,7 +237,7 @@ export const HabitDetailPage: React.FC = () => {
               </>
             }
 
-            {habit.status === HabitStatus.PAUSED &&
+            {(habit.status === HabitStatus.ABANDONED || habit.status === HabitStatus.PAUSED) &&
             <Button
               type="primary"
               icon={<CaretRightOutlined />}
@@ -215,10 +259,10 @@ export const HabitDetailPage: React.FC = () => {
               </Button>
             }
 
-            <Button icon={<EditOutlined />}>编辑</Button>
+            <Button icon={<EditOutlined />} onClick={handleEdit}>编辑</Button>
             <Button
               type="primary"
-              status="danger"
+              danger
               icon={<DeleteOutlined />}
               onClick={handleDelete}>
 
@@ -276,17 +320,17 @@ export const HabitDetailPage: React.FC = () => {
 
                   },
                   {
-                    key: 'startAt',
+                    key: 'repeatStartDate',
                     label: '开始时间',
-                    children: habit.startAt ?
-                    new Date(habit.startAt).toLocaleDateString() :
+                    children: habit.repeatStartDate ?
+                    new Date(habit.repeatStartDate).toLocaleDateString() :
                     '-'
                   },
                   {
-                    key: 'endAt',
+                    key: 'repeatEndDate',
                     label: '目标时间',
-                    children: habit.endAt ?
-                    new Date(habit.endAt).toLocaleDateString() :
+                    children: habit.repeatEndDate ?
+                    new Date(habit.repeatEndDate).toLocaleDateString() :
                     '长期习惯'
                   },
                   {
@@ -413,16 +457,16 @@ export const HabitDetailPage: React.FC = () => {
 
             {/* 时间信息 */}
             <div className="space-y-2 text-sm">
-              {habit.startAt &&
+              {habit.repeatStartDate &&
               <div className="flex justify-between">
                   <span className="text-text-3">开始时间:</span>
-                  <span>{new Date(habit.startAt).toLocaleDateString()}</span>
+                  <span>{new Date(habit.repeatStartDate).toLocaleDateString()}</span>
                 </div>
               }
-              {habit.endAt &&
+              {habit.repeatEndDate &&
               <div className="flex justify-between">
                   <span className="text-text-3">目标时间:</span>
-                  <span>{new Date(habit.endAt).toLocaleDateString()}</span>
+                  <span>{new Date(habit.repeatEndDate).toLocaleDateString()}</span>
                 </div>
               }
               {habit.doneAt &&

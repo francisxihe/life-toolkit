@@ -42,7 +42,13 @@ export class ASTParser {
   parse(code: string, filePath: string): ASTClassInfo {
     const sourceFile = this.project.createSourceFile(filePath, code, { overwrite: true });
 
-    const classDeclaration = sourceFile.getClasses()[0];
+    const classes = sourceFile.getClasses();
+    const classDeclaration = filePath.includes('model.dto.ts')
+      ? classes.find((item) => {
+          const name = item.getName() || '';
+          return name.endsWith('Dto') && !name.includes('WithoutRelations');
+        }) || classes[0]
+      : classes[0];
     if (!classDeclaration) {
       throw new Error(`No class found in ${filePath}`);
     }
@@ -86,7 +92,7 @@ export class ASTParser {
   private parseProperties(properties: PropertyDeclaration[]): ASTProperty[] {
     return properties.map((property) => ({
       name: property.getName(),
-      type: property.getType().getText(),
+      type: property.getTypeNode()?.getText() || property.getType().getText(),
       optional: property.hasQuestionToken(),
       decorators: this.parseDecorators(property.getDecorators()),
       sourceLocation: this.getSourceLocation(property),

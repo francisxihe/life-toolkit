@@ -15,11 +15,6 @@ export const habitRoutes: IRoute = {
       key: 'habit-detail',
       breadcrumb: true,
     },
-    {
-      name: 'menu.habit.statistics',
-      key: 'habit-statistics',
-      breadcrumb: true,
-    },
   ],
 };
 

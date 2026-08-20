@@ -1,5 +1,5 @@
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
-import { MinusCircleOutlined, ReloadOutlined } from '@sue/design-web-react';
+import { Flex, MinusCircleOutlined, ReloadOutlined } from '@sue/design-web-react';
 import Countdown from './Countdown';
 import Flip from './Flip';
 import { getTimeArr } from '../utils';
@@ -14,7 +14,6 @@ const NormalTimer: React.FC = () => {
   const {
     countdown,
     clockState,
-    setClockState,
     clockRefresh,
     setClockRefresh,
     toggleMiniMode,
@@ -22,23 +21,29 @@ const NormalTimer: React.FC = () => {
     toggleFullscreen,
     handleRefresh,
     onConfirmSetting,
+    relatedTaskId,
+    toggleFocus,
+    completeFocus,
+    finishFocus,
   } = useTimerContext();
 
   return (
     <>
-      <div className={styles['clock']}>
+      <Flex className={styles['clock']} justify="center" align="center">
+        {relatedTaskId && <div className="text-white text-center mb-2">关联任务：{relatedTaskId}</div>}
         <Countdown
           refresh={clockRefresh}
           setRefresh={setClockRefresh}
           countdown={countdown}
           state={clockState}
+          onComplete={completeFocus}
         />
-      </div>
+      </Flex>
       <div className={styles['actions']}>
         <PlayController
           className={clsx(styles['action'], 'action-play')}
           state={clockState}
-          setState={setClockState}
+          onToggle={toggleFocus}
         />
         <ReloadOutlined
           className={clsx(styles['action'], 'action-reload')}
@@ -67,6 +72,9 @@ const NormalTimer: React.FC = () => {
           onClick={toggleMiniMode}
           style={{ color: '#fff', fontSize: '30px' }}
         />
+        <button type="button" className={styles['record-button']} onClick={finishFocus}>
+          结束并记录
+        </button>
       </div>
     </>
   );

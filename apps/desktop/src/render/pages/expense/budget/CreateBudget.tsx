@@ -1,7 +1,6 @@
-import { Form, Input, Select, Space, Button, InputNumber, DatePicker } from '@sue/design-web-react';
+import { Form, Input, Select, Space, Button, InputNumber, DatePicker, Modal } from '@sue/design-web-react';
 import { BUDGET_PERIODS, DEFAULT_CATEGORIES } from '../constants';
 import { useState, useRef } from 'react';
-import { openModal } from '@/hooks/OpenModal';
 import { CreateBudgetVo } from '@true-north/vo';
 import dayjs from 'dayjs';
 
@@ -29,7 +28,7 @@ function CreateBudget({
         onChange({ ...changedValues });
       }}
     >
-      <FormItem label="类别" required field={'category'}>
+      <FormItem label="类别" required name={'category'}>
         <Select
           placeholder="Select category"
           options={Object.entries(DEFAULT_CATEGORIES)
@@ -41,11 +40,11 @@ function CreateBudget({
         ></Select>
       </FormItem>
 
-      <FormItem label="金额" required field={'amount'}>
+      <FormItem label="金额" required name={'amount'}>
         <InputNumber step={1} placeholder="Enter amount" />
       </FormItem>
 
-      <FormItem label="周期" required field={'period'}>
+      <FormItem label="周期" required name={'period'}>
         <Select
           placeholder="Select period"
           options={Object.entries(BUDGET_PERIODS).map(([key, label]) => ({
@@ -55,11 +54,11 @@ function CreateBudget({
         ></Select>
       </FormItem>
 
-      <FormItem label="开始日期" required field={'startDate'}>
+      <FormItem label="开始日期" required name={'startDate'}>
         <DatePicker allowClear showTime format="YYYY-MM-DD HH:mm:ss" />
       </FormItem>
 
-      <FormItem label="结束日期" required field={'endDate'}>
+      <FormItem label="结束日期" required name={'endDate'}>
         <DatePicker allowClear showTime format="YYYY-MM-DD HH:mm:ss" />
       </FormItem>
     </Form>
@@ -83,7 +82,9 @@ export function useCreateBudget({
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;
-    openModal({
+    Modal.confirm({
+      icon: null,
+      closable: true,
       title: <div className="text-body-3">添加预算</div>,
       content: (
         <CreateBudget

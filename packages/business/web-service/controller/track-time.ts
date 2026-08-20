@@ -22,7 +22,7 @@ export default class TrackTimeController {
   }
 
   static async findOne(id: string) {
-    return request<TrackTimeVO.TrackTimeVo | null>({ method: 'get' })(`/trackTime/detail/${id}`);
+    return request<TrackTimeVO.TrackTimeVo | null>({ method: 'get' })(`/trackTime/find/${id}`);
   }
 
   static async findByRelatedId(relatedType: string, relatedId: string) {

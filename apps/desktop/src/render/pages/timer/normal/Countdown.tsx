@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Flex } from '@sue/design-web-react';
 import FlipItem from './Flip';
 import { getTimeArr } from '../utils';
 import styles from './style.module.less';
@@ -8,6 +9,7 @@ interface CountdownProps {
   state: boolean;
   refresh: boolean;
   setRefresh: (refresh: boolean) => void;
+  onComplete: () => void;
 }
 
 const Countdown: React.FC<CountdownProps> = ({
@@ -15,6 +17,7 @@ const Countdown: React.FC<CountdownProps> = ({
   state,
   refresh,
   setRefresh,
+  onComplete,
 }) => {
   const [nCountdown, setNCountdown] = useState<number>(countdown);
   const [timeArr, setTimeArr] = useState<number[]>(getTimeArr(countdown));
@@ -45,6 +48,7 @@ const Countdown: React.FC<CountdownProps> = ({
         setNCountdown(0);
         setTimeArr(getTimeArr(0));
         timeHandleRef.current = null;
+        onComplete();
         return;
       }
 
@@ -62,12 +66,13 @@ const Countdown: React.FC<CountdownProps> = ({
           tick(); // 递归调用
         } else {
           timeHandleRef.current = null;
+          onComplete();
         }
       }, 1000);
     };
 
     tick();
-  }, []);
+  }, [onComplete]);
 
   const handleLoadClock = useCallback(() => {
     setNCountdown(countdown);
@@ -102,16 +107,16 @@ const Countdown: React.FC<CountdownProps> = ({
   }, [stopTimer]);
 
   return (
-    <div className={styles['clock-container']}>
+    <Flex align="center">
       <FlipItem total={9} current={timeArr[0]} />
       <FlipItem total={9} current={timeArr[1]} />
-      <div className={styles['colon']}></div>
+      <Flex vertical justify="space-around" className={styles['colon']} />
       <FlipItem total={5} current={timeArr[2]} />
       <FlipItem total={9} current={timeArr[3]} />
-      <div className={styles['colon']}></div>
+      <Flex vertical justify="space-around" className={styles['colon']} />
       <FlipItem total={5} current={timeArr[4]} />
       <FlipItem total={9} current={timeArr[5]} />
-    </div>
+    </Flex>
   );
 };
 

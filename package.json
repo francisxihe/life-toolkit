@@ -2,9 +2,9 @@
   "name": "true-north",
   "description": "知止",
   "private": true,
-  "packageManager": "pnpm@9.7.0",
+  "packageManager": "pnpm@11.18.0",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "workspaces": [
     "apps/*",
@@ -38,17 +38,5 @@
     "ts-jest": "^29.1.0",
     "turbo": "^2.0.1",
     "typescript": "^5.1.3"
-  },
-  "pnpm": {
-    "overrides": {
-      "@types/node": "22.13.0",
-      "vite": "5.4.15",
-      "@sue/design-web-react>dayjs": "^1.11.13",
-      "@sue/design-web-react>@ant-design/colors": "^8.0.1",
-      "@sue/design-web-react>@ant-design/fast-color": "^3.0.1"
-    },
-    "patchedDependencies": {
-      "fe-selector@0.1.0": "patches/fe-selector@0.1.0.patch"
-    }
   }
 }

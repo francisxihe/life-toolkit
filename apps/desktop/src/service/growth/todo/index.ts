@@ -3,6 +3,7 @@ export * from './todo.entity';
 export * from './todo.repository';
 export * from './todo.service';
 export * from './todo.route-controller';
+export * from './todo-related';
 export * from './todo-repeat.entity';
 export * from './todo-repeat.repository';
 export * from './todo-repeat.service';

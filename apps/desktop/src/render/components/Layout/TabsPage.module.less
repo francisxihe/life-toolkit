@@ -1,0 +1,57 @@
+.page {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--sue-color-border-secondary);
+  border-radius: var(--sue-border-radius);
+  background: var(--sue-color-bg-container);
+}
+
+.tabBar {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 0 20px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+  background: var(--sue-color-bg-container);
+}
+
+.tabs {
+  min-width: 0;
+  height: 56px;
+  overflow-x: auto;
+}
+
+.tab {
+  position: relative;
+  height: 56px;
+  padding: 0 10px;
+  color: var(--sue-color-text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap;
+  transition: color .2s ease;
+}
+
+.tab:hover { color: var(--sue-color-primary); }
+
+.tabActive {
+  color: var(--sue-color-primary);
+  cursor: default;
+  font-weight: 600;
+}
+
+.tabActive::after {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  left: 10px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--sue-color-primary);
+  content: '';
+}
+
+.content {
+  background: var(--sue-color-bg-container);
+}

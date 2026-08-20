@@ -11,7 +11,7 @@ function IconButton(props, ref) {
       ref={ref}
       icon={icon}
       shape="circle"
-      type="secondary"
+      type="default"
       className={cs(styles['icon-button'], className)}
       {...rest}
     />

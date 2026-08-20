@@ -6,7 +6,6 @@ import cs from 'clsx';
 import { useSelector } from 'react-redux';
 import Navbar from '../components/NavBar';
 import useLocale from '../utils/useLocale';
-import getUrlParams from '../utils/getUrlParams';
 import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
@@ -17,23 +16,17 @@ import { RouterContext } from '@/router/useRouter';
 
 function PageLayout() {
   useContext(RouterContext);
-  const urlParams = getUrlParams();
   const location = useLocation();
   const pathname = location.pathname;
   const locale = useLocale();
-  const { settings, userLoading } = useSelector((state: GlobalState) => state);
+  const { userLoading } = useSelector((state: GlobalState) => state);
 
   const [breadcrumb, setBreadCrumb] = useState([]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const routeMap = useRef<Map<string, React.ReactNode[]>>(new Map());
 
-  const navbarHeight = 60;
-  const menuWidth = collapsed ? 48 : settings.menuWidth;
-
-  const showNavbar = settings.navbar && urlParams.navbar !== false;
-  const showMenu = settings.menu && urlParams.menu !== false;
-  const showFooter = settings.footer && urlParams.footer !== false;
+  const menuWidth = collapsed ? 48 : 220;
 
   function toggleCollapse() {
     setCollapsed((collapsed) => !collapsed);
@@ -46,43 +39,38 @@ function PageLayout() {
 
   return (
     <Flex vertical container="full">
-      <Flex
-        container="fixed"
-        className={cs('w-full', styles['layout-navbar'], {
-          [styles['layout-navbar-hidden']]: !showNavbar,
-        })}
-      >
-        <Navbar show={showNavbar} />
+      <Flex container="fixed" className={cs('w-full', styles['layout-navbar'])}>
+        <Navbar />
       </Flex>
       <Flex container="fill">
         {userLoading ? (
           <Spin className={styles['spin']} />
         ) : (
           <>
-            {showMenu && (
-              <Flex container="fixed" className="h-full">
-                <Aside
-                  theme="light"
-                  className={styles['layout-sider']}
-                  width={menuWidth}
-                  collapsed={collapsed}
-                  onCollapse={setCollapsed}
-                  trigger={null}
-                  collapsible
-                  breakpoint="xl"
+            <Flex container="fixed" className="h-full">
+              <Aside
+                theme="light"
+                className={styles['layout-sider']}
+                width={menuWidth}
+                collapsed={collapsed}
+                onCollapse={setCollapsed}
+                trigger={null}
+                collapsible
+                breakpoint="xl"
+              >
+                <div className={styles['menu-wrapper']}>
+                  <Navigate collapsed={collapsed} locale={locale} />
+                </div>
+                <Flex
+                  className={styles['collapse-btn']}
+                  align="center"
+                  justify="center"
+                  onClick={toggleCollapse}
                 >
-                  <div className={styles['menu-wrapper']}>
-                    <Navigate collapsed={collapsed} locale={locale} />
-                  </div>
-                  <div
-                    className={styles['collapse-btn']}
-                    onClick={toggleCollapse}
-                  >
-                    {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                  </div>
-                </Aside>
-              </Flex>
-            )}
+                  {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                </Flex>
+              </Aside>
+            </Flex>
             <Flex
               container="fill"
               vertical
@@ -93,19 +81,17 @@ function PageLayout() {
                   container="fixed"
                   className={cs('w-full', styles['layout-breadcrumb'])}
                 >
-                  <Breadcrumb>
-                    {breadcrumb.map((node, index) => (
-                      <Breadcrumb.Item key={index}>
-                        {typeof node === 'string' ? locale[node] || node : node}
-                      </Breadcrumb.Item>
-                    ))}
-                  </Breadcrumb>
+                  <Breadcrumb
+                    items={breadcrumb.map((node, index) => ({
+                      key: index,
+                      title: typeof node === 'string' ? locale[node] || node : node,
+                    }))}
+                  />
                 </Flex>
               )}
               <Flex container="fill" className="overflow-y-auto">
                 <Outlet />
               </Flex>
-              {/* {showFooter && <Footer />} */}
             </Flex>
           </>
         )}

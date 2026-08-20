@@ -24,14 +24,13 @@ export type TagProps =
 export function TagEditor({ value, multiple = true, onChange }: TagProps) {
   return (
     <Select
-      mode={multiple ? 'multiple' : undefined}
+      mode={multiple ? 'tags' : undefined}
       maxTagCount={multiple ? 'responsive' : undefined}
       placeholder={'添加标签'}
       defaultValue={value}
       onChange={(e) => onChange(e)}
       options={options}
       allowClear
-      allowCreate
     ></Select>
   );
 }

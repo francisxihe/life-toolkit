@@ -268,13 +268,13 @@ export class TargetWebServiceComposer {
     // 生成成功消息（如果需要）
     if (this.needsSuccessMessage(method)) {
       lines.push('  if (!options?.silent) {');
-      lines.push(`    message.success('${this.getSuccessMessage(method)}');`);
+      lines.push(`    Message.success('${this.getSuccessMessage(method)}');`);
       lines.push('  }');
     }
 
     lines.push('  return res;');
     lines.push('} catch (error: unknown) {');
-    lines.push('  message.error(error);');
+    lines.push('  Message.error(error);');
     lines.push('}');
 
     return lines.join('\n');

@@ -131,4 +131,24 @@ export default class HabitService {
       Message.error(error);
     }
   }
+
+  static async pause(id: string, options?: MethodOptions) {
+    try {
+      const res = await HabitController.pause(id);
+      if (!options?.silent) Message.success('习惯已暂停');
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+    }
+  }
+
+  static async activate(id: string, options?: MethodOptions) {
+    try {
+      const res = await HabitController.activate(id);
+      if (!options?.silent) Message.success('习惯已开始');
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+    }
+  }
 }

@@ -72,7 +72,7 @@ export const setupInteractions = (graph: Graph) => {
     })
   );
 
-  // 滚动画布插件
+  // 滚动画布：保留 autoResize 以适配负坐标内容；视口尺寸由外层 host ResizeObserver 驱动，避免监听 scroller 内部导致放大循环
   graph.use(
     new Scroller({
       enabled: true,
@@ -89,18 +89,5 @@ export const setupInteractions = (graph: Graph) => {
   // 设置画布交互
   graph.on('blank:click', () => {
     graph.cleanSelection();
-  });
-
-  // 允许通过滚轮缩放
-  graph.on('mousewheel', e => {
-    if (e.originalEvent?.ctrlKey || e.originalEvent?.metaKey) {
-      const delta = e.originalEvent.deltaY;
-      if (delta > 0) {
-        graph.zoom(-0.1);
-      } else {
-        graph.zoom(0.1);
-      }
-      e.originalEvent.preventDefault();
-    }
   });
 };

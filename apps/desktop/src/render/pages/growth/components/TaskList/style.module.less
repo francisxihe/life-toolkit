@@ -1,3 +1,100 @@
+.list {
+  width: 100%;
+}
+
+.taskItem {
+  width: 100%;
+  min-height: 64px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.taskItem:last-child {
+  border-bottom: 0;
+}
+
+.row {
+  min-width: 0;
+  padding: 10px 4px;
+}
+
+.statusIndicator {
+  width: 3px;
+  height: 28px;
+  flex: 0 0 3px;
+  border-radius: var(--sue-border-radius-sm);
+  background: var(--sue-color-primary);
+}
+
+.statusDone {
+  background: var(--sue-color-success);
+}
+
+.statusAbandoned {
+  background: var(--sue-color-text-quaternary);
+}
+
+.done,
+.abandoned {
+  opacity: 0.58;
+}
+
+.executionContent {
+  min-width: 0;
+  flex: 1 1 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.title,
+.executionMeta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.title {
+  color: var(--sue-color-text);
+  font-weight: 500;
+}
+
+.executionMeta {
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+}
+
+.executionActions {
+  flex: 0 0 auto;
+}
+
+.menu {
+  width: 160px;
+  padding: 4px;
+}
+
+.menuItem {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: var(--sue-border-radius-sm);
+  cursor: pointer;
+  line-height: 34px;
+}
+
+.menuItem:hover {
+  background: var(--sue-color-fill-tertiary);
+}
+
+.moreButton {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  color: var(--sue-color-text-secondary) !important;
+}
+
 .custom-checkbox-wrapper {
   :global(.sue-checkbox-checked .sue-checkbox-mask) {
     background-color: var(--color-fill-2) !important;

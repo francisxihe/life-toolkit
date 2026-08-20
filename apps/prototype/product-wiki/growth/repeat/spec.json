@@ -1,0 +1,107 @@
+{
+  "id": "growth.repeat",
+  "kind": "module",
+  "title": "重复规则",
+  "document": "growth/repeat/README.md",
+  "parentId": "growth",
+  "positioning": "为习惯和独立待办提供可验证、可计算、可终止的统一日历重复规则。",
+  "dependencies": [],
+  "entities": [
+    {
+      "id": "repeat-rule",
+      "name": "重复规则",
+      "fields": [
+        {
+          "id": "repeatStartDate",
+          "name": "开始日期",
+          "type": "date",
+          "required": true,
+          "description": "规则开始生效的本地日历日期。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "repeatMode",
+          "name": "重复模式",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "none",
+            "daily",
+            "weekly",
+            "monthly",
+            "yearly",
+            "weekdays",
+            "weekend",
+            "workdays",
+            "restDay",
+            "custom"
+          ],
+          "description": "定义日历匹配和下一次日期的计算方式。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "repeatEndMode",
+          "name": "结束条件",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "forever",
+            "forTimes",
+            "toDate"
+          ],
+          "description": "永久重复、限定总实例次数或截至指定日期。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "rules": [
+    {
+      "id": "valid-configuration",
+      "name": "配置有效性",
+      "entities": [
+        "repeat-rule"
+      ],
+      "description": "模式所需配置必须完整；习惯不允许不重复，待办选择不重复时作为一次性事项。",
+      "reference": "growth.repeat.rule.valid-configuration",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "template-lifecycle",
+      "name": "模板推进",
+      "entities": [
+        "repeat-rule"
+      ],
+      "description": "周期待办只维护当前实例，结算或逾期后推进；终止条件满足时停止生成。",
+      "reference": "growth.repeat.rule.template-lifecycle",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.repeat.overview",
+      "heading": "## 目标与价值"
+    },
+    {
+      "id": "growth.repeat.interaction",
+      "heading": "## 配置与交互"
+    },
+    {
+      "id": "growth.repeat.rule.valid-configuration",
+      "heading": "## 配置有效性"
+    },
+    {
+      "id": "growth.repeat.rule.template-lifecycle",
+      "heading": "## 模板推进"
+    }
+  ],
+  "productStatus": "roadmap",
+  "prototypeCoverage": "complete"
+}

@@ -1,63 +1,41 @@
-import { Repository } from 'typeorm';
-import { BaseService } from '../base.service';
+import { BaseRepository } from '../db/base.repository.impl';
 import { User } from './user.entity';
-import { AppDataSource } from '../database.config';
+import { AppDataSource } from '../db/database.config';
 
-export class UserService extends BaseService<User> {
+type UserFilter = { username?: string; name?: string; keyword?: string };
+
+export class UserService extends BaseRepository<User, UserFilter> {
   constructor() {
-    super(AppDataSource.getRepository(User));
+    super(AppDataSource.getRepository(User), () => this.repo.createQueryBuilder('user'));
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return await this.repository.findOne({
+    return await this.repo.findOne({
       where: { username },
     });
   }
 
   async createUser(userData: { username: string; password: string; name?: string }): Promise<User> {
-    return await this.create(userData);
+    return await this.create(Object.assign(new User(), userData));
   }
 
   async updatePassword(id: string, newPassword: string): Promise<void> {
-    await this.update(id, { password: newPassword });
+    await this.update(Object.assign(new User(), { id, password: newPassword }));
   }
 
   async isUsernameExists(username: string): Promise<boolean> {
-    const count = await this.repository.count({
+    const count = await this.repo.count({
       where: { username },
     });
     return count > 0;
   }
 
-  async page(
-    pageNum: number,
-    pageSize: number
-  ): Promise<{
-    data: User[];
-    total: number;
-    pageNum: number;
-    pageSize: number;
-  }> {
-    const [data, total] = await this.repository.findAndCount({
-      skip: (pageNum - 1) * pageSize,
-      take: pageSize,
-      order: { createdAt: 'DESC' },
-    });
-
-    return {
-      data,
-      total,
-      pageNum,
-      pageSize,
-    };
-  }
-
   async list(filter?: { username?: string; name?: string; keyword?: string }): Promise<User[]> {
     if (!filter) {
-      return await this.findByFilter();
+      return await this.findByFilter({});
     }
 
-    const queryBuilder = this.repository.createQueryBuilder('user');
+    const queryBuilder = this.repo.createQueryBuilder('user');
 
     if (filter.username) {
       queryBuilder.andWhere('user.username LIKE :username', { username: `%${filter.username}%` });
@@ -74,6 +52,14 @@ export class UserService extends BaseService<User> {
     }
 
     return await queryBuilder.orderBy('user.createdAt', 'DESC').getMany();
+  }
+
+  async findWithRelations(id: string): Promise<User> {
+    return this.find(id);
+  }
+
+  async findByFilter(filter: UserFilter = {}): Promise<User[]> {
+    return this.list(filter);
   }
 }
 

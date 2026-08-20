@@ -29,7 +29,7 @@
     "lint": "npm run eslint && npm run stylelint"
   },
   "dependencies": {
-    "@sue/design-web-react": "0.0.3-beta",
+    "@sue/design-web-react": "0.0.3-beta.1",
     "@true-north/enum": "workspace:*",
     "@true-north/vo": "workspace:*",
     "axios": "^0.24.0",

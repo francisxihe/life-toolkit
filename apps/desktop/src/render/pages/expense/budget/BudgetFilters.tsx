@@ -12,7 +12,7 @@ export default function BudgetFilters() {
   const { filters, setFilters } = useExpenses();
   const [date, setDate] = useState<Date | undefined>(filters.dateRange.from);
 
-  const handleDateSelect = (dateString: string, date: Date | undefined) => {
+  const handleDateSelect = (date: Date | undefined) => {
     setDate(date);
     if (date) {
       setFilters({
@@ -47,8 +47,8 @@ export default function BudgetFilters() {
           <DatePicker
             className="w-[200px]"
             value={date}
-            onChange={(dateString: string, date: Dayjs) => {
-              handleDateSelect(dateString, date?.toDate());
+            onChange={(date: Dayjs) => {
+              handleDateSelect(date?.toDate());
             }}
             placeholder="Pick a date"
             prefix={<CalendarOutlined />}

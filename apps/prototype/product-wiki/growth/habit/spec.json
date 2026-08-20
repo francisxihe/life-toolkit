@@ -1,0 +1,165 @@
+{
+  "id": "growth.habit",
+  "kind": "module",
+  "title": "习惯管理",
+  "document": "growth/habit/README.md",
+  "parentId": "growth",
+  "route": "/growth/habit",
+  "positioning": "以目标为约束的养成中心，使用周期待办和二值打卡形成反馈闭环。",
+  "dependencies": [
+    "growth.goal",
+    "growth.todo",
+    "growth.repeat"
+  ],
+  "entities": [
+    {
+      "id": "habit",
+      "name": "习惯",
+      "fields": [
+        {
+          "id": "goalIds",
+          "name": "关联目标",
+          "type": "reference[]",
+          "required": true,
+          "description": "习惯至少关联一个活跃目标。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "status",
+          "name": "状态",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "active",
+            "paused",
+            "completed",
+            "abandoned"
+          ],
+          "description": "开始、暂停、放弃由用户设置；完成仅在执行规则结束时由系统写入。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "repeat",
+          "name": "重复规则",
+          "type": "object",
+          "required": true,
+          "description": "使用统一重复规则定义开始日期、周期、配置和结束条件；习惯不可选择不重复。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "cycleTodo",
+          "name": "周期待办",
+          "type": "reference",
+          "required": true,
+          "description": "活跃习惯维护一个当前周期待办；完成、确认未完成或逾期后自动安排下一次，规则结束时自动完成习惯。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "views": [
+    {
+      "id": "list",
+      "name": "习惯列表",
+      "prototypePage": "habit",
+      "scenario": "日常打卡与进度查看",
+      "reference": "growth.habit.view.list",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
+    },
+    {
+      "id": "detail",
+      "name": "习惯详情",
+      "prototypePage": "habit",
+      "scenario": "查看关联目标和日志",
+      "reference": "growth.habit.view.detail",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
+    },
+    {
+      "id": "statistics",
+      "name": "习惯统计",
+      "prototypePage": "habit",
+      "scenario": "复盘完成率与连续执行情况",
+      "reference": "growth.habit.view.statistics",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none"
+    },
+    {
+      "id": "calendar",
+      "name": "打卡日历",
+      "prototypePage": "habit",
+      "scenario": "观察习惯完成密度",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "reference": "growth.habit.view.calendar"
+    }
+  ],
+  "rules": [
+    {
+      "id": "goal-required",
+      "name": "目标必填",
+      "entities": [
+        "habit"
+      ],
+      "description": "每个习惯至少关联一个活跃目标。",
+      "views": [
+        "list",
+        "detail"
+      ],
+      "reference": "growth.habit.rule.goal-required",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.habit.overview",
+      "heading": "## 目标与价值"
+    },
+    {
+      "id": "growth.habit.structure",
+      "heading": "## 业务流程"
+    },
+    {
+      "id": "growth.habit.view.list",
+      "heading": "### 习惯列表"
+    },
+    {
+      "id": "growth.habit.view.detail",
+      "heading": "### 习惯详情"
+    },
+    {
+      "id": "growth.habit.view.statistics",
+      "heading": "### 习惯统计"
+    },
+    {
+      "id": "growth.habit.view.calendar",
+      "heading": "### 打卡日历"
+    },
+    {
+      "id": "growth.habit.interaction",
+      "heading": "## 交互语义"
+    },
+    {
+      "id": "growth.habit.rules",
+      "heading": "## 业务规则"
+    },
+    {
+      "id": "growth.habit.rule.goal-required",
+      "heading": "### 目标必填"
+    },
+    {
+      "id": "growth.habit.metrics",
+      "heading": "## 复盘指标"
+    }
+  ],
+  "productStatus": "roadmap",
+  "prototypeCoverage": "complete"
+}

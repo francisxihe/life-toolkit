@@ -14,7 +14,9 @@ export class TodoRepeatRepository
 {
   constructor() {
     function buildQuery(filter: TodoRepeatFilterDto) {
-      const qb = this.repo.createQueryBuilder('todoRepeat').leftJoinAndSelect('todoRepeat.todos', 'todos');
+      const qb = this.repo
+        .createQueryBuilder('todoRepeat')
+        .leftJoinAndSelect('todoRepeat.repeat', 'repeat');
 
       if (filter.status !== undefined) {
         qb.andWhere('todoRepeat.status = :status', { status: filter.status });
@@ -31,12 +33,12 @@ export class TodoRepeatRepository
         qb.andWhere('todoRepeat.name LIKE :kw', { kw: `%${filter.keyword}%` });
       }
       if (filter.currentDateStart) {
-        qb.andWhere('todoRepeat.currentDate >= :cds', {
+        qb.andWhere('repeat.currentDate >= :cds', {
           cds: filter.currentDateStart,
         });
       }
       if (filter.currentDateEnd) {
-        qb.andWhere('todoRepeat.currentDate <= :cde', {
+        qb.andWhere('repeat.currentDate <= :cde', {
           cde: filter.currentDateEnd,
         });
       }
@@ -58,7 +60,7 @@ export class TodoRepeatRepository
   }
 
   async findWithRelations(id: string, relations?: string[]): Promise<TodoRepeat> {
-    const defaultRelations = ['todos'];
+    const defaultRelations = ['repeat'];
     const todoRepeat = await this.repo.findOne({
       where: { id },
       relations: relations || defaultRelations,

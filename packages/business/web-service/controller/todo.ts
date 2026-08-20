@@ -38,4 +38,8 @@ export default class TodoController {
   static async list(query?: TodoVO.TodoFilterVo) {
     return request<ResponseListVo<TodoVO.TodoWithoutRelationsVo>>({ method: 'get' })(`/todo/list`, query);
   }
+
+  static async doneBatch(body: TodoVO.TodoFilterVo) {
+    return request<any>({ method: 'put' })(`/todo/done/batch`, body);
+  }
 }

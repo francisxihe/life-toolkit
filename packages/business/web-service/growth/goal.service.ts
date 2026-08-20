@@ -4,7 +4,7 @@ import { Message } from '../message';
 import { MethodOptions } from '../type';
 
 export default class GoalService {
-  static async create(body: GoalVO.CreateGoalVo, options?: MethodOptions): Promise<any> {
+  static async create(body: GoalVO.CreateGoalVo, options?: MethodOptions) {
     try {
       const res = await GoalController.create(body);
       if (!options?.silent) {
@@ -16,7 +16,7 @@ export default class GoalService {
     }
   }
 
-  static async delete(id: string, options?: MethodOptions): Promise<any> {
+  static async delete(id: string, options?: MethodOptions) {
     try {
       const res = await GoalController.delete(id);
       if (!options?.silent) {
@@ -28,7 +28,7 @@ export default class GoalService {
     }
   }
 
-  static async update(id: string, updateGoalVo: GoalVO.UpdateGoalVo, options?: MethodOptions): Promise<any> {
+  static async update(id: string, updateGoalVo: GoalVO.UpdateGoalVo, options?: MethodOptions) {
     try {
       const res = await GoalController.update(id, updateGoalVo);
       if (!options?.silent) {
@@ -40,7 +40,7 @@ export default class GoalService {
     }
   }
 
-  static async find(id: string): Promise<any> {
+  static async find(id: string) {
     try {
       const res = await GoalController.find(id);
       return res;
@@ -49,16 +49,7 @@ export default class GoalService {
     }
   }
 
-  static async findWithRelations(id: string): Promise<any> {
-    try {
-      const res = await GoalController.findWithRelations(id);
-      return res;
-    } catch (error: unknown) {
-      Message.error(error);
-    }
-  }
-
-  static async findByFilter(goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<any> {
+  static async findByFilter(goalListFiltersVo?: GoalVO.GoalFilterVo) {
     try {
       const res = await GoalController.findByFilter(goalListFiltersVo);
       return res;
@@ -67,7 +58,7 @@ export default class GoalService {
     }
   }
 
-  static async page(goalPageFilterVo?: GoalVO.GoalPageFilterVo): Promise<any> {
+  static async page(goalPageFilterVo?: GoalVO.GoalPageFilterVo) {
     try {
       const res = await GoalController.page(goalPageFilterVo);
       return res;
@@ -76,7 +67,7 @@ export default class GoalService {
     }
   }
 
-  static async getTree(goalListFiltersVo?: GoalVO.GoalFilterVo): Promise<any> {
+  static async getTree(goalListFiltersVo?: GoalVO.GoalFilterVo) {
     try {
       const res = await GoalController.getTree(goalListFiltersVo);
       return res;
@@ -85,7 +76,7 @@ export default class GoalService {
     }
   }
 
-  static async findRoots(): Promise<any> {
+  static async findRoots() {
     try {
       const res = await GoalController.findRoots();
       return res;
@@ -94,7 +85,7 @@ export default class GoalService {
     }
   }
 
-  static async findChildren(parentId: string): Promise<any> {
+  static async findChildren(parentId: string) {
     try {
       const res = await GoalController.findChildren(parentId);
       return res;
@@ -103,7 +94,7 @@ export default class GoalService {
     }
   }
 
-  static async abandon(id: string, options?: MethodOptions): Promise<any> {
+  static async abandon(id: string, options?: MethodOptions) {
     try {
       const res = await GoalController.abandon(id);
       if (!options?.silent) {
@@ -118,6 +109,18 @@ export default class GoalService {
   static async restore(id: string, options?: MethodOptions) {
     try {
       const res = await GoalController.restore(id);
+      if (!options?.silent) {
+        Message.success('操作成功');
+      }
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+    }
+  }
+
+  static async markDone(id: string, options?: MethodOptions) {
+    try {
+      const res = await GoalController.markDone(id);
       if (!options?.silent) {
         Message.success('操作成功');
       }

@@ -41,7 +41,8 @@ export const listenToEvent = (
   callback: EventCallback,
 ): boolean => {
   if (isElectronEnv()) {
-    return window.electronAPI.on(channel, callback);
+    window.electronAPI.on?.(channel, callback);
+    return true;
   }
   console.log(`在Web环境中不支持Electron事件: ${channel}`);
   return false;
@@ -49,7 +50,8 @@ export const listenToEvent = (
 
 export const removeEventListener = (channel: string): boolean => {
   if (isElectronEnv()) {
-    return window.electronAPI.removeListener(channel);
+    window.electronAPI.removeListener?.(channel, () => undefined);
+    return true;
   }
   return false;
 };

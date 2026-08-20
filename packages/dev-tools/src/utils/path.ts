@@ -1,5 +1,5 @@
 import path from 'path';
-import { ROOT, CONTROLLER_SOURCE_PATH, CONTROLLER_PROXY_TARGET_PATH } from '../constants';
+import { ROOT, CONTROLLER_SOURCE_PATH, CONTROLLER_PROXY_TARGET_PATH, DTO_SOURCE_PATH } from '../constants';
 
 /**
  * 获取相对于来源代码基础路径的相对路径
@@ -22,7 +22,7 @@ export function getDesktopControllerPathFromServer(sourceControllerPath: string)
 export function getVoPathFromDto(dtoFilePath: string): string {
   // 从 apps/desktop/src/service/growth/goal/dto/goal-model.dto.ts
   // 转换为 packages/business/vo/growth/goal/goal-model.vo.ts
-  const relativePath = path.relative(CONTROLLER_SOURCE_PATH, dtoFilePath);
+  const relativePath = path.relative(DTO_SOURCE_PATH, dtoFilePath);
   const parts = relativePath.split(path.sep);
 
   // 移除 dto 目录层级
@@ -35,7 +35,7 @@ export function getVoPathFromDto(dtoFilePath: string): string {
   const fileName = parts[parts.length - 1].replace('.dto.ts', '.vo.ts');
   parts[parts.length - 1] = fileName;
 
-  return path.join(ROOT, 'packages/business/vo', ...parts);
+  return path.join(ROOT, 'packages/business/vo', 'growth', ...parts);
 }
 
 /**

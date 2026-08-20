@@ -2,6 +2,7 @@
 
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import TaskItem from './TaskItem';
+import styles from './style.module.less';
 
 function TaskList(props: {
   taskList: TaskWithoutRelationsVo[];
@@ -9,7 +10,7 @@ function TaskList(props: {
   refreshTaskList: () => Promise<void>;
 }) {
   return (
-    <div className="w-full mt-[-8px]">
+    <div className={styles.list}>
       {props.taskList.map((task) => (
         <TaskItem
           key={task.id}

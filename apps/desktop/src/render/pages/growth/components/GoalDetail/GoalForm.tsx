@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Input, DatePicker, Select, Form, Radio, Tag, type FormRule, Row, Col } from '@sue/design-web-react';
+import { Input, DatePicker, Select, Form, Radio, Tag, Flex, type FormRule, Row, Col } from '@sue/design-web-react';
 
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -56,6 +56,7 @@ export default function GoalForm() {
     allowedDateRange,
     allowedTypes,
     allowedImportance,
+    allowedDifficulty,
     updateByConstraints,
   } = useGoalFormConstraints(parentGoal);
 
@@ -64,6 +65,9 @@ export default function GoalForm() {
     if (parentGoal) {
       const updates = updateByConstraints(goalFormData);
       form.setFieldsValue(updates);
+      if (Object.keys(updates).length > 0) {
+        setGoalFormData((prev) => ({ ...prev, ...updates }));
+      }
     }
   }, [parentGoal]);
 
@@ -102,12 +106,12 @@ export default function GoalForm() {
             bottom:
               readonly ||
               (parentGoal && allowedDateRange && (
-                <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
+                <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
                   <span>
                     父目标日期范围限制：{allowedDateRange[0]} ~{' '}
                     {allowedDateRange[1]}
                   </span>
-                </div>
+                </Flex>
               )),
           }}
         >
@@ -142,25 +146,25 @@ export default function GoalForm() {
           slot={{
             bottom:
               readonly ||
-              (parentGoal && parentGoal.type === GoalType.KEY_RESULT && (
-                <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
-                  <span>父目标是 成果指标，子目标只能是 成果指标</span>
-                </div>
+              (parentGoal && parentGoal.type === GoalType.RESULT && (
+                <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
+                  <span>父目标是成果，子目标只能是成果</span>
+                </Flex>
               )),
           }}
         >
           <Radio.Group disabled={readonly}>
             <Radio
-              value={GoalType.OBJECTIVE}
-              disabled={readonly || !allowedTypes.includes(GoalType.OBJECTIVE)}
+              value={GoalType.VISION}
+              disabled={readonly || !allowedTypes.includes(GoalType.VISION)}
             >
-              战略规划
+              愿景
             </Radio>
             <Radio
-              value={GoalType.KEY_RESULT}
-              disabled={readonly || !allowedTypes.includes(GoalType.KEY_RESULT)}
+              value={GoalType.RESULT}
+              disabled={readonly || !allowedTypes.includes(GoalType.RESULT)}
             >
-              成果指标
+              成果
             </Radio>
           </Radio.Group>
         </Item>
@@ -175,13 +179,13 @@ export default function GoalForm() {
               (parentGoal &&
                 allowedImportance.length <
                   [...IMPORTANCE_MAP.keys()].length && (
-                  <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
+                  <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
                     <span>⚠️</span>
                     <span>
                       重要程度不能高于父目标：
                       {IMPORTANCE_MAP.get(parentGoal.importance)?.label}
                     </span>
-                  </div>
+                  </Flex>
                 )),
           }}
         >
@@ -214,7 +218,11 @@ export default function GoalForm() {
             disabled={readonly}
           >
             {[...DIFFICULTY_MAP.entries()].map(([key, value]) => (
-              <Select.Option key={key} value={key}>
+              <Select.Option
+                key={key}
+                value={key}
+                disabled={!allowedDifficulty.includes(key)}
+              >
                 <Tag color={value.color || 'gray'} className="m-1">
                   {value.label}
                 </Tag>
@@ -271,7 +279,7 @@ function Item(props: {
           )}
         >
           <Form.Item
-            field={props.name}
+            name={props.name}
             rules={props.rules}
             noStyle={{ showErrorTip: true }}
           >
@@ -286,7 +294,7 @@ function Item(props: {
   return (
     <Col span={props.span} className="w-full flex items-center !p-0">
       <Form.Item
-        field={props.name}
+        name={props.name}
         label={<span className="pl-2">{props.label}</span>}
         labelAlign="left"
         labelCol={{ span: labelCol }}

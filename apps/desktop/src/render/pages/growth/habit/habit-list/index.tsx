@@ -5,7 +5,9 @@ import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
 import { Button, Drawer, Flex, PlusOutlined } from '@sue/design-web-react';
 
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from '../components/CreateHabit';
+import styles from './style.module.less';
 
 export const HabitListPage: React.FC = () => {
   const { goals, handleRefresh } = useHabitListContext();
@@ -13,7 +15,7 @@ export const HabitListPage: React.FC = () => {
     const instance = Drawer.open({
       title: '新增习惯',
       size: 800,
-      footer: null,
+      styles: drawerPaddedBodyStyles,
       content: (
         <CreateHabit
           goals={goals}
@@ -31,11 +33,11 @@ export const HabitListPage: React.FC = () => {
 
   return (
     <DefaultPage title="习惯管理">
-      <Flex vertical container="full">
-        <Flex container="fixed" className="w-full">
+      <Flex vertical container="full" className={styles.page}>
+        <Flex container="fixed" className={styles.filters}>
           <HabitListFilter />
         </Flex>
-        <Flex container="fixed" className="w-full">
+        <Flex container="fixed" className={styles.actions} gap={8}>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -46,7 +48,7 @@ export const HabitListPage: React.FC = () => {
             新增习惯
           </Button>
         </Flex>
-        <Flex container="fill">
+        <Flex container="fill" className={styles.list}>
           <HabitListTable />
         </Flex>
       </Flex>

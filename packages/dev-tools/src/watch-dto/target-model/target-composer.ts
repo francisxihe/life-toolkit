@@ -45,6 +45,12 @@ export class TargetModelComposer {
     // 从 Entity 解析字段
     const entityFields = this.parseEntityFields(intermediateState);
 
+    const enumImports = intermediateState.imports
+      .filter((item) => item.source === '@true-north/enum' && item.importType === 'named')
+      .flatMap((item) => item.specifiers.map((specifier) => specifier.local))
+      .filter((name) => entityFields.some((field) => new RegExp(`\\b${name}\\b`).test(field)));
+    if (enumImports.length) lines.push(`import { ${enumImports.join(', ')} } from '@true-north/enum';`, '');
+
     lines.push(`export type ${voName} = {`);
 
     if (entityFields.length > 0) {
@@ -94,20 +100,23 @@ export class TargetModelComposer {
 
     // 找到 WithoutRelations 类定义
     const entityName = className.replace('Dto', '');
-    const classRegex = new RegExp(`export\\s+class\\s+${entityName}[\\s\\S]*?(?=\\n\\n|\\n@|\\nexport|$)`, 'g');
+    const classRegex = new RegExp(
+      `export\\s+class\\s+${entityName}[\\s\\S]*?(?=\\n@Entity|\\nexport\\s+class|$)`,
+      'g'
+    );
     const classMatch = content.match(classRegex);
 
     if (!classMatch) return fields;
 
     const classContent = classMatch[0];
 
-    // 提取字段定义
-    const fieldRegex = /@Column[^]*?(\w+)(\?)?:\s*([^;]+);/g;
+    // Extract class property declarations rather than decorator arguments.
+    const fieldRegex = /^\s*(\w+)([!?])?:\s*([^;\n]+);/gm;
     let match;
 
     while ((match = fieldRegex.exec(classContent)) !== null) {
       const fieldName = match[1];
-      const optional = match[2] || '';
+      const optional = match[2] === '?' ? '?' : '';
       let fieldType = match[3].trim();
 
       // 转换类型
@@ -139,6 +148,12 @@ export class TargetModelComposer {
     const baseName = intermediateState.metadata.className.replace('Dto', '');
     const voName = `${baseName}Vo`;
     const withoutRelationsVoName = `${baseName}WithoutRelationsVo`;
+
+    const enumImports = intermediateState.imports
+      .filter((item) => item.source === '@true-north/enum' && item.importType === 'named')
+      .flatMap((item) => item.specifiers.map((specifier) => specifier.local))
+      .filter((name) => entityFields.some((field) => new RegExp(`\\b${name}\\b`).test(field)));
+    if (enumImports.length) lines.push(`import { ${enumImports.join(', ')} } from '@true-north/enum';`, '');
 
     lines.push(`export type ${withoutRelationsVoName} = {`);
     for (const field of entityFields) {

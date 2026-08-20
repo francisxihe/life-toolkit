@@ -1,9 +1,9 @@
 'use client';
 
 import { Input, Select, DatePicker, Row, Col, SearchOutlined } from '@sue/design-web-react';
+import dayjs from 'dayjs';
 
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
-import { TagSelector } from '@/components/TagSelector';
 import { useTodoAllContext } from './context';
 import { TodoPageFilterVo } from '@true-north/vo';
 import { TableFilter } from '@/components/Layout/TableFilter';
@@ -30,10 +30,10 @@ export function TodoFilters() {
             prefix={<SearchOutlined />}
             placeholder="关键字"
             value={filters.keyword}
-            onChange={(value) => {
+            onChange={(event) => {
               setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
-                keyword: value,
+                keyword: event.target.value,
               }));
             }}
           />
@@ -41,13 +41,13 @@ export function TodoFilters() {
         <Col span={12}>
           <DatePickerRange
             placeholder={['计划开始日期', '计划结束日期']}
-            value={[filters.planDateStart, filters.planDateEnd]}
+            value={filters.planDateStart && filters.planDateEnd ? [dayjs(filters.planDateStart), dayjs(filters.planDateEnd)] : undefined}
             className="w-full"
             onChange={(value) => {
               setFilters((prev: TodoPageFilterVo) => ({
                 ...prev,
-                planDateStart: value[0],
-                planDateEnd: value[1],
+                planDateStart: value?.[0]?.format('YYYY-MM-DD'),
+                planDateEnd: value?.[1]?.format('YYYY-MM-DD'),
               }));
             }}
           />
@@ -109,18 +109,6 @@ export function TodoFilters() {
             <Select.Option value={TodoStatus.ABANDONED}>已放弃</Select.Option>
           </Select>
         </Col>
-        {/* <Col span={6}>
-          <TagSelector
-            multiple={true}
-            value={filters.tags}
-            onChange={(value) => {
-              setFilters((prev: TodoPageFilterVo) => ({
-                ...prev,
-                tags: value,
-              }));
-            }}
-          />
-        </Col> */}
       </Row>
     </TableFilter>
   );

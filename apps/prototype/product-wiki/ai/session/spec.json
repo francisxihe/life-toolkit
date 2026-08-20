@@ -1,0 +1,274 @@
+{
+  "id": "ai.session",
+  "kind": "module",
+  "title": "AI 会话",
+  "document": "ai/session/README.md",
+  "parentId": "ai",
+  "route": "/ai",
+  "positioning": "提供三栏 AI 会话壳层：会话列表、对话与可插拔工作台容器。",
+  "dependencies": [
+    "growth.goal",
+    "growth.task"
+  ],
+  "entities": [
+    {
+      "id": "conversation",
+      "name": "会话",
+      "fields": [
+        {
+          "id": "title",
+          "name": "标题",
+          "type": "string",
+          "required": true,
+          "description": "会话展示标题。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "refType",
+          "name": "关联类型",
+          "type": "enum",
+          "required": false,
+          "values": [
+            "goal",
+            "task"
+          ],
+          "description": "可选业务关联类型；当前支持目标与任务。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "refId",
+          "name": "关联对象",
+          "type": "reference",
+          "required": false,
+          "description": "可选关联的业务对象标识，如目标或任务。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "updatedAt",
+          "name": "最近更新时间",
+          "type": "string",
+          "required": true,
+          "description": "会话最近一条消息或状态变更时间。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "agent-preference",
+      "name": "编码 Agent 偏好",
+      "fields": [
+        {
+          "id": "selectedAgent",
+          "name": "当前编码 Agent",
+          "type": "string",
+          "required": true,
+          "description": "当前选用的编码 Agent 展示名。在对话区切换，无独立 AI 设置页。本版为 ChatGPT（本机已安装 ChatGPT 应用并登录）；其它 Agent 可随本机探测结果扩充。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "message",
+      "name": "消息",
+      "fields": [
+        {
+          "id": "role",
+          "name": "角色",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "user",
+            "assistant"
+          ],
+          "description": "消息发送角色。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        },
+        {
+          "id": "parts",
+          "name": "内容块",
+          "type": "array",
+          "required": true,
+          "description": "由文本、工具过程与结构化工作台块按顺序组成的消息内容。",
+          "productStatus": "roadmap",
+          "prototypeCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "views": [
+    {
+      "id": "shell",
+      "name": "AI 会话壳层",
+      "prototypePage": "ai-session",
+      "scenario": "三栏：列表 / 对话 / 工作台容器",
+      "reference": "ai.session.view.shell",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "session-list",
+      "name": "会话列表",
+      "prototypePage": "ai-session",
+      "scenario": "浏览、新建、切换会话",
+      "reference": "ai.session.view.session-list",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "conversation",
+      "name": "会话对话",
+      "prototypePage": "ai-session",
+      "scenario": "读写消息；贴底跟随、上翻停跟并可回到底部；输入区底部为 Agent 选择器；发送走当前选中且可用的编码 Agent，流式中发送按钮变为停止；文本、工具过程与结构化块按顺序呈现，工具调用可折叠；结构化块可唤起工作台；支持目标/任务拆解工作台对已选追问预填；通用对话壳层不提供能力专用工具栏",
+      "reference": "ai.session.view.conversation",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "workspace-host",
+      "name": "工作台容器",
+      "prototypePage": "ai-session",
+      "scenario": "默认空容器；用户点选消息中的结构化块后挂载对应功能",
+      "reference": "ai.session.view.workspace-host",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "agent-picker",
+      "name": "编码 Agent 选择器",
+      "prototypePage": "ai-session",
+      "scenario": "在对话区切换本机编码 Agent；本版为 ChatGPT；未安装或未登录项禁用并说明原因；列表可随本机探测结果变长；无独立 AI 设置页",
+      "reference": "ai.session.view.agent-picker",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "rules": [
+    {
+      "id": "workspace-dispatch",
+      "name": "工作台分发",
+      "entities": [
+        "message"
+      ],
+      "description": "用户点选消息中的工作台块后按类型打开对应工作台（含目标拆解与任务拆解）；未点选或切换会话时右侧为空容器。",
+      "views": [
+        "workspace-host",
+        "conversation"
+      ],
+      "reference": "ai.session.rule.workspace-dispatch",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "goal-bound-start",
+      "name": "目标绑定发起",
+      "entities": [
+        "conversation",
+        "message"
+      ],
+      "description": "从目标发起时创建或打开绑定该目标的会话并产出拆解工作台块（不自动打开）；发起所用编码 Agent 与对话区当前选用且可用的 Agent 相同；发起消息中的目标名称可点击进入该目标。",
+      "views": [
+        "shell",
+        "conversation",
+        "workspace-host"
+      ],
+      "reference": "ai.session.rule.goal-bound-start",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "task-bound-start",
+      "name": "任务绑定发起",
+      "entities": [
+        "conversation",
+        "message"
+      ],
+      "description": "从任务发起时创建或打开绑定该任务的会话并产出任务拆解工作台块（不自动打开）；发起所用编码 Agent 与对话区当前选用且可用的 Agent 相同；发起消息中的任务名称可点击进入该任务。",
+      "views": [
+        "shell",
+        "conversation",
+        "workspace-host"
+      ],
+      "reference": "ai.session.rule.task-bound-start",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    },
+    {
+      "id": "agent-switch",
+      "name": "编码 Agent 切换",
+      "entities": [
+        "agent-preference",
+        "conversation",
+        "message"
+      ],
+      "description": "发送走当前选中且可用的编码 Agent。切换只影响之后的发送，不改已有消息，不自动打开工作台；切换后该会话不再续跑上一 Agent 的对话线程，之后每轮作为新的开始。未安装或未登录的项禁用并说明原因。从目标或任务绑定发起与普通发送共用同一套所选 Agent。生成不等于采纳，工作台仍需点选才打开。",
+      "views": [
+        "agent-picker",
+        "conversation",
+        "workspace-host"
+      ],
+      "reference": "ai.session.rule.agent-switch",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete"
+    }
+  ],
+  "references": [
+    {
+      "id": "ai.session.overview",
+      "heading": "## 目标与价值"
+    },
+    {
+      "id": "ai.session.view.shell",
+      "heading": "### AI 会话壳层"
+    },
+    {
+      "id": "ai.session.view.session-list",
+      "heading": "### 会话列表"
+    },
+    {
+      "id": "ai.session.view.conversation",
+      "heading": "### 会话对话"
+    },
+    {
+      "id": "ai.session.view.workspace-host",
+      "heading": "### 工作台容器"
+    },
+    {
+      "id": "ai.session.view.agent-picker",
+      "heading": "### 编码 Agent 选择器"
+    },
+    {
+      "id": "ai.session.interaction",
+      "heading": "## 交互语义"
+    },
+    {
+      "id": "ai.session.rule.workspace-dispatch",
+      "heading": "### 工作台分发"
+    },
+    {
+      "id": "ai.session.rule.goal-bound-start",
+      "heading": "### 目标绑定发起"
+    },
+    {
+      "id": "ai.session.rule.task-bound-start",
+      "heading": "### 任务绑定发起"
+    },
+    {
+      "id": "ai.session.rule.agent-switch",
+      "heading": "### 编码 Agent 切换"
+    }
+  ],
+  "productStatus": "roadmap",
+  "prototypeCoverage": "partial"
+}

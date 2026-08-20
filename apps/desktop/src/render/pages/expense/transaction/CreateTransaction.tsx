@@ -1,8 +1,7 @@
-import { Form, Input, Select, Button, DatePicker, InputNumber } from '@sue/design-web-react';
+import { Form, Input, Select, Button, DatePicker, InputNumber, Modal } from '@sue/design-web-react';
 import { DEFAULT_CATEGORIES } from '../constants';
 import { TagEditor } from '@/components/TagSelector';
 import { useEffect, useRef } from 'react';
-import { openModal } from '@/hooks/OpenModal';
 import { CreateTransactionVo } from '@true-north/vo';
 
 const FormItem = Form.Item;
@@ -37,7 +36,7 @@ export function TransactionForm({
       validateTrigger={['onBlur']}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormItem label="类型" field={'type'} required>
+        <FormItem label="类型" name={'type'} required>
           <Select
             placeholder="请选择类型"
             options={[
@@ -53,11 +52,11 @@ export function TransactionForm({
           ></Select>
         </FormItem>
 
-        <FormItem label="金额" field={'amount'} rules={[{ required: true }]}>
+        <FormItem label="金额" name={'amount'} rules={[{ required: true }]}>
           <InputNumber step={1} placeholder="请输入金额" />
         </FormItem>
 
-        <FormItem label="分类" field={'category'} rules={[{ required: true }]}>
+        <FormItem label="分类" name={'category'} rules={[{ required: true }]}>
           <Select
             placeholder="请选择分类"
             options={Object.entries(DEFAULT_CATEGORIES)
@@ -71,18 +70,18 @@ export function TransactionForm({
 
         <FormItem
           label="交易时间"
-          field={'transactionDateTime'}
+          name={'transactionDateTime'}
           rules={[{ required: true }]}
         >
           <DatePicker allowClear showTime format="YYYY-MM-DD HH:mm:ss" />
         </FormItem>
       </div>
 
-      <FormItem label="描述" field={'description'}>
+      <FormItem label="描述" name={'description'}>
         <Input placeholder="请输入描述" />
       </FormItem>
 
-      <FormItem label="标签" field={'tags'}>
+      <FormItem label="标签" name={'tags'}>
         <TagEditor
           multiple={true}
           value={initialValues.tags}
@@ -111,7 +110,9 @@ export function useCreateTransaction({
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;
-    openModal({
+    Modal.confirm({
+      icon: null,
+      closable: true,
       title: <div className="text-body-3">添加交易</div>,
       content: (
         <TransactionForm

@@ -59,12 +59,12 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
       <Row gutter={16}>
         {/* 关键词搜索 */}
         <Col span={6}>
-          <Form.Item label="关键词搜索" field="keyword">
+          <Form.Item label="关键词搜索" name="keyword">
             <Input
               placeholder="搜索习惯名称或描述"
               prefix={<SearchOutlined />}
               value={filters.keyword}
-              onChange={(value) => handleFilterChange('keyword', value)}
+              onChange={(event) => handleFilterChange('keyword', event.target.value)}
               allowClear
             />
           </Form.Item>
@@ -72,7 +72,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
 
         {/* 状态筛选 */}
         <Col span={6}>
-          <Form.Item label="状态" field="statusList">
+          <Form.Item label="状态" name="statusList">
             <Select
               mode="multiple"
               placeholder="选择状态"
@@ -94,7 +94,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
 
         {/* 难度筛选 */}
         <Col span={6}>
-          <Form.Item label="难度" field="difficultyList">
+          <Form.Item label="难度" name="difficultyList">
             <Select
               mode="multiple"
               placeholder="选择难度"
@@ -116,7 +116,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
 
         {/* 关联目标 */}
         <Col span={6}>
-          <Form.Item label="关联目标" field="goalIds">
+          <Form.Item label="关联目标" name="goalIds">
             <Select
               mode="multiple"
               placeholder="选择目标"
@@ -166,7 +166,7 @@ export const HabitFilter: React.FC<HabitFilterProps> = ({
 
         {/* 开始日期范围 */}
         <Col span={8}>
-          <Form.Item label="开始日期范围" field="dateRange">
+          <Form.Item label="开始日期范围" name="dateRange">
             <RangePicker
               style={{ width: '100%' }}
               onChange={handleDateRangeChange}

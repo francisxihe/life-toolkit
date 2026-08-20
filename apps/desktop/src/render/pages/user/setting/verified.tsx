@@ -40,7 +40,7 @@ function Verified() {
     getData();
   }, []);
 
-  const loadingNode = <Skeleton text={{ rows: 1 }} />;
+  const loadingNode = <Skeleton paragraph={{ rows: 1 }} />;
 
   return (
     <div className={styles.verified}>
@@ -84,13 +84,13 @@ function Verified() {
             return x ?
             <Badge
               status="success"
-              text={t['userSetting.verified.status.success']}>
+              paragraph={t['userSetting.verified.status.success']}>
             </Badge> :
 
             <span>
                   <Badge
                 status="processing"
-                text={t['userSetting.verified.status.waiting']}>
+                paragraph={t['userSetting.verified.status.waiting']}>
               </Badge>
                 </span>;
 

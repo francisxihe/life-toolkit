@@ -1,5 +1,4 @@
 .container {
-  display: flex;
   height: 100vh;
 
   .banner {
@@ -8,7 +7,6 @@
   }
 
   .content {
-    flex: 1;
     position: relative;
     padding-bottom: 40px;
   }
@@ -25,8 +23,6 @@
   position: fixed;
   top: 24px;
   left: 22px;
-  display: inline-flex;
-  align-items: center;
   z-index: 1;
 
   &-text {
@@ -38,30 +34,16 @@
 }
 
 .banner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
   &-inner {
     height: 100%;
     flex: 1;
   }
 }
 
-.content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .carousel {
   height: 100%;
 
   &-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     height: 100%;
   }
 
@@ -107,11 +89,6 @@
     height: 32px;
     line-height: 32px;
     color: rgb(var(--red-6));
-  }
-
-  &-password-actions {
-    display: flex;
-    justify-content: space-between;
   }
 
   &-register-btn {

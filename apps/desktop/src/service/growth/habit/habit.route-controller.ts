@@ -61,8 +61,18 @@ export class HabitController {
     return await this.habitService.abandon(id);
   }
 
-  @Put('/restore/:id', { description: '恢复习惯' })
+  @Put('/pause/:id', { description: '暂停习惯' })
+  async pause(@Param('id') id: string): Promise<void> {
+    return await this.habitService.pause(id);
+  }
+
+  @Put('/activate/:id', { description: '开始或恢复习惯' })
+  async activate(@Param('id') id: string): Promise<void> {
+    return await this.habitService.activate(id);
+  }
+
+  @Put('/restore/:id', { description: '恢复习惯（兼容旧客户端）' })
   async restore(@Param('id') id: string): Promise<void> {
-    return await this.habitService.restore(id);
+    return await this.habitService.activate(id);
   }
 }

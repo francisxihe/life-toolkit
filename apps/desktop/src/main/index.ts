@@ -12,6 +12,7 @@ const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
+import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === 'development';
@@ -88,7 +89,7 @@ function createWindow() {
 
   // 加载默认URL
   if (isDev) {
-    mainWindow.loadURL(DEFAULT_URL + '#/growth/task/task-calendar');
+    mainWindow.loadURL(DEFAULT_URL + '#/growth/task/task-today');
   } else {
     // 生产环境直接加载 index.html，路由由前端处理
     mainWindow.loadURL(DEFAULT_URL);
@@ -160,6 +161,13 @@ app.whenReady().then(async () => {
   // 注册 IPC 处理器
   initIpcRouter();
 
+  try {
+    const mcpPort = await startLoopbackMcpServer();
+    console.log('Loopback MCP 已启动', `127.0.0.1:${mcpPort}`);
+  } catch (error) {
+    console.error('Loopback MCP 启动失败:', error);
+  }
+
   createWindow();
 
   app.on('activate', () => {
@@ -176,6 +184,10 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('before-quit', () => {
+  void stopLoopbackMcpServer();
 });
 
 // 提供加载新URL的方法

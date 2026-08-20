@@ -1,41 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import {
   Tree,
-  Input,
-  Button,
   Spin,
   Empty,
   Modal,
   message,
-  Tag,
-  Divider,
   Flex,
-  EditableText,
-  SearchOutlined,
   CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
 } from '@sue/design-web-react';
+import dayjs from 'dayjs';
 import ContextMenu from '@/components/ContextMenu';
 import { GoalVo } from '@true-north/vo';
-import { GoalStatus } from '@true-north/enum';
 import { useGoalContext } from '../context';
 import { useGoalDetail } from '../../components/GoalDetail';
 import { GoalService } from '@true-north/web-service';
 import styles from './style.module.less';
-import clsx from 'clsx';
 
 interface TreeNodeData {
   key: string;
   title: React.ReactNode;
   children?: TreeNodeData[];
   goalData: GoalVo;
-  goalName: string; // 用于搜索的纯文本标题
-  isLeaf?: boolean; // 是否为叶子节点
+  goalName: string;
+  isLeaf?: boolean;
 }
 
-const GoalTreePanel: React.FC = ({}) => {
+function formatTimeRange(goal: GoalVo) {
+  const start = goal.startAt ? dayjs(goal.startAt).format('YYYY-MM-DD') : '未设置';
+  const end = goal.endAt ? dayjs(goal.endAt).format('YYYY-MM-DD') : '未设置';
+  return `${start} 至 ${end}`;
+}
+
+const GoalTreePanel: React.FC = () => {
   const {
     loading,
     goalTree,
@@ -51,33 +50,85 @@ const GoalTreePanel: React.FC = ({}) => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
   const [treeData, setTreeData] = useState<TreeNodeData[]>([]);
 
-  // 初始化数据和监听筛选条件变化
   useEffect(() => {
     fetchGoalTree();
   }, [fetchGoalTree]);
 
-  // 获取状态标签
-  const getStatusTag = (status: GoalStatus) => {
-    const statusConfig = {
-      [GoalStatus.TODO]: { color: 'gray', text: '待开始' },
-      [GoalStatus.DOING]: { color: 'blue', text: '进行中' },
-      [GoalStatus.DONE]: { color: 'green', text: '已完成' },
-      [GoalStatus.ABANDONED]: { color: 'red', text: '已放弃' },
-    };
-
-    const config = statusConfig[status];
-    return (
-      <Tag color={config.color} size="small">
-        {config.text}
-      </Tag>
-    );
+  const handleAddChild = (parentGoal: GoalVo) => {
+    openCreateDrawer({
+      title: '新增子目标',
+      contentProps: {
+        initialFormData: {
+          parentId: parentGoal.id,
+        },
+        afterSubmit: refreshData,
+      },
+    });
   };
 
-  // 转换目标数据为树形结构
+  const handleAddSibling = async (currentGoal: GoalVo) => {
+    openCreateDrawer({
+      title: '新增同级目标',
+      contentProps: {
+        initialFormData: {
+          parentId: currentGoal.parentId,
+        },
+        afterSubmit: refreshData,
+      },
+    });
+  };
+
+  const handleEdit = (goal: GoalVo) => {
+    openEditDrawer({
+      title: '编辑目标',
+      contentProps: {
+        goalId: goal.id,
+        afterSubmit: refreshData,
+      },
+    });
+  };
+
+  const handleCopy = async (goal: GoalVo) => {
+    openCreateDrawer({
+      title: '复制目标',
+      contentProps: {
+        initialFormData: {
+          name: `${goal.name} - 副本`,
+          description: goal.description,
+          type: goal.type,
+          importance: goal.importance,
+          difficulty: goal.difficulty,
+          parentId: goal.parentId,
+          planTimeRange: [undefined, undefined],
+        },
+        afterSubmit: refreshData,
+      },
+    });
+  };
+
+  const handleDelete = (goal: GoalVo) => {
+    Modal.confirm({
+      title: '确定删除吗？',
+      content: '删除前会检查子目标和关联行动；存在关联内容时不会删除。',
+      onOk: async () => {
+        try {
+          await GoalService.delete(goal.id);
+          message.success('删除成功');
+          refreshData();
+          if (selectedGoalId === goal.id) {
+            setSelectedGoalId(null);
+          }
+        } catch (error) {
+          message.error('删除失败');
+        }
+      },
+    });
+  };
+
   const convertToTreeData = (goals: GoalVo[]): TreeNodeData[] => {
     return goals.map((goal) => ({
       key: goal.id,
-      isLeaf: !goal.hasChildren, // 根据 hasChildren 字段判断是否为叶子节点
+      isLeaf: !goal.hasChildren,
       title: (
         <ContextMenu
           style={{
@@ -124,20 +175,15 @@ const GoalTreePanel: React.FC = ({}) => {
           ]}
         >
           <Flex
+            vertical
             container="full"
-            className={clsx(styles['tree-node'], 'gap-2')}
+            justify="center"
+            className={styles.treeNode}
           >
-            <Flex container="fixed" className="h-full">
-              {getStatusTag(goal.status)}
-            </Flex>
-            <Flex container="fill">
-              <EditableText
-                ellipsis={{ tooltip: true }}
-                style={{ width: '100%' }}
-              >
-                {goal.name}
-              </EditableText>
-            </Flex>
+            <span className={styles.treeGoalLabel}>{goal.name}</span>
+            <small className={styles.treeTimeRange}>
+              {formatTimeRange(goal)}
+            </small>
           </Flex>
         </ContextMenu>
       ),
@@ -147,12 +193,10 @@ const GoalTreePanel: React.FC = ({}) => {
     }));
   };
 
-  // 更新树形数据
   useEffect(() => {
     const converted = convertToTreeData(goalTree);
     setTreeData(converted);
 
-    // 有筛选条件时自动展开所有节点
     if (
       searchValue ||
       Object.values(filters).some(
@@ -173,32 +217,11 @@ const GoalTreePanel: React.FC = ({}) => {
     }
   }, [goalTree, searchValue, filters]);
 
-  // 处理节点选择
   const handleSelect = (selectedKeys: string[]) => {
     const goalId = selectedKeys[0] || null;
     setSelectedGoalId(goalId);
   };
 
-  // 处理节点展开并懒加载
-  const handleExpandWithLoad = async (expandedKeys: string[], info: any) => {
-    setExpandedKeys(expandedKeys);
-
-    // 如果是展开操作且节点没有子节点，则尝试加载
-    if (info.expanded && info.node) {
-      const nodeKey = info.node.key;
-      const nodeData = treeData.find((node) => findNodeByKey(node, nodeKey));
-
-      if (
-        nodeData &&
-        (!nodeData.children || nodeData.children.length === 0) &&
-        !nodeData.isLeaf
-      ) {
-        await loadData({ key: nodeKey });
-      }
-    }
-  };
-
-  // 递归查找节点
   const findNodeByKey = (
     node: TreeNodeData,
     key: string,
@@ -215,108 +238,34 @@ const GoalTreePanel: React.FC = ({}) => {
     return null;
   };
 
-  // 懒加载子节点
   const loadData = async (treeNode: any) => {
     const goalId = treeNode.key;
     try {
-      // 使用上下文中的 loadChildren 方法
       await loadChildren(goalId);
     } catch (error) {
       console.error('加载子节点失败:', error);
     }
   };
 
-  // 创建子目标
-  const handleAddChild = (parentGoal: GoalVo) => {
-    openCreateDrawer({
-      title: '新增子目标',
-      contentProps: {
-        initialFormData: {
-          parentId: parentGoal.id,
-        },
-        afterSubmit: refreshData,
-      },
-    });
-  };
+  const handleExpandWithLoad = async (nextExpandedKeys: string[], info: any) => {
+    setExpandedKeys(nextExpandedKeys);
 
-  // 创建同级目标
-  const handleAddSibling = async (currentGoal: GoalVo) => {
-    openCreateDrawer({
-      title: '新增同级目标',
-      contentProps: {
-        initialFormData: {
-          parentId: currentGoal.parentId,
-        },
-        afterSubmit: refreshData,
-      },
-    });
-  };
+    if (info.expanded && info.node) {
+      const nodeKey = info.node.key;
+      const nodeData = treeData.find((node) => findNodeByKey(node, nodeKey));
 
-  // 编辑目标
-  const handleEdit = (goal: GoalVo) => {
-    openEditDrawer({
-      title: '编辑目标',
-      contentProps: {
-        goalId: goal.id,
-        afterSubmit: refreshData,
-      },
-    });
-  };
-
-  // 复制目标
-  const handleCopy = async (goal: GoalVo) => {
-    openCreateDrawer({
-      title: '复制目标',
-      contentProps: {
-        initialFormData: {
-          name: `${goal.name} - 副本`,
-          description: goal.description,
-          type: goal.type,
-          importance: goal.importance,
-          difficulty: goal.difficulty,
-          parentId: goal.parentId,
-          planTimeRange: [undefined, undefined],
-        },
-        afterSubmit: refreshData,
-      },
-    });
-  };
-
-  // 删除目标
-  const handleDelete = (goal: GoalVo) => {
-    Modal.confirm({
-      title: '确定删除吗？',
-      content: '删除后将无法恢复，如果目标下有子目标，将一并删除，是否继续？',
-      onOk: async () => {
-        try {
-          await GoalService.delete(goal.id);
-          message.success('删除成功');
-          refreshData();
-          // 如果删除的是当前选中的目标，清空选择
-          if (selectedGoalId === goal.id) {
-            setSelectedGoalId(null);
-          }
-        } catch (error) {
-          message.error('删除失败');
-        }
-      },
-    });
-  };
-
-  // 获取所有节点的 key
-  const getAllKeys = (data: TreeNodeData[]): string[] => {
-    const keys: string[] = [];
-    data.forEach((node) => {
-      keys.push(node.key);
-      if (node.children) {
-        keys.push(...getAllKeys(node.children));
+      if (
+        nodeData &&
+        (!nodeData.children || nodeData.children.length === 0) &&
+        !nodeData.isLeaf
+      ) {
+        await loadData({ key: nodeKey });
       }
-    });
-    return keys;
+    }
   };
 
   return (
-    <Spin spinning={loading} className={clsx('w-full')}>
+    <Spin spinning={loading} className={styles.treeLoading}>
       {treeData.length > 0 ? (
         <Tree
           treeData={treeData}
@@ -326,13 +275,7 @@ const GoalTreePanel: React.FC = ({}) => {
           onExpand={handleExpandWithLoad}
           showLine
           blockNode
-          className={clsx(
-            'w-full',
-            '[&_.sue-tree-treenode]:w-full',
-            '[&_.sue-tree-node-content-wrapper]:w-full',
-            '[&_.sue-tree-title]:w-full',
-            '[&_.sue-tree-title]:block',
-          )}
+          className={styles.goalTree}
         />
       ) : (
         <Empty description="暂无目标数据" />

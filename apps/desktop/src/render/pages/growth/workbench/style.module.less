@@ -1,0 +1,26 @@
+.page { box-sizing: border-box; padding: 24px; overflow: auto; }
+.header { width: 100%; }
+.header h1 { margin: 0; color: var(--text-1); font-size: 22px; font-weight: 600; }
+.header p { margin: 6px 0 0; color: var(--text-3); }
+.contentRow { margin-top: 16px; }
+.metric { min-height: 116px; }
+.metricIcon { color: var(--primary-6); font-size: 26px; }
+.statistics { margin-top: 24px; }
+.statistics h2 { margin: 0; color: var(--text-1); font-size: 16px; font-weight: 600; }
+.statisticsGroup { height: 100%; }
+.statisticsGroup :global(.sue-statistic-title) { color: var(--text-3); }
+.statisticsGroup :global(.sue-statistic-content) { color: var(--text-1); }
+.success :global(.sue-statistic-content) { color: var(--success-6); }
+.danger :global(.sue-statistic-content) { color: var(--danger-6); }
+.list { min-height: 220px; }
+.listRow { box-sizing: border-box; min-height: 48px; padding: 6px 0; border-bottom: 1px solid var(--border-2); }
+.listRow:last-child { border-bottom: 0; }
+.todoTitle { min-width: 0; }
+.todoTitle div { min-width: 0; }
+.todoTitle b, .todoTitle span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.todoTitle b { color: var(--text-1); }
+.todoTitle span { margin-top: 2px; color: var(--text-3); font-size: 12px; }
+.habitIcon { color: var(--warning-6); font-size: 18px; }
+.habitStatus { color: var(--text-3); font-size: 12px; white-space: nowrap; }
+.empty { min-height: 180px; color: var(--text-3); }
+@media (max-width: 640px) { .page { padding: 16px; } }

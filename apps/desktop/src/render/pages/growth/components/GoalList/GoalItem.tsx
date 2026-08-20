@@ -31,7 +31,6 @@ function GoalItem(props: GoalItemProps) {
   const { goal } = props;
   return (
     <Card
-      bordered
       size="small"
       className={clsx(
         'w-full bg-bg-3',
@@ -74,9 +73,8 @@ function GoalItem(props: GoalItemProps) {
               onClick={(e) => {
                 e.stopPropagation();
               }}
-              iconOnly
               type="text"
-              size="mini"
+              size="small"
               icon={<SiteIcon id="more-for-goal" />}
               className="!flex justify-center items-center !text-text" />
 

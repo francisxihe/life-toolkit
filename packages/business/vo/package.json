@@ -11,9 +11,7 @@
     }
   },
   "dependencies": {
+    "@true-north/components-repeat": "workspace:*",
     "@true-north/enum": "workspace:*"
-  },
-  "peerDependencies": {
-    "francis-helper-repeat": "0.0.6"
   }
 }

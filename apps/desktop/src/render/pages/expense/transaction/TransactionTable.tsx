@@ -62,5 +62,5 @@ export default function TransactionTable() {
     },
   ];
 
-  return <Table columns={columns} data={transactionList} rowKey="id" />;
+  return <Table columns={columns} dataSource={transactionList} rowKey="id" />;
 }

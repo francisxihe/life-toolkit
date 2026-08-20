@@ -4,11 +4,6 @@ import { Message } from '../message';
 import { MethodOptions } from '../type';
 
 export default class TaskService {
-  /**
-   * create
-   * @param createTaskVo 请求体数据
-   * @returns 操作结果
-   */
   static async create(createTaskVo: TaskVO.CreateTaskVo, options?: MethodOptions) {
     try {
       const res = await TaskController.create(createTaskVo);
@@ -21,11 +16,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * delete
-   * @param id idID
-   * @returns 操作结果
-   */
   static async delete(id: string, options?: MethodOptions) {
     try {
       const res = await TaskController.delete(id);
@@ -38,12 +28,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * update
-   * @param id idID
-   * @param body 请求体数据
-   * @returns 操作结果
-   */
   static async update(id: string, body: TaskVO.UpdateTaskVo, options?: MethodOptions) {
     try {
       const res = await TaskController.update(id, body);
@@ -56,11 +40,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * find
-   * @param id idID
-   * @returns 操作结果
-   */
   static async find(id: string) {
     try {
       const res = await TaskController.find(id);
@@ -70,11 +49,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * findByFilter
-   * @param taskListFiltersVo 查询参数
-   * @returns 操作结果
-   */
   static async findByFilter(taskListFiltersVo?: TaskVO.TaskFilterVo) {
     try {
       const res = await TaskController.findByFilter(taskListFiltersVo);
@@ -84,11 +58,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * getTree
-   * @param taskFilterVo 过滤条件
-   * @returns 任务树结构
-   */
   static async getTree(taskFilterVo?: TaskVO.TaskFilterVo) {
     try {
       const res = await TaskController.getTree(taskFilterVo);
@@ -98,11 +67,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * page
-   * @param taskPageFilterVo 查询参数
-   * @returns 操作结果
-   */
   static async page(taskPageFilterVo?: TaskVO.TaskPageFilterVo) {
     try {
       const res = await TaskController.page(taskPageFilterVo);
@@ -112,11 +76,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * taskWithRelations
-   * @param id idID
-   * @returns 操作结果
-   */
   static async taskWithRelations(id: string) {
     try {
       const res = await TaskController.taskWithRelations(id);
@@ -126,11 +85,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * abandon
-   * @param id idID
-   * @returns 操作结果
-   */
   static async abandon(id: string, options?: MethodOptions) {
     try {
       const res = await TaskController.abandon(id);
@@ -143,11 +97,6 @@ export default class TaskService {
     }
   }
 
-  /**
-   * restore
-   * @param id idID
-   * @returns 操作结果
-   */
   static async restore(id: string, options?: MethodOptions) {
     try {
       const res = await TaskController.restore(id);
@@ -157,6 +106,40 @@ export default class TaskService {
       return res;
     } catch (error: unknown) {
       Message.error(error);
+    }
+  }
+
+  static async markDone(id: string, options?: MethodOptions) {
+    try {
+      const res = await TaskController.markDone(id);
+      if (!options?.silent) {
+        Message.success('操作成功');
+      }
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+    }
+  }
+
+  static async start(id: string, options?: MethodOptions) {
+    try {
+      const res = await TaskController.start(id);
+      if (!options?.silent) Message.success('任务已开始');
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+      throw error;
+    }
+  }
+
+  static async pause(id: string, options?: MethodOptions) {
+    try {
+      const res = await TaskController.pause(id);
+      if (!options?.silent) Message.success('任务已暂停');
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+      throw error;
     }
   }
 }

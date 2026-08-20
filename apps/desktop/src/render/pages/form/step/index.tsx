@@ -111,7 +111,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.basicInfo.name']}
                 required
-                field="basic.name"
+                name="basic.name"
                 rules={[
                 {
                   required: true,
@@ -134,7 +134,7 @@ function StepForm() {
                 label={t['stepForm.basicInfo.channelType']}
                 required
                 initialValue="app"
-                field="basic.channelType"
+                name="basic.channelType"
                 rules={[
                 {
                   required: true,
@@ -151,7 +151,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.basicInfo.time']}
                 required
-                field="basic.time"
+                name="basic.time"
                 rules={[
                 {
                   required: true,
@@ -165,7 +165,7 @@ function StepForm() {
                 label={t['stepForm.basicInfo.link']}
                 required
                 extra={t['stepForm.basicInfo.link.tips']}
-                field="basic.link"
+                name="basic.link"
                 initialValue={'https://arco.design'}
                 rules={[{ required: true }]}>
 
@@ -180,7 +180,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.channel.source']}
                 required
-                field="channel.source"
+                name="channel.source"
                 rules={[
                 {
                   required: true,
@@ -195,7 +195,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.channel.media']}
                 required
-                field="channel.media"
+                name="channel.media"
                 rules={[
                 {
                   required: true,
@@ -210,7 +210,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.channel.keywords']}
                 required
-                field="channel.keywords"
+                name="channel.keywords"
                 initialValue={['今日头条', '火山']}
                 rules={[{ required: true }]}>
 
@@ -220,7 +220,7 @@ function StepForm() {
                 label={t['stepForm.channel.remind']}
                 required
                 initialValue={true}
-                field="channel.remind"
+                name="channel.remind"
                 triggerPropName="checked"
                 rules={[{ required: true }]}>
 
@@ -230,7 +230,7 @@ function StepForm() {
                 <Form.Item
                 label={t['stepForm.channel.content']}
                 required
-                field="channel.content"
+                name="channel.content"
                 rules={[
                 {
                   required: true,

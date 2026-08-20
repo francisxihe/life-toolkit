@@ -25,9 +25,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
     setFilters: (filters: GoalFilters) => void;
     clearFilters: () => void;
 
-    isEditing: boolean;
-    setIsEditing: (editing: boolean) => void;
-
     loading: boolean;
     goalTree: GoalVo[];
     selectedGoal: GoalVo | null;
@@ -47,8 +44,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
     setFilters({});
   }, []);
 
-  const [isEditing, setIsEditing] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [goalTree, setGoalTree] = useState<GoalVo[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalVo | null>(null);
@@ -59,7 +54,7 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
   const fetchGoalTree = useCallback(async () => {
     setLoading(true);
     try {
-      // 如果有搜索条件或筛选条件，使用原有的 findByFilter 方法
+      // 目标树筛选必须保留命中节点的父级路径。
       if (searchValue || Object.keys(filters).length > 0) {
         // 构建筛选条件
         const filterParams: any = {
@@ -74,14 +69,14 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
           filterParams.status = filters.status;
         }
 
-        // 处理日期范围
+        // 查询与所选计划区间有重叠的目标。
         if (filters.dateRange && filters.dateRange.length === 2) {
-          filterParams.startDateStart = filters.dateRange[0];
           filterParams.startDateEnd = filters.dateRange[1];
+          filterParams.endDateStart = filters.dateRange[0];
         }
 
-        const response = await GoalService.findByFilter(filterParams);
-        const data = response?.list || response || [];
+        const response = await GoalService.getTree(filterParams);
+        const data = response || [];
         const treeData = Array.isArray(data) ? data : [];
         setGoalTree(treeData);
       } else {
@@ -168,9 +163,6 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
     filters,
     setFilters,
     clearFilters,
-
-    isEditing,
-    setIsEditing,
 
     loading,
     goalTree,

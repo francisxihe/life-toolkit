@@ -46,7 +46,7 @@ function Success() {
           </div>
           <div className="text-text-3">{t['success.result.subTitle']}</div>
           <div>
-            <Button key="again" type="secondary" style={{ marginRight: 16 }}>
+            <Button key="again" type="default" style={{ marginRight: 16 }}>
               {t['success.result.printResult']}
             </Button>
             <Button key="back" type="primary">

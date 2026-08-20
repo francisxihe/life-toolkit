@@ -1,5 +1,6 @@
 import { Drawer, Popover } from '@sue/design-web-react';
 import { useState } from 'react';
+import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import GoalEditor, { GoalEditorFooter, GoalEditorProps } from './GoalEditor';
 import GoalForeign from './GoalForeign';
 import GoalForm from './GoalForm';
@@ -28,7 +29,7 @@ export function useGoalDetail() {
       ...rest,
       title: '编辑目标',
       size: 800,
-      footer: null,
+      styles: drawerPaddedBodyStyles,
       content: (
         <GoalEditor
           {...contentProps}
@@ -50,7 +51,7 @@ export function useGoalDetail() {
       ...rest,
       title: '新建目标',
       size: 800,
-      footer: null,
+      styles: drawerPaddedBodyStyles,
       content: (
         <GoalCreator
           {...contentProps}

@@ -9,7 +9,7 @@ import { GoalStatus } from '@true-north/enum';
 // 列表过滤DTO - 选择可过滤的字段
 export class GoalFilterDto extends IntersectionType(
   BaseFilterDto,
-  PartialType(PickType(GoalDto, ['type', 'importance'] as const))
+  PartialType(PickType(GoalDto, ['type', 'importance', 'difficulty'] as const))
 ) {
   /** 目标状态 - 支持单个或数组 */
   @IsOptional()
@@ -88,6 +88,11 @@ function importVo(filterVo: GoalFilterVo, filterDto: GoalFilterDto) {
   if (filterVo.status !== undefined) filterDto.status = filterVo.status;
   if (filterVo.type !== undefined) filterDto.type = filterVo.type;
   if (filterVo.importance !== undefined) filterDto.importance = filterVo.importance;
+  if (filterVo.difficulty !== undefined) filterDto.difficulty = filterVo.difficulty;
+  if (filterVo.startDateStart) filterDto.startDateStart = filterVo.startDateStart;
+  if (filterVo.startDateEnd) filterDto.startDateEnd = filterVo.startDateEnd;
+  if (filterVo.endDateStart) filterDto.endDateStart = filterVo.endDateStart;
+  if (filterVo.endDateEnd) filterDto.endDateEnd = filterVo.endDateEnd;
   if (filterVo.doneDateStart) filterDto.doneDateStart = filterVo.doneDateStart;
   if (filterVo.doneDateEnd) filterDto.doneDateEnd = filterVo.doneDateEnd;
   if (filterVo.abandonedDateStart) filterDto.abandonedDateStart = filterVo.abandonedDateStart;

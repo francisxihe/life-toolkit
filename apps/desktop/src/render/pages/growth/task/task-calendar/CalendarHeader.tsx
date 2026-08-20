@@ -1,59 +1,37 @@
 
-import { dayjs } from './utils';
-import { useCalendarContext } from './context';
-import { Radio, Button, Space, Flex, LeftOutlined, RightOutlined } from '@sue/design-web-react';
+import dayjs, { type Dayjs } from 'dayjs';
+import { Button, Space, Flex, LeftOutlined, RightOutlined } from '@sue/design-web-react';
 
-function CalendarHeader(props: { prefixCls: string }) {
-  const { prefixCls } = props;
+type CalendarHeaderProps = {
+  value: Dayjs;
+  onChange: (date: Dayjs) => void;
+};
 
-  const {
-    move,
-    pageShowDate,
-    changePageShowDate,
-    calendarMode,
-    setCalendarMode,
-  } = useCalendarContext();
+function CalendarHeader(props: CalendarHeaderProps) {
+  const { value, onChange } = props;
 
   return (
-    <Flex container="full" className="px-5 py-4">
+    <Flex container="fixed" className="w-full px-5 py-4">
       <Flex container="fill" className="flex items-center">
-        <div className={`${prefixCls}-header-value`}>
-          {calendarMode === 'year'
-            ? pageShowDate.format('YYYY年')
-            : pageShowDate.format('YYYY年MM月')}
+        <div className="text-body-1 text-text-1 font-medium">
+          {value.format('YYYY年MM月')}
         </div>
       </Flex>
 
-      <Flex container="fixed" className="h-full flex items-center gap-4">
-        <Radio.Group
-          optionType="button"
-          options={[
-            {
-              label: '年',
-              value: 'year',
-            },
-            {
-              label: '月',
-              value: 'month',
-            },
-          ]}
-          onChange={(e) => setCalendarMode(e.target.value)}
-          value={calendarMode}
-        />
+      <Flex container="fixed" className="h-full flex items-center">
         <Space.Compact>
           <Button
             className=""
-            onClick={() => changePageShowDate('prev', calendarMode)}
+            onClick={() => onChange(value.subtract(1, 'month'))}
           >
             {<LeftOutlined />}
           </Button>
           <Button
-            className={`${prefixCls}-footer-btn-wrapper`}
-            onClick={() => move(dayjs())}
+            onClick={() => onChange(dayjs())}
           >
             今天
           </Button>
-          <Button onClick={() => changePageShowDate('next', calendarMode)}>
+          <Button onClick={() => onChange(value.add(1, 'month'))}>
             {<RightOutlined />}
           </Button>
         </Space.Compact>

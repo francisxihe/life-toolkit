@@ -1,6 +1,6 @@
-import { DashboardOutlined, ExperimentOutlined, GlobalOutlined, TagOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, DashboardOutlined, ExperimentOutlined, GlobalOutlined, TagOutlined } from '@ant-design/icons';
 import { useContext, useEffect } from 'react';
-import { Tooltip, Input, Avatar, Dropdown, message, Button, CommentOutlined, LoadingOutlined, MoonOutlined, NotificationOutlined, PoweroffOutlined, SettingOutlined, SunOutlined, UserOutlined } from '@sue/design-web-react';
+import { Tooltip, Avatar, Dropdown, message, CommentOutlined, LoadingOutlined, MoonOutlined, NotificationOutlined, PoweroffOutlined, SettingOutlined, SunOutlined, UserOutlined, Flex } from '@sue/design-web-react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalState } from '@/store';
@@ -9,13 +9,13 @@ import useLocale from '@/utils/useLocale';
 import Logo from '@/assets/logo.svg';
 import MessageBox from '@/components/MessageBox';
 import IconButton from './IconButton';
-import Settings from '../Settings';
 import styles from './style/index.module.less';
 import defaultLocale from '@/locale';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/router/routes';
+import { useFocusTimer } from '@/pages/growth/focus-timer';
 
-function Navbar({ show }: { show: boolean }) {
+function Navbar() {
   const t = useLocale();
   const { userInfo, userLoading } = useSelector((state: GlobalState) => state);
   const dispatch = useDispatch();
@@ -24,6 +24,7 @@ function Navbar({ show }: { show: boolean }) {
   const [role, setRole] = useStorage('userRole', 'admin');
 
   const { setLang, lang, theme, setTheme } = useContext(GlobalContext);
+  const { open: openFocusTimer } = useFocusTimer();
 
   function logout() {
     setUserStatus('logout');
@@ -51,18 +52,6 @@ function Navbar({ show }: { show: boolean }) {
       },
     });
   }, [role]);
-
-  if (!show) {
-    return (
-      <div className={styles['fixed-settings']}>
-        <Settings
-          trigger={
-            <Button icon={<SettingOutlined />} type="primary" size="large" />
-          }
-        />
-      </div>
-    );
-  }
 
   const handleChangeRole = () => {
     const newRole = role === 'admin' ? 'user' : 'admin';
@@ -148,21 +137,15 @@ function Navbar({ show }: { show: boolean }) {
   };
 
   return (
-    <div className={styles.navbar}>
-      <div className={styles.left}>
-        <div className={styles.logo}>
+    <Flex className={styles.navbar} justify="space-between">
+      <Flex align="center">
+        <Flex align="center" className={styles.logo}>
           <Logo />
           <div className={styles['logo-name']}>{t['title']}</div>
-        </div>
-      </div>
-      <ul className={styles.right}>
-        <li>
-          <Input.Search
-            className={styles.round}
-            placeholder={t['navbar.search.placeholder']}
-          />
-        </li>
-        <li>
+        </Flex>
+      </Flex>
+      <Flex component="ul" className={styles.right}>
+        <Flex component="li" align="center">
           <Dropdown
             trigger={['hover']}
             placement="bottomRight"
@@ -183,18 +166,23 @@ function Navbar({ show }: { show: boolean }) {
               <IconButton icon={<GlobalOutlined />} />
             </span>
           </Dropdown>
-        </li>
-        <li>
+        </Flex>
+        <Flex component="li" align="center">
           <MessageBox>
             <IconButton icon={<NotificationOutlined />} />
           </MessageBox>
-        </li>
-        <li>
+        </Flex>
+        <Flex component="li" align="center">
+          <Tooltip title="打开专注计时">
+            <IconButton icon={<ClockCircleOutlined />} onClick={() => openFocusTimer()} />
+          </Tooltip>
+        </Flex>
+        <Flex component="li" align="center">
           <Tooltip
             title={
               theme === 'light'
-                ? t['settings.navbar.theme.toDark']
-                : t['settings.navbar.theme.toLight']
+                ? t['navbar.theme.toDark']
+                : t['navbar.theme.toLight']
             }
           >
             <IconButton
@@ -202,12 +190,9 @@ function Navbar({ show }: { show: boolean }) {
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             />
           </Tooltip>
-        </li>
-        <li>
-          <Settings />
-        </li>
+        </Flex>
         {userInfo && (
-          <li>
+          <Flex component="li" align="center">
             <Dropdown
               menu={userMenu}
               placement="bottomRight"
@@ -221,10 +206,10 @@ function Navbar({ show }: { show: boolean }) {
                 )}
               </Avatar>
             </Dropdown>
-          </li>
+          </Flex>
         )}
-      </ul>
-    </div>
+      </Flex>
+    </Flex>
   );
 }
 

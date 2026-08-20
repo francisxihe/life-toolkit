@@ -82,8 +82,20 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
 
 复用组件 (Reusable Components)
   ├── TabsPage
-  └── Flex（@sue/design-web-react，container=full|fixed|fill；fixed 列父加 w-full、行父加 h-full）
+  └── Flex（@sue/design-web-react，container=full|fixed|fill；默认横向，旧 FlexibleContainer 默认栈式布局迁移时须加 vertical；fixed 在列父容器加 w-full、在行父容器加 h-full）
 ```
+
+### 3.1.1 Flex 与控件迁移约定
+
+- `Flex` 包裹 Fragment 或多个直接子节点时，必须显式声明实际排列方向；旧 `FlexibleContainer.Fixed` 本身不创建 flex 格式化上下文，不能直接按新 `Flex` 的默认横向行为推断。
+- `Input` 与 `Input.TextArea` 的 `onChange` 接收原生事件，文本值使用 `event.target.value`；`Checkbox` 使用 `event.target.checked`。
+- `DatePicker` 与 `RangePicker` 的 `onChange` 参数顺序为 `(date, dateString)`；`Select`、`InputNumber`、`Switch` 保持直接接收组件值。
+- `Calendar` 在 Popover、Drawer 等紧凑容器中必须显式使用 `fullscreen={false}`；旧 Arco 的 `panel`、`panelWidth` 属性不适用于新组件。
+- 编辑型 `Input` / `TextArea` 使用 `variant="borderless"` 控制无边框外观，不依赖外层 Tailwind 类覆盖组件内部输入节点。
+- 今日待办采用单栏工作清单：顶部 Tab 栏右侧常驻“新建待办”，页面工具栏只负责标题与日期信息，列表按状态分组并显示数量。
+- 待办新增和编辑 Drawer 使用标准纵向 `Form`，字段包括名称、描述、计划日期、时间范围、重要程度、紧急程度、标签和重复设置；提交成功后才关闭 Drawer 并刷新当前列表。快速创建 Popover 保持紧凑交互，不复用 Drawer 表单。
+- 待办日历使用 `Calendar` 的 `value`、`mode`、`onPanelChange` 与 `fullCellRender`；旧 `pageShowDate`、`dateRender` 不会驱动当前组件库。切换面板后按可见日期范围重新查询待办。
+- 待办名称和描述在写入 `TodoFormData` 前必须是字符串；输入组件读取 `event.target.value`，不允许将原生事件或其他对象传入服务层。
 
 ### 3.2 组件设计原则
 

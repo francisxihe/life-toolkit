@@ -1,6 +1,6 @@
 import { Empty } from '@sue/design-web-react';
 import clsx from 'clsx';
-import { useNavigate } from 'react-router-dom';
+import { openTaskDetailDrawer } from '../../../task/detail/TaskDetailDrawer';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useGoalDetailContext } from '../context';
 import { useTaskDetail } from '../..';
@@ -8,13 +8,9 @@ import TaskList from '../../TaskList';
 
 export function GoalTaskList() {
   const { currentGoal, refreshGoalDetail } = useGoalDetailContext();
-  const navigate = useNavigate();
-
-  // 点击任务跳转到 Task 详情页
+  // 在当前页面打开任务详情抽屉
   const handleTaskClick = async (taskId: string) => {
-    navigate(`/growth/task/detail/${taskId}`, {
-      state: { fromGoal: currentGoal.id },
-    });
+    openTaskDetailDrawer({ taskId });
   };
 
   return currentGoal.taskList?.length > 0 ? (

@@ -1,0 +1,44 @@
+.miniTimer {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 2100;
+  width: 340px;
+  box-shadow: var(--sue-box-shadow-secondary);
+}
+.taskSelect { width: 100%; }
+.selectPopup { z-index: 2100; }
+.miniBody { min-width: 0; }
+.miniTime, .fullTimer { font-variant-numeric: tabular-nums; }
+.miniTime { font-size: 28px; line-height: 1; }
+.taskName {
+  max-width: 220px;
+  overflow: hidden;
+  color: var(--sue-color-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2100;
+  overflow: auto;
+  background: var(--sue-color-bg-layout);
+}
+.fullscreenContent {
+  width: min(760px, 100%);
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
+.fullscreenHeader, .sessionPanel { width: 100%; }
+.fullscreenHeader h1 { margin: 0; color: var(--sue-color-text); font-size: 28px; letter-spacing: 0; }
+.fullscreenHeader p { margin: 6px 0 0; color: var(--sue-color-text-secondary); }
+.fullTimer {
+  color: var(--sue-color-text);
+  font-size: 84px;
+  font-weight: 600;
+  line-height: 1;
+}
+.fullscreen .taskName { max-width: 460px; text-align: center; }
+.emptySessions { color: var(--sue-color-text-tertiary); }

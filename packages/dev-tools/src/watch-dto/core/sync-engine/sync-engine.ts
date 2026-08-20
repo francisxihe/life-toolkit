@@ -52,10 +52,12 @@ export abstract class SyncEngine {
    */
   preserveUserImports(existingContent: string, generatedContent: string): string {
     const existingImports = this.extractImports(existingContent);
+    const generatedImports = this.extractImports(generatedContent);
     const generatedWithoutImports = this.removeImports(generatedContent);
 
     if (existingImports) {
-      return `${existingImports}\n\n${generatedWithoutImports}`;
+      const mergedImports = this.mergeImports(existingImports, generatedImports);
+      return `${mergedImports}\n\n${generatedWithoutImports}`;
     }
 
     return generatedContent;
@@ -99,5 +101,24 @@ export abstract class SyncEngine {
     }
 
     return nonImportLines.join('\n').trim();
+  }
+
+  private mergeImports(existingImports: string, generatedImports: string | null): string {
+    const grouped = new Map<string, Set<string>>();
+    const passthrough: string[] = [];
+    for (const line of `${existingImports}\n${generatedImports || ''}`.split('\n')) {
+      const match = line.match(/^import\s+\{\s*([^}]+)\s*\}\s+from\s+['\"]([^'\"]+)['\"];?$/);
+      if (!match) {
+        if (line && !passthrough.includes(line)) passthrough.push(line);
+        continue;
+      }
+      const names = grouped.get(match[2]) || new Set<string>();
+      match[1].split(',').map((name) => name.trim()).filter(Boolean).forEach((name) => names.add(name));
+      grouped.set(match[2], names);
+    }
+    return [
+      ...passthrough,
+      ...[...grouped.entries()].map(([source, names]) => `import { ${[...names].join(', ')} } from '${source}';`),
+    ].join('\n');
   }
 }

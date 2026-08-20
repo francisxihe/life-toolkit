@@ -52,6 +52,7 @@ function importVo(filterVo: TodoFilterVo, filterDto: TodoFilterDto) {
   filterDto.doneDateEnd = filterVo.doneDateEnd;
   filterDto.abandonedDateStart = filterVo.abandonedDateStart;
   filterDto.abandonedDateEnd = filterVo.abandonedDateEnd;
+  filterDto.taskIds = filterVo.taskIds;
   filterDto.includeIds = filterVo.includeIds;
   filterDto.todoWithRepeatList = filterVo.todoWithRepeatList;
 }

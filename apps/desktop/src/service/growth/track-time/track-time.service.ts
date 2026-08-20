@@ -7,6 +7,10 @@ export class TrackTimeService {
   constructor(private readonly trackTimeRepository: TrackTimeRepository) {}
 
   async create(createDto: CreateTrackTimeDto): Promise<TrackTimeDto> {
+    if (createDto.duration === undefined) {
+      throw new Error('专注时长不能为空');
+    }
+    this.assertValidDuration(createDto.duration, createDto.startAt, createDto.endAt);
     const entity = new TrackTime();
     createDto.exportCreateEntity(entity);
 
@@ -23,6 +27,7 @@ export class TrackTimeService {
   }
 
   async update(updateDto: UpdateTrackTimeDto): Promise<TrackTimeDto> {
+    this.assertValidDuration(updateDto.duration, updateDto.startAt, updateDto.endAt);
     const entity = updateDto.exportUpdateEntity();
     const saved = await this.trackTimeRepository.update(entity);
 
@@ -41,11 +46,25 @@ export class TrackTimeService {
     return entities.map((entity: TrackTime) => TrackTimeDto.importEntity(entity));
   }
 
+  async findByFilter(filter: TrackTimeFilterDto): Promise<TrackTimeDto[]> {
+    const entities = await this.trackTimeRepository.findByFilter(filter);
+    return entities.map((entity: TrackTime) => TrackTimeDto.importEntity(entity));
+  }
+
   async deleteByRelatedId(relatedType: TrackTimeRelatedType, relatedId: string): Promise<void> {
     const trackTimeFilterDto = new TrackTimeFilterDto();
     trackTimeFilterDto.relatedType = relatedType;
     trackTimeFilterDto.relatedId = relatedId;
     await this.trackTimeRepository.deleteByFilter(trackTimeFilterDto);
+  }
+
+  private assertValidDuration(duration?: number, startAt?: Date, endAt?: Date): void {
+    if (duration !== undefined && (!Number.isInteger(duration) || duration <= 0)) {
+      throw new Error('专注时长必须为正整数秒');
+    }
+    if (startAt && endAt && endAt.getTime() < startAt.getTime()) {
+      throw new Error('结束时间不能早于开始时间');
+    }
   }
 }
 

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import { Spin } from '@sue/design-web-react';
-import X6MindMap from './X6MindMap';
+import { Flex, Spin } from '@sue/design-web-react';
 import clsx from 'clsx';
+import X6MindMap from './X6MindMap';
 import { GoalMindMapContextProvider, useGoalMindMapContext } from './context';
+import styles from './style.module.less';
 
 interface GoalMindMapProps {
   className?: string;
@@ -18,26 +19,22 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
   }, []);
 
   return (
-    <Spin spinning={loading} className={clsx('w-full h-full')}>
-      {/* 脑图组件区域 */}
-      {goalTree.length > 0 ? (
-        <X6MindMap
-          goalTree={goalTree}
-          onNodeClick={(nodeId) => {
-            console.log('节点点击:', nodeId);
-          }}
-        />
-      ) : (
-        <div
-          className={clsx(
-            'w-full h-full',
-            'flex items-center justify-center text-gray-500',
-          )}
-        >
-          暂无目标数据
-        </div>
-      )}
-    </Spin>
+    <div className={clsx(styles.root, className)}>
+      <Spin
+        spinning={loading}
+        className={styles.spin}
+        rootClassName={styles.spin}
+        classNames={{ root: styles.spin, container: styles.spin }}
+      >
+        {goalTree.length > 0 ? (
+          <X6MindMap goalTree={goalTree} />
+        ) : (
+          <Flex align="center" justify="center" className={styles.empty}>
+            暂无目标数据
+          </Flex>
+        )}
+      </Spin>
+    </div>
   );
 };
 

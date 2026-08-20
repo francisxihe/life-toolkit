@@ -103,4 +103,17 @@ export default class TodoService {
       Message.error(error);
     }
   }
+
+  static async doneBatch(body: TodoVO.TodoFilterVo, options?: MethodOptions) {
+    try {
+      const res = await TodoController.doneBatch(body);
+      if (!options?.silent) {
+        Message.success('批量完成成功');
+      }
+      return res;
+    } catch (error: unknown) {
+      Message.error(error);
+      throw error;
+    }
+  }
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import loadable from '@loadable/component';
-import { Spin } from '@sue/design-web-react';
+import { Flex, Spin } from '@sue/design-web-react';
 
 // https://github.com/gregberge/loadable-components/pull/226
 function load(fn, options) {
@@ -21,9 +21,9 @@ function LoadingComponent(props: {
     return null;
   }
   return (
-    <div className="spin">
+    <Flex className="spin" align="center" justify="center">
       <Spin />
-    </div>
+    </Flex>
   );
 }
 

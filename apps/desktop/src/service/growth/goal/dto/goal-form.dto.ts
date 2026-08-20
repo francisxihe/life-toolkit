@@ -57,7 +57,7 @@ export class UpdateGoalDto extends IntersectionType(
     if (vo.type !== undefined) this.type = vo.type;
     if (vo.importance !== undefined) this.importance = vo.importance;
     if (vo.difficulty !== undefined) this.difficulty = vo.difficulty;
-    if (vo.parentId !== undefined) this.parentId = vo.parentId;
+    if (vo.parentId !== undefined) this.parentId = vo.parentId as any;
     if (vo.status !== undefined) this.status = vo.status;
 
     // 日期字段转换 (string → Date)

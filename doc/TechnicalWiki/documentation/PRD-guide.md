@@ -1,4 +1,4 @@
-> 写作规范。全局业务规则引用 [ProductWiki](../../ProductWiki/ProductWiki.md)。
+> 写作规范。全局业务规则引用 [ProductWiki](../../../apps/prototype/product-wiki/global/README.md)。
 
 # True North 产品需求文档(PRD)规范
 

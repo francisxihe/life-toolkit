@@ -40,6 +40,13 @@ export class TrackTimeController {
     return dto ? dto.exportVo() : null;
   }
 
+  @Get('/list', { description: '查询时间记录列表' })
+  async list(@Query() query?: TrackTimeVO.TrackTimeFilterVo): Promise<ResponseListVo<TrackTimeVO.TrackTimeWithoutRelationsVo>> {
+    const filter = new TrackTimeFilterDto();
+    if (query) filter.importListVo(query);
+    return TrackTimeDto.dtoListToListVo(await this.trackTimeService.findByFilter(filter));
+  }
+
   @Get('/related/:relatedType/:relatedId', { description: '根据关联对象查询时间记录' })
   async findByRelatedId(
     @Param('relatedType') relatedType: TrackTimeRelatedType,

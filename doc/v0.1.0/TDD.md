@@ -1,6 +1,6 @@
-# True North v0.1.0 技术开发文档 (TDD)
+# True North v0.1.0 技术开发文档（TDD）
 
-## 一、文档元信息
+## 文档元信息
 
 ```yaml
 document_meta:
@@ -8,129 +8,102 @@ document_meta:
   version: 'v0.1.0'
   status: 'draft'
   created_date: '2025-12-23'
-  last_updated: '2025-12-23'
+  last_updated: '2026-08-08'
   owner: 'Growth Squad'
-  target_audience: ['frontend_developer', 'backend_developer']
+  target_audience: ['frontend_developer', 'desktop_service_developer', 'tester']
 
-tech_stack:
-  frontend:
-    framework: 'React 18'
-    language: 'TypeScript'
-    ui_library: ['@sue/design-web-react']
-    state_management: 'React Context + createInjectState'
-    router: 'React Router v6'
-    build_tool: 'Vite'
-  backend:
-    framework: 'NestJS'
-    language: 'TypeScript'
-    orm: 'TypeORM'
-    auth: 'JWT + bcrypt'
-  shared:
-    package_manager: 'pnpm'
-    monorepo_tool: 'Turbo'
+scope:
+  product_change_source: 'apps/prototype/product-wiki/changelog.json'
+  included_modules: ['growth.goal', 'growth.task', 'growth.todo', 'growth.track-time']
+  supplemental_contract: '任务预计时长与专注时长均以整数秒传输和存储；待办无 in_progress，计时不改待办状态'
 ```
 
-## 二、系统架构概览
+桌面端进程、IPC、DTO/VO 与持久化分层参见 [TechnicalWiki · 架构总览](../TechnicalWiki/architecture/overview.md) 和 [TechnicalWiki · 数据流](../TechnicalWiki/architecture/data-flow.md)。产品规则参见 ProductWiki 的 [目标管理](../../apps/prototype/product-wiki/growth/goal/README.md)、[任务管理](../../apps/prototype/product-wiki/growth/task/README.md)、[待办管理](../../apps/prototype/product-wiki/growth/todo/README.md) 与 [专注与时间追踪](../../apps/prototype/product-wiki/growth/track-time/README.md)。长期实现边界见 [TechnicalWiki · Todo](../TechnicalWiki/growth/todo.md)、[Track-Time](../TechnicalWiki/growth/track-time.md)。
 
-- Monorepo：apps/desktop（Electron 桌面端，含业务域与 IPC）+ packages/\*（共享 vo/enum/api/web 等）。
-- 前端路由：`/growth/goal`、`/growth/task/...`，新增 `/growth/task/detail/:id`。
-- 数据流：前端 Context（GoalProvider/TaskProvider）调 packages/api → server Controller → Service → Repository(TypeORM) → DB。
+## 范围追溯与现状
 
-## 三、功能范围与差异
+| ProductWiki 变更 | 原型落点 | 当前桌面端现状 | v0.1.0 交付 |
+| --- | --- | --- | --- |
+| Goal 详情、状态字段 | `pages/goal/index.tsx` | 有 CRUD 与树接口；完成入口和层级规则未完整收口 | 详情操作区、受控状态流转、校验与删除影响检查 |
+| Goal 时间范围、优先级继承 | `shared/lifecycle.ts` | Entity 有时间、重要度、难度；Service 未校验父子关系 | 创建、编辑父/子目标时在 Service 层校验 |
+| Task 详情抽屉 | `pages/task-detail/` | 有任务树、关联查询基础接口；无抽屉实现契约 | 抽屉数据加载与交互实现 |
+| Task 时间继承 | `shared/lifecycle.ts` | Task 允许 `goalId`、`parentId` 同时为空或同时存在，缺少难度字段 | 唯一归属与上游约束校验 |
+| Todo 状态精简 | `pages/todo/`、`EntityDrawer` | 仍有 `in_progress` 与 `/todo/start|/pause` | 三态 + 删除 start/pause + 数据迁移 |
+| Todo 区间专注 / TrackTime 待办关联 | `FocusTimer`、待办列表/抽屉 | TrackTime 仅 `TASK`；待办无专注入口 | `TrackTimeRelatedType.TODO`、入口与只读历史 |
 
-- 对齐 PRD v0.1.0：仅涵盖 Goal 页（状态 Tag + 右上操作区）与 Task 详情页（树 + 详情双栏）。Todo/Habit 按现有实现即可，无新增开发。
-- 交互约束：
-  1. Goal 状态仅展示 Tag，禁止状态切换。
-  2. “已完成”按钮置于右上操作区，与 `...`（编辑/删除/放弃）同区域。
-  3. Goal 关联任务点击后跳转 Task 详情页，并在 Task 树高亮。
+非范围：Habit 产品扩展；服务端因时间点拒绝 create。
 
-## 四、前端设计
+## 目标与任务实现设计
 
-### 4.1 目标页（/growth/goal）
+### Goal：类型、层级与状态
 
-- 组件：`apps/desktop/src/render/pages/growth/goal`
-  - GoalAside：保持树加载与搜索占位，无需改。
-  - GoalMainHeader：右上区域改为「状态 Tag（只读） + Dropdown(...: 编辑/删除/放弃) + 主要按钮“已完成”」。
-    - 状态 Tag：仅展示，不提供下拉。
-    - 主要按钮：调用 `PATCH /goal/:id` 将状态置为已完成，成功后刷新树和详情；提供 toast 反馈。
-    - Dropdown：编辑 → 打开抽屉；删除/放弃 → 二次确认后调用 API。
-  - 关联任务列表：点击某任务时 `navigate('/growth/task/detail/' + task.id, { state: { fromGoal: goalId } })`。
+- 将 Goal 类型的持久化与 VO 枚举统一为 ProductWiki 的 `vision | result`。迁移现有 `objective → vision`、`key_result → result`；迁移在 TypeORM 数据库升级流程中执行，不手改生成 API。
+- `POST /goal/create` 与 `PUT /goal/update/:id` 的 Service 必须在同一业务事务内校验直接父子关系：顶层只能为 `vision`、`result` 父级只能拥有 `result` 子级、子目标时间范围不得越界、重要度和难度不得超过父级；修改父目标时还要校验其全部直接子目标。
+- 通用更新不再作为状态转换入口。新增 `PUT /goal/done/:id`，并保留 `PUT /goal/abandon/:id`、`PUT /goal/restore/:id`；三个入口统一维护 `doneAt`、`abandonedAt`，并只接受合法状态迁移。渲染层仅展示状态 Tag，通过这些操作入口触发变更。
+- 删除前由 GoalService 汇总直接子目标、关联任务、关联待办和关联习惯；存在影响时拒绝删除并返回可展示的影响摘要，避免数据库级级联删除破坏复盘关系。
 
-### 4.2 Task 详情页（新增路由）
+### Task：抽屉、关系树与约束
 
-- 路由：`/growth/task/detail/:id`（在 growth routes 注册）。
-- 页面结构：左侧 Task 树 + 右侧详情（同 Goal 双栏布局）。
-- 左侧 Task 树：
-  - 数据：`GET /task/tree`（若无接口则复用按 parentId 懒加载的列表）；展开父链定位当前任务。
-  - 交互：点击节点 → 刷新右侧详情；搜索/过滤占位。
-- 右侧详情：
-  - Header：状态 Tag（只读） + Dropdown(...: 编辑/删除/放弃) + 主要按钮（标记完成/恢复，取决于状态）。
-  - Tabs：概览 / 子任务 / 关联 Todo / TrackTime
-  - 概览：展示基础信息、时间范围、关联目标；编辑走抽屉。
-  - 子任务：列表 + 内联创建；校验时间/重要度不超父级。
-  - 关联 Todo：列表（调用 /todo?relatedType=task&relatedId=:id）。
-  - TrackTime：按钮跳转计时器（占位，不自动计时）。
-- 从 Goal 跳转：接受 location.state.fromGoal，用于回退时恢复 Goal 页面；在 Task 树高亮当前节点。
-- 返回行为：保留 Task 上一视图的筛选/滚动（存放在 TaskProvider 中的缓存）。
+- 渲染层在 Task 页面内挂载 `TaskDetailDrawer`，不注册 `/growth/task/detail/:id`。入口传入任务 id；Provider 维护当前选中节点，关闭后销毁局部状态。
+- 左侧使用 `GET /task/tree` 的根树定位当前任务所属根节点，再仅渲染该根节点及后代；选中节点展开父链。内联创建调用 `POST /task/create`，成功后刷新此根树。
+- 右侧只提供“概览 / 关联 Todo / TrackTime”：详情使用 `GET /task/task-with-relations/:id`；Todo 使用 `/todo/list` 的 `taskIds` 过滤；TrackTime 使用 `/trackTime/related/:relatedType/:relatedId`，打开计时器时携带任务关联但不自动启动。
+- Task 的创建与更新必须恰好指定一个直接归属（`goalId` 或 `parentId`）；校验归属对象存在、无自环/循环父子关系，并校验任务计划范围、重要度与难度不超出归属目标或父任务。删除有直接子任务或关联 Todo 的任务时返回冲突，不级联删除。
+- 新增 `PUT /task/done/:id`；`abandon`、`restore` 与 `done` 负责状态时间戳和转换校验，通用 `PUT /task/update/:id` 不接受状态流转。
 
-### 4.3 UI 规范（复用）
+### Todo：状态精简与受控流转
 
-- 右上操作区顺序：状态 Tag（只读） | Dropdown(...) | 主要按钮。
-- Dropdown 使用 `@sue/design-web-react` `Dropdown`，删除项危险色，二次确认。
-- 按钮：主要按钮用于完成/恢复，次要按钮用文字/次级样式。
+- `TodoStatus` 仅保留 `todo | done | abandoned`；从 `@true-north/enum` 移除 `IN_PROGRESS`。
+- 删除 `TodoService` / `TodoRepeatService` 的 `start`、`pause` 及 RouteController `PUT /todo/start/:relatedType/:id`、`PUT /todo/pause/:relatedType/:id`；按仓库生成流程同步客户端。
+- `done` / `abandon` 仅允许当前状态为 `todo`；`restore` 回到 `todo`。通用 `update` 不接受状态字段。
+- SQLite 启动迁移：将 `todo` / `todo_repeat`（及实际表名）中 `status = 'in_progress'` 更新为 `'todo'`。
+- Render：列表/表格/筛选去掉「开始」与「进行中」；未完成判定为 `status === todo`。
 
-## 五、后端设计（若需配合）
+### TrackTime：待办关联与 FocusTimer
 
-- Goal 完成/放弃 API：`PATCH /goal/:id { status }`，校验关联约束。
-- Task 树/详情：
-  - `GET /task/tree?rootId=` 或 `GET /task/:id/children` 懒加载。
-  - `GET /task/:id` 返回任务详情（含 parent/children/goalId）。
-  - `PATCH /task/:id { status }` 支持标记完成/放弃。
-- 关联 Todo：`GET /todo?relatedType=task&relatedId=:id`。
-- 返回字段需包含：id、name、status、parentId、goalId、timeFrame、importance、childrenExists。
+- `TrackTimeRelatedType` 增加 `TODO = 'todo'`；create/related 查询支持待办 id。
+- `FocusTimerProvider.open` 支持任务/待办预关联（`{ taskId, todoId, label? }`）；`relatedLocked = Boolean(taskId || todoId)` 由入口显式决定，不用当前 `todoId` 推断。
+- 未锁定时：`loadTimerData` 并行加载未完成任务与 `TodoStatus.TODO` 待办，Select 分组可搜索（`task:<id>` / `todo:<id>`），清空为独立专注；迷你与全屏复用同一选择/锁定逻辑。
+- 锁定时只读展示 `任务 · {name}` / `待办 · {name}`，无 Select；结束时 `TrackTimeController.create` 写入对应关联；**不**调用待办状态接口。
+- 待办列表/详情：当 `status === todo` 且 `planStartTime !== planEndTime` 时展示「开始专注」；时间点隐藏入口。
+- 待办详情只读加载 `GET /trackTime/related/todo/:id`；时间点待办同样可读。
+- 服务端不因时间点拒绝 `relatedType=todo` 的 create。
 
-## 六、数据模型要点
+### 数据、VO 与迁移
 
-- TaskVo / GoalVo：需包含 status (只读展示)、parentId、goalId、timeFrame、importance。
-- TaskTree 节点：`{ id, name, status, parentId, childrenExists }`。
-- 状态枚举：Goal/Task 保持与 ProductWiki 定义一致，前端只读展示。
+| 对象 | v0.1.0 契约 | 兼容处理 |
+| --- | --- | --- |
+| GoalType | `vision | result` | 迁移旧枚举值；VO、DTO、Entity、web-service 通过既有代码生成流程同步。 |
+| Task 计划范围 | 继续使用 `startAt` / `endAt` 表示唯一计划范围 | 原型的 `start/end` 与 `plannedStart/plannedEnd` 映射至该范围，不增设第二组持久化日期。 |
+| Task 预计时长 | `estimated: number`，单位为秒 | `estimateTime: string` 迁移为可无歧义解析的秒数；不可解析值置空并列入数据修复清单。 |
+| TrackTime 时长 | `duration: number`，单位为秒 | 所有聚合与展示从秒换算为小时/分钟；不再以分钟作为 IPC 或存储单位。 |
+| Task 难度 | `difficulty: number`，与 Goal 一致参与上游校验 | 保留历史 `urgency` 列直到兼容窗口结束，但不作为 v0.1.0 任务层级约束字段。 |
+| TodoStatus | `todo \| done \| abandoned` | `in_progress` → `todo`；删除 start/pause 生成接口。 |
+| TrackTimeRelatedType | `none \| task \| todo` | 存量记录无待办关联；新增待办关联写入 `relatedType=todo`。 |
 
-## 七、接口契约摘要
+接口定义、VO 与 web-service controller 必须通过仓库生成流程更新；不得直接改写生成接口。
 
-| API                                  | Method | 说明                                                         |
-| ------------------------------------ | ------ | ------------------------------------------------------------ |
-| `/goal/:id`                          | PATCH  | 更新字段，含 status=completed/abandoned，校验子目标/关联约束 |
-| `/task/:id`                          | GET    | 获取任务详情（含 parent/children/goalId）                    |
-| `/task/:id`                          | PATCH  | 更新任务字段，含 status=completed/abandoned                  |
-| `/task/tree` or `/task/:id/children` | GET    | 获取任务树/子节点                                            |
-| `/todo`                              | GET    | 通过 relatedType=task&relatedId 过滤关联待办                 |
+## 实施顺序与验收
 
-> 若现有 API 不满足，按上述契约补充；前端需容错接口未实现时的占位。
+1. 更新 ProductWiki 与 PRD，完成 Goal/Task/Todo/TrackTime 差异设计。
+2. 落地 Service 级层级、删除与状态转换约束，再通过 RouteController 暴露新增 `done` IPC；删除待办 start/pause。
+3. 完成 Task 抽屉与 Todo 专注入口、TrackTime 待办关联；所有错误在操作位置反馈。
+4. 更新 TechnicalWiki 的现状与差距矩阵，保证版本 TDD 不复制长期工程规范。
 
-## 八、开发与联调
+| 场景 | 验收结果 |
+| --- | --- |
+| 编辑 Goal 父级时间、重要度或难度 | 任一直接子目标越界时拒绝保存并说明冲突。 |
+| Goal 完成、放弃、恢复与删除 | 状态 Tag 只读；状态入口合法；有关联内容时禁止删除。 |
+| 打开任意任务详情 | 在当前页面打开抽屉；左侧仅有同根子树；右侧无独立子任务 Tab。 |
+| 新建或调整子任务 | 必须只有一个上游，且计划范围、重要度、难度均不超过上游。 |
+| 记录与展示工时 | Task 预计与 TrackTime 实际均以秒保存；界面显示可读的小时/分钟。 |
+| 待办状态 | 无开始操作与进行中；旧 `in_progress` 视为未完成。 |
+| 区间待办专注 | 可预关联创建 TrackTime；待办状态不变。 |
+| 时间点待办 | 无专注入口；已有关联记录仍可读。 |
 
-- 前端：
-  - 新增 TaskDetail 页面与路由注册；
-  - 调整 GoalMainHeader 操作区与跳转逻辑；
-  - TaskProvider 增加视图状态缓存（上次列表筛选/滚动）。
-- 后端：
-  - 确认任务树/子节点接口；缺失则补 `GET /task/tree`。
-  - 确认 Goal/Task 状态更新接口支持 completed/abandoned。
-- 验收要点：
-  - Goal 页状态不可下拉，Tag 展示一致。
-  - Goal 任务列表点击跳转 Task 详情，Task 树高亮当前节点。
-  - Task 详情页左树右详情可正常切换节点，右上操作区按钮与 Dropdown 生效。
+验证命令：
 
-## 九、非功能
-
-- 性能：树懒加载；详情接口响应 < 500ms；首屏 < 5s。
-- 兼容：桌面端 Chrome/Edge ≥100。
-- 安全：危险操作必须二次确认；接口鉴权基于 JWT。
-
-## 十、里程碑
-
-| 里程碑 | 内容                                          |
-| ------ | --------------------------------------------- |
-| Alpha  | Goal 操作区调整 + Task 详情页骨架（树+详情）  |
-| Beta   | 子任务/关联 Todo/TrackTime 占位打通，跳转联动 |
-| GA     | 体验打磨、错误处理、性能优化                  |
+```bash
+pnpm --silent --filter true-north-prototype product-wiki:version -- v0.1.0 --json
+pnpm --filter true-north-prototype product-wiki:check
+pnpm --filter true-north-prototype test -- --runInBand
+```

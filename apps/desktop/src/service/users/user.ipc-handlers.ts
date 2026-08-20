@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { userService } from './user.service';
+import { User } from './user.entity';
 
 /**
  * 注册用户相关的 IPC 处理器
@@ -10,8 +11,8 @@ export function registerUserIpcHandlers(): void {
     return await userService.createUser(userData);
   });
 
-  ipcMain.handle('/user/findByFilter', async () => {
-    return await userService.findByFilter();
+  ipcMain.handle('/user/findByFilter', async (_, filter = {}) => {
+    return await userService.findByFilter(filter);
   });
 
   ipcMain.handle('/user/detail', async (_, id) => {
@@ -19,7 +20,7 @@ export function registerUserIpcHandlers(): void {
   });
 
   ipcMain.handle('/user/update', async (_, id, data) => {
-    return await userService.update(id, data);
+    return await userService.update(Object.assign(new User(), { id, ...data }));
   });
 
   ipcMain.handle('/user/delete', async (_, id) => {
@@ -29,7 +30,7 @@ export function registerUserIpcHandlers(): void {
   ipcMain.handle('/user/page', async (_, filter: any) => {
     const pageNum = Number(filter.pageNum) || 1;
     const pageSize = Number(filter.pageSize) || 10;
-    return await userService.page(pageNum, pageSize);
+    return await userService.page({ pageNum, pageSize });
   });
 
   ipcMain.handle('/user/list', async () => {

@@ -1,6 +1,6 @@
 export enum GoalType {
-  OBJECTIVE = 'objective',
-  KEY_RESULT = 'key_result',
+  VISION = 'vision',
+  RESULT = 'result',
 }
 
 export enum GoalStatus {

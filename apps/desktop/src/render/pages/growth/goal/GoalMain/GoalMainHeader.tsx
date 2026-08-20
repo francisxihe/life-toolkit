@@ -1,12 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, message, Tag, Dropdown, Menu, Button, Breadcrumb, Flex, CheckOutlined, CloseOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, RightOutlined } from '@sue/design-web-react';
+import React, { useEffect } from 'react';
+import {
+  Modal,
+  message,
+  Tag,
+  Dropdown,
+  Button,
+  Breadcrumb,
+  Flex,
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  EllipsisOutlined,
+  RightOutlined,
+} from '@sue/design-web-react';
 
-import { GoalService } from '@true-north/web-service';
+import { GoalController, GoalService } from '@true-north/web-service';
 import { useGoalContext } from '../context';
+import { useGoalDetail } from '../../components/GoalDetail';
 import { GoalStatus } from '@true-north/enum';
-import clsx from 'clsx';
+import styles from './style.module.less';
 
-// 状态配置映射
 const STATUS_CONFIG = {
   [GoalStatus.TODO]: {
     label: '待开始',
@@ -33,18 +47,15 @@ const GoalMainHeader: React.FC = () => {
     refreshData,
     selectedGoalId,
     setSelectedGoalId,
-    isEditing,
-    setIsEditing,
   } = useGoalContext();
+  const { openEditDrawer } = useGoalDetail();
 
-  // 构建面包屑路径
   const buildBreadcrumbPath = () => {
     if (!selectedGoal) return [];
 
     const path = [];
     let current = selectedGoal;
 
-    // 从当前目标向上追溯到根目标
     while (current) {
       path.unshift({
         id: current.id,
@@ -59,44 +70,58 @@ const GoalMainHeader: React.FC = () => {
 
   const breadcrumbPath = buildBreadcrumbPath();
 
-  // 当选中的目标ID变化时，获取详情
   useEffect(() => {
     if (selectedGoalId) {
       fetchGoalDetail(selectedGoalId);
-      setIsEditing(false); // 切换目标时退出编辑模式
     }
   }, [selectedGoalId]);
 
-  // 编辑完成后的回调
-  const handleEditComplete = async () => {
-    setIsEditing(false);
-    await refreshData();
+  const handleEdit = () => {
+    if (!selectedGoal) return;
+    openEditDrawer({
+      title: '编辑目标',
+      contentProps: {
+        goalId: selectedGoal.id,
+        afterSubmit: async () => {
+          await refreshData();
+        },
+      },
+    });
   };
 
-  // 状态变更后的回调
-  const handleStatusChange = async () => {
-    await refreshData();
-  };
-
-  // 标记完成
   const handleComplete = async () => {
     if (!selectedGoal) return;
 
+    Modal.confirm({
+      title: '确定标记目标为完成吗？',
+      content: '完成后可通过“恢复”重新激活目标。',
+      onOk: async () => {
+        try {
+          const done = await GoalService.markDone(selectedGoal.id);
+          if (!done) return;
+          message.success('目标已标记为完成');
+          await refreshData();
+        } catch (error) {
+          console.error('标记完成失败:', error);
+          message.error('标记完成失败');
+        }
+      },
+    });
+  };
+
+  const handleRestore = async () => {
+    if (!selectedGoal) return;
     try {
-      await GoalService.update(selectedGoal.id, {
-        status: GoalStatus.DONE,
-        doneAt: new Date().toISOString(),
-        abandonedAt: null,
-      });
-      message.success('目标已标记为完成');
+      const restored = await GoalService.restore(selectedGoal.id);
+      if (!restored) return;
+      message.success('目标已恢复');
       await refreshData();
     } catch (error) {
-      console.error('标记完成失败:', error);
-      message.error('标记完成失败');
+      console.error('恢复目标失败:', error);
+      message.error('恢复目标失败');
     }
   };
 
-  // 放弃目标
   const handleAbandon = () => {
     if (!selectedGoal) return;
 
@@ -105,7 +130,8 @@ const GoalMainHeader: React.FC = () => {
       content: '放弃后可以重新激活，是否继续？',
       onOk: async () => {
         try {
-          await GoalService.abandon(selectedGoal.id);
+          const abandoned = await GoalService.abandon(selectedGoal.id);
+          if (!abandoned) return;
           message.success('目标已放弃');
           await refreshData();
         } catch (error) {
@@ -116,17 +142,17 @@ const GoalMainHeader: React.FC = () => {
     });
   };
 
-  // 删除目标
   const handleDelete = () => {
     if (!selectedGoal) return;
 
     Modal.confirm({
       title: '确定删除吗？',
-      content: '删除后将无法恢复，如果目标下有子目标，将一并删除，是否继续？',
+      content: '删除前会检查子目标和关联行动；存在关联内容时不会删除。',
       onOk: async () => {
         try {
-          await GoalService.delete(selectedGoal.id);
+          await GoalController.delete(selectedGoal.id);
           message.success('删除成功');
+          setSelectedGoalId(null);
           await refreshData();
         } catch (error) {
           console.error('删除失败:', error);
@@ -136,84 +162,103 @@ const GoalMainHeader: React.FC = () => {
     });
   };
 
-  // 渲染操作菜单
-  const renderActionMenu = () => (
-    <Menu>
-      <Menu.Item key="edit" onClick={() => setIsEditing(true)}>
-        <EditOutlined /> 编辑
-      </Menu.Item>
-      <Menu.Item key="abandon" onClick={handleAbandon}>
-        <CloseOutlined /> 放弃
-      </Menu.Item>
-      <Menu.Item key="delete" onClick={handleDelete} className="text-red-500">
-        <DeleteOutlined /> 删除
-      </Menu.Item>
-    </Menu>
-  );
+  const canAbandon =
+    selectedGoal &&
+    (selectedGoal.status === GoalStatus.TODO ||
+      selectedGoal.status === GoalStatus.DOING);
+
+  const menuItems = [
+    {
+      key: 'edit',
+      label: '编辑',
+      icon: <EditOutlined />,
+      onClick: handleEdit,
+    },
+    ...(canAbandon
+      ? [
+          {
+            key: 'abandon',
+            label: '放弃',
+            icon: <CloseOutlined />,
+            onClick: handleAbandon,
+          },
+        ]
+      : []),
+    {
+      key: 'delete',
+      label: '删除',
+      icon: <DeleteOutlined />,
+      danger: true,
+      className: styles.dangerAction,
+      onClick: handleDelete,
+    },
+  ];
 
   return (
     <Flex
       container="fixed"
-      className={clsx(
-        'w-full px-4 !h-14',
-        'border-b border-border-2',
-        'justify-between',
-      )}
+      className={styles.header}
+      justify="space-between"
+      align="center"
     >
-      {/* 左侧：面包屑导航 */}
-      <Flex container="fill" className={clsx('flex items-center')}>
-        <Breadcrumb separator={<RightOutlined className="text-xs text-gray-400" />}>
-          {breadcrumbPath.map((item, index) => (
-            <Breadcrumb.Item
-              key={item.id}
-              className={clsx(
-                'cursor-pointer transition-colors',
-                index === breadcrumbPath.length - 1
-                  ? 'text-gray-900 font-medium'
-                  : 'text-gray-600 hover:text-blue-600',
-              )}
-              onClick={() => {
-                if (index < breadcrumbPath.length - 1) {
-                  setSelectedGoalId(item.id);
-                }
-              }}
-            >
-              {item.name}
-            </Breadcrumb.Item>
-          ))}
-        </Breadcrumb>
+      <Flex container="fill" className={styles.breadcrumb} align="center">
+        <Breadcrumb
+          styles={{
+            item: {
+              fontSize: 16,
+            },
+          }}
+          separator={<RightOutlined />}
+          items={breadcrumbPath.map((item, index) => ({
+            key: item.id,
+            title: item.name,
+            onClick: () => {
+              if (index < breadcrumbPath.length - 1) {
+                setSelectedGoalId(item.id);
+              }
+            },
+          }))}
+        />
+      </Flex>
 
+      <Flex container="fixed" align="center" gap={8} className={styles.actions}>
         {selectedGoal && (
           <Tag color={STATUS_CONFIG[selectedGoal.status]?.color}>
             {STATUS_CONFIG[selectedGoal.status]?.label}
           </Tag>
         )}
-      </Flex>
-
-      {/* 右侧：状态 Tag + 操作区 */}
-      <Flex
-        container="fixed"
-        className={clsx('h-full', 'flex items-center gap-2')}
-      >
-        {/* 主要按钮：已完成 */}
-        {selectedGoal && selectedGoal.status !== GoalStatus.DONE && (
-          <Button
-            type="outline"
-            size="default"
-            status="success"
-            icon={<CheckOutlined />}
-            onClick={handleComplete}
-          >
-            已完成
-          </Button>
-        )}
 
         <Dropdown
-          dropdownRender={() => renderActionMenu()}
+          trigger={['click']}
           placement="bottomRight"
+          menu={{ items: menuItems }}
         >
-          <Button icon={<EllipsisOutlined />} />
+          <Button
+            type="text"
+            icon={<EllipsisOutlined />}
+            aria-label="目标更多操作"
+          />
         </Dropdown>
+
+        {selectedGoal &&
+          (selectedGoal.status === GoalStatus.TODO ||
+            selectedGoal.status === GoalStatus.DOING) && (
+            <Button
+              type="primary"
+              icon={<CheckOutlined />}
+              onClick={handleComplete}
+            >
+              标记完成
+            </Button>
+          )}
+
+        {selectedGoal &&
+          (selectedGoal.status === GoalStatus.DONE ||
+            selectedGoal.status === GoalStatus.ABANDONED) && (
+            <Button type="primary" onClick={handleRestore}>
+              恢复目标
+            </Button>
+          )}
       </Flex>
     </Flex>
   );

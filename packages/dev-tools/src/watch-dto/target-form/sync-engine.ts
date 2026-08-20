@@ -27,7 +27,17 @@ export class FormSyncEngine extends SyncEngine {
 
   sync(dtoFilePath: string, intermediateState: IntermediateState): boolean {
     const voPath = this.getVoPath(dtoFilePath);
-    const content = this.generateVoContent(intermediateState);
+    let content = this.generateVoContent(intermediateState);
+    const updateMatch = intermediateState.code?.match(/export class Update(\w+)Dto[\s\S]*/);
+    if (updateMatch && intermediateState.metadata.className.startsWith('Create')) {
+      const fields = [...updateMatch[0].matchAll(/PickType\([^]*?\[([^\]]+)\]\s+as const\)/g)]
+        .flatMap((match) => [...match[1].matchAll(/['\"]([^'\"]+)['\"]/g)].map((item) => item[1]))
+        .filter((field) => ['status', 'doneAt', 'abandonedAt'].includes(field));
+      const name = updateMatch[1];
+      content += `\n\nexport type Update${name}Vo = Partial<Create${name}Vo> & {\n${fields
+        .map((field) => `  ${field}?: ${name}Vo['${field}'];`)
+        .join('\n')}\n};`;
+    }
 
     let finalContent = content;
     const fs = require('fs');

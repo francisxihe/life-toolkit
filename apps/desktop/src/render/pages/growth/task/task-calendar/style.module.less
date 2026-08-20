@@ -1,22 +1,59 @@
+.page {
+  width: 100%;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid var(--sue-color-border-secondary);
+  border-radius: var(--sue-border-radius);
+  background: var(--sue-color-bg-container);
+}
+
 .custom-calendar {
   border: none !important;
 
-  :global(.sue-calendar-month-row) {
-    height: auto;
-    min-height: 121px;
+  :global(.sue-picker-calendar-header) {
+    padding: 0;
   }
 
-  :global(.sue-calendar-month-with-days .sue-calendar-month-row) {
-    height: 32px;
-    min-height: unset;
-  }
-
-  :global(.sue-calendar-body) {
+  :global(.sue-picker-calendar-body) {
     padding: 0 20px;
   }
 
-  :global(.sue-calendar-week-list-item) {
-    text-align: center;
-    padding: 12px;
+  :global(.sue-picker-content) {
+    table-layout: fixed;
   }
+
+  :global(.sue-picker-cell) {
+    vertical-align: top;
+  }
+}
+
+.cell {
+  min-height: 121px;
+  color: var(--sue-color-text);
+  font-size: 12px;
+}
+
+.cellContent {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 121px;
+  padding: 6px;
+}
+
+.cellOutsideMonth {
+  opacity: 0.5;
+}
+
+.cellDate {
+  height: 22px;
+  line-height: 22px;
+  text-align: right;
+}
+
+.cellCreate {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  left: 6px;
+  z-index: 1;
 }

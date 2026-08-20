@@ -1,7 +1,4 @@
 .entityForm { padding-bottom: 12px; }
 .entityForm :global(.sue-form-item) { margin-bottom: 18px; }
 .formHint { color: var(--sue-color-text-tertiary); }
-.repeatBox { margin: 0 0 18px; padding: 16px; border: 1px solid var(--sue-color-primary-border); border-radius: var(--sue-border-radius); background: var(--sue-color-primary-bg); }
-.weightList { display: flex; flex-direction: column; gap: 8px; }
-.weightList > div span { width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.weightList :global(.sue-slider) { flex: 1; }
+.repeatControl { max-width: 100%; }

@@ -18,15 +18,15 @@ export interface ProjectProps {
 function ProjectCard(props: ProjectProps) {
   const { loading, contributors } = props;
   return (
-    <Card className={styles['project-wrapper']} bordered={true} size="small">
+    <Card className={styles['project-wrapper']} size="small">
       {loading ?
-      <Skeleton text={{ rows: 1 }} animation /> :
+      <Skeleton paragraph={{ rows: 1 }} animation /> :
 
       <h6 className="text-title-1 font-medium">{props.title}</h6>
       }
 
       {loading ?
-      <Skeleton text={{ rows: 1 }} animation style={{ marginTop: '4px' }} /> :
+      <Skeleton paragraph={{ rows: 1 }} animation style={{ marginTop: '4px' }} /> :
 
       <span className="text-text-3 truncate" style={{ margin: '0' }}>
           {props.enTitle}
@@ -35,7 +35,7 @@ function ProjectCard(props: ProjectProps) {
 
       <div className={styles.avatar}>
         {loading ?
-        <Skeleton text={{ rows: 1 }} animation /> :
+        <Skeleton paragraph={{ rows: 1 }} animation /> :
 
         <>
             <Avatar.Group size={24}>

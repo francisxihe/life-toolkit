@@ -50,7 +50,11 @@ export class TaskController {
     @Query() taskPageFilterVo?: TaskVO.TaskPageFilterVo
   ): Promise<ResponsePageVo<TaskVO.TaskWithoutRelationsVo>> {
     const filter = new TaskPageFilterDto();
-    if (taskPageFilterVo) filter.importPageVo(taskPageFilterVo);
+    filter.importPageVo({
+      ...taskPageFilterVo,
+      pageNum: normalizePageValue(taskPageFilterVo?.pageNum, 1),
+      pageSize: normalizePageValue(taskPageFilterVo?.pageSize, 10, 100),
+    });
     const { list, total, pageNum, pageSize } = await this.taskService.page(filter);
     return TaskDto.dtoListToPageVo(list, total, pageNum, pageSize);
   }
@@ -64,6 +68,21 @@ export class TaskController {
   @Put('/abandon/:id', { description: '放弃任务' })
   async abandon(@Param('id') id: string): Promise<boolean> {
     return await this.taskService.abandon(id);
+  }
+
+  @Put('/done/:id', { description: '完成任务' })
+  async markDone(@Param('id') id: string): Promise<boolean> {
+    return await this.taskService.done(id);
+  }
+
+  @Put('/start/:id', { description: '开始任务' })
+  async start(@Param('id') id: string): Promise<boolean> {
+    return await this.taskService.start(id);
+  }
+
+  @Put('/pause/:id', { description: '暂停任务' })
+  async pause(@Param('id') id: string): Promise<boolean> {
+    return await this.taskService.pause(id);
   }
 
   @Put('/restore/:id', { description: '恢复任务' })
@@ -81,7 +100,9 @@ export class TaskController {
     const rootTasks: TaskVO.TaskVo[] = [];
 
     // 转换为 VO 并建立映射
-    const taskVos = list.map((dto) => dto.exportVo());
+    // findByFilter already joins direct children. Build this endpoint from the
+    // flat result only, otherwise every child would be appended twice below.
+    const taskVos = list.map((dto) => ({ ...dto.exportVo(), children: [] }));
     taskVos.forEach((task) => taskMap.set(task.id, task));
 
     // 构建父子关系
@@ -99,4 +120,10 @@ export class TaskController {
 
     return { list: rootTasks };
   }
+}
+
+function normalizePageValue(value: unknown, fallback: number, maximum?: number) {
+  const numberValue = Number(value);
+  if (!Number.isInteger(numberValue) || numberValue < 1) return fallback;
+  return maximum ? Math.min(numberValue, maximum) : numberValue;
 }

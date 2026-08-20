@@ -1,56 +1,37 @@
 import 'reflect-metadata';
-import { Entity, OneToMany, Column } from 'typeorm';
-import { Todo } from '../todo/todo.entity';
-import { RepeatMode, RepeatEndMode } from 'francis-types-repeat';
-import type { RepeatConfig } from 'francis-types-repeat';
-import { TodoStatus } from '@true-north/enum';
-import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { TodoRepeatStatus } from '@true-north/enum';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BaseEntity } from '@business/common';
+import { Repeat } from '../repeat/repeat.entity';
 
 export class TodoRepeatWithoutRelations extends BaseEntity {
-  /** 重复模式 */
-  @Column({
-    type: 'varchar',
-    length: 20,
-  })
-  repeatMode!: RepeatMode;
+  /** 内容名称 */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  name!: string;
 
-  /** 重复配置 */
-  @Column({
-    type: 'text',
-    nullable: true,
-    transformer: {
-      to: (value) => JSON.stringify(value),
-      from: (value) => JSON.parse(value),
-    },
-  })
-  repeatConfig?: RepeatConfig;
+  /** 内容描述 */
+  @Column('text', { nullable: true })
+  @IsString()
+  @IsOptional()
+  description?: string;
 
-  /** 重复结束模式 */
-  @Column({
-    type: 'varchar',
-    length: 20,
-  })
-  repeatEndMode!: RepeatEndMode;
+  /** 重要程度 */
+  @Column('int', { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  importance?: number;
 
-  /** 重复结束日期 */
-  @Column({
-    type: 'date',
-    nullable: true,
-  })
-  repeatEndDate?: string;
-
-  /** 重复次数 */
-  @Column({
-    type: 'int',
-    nullable: true,
-  })
-  repeatTimes?: number;
-
-  /** 重复开始日期 */
-  @Column('date', { nullable: true })
-  repeatStartDate!: string;
+  /** 紧急程度 */
+  @Column('int', { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  @Type(() => Number)
+  urgency?: number;
 
   /** 计划待办开始时间 */
   @Column('time', { nullable: true })
@@ -60,57 +41,30 @@ export class TodoRepeatWithoutRelations extends BaseEntity {
   @Column('time', { nullable: true })
   planEndTime?: string;
 
-  /** 当前执行到的重复日期 */
-  @Column('date', { nullable: true })
-  currentDate!: string;
-
-  /** 模板名称 */
-  @Column('varchar', { nullable: true })
-  @IsString()
+  /** 系列生命周期（非实例 TodoStatus） */
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: TodoRepeatStatus.ACTIVE,
+  })
+  @IsEnum(TodoRepeatStatus)
   @IsOptional()
-  name!: string;
-
-  /** 模板描述 */
-  @Column('text', { nullable: true })
-  @IsString()
-  @IsOptional()
-  description?: string;
-
-  /** 模板重要程度 */
-  @Column('int', { nullable: true })
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  importance?: number;
-
-  /** 模板紧急程度 */
-  @Column('int', { nullable: true })
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  urgency?: number;
-
-  /** 模板标签 */
-  @Column('simple-array', { nullable: true })
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  tags?: string[];
-
-  /** 状态（模板整体状态） */
-  @Column({ type: 'varchar', length: 20, nullable: true })
-  @IsEnum(TodoStatus)
-  @IsOptional()
-  status!: TodoStatus;
+  status!: TodoRepeatStatus;
 
   /** 放弃时间 */
   @Column('datetime', { nullable: true })
   abandonedAt?: Date;
+
+  /** 关联的调度规则 */
+  @Column('varchar', { nullable: true })
+  @IsString()
+  @IsOptional()
+  repeatId!: string;
 }
 
-@Entity('todo_repeat')
+@Entity('repeat_todo')
 export class TodoRepeat extends TodoRepeatWithoutRelations {
-  /** 关联的待办列表 */
-  @OneToMany(() => Todo, (todo) => todo.repeat, { nullable: true })
-  todos?: Todo[];
+  @ManyToOne(() => Repeat, { nullable: true })
+  @JoinColumn({ name: 'repeat_id' })
+  repeat?: Repeat;
 }

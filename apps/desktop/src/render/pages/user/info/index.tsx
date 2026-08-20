@@ -30,22 +30,22 @@ function UserInfo() {
       <Row gutter={16}>
         <Col span={16}>
           <Card className={styles.wrapper}>
-            <div className={styles['card-title-wrapper']}>
+            <Flex justify="space-between">
               <h6 className="text-title-1 font-medium" style={{ marginBottom: '20px' }}>
                 {t['userInfo.title.project']}
               </h6>
               <a style={{ color: "var(--color-primary-6)" }}>{t['userInfo.btn.more']}</a>
-            </div>
+            </Flex>
             <MyProject />
           </Card>
         </Col>
         <Col span={8}>
           <Card className={styles.wrapper}>
-            <div className={styles['card-title-wrapper']}>
+            <Flex justify="space-between">
               <h6 className="text-title-1 font-medium" style={{ marginBottom: '12px' }}>
                 {t['userInfo.title.team']}
               </h6>
-            </div>
+            </Flex>
             <MyTeam />
           </Card>
         </Col>
@@ -53,22 +53,22 @@ function UserInfo() {
       <Row gutter={16}>
         <Col span={16}>
           <Card className={styles.wrapper}>
-            <div className={styles['card-title-wrapper']}>
+            <Flex justify="space-between">
               <h6 className="text-title-1 font-medium" style={{ marginBottom: '8px' }}>
                 {t['userInfo.title.news']}
               </h6>
               <a style={{ color: "var(--color-primary-6)" }}>{t['userInfo.btn.all']}</a>
-            </div>
+            </Flex>
             <LatestNews />
           </Card>
         </Col>
         <Col span={8}>
           <Card className={styles.wrapper}>
-            <div className={styles['card-title-wrapper']}>
+            <Flex justify="space-between">
               <h6 className="text-title-1 font-medium">{t['userInfo.title.notice']}</h6>
-            </div>
+            </Flex>
             {noticeLoading ?
-            <Skeleton text={{ rows: 10 }} animation /> :
+            <Skeleton paragraph={{ rows: 10 }} animation /> :
 
             <Flex
               vertical

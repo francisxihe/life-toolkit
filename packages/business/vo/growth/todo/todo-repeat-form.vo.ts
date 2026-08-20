@@ -6,7 +6,6 @@ export type CreateTodoRepeatVo = Pick<
   | 'description'
   | 'importance'
   | 'urgency'
-  | 'tags'
   | 'status'
   | 'currentDate'
   | 'repeatStartDate'

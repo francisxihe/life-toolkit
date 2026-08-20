@@ -1,0 +1,130 @@
+.calendar {
+  width: 100%;
+  padding: 16px;
+  color: var(--sue-color-text);
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  align-items: center;
+  min-height: 32px;
+  margin-bottom: 12px;
+}
+
+.monthLabel {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.iconButton,
+.dateButton,
+.todayButton {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.iconButton {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--sue-color-text-secondary);
+}
+
+.iconButton:hover,
+.dateButton:hover {
+  background: var(--sue-color-fill-tertiary);
+  color: var(--sue-color-primary);
+}
+
+.weekdays,
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.weekdays {
+  margin-bottom: 4px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 11px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.dateButton {
+  position: relative;
+  display: block;
+  min-height: 48px;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 0;
+  border-top: 3px solid transparent;
+  background: var(--sue-color-fill-quaternary);
+  color: var(--sue-color-text);
+  padding: 4px 6px 6px;
+  line-height: 16px;
+  border-bottom-left-radius: 2px;
+  border-bottom-right-radius: 2px;
+}
+
+.dateNumber {
+  display: block;
+  font-size: 10px;
+  line-height: 10px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.itemCount {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 12px;
+  font-weight: 500;
+  transform: translate(-50%, -50%);
+}
+
+.outsideMonth {
+  color: var(--sue-color-text-quaternary);
+}
+
+.today {
+  color: var(--sue-color-primary);
+}
+
+.selected {
+  border-top-color: var(--sue-color-primary);
+  background: var(--sue-color-primary-bg);
+  color: var(--sue-color-primary);
+}
+
+.selected:hover {
+  background: var(--sue-color-primary-bg);
+  color: var(--sue-color-primary);
+}
+
+.todayButton {
+  width: 100%;
+  min-height: 30px;
+  margin-top: 14px;
+  border-top: 1px solid var(--sue-color-border-secondary);
+  background: transparent;
+  color: var(--sue-color-primary);
+  font-size: 12px;
+}
+
+.todayButton:hover {
+  color: var(--sue-color-primary);
+}

@@ -1,0 +1,126 @@
+.miniTimer {
+  position: fixed;
+  z-index: 1200;
+  right: 24px;
+  bottom: 24px;
+  width: 320px;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+}
+
+.taskSelector {
+  width: 100%;
+}
+
+.selectPopup {
+  z-index: 2100;
+}
+
+.miniBody {
+  min-width: 0;
+}
+
+.miniTime {
+  color: var(--primary-6);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.taskName {
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.finishButton {
+  align-self: flex-end;
+  padding: 0;
+}
+
+/* Fullscreen reuses pages/timer Flip clock + bottom actions */
+.fullscreen {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  background: var(--sue-color-bg-layout, #f5f5f5);
+}
+
+.fullscreenContent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.fullscreenHeader {
+  position: absolute;
+  z-index: 2;
+  top: 24px;
+  right: 24px;
+  left: 24px;
+}
+
+.fullscreenHeader h1 {
+  margin: 0;
+  color: var(--sue-color-text);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.fullscreenHeader p {
+  margin: 6px 0 0;
+  color: var(--sue-color-text-secondary);
+}
+
+.fullscreenTaskSelector {
+  width: min(100%, 280px);
+}
+
+.clock {
+  width: 100%;
+  height: 100%;
+}
+
+.colon {
+  height: 50px;
+  padding: 0 10px;
+}
+
+.colon::after,
+.colon::before {
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 70%);
+  content: '';
+}
+
+.fullscreenActions {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  padding: 12px;
+}
+
+.recordButton {
+  margin: 0 4px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  background: var(--sue-color-success, #00b42a);
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .miniTimer {
+    right: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+  }
+
+  .fullscreenActions {
+    right: 8px;
+  }
+}

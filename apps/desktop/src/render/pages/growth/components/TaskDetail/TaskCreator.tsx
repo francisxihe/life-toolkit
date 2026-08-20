@@ -41,7 +41,7 @@ function Footer(props: { onClose?: () => Promise<void> }) {
       <Button
         type="primary"
         onClick={async () => {
-          await onSubmit();
+          if (!(await onSubmit())) return;
           props.onClose?.();
         }}
       >

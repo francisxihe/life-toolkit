@@ -28,7 +28,15 @@ export class TargetFormComposer {
     const lines: string[] = [];
     const voName = intermediateState.metadata.voName;
 
-    lines.push(`export type ${voName} = {`);
+    const pickedFields = this.extractPickFields(intermediateState.code || '');
+    if (pickedFields.length) {
+      const baseName = intermediateState.metadata.className.replace(/^Create/, '').replace('Dto', '');
+      lines.push(`export type ${voName} = Pick<${baseName}Vo,`);
+      for (const field of pickedFields) lines.push(`  | '${field}'`);
+      lines.push(`> & {`);
+    } else {
+      lines.push(`export type ${voName} = {`);
+    }
 
     const fieldsArray = Array.from(intermediateState.fields.values());
     const nonRelationFields = filterNonRelationFields(fieldsArray);
@@ -52,7 +60,21 @@ export class TargetFormComposer {
     const baseName = intermediateState.metadata.className.replace('Dto', '').replace('Update', '');
     const createVoName = `Create${baseName}Vo`;
 
-    return `export type ${voName} = Partial<${createVoName}>;`;
+    const statusFields = this.extractPickFields(intermediateState.code || '').filter((field) =>
+      ['status', 'doneAt', 'abandonedAt'].includes(field)
+    );
+    if (!statusFields.length) return `export type ${voName} = Partial<${createVoName}>;`;
+    const baseNameWithoutCreate = createVoName.replace(/^Create/, '').replace('Vo', '');
+    return [
+      `export type ${voName} = Partial<${createVoName}> & {`,
+      ...statusFields.map((field) => `  ${field}?: ${baseNameWithoutCreate}Vo['${field}'];`),
+      '};',
+    ].join('\n');
+  }
+
+  private extractPickFields(code: string): string[] {
+    const match = code.match(/PickType\([^]*?\[([^\]]+)\]\s+as const\)/);
+    return match ? [...match[1].matchAll(/['\"]([^'\"]+)['\"]/g)].map((item) => item[1]) : [];
   }
 
   /**

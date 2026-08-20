@@ -1,22 +1,16 @@
 import { Select, Row, Col } from '@sue/design-web-react';
 
 import { TableFilter } from '@/components/Layout/TableFilter';
-import { HabitPageFilterVo } from '@true-north/vo';
-import { useState } from 'react';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { useHabitListContext } from './context';
 
 export default function HabitListFilter() {
-  const { handleRefresh } = useHabitListContext();
-  const [filters, setFilters] = useState<HabitPageFilterVo>({
-    pageNum: 1,
-    pageSize: 12,
-  });
+  const { handleRefresh, filters, setFilters } = useHabitListContext();
 
   return (
     <TableFilter
       clearFilters={async () => {
-        await handleRefresh();
+        setFilters({ pageNum: 1, pageSize: 12 });
       }}
       search={async () => {
         await handleRefresh();
@@ -31,7 +25,7 @@ export default function HabitListFilter() {
               value: option.value,
             }))}
             value={filters.status}
-            onChange={(value) => setFilters({ ...filters, status: value })}
+            onChange={(value) => setFilters((current) => ({ ...current, status: value, pageNum: 1 }))}
             allowClear
           />
         </Col>

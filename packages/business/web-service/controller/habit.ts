@@ -11,7 +11,7 @@ export default class HabitController {
   }
 
   static async update(id: string, updateHabitVo: HabitVO.UpdateHabitVo) {
-    return request<HabitVO.HabitVo>({ method: 'put' })(`/habit/update${id}`, updateHabitVo);
+    return request<HabitVO.HabitVo>({ method: 'put' })(`/habit/update/${id}`, updateHabitVo);
   }
 
   static async find(id: string) {
@@ -31,6 +31,14 @@ export default class HabitController {
 
   static async restore(id: string) {
     return request<void>({ method: 'put' })(`/habit/restore/${id}`);
+  }
+
+  static async pause(id: string) {
+    return request<void>({ method: 'put' })(`/habit/pause/${id}`);
+  }
+
+  static async activate(id: string) {
+    return request<void>({ method: 'put' })(`/habit/activate/${id}`);
   }
 
   static async findByFilter(habitListFiltersVo?: HabitVO.HabitFilterVo) {

@@ -3,6 +3,7 @@ import { TodoFilterDto } from './dto';
 import { Todo } from './todo.entity';
 import { BaseRepository } from '@business/common';
 import { BaseRepository as BaseRepositoryImpl } from '../../db/base.repository.impl';
+import { TodoRelatedType } from '@true-north/enum';
 import dayjs from 'dayjs';
 
 export interface TodoRepository extends BaseRepository<Todo, TodoFilterDto> {
@@ -12,10 +13,7 @@ export interface TodoRepository extends BaseRepository<Todo, TodoFilterDto> {
 export class TodoRepository extends BaseRepositoryImpl<Todo, TodoFilterDto> implements TodoRepository {
   constructor() {
     function buildQuery(filter: TodoFilterDto) {
-      const qb = this.repo
-        .createQueryBuilder('todo')
-        .leftJoinAndSelect('todo.task', 'task')
-        .leftJoinAndSelect('todo.habit', 'habit');
+      const qb = this.repo.createQueryBuilder('todo').andWhere('todo.deletedAt IS NULL');
 
       if (filter.includeIds && filter.includeIds.length > 0) {
         qb.andWhere('todo.id IN (:...includeIds)', { includeIds: filter.includeIds });
@@ -29,7 +27,18 @@ export class TodoRepository extends BaseRepositoryImpl<Todo, TodoFilterDto> impl
           importance: filter.importance,
         });
       if (filter.urgency !== undefined) qb.andWhere('todo.urgency = :urgency', { urgency: filter.urgency });
-      if (filter.taskId) qb.andWhere('todo.taskId = :taskId', { taskId: filter.taskId });
+      if (filter.taskId) {
+        qb.andWhere('todo.relatedType = :taskRelatedType AND todo.relatedId = :taskId', {
+          taskRelatedType: TodoRelatedType.TASK,
+          taskId: filter.taskId,
+        });
+      }
+      if (filter.taskIds?.length) {
+        qb.andWhere('todo.relatedType = :taskIdsRelatedType AND todo.relatedId IN (:...taskIds)', {
+          taskIdsRelatedType: TodoRelatedType.TASK,
+          taskIds: filter.taskIds,
+        });
+      }
       if (filter.keyword) qb.andWhere('todo.name LIKE :kw', { kw: `%${filter.keyword}%` });
       if (filter.planDateStart) qb.andWhere('todo.planDate >= :ds', { ds: filter.planDateStart });
       if (filter.planDateEnd) qb.andWhere('todo.planDate <= :de', { de: filter.planDateEnd });
@@ -58,11 +67,9 @@ export class TodoRepository extends BaseRepositoryImpl<Todo, TodoFilterDto> impl
     super(AppDataSource.getRepository(Todo), buildQuery);
   }
 
-  async findWithRelations(id: string, relations?: string[]): Promise<Todo> {
-    const defaultRelations = ['task', 'habit'];
+  async findWithRelations(id: string, _relations?: string[]): Promise<Todo> {
     const todo = await this.repo.findOne({
       where: { id },
-      relations: relations || defaultRelations,
     });
     if (!todo) throw new Error(`待办不存在，ID: ${id}`);
     return todo;

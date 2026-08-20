@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { GoalType, Importance } from '@true-north/enum';
-import { IMPORTANCE_MAP } from '../../constants';
+import dayjs from 'dayjs';
+import { Difficulty, GoalType, Importance } from '@true-north/enum';
+import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { GoalFormData } from '@true-north/web-service';
 import { GoalVo } from '@true-north/vo';
 
@@ -17,12 +18,12 @@ export const useGoalFormConstraints = (parentGoal: GoalVo) => {
 
   const allowedTypes = useMemo(() => {
     if (!parentGoal) {
-      return [GoalType.OBJECTIVE, GoalType.KEY_RESULT];
+      return [GoalType.VISION];
     }
 
-    return parentGoal.type === GoalType.KEY_RESULT
-      ? [GoalType.KEY_RESULT]
-      : [GoalType.OBJECTIVE, GoalType.KEY_RESULT];
+    return parentGoal.type === GoalType.RESULT
+      ? [GoalType.RESULT]
+      : [GoalType.VISION, GoalType.RESULT];
   }, [parentGoal]);
 
   const allowedImportance = useMemo(() => {
@@ -41,14 +42,19 @@ export const useGoalFormConstraints = (parentGoal: GoalVo) => {
     });
   }, [parentGoal]);
 
+  const allowedDifficulty = useMemo(() => {
+    if (!parentGoal?.difficulty) return [...DIFFICULTY_MAP.keys()];
+    return [...DIFFICULTY_MAP.keys()].filter((difficulty) => difficulty <= parentGoal.difficulty!);
+  }, [parentGoal]);
+
   function updateByConstraints(goalFormData: GoalFormData) {
     const updates: Partial<typeof goalFormData> = {};
 
     // 检查父目标是否为成果指标
     if (parentGoal.startAt && parentGoal.endAt) {
       if (
-        goalFormData.planTimeRange[0] < parentGoal.startAt ||
-        goalFormData.planTimeRange[1] > parentGoal.endAt
+        (goalFormData.planTimeRange[0] && dayjs(goalFormData.planTimeRange[0]).isBefore(dayjs(parentGoal.startAt))) ||
+        (goalFormData.planTimeRange[1] && dayjs(goalFormData.planTimeRange[1]).isAfter(dayjs(parentGoal.endAt)))
       ) {
         updates.planTimeRange = [undefined, undefined];
       }
@@ -56,10 +62,10 @@ export const useGoalFormConstraints = (parentGoal: GoalVo) => {
 
     // 检查目标类型是否符合约束
     if (
-      parentGoal.type === GoalType.KEY_RESULT &&
-      goalFormData.type !== GoalType.KEY_RESULT
+      parentGoal.type === GoalType.RESULT &&
+      goalFormData.type !== GoalType.RESULT
     ) {
-      updates.type = GoalType.KEY_RESULT;
+      updates.type = GoalType.RESULT;
     }
 
     // 检查重要程度是否符合约束（子目标重要程度不能低于父目标）
@@ -75,6 +81,14 @@ export const useGoalFormConstraints = (parentGoal: GoalVo) => {
       updates.importance = parentGoal.importance;
     }
 
+    if (
+      parentGoal.difficulty !== undefined &&
+      goalFormData.difficulty !== undefined &&
+      goalFormData.difficulty > parentGoal.difficulty
+    ) {
+      updates.difficulty = parentGoal.difficulty as Difficulty;
+    }
+
     return updates;
   }
 
@@ -82,6 +96,7 @@ export const useGoalFormConstraints = (parentGoal: GoalVo) => {
     allowedDateRange,
     allowedTypes,
     allowedImportance,
+    allowedDifficulty,
     updateByConstraints,
   };
 };

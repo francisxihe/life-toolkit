@@ -1,0 +1,21 @@
+.detailShell { min-height: 540px; overflow: hidden; border: 1px solid var(--sue-color-border-secondary); border-radius: var(--sue-border-radius); background: var(--sue-color-bg-container); }
+.treePanel { width: 320px; flex: 0 0 320px; min-width: 0; border-right: 1px solid var(--sue-color-border-secondary); overflow: hidden; }
+.treeHeader { padding: 16px; border-bottom: 1px solid var(--sue-color-border-secondary); }
+.treeCreateForm { padding-top: 4px; }
+.treeCreateError { font-size: 12px; }
+.treeList { min-height: 0; overflow: auto; padding: 8px; }
+.treeRow { display: flex; align-items: center; min-width: 0; min-height: 34px; }
+.treeToggle { width: 26px; padding: 0 !important; }
+.treeSpacer { width: 26px; flex: 0 0 26px; }
+.treeButton, .treeActive { flex: 1; min-width: 0; justify-content: space-between !important; padding: 0 8px !important; text-align: left; }
+.treeButton span, .treeActive span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.treeButton small, .treeActive small { margin-left: 8px; color: var(--sue-color-text-tertiary); }
+.treeActive { color: var(--sue-color-primary) !important; background: var(--sue-color-primary-bg) !important; }
+.detailMain { min-width: 0; flex: 1 1 auto; overflow: auto; }
+.detailHeader { min-height: 72px; padding: 12px 20px; border-bottom: 1px solid var(--sue-color-border-secondary); }
+.detailHeader h2 { margin: 0; font-size: 18px; font-weight: 600; }
+.detailTabs :global(.sue-tabs-nav) { margin: 0; padding: 0 20px; }
+.tabBody { padding: 20px; }
+.rows { margin-top: 12px; border-top: 1px solid var(--sue-color-border-secondary); }
+.row { min-height: 46px; padding: 6px 0; border-bottom: 1px solid var(--sue-color-border-secondary); }
+.dangerAction { color: var(--sue-color-error) !important; }

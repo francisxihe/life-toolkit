@@ -52,40 +52,35 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
   };
 
   return (
-    <div
-      ref={containerRef}
-      className={`mind-map w-full h-full flex flex-col ${className}`}
-      style={{ position: 'relative' }}
-    >
+    <div ref={containerRef} className={`mind-map ${className}`}>
       {showToolbar && (
         <MindMapToolbar
           onExport={() => setExportModalVisible(true)}
           onImport={() => setImportModalVisible(true)}
         />
       )}
-      <MindMapGraph
-        options={options}
-        onChange={onChange}
-        onNodeClick={onNodeClick}
-        onGraphReady={onGraphReady}
-        MindMapNode={MindMapNode}
-      />
+      <div className="mind-map-canvas">
+        <MindMapGraph
+          options={options}
+          onChange={onChange}
+          onNodeClick={onNodeClick}
+          onGraphReady={onGraphReady}
+          MindMapNode={MindMapNode}
+        />
+      </div>
 
-      {/* 节点编辑器 */}
       <NodeEditor
-        visible={nodeEditorVisible}
+        open={nodeEditorVisible}
         nodeId={selectedNodeId}
         onClose={() => setNodeEditorVisible(false)}
       />
 
       <MiniMapContainer />
 
-      {/* 导出模态框 */}
-      <ExportModal visible={exportModalVisible} onClose={() => setExportModalVisible(false)} />
+      <ExportModal open={exportModalVisible} onClose={() => setExportModalVisible(false)} />
 
-      {/* 导入模态框 */}
       <ImportModal
-        visible={importModalVisible}
+        open={importModalVisible}
         onClose={() => setImportModalVisible(false)}
         onImport={handleImport}
       />

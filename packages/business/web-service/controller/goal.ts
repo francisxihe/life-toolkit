@@ -18,10 +18,6 @@ export default class GoalController {
     return request<GoalVO.GoalVo>({ method: 'get' })(`/goal/find/${id}`);
   }
 
-  static async findWithRelations(id: string) {
-    return request<GoalVO.GoalVo>({ method: 'get' })(`/goal/find-with-relations/${id}`);
-  }
-
   static async page(goalPageFilterVo?: GoalVO.GoalPageFilterVo) {
     return request<ResponsePageVo<GoalVO.GoalWithoutRelationsVo>>({ method: 'get' })(`/goal/page`, goalPageFilterVo);
   }
@@ -48,5 +44,9 @@ export default class GoalController {
 
   static async getTree(goalListFiltersVo?: GoalVO.GoalFilterVo) {
     return request<ResponseTreeVo<GoalVO.GoalVo>>({ method: 'get' })(`/goal/get-tree`, goalListFiltersVo);
+  }
+
+  static async markDone(id: string) {
+    return request<boolean>({ method: 'put' })(`/goal/done/${id}`);
   }
 }

@@ -6,14 +6,14 @@ VERSION="${1:-0.0.3-beta}"
 OUT="$ROOT/vendor/sue-design-web-react"
 TMP="$(mktemp -d)"
 
-cleanup() { rm -rf "$TMP"; }
+cleanup() { rm -rf "$TMP"; rm -f "$ROOT/sue-design-web-react-${VERSION}.tgz"; }
 trap cleanup EXIT
 
-cd "$TMP"
+cd "$ROOT"
 npm pack "@sue/design-web-react@${VERSION}" -s
-tar -xzf "sue-design-web-react-${VERSION}.tgz"
+tar -xzf "sue-design-web-react-${VERSION}.tgz" -C "$TMP"
 rm -rf "$OUT"
-mv package "$OUT"
+mv "$TMP/package" "$OUT"
 
 node -e "
 const fs = require('fs');

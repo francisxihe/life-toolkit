@@ -12,7 +12,7 @@ export function TableFilter(props: {
   return (
     <Flex container="full" className="w-full my-3">
       <Flex container="fill">{children}</Flex>
-      <Divider type="vertical" style={{ height: '80px' }} />
+      <Divider vertical style={{ height: '80px' }} />
       <Flex container="fixed" className="h-full flex flex-col gap-4 mx-3">
         {Actions || (
           <>

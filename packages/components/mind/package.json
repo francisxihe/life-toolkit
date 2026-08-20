@@ -21,7 +21,7 @@
     "@antv/x6-react-components": "^2.0.9",
     "@antv/x6-react-shape": "^2.2.3",
     "@antv/xflow": "^2.1.13",
-    "@sue/design-web-react": "0.0.3-beta",
+    "@sue/design-web-react": "0.0.3-beta.1",
     "@true-north/common-web-utils": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"

@@ -1,6 +1,0 @@
-.timerCard { min-height: 410px; }
-.timerCircle { display: flex; width: 220px; height: 220px; flex-direction: column; align-items: center; justify-content: center; border: 10px solid var(--sue-color-primary-bg); border-radius: 50%; background: var(--sue-color-bg-container); }
-.timerCircle b { font-size: 38px; }
-.timerCircle span { max-width: 160px; overflow: hidden; color: var(--sue-color-text-secondary); text-align: center; text-overflow: ellipsis; white-space: nowrap; }
-.session { min-height: 50px; border-bottom: 1px solid var(--sue-color-border-secondary); }
-@media (max-width: 575px) { .timerCircle { width: 180px; height: 180px; } }

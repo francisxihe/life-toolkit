@@ -24,7 +24,7 @@ function Success() {
           </div>
           <div className="text-text-3">{t['error.result.subTitle']}</div>
           <div>
-            <Button key="again" type="secondary" style={{ marginRight: 16 }}>
+            <Button key="again" type="default" style={{ marginRight: 16 }}>
               {t['error.result.goBack']}
             </Button>
             <Button key="back" type="primary">

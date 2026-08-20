@@ -41,4 +41,16 @@ export default class TaskController {
   static async getTree(taskFilterVo?: TaskVO.TaskFilterVo) {
     return request<ResponseListVo<TaskVO.TaskVo>>({ method: 'get' })(`/task/tree`, taskFilterVo);
   }
+
+  static async markDone(id: string) {
+    return request<boolean>({ method: 'put' })(`/task/done/${id}`);
+  }
+
+  static async start(id: string) {
+    return request<boolean>({ method: 'put' })(`/task/start/${id}`);
+  }
+
+  static async pause(id: string) {
+    return request<boolean>({ method: 'put' })(`/task/pause/${id}`);
+  }
 }

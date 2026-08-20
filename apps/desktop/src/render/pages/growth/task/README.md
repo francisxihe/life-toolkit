@@ -1,5 +1,7 @@
 # 任务管理 - 技术设计文档 (TDD)
 
+> 当前实现快照（2026-08-07）：桌面端只保留“当前任务、任务日历、全部任务”三个入口。当前任务使用 `DayAgendaDateProvider` 选择日期，并按过期、当日、已完成、已放弃分组；任务详情通过 `TaskDetailDrawer` 打开。独立本周视图和任务统计页已移除，以下旧版分组说明仅作为历史设计参考，不是当前路由契约。
+
 ## 1. 数据模型
 
 ### 1.1 任务数据模型
@@ -187,9 +189,17 @@ function useTaskFormConstraints(parentTask, parentGoal) {
 }
 ```
 
-## 3. API 接口
+## 3. 本周分组与过期规则
 
-### 3.1 任务服务
+- 日期以客户端本地日历日计算，格式为 `YYYY-MM-DD`；本周边界沿用 `dayjs().startOf('week')` 和 `dayjs().endOf('week')`，即周日至周六。
+- 待办以计划日期 `planDate` 判断；任务以计划结束时间 `endAt` 所在日期判断。
+- “已过期”仅包含 `TODO` 状态且日期早于当天的事项：待办满足 `planDate <= 昨天`，任务满足 `endAt <= 昨天 23:59:59`。
+- 日期为今天、本周后续日期或未来日期的未完成事项不属于“已过期”。没有结束时间的任务不自动标记为过期。
+- “本周”仅展示结束日期落在本周内的 `TODO` 状态任务；已完成和已放弃任务分别按 `doneAt`、`abandonedAt` 落在本周内分组，且不会进入“已过期”。
+
+## 4. API 接口
+
+### 4.1 任务服务
 
 ```typescript
 // 获取任务详情
@@ -208,9 +218,9 @@ TaskService.update(id: string, data: UpdateTaskDto): Promise<TaskVo>
 TaskService.delete(id: string): Promise<void>
 ```
 
-## 4. 组件架构
+## 5. 组件架构
 
-### 4.1 页面组件
+### 5.1 页面组件
 
 ```
 TaskPage
@@ -220,7 +230,7 @@ TaskPage
       └── TaskAll       # 全部任务
 ```
 
-### 4.2 共享组件
+### 5.2 共享组件
 
 - `TaskDetail`: 任务详情组件
   - `TaskCreator`: 创建任务
@@ -237,4 +247,4 @@ TaskPage
 ---
 
 **维护者**: True North Team  
-**最后更新**: 2025-12-22
+**最后更新**: 2026-07-30

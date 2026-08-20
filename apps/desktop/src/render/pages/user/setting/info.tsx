@@ -11,7 +11,7 @@ function InfoForm({ loading }: { loading?: boolean }) {
 
   const handleSave = async () => {
     try {
-      await form.validate();
+      await form.validateFields();
       message.success('userSetting.saveSuccess');
     } catch (_) {}
   };
@@ -41,7 +41,7 @@ function InfoForm({ loading }: { loading?: boolean }) {
     >
       <Form.Item
         label={t['userSetting.info.email']}
-        field="email"
+        name="email"
         rules={[
           {
             type: 'email',
@@ -58,7 +58,7 @@ function InfoForm({ loading }: { loading?: boolean }) {
       </Form.Item>
       <Form.Item
         label={t['userSetting.info.nickName']}
-        field="nickName"
+        name="nickName"
         rules={[
           {
             required: true,
@@ -74,7 +74,7 @@ function InfoForm({ loading }: { loading?: boolean }) {
       </Form.Item>
       <Form.Item
         label={t['userSetting.info.area']}
-        field="rangeArea"
+        name="rangeArea"
         rules={[
           { required: true, message: t['userSetting.info.area.placeholder'] },
         ]}
@@ -90,7 +90,7 @@ function InfoForm({ loading }: { loading?: boolean }) {
       </Form.Item>
       <Form.Item
         label={t['userSetting.info.location']}
-        field="location"
+        name="location"
         initialValue={['BeiJing', 'BeiJing', 'HaiDian']}
         rules={[
           {
@@ -135,14 +135,14 @@ function InfoForm({ loading }: { loading?: boolean }) {
           />
         )}
       </Form.Item>
-      <Form.Item label={t['userSetting.info.address']} field="address">
+      <Form.Item label={t['userSetting.info.address']} name="address">
         {loading ? (
           loadingNode()
         ) : (
           <Input placeholder={t['userSetting.info.address.placeholder']} />
         )}
       </Form.Item>
-      <Form.Item label={t['userSetting.info.profile']} field="profile">
+      <Form.Item label={t['userSetting.info.profile']} name="profile">
         {loading ? (
           loadingNode(3)
         ) : (

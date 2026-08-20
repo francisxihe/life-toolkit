@@ -38,8 +38,6 @@ export default defineConfig({
           'class-validator',
           'class-transformer',
           'uuid',
-          /^francis-types-repeat/,
-          /^francis-helper-repeat/,
           /^react-dnd/,
           /^dnd-core/,
           /^immutability-helper/,
@@ -156,7 +154,7 @@ export default defineConfig({
     },
     optimizeDeps: {
       include: ['react', 'react-dom', 'react-dnd', 'react-dnd-html5-backend', 'mitt', 'lodash-es'],
-      exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar', 'francis-helper-repeat'],
+      exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar'],
     },
   },
 });

@@ -20,7 +20,9 @@ export default function Transactions() {
     >
       <Flex
         container="fixed"
-        className="w-full px-5 py-2 flex justify-between items-center border-b"
+        justify="space-between"
+        align="center"
+        className="w-full px-5 py-2 border-b"
       >
         <div className="text-text-1 text-title-2 font-[500] py-1">账单</div>
       </Flex>

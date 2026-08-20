@@ -2,7 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { TaskVo } from '@true-north/vo';
-import { TaskService } from '@true-north/web-service';
+import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
+import { TrackTimeRelatedType } from '@true-north/enum';
+import { message } from '@sue/design-web-react';
 import { createInjectState } from '@/utils/createInjectState';
 
 export type TaskDetailContextProps = {
@@ -35,11 +37,21 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   const fetchTaskDetail = useCallback(async (id: string) => {
     try {
       setLoading(true);
-      const task = await TaskService.find(id);
-      setCurrentTask(task);
+      const [task, todoResult, trackTimeResult] = await Promise.all([
+        TaskService.taskWithRelations(id),
+        TodoService.list({ taskIds: [id] }),
+        TrackTimeController.findByRelatedId(TrackTimeRelatedType.TASK, id),
+      ]);
+      if (!task) return;
+      setCurrentTask({
+        ...task,
+        todoList: (todoResult?.list || []) as TaskVo['todoList'],
+        trackTimeList: (trackTimeResult?.list || []) as TaskVo['trackTimeList'],
+      });
       setSelectedTaskId(id);
     } catch (error) {
       console.error('获取任务详情失败:', error);
+      message.error('获取任务详情失败');
     } finally {
       setLoading(false);
     }
@@ -49,11 +61,15 @@ export const [TaskDetailProvider, useTaskDetailContext] = createInjectState<{
   const fetchTaskTree = useCallback(async () => {
     try {
       const { list } = await TaskService.getTree({});
-      setTaskTree(list);
+      const containsTask = (task: TaskVo, id: string): boolean =>
+        task.id === id || Boolean(task.children?.some((child) => containsTask(child, id)));
+      const root = list.find((task) => containsTask(task, props.taskId));
+      setTaskTree(root ? [root] : []);
     } catch (error) {
       console.error('获取任务树失败:', error);
+      message.error('获取任务树失败');
     }
-  }, []);
+  }, [props.taskId]);
 
   // 刷新数据
   const refreshData = useCallback(async () => {

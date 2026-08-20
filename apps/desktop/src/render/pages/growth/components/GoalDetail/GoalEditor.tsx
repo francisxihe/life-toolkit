@@ -42,11 +42,12 @@ export function GoalEditorFooter() {
   const { onSubmit, onClose, currentGoal, goalFormData } =
     useGoalDetailContext();
 
-  async function handleUpdate() {
-    await GoalService.update(
+  async function handleUpdate(): Promise<boolean> {
+    const goal = await GoalService.update(
       currentGoal.id,
       GoalMapping.formDataToUpdateVo(goalFormData),
     );
+    return Boolean(goal);
   }
 
   return (
@@ -55,7 +56,7 @@ export function GoalEditorFooter() {
       <Button
         type="primary"
         onClick={async () => {
-          await handleUpdate();
+          if (!(await handleUpdate())) return;
           await onSubmit();
           onClose?.();
         }}

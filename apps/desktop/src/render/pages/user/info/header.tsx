@@ -1,6 +1,6 @@
 import { CameraOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import React from 'react';
-import { Avatar, Space, Skeleton, HomeOutlined, UserOutlined } from '@sue/design-web-react';
+import { Avatar, Space, Skeleton, HomeOutlined, UserOutlined, Flex } from '@sue/design-web-react';
 
 import styles from './style/index.module.less';
 
@@ -36,7 +36,7 @@ function UserInfoHeader(props: HeaderProps) {
     />
   );
   return (
-    <div className={styles.header}>
+    <Flex className={styles.header} justify="center" align="center">
       <Space
         size={8}
         direction="vertical"
@@ -76,7 +76,7 @@ function UserInfoHeader(props: HeaderProps) {
           </Space>
         </div>
       </Space>
-    </div>
+    </Flex>
   );
 }
 

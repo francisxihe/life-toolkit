@@ -109,7 +109,7 @@ function DropContent() {
       <Spin spinning={loading} style={{ display: 'block' }}>
         <Tabs
           defaultActiveKey="message"
-          destroyInactiveTabPane
+          destroyOnHidden
           tabBarExtraContent={
             <Button type="link" onClick={() => setSourceData([])}>
               {t['message.empty']}

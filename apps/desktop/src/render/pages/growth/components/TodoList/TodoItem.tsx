@@ -1,7 +1,13 @@
 'use client';
 
-import { Tag, Popover, Button, Flex } from '@sue/design-web-react';
+import {
+  Button,
+  EditableParagraph,
+  Flex,
+  Tooltip,
+} from '@sue/design-web-react';
 import SiteIcon from '@/components/SiteIcon';
+import { PlayCircleOutlined, CloseOutlined } from '@ant-design/icons';
 import { isToday } from 'date-fns';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
@@ -9,7 +15,11 @@ import { TodoService } from '@true-north/web-service';
 import { TodoWithoutRelationsVo } from '@true-north/vo';
 import dayjs from 'dayjs';
 import clsx from 'clsx';
-import { TodoRelatedType } from '@true-north/enum';
+import { TodoRelatedType, TodoStatus } from '@true-north/enum';
+import styles from './style.module.less';
+import { emitTodoChanged } from '../../events';
+import { formatTodoPlanTime, isTodoPlanRange } from '../TodoDetail';
+import { useFocusTimer } from '../../focus-timer';
 
 export type TodoItemProps = {
   todo: TodoWithoutRelationsVo;
@@ -20,134 +30,137 @@ export type TodoItemProps = {
 
 function TodoItem(props: TodoItemProps) {
   const { todo } = props;
+  const { open: openFocusTimer } = useFocusTimer();
+  const isActive = todo.status === TodoStatus.TODO;
+  const canFocus =
+    isActive && isTodoPlanRange(todo.planStartTime, todo.planEndTime);
+  const planTimeLabel = formatTodoPlanTime(
+    todo.planStartTime,
+    todo.planEndTime,
+  );
+
   return (
-    <div className={'w-full pl-4 py-2 bg-bg'} key={todo.id}>
-      <Flex container="full" className="items-start" align="flex-start">
-        <Flex container="fixed" className="h-full flex items-start">
-          {props.TriggerCheckbox}
-        </Flex>
-        <Flex
-          container="fill"
-          onClick={() => props.onClickTodo(todo)}
-          className={clsx([
-          'cursor-pointer border-b',
-          'after:content-[""] after:block after:h-1 after:w-full']
-          )}>
-
-          <div
-            className={clsx(['flex items-center justify-between', 'leading-8'])}>
-
-            <span className="text-text-1 flex items-center">
+    <Flex
+      className={clsx(styles.todoItem, styles.itemLayout, {
+        [styles.done]: todo.status === TodoStatus.DONE,
+        [styles.abandoned]: todo.status === TodoStatus.ABANDONED,
+      })}
+      key={todo.id}
+      container="full"
+      align="center"
+      gap={12}
+    >
+      <Flex container="fixed" className={styles.checkbox} align="flex-start">
+        {props.TriggerCheckbox}
+      </Flex>
+      <span
+        className={clsx(styles.statusIndicator, {
+          [styles.statusDone]: todo.status === TodoStatus.DONE,
+          [styles.statusAbandoned]: todo.status === TodoStatus.ABANDONED,
+        })}
+        aria-hidden="true"
+      />
+      <Flex
+        vertical
+        container="fill"
+        onClick={() => props.onClickTodo(todo)}
+        className={styles.content}
+      >
+        <Flex className={styles.header} align="center" gap={12}>
+          <Tooltip title={todo.description}>
+            <Flex
+              container="fixed"
+              className={styles.title}
+              align="center"
+              gap={5}
+            >
               {todo.name}
-              {todo.relatedType === TodoRelatedType.IS_REPEAT &&
-              <SiteIcon
-                id={'repeat'}
-                className={'text-danger'}
-                width={20}
-                height={20} />
+              {todo.relatedType === TodoRelatedType.IS_REPEAT && (
+                <SiteIcon
+                  id="repeat"
+                  className={styles.repeatIcon}
+                  width={20}
+                  height={20}
+                />
+              )}
+            </Flex>
+          </Tooltip>
 
-              }
-            </span>
-            <div className="h-8 flex items-center">
-              <Popover
-                trigger="click"
-                content={
-                <div className="w-40">
-                    <div
-                    className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
-                    onClick={() => {
-                      TodoService.abandon(todo.relatedType, todo.id);
-                      props.refreshTodoList();
-                    }}>
-
-                      放弃
-                    </div>
-                    <div
-                    className="cursor-pointer px-3 h-9 leading-9 hover:bg-fill-2"
-                    onClick={() => {
-                      TodoService.delete(todo.relatedType, todo.id);
-                      props.refreshTodoList();
-                    }}>
-
-                      删除
-                    </div>
-                  </div>
-                }>
-
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                  iconOnly
-                  type="text"
-                  size="mini"
-                  icon={<SiteIcon id="more-for-task" />}
-                  className="!flex justify-center items-center !text-text" />
-
-              </Popover>
-            </div>
-          </div>
-          {todo.description &&
-          <p
-            className="text-body-1 !mb-0.5"
-            style={{
-              textDecoration:
-              todo.status === 'done' ? 'line-through' : 'none',
-              color: 'var(--color-text-3)'
-            }}>
-
-              {todo.description}
-            </p>
-          }
-          <div className={clsx(['flex items-center gap-2', 'text-body-2'])}>
-            {todo.importance &&
-            <IconSelector
-              map={IMPORTANCE_MAP}
-              iconName="priority-0"
-              value={todo.importance}
-              readonly />
-
-            }
-
-            {todo.urgency &&
-            <IconSelector
-              map={URGENCY_MAP}
-              iconName="urgency"
-              value={todo.urgency}
-              readonly />
-
-            }
-
-            {!isToday(todo.planDate) &&
+          <Flex
+            container="fixed"
+            className={styles.meta}
+            align="center"
+            wrap
+            gap={8}
+          >
+            {todo.importance && (
+              <IconSelector
+                map={IMPORTANCE_MAP}
+                iconName="priority-0"
+                value={todo.importance}
+                readonly
+              />
+            )}
+            {todo.urgency && (
+              <IconSelector
+                map={URGENCY_MAP}
+                iconName="urgency"
+                value={todo.urgency}
+                readonly
+              />
+            )}
+          </Flex>
+          <Flex container="fill" justify="flex-end">
             <span
               className={
-              todo.planDate < dayjs().format('YYYY-MM-DD') ?
-              'text-danger' :
-              'text-text-3'
-              }>
-
-                {todo.planDate}
-                {todo.planStartTime && todo.planEndTime &&
-              <>
-                    {todo.planStartTime}-{todo.planEndTime}
-                  </>
+                todo.planDate < dayjs().format('YYYY-MM-DD')
+                  ? styles.overdue
+                  : styles.date
               }
-              </span>
-            }
-            {todo.tags?.length > 0 &&
-            <div className="flex flex-wrap gap-1">
-                {todo.tags.map((tag, index) =>
-              <Tag key={index} color="blue">
-                    {tag}
-                  </Tag>
-              )}
-              </div>
-            }
-          </div>
+            >
+              {isToday(todo.planDate) ? '' : `${todo.planDate} `}
+              {planTimeLabel}
+            </span>
+          </Flex>
         </Flex>
       </Flex>
-    </div>);
-
+      {isActive && (
+        <Flex
+          container="fixed"
+          className={styles.executionActions}
+          align="center"
+          gap={8}
+        >
+          {canFocus && (
+            <Tooltip title="开始专注">
+              <Button
+                size="small"
+                icon={<PlayCircleOutlined />}
+                aria-label={`为${todo.name}开始专注`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  openFocusTimer({ todoId: todo.id, label: todo.name });
+                }}
+              />
+            </Tooltip>
+          )}
+          <Tooltip title="放弃">
+            <Button
+              size="small"
+              icon={<CloseOutlined />}
+              aria-label={`放弃 ${todo.name}`}
+              onClick={async (event) => {
+                event.stopPropagation();
+                await TodoService.abandon(todo.relatedType, todo.id);
+                emitTodoChanged();
+                await props.refreshTodoList();
+              }}
+            />
+          </Tooltip>
+        </Flex>
+      )}
+    </Flex>
+  );
 }
 
 export default TodoItem;

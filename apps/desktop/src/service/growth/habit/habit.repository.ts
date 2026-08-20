@@ -22,6 +22,7 @@ export class HabitRepository extends BaseRepositoryImpl<Habit, HabitFilterDto> i
       let qb = this.repo
         .createQueryBuilder('habit')
         .leftJoinAndSelect('habit.goals', 'goal')
+        .leftJoinAndSelect('habit.repeat', 'repeat')
         .andWhere('habit.deletedAt IS NULL');
 
       if (filter.id) {
@@ -91,7 +92,7 @@ export class HabitRepository extends BaseRepositoryImpl<Habit, HabitFilterDto> i
   }
 
   async findWithRelations(id: string, relations?: string[]): Promise<Habit> {
-    const defaultRelations = ['goals', 'todos'];
+    const defaultRelations = ['goals', 'repeat'];
     const entity = await this.repo.findOne({
       where: { id },
       relations: relations || defaultRelations,

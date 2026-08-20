@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Flex } from '@sue/design-web-react';
 import Footer from '@/components/Footer';
 import Logo from '@/assets/logo.svg';
 import LoginForm from './form';
@@ -11,25 +12,23 @@ function Login() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.logo}>
+    <Flex className={styles.container}>
+      <Flex className={styles.logo} align="center">
         <Logo />
         <div className={styles['logo-text']}>Arco Design Pro</div>
-      </div>
-      <div className={styles.banner}>
+      </Flex>
+      <Flex className={styles.banner} justify="center" align="center">
         <div className={styles['banner-inner']}>
           <LoginBanner />
         </div>
-      </div>
-      <div className={styles.content}>
-        <div className={styles['content-inner']}>
-          <LoginForm />
-        </div>
+      </Flex>
+      <Flex className={styles.content} flex={1} justify="center" align="center">
+        <LoginForm />
         <div className={styles.footer}>
           <Footer />
         </div>
-      </div>
-    </div>
+      </Flex>
+    </Flex>
   );
 }
 Login.displayName = 'LoginPage';

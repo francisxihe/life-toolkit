@@ -11,7 +11,12 @@ export class GoalWithoutRelationsDto extends GoalWithoutRelations {}
 // 基础DTO - 包含所有字段
 export class GoalDto extends IntersectionType(BaseModelDto, GoalWithoutRelationsDto) {
   importVo(body: Partial<GoalVO.CreateGoalVo>) {
-    throw new Error('Method not implemented.');
+    if (body.name !== undefined) this.name = body.name;
+    if (body.description !== undefined) this.description = body.description;
+    if (body.type !== undefined) this.type = body.type;
+    if (body.importance !== undefined) this.importance = body.importance;
+    if (body.difficulty !== undefined) this.difficulty = body.difficulty;
+    if (body.parentId !== undefined) this.parentId = body.parentId;
   }
   children?: GoalDto[];
   parent?: GoalDto;

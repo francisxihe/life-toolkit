@@ -1,5 +1,5 @@
 import { createInjectState } from '@/utils/createInjectState';
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { TaskService } from '@true-north/web-service';
 import { TaskVo } from '@true-north/vo';
@@ -11,45 +11,25 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     setSearchQuery: (query: string) => void;
     pageShowDate: Dayjs;
     setPageShowDate: (date: Dayjs) => void;
-    move: (date: Dayjs) => void;
-    changePageShowDate: (type: 'prev' | 'next', mode: 'month' | 'year') => void;
-    calendarMode: 'month' | 'year';
-    setCalendarMode: (mode: 'month' | 'year') => void;
-    getTaskList: () => Promise<void>;
+    showAddTaskDate: Dayjs | null;
+    setShowAddTaskDate: (date: Dayjs | null) => void;
+    getTaskList: (date?: Dayjs) => Promise<void>;
   };
 }>(() => {
   const [searchQuery, setSearchQuery] = useState('');
   const [taskList, setTaskList] = useState<TaskVo[]>([]);
   const [pageShowDate, setPageShowDate] = useState(dayjs());
-  const [calendarMode, setCalendarMode] = useState<'month' | 'year'>('month');
+  const [showAddTaskDate, setShowAddTaskDate] = useState<Dayjs | null>(null);
 
-  function onChangePageDate(time: Dayjs) {
-    setPageShowDate(time);
-    // onPanelChange && onPanelChange(time);
-  }
-
-  function move(time: Dayjs) {
-    // setCalendarDate(time);
-    // onChange && onChange(time);
-    onChangePageDate(time);
-  }
-
-  function changePageShowDate(type: 'prev' | 'next', mode: 'month' | 'year') {
-    if (type === 'prev') {
-      setPageShowDate(dayjs(pageShowDate).subtract(1, mode));
-    } else {
-      setPageShowDate(dayjs(pageShowDate).add(1, mode));
-    }
-  }
-
-  const getTaskList = async () => {
-    const { list } = await TaskService.findByFilter();
-    setTaskList(list);
-  };
-
-  useEffect(() => {
-    getTaskList();
-  }, []);
+  const getTaskList = useCallback(async (date = pageShowDate) => {
+    const visibleStart = date.startOf('month').startOf('week');
+    const visibleEnd = date.endOf('month').endOf('week');
+    const response = await TaskService.findByFilter({
+      startDateEnd: visibleEnd.format('YYYY-MM-DD'),
+      endDateStart: visibleStart.format('YYYY-MM-DD'),
+    });
+    setTaskList(response?.list ?? []);
+  }, [pageShowDate]);
 
   return {
     taskList,
@@ -57,10 +37,8 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     setSearchQuery,
     pageShowDate,
     setPageShowDate,
-    move,
-    changePageShowDate,
-    calendarMode,
-    setCalendarMode,
+    showAddTaskDate,
+    setShowAddTaskDate,
     getTaskList,
   };
 });

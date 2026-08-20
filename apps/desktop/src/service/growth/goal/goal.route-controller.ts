@@ -83,6 +83,11 @@ export class GoalController {
     return await this.goalService.abandon(id);
   }
 
+  @Put('/done/:id', { description: '完成目标' })
+  async markDone(@Param('id') id: string): Promise<boolean> {
+    return await this.goalService.done(id);
+  }
+
   @Put('/restore/:id', { description: '恢复目标' })
   async restore(@Param('id') id: string): Promise<boolean> {
     return await this.goalService.restore(id);

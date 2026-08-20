@@ -98,7 +98,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
   return (
     <Modal
       title="编辑节点"
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
       autoFocus={false}
@@ -118,17 +118,17 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
         </div>
 
         <div className="flex flex-wrap gap-2 justify-end pt-4">
-          <Button onClick={handleAddChild} type="secondary">
+          <Button onClick={handleAddChild} type="default">
             添加子节点
           </Button>
 
           {!isRootNode && (
             <>
-              <Button onClick={handleAddSibling} type="secondary">
+              <Button onClick={handleAddSibling} type="default">
                 添加兄弟节点
               </Button>
 
-              <Button onClick={handleDelete} type="secondary" status="danger">
+              <Button onClick={handleDelete} type="default" danger>
                 删除节点
               </Button>
             </>

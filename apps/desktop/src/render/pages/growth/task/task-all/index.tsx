@@ -1,40 +1,28 @@
 'use client';
 
+import { useEffect } from 'react';
 import { TaskFilters } from './TaskFilters';
 import { Flex } from '@sue/design-web-react';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import { useTaskAllContext } from './context';
-import { CreateButton } from '@/components/Button/CreateButton';
-import { useTaskDetail } from '../../components';
+import styles from './style.module.less';
+import { onTaskChanged } from '../../events';
 
 function TaskAll() {
   const { getTaskPage } = useTaskAllContext();
-  const { openCreateDrawer: openCreateTaskDrawer } = useTaskDetail();
+  useEffect(() => {
+    void getTaskPage();
+    return onTaskChanged(() => { void getTaskPage(); });
+  }, []);
 
   return (
-    <Flex vertical container="full">
-      <Flex container="fixed" className="w-full px-5 flex border-b">
+    <Flex vertical container="full" className={styles.page}>
+      <Flex container="fixed" className={styles.filters}>
         <TaskFilters />
       </Flex>
 
-      <Flex container="fixed" className="w-full px-5 flex my-3">
-        <CreateButton
-          onClick={() => {
-            openCreateTaskDrawer({
-              contentProps: {
-                afterSubmit: async () => {
-                  await getTaskPage();
-                },
-              },
-            });
-          }}
-        >
-          新建
-        </CreateButton>
-      </Flex>
-
-      <Flex container="fill" className="px-5 w-full h-full flex">
+      <Flex container="fill" className={styles.table}>
         <TaskTable />
       </Flex>
     </Flex>

@@ -10,19 +10,6 @@ declare module '*.less' {
   export default classes;
 }
 
-declare module '*/settings.json' {
-  const value: {
-    colorWeek: boolean;
-    navbar: boolean;
-    menu: boolean;
-    footer: boolean;
-    themeColor: string;
-    menuWidth: number;
-  };
-
-  export default value;
-}
-
 declare module '*.png' {
   const value: string;
   export default value;

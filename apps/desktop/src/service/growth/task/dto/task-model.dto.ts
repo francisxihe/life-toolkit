@@ -6,6 +6,7 @@ import { TrackTimeDto } from '../../track-time/dto/track-time-model.dto';
 import { TodoDto } from '../../todo/dto/todo-model.dto';
 import dayjs from 'dayjs';
 import { BaseMapper } from '@business/common/base.mapper';
+import { Difficulty } from '@true-north/enum';
 import type { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@true-north/vo';
 
 export class TaskWithoutRelationsDto extends TaskWithoutRelations {}
@@ -24,6 +25,7 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
     this.description = entity.description;
     this.status = entity.status;
     this.importance = entity.importance;
+    this.difficulty = entity.difficulty;
     this.startAt = entity.startAt;
     this.endAt = entity.endAt;
     this.doneAt = entity.doneAt;
@@ -32,6 +34,8 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
     this.tags = entity.tags;
     this.importance = entity.importance;
     this.urgency = entity.urgency;
+    this.parentId = entity.parentId;
+    this.goalId = entity.goalId;
 
     // 关联对象映射（浅拷贝，避免循环引用）
     if (entity.parent) {
@@ -76,6 +80,7 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
       children: this.children?.map((child) => child.exportVo()) || [],
       parent: this.parent?.exportVo(),
       goal: this.goal?.exportVo(),
+      trackTimeList: this.trackTimeList?.map((trackTime) => trackTime.exportVo()),
       todoList: this.todoList?.map((todo) => todo.exportVo()),
     };
   }
@@ -92,9 +97,12 @@ export class TaskDto extends IntersectionType(BaseModelDto, TaskWithoutRelations
       abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
       estimateTime: this.estimateTime,
       importance: this.importance,
+      difficulty: this.difficulty,
       urgency: this.urgency,
       tags: this.tags,
       trackTimeIds: this.trackTimeIds,
+      parentId: this.parentId,
+      goalId: this.goalId,
     };
   }
 

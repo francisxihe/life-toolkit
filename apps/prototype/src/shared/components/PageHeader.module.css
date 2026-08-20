@@ -1,4 +1,8 @@
-.pageHeader { margin-bottom: 16px; }
-.pageHeader h1 { margin: 0 0 6px; font-size: 24px; line-height: 1.35; }
-.pageHeader p { margin: 0; color: var(--sue-color-text-secondary); }
-@media (max-width: 575px) { .pageHeader { flex-direction: column; gap: 12px; } .pageHeader :global(.sue-space) { width: 100%; flex-wrap: wrap; } .pageHeader :global(.sue-btn) { flex: 1; } }
+.pageHeader {
+  margin-bottom: 12px;
+}
+.pageHeader h1 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.4;
+}

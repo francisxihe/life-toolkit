@@ -37,9 +37,11 @@ export class GoalRepository extends BaseRepositoryImpl<Goal, GoalFilterDto> impl
       }
 
       if (filter.status) {
-        qb = qb.andWhere('goal.status = :status', {
-          status: filter.status,
-        });
+        if (Array.isArray(filter.status)) {
+          qb = qb.andWhere('goal.status IN (:...statuses)', { statuses: filter.status });
+        } else {
+          qb = qb.andWhere('goal.status = :status', { status: filter.status });
+        }
       }
 
       if (filter.type) {
@@ -52,6 +54,12 @@ export class GoalRepository extends BaseRepositoryImpl<Goal, GoalFilterDto> impl
         });
       }
 
+      if (filter.difficulty) {
+        qb = qb.andWhere('goal.difficulty = :difficulty', {
+          difficulty: filter.difficulty,
+        });
+      }
+
       const keyword = filter.keyword;
       if (keyword) {
         qb = qb.andWhere('(goal.name LIKE :kw OR goal.description LIKE :kw)', {
@@ -59,10 +67,20 @@ export class GoalRepository extends BaseRepositoryImpl<Goal, GoalFilterDto> impl
         });
       }
 
-      const { startDateStart, endDateEnd } = filter;
+      const { startDateStart, startDateEnd, endDateStart, endDateEnd } = filter;
       if (startDateStart) {
         qb = qb.andWhere('goal.startAt >= :startDateStart', {
           startDateStart: new Date(`${startDateStart}T00:00:00`),
+        });
+      }
+      if (startDateEnd) {
+        qb = qb.andWhere('goal.startAt <= :startDateEnd', {
+          startDateEnd: new Date(`${startDateEnd}T23:59:59`),
+        });
+      }
+      if (endDateStart) {
+        qb = qb.andWhere('goal.endAt >= :endDateStart', {
+          endDateStart: new Date(`${endDateStart}T00:00:00`),
         });
       }
       if (endDateEnd) {

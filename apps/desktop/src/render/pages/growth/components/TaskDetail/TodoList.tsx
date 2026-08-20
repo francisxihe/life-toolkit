@@ -8,7 +8,7 @@ import { useTodoDetail } from '../TodoDetail';
 export default function TaskDetailTodoList() {
   const { currentTask, refreshTaskDetail } = useTaskDetailContext();
 
-  const { CreatePopover: CreateTodoPopover } = useTodoDetail();
+  const { openCreateDrawer } = useTodoDetail();
 
   if (!currentTask) return null;
 
@@ -23,18 +23,23 @@ export default function TaskDetailTodoList() {
         ])}
       >
         待办列表
-        <CreateTodoPopover
-          creatorProps={{
-            initialFormData: {
-              taskId: currentTask.id,
-            },
-            afterSubmit: async () => {
-              await refreshTaskDetail(currentTask.id);
-            },
+        <CreateButton
+          type="text"
+          onClick={() => {
+            openCreateDrawer({
+              contentProps: {
+                initialFormData: {
+                  taskId: currentTask.id,
+                },
+                afterSubmit: async () => {
+                  await refreshTaskDetail(currentTask.id);
+                },
+              },
+            });
           }}
         >
-          <CreateButton type="text">添加待办</CreateButton>
-        </CreateTodoPopover>
+          添加待办
+        </CreateButton>
       </Flex>
       <Flex container="fill" className="overflow-auto">
         {currentTask?.todoList && (

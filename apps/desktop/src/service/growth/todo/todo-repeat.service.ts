@@ -9,33 +9,51 @@ import {
   TodoDto,
 } from './dto';
 import { TodoRepeat } from './todo-repeat.entity';
-import { calculateNextDate, isValidDate } from 'francis-helper-repeat';
-import { RepeatEndMode } from 'francis-types-repeat';
-import { TodoStatus, TodoRelatedType } from '@true-north/enum';
+import { RepeatEndMode } from '@true-north/components-repeat/types';
+import { TodoStatus, TodoRelatedType, TodoRepeatStatus } from '@true-north/enum';
 import dayjs from 'dayjs';
+import { RepeatService, repeatService as defaultRepeatService } from '../repeat/repeat.service';
+import { TodoRepository } from './todo.repository';
 
 export class TodoRepeatService {
   todoRepeatRepository: TodoRepeatRepository;
+  repeatService: RepeatService;
+  todoRepository: TodoRepository;
 
-  constructor(todoRepeatRepository: TodoRepeatRepository) {
+  constructor(
+    todoRepeatRepository: TodoRepeatRepository,
+    repeatService = defaultRepeatService,
+    todoRepository = new TodoRepository()
+  ) {
     this.todoRepeatRepository = todoRepeatRepository;
+    this.repeatService = repeatService;
+    this.todoRepository = todoRepository;
   }
 
   // ====== 基础 CRUD ======
 
   async create(createTodoRepeatDto: CreateTodoRepeatDto): Promise<TodoRepeatDto> {
-    // 在创建前，确保 currentDate 符合重复规则
-    createTodoRepeatDto = this.fixCurrentDate(createTodoRepeatDto);
-
-    const entity = await this.todoRepeatRepository.create(createTodoRepeatDto.exportCreateEntity());
-    const todoRepeatDto = new TodoRepeatDto();
-    todoRepeatDto.importEntity(entity);
-    return todoRepeatDto;
+    this.repeatService.assertValidRepeat(createTodoRepeatDto);
+    const rule = this.repeatService.fixCurrentDate(createTodoRepeatDto.toRepeatRuleInput());
+    const repeat = await this.repeatService.create(rule);
+    const entity = await this.todoRepeatRepository.create(
+      createTodoRepeatDto.exportCreateEntity(repeat.id)
+    );
+    return this.toDto(await this.todoRepeatRepository.findWithRelations(entity.id));
   }
 
+  /** 删除系列定义与调度；不级联删除已物化的 relatedType=repeat 历史 todo */
   async delete(id: string): Promise<boolean> {
     try {
+      const current = await this.todoRepeatRepository.findWithRelations(id);
       await this.todoRepeatRepository.delete(id);
+      if (current.repeatId) {
+        try {
+          await this.repeatService.repeatRepository.delete(current.repeatId);
+        } catch {
+          // repeat 可能已被其他主人共用；独立 repeat_todo 场景下删除即可
+        }
+      }
       return true;
     } catch (error) {
       throw error;
@@ -43,26 +61,40 @@ export class TodoRepeatService {
   }
 
   async update(updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto> {
-    console.log('========updateTodoRepeatDto', updateTodoRepeatDto);
-    const entity = await this.todoRepeatRepository.update(updateTodoRepeatDto.exportUpdateEntity());
-    const todoRepeatDto = new TodoRepeatDto();
-    todoRepeatDto.importEntity(entity);
-    return todoRepeatDto;
+    const currentEntity = await this.todoRepeatRepository.findWithRelations(updateTodoRepeatDto.id);
+    updateTodoRepeatDto.importUpdateEntity(currentEntity);
+
+    if (updateTodoRepeatDto.hasRepeatRuleUpdate()) {
+      this.repeatService.assertValidRepeat({
+        repeatMode: updateTodoRepeatDto.repeatMode,
+        repeatConfig: updateTodoRepeatDto.repeatConfig,
+        repeatEndMode: updateTodoRepeatDto.repeatEndMode,
+        repeatEndDate: updateTodoRepeatDto.repeatEndDate,
+        repeatTimes: updateTodoRepeatDto.repeatTimes,
+        repeatStartDate: updateTodoRepeatDto.repeatStartDate,
+      });
+      if (currentEntity.repeatId) {
+        await this.repeatService.update(currentEntity.repeatId, updateTodoRepeatDto.toRepeatRulePartial());
+      }
+    }
+
+    await this.todoRepeatRepository.update(updateTodoRepeatDto.exportUpdateEntity());
+    return this.toDto(await this.todoRepeatRepository.findWithRelations(updateTodoRepeatDto.id));
   }
 
   async findWithRelations(id: string): Promise<TodoRepeatDto> {
     const entity = await this.todoRepeatRepository.findWithRelations(id);
-    const todoRepeatDto = new TodoRepeatDto();
-    todoRepeatDto.importEntity(entity);
-    return todoRepeatDto;
+    const dto = this.toDto(entity);
+    this.repeatService.assertValidRepeat(dto);
+    return dto;
   }
 
   async findByFilter(filter: TodoRepeatFilterDto): Promise<TodoRepeatDto[]> {
     const entities = await this.todoRepeatRepository.findByFilter(filter);
     return entities.map((entity) => {
-      const todoRepeatDto = new TodoRepeatDto();
-      todoRepeatDto.importEntity(entity);
-      return todoRepeatDto;
+      const dto = this.toDto(entity);
+      this.repeatService.assertValidRepeat(dto);
+      return dto;
     });
   }
 
@@ -76,9 +108,9 @@ export class TodoRepeatService {
     return {
       ...result,
       list: result.list.map((entity) => {
-        const todoRepeatDto = new TodoRepeatDto();
-        todoRepeatDto.importEntity(entity);
-        return todoRepeatDto;
+        const dto = this.toDto(entity);
+        this.repeatService.assertValidRepeat(dto);
+        return dto;
       }),
     };
   }
@@ -86,72 +118,62 @@ export class TodoRepeatService {
   // ====== 业务逻辑编排 ======
 
   async batchUpdate(includeIds: string[], updateTodoRepeatDto: UpdateTodoRepeatDto): Promise<TodoRepeatDto[]> {
-    const filterDto = new TodoRepeatFilterDto();
-    filterDto.includeIds = includeIds;
-    const result = await this.todoRepeatRepository.updateByFilter(filterDto, updateTodoRepeatDto as any);
-    return result as any;
+    const results: TodoRepeatDto[] = [];
+    for (const id of includeIds) {
+      const dto = new UpdateTodoRepeatDto();
+      Object.assign(dto, updateTodoRepeatDto);
+      dto.id = id;
+      results.push(await this.update(dto));
+    }
+    return results;
   }
 
-  async done(id: string): Promise<any> {
-    const todoRepeatUpdateEntity = new TodoRepeat();
-    todoRepeatUpdateEntity.id = id;
-    todoRepeatUpdateEntity.status = TodoStatus.DONE;
-    await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
-  }
-
-  async abandon(id: string): Promise<any> {
-    const todoRepeatUpdateEntity = new TodoRepeat();
-    todoRepeatUpdateEntity.id = id;
-    todoRepeatUpdateEntity.status = TodoStatus.ABANDONED;
-    todoRepeatUpdateEntity.abandonedAt = new Date();
-    await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
+  /** 将 repeat_todo 标记为最终结束状态（无下一实例时） */
+  async finish(id: string, status: TodoRepeatStatus.ENDED | TodoRepeatStatus.ABANDONED): Promise<void> {
+    const updateTodoRepeatDto = new UpdateTodoRepeatDto();
+    updateTodoRepeatDto.id = id;
+    updateTodoRepeatDto.status = status;
+    if (status === TodoRepeatStatus.ABANDONED) {
+      updateTodoRepeatDto.abandonedAt = new Date();
+    }
+    await this.update(updateTodoRepeatDto);
   }
 
   async restore(id: string): Promise<any> {
     const todoRepeatUpdateEntity = new TodoRepeat();
     todoRepeatUpdateEntity.id = id;
-    todoRepeatUpdateEntity.status = TodoStatus.TODO;
+    todoRepeatUpdateEntity.status = TodoRepeatStatus.ACTIVE;
     todoRepeatUpdateEntity.abandonedAt = undefined;
     await this.todoRepeatRepository.update(todoRepeatUpdateEntity);
   }
 
-  async updateToNext(id: string): Promise<TodoRepeatDto> {
-    let todoRepeatDto = await this.findWithRelations(id);
-    const repeatConfig = {
-      repeatMode: todoRepeatDto.repeatMode,
-      repeatConfig: todoRepeatDto.repeatConfig,
-      repeatEndMode: todoRepeatDto.repeatEndMode,
-      repeatEndDate: todoRepeatDto.repeatEndDate,
-      repeatTimes: todoRepeatDto.repeatTimes,
-      repeatStartDate: todoRepeatDto.repeatStartDate,
-    };
-    // 验证当前日期是否符合重复规则
-    todoRepeatDto = this.fixCurrentDate(todoRepeatDto);
-
-    let currentDate = dayjs(todoRepeatDto.currentDate);
-    let nextDate: dayjs.Dayjs;
-
-    // 当前日期符合规则，计算下一个日期
-    const calculatedNextDate = calculateNextDate(currentDate, repeatConfig);
-
-    if (!calculatedNextDate) {
-      throw new Error('No next date found');
+  /**
+   * 结算当前实例：返回结算前内容快照（含 settled currentDate）；推进游标由 RepeatService 完成。
+   * nextDate 为 null 表示重复计划已结束。
+   */
+  async settleCurrent(id: string): Promise<{ settled: TodoRepeatDto; nextDate: string | null }> {
+    const todoRepeatDto = await this.findWithRelations(id);
+    if (todoRepeatDto.status !== TodoRepeatStatus.ACTIVE) {
+      throw new Error('当前状态不允许结算周期待办');
     }
-    nextDate = calculatedNextDate;
+    if (!todoRepeatDto.repeatId) {
+      throw new Error('缺少关联的重复规则');
+    }
 
-    const updateTodoRepeatDto = new UpdateTodoRepeatDto();
-    updateTodoRepeatDto.id = todoRepeatDto.id;
-    updateTodoRepeatDto.currentDate = nextDate.format('YYYY-MM-DD');
-    await this.update(updateTodoRepeatDto);
-    return todoRepeatDto;
+    const { settledCurrentDate, nextDate } = await this.repeatService.settleCurrent(todoRepeatDto.repeatId);
+    const settledSnapshot = new TodoRepeatDto();
+    Object.assign(settledSnapshot, todoRepeatDto);
+    settledSnapshot.currentDate = settledCurrentDate;
+
+    return { settled: settledSnapshot, nextDate };
   }
 
   /**
-   * 基于 TodoListFilter 的日期范围，展开符合条件的重复待办为 TodoDto 列表
-   * 不会落库，仅在内存中生成；若当日已有具体待办，则使用已存在的待办（并补充 repeat 信息）
+   * 基于 TodoListFilter 的日期范围，展开符合条件的 repeat_todo 为 TodoDto 列表
+   * 不会落库，仅在内存中生成
    */
   async generateTodoByRepeat(todoFilter: TodoFilterDto): Promise<TodoDto[]> {
-    if (todoFilter.status !== TodoStatus.TODO) {
+    if (todoFilter.status && todoFilter.status !== TodoStatus.TODO) {
       return [];
     }
     const rangeStart = todoFilter.planDateStart ? dayjs(todoFilter.planDateStart) : undefined;
@@ -160,52 +182,50 @@ export class TodoRepeatService {
     const repeatFilter = new TodoRepeatFilterDto();
     repeatFilter.currentDateStart = todoFilter.planDateStart;
     repeatFilter.currentDateEnd = todoFilter.planDateEnd;
+    repeatFilter.status = TodoRepeatStatus.ACTIVE;
 
     const todoRepeatList = await this.todoRepeatRepository.findByFilter(repeatFilter);
     const results: TodoDto[] = [];
 
     for (const todoRepeat of todoRepeatList) {
-      let todoRepeatDto = new TodoRepeatDto();
-      todoRepeatDto.importEntity(todoRepeat);
+      const todoRepeatDto = this.toDto(todoRepeat);
+      if (todoRepeatDto.status !== TodoRepeatStatus.ACTIVE) {
+        continue;
+      }
 
-      // 结束条件预处理
       const endMode = todoRepeatDto.repeatEndMode as RepeatEndMode | undefined;
       const endDate = todoRepeatDto.repeatEndDate ? dayjs(todoRepeatDto.repeatEndDate) : undefined;
       const maxTimes = todoRepeatDto.repeatTimes ?? undefined;
 
-      todoRepeatDto = this.fixCurrentDate(todoRepeatDto);
-
-      // 确定生成待办的日期
-      let targetDate = todoRepeatDto.currentDate ? dayjs(todoRepeatDto.currentDate) : null;
-
-      if (!targetDate) {
-        continue; // 没有当前日期，跳过
+      if (todoRepeatDto.repeatId) {
+        const fixed = this.repeatService.fixCurrentDate({
+          repeatMode: todoRepeatDto.repeatMode,
+          repeatConfig: todoRepeatDto.repeatConfig,
+          repeatEndMode: todoRepeatDto.repeatEndMode,
+          repeatEndDate: todoRepeatDto.repeatEndDate,
+          repeatTimes: todoRepeatDto.repeatTimes,
+          repeatStartDate: todoRepeatDto.repeatStartDate,
+          currentDate: todoRepeatDto.currentDate,
+        });
+        todoRepeatDto.currentDate = fixed.currentDate || fixed.repeatStartDate;
       }
 
-      // 检查目标日期是否在查询范围内
-      if (rangeStart && targetDate.isBefore(rangeStart, 'day')) {
-        continue;
-      }
-      if (rangeEnd && targetDate.isAfter(rangeEnd, 'day')) {
-        continue;
-      }
+      const targetDate = todoRepeatDto.currentDate ? dayjs(todoRepeatDto.currentDate) : null;
+      if (!targetDate) continue;
 
-      // 次数限制检查（若设置 FOR_TIMES）
+      if (rangeStart && targetDate.isBefore(rangeStart, 'day')) continue;
+      if (rangeEnd && targetDate.isAfter(rangeEnd, 'day')) continue;
+
       if (endMode === RepeatEndMode.FOR_TIMES) {
-        const repeatTodo = await this.findWithRelations(todoRepeatDto.id);
-        if ((repeatTodo?.todos?.length ?? 0) >= (maxTimes || 0)) {
-          continue;
-        }
+        const settledCount = await this.countSettledTodos(todoRepeatDto.id);
+        if (settledCount >= (maxTimes || 0)) continue;
       }
 
-      // 终止日期限制检查
       if (endMode === RepeatEndMode.TO_DATE && endDate && targetDate.isAfter(endDate, 'day')) {
         continue;
       }
 
-      // 生成目标日期的待办
-      const todoDto = this.generateTodo(todoRepeatDto, targetDate.toDate());
-      results.push(todoDto);
+      results.push(this.generateTodo(todoRepeatDto, targetDate.toDate()));
     }
 
     return results;
@@ -215,50 +235,41 @@ export class TodoRepeatService {
     const todoDto = new TodoDto();
     todoDto.id = todoRepeat.id;
     todoDto.name = todoRepeat.name;
-    todoDto.importEntity({
-      id: todoRepeat.id,
-      name: todoRepeat.name,
-      description: todoRepeat.description,
-      tags: todoRepeat.tags || [],
-      importance: todoRepeat.importance,
-      urgency: todoRepeat.urgency,
-      planDate: planDate || dayjs(todoRepeat.currentDate).toDate(),
-      planStartTime: todoRepeat.planStartTime,
-      planEndTime: todoRepeat.planEndTime,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      repeat: todoRepeat,
-      relatedType: TodoRelatedType.IS_REPEAT,
-      status: TodoStatus.TODO,
-    });
+    todoDto.description = todoRepeat.description;
+    todoDto.importance = todoRepeat.importance;
+    todoDto.urgency = todoRepeat.urgency;
+    todoDto.planDate = planDate || dayjs(todoRepeat.currentDate).toDate();
+    todoDto.planStartTime = todoRepeat.planStartTime;
+    todoDto.planEndTime = todoRepeat.planEndTime;
+    todoDto.relatedType = TodoRelatedType.IS_REPEAT;
+    todoDto.relatedId = todoRepeat.id;
+    todoDto.status = TodoStatus.TODO;
+    todoDto.createdAt = new Date() as any;
+    todoDto.updatedAt = new Date() as any;
+    todoDto.repeatConfig = {
+      currentDate: todoRepeat.currentDate,
+      repeatStartDate: todoRepeat.repeatStartDate,
+      repeatMode: todoRepeat.repeatMode,
+      repeatConfig: todoRepeat.repeatConfig,
+      repeatEndMode: todoRepeat.repeatEndMode,
+      repeatEndDate: todoRepeat.repeatEndDate,
+      repeatTimes: todoRepeat.repeatTimes,
+    };
     return todoDto;
   }
 
-  fixCurrentDate<T extends TodoRepeatDto | CreateTodoRepeatDto>(todoRepeatDto: T): T {
-    // 在创建前，确保 currentDate 符合重复规则
-    if (todoRepeatDto.currentDate) {
-      const repeatConfig = {
-        repeatMode: todoRepeatDto.repeatMode,
-        repeatConfig: todoRepeatDto.repeatConfig,
-        repeatEndMode: todoRepeatDto.repeatEndMode,
-        repeatEndDate: todoRepeatDto.repeatEndDate,
-        repeatTimes: todoRepeatDto.repeatTimes,
-        repeatStartDate: todoRepeatDto.repeatStartDate,
-      };
+  private async countSettledTodos(repeatTodoId: string): Promise<number> {
+    return this.todoRepository.repo.count({
+      where: {
+        relatedType: TodoRelatedType.REPEAT,
+        relatedId: repeatTodoId,
+      } as any,
+    });
+  }
 
-      const currentDate = dayjs(todoRepeatDto.currentDate);
-      const isCurrentDateValid = isValidDate(currentDate, repeatConfig);
-
-      if (!isCurrentDateValid) {
-        // 如果当前日期不符合规则，找到下一个符合条件的日期
-        const validNextDate = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
-
-        if (validNextDate) {
-          todoRepeatDto.currentDate = validNextDate.format('YYYY-MM-DD');
-        }
-      }
-    }
-
-    return todoRepeatDto;
+  private toDto(entity: TodoRepeat): TodoRepeatDto {
+    const dto = new TodoRepeatDto();
+    dto.importEntity(entity);
+    return dto;
   }
 }

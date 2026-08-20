@@ -4,7 +4,7 @@ import {
   GoalDetailContextProps,
 } from './context';
 import GoalForm from './GoalForm';
-import { Button, Flex } from '@sue/design-web-react';
+import { Button, Flex, message } from '@sue/design-web-react';
 import { GoalService, GoalMapping } from '@true-north/web-service';
 
 export type GoalCreatorProps = {
@@ -37,8 +37,9 @@ export default function GoalCreator(props: GoalCreatorProps) {
 function Footer() {
   const { goalFormData, onSubmit, onClose } = useGoalDetailContext();
 
-  async function handleCreate() {
-    await GoalService.create(GoalMapping.formDataToCreateVo(goalFormData));
+  async function handleCreate(): Promise<boolean> {
+    const goal = await GoalService.create(GoalMapping.formDataToCreateVo(goalFormData));
+    return Boolean(goal);
   }
 
   return (
@@ -48,9 +49,10 @@ function Footer() {
         type="primary"
         onClick={async () => {
           if (!goalFormData.name) {
+            message.error('请输入目标名称');
             return;
           }
-          await handleCreate();
+          if (!(await handleCreate())) return;
           await onSubmit();
           onClose?.();
         }}

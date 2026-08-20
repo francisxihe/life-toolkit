@@ -1,6 +1,6 @@
 export enum HabitStatus {
-  TODO = 'todo',
-  DOING = 'doing',
-  DONE = 'done',
+  ACTIVE = 'active',
+  PAUSED = 'paused',
+  COMPLETED = 'completed',
   ABANDONED = 'abandoned',
 }

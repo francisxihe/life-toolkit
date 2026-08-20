@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Dropdown, Menu, CopyOutlined, DeleteOutlined, EditOutlined, EllipsisOutlined, PlusOutlined } from '@sue/design-web-react';
+import { Menu, Flex, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@sue/design-web-react';
 
 import styles from './style.module.less';
 
@@ -68,7 +68,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
   const menuItems = [
     {
       key: 'edit',
-      icon: <EditOutlined fontSize={16} />,
+      icon: <EditOutlined style={{ fontSize: 16 }} />,
       label: '编辑目标',
       onClick: () => {
         onEdit?.(nodeId);
@@ -77,7 +77,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'addChild',
-      icon: <PlusOutlined fontSize={16} />,
+      icon: <PlusOutlined style={{ fontSize: 16 }} />,
       label: '添加子目标',
       onClick: () => {
         onAddChild?.(nodeId);
@@ -86,7 +86,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'addSibling',
-      icon: <PlusOutlined fontSize={16} />,
+      icon: <PlusOutlined style={{ fontSize: 16 }} />,
       label: '添加同级目标',
       onClick: () => {
         onAddSibling?.(nodeId);
@@ -95,7 +95,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'copy',
-      icon: <CopyOutlined fontSize={16} />,
+      icon: <CopyOutlined style={{ fontSize: 16 }} />,
       label: '复制目标',
       onClick: () => {
         onCopy?.(nodeId);
@@ -104,7 +104,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'delete',
-      icon: <DeleteOutlined fontSize={16} />,
+      icon: <DeleteOutlined style={{ fontSize: 16 }} />,
       label: '删除节点',
       className: styles['menu-item-danger'],
       onClick: () => {
@@ -134,10 +134,10 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
               className={item.className}
               onClick={item.onClick}
             >
-              <div className={styles['menu-item']}>
+              <Flex className={styles['menu-item']} align="center" gap={8}>
                 {item.icon}
                 <span>{item.label}</span>
-              </div>
+              </Flex>
             </Menu.Item>
           );
         })}

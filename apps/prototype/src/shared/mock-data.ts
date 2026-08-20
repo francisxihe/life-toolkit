@@ -1,37 +1,24 @@
-import { BrainCircuit, Clock3, FolderKanban, Grid2X2, ListTodo, Target, TrendingUp } from 'lucide-react';
+import { FolderKanban, Grid2X2, ListTodo, Sparkles, Target, TrendingUp } from 'lucide-react';
+import growthFixtures from '../fixtures/growth.json';
+import { productEnumValues } from '../product-wiki';
 import type { Goal, GoalType, Habit, NavigationItem, Task, Todo } from './types';
 
 export const TODAY = '2026-07-27';
 export const NEXT_DAY = '2026-07-28';
 export const HOLIDAYS_2026 = new Set(['2026-01-01', '2026-01-02', '2026-01-03', '2026-02-16', '2026-02-17', '2026-02-18', '2026-02-19', '2026-02-20', '2026-02-21', '2026-04-04', '2026-04-05', '2026-04-06', '2026-05-01', '2026-05-02', '2026-05-03', '2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07']);
 
-export const goalTypes: Array<{ value: GoalType; label: string }> = [
-  { value: 'vision', label: '愿景' }, { value: 'result', label: '成果型' }, { value: 'process', label: '过程型' }, { value: 'metric', label: '指标型' }, { value: 'milestone', label: '里程碑' },
-];
+const goalTypeLabels: Record<GoalType, string> = { vision: '规划', result: '指标' };
+export const goalTypes: Array<{ value: GoalType; label: string }> = productEnumValues('growth.goal', 'goal', 'type').map((value) => ({ value: value as GoalType, label: goalTypeLabels[value as GoalType] || value }));
 export const nav: NavigationItem[] = [
-  { id: 'workbench', label: '工作台', icon: Grid2X2 }, { id: 'goal', label: '目标管理', icon: Target },
-  { id: 'task', label: '任务管理', icon: FolderKanban }, { id: 'todo', label: '待办事项', icon: ListTodo },
-  { id: 'habit', label: '习惯追踪', icon: TrendingUp }, { id: 'focus', label: '专注计时', icon: Clock3 },
-  { id: 'mindmap', label: '目标脑图', icon: BrainCircuit },
+  { id: 'workbench', path: '/workbench', label: '工作台', icon: Grid2X2 },
+  { id: 'goal', path: '/goals', label: '目标', icon: Target },
+  { id: 'task', path: '/tasks', label: '任务', icon: FolderKanban },
+  { id: 'todo', path: '/todos', label: '待办事项', icon: ListTodo },
+  { id: 'habit', path: '/habits', label: '习惯', icon: TrendingUp },
+  { id: 'ai', path: '/ai', label: 'AI', icon: Sparkles },
 ];
 
-export const initialGoals: Goal[] = [
-  { id: 'g1', title: '2026 年度目标', description: '建立稳定、可持续的个人成长系统。', type: 'vision', status: 'doing', importance: 5, difficulty: 5, start: '2026-01-01', end: '2026-12-31', progress: 62, history: ['01-01 创建年度目标'] },
-  { id: 'g2', title: '产品与创造', description: '完成知止 V2.0 的用户验证与发布。', parentId: 'g1', type: 'result', status: 'doing', importance: 5, difficulty: 4, start: '2026-01-01', end: '2026-12-31', progress: 72, history: ['07-25 更新进度'] },
-  { id: 'g3', title: '知止 V2.0 发布', description: '以真实用户反馈验证版本价值。', parentId: 'g2', type: 'result', status: 'doing', importance: 5, difficulty: 4, start: '2026-07-01', end: '2026-09-30', progress: 48, history: ['07-01 建立目标'] },
-  { id: 'g4', title: '成长与学习', description: '形成阅读与复盘的稳定节奏。', parentId: 'g1', type: 'process', status: 'doing', importance: 4, difficulty: 3, start: '2026-01-01', end: '2026-12-31', progress: 58, history: ['07-20 完成读书会'] },
-];
-export const initialTasks: Task[] = [
-  { id: 't1', title: '完成用户访谈招募', description: '确认 5 位目标用户并完成预约。', goalId: 'g3', status: 'doing', importance: 5, difficulty: 3, start: '2026-07-20', end: '2026-08-02', planned: NEXT_DAY, estimated: 4, actual: 1.5 },
-  { id: 't2', title: '整理 V2.0 访谈提纲', description: '覆盖核心价值、使用阻碍和价格意愿。', parentId: 't1', status: 'blocked', importance: 4, difficulty: 2, start: '2026-07-20', end: '2026-08-02', planned: TODAY, estimated: 2, actual: 0.5, blockedReason: '等待用户画像确认' },
-  { id: 't3', title: '完成七月阅读复盘', description: '整理阅读笔记并输出一个行动。', goalId: 'g4', status: 'todo', importance: 3, difficulty: 2, start: '2026-07-01', end: '2026-07-31', planned: TODAY, estimated: 2, actual: 0 },
-];
-export const initialTodos: Todo[] = [
-  { id: 'd1', title: '确认 3 位访谈对象', description: '优先联系最近活跃的测试用户。', taskId: 't1', status: 'todo', importance: 5, urgency: 5, planned: TODAY, due: TODAY, reminder: 'time', history: ['07-26 从任务创建'] },
-  { id: 'd2', title: '补充访谈提纲问题', description: '增加首日留存和付费意愿问题。', taskId: 't2', status: 'in_progress', importance: 4, urgency: 4, planned: TODAY, due: NEXT_DAY, reminder: 'none', history: ['刚刚开始执行'] },
-  { id: 'd3', title: '阅读《掌控习惯》30 分钟', description: '记录一个可以落地的提示设计。', goalId: 'g4', status: 'todo', importance: 3, urgency: 2, planned: NEXT_DAY, due: NEXT_DAY, reminder: 'habit-sync', history: ['07-26 创建'] },
-];
-export const initialHabits: Habit[] = [
-  { id: 'h1', title: '睡前阅读 30 分钟', goalIds: ['g4'], status: 'active', importance: 4, difficulty: 2, weights: { g4: 4 }, reminder: 'habit-sync', tags: ['阅读', '晚间'], streak: 12, longest: 21, logs: [{ date: '2026-07-26', score: 'perfect', mood: '平静', note: '完成章节阅读' }] },
-  { id: 'h2', title: '每日产品复盘', goalIds: ['g3'], status: 'active', importance: 5, difficulty: 3, weights: { g3: 5 }, reminder: 'time', tags: ['产品', '复盘'], streak: 6, longest: 14, logs: [] },
-];
+export const initialGoals = growthFixtures.goals as unknown as Goal[];
+export const initialTasks = growthFixtures.tasks as unknown as Task[];
+export const initialTodos = growthFixtures.todos as unknown as Todo[];
+export const initialHabits = growthFixtures.habits as unknown as Habit[];

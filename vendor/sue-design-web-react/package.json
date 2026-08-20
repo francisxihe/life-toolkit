@@ -1,7 +1,7 @@
 {
   "name": "@sue/design-web-react",
   "type": "module",
-  "version": "0.0.3-beta.2",
+  "version": "0.0.3-beta",
   "description": "Ylib Design React Component Library",
   "license": "UNLICENSED",
   "sideEffects": [
@@ -95,11 +95,11 @@
     "test": "vitest run",
     "build": "pnpm run build:esm && pnpm run build:vite:parallel && pnpm run build:p",
     "build:p": "pnpm run build:style",
-    "build:esm": "tsdown",
-    "build:with-locales": "run-p build:with-locales:esm build:with-locales:umd",
+    "build:esm": "tsdown --logLevel warn",
+    "build:with-locales": "run-p --max-parallel 1 --print-name build:with-locales:esm build:with-locales:umd",
     "build:with-locales:esm": "cross-env WITH_LOCALES_FORMAT=es vite build --config ./vite.with-locales.config.ts",
     "build:with-locales:umd": "cross-env WITH_LOCALES_FORMAT=umd vite build --config ./vite.with-locales.config.ts",
-    "build:vite:parallel": "run-p build:umd build:full-esm build:with-locales",
+    "build:vite:parallel": "run-p --max-parallel 1 --print-name build:umd build:full-esm build:with-locales",
     "build:full-esm": "vite build --config ./vite.esm.config.ts",
     "build:umd": "vite build",
     "build:token-meta": "tsx ./scripts/token/generate-token-meta.ts",

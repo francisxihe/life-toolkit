@@ -12,6 +12,7 @@ export class CreateTaskDto extends PickType(TaskDto, [
   'tags',
   'estimateTime',
   'importance',
+  'difficulty',
   'urgency',
   'goalId',
   'startAt',
@@ -31,11 +32,12 @@ export class CreateTaskDto extends PickType(TaskDto, [
     if (vo.tags !== undefined) this.tags = vo.tags;
     if (vo.estimateTime !== undefined) this.estimateTime = vo.estimateTime;
     if (vo.importance !== undefined) this.importance = vo.importance;
+    if (vo.difficulty !== undefined) this.difficulty = vo.difficulty;
     if (vo.urgency !== undefined) this.urgency = vo.urgency;
-    if (vo.goalId !== undefined) this.goalId = vo.goalId;
+    if (vo.goalId !== undefined) this.goalId = vo.goalId as any;
     if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
     if (vo.endAt !== undefined) this.endAt = new Date(vo.endAt);
-    if (vo.parentId !== undefined) this.parentId = vo.parentId;
+    if (vo.parentId !== undefined) this.parentId = vo.parentId as any;
   }
 
   exportCreateEntity(entity: Task) {
@@ -44,6 +46,7 @@ export class CreateTaskDto extends PickType(TaskDto, [
     if (this.tags !== undefined) entity.tags = this.tags;
     if (this.estimateTime !== undefined) entity.estimateTime = this.estimateTime;
     if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.difficulty !== undefined) entity.difficulty = this.difficulty;
     if (this.urgency !== undefined) entity.urgency = this.urgency;
     if (this.goalId !== undefined) entity.goalId = this.goalId;
     if (this.startAt !== undefined) entity.startAt = this.startAt;
@@ -64,6 +67,7 @@ export class UpdateTaskDto extends IntersectionType(
     if (vo.tags !== undefined) this.tags = vo.tags;
     if (vo.estimateTime !== undefined) this.estimateTime = vo.estimateTime;
     if (vo.importance !== undefined) this.importance = vo.importance;
+    if (vo.difficulty !== undefined) this.difficulty = vo.difficulty;
     if (vo.urgency !== undefined) this.urgency = vo.urgency;
     if (vo.goalId !== undefined) this.goalId = vo.goalId;
     if (vo.startAt !== undefined) this.startAt = new Date(vo.startAt);
@@ -79,6 +83,7 @@ export class UpdateTaskDto extends IntersectionType(
     if (this.tags !== undefined) entity.tags = this.tags;
     if (this.estimateTime !== undefined) entity.estimateTime = this.estimateTime;
     if (this.importance !== undefined) entity.importance = this.importance;
+    if (this.difficulty !== undefined) entity.difficulty = this.difficulty;
     if (this.urgency !== undefined) entity.urgency = this.urgency;
     if (this.goalId !== undefined) entity.goalId = this.goalId;
     if (this.startAt !== undefined) entity.startAt = this.startAt;

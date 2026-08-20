@@ -1,4 +1,5 @@
 import { registerIpcHandlers } from 'electron-ipc-restful';
+import { AiController } from '../service/ai/ai.route-controller';
 import { GoalController } from '../service/growth/goal/goal.route-controller';
 import { HabitController } from '../service/growth/habit/habit.route-controller';
 import { TaskController } from '../service/growth/task/task.route-controller';
@@ -11,6 +12,13 @@ import { TrackTimeController } from '../service/growth/track-time/track-time.rou
  */
 export function initIpcRouter(): void {
   registerIpcHandlers({
-    controllers: [GoalController, HabitController, TaskController, TodoController, TrackTimeController],
+    controllers: [
+      GoalController,
+      HabitController,
+      TaskController,
+      TodoController,
+      TrackTimeController,
+      AiController,
+    ],
   });
 }

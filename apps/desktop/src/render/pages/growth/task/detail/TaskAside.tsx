@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tree, Input, Button, Empty, PlusOutlined, SearchOutlined } from '@sue/design-web-react';
+import { Tree, Button, Empty, Flex, PlusOutlined } from '@sue/design-web-react';
 
 import { useTaskDetailContext } from './context';
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import clsx from 'clsx';
+import { useTaskDetail } from '../../components/TaskDetail';
+import styles from './style.module.less';
 
 interface TaskAsideProps {
   currentTaskId: string;
@@ -18,56 +20,44 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
     selectedTaskId,
     setSelectedTaskId,
     fetchTaskDetail,
-    loading,
+    refreshData,
   } = useTaskDetailContext();
 
-  const [searchKeyword, setSearchKeyword] = useState('');
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const { openCreateDrawer } = useTaskDetail();
 
   // 构建树形数据
   const buildTreeData = (tasks: TaskVo[]) => {
-    const taskMap = new Map<string, TaskVo>();
-    tasks.forEach((task) => taskMap.set(task.id, task));
-
-    const rootTasks: TaskVo[] = [];
-    const childrenMap = new Map<string, TaskVo[]>();
-
-    tasks.forEach((task) => {
-      if (!task.parentId) {
-        rootTasks.push(task);
-      } else {
-        if (!childrenMap.has(task.parentId)) {
-          childrenMap.set(task.parentId, []);
-        }
-        childrenMap.get(task.parentId)!.push(task);
-      }
-    });
-
     const convertToTreeNode = (task: TaskVo): any => {
-      const children = childrenMap.get(task.id) || [];
+      const children = task.children || [];
       return {
         key: task.id,
         title: (
-          <div className="flex items-center justify-between w-full">
+          <Flex
+            align="center"
+            justify="space-between"
+            gap={8}
+            className={styles.treeTitle}
+          >
             <span
               className={clsx(
-                'truncate',
-                task.status === TaskStatus.DONE && 'line-through text-gray-400',
+                styles.treeName,
+                task.status === TaskStatus.DONE && styles.treeNameDone,
               )}
             >
               {task.name}
             </span>
-            <div className="flex items-center gap-1">
+            <Flex align="center" className={styles.treeTag}>
               {getStatusTag(task.status)}
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         ),
         children: children.map(convertToTreeNode),
         isLeaf: children.length === 0,
       };
     };
 
-    return rootTasks.map(convertToTreeNode);
+    return tasks.map(convertToTreeNode);
   };
 
   // 获取状态标签
@@ -86,11 +76,11 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
     return (
       <span
         className={clsx(
-          'px-1 py-0.5 text-xs rounded',
-          config.color === 'gray' && 'bg-gray-100 text-gray-600',
-          config.color === 'blue' && 'bg-blue-100 text-blue-600',
-          config.color === 'green' && 'bg-green-100 text-green-600',
-          config.color === 'red' && 'bg-red-100 text-red-600',
+          styles.statusTag,
+          config.color === 'gray' && styles.statusTodo,
+          config.color === 'blue' && styles.statusDoing,
+          config.color === 'green' && styles.statusDone,
+          config.color === 'red' && styles.statusAbandoned,
         )}
       >
         {config.text}
@@ -98,14 +88,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
     );
   };
 
-  // 过滤任务
-  const filteredTasks = taskTree.filter(
-    (task) =>
-      !searchKeyword ||
-      task.name.toLowerCase().includes(searchKeyword.toLowerCase()),
-  );
-
-  const treeData = buildTreeData(filteredTasks);
+  const treeData = buildTreeData(taskTree);
 
   // 处理节点选择
   const handleSelect = (selectedKeys: string[]) => {
@@ -120,8 +103,14 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
   React.useEffect(() => {
     if (currentTaskId && taskTree.length > 0) {
       const expandKeys: string[] = [];
+      const allTasks: TaskVo[] = [];
+      const collect = (tasks: TaskVo[]) => tasks.forEach((task) => {
+        allTasks.push(task);
+        if (task.children) collect(task.children);
+      });
+      collect(taskTree);
       const findParentChain = (taskId: string) => {
-        const task = taskTree.find((t) => t.id === taskId);
+        const task = allTasks.find((t) => t.id === taskId);
         if (task?.parentId) {
           expandKeys.push(task.parentId);
           findParentChain(task.parentId);
@@ -133,30 +122,29 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
   }, [currentTaskId, taskTree]);
 
   return (
-    <div className="flex flex-col h-full">
+    <Flex vertical className={styles.asideContent}>
       {/* 搜索和操作栏 */}
-      <div className="p-4 border-b border-border-2">
-        <div className="flex flex-col gap-2">
-          <Input
-            placeholder="搜索任务..."
-            prefix={<SearchOutlined />}
-            value={searchKeyword}
-            onChange={setSearchKeyword}
-            allowClear
-          />
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            size="small"
-            className="w-full"
-          >
-            新建任务
-          </Button>
-        </div>
+      <div className={styles.asideToolbar}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="small"
+          className={styles.createButton}
+          onClick={() =>
+            openCreateDrawer({
+              contentProps: {
+                initialFormData: { parentId: selectedTaskId, isSubTask: true },
+                afterSubmit: refreshData,
+              },
+            })
+          }
+        >
+          新建子任务
+        </Button>
       </div>
 
       {/* 任务树 */}
-      <div className="flex-1 overflow-auto p-2">
+      <div className={styles.treeArea}>
         {treeData.length > 0 ? (
           <Tree
             treeData={treeData}
@@ -166,13 +154,13 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
             onExpand={setExpandedKeys}
             blockNode
             showLine
-            className="task-tree"
+            className={styles.taskTree}
           />
         ) : (
           <Empty description="暂无任务数据" />
         )}
       </div>
-    </div>
+    </Flex>
   );
 };
 

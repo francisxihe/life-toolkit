@@ -1,3 +1,36 @@
 packages:
   - 'apps/*'
   - 'packages/**/*'
+
+shamefullyHoist: true
+nodeLinker: hoisted
+strictPeerDependencies: false
+confirmModulesPurge: false
+nodeOptions: "--no-warnings --no-deprecation"
+storeDir: .pnpm-store
+
+minimumReleaseAgeExclude:
+  - '@sue/design-web-react@0.0.3-beta'
+  - baseline-browser-mapping@2.11.12
+  - electron-to-chromium@1.5.400
+  - node-releases@2.0.52
+  - terser@5.49.1
+
+overrides:
+  '@types/node': 22.13.0
+  esbuild: 0.25.12
+  vite: 5.4.15
+  '@sue/design-web-react>dayjs': ^1.11.13
+  '@sue/design-web-react>@ant-design/colors': ^8.0.1
+  '@sue/design-web-react>@ant-design/fast-color': ^3.0.1
+
+patchedDependencies:
+  fe-selector@0.1.0: patches/fe-selector@0.1.0.patch
+
+allowBuilds:
+  '@swc/core': true
+  electron: true
+  electron-winstaller: true
+  esbuild: true
+  sharp: true
+  sqlite3: true

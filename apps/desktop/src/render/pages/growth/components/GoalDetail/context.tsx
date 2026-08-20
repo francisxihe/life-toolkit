@@ -9,6 +9,7 @@ import {
 } from '@true-north/web-service';
 import { createInjectState } from '@/utils/createInjectState';
 import { GoalType, GoalStatus, Importance, Difficulty } from '@true-north/enum';
+import dayjs from 'dayjs';
 
 export type GoalDetailContextProps = {
   goalId?: string;
@@ -36,15 +37,19 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
 }>((props) => {
   const [currentGoal, setCurrentGoal] = useState<GoalVo>();
 
+  const initialPlanTimeRange = props.initialFormData?.planTimeRange;
   const [initialFormData, setInitialFormData] = useState<GoalFormData>({
     name: '',
-    type: props.initialFormData?.type || GoalType.KEY_RESULT,
+    type: props.initialFormData?.type || (props.initialFormData?.parentId ? GoalType.RESULT : GoalType.VISION),
     status: props.initialFormData?.status || GoalStatus.TODO,
     importance: props.initialFormData?.importance || Importance.Core,
     difficulty: props.initialFormData?.difficulty || Difficulty.Challenger,
-    planTimeRange: [undefined, undefined],
     children: [],
     ...props.initialFormData,
+    planTimeRange: [
+      initialPlanTimeRange?.[0] ? dayjs(initialPlanTimeRange[0]) : undefined,
+      initialPlanTimeRange?.[1] ? dayjs(initialPlanTimeRange[1]) : undefined,
+    ],
   });
 
   const [goalFormData, setGoalFormData] =
@@ -53,7 +58,11 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   const refreshGoalDetail = useCallback(
     async (id: string) => {
       const goal = await GoalService.find(id);
+      if (!goal) return;
       setCurrentGoal(goal);
+      const formData = GoalMapping.voToGoalFormData(goal);
+      setInitialFormData(formData);
+      setGoalFormData(formData);
     },
     [setCurrentGoal],
   );
@@ -63,10 +72,10 @@ export const [GoalDetailProvider, useGoalDetailContext] = createInjectState<{
   };
 
   useEffect(() => {
-    if (currentGoal?.id) {
-      setInitialFormData(GoalMapping.voToGoalFormData(currentGoal));
+    if (props.goalId) {
+      refreshGoalDetail(props.goalId);
     }
-  }, [currentGoal, setInitialFormData]);
+  }, [props.goalId, refreshGoalDetail]);
 
   return {
     currentGoal,

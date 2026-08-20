@@ -5,10 +5,16 @@ import { Task } from '../task/task.entity';
 
 @Entity('track_time')
 export class TrackTime extends BaseEntity {
-  startAt!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  startAt?: Date;
 
-  endAt!: Date;
+  @Column({ type: 'datetime', nullable: true })
+  endAt?: Date;
 
+  @Column({ type: 'int', nullable: true })
+  duration?: number;
+
+  @Column({ type: 'text', nullable: true })
   notes?: string;
 
   /** 关联类型 */

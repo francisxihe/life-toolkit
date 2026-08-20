@@ -13,7 +13,7 @@ true-north/
 │   ├── components/           # 可复用组件
 │   └── dev-tools/            # 开发工具
 ├── doc/
-│   ├── ProductWiki/          # 产品 Wiki
+│   ├── apps/prototype/product-wiki/ # 与原型同仓维护的产品 Wiki
 │   ├── TechnicalWiki/        # 技术 Wiki
 │   └── {version}/            # 版本交付 PRD/TDD（如 v0.1.0/）
 ├── package.json

@@ -8,6 +8,7 @@ import {
   Space,
   Divider,
   PlusOutlined,
+  Flex,
 } from '@sue/design-web-react';
 import {
   CaretRightOutlined,
@@ -146,17 +147,17 @@ export default function TimeTracker({
     <div className="space-y-4">
       {/* 实时计时器 */}
       <div className="bg-gray-50 p-4 rounded-lg">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2">
+        <Flex align="center" justify="space-between" className="mb-4">
+          <Flex align="center" gap={8}>
             <Avatar size={24} style={{ backgroundColor: '#6366f1' }}>
               X
             </Avatar>
             <span>Xihe Francis</span>
-          </div>
+          </Flex>
           <div className="text-2xl font-mono">{formatTime(currentTime)}</div>
-        </div>
+        </Flex>
 
-        <div className="flex items-center space-x-2 mb-3">
+        <Flex align="center" gap={8} className="mb-3">
           {!isRunning ?
           <Button
             type="primary"
@@ -182,7 +183,7 @@ export default function TimeTracker({
               </Button>
             </>
           }
-        </div>
+        </Flex>
       </div>
 
       {/* 时间范围选择 */}
@@ -195,7 +196,7 @@ export default function TimeTracker({
           <RangePicker
             showTime
             value={timeRange}
-            onChange={(dateString, date) =>
+            onChange={(date) =>
             setTimeRange(date as [dayjs.Dayjs, dayjs.Dayjs])
             }
             style={{ width: '100%' }}
@@ -204,10 +205,10 @@ export default function TimeTracker({
           <Input.TextArea
             placeholder="备注..."
             value={note}
-            onChange={setNote}
+            onChange={(event) => setNote(event.target.value)}
             autoSize={{ minRows: 2, maxRows: 3 }} />
 
-          <div className="flex space-x-2">
+          <Flex gap={8}>
             <Button
               type="primary"
               onClick={addTimeRange}
@@ -216,26 +217,28 @@ export default function TimeTracker({
 
               添加时间记录
             </Button>
-          </div>
+          </Flex>
         </div>
       </div>
 
       {/* 时间记录列表 */}
       <div>
-        <div className="flex justify-between items-center mb-3">
+        <Flex justify="space-between" align="center" className="mb-3">
           <h6 className="text-title-1 font-medium">时间记录</h6>
           <div className="text-sm text-gray-500">
             总计: {formatDuration(totalTime)}
           </div>
-        </div>
+        </Flex>
 
         <div className="space-y-2 max-h-60 overflow-y-auto">
           {timeEntries.map((entry) =>
-          <div
+          <Flex
             key={entry.id}
-            className="flex items-center justify-between p-3 bg-white rounded border">
+            align="center"
+            justify="space-between"
+            className="p-3 bg-bg-1 rounded border">
 
-              <div className="flex items-center space-x-3">
+              <Flex align="center" gap={12}>
                 <Avatar size={20} style={{ backgroundColor: '#6366f1' }}>
                   X
                 </Avatar>
@@ -251,11 +254,11 @@ export default function TimeTracker({
                     </div>
                 }
                 </div>
-              </div>
+              </Flex>
               <div className="text-sm font-medium">
                 {formatDuration(entry.duration)}
               </div>
-            </div>
+            </Flex>
           )}
 
           {timeEntries.length === 0 &&

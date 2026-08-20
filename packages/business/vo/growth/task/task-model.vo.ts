@@ -2,15 +2,16 @@ import { BaseEntityVo } from '../../common';
 import { TrackTimeVo } from '../track-time/track-time.vo';
 import { GoalVo } from '../goal/goal-model.vo';
 import { TodoVo } from '../todo/todo-model.vo';
-import { TaskStatus } from '@true-north/enum';
+import { TaskStatus, Difficulty } from '@true-north/enum';
 
 export type TaskWithoutRelationsVo = {
   name: string;
   status: TaskStatus;
-  estimateTime?: string;
+  estimateTime?: number;
   trackTimeIds: string[];
   description?: string;
   importance?: number;
+  difficulty?: Difficulty;
   urgency?: number;
   tags: string[];
   doneAt?: string;

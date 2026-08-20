@@ -2,48 +2,59 @@
 
 import { GoalProvider } from './context';
 import React, { useState } from 'react';
-import { Layout } from '@sue/design-web-react';
-import clsx from 'clsx';
-import { useGoalContext } from './context';
-import { useGoalDetail } from '../components/GoalDetail';
+import { Flex, Tabs } from '@sue/design-web-react';
 import GoalMain from './GoalMain';
 import GoalAside from './GoalAside';
-
-const { Sider, Content } = Layout;
+import GoalMindMap from '@/pages/mind-map';
+import styles from './style.module.less';
 
 interface GoalTreeViewProps {
   className?: string;
 }
 
 const GoalTreeView: React.FC<GoalTreeViewProps> = () => {
-  const { refreshData } = useGoalContext();
-  const { openCreateDrawer } = useGoalDetail();
-
   return (
-    <Layout
-      className={clsx('w-full h-full', 'rounded', 'bg-bg-2', 'overflow-hidden')}
-    >
+    <Flex container="full" className={styles.treeLayout}>
       {/* 左侧目标树 */}
-      <Sider
-        width={320}
-        className={clsx('min-w-[200px] max-w-[400px]')}
-        theme="light"
-      >
+      <Flex container="fixed" className={styles.sider}>
         <GoalAside />
-      </Sider>
+      </Flex>
 
       {/* 右侧详情面板 */}
-      <Content>
+      <Flex container="fill" className={styles.content}>
         <GoalMain />
-      </Content>
-    </Layout>
+      </Flex>
+    </Flex>
   );
 };
 
 export default function Goal() {
+  const [activeTab, setActiveTab] = useState('tree');
+
   return (
-    <GoalProvider>
-      <GoalTreeView />
-    </GoalProvider>
+    <Flex vertical container="full" className={styles.page}>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        className={styles.tabs}
+        tabBarStyle={{ padding: '0 16px' }}
+        items={[
+          {
+            key: 'tree',
+            label: '目标树',
+            children: (
+              <GoalProvider>
+                <GoalTreeView />
+              </GoalProvider>
+            ),
+          },
+          {
+            key: 'mindmap',
+            label: '目标脑图',
+            children: <GoalMindMap />,
+          },
+        ]}
+      />
+    </Flex>
   );
 }

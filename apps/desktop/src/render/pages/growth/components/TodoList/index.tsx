@@ -3,6 +3,7 @@
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
 import TriggerTodoStatus from './TriggerTodoStatus';
 import TodoItem from './TodoItem';
+import styles from './style.module.less';
 
 function TodoList(props: {
   todoList: TodoVo[];
@@ -10,7 +11,7 @@ function TodoList(props: {
   refreshTodoList: () => Promise<void>;
 }) {
   return (
-    <div className="w-full mt-[-8px]">
+    <div className={styles.list}>
       {props.todoList.map((todo) => (
         <TodoItem
           key={todo.id}

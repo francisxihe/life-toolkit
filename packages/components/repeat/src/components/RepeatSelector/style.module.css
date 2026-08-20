@@ -1,0 +1,22 @@
+.root {
+  width: 100%;
+}
+
+.control {
+  width: 100%;
+}
+
+.flexControl {
+  flex: 1 1 10rem;
+  min-width: 10rem;
+}
+
+.numberControl {
+  width: 5rem;
+}
+
+.label {
+  color: var(--color-text-2);
+  flex: 0 0 auto;
+  font-size: 0.875rem;
+}

@@ -15,7 +15,7 @@ export type GoalFilterVo = {
   onlyRootLevel?: boolean;
   status?: GoalVo['status'] | GoalVo['status'][];
 } & BaseFilterVo &
-  Partial<Pick<GoalVo, 'type' | 'importance'>>;
+  Partial<Pick<GoalVo, 'type' | 'importance' | 'difficulty'>>;
 
 export type GoalPageFilterVo = GoalFilterVo & {
   pageNum: number;

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "true-north-prototype-product-wiki-changelog",
+  "title": "ProductWiki changelog",
+  "type": "object",
+  "required": ["changes"],
+  "properties": {
+    "changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "event", "summary", "productStatus", "prototypeCoverage", "feature"],
+        "properties": {
+          "version": { "type": "string", "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+$" },
+          "date": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" },
+          "event": { "enum": ["baseline", "introduced", "changed", "released", "deprecated", "removed"] },
+          "summary": { "type": "string", "minLength": 1 },
+          "productStatus": { "enum": ["roadmap", "released", "deprecated"] },
+          "prototypeCoverage": { "enum": ["none", "partial", "complete"] },
+          "feature": {
+            "type": "object",
+            "required": ["key", "scope", "moduleId", "moduleTitle", "name"],
+            "properties": {
+              "key": { "type": "string", "minLength": 1 },
+              "scope": { "enum": ["module", "entity", "field", "view", "rule"] },
+              "moduleId": { "type": "string", "minLength": 1 },
+              "moduleTitle": { "type": "string", "minLength": 1 },
+              "name": { "type": "string", "minLength": 1 },
+              "parentName": { "type": "string", "minLength": 1 },
+              "reference": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

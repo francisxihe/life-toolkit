@@ -1,0 +1,616 @@
+{
+  "changes": [
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "编码 Agent 选择器本版为 ChatGPT（本机 ChatGPT 应用）；去掉 Cursor；未安装或未登录项仍禁用并说明原因。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:agent-picker", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 选择器", "reference": "ai.session.view.agent-picker" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "当前选用的编码 Agent 展示名本版为 ChatGPT；在对话区切换，无独立 AI 设置页。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:agent-preference.selectedAgent", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "当前编码 Agent", "parentName": "编码 Agent 偏好" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "会话或应用偏好记录当前选用的编码 Agent 展示名；在对话区切换，无独立 AI 设置页。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:agent-preference.selectedAgent", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "当前编码 Agent", "parentName": "编码 Agent 偏好" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "对话区切换本机编码 Agent；未安装或未登录项禁用并说明原因；列表可随探测结果变长。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:agent-picker", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 选择器", "reference": "ai.session.view.agent-picker" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "发送走当前选中且可用的 Agent；切换只影响之后发送，不改已有消息、不自动打开工作台，且该会话不再续跑上一 Agent 线程。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:agent-switch", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 切换", "reference": "ai.session.rule.agent-switch" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "提供三栏 AI 会话壳层：会话列表、对话与可插拔工作台容器。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:shell", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "AI 会话壳层", "reference": "ai.session.view.shell" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "会话列表展示标题、绑定目标与更新时间，支持新建与切换。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:session-list", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话列表", "reference": "ai.session.view.session-list" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "对话区展示文本与结构化工作台块，支持追问与重新生成拆解。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "右侧工作台容器按结构化块挂载功能，无块时为空态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:workspace-host", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "工作台容器", "reference": "ai.session.view.workspace-host" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "消息中的工作台块按类型打开对应工作台；无块则空容器。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:workspace-dispatch", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "工作台分发", "reference": "ai.session.rule.workspace-dispatch" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "同一会话可有多块工作台；右侧仅在用户点选后打开，切换会话关闭，不再默认取最后一条。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:workspace-dispatch", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "工作台分发", "reference": "ai.session.rule.workspace-dispatch" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "工作台类型扩展为含目标拆解与任务拆解。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:workspace-dispatch", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "工作台分发", "reference": "ai.session.rule.workspace-dispatch" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "从目标发起时创建或打开绑定该目标的会话，并产出拆解工作台块。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:goal-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "目标绑定发起", "reference": "ai.session.rule.goal-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "从目标发起产出拆解工作台块但不自动打开；发起消息中的目标名称可点击进入该目标。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:goal-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "目标绑定发起", "reference": "ai.session.rule.goal-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "从任务发起时创建或打开绑定该任务的会话并产出任务拆解工作台块；发起消息中的任务名称可点击进入该任务。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:task-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "任务绑定发起", "reference": "ai.session.rule.task-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "重新生成拆解追加新工作台块但不自动打开；发起消息目标名称可点击。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "会话页作为通用对话壳层，移除「重新生成拆解」等能力专用工具栏；发起消息目标名称仍可点击。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "追问文案可由目标拆解工作台「对已选追问」预填进输入框，确认后发送；仍不自动改工作台。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "发起消息中的任务名称可点击；对已选追问也可来自任务拆解工作台。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "会话对话的发送依赖当前选中且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "对话区贴底跟随、上翻停跟并可回到底部；输入区底部为 Agent 选择器；流式发送按钮变为停止；工具调用过程可折叠。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "消息内容块由文本、工具过程与结构化工作台块按顺序组成。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:message.parts", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "内容块", "parentName": "消息" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "从目标绑定发起与普通发送共用对话区当前选用且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:goal-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "目标绑定发起", "reference": "ai.session.rule.goal-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "从任务绑定发起与普通发送共用对话区当前选用且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:task-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "任务绑定发起", "reference": "ai.session.rule.task-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "工作台容器默认空态，仅用户显式点选消息中的结构化块后挂载。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:workspace-host", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "工作台容器", "reference": "ai.session.view.workspace-host" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "目标详情提供 AI 拆解抽屉：展示分析摘要与子目标/任务/待办/习惯建议，支持勾选、冲突提示与已采纳态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:view:ai-decomposition", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 拆解", "reference": "growth.goal.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "AI 拆解从目标详情抽屉改为发起绑定会话，并在会话页右侧工作台审阅采纳。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:view:ai-decomposition", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 拆解", "reference": "growth.goal.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "工作台建议统一为编辑仅缓存预览、采纳用当前预览；已采纳置灰不可再操作；支持勾选后对已选追问。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:view:ai-decomposition", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 拆解", "reference": "growth.goal.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "原型工作台：「编辑」回显建议并保存至预览；采纳置灰；提供对已选追问预填。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:view:ai-decomposition", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 拆解", "reference": "growth.goal.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "正式产品由已接入的模型结合目标上下文生成建议；原型仅演示交互与建议形态；模型不可用时明确失败而非静默假建议。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:rule:ai-decompose-generation", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议生成", "reference": "growth.goal.rule.ai-decompose-generation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "建议生成结果改为以会话消息中的结构化工作台块交付。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:rule:ai-decompose-generation", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议生成", "reference": "growth.goal.rule.ai-decompose-generation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-09",
+      "event": "introduced",
+      "summary": "支持单条采纳、批量确认采纳与编辑后采纳；冲突建议不可采纳，已采纳不可重复创建；待办须关联当前目标。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议采纳", "reference": "growth.goal.rule.ai-decompose-adopt" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "采纳交互载体改为 AI 会话工作台；冲突、已采纳与编辑后采纳语义不变。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议采纳", "reference": "growth.goal.rule.ai-decompose-adopt" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "「编辑后采纳」改为「编辑」仅回写预览缓存；采纳以当前预览创建；已采纳置灰且不可再编辑/采纳/勾选。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.goal:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议采纳", "reference": "growth.goal.rule.ai-decompose-adopt" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "原型落地编辑回显与预览缓存保存；采纳后预览置灰。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "AI 建议采纳", "reference": "growth.goal.rule.ai-decompose-adopt" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开工作台。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.goal:rule:ai-decompose-followup", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "对已选建议追问", "reference": "growth.goal.rule.ai-decompose-followup" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "原型工作台提供「对已选追问」，将所选建议摘要预填对话输入框。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:ai-decompose-followup", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "对已选建议追问", "reference": "growth.goal.rule.ai-decompose-followup" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "删除仅全部待办提供；重复系列只能在全部删除，且保留已结算历史。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.todo:rule:delete-boundary", "scope": "rule", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "删除入口与重复删除", "reference": "growth.todo.rule.delete-boundary" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "changed",
+      "summary": "全部待办纳入进行中重复当前实例，并作为删除与批量治理入口。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.todo:view:all", "scope": "view", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "全部待办", "reference": "growth.todo.view.all" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "changed",
+      "summary": "待办列表直接露出完成与放弃（习惯/周期以标记未完成结算）。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.todo:view:today", "scope": "view", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "当前待办", "reference": "growth.todo.view.today" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "新建可配置是否重复；编辑不可切换是否重复，已有规则仍可调整细节。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.todo:rule:edit-no-repeat-toggle", "scope": "rule", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "编辑不可切换是否重复", "reference": "growth.todo.rule.edit-no-repeat-toggle" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "changed",
+      "summary": "待办状态精简为待开始、已完成、已放弃，去掉进行中与开始操作。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.todo:field:todo.status", "scope": "field", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "状态", "parentName": "待办" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "区间计划的未完成待办可从待办入口关联全局专注计时；时间点待办隐藏入口，历史记录仍可读。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.todo:rule:focus-range-only", "scope": "rule", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "区间计划可关联专注", "reference": "growth.todo.rule.focus-range-only" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "专注记录可关联待办，与任务关联互斥；结束专注不改变待办状态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:rule:todo-optional", "scope": "rule", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "待办可选关联", "reference": "growth.track-time.rule.todo-optional" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "顶栏联合选择支持待办；入口锁定预填，结束专注仍不改变待办状态。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:rule:todo-optional", "scope": "rule", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "待办可选关联", "reference": "growth.track-time.rule.todo-optional" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "仅区间计划待办可从待办入口管理计时；时间点待办入口隐藏，已有记录只读。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:rule:todo-range-focus", "scope": "rule", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "待办入口仅区间可管理计时", "reference": "growth.track-time.rule.todo-range-focus" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "changed",
+      "summary": "专注模块依赖待办，并从顶栏、任务或待办唤起全局计时。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:view:focus", "scope": "view", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "专注计时", "reference": "growth.track-time.overview" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "顶栏唤起可搜索选择任务或待办；任务/待办入口锁定预填关联。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:view:focus", "scope": "view", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "专注计时", "reference": "growth.track-time.overview" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-08-08",
+      "event": "introduced",
+      "summary": "专注记录新增可选关联待办字段。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.track-time:field:track-time.todoId", "scope": "field", "moduleId": "growth.track-time", "moduleTitle": "专注与时间追踪", "name": "关联待办", "parentName": "专注记录" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端不再提供独立目标健康面板，结构与执行摘要由目标详情和工作台承载。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.goal:view:dashboard", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "目标健康面板", "reference": "growth.goal.view.dashboard" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端不再提供独立习惯统计页，连续天数摘要收敛到习惯详情和工作台。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.habit:view:statistics", "scope": "view", "moduleId": "growth.habit", "moduleTitle": "习惯管理", "name": "习惯统计", "reference": "growth.habit.view.statistics" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端不再提供独立习惯打卡日历，周期执行记录由习惯详情和待办日程展示。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.habit:view:calendar", "scope": "view", "moduleId": "growth.habit", "moduleTitle": "习惯管理", "name": "打卡日历", "reference": "growth.habit.view.calendar" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端移除独立周视图，统一由可切换日期的当前任务视图与任务日历承载。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.task:view:week", "scope": "view", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "本周任务", "reference": "growth.task.view.week" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端移除独立任务统计页，统计摘要统一收敛到工作台。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.task:view:statistics", "scope": "view", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "任务统计", "reference": "growth.task.view.statistics" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端移除独立周视图，统一由可切换日期的当前待办视图与待办日历承载。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.todo:view:week", "scope": "view", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "本周待办", "reference": "growth.todo.view.week" }
+    },
+    {
+      "version": "v0.1.1",
+      "date": "2026-08-07",
+      "event": "deprecated",
+      "summary": "桌面端移除独立待办统计页，统计摘要统一收敛到工作台。",
+      "productStatus": "deprecated",
+      "prototypeCoverage": "none",
+      "feature": { "key": "growth.todo:view:statistics", "scope": "view", "moduleId": "growth.todo", "moduleTitle": "待办管理", "name": "待办统计", "reference": "growth.todo.view.statistics" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "目标状态统一为待开始、进行中、已完成和已放弃。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:field:goal.status", "scope": "field", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "状态", "parentName": "目标" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "补齐目标详情操作区、完成撤销和关联任务详情抽屉。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:view:detail", "scope": "view", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "目标详情", "reference": "growth.goal.view.detail" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "编辑父目标时校验所有直接子目标的时间范围。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:time-frame", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "时间范围", "reference": "growth.goal.rule.time-frame" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "编辑父目标时校验所有直接子目标的重要度与难度约束。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.goal:rule:priority-inheritance", "scope": "rule", "moduleId": "growth.goal", "moduleTitle": "目标管理", "name": "优先级继承", "reference": "growth.goal.rule.priority-inheritance" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "新增任务详情抽屉，始终展示当前根任务子树，并在任务树区域创建子任务、提供关联 Todo 与 TrackTime 入口。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:view:detail", "scope": "view", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "任务详情", "reference": "growth.task.view.detail" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "changed",
+      "summary": "任务详情增加「AI 拆解」入口，发起绑定该任务的 AI 会话。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:view:detail", "scope": "view", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "任务详情", "reference": "growth.task.view.detail" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "从任务详情发起 AI 会话；工作台审阅子任务与待办建议，支持编辑预览、采纳置灰与对已选追问。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:view:ai-decomposition", "scope": "view", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "AI 拆解", "reference": "growth.task.view.ai-decomposition" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "正式产品由模型结合任务上下文生成子任务与待办建议；结果以会话工作台块交付；原型仅演示交互。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "partial",
+      "feature": { "key": "growth.task:rule:ai-decompose-generation", "scope": "rule", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "AI 建议生成", "reference": "growth.task.rule.ai-decompose-generation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "工作台内采纳子任务（父级为当前任务）或待办（关联当前任务）；编辑仅缓存预览；已采纳置灰。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:rule:ai-decompose-adopt", "scope": "rule", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "AI 建议采纳", "reference": "growth.task.rule.ai-decompose-adopt" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:rule:ai-decompose-followup", "scope": "rule", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "对已选建议追问", "reference": "growth.task.rule.ai-decompose-followup" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-11",
+      "event": "introduced",
+      "summary": "会话可选关联类型扩展为支持目标与任务。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:conversation.refType", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "关联类型", "parentName": "会话" }
+    },
+    {
+      "version": "v0.1.0",
+      "date": "2026-07-30",
+      "event": "changed",
+      "summary": "子任务内联创建时校验上级的时间、重要度与难度范围。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "growth.task:rule:time-inheritance", "scope": "rule", "moduleId": "growth.task", "moduleTitle": "任务管理", "name": "时间继承", "reference": "growth.task.rule.time-inheritance" }
+    }
+  ]
+}

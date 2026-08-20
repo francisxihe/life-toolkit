@@ -1,0 +1,20 @@
+.loading, .emptyState { min-height: 256px; color: var(--sue-color-text-tertiary); }
+
+.legacyPage {
+  min-width: 0;
+  padding: 4px 0 16px;
+  color: var(--sue-color-text);
+
+  :global(.sue-card) { border-color: var(--sue-color-border-secondary); box-shadow: none; }
+  :global(.text-text-1) { color: var(--sue-color-text) !important; }
+  :global(.text-text-2), :global(.text-gray-600) { color: var(--sue-color-text-secondary) !important; }
+  :global(.text-text-3), :global(.text-gray-500) { color: var(--sue-color-text-tertiary) !important; }
+  :global(.bg-gray-50), :global(.bg-blue-50), :global(.bg-green-50), :global(.bg-purple-50), :global(.bg-orange-50) { background: var(--sue-color-fill-quaternary) !important; }
+  :global(.text-blue-600), :global(.text-purple-600) { color: var(--sue-color-primary) !important; }
+  :global(.text-green-600) { color: var(--sue-color-success) !important; }
+  :global(.text-red-600) { color: var(--sue-color-error) !important; }
+  :global(.text-orange-600) { color: var(--sue-color-warning) !important; }
+  :global(.border) { border-color: var(--sue-color-border-secondary) !important; }
+  :global(table) { width: 100%; border-color: var(--sue-color-border-secondary); }
+  :global(th), :global(td) { border-color: var(--sue-color-border-secondary) !important; }
+}

@@ -1,14 +1,24 @@
 import { Habit, HabitWithoutRelations } from '../habit.entity';
 import { BaseModelDto, BaseMapper } from '@business/common';
-import { OmitType, IntersectionType } from 'francis-mapped-types';
+import { IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@true-north/vo';
 import { GoalDto } from '../../goal/dto/goal-model.dto';
 import { TodoDto } from '../../todo/dto/todo-model.dto';
+import type { RepeatConfigPayload } from '@true-north/components-repeat/types';
+import { RepeatEndMode, RepeatMode } from '@true-north/components-repeat/types';
 
-export class HabitWithoutRelationsDto extends IntersectionType(BaseModelDto, HabitWithoutRelations) {}
+export class HabitWithoutRelationsDto extends IntersectionType(BaseModelDto, HabitWithoutRelations) {
+  /** 由关联 Repeat 展平，供 API / VO 兼容 */
+  repeatMode!: RepeatMode;
+  repeatConfig?: RepeatConfigPayload;
+  repeatEndMode!: RepeatEndMode;
+  repeatEndDate?: string;
+  repeatTimes?: number;
+  repeatStartDate!: string;
+}
 
-export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelationsDto) {
+export class HabitDto extends HabitWithoutRelationsDto {
   goals?: GoalDto[];
   todos?: TodoDto[];
 
@@ -20,26 +30,30 @@ export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelatio
     this.status = entity.status;
     this.importance = entity.importance;
     this.difficulty = entity.difficulty;
-    this.repeatStartDate = entity.repeatStartDate;
-    this.repeatEndDate = entity.repeatEndDate;
-    this.repeatTimes = entity.repeatTimes;
-    this.repeatMode = entity.repeatMode;
-    this.repeatConfig = entity.repeatConfig;
-    this.repeatEndMode = entity.repeatEndMode;
+    this.tags = entity.tags;
+    this.repeatId = entity.repeatId;
+    this.cycleTodoId = entity.cycleTodoId;
+    this.cycleCount = entity.cycleCount;
+    this.currentStreak = entity.currentStreak;
+    this.longestStreak = entity.longestStreak;
+    this.completedCount = entity.completedCount;
+    this.doneAt = entity.doneAt;
+    this.abandonedAt = entity.abandonedAt;
 
-    // 关联对象映射（浅拷贝，避免循环引用）
+    if (entity.repeat) {
+      this.repeatStartDate = entity.repeat.repeatStartDate;
+      this.repeatEndDate = entity.repeat.repeatEndDate;
+      this.repeatTimes = entity.repeat.repeatTimes;
+      this.repeatMode = entity.repeat.repeatMode;
+      this.repeatConfig = entity.repeat.repeatConfig;
+      this.repeatEndMode = entity.repeat.repeatEndMode;
+    }
+
     if (entity.goals) {
       this.goals = entity.goals.map((goal) => {
         const goalDto = new GoalDto();
         goalDto.importEntity(goal);
         return goalDto;
-      });
-    }
-    if (entity.todos) {
-      this.todos = entity.todos.map((todo) => {
-        const todoDto = new TodoDto();
-        todoDto.importEntity(todo);
-        return todoDto;
       });
     }
   }
@@ -60,12 +74,20 @@ export class HabitDto extends IntersectionType(BaseModelDto, HabitWithoutRelatio
       tags: this.tags,
       difficulty: this.difficulty,
       importance: this.importance,
+      repeatId: this.repeatId,
       repeatStartDate: this.repeatStartDate,
       repeatMode: this.repeatMode,
       repeatConfig: this.repeatConfig,
       repeatEndMode: this.repeatEndMode,
       repeatEndDate: this.repeatEndDate,
       repeatTimes: this.repeatTimes,
+      cycleTodoId: this.cycleTodoId,
+      cycleCount: this.cycleCount,
+      currentStreak: this.currentStreak,
+      longestStreak: this.longestStreak,
+      completedCount: this.completedCount,
+      doneAt: this.doneAt ? dayjs(this.doneAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
+      abandonedAt: this.abandonedAt ? dayjs(this.abandonedAt).format('YYYY-MM-DD HH:mm:ss') : undefined,
     };
   }
 

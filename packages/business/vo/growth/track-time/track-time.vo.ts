@@ -1,7 +1,8 @@
 import { BaseEntityVo } from '../../common';
+import { TrackTimeRelatedType } from '@true-north/enum';
 
 export type TrackTimeWithoutRelationsVo = {
-  relatedType?: string;
+  relatedType?: TrackTimeRelatedType;
   relatedId?: string;
   startAt?: string;
   endAt?: string;

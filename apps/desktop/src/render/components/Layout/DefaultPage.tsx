@@ -1,7 +1,7 @@
 'use client';
 
 import { Flex } from '@sue/design-web-react';
-import clsx from 'clsx';
+import styles from './DefaultPage.module.less';
 
 export default function DefaultPage(props: {
   title: string;
@@ -11,20 +11,18 @@ export default function DefaultPage(props: {
     <Flex
       vertical
       container="full"
-      className="bg-bg-2 rounded-lg w-full h-full"
+      className={styles.page}
     >
       <Flex
         container="fixed"
-        className="w-full px-5 py-2 flex justify-between items-center border-b"
+        className={styles.header}
       >
-        <div className="text-text-1 text-title-2 font-medium py-1">
-          {props.title}
-        </div>
+        <h1 className={styles.title}>{props.title}</h1>
       </Flex>
 
       <Flex
         container="fill"
-        className={clsx('px-5 w-full h-full', 'flex flex-col gap-3')}
+        className={styles.content}
       >
         {props.children}
       </Flex>

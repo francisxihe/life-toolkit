@@ -63,7 +63,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, onClose }) => {
   return (
     <Modal
       title="导出思维导图"
-      visible={visible}
+      open={visible}
       onOk={handleExport}
       onCancel={onClose}
       okText="导出"
@@ -138,7 +138,7 @@ const ImportModal: React.FC<ImportModalProps> = ({ visible, onClose, onImport })
   };
 
   return (
-    <Modal title="导入思维导图" visible={visible} onCancel={onClose} footer={null}>
+    <Modal title="导入思维导图" open={visible} onCancel={onClose} footer={null}>
       <div className="p-6 text-center">
         <div
           className="border-2 border-dashed border-gray-300 rounded-lg p-8 cursor-pointer hover:bg-gray-50 transition-colors"

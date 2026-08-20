@@ -35,7 +35,7 @@ const ToolButton: React.FC<ToolButtonProps> = ({
 }) => (
   <Tooltip content={content}>
     <Button
-      type="secondary"
+      type="default"
       icon={icon}
       onClick={onClick}
       disabled={disabled}
