@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Input, DatePicker, Select, Form, Radio, Tag, type FormRule, Row, Col } from '@sue/design-web-react';
+import { Input, DatePicker, Select, Form, Radio, Tag, Flex, type FormRule, Row, Col } from '@sue/design-web-react';
 
 import clsx from 'clsx';
 import dayjs from 'dayjs';
@@ -106,12 +106,12 @@ export default function GoalForm() {
             bottom:
               readonly ||
               (parentGoal && allowedDateRange && (
-                <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
+                <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
                   <span>
                     父目标日期范围限制：{allowedDateRange[0]} ~{' '}
                     {allowedDateRange[1]}
                   </span>
-                </div>
+                </Flex>
               )),
           }}
         >
@@ -147,9 +147,9 @@ export default function GoalForm() {
             bottom:
               readonly ||
               (parentGoal && parentGoal.type === GoalType.RESULT && (
-                <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
+                <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
                   <span>父目标是成果，子目标只能是成果</span>
-                </div>
+                </Flex>
               )),
           }}
         >
@@ -179,13 +179,13 @@ export default function GoalForm() {
               (parentGoal &&
                 allowedImportance.length <
                   [...IMPORTANCE_MAP.keys()].length && (
-                  <div className="text-xs text-orange-600 mt-1 flex items-start gap-1">
+                  <Flex align="flex-start" gap={4} className="text-xs text-orange-600 mt-1">
                     <span>⚠️</span>
                     <span>
                       重要程度不能高于父目标：
                       {IMPORTANCE_MAP.get(parentGoal.importance)?.label}
                     </span>
-                  </div>
+                  </Flex>
                 )),
           }}
         >

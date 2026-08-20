@@ -6,6 +6,8 @@ import useRouter, { FlattenRoute, RouterContext } from './useRouter';
 import { TaskDetailDrawerHost } from '../pages/growth/task/detail/TaskDetailDrawer';
 import { FocusTimerProvider } from '../pages/growth/focus-timer';
 
+const ForbiddenPage = lazyload(() => import('../pages/exception/403'));
+
 function Router() {
   const router = useRouter();
 
@@ -35,35 +37,7 @@ function Router() {
             {renderRouteComponent(
               router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath),
             )}
-          {/* {flattenRoutes.map((route) => {
-          return (
-            <Route
-              key={route.key}
-              path={`/${route.key}`}
-              element={<route.component />}
-            >
-              {route.children?.map((child) => {
-                return (
-                  child.component && (
-                    <Route
-                      key={child.key}
-                      path={`/${child.key}`}
-                      element={<child.component />}
-                    />
-                  )
-                );
-              })}
-            </Route>
-          );
-        })} */}
-          {/* <Route
-          path="/"
-          // element={<Navigate to={`/${defaultRoute}`} />}
-        /> */}
-            <Route
-              path="*"
-              element={lazyload(() => import('../pages/exception/403'))}
-            />
+            <Route path="*" element={<ForbiddenPage />} />
           </Route>
         </Routes>
       </FocusTimerProvider>

@@ -1,0 +1,305 @@
+.shell {
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--sue-color-border-secondary);
+  border-radius: var(--sue-border-radius);
+  background: var(--sue-color-bg-container);
+  overflow: hidden;
+}
+
+.sessionList {
+  width: 240px;
+  border-right: 1px solid var(--sue-color-border-secondary);
+  min-height: 0;
+}
+
+.sessionListHeader {
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.sessionListBody {
+  overflow: auto;
+  min-height: 0;
+  padding: 8px;
+}
+
+.sessionItem {
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--sue-border-radius-sm);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sessionItem:hover {
+  background: var(--sue-color-fill-tertiary);
+}
+
+.sessionItemActive {
+  background: var(--sue-color-primary-bg) !important;
+  color: var(--sue-color-primary);
+}
+
+.sessionTitle {
+  display: block;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sessionMeta {
+  display: block;
+  margin-top: 4px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation {
+  min-width: 0;
+  min-height: 0;
+}
+
+.conversationHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.conversationViewport {
+  position: relative;
+  min-height: 0;
+}
+
+.conversationBody {
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+  padding: 16px;
+}
+
+.conversationEmpty {
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+}
+
+.scrollToBottom {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 2;
+  transform: translateX(-50%);
+}
+
+.streamCursor {
+  display: inline-block;
+  width: 0.45em;
+  height: 1em;
+  margin-left: 1px;
+  background: currentColor;
+  vertical-align: text-bottom;
+  animation: streamCursorBlink 1s step-end infinite;
+}
+
+@keyframes streamCursorBlink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.agentSwitchHint {
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.messageRow {
+  margin-bottom: 12px;
+}
+
+.bubble {
+  max-width: 78%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--sue-color-fill-tertiary);
+}
+
+.bubbleUser {
+  background: var(--sue-color-primary-bg);
+  color: var(--sue-color-primary);
+}
+
+.bubbleText {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.entityLink {
+  margin-left: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--sue-color-primary, #1677ff);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.entityLink:hover {
+  opacity: 0.85;
+}
+
+.workspaceChip {
+  margin-top: 8px;
+}
+
+.toolPart {
+  margin-top: 6px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+}
+
+.toolPart summary {
+  cursor: pointer;
+}
+
+.toolPartBody {
+  margin-top: 4px;
+  padding-left: 8px;
+}
+
+.conversationComposer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--sue-color-border-secondary);
+}
+
+.composerCard {
+  padding: 8px 12px;
+  border: 1px solid var(--sue-color-border);
+  border-radius: var(--sue-border-radius);
+  background: var(--sue-color-bg-container);
+}
+
+.composerCard:focus-within {
+  border-color: var(--sue-color-primary);
+}
+
+.composerCard :global(textarea) {
+  box-shadow: none;
+  resize: none;
+}
+
+.composerField {
+  position: relative;
+  min-width: 0;
+}
+
+.mentionPanel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  z-index: 8;
+  margin-bottom: 6px;
+  max-height: 240px;
+  overflow: auto;
+  border: 1px solid var(--sue-color-border-secondary);
+  border-radius: var(--sue-border-radius-sm);
+  background: var(--sue-color-bg-container);
+  box-shadow: var(--sue-box-shadow-secondary);
+}
+
+.mentionItem {
+  width: 100%;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.mentionItem:hover,
+.mentionItemActive {
+  background: var(--sue-color-primary-bg);
+}
+
+.mentionKind {
+  margin-right: 8px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+}
+
+.workspaceHost {
+  width: 400px;
+  border-left: 1px solid var(--sue-color-border-secondary);
+  min-width: 0;
+  min-height: 0;
+  background: var(--sue-color-bg-container);
+}
+
+.workspaceHeader {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+  font-weight: 500;
+}
+
+.workspaceBody {
+  overflow: auto;
+  min-height: 0;
+  padding: 16px;
+}
+
+.emptyWorkspace {
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+  margin-top: 72px;
+  line-height: 1.7;
+}
+
+.aiAlert {
+  margin: 0 0 12px;
+}
+
+.aiControls {
+  margin-bottom: 12px;
+}
+
+.aiSuggestions h3 {
+  margin: 8px 0 4px;
+  font-size: 16px;
+}
+
+.aiSuggestions p {
+  margin: 0 0 6px;
+  color: var(--sue-color-text-secondary);
+}
+
+.aiSuggestions small {
+  color: var(--sue-color-text-tertiary);
+}
+
+.accepted {
+  opacity: 0.62;
+}
+
+.acceptedPreview {
+  color: var(--sue-color-text-tertiary);
+}
+
+.acceptedPreview h3,
+.acceptedPreview p,
+.acceptedPreview small {
+  color: inherit;
+}
+
+.page {
+  height: 100%;
+  min-height: 0;
+}

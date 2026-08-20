@@ -6,7 +6,8 @@ import { workspaceRegistry } from '../workspaces/registry';
 import styles from '../style.module.css';
 
 export function WorkspaceHost() {
-  const { activeConversation, activeWorkspacePart, goals, tasks, saveEntity, setDraft } = useAiSessionContext();
+  const { activeConversation, activeWorkspacePart, goals, tasks, saveEntity, setDraft, focusComposer } =
+    useAiSessionContext();
 
   let body: ReactNode = <EmptyWorkspace />;
   if (activeWorkspacePart) {
@@ -19,7 +20,10 @@ export function WorkspaceHost() {
         goals={goals}
         tasks={tasks}
         saveEntity={saveEntity}
-        setDraft={setDraft}
+        setDraft={(text) => {
+          setDraft(text);
+          focusComposer();
+        }}
       />
     ) : (
       <div className={styles.emptyWorkspace}>未知工作台类型：{activeWorkspacePart.workspaceKey}</div>

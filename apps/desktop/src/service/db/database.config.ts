@@ -16,6 +16,8 @@ import { Repeat } from '../growth/repeat/repeat.entity';
 import { TrackTime } from '../growth/track-time/entity';
 import { AiRun } from '../ai/run/ai-run.entity';
 import { AiSuggestionCache } from '../ai/cache/ai-suggestion-cache.entity';
+import { AiConversation } from '../ai/conversation/conversation.entity';
+import { AiMessage } from '../ai/conversation/message.entity';
 
 const getDatabasePath = () => {
   if (process.env.NODE_ENV === 'development') {
@@ -36,7 +38,20 @@ export const AppDataSource = new DataSource({
   database: databasePath,
   synchronize: true,
   logging: process.env.NODE_ENV === 'development' ? ['error'] : undefined,
-  entities: [User, Goal, Task, Todo, TodoRepeat, Repeat, Habit, TrackTime, AiRun, AiSuggestionCache],
+  entities: [
+    User,
+    Goal,
+    Task,
+    Todo,
+    TodoRepeat,
+    Repeat,
+    Habit,
+    TrackTime,
+    AiRun,
+    AiSuggestionCache,
+    AiConversation,
+    AiMessage,
+  ],
   migrations: [],
   subscribers: [],
   namingStrategy: new SnakeNamingStrategy(),
@@ -46,6 +61,7 @@ export const initializeDatabase = async (): Promise<void> => {
   try {
     if (!AppDataSource.isInitialized) {
       await repairGrowthV010BeforeSynchronize();
+      await migrateAiConversationAgentBeforeSynchronize();
       await AppDataSource.initialize();
       await migrateGrowthV010();
       await migrateGrowthV011();
@@ -288,6 +304,127 @@ async function migrateTodoRepeatToRepeatTodo(): Promise<void> {
   }
 
   await AppDataSource.query(`DROP TABLE IF EXISTS todo_repeat`);
+}
+
+/**
+ * Copy conversation ref onto workspace payloads and pluralize entityLinks
+ * before TypeORM drops ai_conversation.ref_type / ref_id.
+ */
+async function migrateAiConversationAgentBeforeSynchronize(): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const database = new sqlite3.Database(databasePath, (openError) => {
+      if (openError) {
+        reject(openError);
+        return;
+      }
+
+      const all = <T>(sql: string, params: unknown[] = []) =>
+        new Promise<T[]>((res, rej) => {
+          database.all(sql, params, (error, rows) => (error ? rej(error) : res((rows || []) as T[])));
+        });
+      const get = <T>(sql: string, params: unknown[] = []) =>
+        new Promise<T | undefined>((res, rej) => {
+          database.get(sql, params, (error, row) => (error ? rej(error) : res(row as T | undefined)));
+        });
+      const run = (sql: string, params: unknown[] = []) =>
+        new Promise<void>((res, rej) => {
+          database.run(sql, params, (error) => (error ? rej(error) : res()));
+        });
+
+      void (async () => {
+        try {
+          const tables = await all<{ name: string }>(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('ai_conversation', 'ai_message')"
+          );
+          const tableNames = new Set(tables.map((table) => table.name));
+          if (!tableNames.has('ai_message')) {
+            database.close((closeError) => (closeError ? reject(closeError) : resolve()));
+            return;
+          }
+
+          const conversationColumns = tableNames.has('ai_conversation')
+            ? await all<{ name: string }>(`PRAGMA table_info('ai_conversation')`)
+            : [];
+          const conversationColumnNames = new Set(conversationColumns.map((column) => column.name));
+          const hasRefColumns =
+            conversationColumnNames.has('ref_type') && conversationColumnNames.has('ref_id');
+
+          type ConversationRow = { id: string; ref_type?: string | null; ref_id?: string | null };
+          const conversations = hasRefColumns
+            ? await all<ConversationRow>(
+                `SELECT id, ref_type, ref_id FROM ai_conversation WHERE deleted_at IS NULL`
+              )
+            : [];
+          const refByConversation = new Map<string, { type: 'goal' | 'task'; id: string; label: string }>();
+
+          for (const conversation of conversations) {
+            const refType = conversation.ref_type === 'goal' || conversation.ref_type === 'task'
+              ? conversation.ref_type
+              : null;
+            const refId = conversation.ref_id?.trim();
+            if (!refType || !refId) continue;
+            let label = refId;
+            if (refType === 'goal') {
+              const row = await get<{ name?: string }>(`SELECT name FROM goal WHERE id = ? LIMIT 1`, [refId]);
+              if (row?.name) label = row.name;
+            } else {
+              const row = await get<{ name?: string }>(`SELECT name FROM task WHERE id = ? LIMIT 1`, [refId]);
+              if (row?.name) label = row.name;
+            }
+            refByConversation.set(conversation.id, { type: refType, id: refId, label });
+          }
+
+          const messages = await all<{ id: string; conversation_id: string; parts: string }>(
+            `SELECT id, conversation_id, parts FROM ai_message WHERE deleted_at IS NULL`
+          );
+
+          for (const message of messages) {
+            if (!message.parts) continue;
+            let parts: unknown;
+            try {
+              parts = typeof message.parts === 'string' ? JSON.parse(message.parts) : message.parts;
+            } catch {
+              continue;
+            }
+            if (!Array.isArray(parts)) continue;
+
+            const conversationRef = refByConversation.get(message.conversation_id);
+            let changed = false;
+            const nextParts = parts.map((raw) => {
+              if (!raw || typeof raw !== 'object') return raw;
+              const part = raw as Record<string, unknown>;
+              if (part.type === 'text' && part.entityLink && !part.entityLinks) {
+                changed = true;
+                const { entityLink, ...rest } = part;
+                return { ...rest, entityLinks: [entityLink] };
+              }
+              if (part.type === 'workspace' && conversationRef) {
+                const payload =
+                  part.payload && typeof part.payload === 'object'
+                    ? { ...(part.payload as Record<string, unknown>) }
+                    : {};
+                if (!payload.ref) {
+                  changed = true;
+                  return { ...part, payload: { ...payload, ref: conversationRef } };
+                }
+              }
+              return part;
+            });
+
+            if (!changed) continue;
+            await run(`UPDATE ai_message SET parts = ? WHERE id = ?`, [
+              JSON.stringify(nextParts),
+              message.id,
+            ]);
+          }
+
+          database.close((closeError) => (closeError ? reject(closeError) : resolve()));
+        } catch (error) {
+          database.close(() => reject(error));
+        }
+      })();
+    });
+  });
 }
 
 export const closeDatabase = async (): Promise<void> => {

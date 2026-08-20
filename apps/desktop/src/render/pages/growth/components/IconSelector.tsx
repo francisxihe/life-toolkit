@@ -1,5 +1,5 @@
 import SiteIcon from '@/components/SiteIcon';
-import { Popover, Tooltip } from '@sue/design-web-react';
+import { Flex, Popover, Tooltip } from '@sue/design-web-react';
 
 export default function IconSelector(props: {
   map: Map<number, { color: string; label: string }>;
@@ -14,14 +14,16 @@ export default function IconSelector(props: {
     <Popover
       disabled={readonly}
       content={
-        <div className="flex flex-col gap-4">
+        <Flex vertical gap={16}>
           <div className="py-1">
             {[...Array.from(map.entries())].map(([key, value], index) => {
               const { color, label } = value;
               return (
-                <div
+                <Flex
                   key={index}
-                  className="px-3 py-1 flex items-center gap-2 cursor-pointer"
+                  align="center"
+                  gap={8}
+                  className="px-3 py-1 cursor-pointer"
                   onClick={() => {
                     onChange(key);
                   }}
@@ -33,11 +35,11 @@ export default function IconSelector(props: {
                     style={{ color: `rgb(var(--${color}-6))` }}
                   />
                   <div className="text-body-3">{label}</div>
-                </div>
+                </Flex>
               );
             })}
           </div>
-        </div>
+        </Flex>
       }
       trigger={readonly ? 'hover' : 'click'}
     >
@@ -47,8 +49,10 @@ export default function IconSelector(props: {
         color="var(--color-bg-2)"
         disabled={!map.get(value)?.label}
       >
-        <div
-          className={`flex items-center justify-center rounded-sm ${
+        <Flex
+          align="center"
+          justify="center"
+          className={`rounded-sm ${
             readonly ? 'w-4 h-4' : 'w-7 h-7 cursor-pointer hover:bg-fill-3'
           }`}
         >
@@ -59,7 +63,7 @@ export default function IconSelector(props: {
             className={`cursor-pointer`}
             style={{ color: `rgb(var(--${map.get(value)?.color}-6))` }}
           />
-        </div>
+        </Flex>
       </Tooltip>
     </Popover>
   );

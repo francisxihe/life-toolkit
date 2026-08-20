@@ -60,6 +60,8 @@ const i18n = {
     'menu.habit': 'Habit',
     'menu.habit.list': 'Habit List',
     'menu.habit.detail': 'Habit Detail',
+    'menu.ai': 'AI',
+    'menu.ai.media': 'AI Media',
   },
   'zh-CN': {
     title: '知止',
@@ -121,6 +123,8 @@ const i18n = {
     'menu.habit': '习惯',
     'menu.habit.list': '习惯列表',
     'menu.habit.detail': '习惯详情',
+    'menu.ai': 'AI 会话',
+    'menu.ai.media': '媒体实验',
   },
 };
 

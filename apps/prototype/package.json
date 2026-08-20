@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@true-north/components-repeat": "workspace:*",
-    "@sue/design-web-react": "0.0.3-beta",
+    "@sue/design-web-react": "0.0.3-beta.1",
     "dayjs": "^1.11.13",
     "dompurify": "3.4.12",
     "fe-selector": "0.1.0",

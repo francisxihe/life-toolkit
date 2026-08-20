@@ -28,7 +28,7 @@
     "test": "jest --config jest.config.cjs"
   },
   "dependencies": {
-    "@sue/design-web-react": "0.0.3-beta",
+    "@sue/design-web-react": "0.0.3-beta.1",
     "chinese-holiday-calendar": "0.0.4",
     "dayjs": "^1.11.13",
     "lodash-es": "^4.17.21"

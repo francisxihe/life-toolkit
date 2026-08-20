@@ -35,6 +35,14 @@ export class AiPlatformError extends Error {
     return new AiPlatformError(AiErrorCode.CONTEXT_NOT_FOUND, message);
   }
 
+  static agentUnavailable(message: string): AiPlatformError {
+    return new AiPlatformError(AiErrorCode.AGENT_UNAVAILABLE, message);
+  }
+
+  static agentUnauthenticated(message: string): AiPlatformError {
+    return new AiPlatformError(AiErrorCode.AGENT_UNAUTHENTICATED, message);
+  }
+
   static internal(message: string): AiPlatformError {
     return new AiPlatformError(AiErrorCode.INTERNAL, message);
   }

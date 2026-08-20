@@ -14,17 +14,21 @@ export function parseAiError(error: unknown): { code: AiErrorCode; message: stri
 export function aiErrorUserMessage(code: AiErrorCode, fallback?: string): string {
   switch (code) {
     case AiErrorCode.NOT_CONFIGURED:
-      return '主进程 AI 配置不可用，请检查 ai.config.ts 中的 baseUrl/model/apiKey';
+      return '当前 AI 能力不可用，请确认本机 ChatGPT 已安装并登录';
     case AiErrorCode.PROVIDER_HTTP:
-      return '模型服务拒绝请求或鉴权失败，请检查 Key 与 URL';
+      return '模型服务拒绝请求或鉴权失败';
     case AiErrorCode.TIMEOUT:
       return '模型请求超时，请稍后重试';
     case AiErrorCode.INVALID_MODEL_OUTPUT:
-      return '模型输出无法解析，请重新生成';
+      return '拆解建议格式无效，请重新生成';
     case AiErrorCode.CONTEXT_NOT_FOUND:
-      return '目标不存在或已删除';
+      return '目标或任务不存在或已删除';
+    case AiErrorCode.AGENT_UNAVAILABLE:
+      return '本机未安装所选编码 Agent，或当前没有可用 Agent';
+    case AiErrorCode.AGENT_UNAUTHENTICATED:
+      return '所选编码 Agent 已安装但尚未登录';
     case AiErrorCode.INTERNAL:
     default:
-      return fallback || 'AI 拆解失败，请重试';
+      return fallback || 'AI 请求失败，请重试';
   }
 }

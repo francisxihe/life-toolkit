@@ -26,8 +26,15 @@ export type DecomposePayload = { analysisSummary: string; suggestions: AiSuggest
 export type GoalDecomposePayload = DecomposePayload;
 export type TaskDecomposePayload = DecomposePayload;
 export type AiWorkspacePart = { type: 'workspace'; workspaceKey: AiWorkspaceKey; payload: DecomposePayload };
-export type AiMessagePart = AiTextPart | AiWorkspacePart;
+export type AiToolPart = {
+  type: 'tool';
+  toolName: string;
+  status: 'running' | 'done' | 'error';
+  argsSummary?: string;
+  resultSummary?: string;
+};
+export type AiMessagePart = AiTextPart | AiWorkspacePart | AiToolPart;
 export type AiConversation = { id: string; title: string; refType?: 'goal' | 'task'; refId?: string; updatedAt: string };
-export type AiMessage = { id: string; conversationId: string; role: 'user' | 'assistant'; parts: AiMessagePart[]; createdAt: string };
+export type AiMessage = { id: string; conversationId: string; role: 'user' | 'assistant'; parts: AiMessagePart[]; createdAt: string; agentName?: string };
 export type NavigationItem = { id: string; path: string; label: string; icon: LucideIcon };
 export type SaveEntity = (kind: DrawerKind, draft: Goal | Task | Todo | Habit) => void;

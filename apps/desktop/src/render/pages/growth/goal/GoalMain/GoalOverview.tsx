@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Flex, Row, Space, Statistic, Tag } from '@sue/design-web-react';
 import dayjs from 'dayjs';
 import { Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useGoalContext } from '../context';
 import { useGoalDetailContext } from '../../components/GoalDetail/context';
 import { HabitService } from '@true-north/web-service';
 import { IMPORTANCE_MAP } from '../../constants';
-import GoalAiDecomposition from '../GoalAiDecomposition';
 import styles from './style.module.less';
 
 const GoalOverview: React.FC = () => {
-  const { selectedGoal, refreshData } = useGoalContext();
-  const { currentGoal, refreshGoalDetail } = useGoalDetailContext();
-  const [aiOpen, setAiOpen] = useState(false);
+  const navigate = useNavigate();
+  const { selectedGoal } = useGoalContext();
+  const { currentGoal } = useGoalDetailContext();
   const [habitCount, setHabitCount] = useState(0);
 
-  // 详情摘要以页面选中目标为准；关联任务数优先用 DetailProvider 已加载的关系
   const goal = selectedGoal;
   const taskCount =
     currentGoal?.id === goal?.id
@@ -50,13 +49,6 @@ const GoalOverview: React.FC = () => {
   const start = goal.startAt ? dayjs(goal.startAt).format('YYYY-MM-DD') : '未设置';
   const end = goal.endAt ? dayjs(goal.endAt).format('YYYY-MM-DD') : '未设置';
 
-  const handleAiSaved = async () => {
-    await refreshData();
-    if (goal?.id) {
-      await refreshGoalDetail(goal.id);
-    }
-  };
-
   return (
     <Flex vertical gap={16} className={styles.overview}>
       <Flex align="center" justify="space-between" wrap="wrap" gap={8}>
@@ -64,7 +56,12 @@ const GoalOverview: React.FC = () => {
           {importance && <Tag color={importance.color}>{importance.label}</Tag>}
           <small className={styles.timeRange}>{`时间范围：${start} 至 ${end}`}</small>
         </Space>
-        <Button icon={<Sparkles size={15} />} onClick={() => setAiOpen(true)}>AI 拆解</Button>
+        <Button
+          icon={<Sparkles size={15} />}
+          onClick={() => navigate(`/ai?goalId=${encodeURIComponent(goal.id)}`)}
+        >
+          AI 拆解
+        </Button>
       </Flex>
 
       {goal.description ? (
@@ -81,13 +78,6 @@ const GoalOverview: React.FC = () => {
           <Statistic title="关联习惯" value={habitCount} suffix="项" />
         </Col>
       </Row>
-
-      <GoalAiDecomposition
-        open={aiOpen}
-        goal={goal}
-        onClose={() => setAiOpen(false)}
-        onSaved={handleAiSaved}
-      />
     </Flex>
   );
 };

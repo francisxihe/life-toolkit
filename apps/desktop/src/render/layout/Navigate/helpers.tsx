@@ -14,6 +14,7 @@ import {
   FolderKanban,
   Grid2X2,
   ListTodo,
+  Sparkles,
   Target,
   TrendingUp,
 } from 'lucide-react';
@@ -34,6 +35,8 @@ export function getIconFromKey(key: string): React.ReactNode {
       return <TrendingUp size={16} className={styles.icon} />;
     case '/growth/goal':
       return <Target size={16} className={styles.icon} />;
+    case '/ai':
+      return <Sparkles size={16} className={styles.icon} />;
     case '/dashboard':
       return <DashboardOutlined className={styles.icon} />;
     case '/list':

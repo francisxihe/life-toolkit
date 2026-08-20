@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type RefObject } from 'react';
+import { Input, type GetRef } from '@sue/design-web-react';
 import { useSearchParams } from 'react-router-dom';
 import { buildGoalDecomposePayload } from '../../shared/ai-decompose-fixture';
 import { buildTaskDecomposePayload } from '../../shared/ai-task-decompose-fixture';
@@ -15,6 +16,32 @@ import type {
   Todo,
 } from '../../shared/types';
 
+export type CodingAgent = {
+  id: string;
+  name: string;
+  available: boolean;
+  unavailableReason?: string;
+};
+
+const CODING_AGENTS: CodingAgent[] = [
+  { id: 'codex', name: 'ChatGPT', available: true },
+  { id: 'claude-code', name: 'Claude Code', available: false, unavailableReason: '未安装' },
+];
+
+function findSendableAgent(agents: CodingAgent[], selectedId: string) {
+  const selected = agents.find((item) => item.id === selectedId);
+  return selected?.available ? selected : undefined;
+}
+
+type ComposerInputRef = GetRef<typeof Input.TextArea>;
+
+function buildFollowupText(agentName: string, switched: boolean) {
+  const lead = switched
+    ? `已改用「${agentName}」开始新的对话线程，不会续跑上一 Agent 的上下文。`
+    : `由「${agentName}」回复。`;
+  return `${lead}会话页是通用对话壳层，不会自动改写已有工作台结果；新的结构化结果仍由对应能力在消息中产出后，由你手动打开工作台。`;
+}
+
 type AiSessionContextValue = {
   goals: Goal[];
   tasks: Task[];
@@ -29,12 +56,20 @@ type AiSessionContextValue = {
   activeWorkspacePart: AiWorkspacePart | null;
   draft: string;
   setDraft: (value: string) => void;
+  composerInputRef: RefObject<ComposerInputRef>;
+  focusComposer: () => void;
   selectConversation: (id: string) => void;
   createBlankConversation: () => void;
   sendUserMessage: () => void;
   openWorkspaceFromMessage: (messageId: string) => void;
   goalTitle: (goalId?: string) => string | undefined;
   taskTitle: (taskId?: string) => string | undefined;
+  codingAgents: CodingAgent[];
+  selectedAgentId: string;
+  selectedAgent: CodingAgent | undefined;
+  selectCodingAgent: (id: string) => void;
+  canSendWithSelectedAgent: boolean;
+  threadWillReset: boolean;
 };
 
 const AiSessionContext = createContext<AiSessionContextValue | null>(null);
@@ -104,8 +139,16 @@ function buildSeedData(goals: Goal[], tasks: Task[], todos: Todo[], habits: Habi
       conversationId: boundId,
       role: 'assistant',
       createdAt: '2026-08-11T10:00:00.000Z',
+      agentName: 'ChatGPT',
       parts: [
         { type: 'text', text: `已根据「${seedGoal.title}」生成分层拆解建议，点击消息中的「打开工作台」可审阅并采纳。` },
+        {
+          type: 'tool',
+          toolName: 'get_goal',
+          status: 'done',
+          argsSummary: `goalId=${seedGoal.id}`,
+          resultSummary: `已读取目标「${seedGoal.title}」`,
+        },
         { type: 'workspace', workspaceKey: 'goal.decompose', payload },
       ],
     },
@@ -121,6 +164,7 @@ function buildSeedData(goals: Goal[], tasks: Task[], todos: Todo[], habits: Habi
       conversationId: chatId,
       role: 'assistant',
       createdAt: '2026-08-11T09:30:00.000Z',
+      agentName: 'ChatGPT',
       parts: [{ type: 'text', text: '可以从当前最重要的目标里挑一个最小下一步开始。这是纯文本回复，不会打开工作台。' }],
     },
   ];
@@ -157,8 +201,16 @@ export function AiSessionProvider({
   const [activeConversationId, setActiveConversationId] = useState<string | null>(seed.activeConversationId);
   const [activeWorkspaceMessageId, setActiveWorkspaceMessageId] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
+  const composerInputRef = useRef<ComposerInputRef>(null);
+  const [selectedAgentId, setSelectedAgentId] = useState(CODING_AGENTS[0].id);
+  const [lastSentAgentByConversation, setLastSentAgentByConversation] = useState<Record<string, string>>({
+    [seed.conversations[0].id]: 'codex',
+    [seed.conversations[1].id]: 'codex',
+  });
   const conversationsRef = useRef(conversations);
   conversationsRef.current = conversations;
+  const selectedAgentIdRef = useRef(selectedAgentId);
+  selectedAgentIdRef.current = selectedAgentId;
 
   const activeConversation = conversations.find((item) => item.id === activeConversationId);
   const activeMessages = useMemo(
@@ -173,6 +225,23 @@ export function AiSessionProvider({
     () => resolveActiveWorkspacePart(activeMessages, activeWorkspaceMessageId),
     [activeMessages, activeWorkspaceMessageId],
   );
+  const selectedAgent = CODING_AGENTS.find((item) => item.id === selectedAgentId);
+  const canSendWithSelectedAgent = Boolean(selectedAgent?.available);
+  const threadWillReset = Boolean(
+    activeConversationId &&
+      lastSentAgentByConversation[activeConversationId] &&
+      lastSentAgentByConversation[activeConversationId] !== selectedAgentId,
+  );
+
+  const selectCodingAgent = useCallback((id: string) => {
+    const next = CODING_AGENTS.find((item) => item.id === id);
+    if (!next?.available) return;
+    setSelectedAgentId(id);
+  }, []);
+
+  const focusComposer = useCallback(() => {
+    composerInputRef.current?.focus({ preventScroll: true });
+  }, []);
 
   const goalTitle = useCallback(
     (goalId?: string) => (goalId ? goals.find((goal) => goal.id === goalId)?.title : undefined),
@@ -230,11 +299,13 @@ export function AiSessionProvider({
         createdAt: timestamp,
         parts: [buildGoalDecomposeRequestPart(goal)],
       };
+      const agent = findSendableAgent(CODING_AGENTS, selectedAgentIdRef.current);
       const assistantMessage: AiMessage = {
         id: createId('msg'),
         conversationId,
         role: 'assistant',
         createdAt: timestamp,
+        agentName: agent?.name,
         parts: [
           { type: 'text', text: `已根据「${goal.title}」生成分层拆解建议，点击消息中的「打开工作台」可审阅并采纳。` },
           { type: 'workspace', workspaceKey: 'goal.decompose', payload },
@@ -244,6 +315,9 @@ export function AiSessionProvider({
       setMessages((items) => [...items, userMessage, assistantMessage]);
       setActiveConversationId(conversationId);
       setActiveWorkspaceMessageId(null);
+      if (agent) {
+        setLastSentAgentByConversation((items) => ({ ...items, [conversationId]: agent.id }));
+      }
       return conversationId;
     },
     [goals, habits, tasks, todos],
@@ -279,11 +353,13 @@ export function AiSessionProvider({
         createdAt: timestamp,
         parts: [buildTaskDecomposeRequestPart(task)],
       };
+      const agent = findSendableAgent(CODING_AGENTS, selectedAgentIdRef.current);
       const assistantMessage: AiMessage = {
         id: createId('msg'),
         conversationId,
         role: 'assistant',
         createdAt: timestamp,
+        agentName: agent?.name,
         parts: [
           { type: 'text', text: `已根据「${task.title}」生成子任务与待办建议，点击消息中的「打开工作台」可审阅并采纳。` },
           { type: 'workspace', workspaceKey: 'task.decompose', payload },
@@ -293,6 +369,9 @@ export function AiSessionProvider({
       setMessages((items) => [...items, userMessage, assistantMessage]);
       setActiveConversationId(conversationId);
       setActiveWorkspaceMessageId(null);
+      if (agent) {
+        setLastSentAgentByConversation((items) => ({ ...items, [conversationId]: agent.id }));
+      }
       return conversationId;
     },
     [tasks, todos],
@@ -320,8 +399,11 @@ export function AiSessionProvider({
 
   const sendUserMessage = useCallback(() => {
     const text = draft.trim();
-    if (!text || !activeConversationId) return;
+    const agent = findSendableAgent(CODING_AGENTS, selectedAgentId);
+    if (!text || !activeConversationId || !agent) return;
     const timestamp = nowIso();
+    const lastSent = lastSentAgentByConversation[activeConversationId];
+    const switched = Boolean(lastSent && lastSent !== agent.id);
     const userMessage: AiMessage = {
       id: createId('msg'),
       conversationId: activeConversationId,
@@ -334,10 +416,11 @@ export function AiSessionProvider({
       conversationId: activeConversationId,
       role: 'assistant',
       createdAt: timestamp,
+      agentName: agent.name,
       parts: [
         {
           type: 'text',
-          text: '已收到你的追问。会话页是通用对话壳层，不会自动改写已有工作台结果；新的结构化结果仍由对应能力在消息中产出后，由你手动打开工作台。',
+          text: buildFollowupText(agent.name, switched),
         },
       ],
     };
@@ -345,8 +428,9 @@ export function AiSessionProvider({
     setConversations((items) =>
       items.map((item) => (item.id === activeConversationId ? { ...item, updatedAt: timestamp } : item)),
     );
+    setLastSentAgentByConversation((items) => ({ ...items, [activeConversationId]: agent.id }));
     setDraft('');
-  }, [activeConversationId, draft]);
+  }, [activeConversationId, draft, lastSentAgentByConversation, selectedAgentId]);
 
   const openWorkspaceFromMessage = useCallback((messageId: string) => {
     setActiveWorkspaceMessageId(messageId);
@@ -367,32 +451,46 @@ export function AiSessionProvider({
       activeWorkspacePart,
       draft,
       setDraft,
+      composerInputRef,
+      focusComposer,
       selectConversation,
       createBlankConversation,
       sendUserMessage,
       openWorkspaceFromMessage,
       goalTitle,
       taskTitle,
+      codingAgents: CODING_AGENTS,
+      selectedAgentId,
+      selectedAgent,
+      selectCodingAgent,
+      canSendWithSelectedAgent,
+      threadWillReset,
     }),
     [
       activeConversation,
       activeConversationId,
       activeMessages,
       activeWorkspacePart,
+      canSendWithSelectedAgent,
       conversations,
       createBlankConversation,
       draft,
+      focusComposer,
       goalTitle,
       goals,
       onOpenGoal,
       onOpenTask,
       openWorkspaceFromMessage,
       saveEntity,
+      selectCodingAgent,
       selectConversation,
+      selectedAgent,
+      selectedAgentId,
       sendUserMessage,
       setDrawer,
       taskTitle,
       tasks,
+      threadWillReset,
     ],
   );
 

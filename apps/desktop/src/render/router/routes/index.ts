@@ -20,9 +20,9 @@ export type IRoute = AuthParams & {
 };
 
 export const routes: IRoute[] = [
+  aiRoutes,
   growthRoutes,
   expensesRoutes,
-  aiRoutes,
   erpRoutes,
 ];
 

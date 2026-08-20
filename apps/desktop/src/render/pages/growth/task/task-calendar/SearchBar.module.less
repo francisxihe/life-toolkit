@@ -1,0 +1,48 @@
+.bar {
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--color-border-1);
+}
+
+.field {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-3);
+}
+
+.input {
+  width: 100%;
+  padding: 8px 40px;
+  border: 1px solid var(--color-border-2);
+  border-radius: var(--border-radius-large);
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-primary-6);
+    box-shadow: 0 0 0 2px var(--color-primary-light-1);
+  }
+}
+
+.clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.clearIcon {
+  width: 16px;
+  height: 16px;
+  color: var(--color-text-3);
+
+  &:hover {
+    color: var(--color-text-2);
+  }
+}

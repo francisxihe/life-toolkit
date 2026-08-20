@@ -2,7 +2,6 @@ import { Flex, Layout } from '@sue/design-web-react';
 import type { HTMLAttributes } from 'react';
 
 import cs from 'clsx';
-import styles from './style/index.module.less';
 
 function Footer(props: HTMLAttributes<HTMLElement> = {}) {
   const { className, ...restProps } = props;
@@ -11,7 +10,7 @@ function Footer(props: HTMLAttributes<HTMLElement> = {}) {
       component={Layout.Footer}
       align="center"
       justify="center"
-      className={cs(styles.footer, className)}
+      className={cs('h-10 text-text-2', className)}
       {...restProps}
     >
       True North

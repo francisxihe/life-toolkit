@@ -83,8 +83,8 @@ importers:
         specifier: ^0.8.4
         version: 0.8.4(nanostores@0.11.4)(react@18.3.1)
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@true-north/common-web-utils':
         specifier: workspace:*
         version: link:../../packages/common-web/utils
@@ -294,8 +294,8 @@ importers:
   apps/prototype:
     dependencies:
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@true-north/components-repeat':
         specifier: workspace:*
         version: link:../../packages/components/repeat
@@ -366,8 +366,8 @@ importers:
   packages/business/web-service:
     dependencies:
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@19.2.8))(react@19.2.8)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@19.2.8))(react@19.2.8)
       '@true-north/enum':
         specifier: workspace:*
         version: link:../enum
@@ -417,8 +417,8 @@ importers:
         specifier: ^2.1.13
         version: 2.2.4(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@true-north/common-web-utils':
         specifier: workspace:*
         version: link:../../common-web/utils
@@ -448,8 +448,8 @@ importers:
   packages/components/repeat:
     dependencies:
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       chinese-holiday-calendar:
         specifier: 0.0.4
         version: 0.0.4
@@ -497,8 +497,8 @@ importers:
         specifier: ^6.3.2
         version: 6.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@sue/design-web-react':
-        specifier: 0.0.3-beta
-        version: 0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/express':
         specifier: ^4.17.0
         version: 4.17.25
@@ -2689,8 +2689,8 @@ packages:
   '@sqltools/formatter@1.2.5':
     resolution: {integrity: sha512-Uy0+khmZqUrUGm5dmMqVlnvufZRSK0FbYzVgp0UMstm+F5+W2/jnEEQyc9vo1ZR/E5ZI/B1WjjoTqBqwJL6Krw==}
 
-  '@sue/design-web-react@0.0.3-beta':
-    resolution: {integrity: sha512-hOBQ1TTdP2X1NQue5oG+vUAMwx2kazEPAFybSYoc26KqSapBWHs11yW6JCKKz7z3E8EyoYT9lc4v9axPWALAiA==, tarball: https://packages.aliyun.com/69f800449b7ce0afb00bda0e/npm/npm-registry/@sue/design-web-react/-/@sue/design-web-react-0.0.3-beta.tgz}
+  '@sue/design-web-react@0.0.3-beta.1':
+    resolution: {integrity: sha512-KmT9uLN4za9wjrTlYllc8JdoOlHm6g4C3FiPPSfXYSauci802DWch84TH4rVPzCX9u2p2u1WtDWtRVGFwSceXA==, tarball: https://packages.aliyun.com/69f800449b7ce0afb00bda0e/npm/npm-registry/@sue/design-web-react/-/@sue/design-web-react-0.0.3-beta.1.tgz}
     peerDependencies:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
@@ -11406,7 +11406,7 @@ snapshots:
 
   '@sqltools/formatter@1.2.5': {}
 
-  '@sue/design-web-react@0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@sue/design-web-react@0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@ant-design/colors': 8.0.1
       '@ant-design/cssinjs': 2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -11462,7 +11462,7 @@ snapshots:
       - luxon
       - moment
 
-  '@sue/design-web-react@0.0.3-beta(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@19.2.8))(react@19.2.8)':
+  '@sue/design-web-react@0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@ant-design/colors': 8.0.1
       '@ant-design/cssinjs': 2.1.2(react-dom@18.3.1(react@19.2.8))(react@19.2.8)

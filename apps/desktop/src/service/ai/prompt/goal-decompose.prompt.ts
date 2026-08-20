@@ -13,12 +13,12 @@ export const GOAL_DECOMPOSE_SCHEMA_HINT = `{
   }>
 }`;
 
+/** JSON contract only; domain persona comes from growth.goal skill. */
 export function buildGoalDecomposeMessages(contextText: string): ProviderMessage[] {
   return [
     {
       role: 'system',
       content: [
-        '你是个人目标规划助手。根据给定目标上下文，拆解可执行的下一层建议。',
         '只输出一个 JSON 对象，不要 markdown，不要额外说明。',
         '建议类型仅允许 goal（子目标）、task、todo、habit。',
         '建议应具体可执行，标题简洁；planned 使用 YYYY-MM-DD；importance/difficulty 为 1-5 整数。',

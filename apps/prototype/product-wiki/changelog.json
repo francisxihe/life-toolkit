@@ -2,6 +2,51 @@
   "changes": [
     {
       "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "编码 Agent 选择器本版为 ChatGPT（本机 ChatGPT 应用）；去掉 Cursor；未安装或未登录项仍禁用并说明原因。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:agent-picker", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 选择器", "reference": "ai.session.view.agent-picker" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "当前选用的编码 Agent 展示名本版为 ChatGPT；在对话区切换，无独立 AI 设置页。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:agent-preference.selectedAgent", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "当前编码 Agent", "parentName": "编码 Agent 偏好" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "会话或应用偏好记录当前选用的编码 Agent 展示名；在对话区切换，无独立 AI 设置页。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:agent-preference.selectedAgent", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "当前编码 Agent", "parentName": "编码 Agent 偏好" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "对话区切换本机编码 Agent；未安装或未登录项禁用并说明原因；列表可随探测结果变长。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:agent-picker", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 选择器", "reference": "ai.session.view.agent-picker" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "introduced",
+      "summary": "发送走当前选中且可用的 Agent；切换只影响之后发送，不改已有消息、不自动打开工作台，且该会话不再续跑上一 Agent 线程。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:agent-switch", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "编码 Agent 切换", "reference": "ai.session.rule.agent-switch" }
+    },
+    {
+      "version": "v0.2.0",
       "date": "2026-08-11",
       "event": "introduced",
       "summary": "提供三栏 AI 会话壳层：会话列表、对话与可插拔工作台容器。",
@@ -125,6 +170,51 @@
       "productStatus": "roadmap",
       "prototypeCoverage": "complete",
       "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "会话对话的发送依赖当前选中且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "对话区贴底跟随、上翻停跟并可回到底部；输入区底部为 Agent 选择器；流式发送按钮变为停止；工具调用过程可折叠。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:view:conversation", "scope": "view", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "会话对话", "reference": "ai.session.view.conversation" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "消息内容块由文本、工具过程与结构化工作台块按顺序组成。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:field:message.parts", "scope": "field", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "内容块", "parentName": "消息" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "从目标绑定发起与普通发送共用对话区当前选用且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:goal-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "目标绑定发起", "reference": "ai.session.rule.goal-bound-start" }
+    },
+    {
+      "version": "v0.2.0",
+      "date": "2026-08-19",
+      "event": "changed",
+      "summary": "从任务绑定发起与普通发送共用对话区当前选用且可用的编码 Agent。",
+      "productStatus": "roadmap",
+      "prototypeCoverage": "complete",
+      "feature": { "key": "ai.session:rule:task-bound-start", "scope": "rule", "moduleId": "ai.session", "moduleTitle": "AI 会话", "name": "任务绑定发起", "reference": "ai.session.rule.task-bound-start" }
     },
     {
       "version": "v0.2.0",

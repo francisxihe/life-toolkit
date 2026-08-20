@@ -10,6 +10,8 @@ export enum AiRunStatus {
 
 export enum AiCapabilityKey {
   GOAL_DECOMPOSE = 'goal.decompose',
+  TASK_DECOMPOSE = 'task.decompose',
+  CONVERSATION_CHAT = 'conversation.chat',
 }
 
 export enum AiErrorCode {
@@ -18,6 +20,8 @@ export enum AiErrorCode {
   TIMEOUT = 'TIMEOUT',
   INVALID_MODEL_OUTPUT = 'INVALID_MODEL_OUTPUT',
   CONTEXT_NOT_FOUND = 'CONTEXT_NOT_FOUND',
+  AGENT_UNAVAILABLE = 'AGENT_UNAVAILABLE',
+  AGENT_UNAUTHENTICATED = 'AGENT_UNAUTHENTICATED',
   INTERNAL = 'INTERNAL',
 }
 

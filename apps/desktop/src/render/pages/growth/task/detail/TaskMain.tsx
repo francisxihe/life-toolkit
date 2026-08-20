@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { Tabs, Tag, Dropdown, Menu, Button, Modal, message, Flex, CheckOutlined, CloseOutlined, DeleteOutlined, EllipsisOutlined, Empty } from '@sue/design-web-react';
 import dayjs from 'dayjs';
+import { Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
@@ -40,6 +42,7 @@ const STATUS_CONFIG = {
 };
 
 const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
+  const navigate = useNavigate();
   const { refreshData } = useTaskDetailContext();
   const { openEditDrawer: openTodoDrawer } = useTodoDetail();
   const { open: openFocusTimer } = useFocusTimer();
@@ -209,6 +212,14 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
           <Tag color={STATUS_CONFIG[task.status]?.color}>
             {STATUS_CONFIG[task.status]?.label}
           </Tag>
+
+          <Button
+            type="text"
+            icon={<Sparkles size={15} />}
+            onClick={() => navigate(`/ai?taskId=${encodeURIComponent(task.id)}`)}
+          >
+            AI 拆解
+          </Button>
 
           <Button type="text" onClick={onEdit}>
             编辑

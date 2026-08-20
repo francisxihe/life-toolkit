@@ -22,7 +22,7 @@
     "@ant-design/icons": "^6.3.2",
     "@loadable/component": "^5.13.2",
     "@nanostores/react": "^0.8.4",
-    "@sue/design-web-react": "0.0.3-beta",
+    "@sue/design-web-react": "0.0.3-beta.1",
     "@true-north/common-web-utils": "workspace:*",
     "@true-north/components-mind": "workspace:*",
     "@true-north/components-repeat": "workspace:*",

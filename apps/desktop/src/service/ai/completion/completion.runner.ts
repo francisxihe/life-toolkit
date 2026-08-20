@@ -3,7 +3,7 @@ import { AiCapabilityKey, AiProviderKind, AiRunStatus } from '@true-north/enum';
 import { assertAiConfigured, getAiConfig, normalizeAiBaseUrl } from '../ai.config';
 import { AiPlatformError, parseAiError } from '../ai-error';
 import { aiProviderRegistry } from '../provider/provider.registry';
-import type { ProviderMessage } from '../provider/ai-provider';
+import type { ProviderMessage, ProviderStreamChunk, ProviderTool } from '../provider/ai-provider';
 import { aiRunService } from '../run/ai-run.service';
 import { buildJsonRepairMessages, extractJsonText } from './json-repair';
 
@@ -15,6 +15,8 @@ export type CompletionInput = {
   schemaHint?: string;
   ref?: { type: string; id: string };
   temperature?: number;
+  signal?: AbortSignal;
+  tools?: ProviderTool[];
 };
 
 export type CompletionResult = {
@@ -44,7 +46,7 @@ export class CompletionRunner {
       model: cfg.model,
       baseUrlHost: hostOf(cfg.baseUrl),
       requestSummary: JSON.stringify({
-        messages: input.messages.map((m) => ({ role: m.role, chars: m.content.length })),
+        messages: input.messages.map((m) => ({ role: m.role, chars: (m.content || '').length })),
         responseFormat: input.responseFormat,
       }),
       refType: input.ref?.type,
@@ -63,6 +65,7 @@ export class CompletionRunner {
           temperature: input.temperature,
           maxTokens: cfg.maxTokens,
           jsonMode: input.responseFormat === 'json',
+          signal: input.signal,
         })
       ).content;
 
@@ -81,6 +84,7 @@ export class CompletionRunner {
               temperature: input.temperature,
               maxTokens: cfg.maxTokens,
               jsonMode: true,
+              signal: input.signal,
             })
           ).content;
           parsed = this.parseJson(content, input.schema);
@@ -97,6 +101,67 @@ export class CompletionRunner {
       });
 
       return { content, parsed, runId: run.id };
+    } catch (error) {
+      const parsed = parseAiError(error);
+      await aiRunService.finish(run.id, {
+        status: AiRunStatus.FAILED,
+        errorCode: parsed.code,
+        errorMessage: parsed.message,
+        latencyMs: Date.now() - startedAt,
+      });
+      if (error instanceof AiPlatformError) throw error;
+      throw new AiPlatformError(parsed.code, parsed.message);
+    }
+  }
+
+  async *stream(input: CompletionInput): AsyncIterable<ProviderStreamChunk & { runId: string }> {
+    const cfg = getAiConfig();
+    assertAiConfigured(cfg);
+
+    const provider = aiProviderRegistry.get(cfg.providerKind);
+    if (!provider.stream) {
+      throw AiPlatformError.internal('当前 Provider 不支持流式输出');
+    }
+
+    const startedAt = Date.now();
+    const run = await aiRunService.start({
+      capabilityKey: input.capabilityKey,
+      providerKind: cfg.providerKind as AiProviderKind,
+      model: cfg.model,
+      baseUrlHost: hostOf(cfg.baseUrl),
+      requestSummary: JSON.stringify({
+        messages: input.messages.map((m) => ({ role: m.role, chars: (m.content || '').length })),
+        responseFormat: 'text',
+        stream: true,
+      }),
+      refType: input.ref?.type,
+      refId: input.ref?.id,
+    });
+
+    let full = '';
+    try {
+      for await (const chunk of provider.stream({
+        baseUrl: cfg.baseUrl,
+        apiKey: cfg.apiKey,
+        model: cfg.model,
+        messages: input.messages,
+        timeoutMs: cfg.timeoutMs,
+        temperature: input.temperature,
+        maxTokens: cfg.maxTokens,
+        signal: input.signal,
+        tools: input.tools,
+      })) {
+        if (chunk.type === 'text') {
+          full += chunk.delta;
+        }
+        yield { ...chunk, runId: run.id };
+      }
+
+      await aiRunService.finish(run.id, {
+        status: AiRunStatus.SUCCEEDED,
+        responseSummary: full,
+        latencyMs: Date.now() - startedAt,
+      });
     } catch (error) {
       const parsed = parseAiError(error);
       await aiRunService.finish(run.id, {
