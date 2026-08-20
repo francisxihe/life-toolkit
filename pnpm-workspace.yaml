@@ -17,6 +17,7 @@ minimumReleaseAgeExclude:
   - terser@5.49.1
 
 overrides:
+  typescript: ^6.0.0
   '@types/node': 22.13.0
   esbuild: 0.25.12
   vite: 5.4.15

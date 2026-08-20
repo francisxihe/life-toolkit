@@ -1,6 +1,6 @@
 # Track-Time 技术实现
 
-产品说明见 [专注与时间追踪 ProductWiki](../../../apps/prototype/product-wiki/growth/track-time/README.md)。
+产品说明见 [专注与时间追踪 ProductWiki](../../../packages/product-wiki/wiki/growth/track-time/README.md)。
 
 ## 当前代码边界
 
@@ -19,13 +19,13 @@
 | GET | `/trackTime/related/:relatedType/:relatedId` | 按关联对象查询记录 |
 | DELETE | `/trackTime/related/:relatedType/:relatedId` | 删除关联对象的全部记录 |
 
-## 原型对齐边界
+## 产品表面 / 实现缺口
 
-Growth 其余页面视觉以 Prototype 为准；**专注计时是样式例外**：
+**专注计时是样式例外**（相对其它 Growth 页）：
 
-| 产品/原型语义 | 当前实现 | 对齐约束 |
+| 产品语义 | 当前实现 | 对齐约束 |
 | --- | --- | --- |
-| 迷你浮层 | `FocusTimerProvider` mini Card | **保持 Desktop 现状**（`focus-timer/index.tsx` mini 分支），不跟原型像素对齐。 |
+| 迷你浮层 | `FocusTimerProvider` mini Card | **保持 Desktop 现状**（`focus-timer/index.tsx` mini 分支）。 |
 | 全屏模式 | FocusTimer full | **复用** [`pages/timer/normal`](../../../apps/desktop/src/render/pages/timer/normal/) 的 `Flip` / `Countdown`（或 `Flip` + `getTimeArr`）+ 底部 `.actions`；业务仍 `TrackTimeController.create`；不以「仅深色大字」代替。 |
 | 全局计时器 | 顶栏、任务与待办入口唤起 | 可携带任务或待办关联；UI 状态不由 RouteController 保存。顶栏未锁定时提供可搜索的任务/待办联合选择（`task:<id>` / `todo:<id>`）；任务或待办入口显式锁定关联，不展示选择器。Select 弹层 `z-index` 高于迷你/全屏浮层。 |
 | 任务可选关联 | 通用可选关联 | `relatedType=task`；未关联记录可创建查询。 |

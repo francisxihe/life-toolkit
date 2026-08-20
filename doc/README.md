@@ -2,7 +2,7 @@
 
 | 文档 | 路径 | 说明 |
 | --- | --- | --- |
-| 产品 Wiki | [apps/prototype/product-wiki](../apps/prototype/product-wiki/README.md) | 与原型同仓维护的产品定位、业务域与设计规范 |
+| 产品 Wiki | [packages/product-wiki/wiki](../packages/product-wiki/wiki/README.md) | desktop 产品事实来源：定位、业务域与设计规范 |
 | 技术 Wiki | [TechnicalWiki/TechnicalWiki.md](./TechnicalWiki/TechnicalWiki.md) | Monorepo、Desktop 分层、代码规范 |
 | 版本交付 | [v0.1.0](./v0.1.0/PRD.md) · [v0.2.0](./v0.2.0/PRD.md) | 交付文档位于 `doc/{version}/`（PRD + TDD） |
 | AI 技术域 | [TechnicalWiki/ai](./TechnicalWiki/ai/README.md) | AI 平台与 Capability 设计基线（`status: design`） |

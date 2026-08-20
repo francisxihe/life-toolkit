@@ -1,4 +1,6 @@
 import { spawn, spawnSync } from 'child_process';
+import path from 'path';
+import { traceExternal } from '@true-north/dev-lab/collector';
 import { consumeJsonl, readString } from '../jsonl';
 import { registerChildProcess } from '../process-registry';
 import { prepareCodexWorkspace } from '../workspace';
@@ -53,6 +55,21 @@ export function buildCodexExecArgs(input: {
 }
 
 export async function spawnCodex(input: RuntimeSpawnInput): Promise<RuntimeSpawnResult> {
+  return traceExternal(
+    {
+      kind: 'spawn',
+      streamId: input.streamId,
+      summary: `${path.basename(input.binPath)} exec`,
+      detail: { bin: path.basename(input.binPath), resume: Boolean(input.resumeThreadId) },
+    },
+    (span) => spawnCodexProcess(input, span.setDetail),
+  );
+}
+
+async function spawnCodexProcess(
+  input: RuntimeSpawnInput,
+  setDetail: (detail: unknown) => void,
+): Promise<RuntimeSpawnResult> {
   const { binPath, workspaceDir, mcpUrl, prompt, resumeThreadId, signal } = input;
   const codexHome = prepareCodexWorkspace(workspaceDir, mcpUrl);
   const args = buildCodexExecArgs({
@@ -112,11 +129,17 @@ export async function spawnCodex(input: RuntimeSpawnInput): Promise<RuntimeSpawn
   }
 
   const exitCode = await exitPromise;
+  const stderr = stderrChunks.join('');
+  setDetail({
+    bin: path.basename(binPath),
+    exitCode,
+    stderr: stderr.trim().slice(0, 800),
+  });
 
   return {
     threadId,
     exitCode,
-    stderr: stderrChunks.join(''),
+    stderr,
   };
 }
 

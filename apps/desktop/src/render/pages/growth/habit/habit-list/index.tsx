@@ -4,6 +4,7 @@ import HabitListFilter from './HabitListFilter';
 import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
 import { Button, Drawer, Flex, PlusOutlined } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from '../components/CreateHabit';
@@ -33,6 +34,7 @@ export const HabitListPage: React.FC = () => {
 
   return (
     <DefaultPage title="习惯管理">
+      <ProductSurface id={productRef('growth.habit.view.list')}>
       <Flex vertical container="full" className={styles.page}>
         <Flex container="fixed" className={styles.filters}>
           <HabitListFilter />
@@ -52,6 +54,7 @@ export const HabitListPage: React.FC = () => {
           <HabitListTable />
         </Flex>
       </Flex>
+      </ProductSurface>
     </DefaultPage>
   );
 };

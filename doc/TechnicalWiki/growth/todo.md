@@ -1,6 +1,6 @@
 # Todo 技术实现
 
-产品说明见 [待办管理 ProductWiki](../../../apps/prototype/product-wiki/growth/todo/README.md)。重复调度与 `repeat_todo` 见 [重复规则](./repeat.md)。
+产品说明见 [待办管理 ProductWiki](../../../packages/product-wiki/wiki/growth/todo/README.md)。重复调度与 `repeat_todo` 见 [重复规则](./repeat.md)。
 
 ## 代码边界
 
@@ -63,11 +63,11 @@
 
 `DELETE .../is-repeat/:id`：删除 `repeat_todo` 及其 `repeat`；**保留** `relatedType=repeat AND relatedId=:id` 的历史 todo。
 
-## 原型对齐边界
+## 产品表面 / 实现缺口
 
 桌面端入口：`/growth/todo/todo-today`、`todo-calendar`、`todo-all`。批量完成仅在 `todo-all`（单次 ≤50）。
 
-| 产品/原型语义 | 实现边界 |
+| 产品语义 | 实现边界 |
 | --- | --- |
 | 状态 | `todo / done / abandoned`；通用 update 不接受状态流转 |
 | 周期待办 | 见 [重复规则](./repeat.md)；三视图均展示当前指针实例 |

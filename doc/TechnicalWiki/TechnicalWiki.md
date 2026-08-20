@@ -1,6 +1,6 @@
 # True North TechnicalWiki
 
-> 本文件作为 True North 的技术全局入口：Monorepo 布局、Desktop 分层、文档树约定、开发流程与分层代码规范。产品定位与业务规则见 [ProductWiki](../../apps/prototype/product-wiki/global/README.md)。
+> 本文件作为 True North 的技术全局入口：Monorepo 布局、Desktop 分层、文档树约定、开发流程与分层代码规范。产品定位与业务规则见 [ProductWiki](../../packages/product-wiki/wiki/global/README.md)。
 
 ---
 
@@ -8,7 +8,7 @@
 
 True North 采用 **Monorepo**（pnpm workspace + Turbo），当前交付形态为 **Electron 桌面应用**（`apps/desktop`），业务数据本地持久化（TypeORM + SQLite），共享类型与枚举位于 `packages/business`。
 
-Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki · 全局业务规则](../../apps/prototype/product-wiki/global/README.md)。
+Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki · 全局业务规则](../../packages/product-wiki/wiki/global/README.md)。
 
 ---
 
@@ -31,7 +31,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | [documentation/PRD-guide.md](./documentation/PRD-guide.md) | 产品需求文档写作规范 |
 | [documentation/TDD-guide.md](./documentation/TDD-guide.md) | 技术设计文档写作规范 |
 | [documentation/ProductWiki-guide.md](./documentation/ProductWiki-guide.md) | ProductWiki 写作规范 |
-| [growth/README.md](./growth/README.md) | Growth 技术基线、路由与原型对齐边界 |
+| [growth/README.md](./growth/README.md) | Growth 技术基线、路由与产品表面 / 实现缺口 |
 | [ai/README.md](./ai/README.md) | AI 平台域（设计基线）：Settings、Runner、Capability、目标拆解与聊天预留 |
 
 ### 开发规范
@@ -67,7 +67,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 
 | 路径 | 用途 |
 | --- | --- |
-| [apps/prototype/product-wiki/global/README.md](../../apps/prototype/product-wiki/global/README.md) | 产品全局 SSOT |
+| [packages/product-wiki/wiki/global/README.md](../../packages/product-wiki/wiki/global/README.md) | 产品全局 SSOT |
 | [doc/TechnicalWiki/TechnicalWiki.md](./TechnicalWiki.md) | 技术全局 SSOT |
 | `doc/{version}/`（如 [v0.1.0](../v0.1.0/)、[v0.2.0](../v0.2.0/)） | 本版本 PRD/TDD（唯一交付落点） |
 

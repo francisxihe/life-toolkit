@@ -5,6 +5,7 @@ import { GoalStatus, HabitStatus, TaskStatus, TodoRelatedType, TodoStatus } from
 import { GoalService, HabitService, TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import { HabitVo, TaskWithoutRelationsVo, TodoVo } from '@true-north/vo';
 import { useNavigate } from 'react-router-dom';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import dayjs from 'dayjs';
 import { onHabitChanged, onTaskChanged, onTodoChanged } from '../events';
 import { formatHabitRepeatLabel } from '../habit/formatHabitRepeatLabel';
@@ -152,6 +153,7 @@ export default function Workbench() {
   const longestStreak = Math.max(0, ...data.habits.map((habit) => habit.currentStreak || 0));
 
   return (
+    <ProductSurface id={productRef('global.rules')}>
     <Flex vertical container="full" className={styles.page} gap={20}>
       <Flex container="fixed" align="center" justify="space-between" className={styles.header}>
         <div><h1>工作台</h1><p>聚合今天最需要推进的行动和投入。</p></div>
@@ -240,6 +242,7 @@ export default function Workbench() {
         </Row>
       </Spin>
     </Flex>
+    </ProductSurface>
   );
 }
 

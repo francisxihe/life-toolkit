@@ -19,9 +19,10 @@ sequenceDiagram
 
 | 目录 | 运行环境 | 职责 |
 | --- | --- | --- |
-| `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller |
+| `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller；DEV 下还有 REST / TypeORM Lab 钩子 |
 | `src/preload` | 隔离上下文 | 向 `window.electronAPI` 暴露 REST 风格 API |
 | `src/render` | Chromium | React UI、路由、模块 Context |
+| `src/dev` | Chromium（仅 DEV） | ProductWiki / Lab 的 html 薄入口 |
 | `src/service` | Node（主进程侧） | TypeORM、业务 Service、**RouteController（IPC 入口）** |
 
 ## render 层约定
@@ -71,7 +72,30 @@ render/pages/
 └── ...
 ```
 
-业务规则与模块产品说明见 [ProductWiki · Growth](../../../apps/prototype/product-wiki/growth/README.md)。
+业务规则与模块产品说明见 [ProductWiki · Growth](../../../packages/product-wiki/wiki/growth/README.md)。
+
+## DEV 主窗口分栏
+
+DEV 下主窗口保持两栏布局：左侧业务页，右侧中间栏三选一（互斥）：
+
+```
+业务页 | 中间栏（三选一）
+         ProductWiki  |  Lab  |  DevTools
+```
+
+- 主进程 `sideMode: 'wiki' | 'lab' | 'devtools'`（另有 `hidden` 表示收起中间栏）
+- View 菜单：**ProductWiki** / **Lab** / **Toggle Developer Tools**，三项为互斥 checkbox
+- 三个模式各自占用独立 `WebContentsView`（`inspectorView` / `labView` / `devtoolsView`），同一套右侧 bounds 与 splitter；不要把 Lab `loadURL` 到 ProductWiki 的 `inspectorView`
+- Lab 不进入主应用 React 树；入口为 `src/dev/Lab.html`（只 `bootstrapLabPanel()`），preload 仅 DEV 暴露 `labPanel` 桥
+- 生产构建不创建该分栏、不包装 REST、不采集 SQL / spawn / MCP
+
+Lab 当前第一个工具是**请求时间线**：一条 IPC 一行，展开可看 params、response、duration 以及子 span（sql / spawn / mcp）。并行的 `/task/list` 各占一行并用 `AsyncLocalStorage` 把 SQL 挂到对应 IPC。AI 的 `startMessageStream` 会在 handler 返回后继续跑 Codex/MCP，后续 span 通过已有 `streamId` 挂回同一行。
+
+采集器在 `@true-north/dev-lab`（`packages/dev-lab`）：约 200 条环形缓冲，敏感字段按 `password|apiKey|authorization|secret|token` 脱敏。desktop 只留宿主适配：
+
+- REST：`src/main/dev-trace/ipc-hook.ts` 在 `initIpcRouter()` 里、`registerIpcHandlers` 之前包装 `ipcMain.handle('REST')`（`electron-ipc-restful` 无拦截器 API）
+- TypeORM：`src/main/dev-trace/sql-logger.ts` DEV 自定义 `Logger`（`logQuery` / `logQueryError`），忽略 schema/migration
+- Codex `spawnCodex` 与 loopback MCP `tools/call`：一行 `traceExternal`（`@true-north/dev-lab/collector`），不把 prompt 打进时间线
 
 ## 相关文档
 

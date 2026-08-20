@@ -3,6 +3,7 @@ import type { IncomingMessage, ServerResponse } from 'http';
 import { randomUUID } from 'crypto';
 import type { AiMessagePartVo, AiToolPartVo, AiWorkspacePartVo } from '@true-north/vo';
 import { agentTools, executeAgentTool, summarizeToolArgs } from '../../agent/tools';
+import { traceExternal } from '@true-north/dev-lab/collector';
 import { getStreamSession } from '../stream-session';
 
 const PROTOCOL_VERSIONS = ['2025-03-26', '2024-11-05'];
@@ -171,7 +172,23 @@ async function handleRpc(message: JsonRpcRequest, streamId?: string): Promise<un
       params.arguments && typeof params.arguments === 'object' && !Array.isArray(params.arguments)
         ? (params.arguments as Record<string, unknown>)
         : {};
-    return callTool(streamId, name, args);
+    return traceExternal(
+      {
+        kind: 'mcp',
+        streamId,
+        summary: `tools/call ${name || '(unknown)'}`,
+        detail: { tool: name, args: summarizeToolArgs(args) },
+      },
+      async (span) => {
+        const result = await callTool(streamId, name, args);
+        span.setDetail({
+          tool: name,
+          args: summarizeToolArgs(args),
+          error: Boolean(result && typeof result === 'object' && 'isError' in result && result.isError),
+        });
+        return result;
+      },
+    );
   }
 
   if (method === 'resources/list' || method === 'prompts/list') {

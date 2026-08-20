@@ -8,6 +8,7 @@ import { getIconFromKey } from './helpers';
 interface NavigateProps {
   collapsed: boolean;
   locale: string;
+  'data-product-ref'?: string;
 }
 
 type MenuItem = {
@@ -17,7 +18,7 @@ type MenuItem = {
   children?: MenuItem[];
 };
 
-const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
+const Navigate: React.FC<NavigateProps> = ({ collapsed, locale, 'data-product-ref': productRefAttr }) => {
   const routeMap = useRef<Map<string, React.ReactNode[]>>(new Map());
   const menuMap = useRef<
     Map<string, { menuItem?: boolean; subMenu?: boolean }>
@@ -205,6 +206,7 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale }) => {
       inlineCollapsed={collapsed}
       items={menuItems}
       triggerSubMenuAction="click"
+      data-product-ref={productRefAttr}
       onClick={({ key }) => {
         if (collapsed) {
           setPopupOpenKeys([]);

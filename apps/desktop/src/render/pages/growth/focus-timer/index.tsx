@@ -5,6 +5,7 @@ import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
 import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import styles from './style.module.less';
 
 const DEFAULT_DURATION = 25 * 60;
@@ -242,6 +243,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
     <FocusTimerContext.Provider value={contextValue}>
       {children}
       {visible && (
+        <ProductSurface id={productRef('growth.track-time.overview')}>
         <FocusTimerOverlay
           elapsed={elapsed}
           fullScreen={fullScreen}
@@ -258,6 +260,7 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
           onToggleFullScreen={() => setFullScreen((value) => !value)}
           onToggleRunning={toggleRunning}
         />
+        </ProductSurface>
       )}
     </FocusTimerContext.Provider>
   );
@@ -282,6 +285,8 @@ function RelatedSelector({
     return <span className={styles.taskName}>{lockedDisplay}</span>;
   }
   return (
+    <ProductSurface id={productRef('growth.track-time.rule.task-optional')}>
+      <ProductSurface id={productRef('growth.track-time.rule.todo-optional')}>
     <Select
       allowClear
       showSearch
@@ -294,6 +299,8 @@ function RelatedSelector({
       options={relatedOptions}
       onChange={(value) => onSelectRelated(value as string | undefined)}
     />
+      </ProductSurface>
+    </ProductSurface>
   );
 }
 
@@ -312,6 +319,7 @@ function FocusTimerOverlay({
   onSelectRelated,
   onToggleFullScreen,
   onToggleRunning,
+  'data-product-ref': productRefAttr,
 }: {
   elapsed: number;
   fullScreen: boolean;
@@ -327,6 +335,7 @@ function FocusTimerOverlay({
   onSelectRelated: (value?: string) => void;
   onToggleFullScreen: () => void;
   onToggleRunning: () => void;
+  'data-product-ref'?: string;
 }) {
   const remaining = Math.max(DEFAULT_DURATION - elapsed, 0);
   const timeArr = getTimeArr(remaining);
@@ -360,7 +369,7 @@ function FocusTimerOverlay({
 
   if (fullScreen) {
     return (
-      <div className={styles.fullscreen}>
+      <div className={styles.fullscreen} data-product-ref={productRefAttr}>
         <div className={styles.fullscreenContent}>
           <Flex className={styles.fullscreenHeader} align="center" justify="space-between">
             <div>
@@ -407,7 +416,7 @@ function FocusTimerOverlay({
   }
 
   return (
-    <Card className={styles.miniTimer}>
+    <Card className={styles.miniTimer} data-product-ref={productRefAttr}>
       <Flex vertical gap={12}>
         <Flex align="center" justify="space-between">
           <b>专注计时</b>

@@ -9,6 +9,7 @@ import useLocale from '../utils/useLocale';
 import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 
 const Aside = Layout.Sider;
 
@@ -59,7 +60,9 @@ function PageLayout() {
                 breakpoint="xl"
               >
                 <div className={styles['menu-wrapper']}>
-                  <Navigate collapsed={collapsed} locale={locale} />
+                  <ProductSurface id={productRef('global.overview')}>
+                    <Navigate collapsed={collapsed} locale={locale} />
+                  </ProductSurface>
                 </div>
                 <Flex
                   className={styles['collapse-btn']}

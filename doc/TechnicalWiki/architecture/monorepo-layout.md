@@ -5,15 +5,15 @@
 ```
 true-north/
 ├── apps/
-│   └── desktop/              # Electron 应用（唯一 app）
+│   └── desktop/              # Electron 应用（唯一产品表面）
 ├── packages/
 │   ├── business/             # vo、enum、web-service（含 request / electron-types）
 │   ├── common/               # 通用工具
 │   ├── common-web/           # Web 通用能力
 │   ├── components/           # 可复用组件
-│   └── dev-tools/            # 开发工具
+│   ├── dev-lab/              # DEV Lab：采集器、协议与面板 UI
+│   └── product-wiki/         # 产品 SSOT 与 DEV 检查器
 ├── doc/
-│   ├── apps/prototype/product-wiki/ # 与原型同仓维护的产品 Wiki
 │   ├── TechnicalWiki/        # 技术 Wiki
 │   └── {version}/            # 版本交付 PRD/TDD（如 v0.1.0/）
 ├── package.json
@@ -28,6 +28,7 @@ apps/desktop/src/
 ├── main/           # Electron 主进程
 ├── preload/        # preload 脚本
 ├── render/         # React 渲染进程（pages、router、components）
+├── dev/            # DEV 薄入口（ProductWiki.html / Lab.html）
 ├── service/        # 本地业务与数据库
 │   ├── db/         # TypeORM 数据源、BaseRepository
 │   ├── growth/     # 个人成长域模块

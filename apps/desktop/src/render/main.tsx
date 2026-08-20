@@ -146,3 +146,9 @@ function LifeToolkitApp() {
 }
 
 createRoot(document.getElementById('root') as HTMLElement).render(<LifeToolkitApp />);
+
+if (import.meta.env.DEV) {
+  void import('@true-north/product-wiki/inspector/bridge').then((module) =>
+    module.bootstrapProductInspectorBridge(),
+  );
+}

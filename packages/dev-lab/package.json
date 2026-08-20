@@ -1,0 +1,29 @@
+{
+  "name": "@true-north/dev-lab",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./collector": {
+      "types": "./src/collector.ts",
+      "import": "./src/collector.ts"
+    },
+    "./panel": {
+      "types": "./src/panel/index.ts",
+      "import": "./src/panel/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "typescript": "^6.0.3"
+  }
+}

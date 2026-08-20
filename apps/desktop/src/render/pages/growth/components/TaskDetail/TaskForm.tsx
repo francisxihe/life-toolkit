@@ -10,6 +10,7 @@ import GoalTreeSelector from '../GoalTreeSelector';
 import { useTaskFormConstraints } from './hooks';
 import { TaskService, GoalService } from '@true-north/web-service';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
@@ -137,9 +138,11 @@ export default function TaskForm() {
         </Item>
         {/* 创建模式下如果有父任务id或目标id则不显示是否子任务开关 */}
         {!shouldHideSubTaskSwitch && (
+          <ProductSurface id={productRef('growth.task.rule.single-parent')}>
           <Item span={24} label="是否子任务" name="isSubTask" valuePropName="checked">
             <Switch checked={taskFormData.isSubTask} />
           </Item>
+          </ProductSurface>
         )}
         {taskFormData.isSubTask ? (
           <Item
@@ -168,6 +171,7 @@ export default function TaskForm() {
             />
           </Item>
         )}
+        <ProductSurface id={productRef('growth.task.rule.time-inheritance')}>
         <Item span={24} label="日期" name="planTimeRange">
           <RangePicker
             className="w-full rounded-md"
@@ -185,6 +189,7 @@ export default function TaskForm() {
             placeholder={datePlaceholder}
           />
         </Item>
+        </ProductSurface>
         <Item span={12} label="预估时间" name="estimateTime">
           <InputNumber min={0} step={60} placeholder="秒" />
         </Item>

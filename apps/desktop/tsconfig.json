@@ -20,13 +20,19 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
+    "types": ["node"],
     "paths": {
-      "@/*": ["src/render/*"],
-      "@business/*": ["src/service/*"]
+      "@/*": ["./src/render/*"],
+      "@business/*": ["./src/service/*"],
+      "@true-north/product-wiki": ["../../packages/product-wiki/src/index.ts"],
+      "@true-north/product-wiki/*": ["../../packages/product-wiki/src/*"],
+      "@true-north/dev-lab": ["../../packages/dev-lab/src/index.ts"],
+      "@true-north/dev-lab/*": ["../../packages/dev-lab/src/*"]
     }
   },
   "include": [
+    "src/dev/**/*.ts",
+    "src/dev/**/*.tsx",
     "src/render/**/*.ts",
     "src/render/**/*.tsx",
     "src/main/**/*.ts",

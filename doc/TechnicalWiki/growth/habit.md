@@ -1,6 +1,6 @@
 # Habit 技术实现
 
-产品说明见 [习惯管理 ProductWiki](../../../apps/prototype/product-wiki/growth/habit/README.md)。重复调度见 [重复规则](./repeat.md)。
+产品说明见 [习惯管理 ProductWiki](../../../packages/product-wiki/wiki/growth/habit/README.md)。重复调度见 [重复规则](./repeat.md)。
 
 ## 代码边界
 
@@ -29,11 +29,11 @@
 | GET | `/habit/find/:id`、`/list`、`/page` | 查询 |
 | PUT | `/habit/abandon/:id`、`/restore/:id`、暂停/激活 | 受控状态；放弃时结算未完成的 cycle todo |
 
-## 原型对齐边界
+## 产品表面 / 实现缺口
 
-功能与样式真源均为 **Prototype**：主路径是列表/卡片就地打卡，详情为次要入口。工作台习惯区复用 Todo `done`/`abandon`。
+主路径是列表/卡片就地打卡，详情为次要入口。工作台习惯区复用 Todo `done`/`abandon`。
 
-| 产品/原型语义 | 实现边界 |
+| 产品语义 | 实现边界 |
 | --- | --- |
 | HabitCard / 工作台 | 就地完成/未完成；`formatHabitRepeatLabel` 展示规则 |
 | 状态 | `active / paused / completed / abandoned` |

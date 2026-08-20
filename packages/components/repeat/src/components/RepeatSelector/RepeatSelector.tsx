@@ -45,6 +45,7 @@ export type RepeatSelectorProps = {
   value: RepeatSelectorValue;
   onChange: (value: RepeatSelectorValue) => void;
   onInvalid?: (issues: ValidationIssue[]) => void;
+  'data-product-ref'?: string;
 };
 
 export type RepeatSelectorValue = Omit<RepeatPayload, 'repeatMode'> & {
@@ -216,7 +217,7 @@ function toPayload(value: RepeatSelectorFormValue): RepeatSelectorValue {
   }
 }
 
-export function RepeatSelector({ lang, value, onChange, onInvalid }: RepeatSelectorProps) {
+export function RepeatSelector({ lang, value, onChange, onInvalid, 'data-product-ref': productRefAttr }: RepeatSelectorProps) {
   const t: Record<string, string> = locale[lang];
   const parsedValue = useMemo(() => parseRepeatRule(value), [value]);
 
@@ -474,7 +475,7 @@ export function RepeatSelector({ lang, value, onChange, onInvalid }: RepeatSelec
   );
 
   return (
-    <Flex vertical gap={12} className={styles.root}>
+    <Flex vertical gap={12} className={styles.root} data-product-ref={productRefAttr}>
       <Flex vertical gap={4}>
         <span className={styles.label}>{t['repeat.startDate']}</span>
         <DatePicker

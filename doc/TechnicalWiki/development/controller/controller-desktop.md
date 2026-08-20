@@ -17,7 +17,7 @@ Desktop 主进程的 **RouteController**（`*.route-controller.ts`）是 Growth 
 | VO → DTO.import\*Vo / DTO.exportVo → VO | 直接操作 Repository / Entity |
 | 默认注入模块 service 单例 | 维护第二份透传方法列表 |
 
-装饰器来自 `@business/decorators`：桥接 `electron-ipc-restful`，并保留 `description` 等元数据供 dev-tools。
+装饰器来自 `@business/decorators`：桥接 `electron-ipc-restful`，并保留 `description` 等静态元数据。
 
 ## 文件位置
 
@@ -95,14 +95,9 @@ export function initIpcRouter(): void {
 
 注意：`electron-ipc-restful` 对 **Class** 取 `@Controller` 前缀元数据；对实例取前缀可能为空。因此注册 **Class**，并用构造器默认参数完成 DI。
 
-## 客户端同步（dev-tools）
+## 客户端 API 对齐
 
-SSOT 为 `*.route-controller.ts`：
-
-- → `@true-north/web-service`（`packages/business/web-service/controller`）
-- → `@true-north/web-service`（`packages/business/web-service/growth`）
-
-Desktop Proxy（`*.controller.ts`）同步已下线。
+SSOT 为 `*.route-controller.ts`，与 `@true-north/web-service` 的 controller / growth 路径手写对齐。历史上的 Desktop Proxy（`*.controller.ts`）和 dev-tools 代码生成已下线。
 
 ## 何时再引入 Adapter
 

@@ -3,6 +3,7 @@ import { Button, Col, Flex, Row, Space, Statistic, Tag } from '@sue/design-web-r
 import dayjs from 'dayjs';
 import { Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { useGoalContext } from '../context';
 import { useGoalDetailContext } from '../../components/GoalDetail/context';
 import { HabitService } from '@true-north/web-service';
@@ -56,12 +57,14 @@ const GoalOverview: React.FC = () => {
           {importance && <Tag color={importance.color}>{importance.label}</Tag>}
           <small className={styles.timeRange}>{`时间范围：${start} 至 ${end}`}</small>
         </Space>
-        <Button
-          icon={<Sparkles size={15} />}
-          onClick={() => navigate(`/ai?goalId=${encodeURIComponent(goal.id)}`)}
-        >
-          AI 拆解
-        </Button>
+        <ProductSurface id={productRef('ai.session.rule.goal-bound-start')}>
+          <Button
+            icon={<Sparkles size={15} />}
+            onClick={() => navigate(`/ai?goalId=${encodeURIComponent(goal.id)}`)}
+          >
+            AI 拆解
+          </Button>
+        </ProductSurface>
       </Flex>
 
       {goal.description ? (

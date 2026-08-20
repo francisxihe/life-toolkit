@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Flex } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { TaskService } from '@true-north/web-service';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
@@ -153,6 +154,7 @@ export default function TaskToday() {
   );
 
   return (
+    <ProductSurface id={productRef('growth.task.view.today')}>
     <Flex vertical container="full" className={styles.page}>
       <div className={styles.layout}>
         <aside className={styles.sidebar}>
@@ -204,5 +206,6 @@ export default function TaskToday() {
         </Flex>
       </div>
     </Flex>
+    </ProductSurface>
   );
 }

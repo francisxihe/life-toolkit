@@ -1,14 +1,15 @@
 import { Button, Flex } from '@sue/design-web-react';
 import { Plus } from 'lucide-react';
+import type { ProductSurfaceHostProps } from '@true-north/product-wiki';
 import { useAiSessionContext } from '../context';
 import styles from '../style.module.less';
 
-export function SessionList() {
+export function SessionList({ 'data-product-ref': productRefAttr }: ProductSurfaceHostProps) {
   const { conversations, activeConversationId, selectConversation, createBlankConversation, goalTitle, taskTitle } =
     useAiSessionContext();
 
   return (
-    <Flex vertical container="fixed" className={`${styles.sessionList} h-full`}>
+    <Flex vertical container="fixed" className={`${styles.sessionList} h-full`} data-product-ref={productRefAttr}>
       <Flex className={styles.sessionListHeader} justify="space-between" align="center">
         <strong>会话</strong>
         <Button size="small" icon={<Plus size={14} />} onClick={() => void createBlankConversation()}>

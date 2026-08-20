@@ -7,12 +7,13 @@ import fs from 'fs';
 // 在ESM环境中导入Electron
 import electron from 'electron';
 
-const { app, BrowserWindow, ipcMain, shell, dialog } = electron;
+const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, shell } = electron;
 
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
 import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
+import { createProductWikiInspectorHost } from './product-wiki-inspector';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === 'development';
@@ -59,6 +60,8 @@ function getPreloadPath() {
 
 // 保持对window对象的全局引用
 let mainWindow = null;
+let appView = null;
+let productWikiInspector = null;
 
 // 默认加载的URL - 使用渲染进程的开发服务器
 let DEFAULT_URL: string;
@@ -72,50 +75,134 @@ if (isDev) {
   DEFAULT_URL = `file://${path.join(__dirname, '../renderer/index.html')}`;
 }
 
-function createWindow() {
-  // 创建浏览器窗口
-  mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    show: !isDev, // 开发环境下不自动显示窗口
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: getPreloadPath(),
-      webSecurity: !isDev, // 开发环境下禁用Web安全限制
-      allowRunningInsecureContent: isDev, // 允许加载不安全内容
+function getAppWebContents() {
+  if (appView && !appView.webContents.isDestroyed()) return appView.webContents;
+  if (mainWindow instanceof BrowserWindow) return mainWindow.webContents;
+  return null;
+}
+
+function installDevApplicationMenu() {
+  const isMac = process.platform === 'darwin';
+  const withAppContents = (run) => {
+    const contents = getAppWebContents();
+    if (contents) run(contents);
+  };
+  const template = [
+    ...(isMac
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: 'about' },
+              { type: 'separator' },
+              { role: 'services' },
+              { type: 'separator' },
+              { role: 'hide' },
+              { role: 'hideOthers' },
+              { role: 'unhide' },
+              { type: 'separator' },
+              { role: 'quit' },
+            ],
+          },
+        ]
+      : []),
+    { role: 'fileMenu' },
+    { role: 'editMenu' },
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Reload',
+          accelerator: 'CmdOrCtrl+R',
+          click: () => withAppContents((contents) => contents.reload()),
+        },
+        {
+          label: 'Force Reload',
+          accelerator: 'CmdOrCtrl+Shift+R',
+          click: () => withAppContents((contents) => contents.reloadIgnoringCache()),
+        },
+        { type: 'separator' },
+        {
+          label: 'ProductWiki',
+          type: 'checkbox',
+          checked: productWikiInspector?.getSideMode() === 'wiki',
+          click: (item) => {
+            if (item.checked) productWikiInspector?.setSideMode('wiki');
+            else if (productWikiInspector?.getSideMode() === 'wiki') productWikiInspector?.setSideMode('hidden');
+          },
+        },
+        {
+          label: 'Lab',
+          type: 'checkbox',
+          checked: productWikiInspector?.getSideMode() === 'lab',
+          click: (item) => {
+            if (item.checked) productWikiInspector?.setSideMode('lab');
+            else if (productWikiInspector?.getSideMode() === 'lab') productWikiInspector?.setSideMode('hidden');
+          },
+        },
+        {
+          label: 'Toggle Developer Tools',
+          type: 'checkbox',
+          checked: Boolean(productWikiInspector?.isDevToolsOpen()),
+          accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          click: () => productWikiInspector?.toggleDevTools(),
+        },
+        { type: 'separator' },
+        {
+          label: 'Actual Size',
+          accelerator: 'CmdOrCtrl+0',
+          click: () => withAppContents((contents) => contents.setZoomLevel(0)),
+        },
+        {
+          label: 'Zoom In',
+          accelerator: 'CmdOrCtrl+Plus',
+          click: () => withAppContents((contents) => contents.setZoomLevel(contents.getZoomLevel() + 0.5)),
+        },
+        {
+          label: 'Zoom Out',
+          accelerator: 'CmdOrCtrl+-',
+          click: () => withAppContents((contents) => contents.setZoomLevel(contents.getZoomLevel() - 0.5)),
+        },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
     },
-  });
+    { role: 'windowMenu' },
+  ];
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
 
-  // 加载默认URL
+function createWindow() {
+  const webPreferences = {
+    nodeIntegration: false,
+    contextIsolation: true,
+    preload: getPreloadPath(),
+    webSecurity: !isDev,
+    allowRunningInsecureContent: isDev,
+  };
+
   if (isDev) {
-    mainWindow.loadURL(DEFAULT_URL + '#/growth/task/task-today');
-  } else {
-    // 生产环境直接加载 index.html，路由由前端处理
-    mainWindow.loadURL(DEFAULT_URL);
-  }
-
-  // 页面加载完成后再显示窗口，避免热更新时抢夺焦点
-  mainWindow.webContents.once('did-finish-load', () => {
-    if (isDev) {
-      // 开发环境下延迟显示，避免热更新时抢夺焦点
+    mainWindow = new BaseWindow({
+      width: 1200,
+      height: 800,
+      show: false,
+    });
+    appView = new WebContentsView({ webPreferences });
+    mainWindow.contentView.addChildView(appView);
+    const [contentWidth, contentHeight] = mainWindow.getContentSize();
+    appView.setBounds({ x: 0, y: 0, width: contentWidth, height: contentHeight });
+    const contents = appView.webContents;
+    contents.loadURL(DEFAULT_URL + '#/growth/task/task-today');
+    contents.once('did-finish-load', () => {
       if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.showInactive(); // 显示但不获得焦点
+        mainWindow.showInactive();
       }
-    } else {
-      // 生产环境正常显示
-      mainWindow.show();
-    }
-  });
-
-  // 在开发环境中插入脚本解决跨域问题
-  if (isDev) {
-    mainWindow.webContents.on('did-finish-load', () => {
-      mainWindow.webContents
+    });
+    contents.on('did-finish-load', () => {
+      contents
         .executeJavaScript(
           `
         try {
-          // 尝试放宽跨域限制
           document.domain = document.domain.split('.').slice(-2).join('.');
         } catch(e) {
           console.warn('设置document.domain失败:', e);
@@ -124,23 +211,35 @@ function createWindow() {
         )
         .catch((err) => console.error('执行脚本失败:', err));
     });
+    contents.setWindowOpenHandler((details: { url: string }) => {
+      if (details.url.startsWith('https://') || details.url.startsWith('http://')) {
+        shell.openExternal(details.url);
+      }
+      return { action: 'deny' };
+    });
+  } else {
+    mainWindow = new BrowserWindow({
+      width: 1200,
+      height: 800,
+      show: false,
+      webPreferences,
+    });
+    mainWindow.loadURL(DEFAULT_URL);
+    mainWindow.webContents.once('did-finish-load', () => {
+      if (mainWindow && !mainWindow.isDestroyed()) mainWindow.show();
+    });
+    mainWindow.webContents.setWindowOpenHandler((details: { url: string }) => {
+      if (details.url.startsWith('https://') || details.url.startsWith('http://')) {
+        shell.openExternal(details.url);
+      }
+      return { action: 'deny' };
+    });
   }
 
-  // 开发环境下打开开发者工具
-  if (isDev) {
-    mainWindow.webContents.openDevTools();
-  }
-
-  // 允许打开外部链接
-  mainWindow.webContents.setWindowOpenHandler((details: { url: string }) => {
-    if (details.url.startsWith('https://') || details.url.startsWith('http://')) {
-      shell.openExternal(details.url);
-    }
-    return { action: 'deny' };
-  });
-
-  // 窗口关闭时释放引用
   mainWindow.on('closed', () => {
+    productWikiInspector?.destroy();
+    productWikiInspector = null;
+    appView = null;
     mainWindow = null;
   });
 }
@@ -169,11 +268,34 @@ app.whenReady().then(async () => {
   }
 
   createWindow();
+  if (isDev) {
+    productWikiInspector = createProductWikiInspectorHost({
+      isDev,
+      getMainWindow: () => mainWindow,
+      getAppView: () => appView,
+      getPreloadPath,
+      rendererUrl: DEFAULT_URL,
+      onChanged: installDevApplicationMenu,
+    });
+    productWikiInspector?.attach();
+    installDevApplicationMenu();
+  }
 
   app.on('activate', () => {
-    // 在macOS上，当点击dock图标且没有其他窗口打开时，通常需要在应用程序中重新创建一个窗口
     if (mainWindow === null) {
       createWindow();
+      if (isDev) {
+        productWikiInspector = createProductWikiInspectorHost({
+          isDev,
+          getMainWindow: () => mainWindow,
+          getAppView: () => appView,
+          getPreloadPath,
+          rendererUrl: DEFAULT_URL,
+          onChanged: installDevApplicationMenu,
+        });
+        productWikiInspector?.attach();
+        installDevApplicationMenu();
+      }
     }
   });
 });
@@ -192,8 +314,9 @@ app.on('before-quit', () => {
 
 // 提供加载新URL的方法
 ipcMain.handle('load-url', async (_: any, url: string) => {
-  if (mainWindow) {
-    await mainWindow.loadURL(url);
+  const contents = getAppWebContents();
+  if (contents) {
+    await contents.loadURL(url);
     return { success: true };
   }
   return { success: false, error: '窗口未创建' };

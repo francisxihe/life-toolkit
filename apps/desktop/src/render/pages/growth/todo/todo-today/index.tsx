@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Flex } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import styles from './style.module.less';
 import { TodoService } from '@true-north/web-service';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
@@ -114,6 +115,7 @@ export default function TodoToday() {
   }
 
   return (
+    <ProductSurface id={productRef('growth.todo.view.today')}>
     <Flex container="full">
       <Flex vertical container="fixed" className={styles.sidebar}>
         <DayAgendaCalendar
@@ -145,5 +147,6 @@ export default function TodoToday() {
         </Flex>
       </Flex>
     </Flex>
+    </ProductSurface>
   );
 }

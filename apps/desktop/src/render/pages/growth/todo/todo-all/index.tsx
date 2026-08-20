@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { TodoFilters } from './TodoFilters';
 import { Button, Flex, message } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { TodoService } from '@true-north/web-service';
 import { TodoStatus } from '@true-north/enum';
 import { TodoAllProvider } from './context';
@@ -52,6 +53,7 @@ function TodoAll() {
   };
 
   return (
+    <ProductSurface id={productRef('growth.todo.view.all')}>
     <Flex vertical container="full" className={styles.page}>
       <Flex container="fixed" className={styles.filters}>
         <TodoFilters />
@@ -64,13 +66,16 @@ function TodoAll() {
         />
       </Flex>
       {selectedRowKeys.length > 0 && (
+        <ProductSurface id={productRef('growth.todo.rule.batch-limit')}>
         <Flex container="fixed" className={styles.batchBar} justify="flex-end" align="center">
           <Button type="primary" loading={batchLoading} onClick={handleBatchDone}>
             批量完成 ({selectedRowKeys.length})
           </Button>
         </Flex>
+        </ProductSurface>
       )}
     </Flex>
+    </ProductSurface>
   );
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import { Flex, Input, Select } from '@sue/design-web-react';
+import { ProductSurface, productRef, type ProductSurfaceHostProps } from '@true-north/product-wiki';
 import type { AiEntityLinkVo } from '@true-north/vo';
 import {
   Conversation,
@@ -29,7 +30,7 @@ function resolveTextArea(ref: ComposerInputRef | null): HTMLTextAreaElement | nu
   return nested instanceof HTMLTextAreaElement ? nested : null;
 }
 
-export function ConversationPane() {
+export function ConversationPane({ 'data-product-ref': productRefAttr }: ProductSurfaceHostProps) {
   const {
     activeConversation,
     activeConversationId,
@@ -137,8 +138,10 @@ export function ConversationPane() {
   const sendDisabled = !canSendWithSelectedAgent || !draft.text.trim() || !activeConversation;
 
   const agentPicker = (
-    <Flex align="center" gap={8} wrap>
-      <Select
+    <ProductSurface id={productRef('ai.session.view.agent-picker')}>
+      <ProductSurface id={productRef('ai.session.rule.agent-switch')}>
+        <Flex align="center" gap={8} wrap>
+          <Select
         size="small"
         value={selectedAgentId || undefined}
         aria-label="编码 Agent"
@@ -155,7 +158,9 @@ export function ConversationPane() {
           之后的发送将由「{selectedAgent.name}」重新开始，不会续跑上一 Agent 的对话线程。
         </span>
       ) : null}
-    </Flex>
+        </Flex>
+      </ProductSurface>
+    </ProductSurface>
   );
 
   const mentionSlot =
@@ -193,7 +198,7 @@ export function ConversationPane() {
       : undefined;
 
   return (
-    <Conversation>
+    <Conversation data-product-ref={productRefAttr}>
       {activeConversation ? (
         <Flex container="fixed" className={`${styles.conversationHeader} w-full`}>
           <strong>{activeConversation.title}</strong>

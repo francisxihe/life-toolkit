@@ -573,7 +573,7 @@ export class ModuleController {
 #### 4. 控制器验证
 - [ ] RouteController 处理 VO ↔ DTO 转换
 - [ ] RouteController 路径已注册到 `initIpcRouter` / electron-ipc-restful
-- [ ] `@true-north/web-service/controller` 路径与 RouteController 对齐（dev-tools 可同步）
+- [ ] `@true-north/web-service/controller` 路径与 RouteController 对齐
 - [ ] 异常处理机制完善
 
 #### 5. 字段控制验证

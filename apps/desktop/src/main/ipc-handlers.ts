@@ -1,4 +1,5 @@
 import { registerIpcHandlers } from 'electron-ipc-restful';
+import { installLabPanelIpc, installRestTraceHook } from './dev-trace';
 import { AiController } from '../service/ai/ai.route-controller';
 import { GoalController } from '../service/growth/goal/goal.route-controller';
 import { HabitController } from '../service/growth/habit/habit.route-controller';
@@ -11,6 +12,8 @@ import { TrackTimeController } from '../service/growth/track-time/track-time.rou
  * route-controller 同时承担 VO 边界与 electron-ipc-restful 路由注册
  */
 export function initIpcRouter(): void {
+  installRestTraceHook();
+  installLabPanelIpc();
   registerIpcHandlers({
     controllers: [
       GoalController,

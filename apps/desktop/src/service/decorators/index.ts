@@ -1,7 +1,7 @@
 /**
  * 业务控制器装饰器系统
  * - 运行时：桥接 electron-ipc-restful，使 route-controller 可直接注册为 IPC 路由
- * - 静态元数据：保留 description 等供 dev-tools AST / 文档使用
+ * - 静态元数据：保留 description 等供文档 / 自省使用
  */
 
 import {

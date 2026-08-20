@@ -13,7 +13,6 @@ const ROOT = path.resolve(__dirname, '..');
 const WALK_ROOTS = [
   path.join(ROOT, 'apps/desktop'),
   path.join(ROOT, 'packages/components/mind'),
-  path.join(ROOT, 'packages/dev-tools'),
   path.join(ROOT, 'packages/share-web'),
 ];
 

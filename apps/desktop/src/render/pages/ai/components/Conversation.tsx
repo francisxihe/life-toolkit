@@ -115,12 +115,21 @@ export function useConversationViewport(options: {
   return { viewportRef, innerRef, stuck, scrollToBottom };
 }
 
-export function Conversation({ children, className }: { children: ReactNode; className?: string }) {
+export function Conversation({
+  children,
+  className,
+  'data-product-ref': productRefAttr,
+}: {
+  children: ReactNode;
+  className?: string;
+  'data-product-ref'?: string;
+}) {
   return (
     <Flex
       vertical
       container="fill"
       className={`${styles.conversation} ${className || ''}`.trim()}
+      data-product-ref={productRefAttr}
     >
       {children}
     </Flex>

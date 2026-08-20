@@ -1,0 +1,269 @@
+{
+  "id": "growth.goal",
+  "kind": "module",
+  "title": "目标管理",
+  "document": "growth/goal/README.md",
+  "parentId": "growth",
+  "route": "/growth/goal",
+  "positioning": "提供树形层级的长期目标规划能力，是执行实体的约束源。",
+  "dependencies": [],
+  "entities": [
+    {
+      "id": "goal",
+      "name": "目标",
+      "fields": [
+        {
+          "id": "type",
+          "name": "类型",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "vision",
+            "result"
+          ],
+          "description": "目标的规划类型。",
+          "productStatus": "roadmap",
+          "surfaceCoverage": "complete"
+        },
+        {
+          "id": "status",
+          "name": "状态",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "todo",
+            "doing",
+            "done",
+            "abandoned"
+          ],
+          "description": "目标生命周期状态。",
+          "productStatus": "roadmap",
+          "surfaceCoverage": "complete"
+        },
+        {
+          "id": "importance",
+          "name": "重要度",
+          "type": "number",
+          "required": true,
+          "description": "1 至 5 的优先级。",
+          "productStatus": "roadmap",
+          "surfaceCoverage": "complete"
+        },
+        {
+          "id": "difficulty",
+          "name": "难度",
+          "type": "number",
+          "required": true,
+          "description": "1 至 5 的执行难度。",
+          "productStatus": "roadmap",
+          "surfaceCoverage": "complete"
+        },
+        {
+          "id": "parentId",
+          "name": "父目标",
+          "type": "reference",
+          "required": false,
+          "description": "支持无限层级的目标树。",
+          "productStatus": "roadmap",
+          "surfaceCoverage": "complete"
+        }
+      ],
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    }
+  ],
+  "views": [
+    {
+      "id": "tree",
+      "name": "目标树",
+      "desktopRoute": "/growth/goal",
+      "scenario": "构建和浏览目标层级",
+      "reference": "growth.goal.view.tree",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "partial"
+    },
+    {
+      "id": "detail",
+      "name": "目标详情",
+      "desktopRoute": "/growth/goal",
+      "scenario": "查看和编辑单个目标",
+      "reference": "growth.goal.view.detail",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    },
+    {
+      "id": "mindmap",
+      "name": "目标脑图",
+      "desktopRoute": "/growth/goal",
+      "scenario": "理解目标与任务关系",
+      "reference": "growth.goal.view.mindmap",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "partial"
+    },
+    {
+      "id": "dashboard",
+      "name": "目标健康面板",
+      "desktopRoute": "/growth/goal",
+      "scenario": "查看结构健康与指标趋势",
+      "productStatus": "deprecated",
+      "surfaceCoverage": "none",
+      "reference": "growth.goal.view.dashboard"
+    },
+    {
+      "id": "ai-decomposition",
+      "name": "AI 拆解",
+      "desktopRoute": "/ai",
+      "scenario": "从目标详情发起 AI 会话；工作台审阅建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
+      "reference": "growth.goal.view.ai-decomposition",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    }
+  ],
+  "rules": [
+    {
+      "id": "time-frame",
+      "name": "时间范围",
+      "entities": [
+        "goal"
+      ],
+      "description": "目标的计划时间范围由开始和结束日期确定，并约束层级排期。",
+      "views": [
+        "tree",
+        "detail"
+      ],
+      "reference": "growth.goal.rule.time-frame",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    },
+    {
+      "id": "type",
+      "name": "类型规则",
+      "entities": [
+        "goal"
+      ],
+      "description": "目标仅分为规划和指标，并受直接父子层级约束。",
+      "views": [
+        "detail"
+      ],
+      "reference": "growth.goal.rule.type",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    },
+    {
+      "id": "priority-inheritance",
+      "name": "优先级继承",
+      "entities": [
+        "goal"
+      ],
+      "description": "子目标的重要度和难度不得超过父目标。",
+      "views": [
+        "detail"
+      ],
+      "reference": "growth.goal.rule.priority-inheritance",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-generation",
+      "name": "AI 建议生成",
+      "entities": [
+        "goal"
+      ],
+      "description": "正式产品由已接入的模型结合当前目标上下文生成建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态，不作为生成算法规格。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-generation",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "partial"
+    },
+    {
+      "id": "ai-decompose-adopt",
+      "name": "AI 建议采纳",
+      "entities": [
+        "goal"
+      ],
+      "description": "工作台内单条或批量采纳以当前预览创建实体；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-adopt",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    },
+    {
+      "id": "ai-decompose-followup",
+      "name": "对已选建议追问",
+      "entities": [
+        "goal"
+      ],
+      "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-followup",
+      "productStatus": "roadmap",
+      "surfaceCoverage": "complete"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.goal.overview",
+      "heading": "## 目标与价值"
+    },
+    {
+      "id": "growth.goal.structure",
+      "heading": "## 业务流程"
+    },
+    {
+      "id": "growth.goal.view.tree",
+      "heading": "### 目标树"
+    },
+    {
+      "id": "growth.goal.view.detail",
+      "heading": "### 目标详情"
+    },
+    {
+      "id": "growth.goal.view.mindmap",
+      "heading": "### 目标脑图"
+    },
+    {
+      "id": "growth.goal.view.dashboard",
+      "heading": "### 目标健康面板"
+    },
+    {
+      "id": "growth.goal.view.ai-decomposition",
+      "heading": "### AI 拆解"
+    },
+    {
+      "id": "growth.goal.interaction",
+      "heading": "## 交互语义"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-generation",
+      "heading": "### AI 建议生成"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-adopt",
+      "heading": "### AI 建议采纳"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-followup",
+      "heading": "### 对已选建议追问"
+    },
+    {
+      "id": "growth.goal.rule.time-frame",
+      "heading": "### 时间范围"
+    },
+    {
+      "id": "growth.goal.rule.type",
+      "heading": "### 类型规则"
+    },
+    {
+      "id": "growth.goal.rule.priority-inheritance",
+      "heading": "### 优先级继承"
+    }
+  ],
+  "productStatus": "roadmap",
+  "surfaceCoverage": "complete"
+}

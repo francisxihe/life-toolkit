@@ -1,0 +1,27 @@
+{
+  "id": "growth",
+  "kind": "domain",
+  "title": "个人成长系统",
+  "document": "growth/README.md",
+  "parentId": "global",
+  "positioning": "围绕目标、任务、待办、习惯与时间追踪形成个人成长闭环。",
+  "dependencies": [
+    "global"
+  ],
+  "references": [
+    {
+      "id": "growth.overview",
+      "heading": "## 成长闭环"
+    },
+    {
+      "id": "growth.architecture",
+      "heading": "## 模块协作"
+    },
+    {
+      "id": "growth.design",
+      "heading": "## 体验原则"
+    }
+  ],
+  "productStatus": "roadmap",
+  "surfaceCoverage": "complete"
+}

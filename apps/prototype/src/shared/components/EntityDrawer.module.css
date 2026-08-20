@@ -1,4 +1,0 @@
-.entityForm { padding-bottom: 12px; }
-.entityForm :global(.sue-form-item) { margin-bottom: 18px; }
-.formHint { color: var(--sue-color-text-tertiary); }
-.repeatControl { max-width: 100%; }

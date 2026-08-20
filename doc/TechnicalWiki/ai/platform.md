@@ -131,7 +131,7 @@ interface AiCapability<I, O> {
 
 ## 7. 会话与消息（设计基线）
 
-产品语义参见 ProductWiki · [AI 会话](../../../apps/prototype/product-wiki/ai/session/README.md)。本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+产品语义参见 ProductWiki · [AI 会话](../../../packages/product-wiki/wiki/ai/session/README.md)。本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
 
 会话壳复用平台配置、Provider、Runner、AiRun；结构化结果经 Capability 生成后写入消息中的工作台块，由渲染层按类型挂载工作台。
 

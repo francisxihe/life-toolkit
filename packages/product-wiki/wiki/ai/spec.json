@@ -1,0 +1,23 @@
+{
+  "id": "ai",
+  "kind": "domain",
+  "title": "AI 能力",
+  "document": "ai/README.md",
+  "parentId": "global",
+  "positioning": "AI 会话与可插拔工作台，承接结构化协助结果的审阅与落地。",
+  "dependencies": [
+    "global"
+  ],
+  "references": [
+    {
+      "id": "ai.overview",
+      "heading": "## 能力定位"
+    },
+    {
+      "id": "ai.architecture",
+      "heading": "## 模块协作"
+    }
+  ],
+  "productStatus": "roadmap",
+  "surfaceCoverage": "partial"
+}

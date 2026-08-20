@@ -7,6 +7,7 @@ import { Difficulty } from '@true-north/enum';
 import dayjs from 'dayjs';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 import RepeatSelector, { createDefaultRepeatSetting, type RepeatSelectorValue } from '@true-north/components-repeat';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { emitHabitChanged } from '../../events';
 
 const { TextArea } = Input;
@@ -135,6 +136,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         </Form.Item>
 
         {/* 目标关联 - 强制选择 */}
+        <ProductSurface id={productRef('growth.habit.rule.goal-required')}>
         <div>
           <span className="block mb-2 font-medium">
             关联目标 <span className="text-red-500">*</span>
@@ -177,6 +179,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
             </span>
           }
         </div>
+        </ProductSurface>
 
         {/* 属性设置 */}
         <div className="grid grid-cols-2 gap-4">
@@ -220,7 +223,11 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
 
         <div>
           <span className="block mb-2 font-medium">重复规则</span>
+          <ProductSurface id={productRef('growth.repeat.rule.valid-configuration')}>
+            <ProductSurface id={productRef('growth.repeat.rule.template-lifecycle')}>
           <RepeatSelector lang="zh-CN" value={repeatSetting} onChange={setRepeatSetting} />
+            </ProductSurface>
+          </ProductSurface>
         </div>
 
         <Divider />

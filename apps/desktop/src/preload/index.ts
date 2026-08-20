@@ -51,6 +51,66 @@ const exposeAPI = () => {
         ipcRenderer.removeListener(channel, listener);
       },
     } as ElectronAPI);
+
+    if (process.env.NODE_ENV === 'development') {
+      let splitterCapturing = false;
+      ipcRenderer.on('product-wiki:splitter-capturing', (_event, on) => {
+        splitterCapturing = Boolean(on);
+      });
+      window.addEventListener('mousemove', (event) => {
+        if (splitterCapturing) ipcRenderer.send('product-wiki:splitter-drag-move', event.screenX);
+      });
+      window.addEventListener('mouseup', (event) => {
+        if (splitterCapturing) ipcRenderer.send('product-wiki:splitter-drag-end', event.screenX);
+      });
+      contextBridge.exposeInMainWorld('productWikiInspectorBridge', {
+        sendSelection: (payload) => ipcRenderer.send('product-wiki:selection', payload),
+        sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
+        onSetSelecting: (listener) => {
+          const handler = (_event, selecting) => listener(selecting);
+          ipcRenderer.on('product-wiki:set-selecting', handler);
+          return () => ipcRenderer.removeListener('product-wiki:set-selecting', handler);
+        },
+        onCancel: (listener) => {
+          const handler = () => listener();
+          ipcRenderer.on('product-wiki:cancel', handler);
+          return () => ipcRenderer.removeListener('product-wiki:cancel', handler);
+        },
+      });
+      contextBridge.exposeInMainWorld('productWikiInspectorPanel', {
+        sendSetSelecting: (selecting) => ipcRenderer.send('product-wiki:set-selecting', selecting),
+        sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
+        sendSetVisible: (visible) => ipcRenderer.send('product-wiki:set-visible', visible),
+        sendSplitterDragStart: (edge, screenX) =>
+          ipcRenderer.send('product-wiki:splitter-drag-start', { edge, screenX }),
+        sendSplitterDragMove: (screenX) => ipcRenderer.send('product-wiki:splitter-drag-move', screenX),
+        sendSplitterDragEnd: (screenX) => ipcRenderer.send('product-wiki:splitter-drag-end', screenX),
+        onSelection: (listener) => {
+          const handler = (_event, payload) => listener(payload);
+          ipcRenderer.on('product-wiki:selection', handler);
+          return () => ipcRenderer.removeListener('product-wiki:selection', handler);
+        },
+        onCancel: (listener) => {
+          const handler = () => listener();
+          ipcRenderer.on('product-wiki:cancel', handler);
+          return () => ipcRenderer.removeListener('product-wiki:cancel', handler);
+        },
+        onSplitterDragEnd: (listener) => {
+          const handler = () => listener();
+          ipcRenderer.on('product-wiki:splitter-drag-end', handler);
+          return () => ipcRenderer.removeListener('product-wiki:splitter-drag-end', handler);
+        },
+      });
+      contextBridge.exposeInMainWorld('labPanel', {
+        snapshot: () => ipcRenderer.invoke('lab:snapshot'),
+        clear: () => ipcRenderer.invoke('lab:clear'),
+        onUpdate: (listener) => {
+          const handler = (_event, entries) => listener(entries);
+          ipcRenderer.on('lab:update', handler);
+          return () => ipcRenderer.removeListener('lab:update', handler);
+        },
+      });
+    }
   } else {
     console.log('============在Web环境中运行');
     if (typeof window !== 'undefined') {

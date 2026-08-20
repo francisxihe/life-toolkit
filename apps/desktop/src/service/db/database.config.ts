@@ -17,6 +17,7 @@ import { TrackTime } from '../growth/track-time/entity';
 import { AiSuggestionCache } from '../ai/cache/ai-suggestion-cache.entity';
 import { AiConversation } from '../ai/conversation/conversation.entity';
 import { AiMessage } from '../ai/conversation/message.entity';
+import { createDevTraceTypeormLogger } from '../../main/dev-trace';
 
 const getDatabasePath = () => {
   if (process.env.NODE_ENV === 'development') {
@@ -31,12 +32,15 @@ const getDatabasePath = () => {
 };
 
 const databasePath = getDatabasePath();
+const isDev = process.env.NODE_ENV === 'development';
 
 export const AppDataSource = new DataSource({
   type: 'sqlite',
   database: databasePath,
   synchronize: true,
-  logging: process.env.NODE_ENV === 'development' ? ['error'] : undefined,
+  logging: isDev ? ['query', 'error'] : undefined,
+  logger: createDevTraceTypeormLogger(),
+  maxQueryExecutionTime: isDev ? -1 : undefined,
   entities: [
     User,
     Goal,

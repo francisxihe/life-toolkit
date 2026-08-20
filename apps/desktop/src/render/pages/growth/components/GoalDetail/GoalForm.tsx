@@ -9,6 +9,7 @@ import { useGoalDetailContext } from './context';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 import GoalTreeSelector from '../GoalTreeSelector';
 import { useGoalFormConstraints } from './hooks';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;
@@ -97,6 +98,7 @@ export default function GoalForm() {
             disabled={readonly}
           />
         </Item>
+        <ProductSurface id={productRef('growth.goal.rule.time-frame')}>
         <Item
           span={24}
           label="时间范围"
@@ -138,6 +140,8 @@ export default function GoalForm() {
             }
           />
         </Item>
+        </ProductSurface>
+        <ProductSurface id={productRef('growth.goal.rule.type')}>
         <Item
           span={24}
           label="目标类型"
@@ -168,6 +172,8 @@ export default function GoalForm() {
             </Radio>
           </Radio.Group>
         </Item>
+        </ProductSurface>
+        <ProductSurface id={productRef('growth.goal.rule.priority-inheritance')}>
         <Item
           span={12}
           label="重要程度"
@@ -230,6 +236,7 @@ export default function GoalForm() {
             ))}
           </Select>
         </Item>
+        </ProductSurface>
         <Item span={24} label="描述" name="description">
           <TextArea
             autoSize={false}

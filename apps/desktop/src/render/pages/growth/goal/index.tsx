@@ -3,6 +3,7 @@
 import { GoalProvider } from './context';
 import React, { useState } from 'react';
 import { Flex, Tabs } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import GoalMain from './GoalMain';
 import GoalAside from './GoalAside';
 import GoalMindMap from '@/pages/mind-map';
@@ -15,15 +16,17 @@ interface GoalTreeViewProps {
 const GoalTreeView: React.FC<GoalTreeViewProps> = () => {
   return (
     <Flex container="full" className={styles.treeLayout}>
-      {/* 左侧目标树 */}
-      <Flex container="fixed" className={styles.sider}>
-        <GoalAside />
-      </Flex>
+      <ProductSurface id={productRef('growth.goal.view.tree')}>
+        <Flex container="fixed" className={styles.sider}>
+          <GoalAside />
+        </Flex>
+      </ProductSurface>
 
-      {/* 右侧详情面板 */}
-      <Flex container="fill" className={styles.content}>
-        <GoalMain />
-      </Flex>
+      <ProductSurface id={productRef('growth.goal.view.detail')}>
+        <Flex container="fill" className={styles.content}>
+          <GoalMain />
+        </Flex>
+      </ProductSurface>
     </Flex>
   );
 };
@@ -51,7 +54,11 @@ export default function Goal() {
           {
             key: 'mindmap',
             label: '目标脑图',
-            children: <GoalMindMap />,
+            children: (
+              <ProductSurface id={productRef('growth.goal.view.mindmap')}>
+                <GoalMindMap />
+              </ProductSurface>
+            ),
           },
         ]}
       />

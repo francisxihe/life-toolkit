@@ -32,6 +32,7 @@ import { DIFFICULTY_MAP } from '../constants';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from './components/CreateHabit';
 import { emitHabitChanged } from '../events';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import styles from './style.module.less';
 
 export const HabitDetailPage: React.FC = () => {
@@ -188,6 +189,7 @@ export const HabitDetailPage: React.FC = () => {
   }
 
   return (
+    <ProductSurface id={productRef('growth.habit.view.detail')}>
     <div className={styles.legacyPage}>
       {/* 页面头部 */}
       <Card className="mb-4">
@@ -487,7 +489,9 @@ export const HabitDetailPage: React.FC = () => {
           </Card>
         </Col>
       </Row>
-    </div>);
+    </div>
+    </ProductSurface>
+    );
 
 };
 

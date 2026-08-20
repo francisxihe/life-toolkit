@@ -1,6 +1,6 @@
 # Goal 技术实现
 
-产品说明见 [目标管理 ProductWiki](../../../apps/prototype/product-wiki/growth/goal/README.md)。
+产品说明见 [目标管理 ProductWiki](../../../packages/product-wiki/wiki/growth/goal/README.md)。
 
 ## 当前代码边界
 
@@ -21,9 +21,9 @@
 
 控制器负责将请求 VO 导入 DTO，再调用服务并导出 VO；本文不将其视为产品字段契约。
 
-## 原型对齐边界
+## 产品表面 / 实现缺口
 
-| 原型契约 | v0.1.0 状态 | 当前实现 |
+| 产品契约 | v0.1.0 状态 | 当前实现 |
 | --- | --- | --- |
 | `vision / result` 类型 | 已落地 | enum、VO、DTO 与 Entity 统一为 `vision / result`；数据库初始化会将旧的 `objective / key_result` 迁移为新值。 |
 | 父子类型、时间、重要度和难度约束 | 已落地 | GoalService 在创建、编辑父级与变更父级时校验直接层级、循环引用、时间范围、重要度与难度；父级收紧会校验全部直接子目标。 |

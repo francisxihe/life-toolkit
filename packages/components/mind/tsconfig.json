@@ -15,14 +15,12 @@
     "isolatedModules": true,
     "noEmit": false,
     "outDir": "dist",
+    "rootDir": "./src",
     "declaration": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    },
     "experimentalDecorators": true,
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "types": ["node"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "**/*.md"]

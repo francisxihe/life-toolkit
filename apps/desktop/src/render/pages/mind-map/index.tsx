@@ -9,9 +9,10 @@ import styles from './style.module.less';
 
 interface GoalMindMapProps {
   className?: string;
+  'data-product-ref'?: string;
 }
 
-const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
+const GoalMindMap: React.FC<GoalMindMapProps> = ({ className, 'data-product-ref': productRefAttr }) => {
   const { loading, goalTree, fetchGoalTree } = useGoalMindMapContext();
 
   useEffect(() => {
@@ -19,7 +20,7 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
   }, []);
 
   return (
-    <div className={clsx(styles.root, className)}>
+    <div className={clsx(styles.root, className)} data-product-ref={productRefAttr}>
       <Spin
         spinning={loading}
         className={styles.spin}
@@ -38,10 +39,10 @@ const GoalMindMap: React.FC<GoalMindMapProps> = ({ className }) => {
   );
 };
 
-export default (props: GoalMindMapProps) => {
+export default ({ className, 'data-product-ref': productRefAttr }: GoalMindMapProps) => {
   return (
-    <GoalMindMapContextProvider {...props}>
-      <GoalMindMap {...props} />
+    <GoalMindMapContextProvider>
+      <GoalMindMap className={className} data-product-ref={productRefAttr} />
     </GoalMindMapContextProvider>
   );
 };

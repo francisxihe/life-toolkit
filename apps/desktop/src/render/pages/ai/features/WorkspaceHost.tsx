@@ -1,11 +1,12 @@
 import type { ReactNode } from 'react';
 import { Flex } from '@sue/design-web-react';
+import type { ProductSurfaceHostProps } from '@true-north/product-wiki';
 import { EmptyWorkspace } from '../components/EmptyWorkspace';
 import { useAiSessionContext } from '../context';
 import { workspaceRegistry } from '../workspaces/registry';
 import styles from '../style.module.less';
 
-export function WorkspaceHost() {
+export function WorkspaceHost({ 'data-product-ref': productRefAttr }: ProductSurfaceHostProps) {
   const {
     activeWorkspacePart,
     activeWorkspaceMessageId,
@@ -42,7 +43,7 @@ export function WorkspaceHost() {
   }
 
   return (
-    <Flex vertical container="fixed" className={`${styles.workspaceHost} h-full`}>
+    <Flex vertical container="fixed" className={`${styles.workspaceHost} h-full`} data-product-ref={productRefAttr}>
       <Flex container="fixed" className={`${styles.workspaceHeader} w-full`}>
         工作台
       </Flex>

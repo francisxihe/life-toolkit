@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { TaskFilters } from './TaskFilters';
 import { Flex } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import { useTaskAllContext } from './context';
@@ -17,6 +18,7 @@ function TaskAll() {
   }, []);
 
   return (
+    <ProductSurface id={productRef('growth.task.view.all')}>
     <Flex vertical container="full" className={styles.page}>
       <Flex container="fixed" className={styles.filters}>
         <TaskFilters />
@@ -26,6 +28,7 @@ function TaskAll() {
         <TaskTable />
       </Flex>
     </Flex>
+    </ProductSurface>
   );
 }
 

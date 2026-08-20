@@ -1,4 +1,5 @@
 import { Calendar } from '@sue/design-web-react';
+import { ProductSurface, productRef } from '@true-north/product-wiki';
 import { useEffect } from 'react';
 import { CalendarProvider } from './context';
 import CalendarCell from './CalendarCell';
@@ -23,6 +24,7 @@ function CalendarPage() {
   }), [getTaskList]);
 
   return (
+    <ProductSurface id={productRef('growth.task.view.calendar')}>
     <div className={styles.page}>
       <Calendar
         className={`${styles['custom-calendar']}`}
@@ -37,6 +39,7 @@ function CalendarPage() {
         onChange={setPageShowDate}
       />
     </div>
+    </ProductSurface>
   );
 }
 
