@@ -14,7 +14,6 @@ import { Todo } from '../growth/todo/todo.entity';
 import { TodoRepeat } from '../growth/todo/todo-repeat.entity';
 import { Repeat } from '../growth/repeat/repeat.entity';
 import { TrackTime } from '../growth/track-time/entity';
-import { AiRun } from '../ai/run/ai-run.entity';
 import { AiSuggestionCache } from '../ai/cache/ai-suggestion-cache.entity';
 import { AiConversation } from '../ai/conversation/conversation.entity';
 import { AiMessage } from '../ai/conversation/message.entity';
@@ -47,7 +46,6 @@ export const AppDataSource = new DataSource({
     Repeat,
     Habit,
     TrackTime,
-    AiRun,
     AiSuggestionCache,
     AiConversation,
     AiMessage,

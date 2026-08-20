@@ -1,17 +1,6 @@
-export enum AiProviderKind {
-  OPENAI_COMPATIBLE = 'openai_compatible',
-}
-
-export enum AiRunStatus {
-  PENDING = 'pending',
-  SUCCEEDED = 'succeeded',
-  FAILED = 'failed',
-}
-
 export enum AiCapabilityKey {
   GOAL_DECOMPOSE = 'goal.decompose',
   TASK_DECOMPOSE = 'task.decompose',
-  CONVERSATION_CHAT = 'conversation.chat',
 }
 
 export enum AiErrorCode {

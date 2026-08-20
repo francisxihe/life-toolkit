@@ -53,7 +53,7 @@ pnpm --silent --filter true-north-prototype product-wiki:version -- v0.2.0 --jso
 | 工作台是否默认打开 | A 发起后自动打开最后一块 / B 仅用户点选后打开 | **B**（含从目标/任务发起） | 桌面 `context.tsx` 在 stream `message`/`done` 含 workspace 时仍自动激活，实现阶段须改掉 |
 | 生成落点 | A 仅抽屉本地态 / B 写入助手消息 workspace 块 | **B**；MCP `decompose_*` 调 `goal.decompose` / `task.decompose` Capability 后写入块 | 消息 parts 需稳定 schema |
 | 会话持久化 | A 仅内存 / B SQLite Conversation + Message | **B**（本版） | 无云同步 |
-| 密钥与设置 | A 设置页 / B 配置文件写死 / C 本版不读应用侧密钥 | **C（本版）**；聊天与拆解都不读应用侧密钥 | 无设置页；已删除 HTTP 生成入口（`ai.config` / Provider / CompletionRunner） |
+| 密钥与设置 | A 设置页 / B 配置文件写死 / C 本版不读应用侧密钥 | **C（本版）**；聊天与拆解都不读应用侧密钥 | 无设置页；本地直连大模型栈已删（prompt / AiRun / Provider 类型） |
 | 会话聊天载体 | A 应用内 openai_compatible stream + 自研 loop / B 本机编码 Agent CLI / C A 作 B 的回退 | **B**；**无** HTTP 聊天回退、**无**自研 loop 回退 | 依赖用户本机已安装并登录的 CLI |
 | 领域工具 | A 应用内 tool-calling 多轮 / B 禁止一切工具、助手纯文本 / C loopback MCP + 工作台块 | **C**；实现仍 `apps/desktop/src/service/ai/agent/tools.ts` | MCP 网关须绑定当前 stream 的 persistParts |
 | Agent 切换与线程 | A 跨 Agent 续跑同一原生线程 / B 切换后该会话不再续跑上一 Agent 线程 | **B**（用户已确认原型） | 会话存 `runtimeId` + `runtimeThreadId`；切换清空 thread |
@@ -70,7 +70,7 @@ pnpm --silent --filter true-north-prototype product-wiki:version -- v0.2.0 --jso
 
 | 能力 | 现状 | 目标 |
 | --- | --- | --- |
-| AI 配置 / Provider / Runner / AiRun / 缓存 | 已落地；拆解曾调 Runner.complete | **已删除** HTTP 生成入口（`ai.config` / Provider / CompletionRunner）；AiRun / cache 仍保留 |
+| AI 配置 / Provider / Runner / AiRun / 缓存 | 已落地；拆解曾调 Runner.complete | **已删除** 本地直连大模型栈（prompt / AiRun / Provider 类型）；capability + cache 仍负责校验写入 |
 | Goal / Task decompose Capability | 已落地（HTTP 生成 JSON） | 改为校验 Agent 传入的建议并写入工作台；仅经 MCP `decompose_*` |
 | 自研 `agent-loop.ts` | `conversation.service` 调用 `runAgentLoop` | **实现阶段删除**该文件及对它的依赖；禁止再接应用内多轮 tool-calling |
 | `tools.ts` | 作为 OpenAI tools 给 loop 用 | 改为 MCP 网关执行层；工具名与语义不变 |
@@ -89,10 +89,10 @@ pnpm --silent --filter true-north-prototype product-wiki:version -- v0.2.0 --jso
 
 | 层 | 路径 / 职责 |
 | --- | --- |
-| Enum / VO | 既有 AI enum 增 `AGENT_UNAVAILABLE`、`AGENT_UNAUTHENTICATED`；Conversation 增 runtime 字段；Runtime Agent 列表/选择 VO；Goal/Task Decompose 保持 |
+| Enum / VO | 既有 AI enum 增 `AGENT_UNAVAILABLE`、`AGENT_UNAUTHENTICATED`；已删 `AiProviderKind` / `AiRunStatus` / `CONVERSATION_CHAT`；Conversation 增 runtime 字段；Runtime Agent 列表/选择 VO；Goal/Task Decompose 保持 |
 | web-service | 既有 `controller/ai.ts`；新增 agents 列表与选择 client |
 | main IPC | 既有 `ai.route-controller.ts`；Runtime 探测与选择路由；发送仍 `webContents.send('ai.conversation.stream')` |
-| Platform | 保留 capability/context/cache（拆解校验写入）；**已删除** HTTP 生成入口（`ai.config` / Provider / CompletionRunner）；AiRun 仍保留、本版不调用；新增 `runtime/`（注册表、探测、spawn、JSONL 适配）；`conversation/` 改为调 Runtime；`agent/tools.ts` 给 MCP 网关用；**删除** `agent/agent-loop.ts` |
+| Platform | 保留 capability/context/cache（拆解校验写入）；**已删除** 本地直连大模型栈（prompt / AiRun / Provider 类型）；新增 `runtime/`（注册表、探测、spawn、JSONL 适配）；`conversation/` 改为调 Runtime；`agent/tools.ts` 给 MCP 网关用；**删除** `agent/agent-loop.ts` |
 | MCP | 主进程 loopback 网关（本机 `127.0.0.1`），把 `tools.ts` 暴露为 MCP tools |
 | Render | `/ai` 会话页 composer 增加 Agent 选择器；工作台 registry 不变；**禁止**因 workspace 块自动打开右侧 |
 
@@ -182,7 +182,7 @@ win32 / WSL：新线程 `--sandbox danger-full-access`；续跑 `-c sandbox_mode
 
 工作台块至少含：`type: 'workspace'`、`workspaceKey`（`goal.decompose` \| `task.decompose`）、载荷（`runId`、`analysisSummary`、`suggestions`——含 `accepted?` 与用户编辑后的预览草稿、`ref`）。预览草稿写回后，采纳与「对已选追问」均读当前预览。
 
-**AiRun / AiSuggestionCache**：HTTP 生成入口已删；不强制写 Provider 形态的 AiRun（实体仍保留）。缓存可命中则跳过要求 Agent 重传；未命中不得回退 HTTP。聊天若写审计不得带 `apiKey`。
+**AiSuggestionCache**：本地直连大模型栈已删（含 AiRun 实体）。缓存可命中则跳过要求 Agent 重传；未命中不得回退 HTTP。聊天若写审计不得带 `apiKey`。
 
 **不做：** settings 持久化 UI、safeStorage、本地启发式建议、把用户全局 MCP 配置改成 True North 专用。
 
@@ -273,7 +273,7 @@ win32 / WSL：新线程 `--sandbox danger-full-access`；续跑 `-c sandbox_mode
 5. ChatGPT（内置 `codex`）spawn 适配（stdin + `--json` + resume + 隔离目录 MCP）；JSONL → 现有 stream 事件；会话写入 `runtimeThreadId`。
 6. `conversation.service` 停止调用 `runAgentLoop`；发送改走 Runtime；**删除** `apps/desktop/src/service/ai/agent/agent-loop.ts`。
 7. Render：Agent 选择器（展示名 ChatGPT）、灰显、切换提示、不可用禁发；绑定发起对齐 ensure；去掉 workspace 自动打开。
-8. 错误码与 `parse-ai-error` 文案；联调：切换丢线程、HTTP 生成入口已删、无 HTTP 聊天/拆解回退。
+8. 错误码与 `parse-ai-error` 文案；联调：切换丢线程、本地直连大模型栈已删、无 HTTP 聊天/拆解回退。
 
 | 场景 | 验收结果 |
 | --- | --- |

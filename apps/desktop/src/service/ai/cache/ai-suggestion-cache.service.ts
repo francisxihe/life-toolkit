@@ -7,16 +7,6 @@ export function fingerprintPromptContext(promptContext: string): string {
   return createHash('sha256').update(promptContext).digest('hex');
 }
 
-/** Fingerprint business context + skill pack content so skill edits bust cache. */
-export function fingerprintPromptContextWithSkills(
-  promptContext: string,
-  skillFingerprint: string
-): string {
-  return createHash('sha256')
-    .update(`${promptContext}\n@@skills@@\n${skillFingerprint}`)
-    .digest('hex');
-}
-
 export class AiSuggestionCacheService {
   constructor(private readonly repository = new AiSuggestionCacheRepository()) {}
 
