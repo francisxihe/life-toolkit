@@ -15,18 +15,6 @@ export class AiPlatformError extends Error {
     return `${this.aiCode}: ${this.message}`;
   }
 
-  static notConfigured(message: string): AiPlatformError {
-    return new AiPlatformError(AiErrorCode.NOT_CONFIGURED, message);
-  }
-
-  static providerHttp(message: string): AiPlatformError {
-    return new AiPlatformError(AiErrorCode.PROVIDER_HTTP, message);
-  }
-
-  static timeout(message: string): AiPlatformError {
-    return new AiPlatformError(AiErrorCode.TIMEOUT, message);
-  }
-
   static invalidModelOutput(message: string): AiPlatformError {
     return new AiPlatformError(AiErrorCode.INVALID_MODEL_OUTPUT, message);
   }

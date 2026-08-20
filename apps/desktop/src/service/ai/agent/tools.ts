@@ -4,7 +4,6 @@ import { GoalRepository } from '../../growth/goal/goal.repository';
 import { GoalFilterDto } from '../../growth/goal/dto';
 import { TaskRepository } from '../../growth/task/task.repository';
 import { TaskFilterDto } from '../../growth/task/dto';
-import type { ProviderTool } from '../provider/ai-provider';
 import { capabilityRegistry } from '../capability/capability.registry';
 import { goalContextBuilder } from '../context/goal-context.builder';
 import { taskContextBuilder } from '../context/task-context.builder';
@@ -319,14 +318,6 @@ export const agentTools: AgentTool[] = [
 ];
 
 const toolsByName = new Map(agentTools.map((tool) => [tool.name, tool]));
-
-export function listProviderTools(): ProviderTool[] {
-  return agentTools.map((tool) => ({
-    name: tool.name,
-    description: tool.description,
-    parameters: tool.parameters,
-  }));
-}
 
 export function findAgentTool(name: string): AgentTool | undefined {
   return toolsByName.get(name);
