@@ -72,7 +72,7 @@ render/pages/
 └── ...
 ```
 
-业务规则与模块产品说明见 [ProductWiki · Growth](../../../packages/product-wiki/wiki/growth/README.md)。
+业务规则与模块产品说明见 [ProductWiki · Growth](../../../packages/product-wiki/wiki/growth/spec.json)。
 
 ## DEV 主窗口分栏
 

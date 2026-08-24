@@ -407,7 +407,7 @@ importers:
         version: 4.18.1
       react:
         specifier: ^18.0.0
-        version: 19.2.8
+        version: 18.3.1
       react-dom:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
@@ -434,11 +434,14 @@ importers:
         specifier: ^29.1.0
         version: 29.4.12(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.1)(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3)))(typescript@6.0.3)
       typescript:
-        specifier: ^6.0.3
+        specifier: ^6.0.0
         version: 6.0.3
 
   packages/dev-lab:
     dependencies:
+      '@sue/design-web-react':
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -453,26 +456,32 @@ importers:
         specifier: ^18.2.0
         version: 18.3.7(@types/react@18.3.31)
       typescript:
-        specifier: ^6.0.3
+        specifier: ^6.0.0
         version: 6.0.3
 
   packages/product-wiki:
     dependencies:
+      '@sue/design-web-react':
+        specifier: 0.0.3-beta.1
+        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       dompurify:
         specifier: 3.4.12
         version: 3.4.12
       fe-selector:
         specifier: 0.1.0
-        version: 0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@19.2.8))(react@18.3.1)
-      lucide:
-        specifier: 1.27.0
-        version: 1.27.0
+        version: 0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      lucide-react:
+        specifier: ^0.460.0
+        version: 0.460.0(react@18.3.1)
       marked:
         specifier: 18.0.7
         version: 18.0.7
       react:
         specifier: ^18.0.0
-        version: 19.2.8
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/jest':
         specifier: ^29.5.0
@@ -480,6 +489,9 @@ importers:
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.31
+      '@types/react-dom':
+        specifier: ^18.2.0
+        version: 18.3.7(@types/react@18.3.31)
       jest:
         specifier: ^29.5.0
         version: 29.7.0(@types/node@22.13.0)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
@@ -487,7 +499,7 @@ importers:
         specifier: ^29.1.0
         version: 29.4.12(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.1)(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3)))(typescript@6.0.3)
       typescript:
-        specifier: ^6.0.3
+        specifier: ^6.0.0
         version: 6.0.3
 
 packages:
@@ -4794,6 +4806,7 @@ packages:
   eslint@9.39.5:
     resolution: {integrity: sha512-DgZS62aPLXKlnxILS/AYCoRvHaZeXceIzlXPkkGGzJWSow1aEk0lbTlxUSlyjC8jcaKxAdOnTDz+o1JFSBsyjw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -5981,9 +5994,6 @@ packages:
     resolution: {integrity: sha512-BVtq/DykVeIvRTJvRAgCsOwaGL8Un3Bxh8MbDxMhEWlZay3T4IpEKDEpwt5KZ0KJMHzgm6jrltxlT5eXOWXDHg==}
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0-rc
-
-  lucide@1.27.0:
-    resolution: {integrity: sha512-m78hY+pL+dLrVvDEl68oYTdvjXW5Nz0ULDsUfbWfl7lzNDv1kFZGG+bAEm2eGEmUyvpZgAcyRwNhFljIErss3w==}
 
   luxon@3.3.0:
     resolution: {integrity: sha512-An0UCfG/rSiqtAIiBPO0Y9/zAnHUZxAMiCpTd5h2smgsj7GGmcenvrvww2cqNA8/4A5ZrD1gJpHN2mIHZQF+Mg==}
@@ -14391,10 +14401,10 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.5
 
-  fe-selector@0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@19.2.8))(react@18.3.1):
+  fe-selector@0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     optionalDependencies:
       react: 18.3.1
-      react-dom: 18.3.1(react@19.2.8)
+      react-dom: 18.3.1(react@18.3.1)
 
   fecha@4.2.3: {}
 
@@ -15671,8 +15681,6 @@ snapshots:
   lucide-react@0.460.0(react@18.3.1):
     dependencies:
       react: 18.3.1
-
-  lucide@1.27.0: {}
 
   luxon@3.3.0:
     optional: true

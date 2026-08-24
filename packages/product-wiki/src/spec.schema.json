@@ -3,12 +3,11 @@
   "$id": "true-north-product-wiki",
   "title": "ProductWiki module specification",
   "type": "object",
-  "required": ["id", "kind", "title", "document", "productStatus", "surfaceCoverage", "references"],
+  "required": ["id", "kind", "title", "productStatus", "surfaceCoverage", "references"],
   "properties": {
     "id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]*$" },
     "kind": { "enum": ["global", "domain", "module"] },
     "title": { "type": "string", "minLength": 1 },
-    "document": { "type": "string", "pattern": "^[a-z0-9_./-]+README\\.md$" },
     "parentId": { "type": "string" },
     "route": { "type": "string" },
     "positioning": { "type": "string" },
@@ -96,10 +95,11 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "heading"],
+        "required": ["id", "title", "body"],
         "properties": {
           "id": { "type": "string", "pattern": "^[a-z][a-z0-9.-]*$" },
-          "heading": { "type": "string", "minLength": 2 }
+          "title": { "type": "string", "minLength": 1 },
+          "body": { "type": "string" }
         },
         "additionalProperties": false
       }

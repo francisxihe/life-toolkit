@@ -40,7 +40,7 @@ product_meta:
 | --- | --- |
 | 产品已从「详情抽屉拆解」演进为「业务页只发起、会话页审阅」；会话聊天与拆解建议均改为本机编码 Agent，不再要求用户在应用内配置模型密钥。 | 1) 交付三栏 AI 会话壳；2) 从目标/任务发起绑定会话并产出拆解工作台块；3) 工作台内用当前 Agent 生成的建议完成采纳；4) 会话文本与拆解生成走当前选用且可用的本机 Agent；5) 可在对话区切换 Agent；6) 无 AI 设置页。 |
 
-参见 ProductWiki · [AI 会话](../../apps/prototype/product-wiki/ai/session/README.md)、[目标管理 · AI 拆解](../../apps/prototype/product-wiki/growth/goal/README.md)、[任务管理 · AI 拆解](../../apps/prototype/product-wiki/growth/task/README.md)。
+参见 ProductWiki · [AI 会话](../../packages/product-wiki/wiki/ai/session/spec.json)、[目标管理 · AI 拆解](../../packages/product-wiki/wiki/growth/goal/spec.json)、[任务管理 · AI 拆解](../../packages/product-wiki/wiki/growth/task/spec.json)。
 
 ---
 

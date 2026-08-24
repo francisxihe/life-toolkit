@@ -56,13 +56,12 @@ export type ProductRuleSpec = {
   productStatus: ProductStatus;
   surfaceCoverage: SurfaceCoverage;
 };
-export type ProductDocumentationReference = { id: ProductReferenceId; heading: string };
+export type ProductDocumentationReference = { id: ProductReferenceId; title: string; body: string };
 
 export type ProductSpec = {
   id: string;
   kind: ProductSpecKind;
   title: string;
-  document: string;
   parentId?: string;
   route?: string;
   positioning?: string;

@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Button, CloseOutlined, ConfigProvider, Empty, Flex, Tabs, Tag } from '@sue/design-web-react';
+import zhCN from '@sue/design-web-react/locale/zh_CN';
 import '../protocol';
 import type { TraceEntry, TraceSpan } from '../types';
 
 type LabToolId = 'request';
-
-const TOOLS: Array<{ id: LabToolId; label: string; title: string }> = [
-  { id: 'request', label: '请求', title: 'IPC 请求时间线' },
-];
 
 function formatDuration(ms?: number): string {
   if (ms == null) return '…';
@@ -43,9 +41,17 @@ function statusClass(entry: TraceEntry): string {
 }
 
 export function LabApp() {
+  return (
+    <ConfigProvider locale={zhCN}>
+      <LabShell />
+    </ConfigProvider>
+  );
+}
+
+function LabShell() {
   const [tool, setTool] = useState<LabToolId>('request');
   const [entries, setEntries] = useState<TraceEntry[]>([]);
-  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
 
   useEffect(() => {
     const api = window.labPanel;
@@ -56,79 +62,111 @@ export function LabApp() {
 
   const ordered = useMemo(() => [...entries].reverse(), [entries]);
 
+  useEffect(() => {
+    if (ordered.length === 0) {
+      setSelectedEntryId(null);
+      return;
+    }
+    setSelectedEntryId((current) =>
+      current && ordered.some((entry) => entry.id === current) ? current : ordered[0].id,
+    );
+  }, [ordered]);
+
+  const selected = ordered.find((entry) => entry.id === selectedEntryId);
+
+  const clearEntries = () => {
+    void window.labPanel?.clear().then((next) => {
+      if (Array.isArray(next)) setEntries(next);
+      else setEntries([]);
+    });
+  };
+
   return (
-    <>
-      <nav className="labToolRail" aria-label="Lab 工具">
-        {TOOLS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className="labToolTrigger"
-            title={item.title}
-            aria-pressed={tool === item.id}
-            onClick={() => setTool(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      </nav>
-      <section className="labPanel" aria-label="Lab">
-        {tool === 'request' ? (
-          <>
-            <header className="labHeader">
-              <div>
-                <strong>请求</strong>
-                <span>每条 IPC 一行，展开查看参数、响应与子 span</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  void window.labPanel?.clear().then((next) => {
-                    if (Array.isArray(next)) setEntries(next);
-                    else setEntries([]);
-                  });
-                  setExpanded({});
-                }}
-              >
-                清空
-              </button>
-            </header>
-            <div className="labContent">
-              {ordered.length === 0 ? (
-                <p className="labEmpty">还没有捕获到请求</p>
-              ) : (
-                ordered.map((entry) => (
-                  <article key={entry.id} className="labRow">
-                    <button
-                      type="button"
-                      className="labRowHeader"
-                      aria-expanded={Boolean(expanded[entry.id])}
-                      onClick={() =>
-                        setExpanded((current) => ({ ...current, [entry.id]: !current[entry.id] }))
-                      }
-                    >
-                      <i className={`labStatus ${statusClass(entry)}`} />
-                      {entry.kind === 'ipc' ? <span className="labMethod">{entry.method}</span> : null}
-                      <span className="labPath">{rowTitle(entry)}</span>
-                      <span className="labMeta">
-                        {formatDuration(entry.durationMs)} · {formatTime(entry.startedAt)}
-                      </span>
-                    </button>
-                    {expanded[entry.id] ? <EntryDetail entry={entry} /> : null}
-                  </article>
-                ))
-              )}
-            </div>
-          </>
-        ) : null}
-      </section>
-    </>
+    <Flex vertical container="full" className="labPanel" aria-label="Lab">
+      <Flex container="fixed" className="labHeader" align="center" gap={8}>
+        <Tabs
+          className="labTabs"
+          size="small"
+          activeKey={tool}
+          tabBarStyle={{ marginBottom: 0 }}
+          onChange={(key) => setTool(key as LabToolId)}
+          tabBarExtraContent={
+            <Button size="small" onClick={clearEntries}>
+              清空
+            </Button>
+          }
+          items={[{ key: 'request', label: '请求' }]}
+        />
+        <Button
+          type="text"
+          className="labHeaderClose"
+          title="关闭 Lab"
+          aria-label="关闭 Lab"
+          icon={<CloseOutlined />}
+          onClick={() => window.labPanel?.sendSetVisible(false)}
+        />
+      </Flex>
+      {tool === 'request' ? (
+        <RequestView
+          ordered={ordered}
+          selectedEntryId={selectedEntryId}
+          selected={selected}
+          onSelect={setSelectedEntryId}
+        />
+      ) : null}
+    </Flex>
+  );
+}
+
+function RequestView({
+  ordered,
+  selectedEntryId,
+  selected,
+  onSelect,
+}: {
+  ordered: TraceEntry[];
+  selectedEntryId: string | null;
+  selected: TraceEntry | undefined;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <Flex container="fill" className="labBody">
+      <Flex vertical container="fixed" className="labList">
+        {ordered.length === 0 ? (
+          <Empty description="还没有捕获到请求" />
+        ) : (
+          ordered.map((entry) => (
+            <button
+              key={entry.id}
+              type="button"
+              className={`labRow ${entry.id === selectedEntryId ? 'labRowSelected' : ''}`}
+              onClick={() => onSelect(entry.id)}
+            >
+              <i className={`labStatus ${statusClass(entry)}`} />
+              {entry.kind === 'ipc' ? <span className="labMethod">{entry.method}</span> : null}
+              <span className="labPath">{rowTitle(entry)}</span>
+              <span className="labMeta">{formatDuration(entry.durationMs)}</span>
+            </button>
+          ))
+        )}
+      </Flex>
+      <Flex vertical container="fill" className="labDetailPane">
+        {selected ? <EntryDetail entry={selected} /> : <Empty description="选择一条请求查看详情" />}
+      </Flex>
+    </Flex>
   );
 }
 
 function EntryDetail({ entry }: { entry: TraceEntry }) {
   return (
     <div className="labDetail">
+      <div className="labDetailHead">
+        {entry.kind === 'ipc' ? <Tag>{entry.method}</Tag> : <Tag>{entry.kind}</Tag>}
+        <span className="labPath">{rowTitle(entry)}</span>
+        <span className="labMeta">
+          {formatDuration(entry.durationMs)} · {formatTime(entry.startedAt)}
+        </span>
+      </div>
       {entry.streamId ? (
         <dl className="labBlock">
           <dt>streamId</dt>

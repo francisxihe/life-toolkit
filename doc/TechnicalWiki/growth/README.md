@@ -1,6 +1,6 @@
 # Growth 技术实现
 
-本目录记录 Growth 域的桌面端技术基线。产品语义、规则和路线图以 [Growth ProductWiki](../../../packages/product-wiki/wiki/growth/README.md) 为准；每个模块页区分“当前实现”和“产品表面 / 实现缺口”，避免把设计目标误写为已实现能力。
+本目录记录 Growth 域的桌面端技术基线。产品语义、规则和路线图以 [Growth ProductWiki](../../../packages/product-wiki/wiki/growth/spec.json) 为准；每个模块页区分“当前实现”和“产品表面 / 实现缺口”，避免把设计目标误写为已实现能力。
 
 交付顺序：**ProductWiki + desktop 表面 → 本目录技术方案 → Desktop 落地**。新项目不做数据兼容/迁移；本地测试数据可保留。
 

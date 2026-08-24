@@ -1,3 +1,4 @@
+import '@sue/design-web-react/dist/sue.css';
 import { bootstrapLabPanel } from '@true-north/dev-lab/panel';
 
 const lab = bootstrapLabPanel();

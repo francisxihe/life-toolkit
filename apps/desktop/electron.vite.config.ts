@@ -195,7 +195,7 @@ export default defineConfig({
           find: '@true-north/product-wiki/inspector/panel',
           replacement: path.resolve(
             currentDirPath,
-            '../../packages/product-wiki/src/inspector/panel.ts',
+            '../../packages/product-wiki/src/inspector/panel/index.ts',
           ),
         },
         {
@@ -235,7 +235,6 @@ export default defineConfig({
         'fe-selector',
         'marked',
         'dompurify',
-        'lucide',
       ],
       exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar'],
     },

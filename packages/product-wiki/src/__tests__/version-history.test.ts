@@ -54,7 +54,7 @@ describe('ProductWiki version history', () => {
 
   it('derives stable keys for current module, entity, field, view, and rule features', () => {
     const specification = {
-      id: 'growth.todo', kind: 'module', title: '待办管理', document: 'growth/todo/README.md', productStatus: 'roadmap', surfaceCoverage: 'complete', references: [],
+      id: 'growth.todo', kind: 'module', title: '待办管理', productStatus: 'roadmap', surfaceCoverage: 'complete', references: [],
       entities: [{ id: 'todo', name: '待办', productStatus: 'roadmap', surfaceCoverage: 'complete', fields: [{ id: 'title', name: '标题', type: 'string', required: true, description: '待办标题。', productStatus: 'roadmap', surfaceCoverage: 'complete' }] }],
       views: [{ id: 'today', name: '今日待办', desktopRoute: '/growth/todo/todo-today', scenario: '查看今日事项。', productStatus: 'roadmap', surfaceCoverage: 'complete', reference: 'growth.todo.view.today' }],
       rules: [{ id: 'related', name: '关联约束', entities: ['todo'], description: '维护关联。', reference: 'growth.todo.rule.related', productStatus: 'roadmap', surfaceCoverage: 'complete' }],

@@ -13,12 +13,12 @@ document_meta:
   target_audience: ['frontend_developer', 'desktop_service_developer', 'tester']
 
 scope:
-  product_change_source: 'apps/prototype/product-wiki/changelog.json'
+  product_change_source: 'packages/product-wiki/wiki/changelog.json'
   included_modules: ['growth.goal', 'growth.task', 'growth.todo', 'growth.track-time']
   supplemental_contract: '任务预计时长与专注时长均以整数秒传输和存储；待办无 in_progress，计时不改待办状态'
 ```
 
-桌面端进程、IPC、DTO/VO 与持久化分层参见 [TechnicalWiki · 架构总览](../TechnicalWiki/architecture/overview.md) 和 [TechnicalWiki · 数据流](../TechnicalWiki/architecture/data-flow.md)。产品规则参见 ProductWiki 的 [目标管理](../../apps/prototype/product-wiki/growth/goal/README.md)、[任务管理](../../apps/prototype/product-wiki/growth/task/README.md)、[待办管理](../../apps/prototype/product-wiki/growth/todo/README.md) 与 [专注与时间追踪](../../apps/prototype/product-wiki/growth/track-time/README.md)。长期实现边界见 [TechnicalWiki · Todo](../TechnicalWiki/growth/todo.md)、[Track-Time](../TechnicalWiki/growth/track-time.md)。
+桌面端进程、IPC、DTO/VO 与持久化分层参见 [TechnicalWiki · 架构总览](../TechnicalWiki/architecture/overview.md) 和 [TechnicalWiki · 数据流](../TechnicalWiki/architecture/data-flow.md)。产品规则参见 ProductWiki 的 [目标管理](../../packages/product-wiki/wiki/growth/goal/spec.json)、[任务管理](../../packages/product-wiki/wiki/growth/task/spec.json)、[待办管理](../../packages/product-wiki/wiki/growth/todo/spec.json) 与 [专注与时间追踪](../../packages/product-wiki/wiki/growth/track-time/spec.json)。长期实现边界见 [TechnicalWiki · Todo](../TechnicalWiki/growth/todo.md)、[Track-Time](../TechnicalWiki/growth/track-time.md)。
 
 ## 范围追溯与现状
 

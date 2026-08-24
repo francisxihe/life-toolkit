@@ -1,6 +1,6 @@
 # Todo 技术实现
 
-产品说明见 [待办管理 ProductWiki](../../../packages/product-wiki/wiki/growth/todo/README.md)。重复调度与 `repeat_todo` 见 [重复规则](./repeat.md)。
+产品说明见 [待办管理 ProductWiki](../../../packages/product-wiki/wiki/growth/todo/spec.json)。重复调度与 `repeat_todo` 见 [重复规则](./repeat.md)。
 
 ## 代码边界
 

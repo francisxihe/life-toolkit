@@ -1,6 +1,6 @@
 # Habit 技术实现
 
-产品说明见 [习惯管理 ProductWiki](../../../packages/product-wiki/wiki/growth/habit/README.md)。重复调度见 [重复规则](./repeat.md)。
+产品说明见 [习惯管理 ProductWiki](../../../packages/product-wiki/wiki/growth/habit/spec.json)。重复调度见 [重复规则](./repeat.md)。
 
 ## 代码边界
 

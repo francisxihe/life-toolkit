@@ -66,21 +66,34 @@ const exposeAPI = () => {
       contextBridge.exposeInMainWorld('productWikiInspectorBridge', {
         sendSelection: (payload) => ipcRenderer.send('product-wiki:selection', payload),
         sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
+        sendPageContext: (payload) => ipcRenderer.send('product-wiki:page-context', payload),
         onSetSelecting: (listener) => {
           const handler = (_event, selecting) => listener(selecting);
           ipcRenderer.on('product-wiki:set-selecting', handler);
           return () => ipcRenderer.removeListener('product-wiki:set-selecting', handler);
+        },
+        onSetHighlightVisible: (listener) => {
+          const handler = (_event, visible) => listener(Boolean(visible));
+          ipcRenderer.on('product-wiki:set-highlight-visible', handler);
+          return () => ipcRenderer.removeListener('product-wiki:set-highlight-visible', handler);
         },
         onCancel: (listener) => {
           const handler = () => listener();
           ipcRenderer.on('product-wiki:cancel', handler);
           return () => ipcRenderer.removeListener('product-wiki:cancel', handler);
         },
+        onRequestPageContext: (listener) => {
+          const handler = () => listener();
+          ipcRenderer.on('product-wiki:request-page-context', handler);
+          return () => ipcRenderer.removeListener('product-wiki:request-page-context', handler);
+        },
       });
       contextBridge.exposeInMainWorld('productWikiInspectorPanel', {
         sendSetSelecting: (selecting) => ipcRenderer.send('product-wiki:set-selecting', selecting),
+        sendSetHighlightVisible: (visible) => ipcRenderer.send('product-wiki:set-highlight-visible', visible),
         sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
         sendSetVisible: (visible) => ipcRenderer.send('product-wiki:set-visible', visible),
+        sendRequestPageContext: () => ipcRenderer.send('product-wiki:request-page-context'),
         sendSplitterDragStart: (edge, screenX) =>
           ipcRenderer.send('product-wiki:splitter-drag-start', { edge, screenX }),
         sendSplitterDragMove: (screenX) => ipcRenderer.send('product-wiki:splitter-drag-move', screenX),
@@ -89,6 +102,11 @@ const exposeAPI = () => {
           const handler = (_event, payload) => listener(payload);
           ipcRenderer.on('product-wiki:selection', handler);
           return () => ipcRenderer.removeListener('product-wiki:selection', handler);
+        },
+        onPageContext: (listener) => {
+          const handler = (_event, payload) => listener(payload);
+          ipcRenderer.on('product-wiki:page-context', handler);
+          return () => ipcRenderer.removeListener('product-wiki:page-context', handler);
         },
         onCancel: (listener) => {
           const handler = () => listener();
@@ -104,6 +122,7 @@ const exposeAPI = () => {
       contextBridge.exposeInMainWorld('labPanel', {
         snapshot: () => ipcRenderer.invoke('lab:snapshot'),
         clear: () => ipcRenderer.invoke('lab:clear'),
+        sendSetVisible: (visible) => ipcRenderer.send('lab:set-visible', visible),
         onUpdate: (listener) => {
           const handler = (_event, entries) => listener(entries);
           ipcRenderer.on('lab:update', handler);

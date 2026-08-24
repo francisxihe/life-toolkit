@@ -5,10 +5,10 @@ import { fileURLToPath } from 'node:url';
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = join(packageRoot, '../..');
 const wikiRoot = join(packageRoot, 'wiki');
-const schemaPath = join(wikiRoot, 'spec.schema.json');
-const changelogSchemaPath = join(wikiRoot, 'changelog.schema.json');
+const srcRoot = join(packageRoot, 'src');
+const schemaPath = join(srcRoot, 'spec.schema.json');
+const changelogSchemaPath = join(srcRoot, 'changelog.schema.json');
 const changelogPath = join(wikiRoot, 'changelog.json');
-const generatedChangelogPath = join(wikiRoot, 'CHANGELOG.md');
 const generatedReferencesPath = join(packageRoot, 'src/references.generated.ts');
 const desktopRenderRoot = join(repoRoot, 'apps/desktop/src/render');
 const write = process.argv.includes('--write') || process.argv.includes('sync');
@@ -107,139 +107,20 @@ function validateSpecification(specification, path) {
     errors.push(`${label}: specification must be an object`);
     return;
   }
-  for (const key of ['id', 'kind', 'title', 'document']) required(specification, key, 'string', label);
+  for (const key of ['id', 'kind', 'title']) required(specification, key, 'string', label);
   if (!Array.isArray(specification.references) || specification.references.length === 0) {
     errors.push(`${label}: references must be a non-empty array`);
   } else {
     specification.references.forEach((reference, index) => {
       required(reference, 'id', 'string', `${label}.references[${index}]`);
-      required(reference, 'heading', 'string', `${label}.references[${index}]`);
+      required(reference, 'title', 'string', `${label}.references[${index}]`);
+      required(reference, 'body', 'string', `${label}.references[${index}]`);
     });
   }
   for (const collection of ['dependencies', 'entities', 'views', 'rules']) {
     if (specification[collection] !== undefined && !Array.isArray(specification[collection])) {
       errors.push(`${label}: ${collection} must be an array when provided`);
     }
-  }
-}
-
-function escapePattern(value) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function marker(reference) {
-  return `<!-- product-ref: ${reference} -->`;
-}
-
-function statusLabel(status) {
-  return ({ roadmap: '路线图', released: '已发布', deprecated: '已废弃' })[status] || status;
-}
-
-function coverageLabel(coverage) {
-  return ({ none: '未覆盖', partial: '部分覆盖', complete: '完整覆盖' })[coverage] || coverage;
-}
-
-function productTable(specification) {
-  const lines = [
-    '<!-- product-wiki:managed:start -->',
-    '## 产品规格（受管）',
-    '',
-    `- 标识：\`${specification.id}\``,
-    `- 类型：${specification.kind}`,
-    `- 产品状态：${statusLabel(specification.productStatus)}`,
-    `- 表面覆盖：${coverageLabel(specification.surfaceCoverage)}`,
-  ];
-  if (specification.route) lines.push(`- 产品入口：\`${specification.route}\``);
-  if (specification.positioning) lines.push(`- 产品定位：${specification.positioning}`);
-  if (specification.dependencies?.length) lines.push(`- 依赖：${specification.dependencies.map((item) => `\`${item}\``).join('、')}`);
-
-  if (specification.entities?.length) {
-    lines.push('', '### 产品对象', '', '| 对象 | 产品状态 | 表面覆盖 |', '| --- | --- | --- |');
-    specification.entities.forEach((entity) => lines.push(`| ${entity.name} | ${statusLabel(entity.productStatus)} | ${coverageLabel(entity.surfaceCoverage)} |`));
-    lines.push('', '### 字段与枚举', '', '| 实体 | 字段 | 类型 | 必填 | 可选值 | 产品状态 | 表面覆盖 | 说明 |', '| --- | --- | --- | --- | --- | --- | --- |');
-    specification.entities.forEach((entity) => {
-      entity.fields.forEach((field, index) => {
-        lines.push(`| ${index === 0 ? entity.name : ''} | \`${field.id}\` | ${field.type} | ${field.required ? '是' : '否'} | ${(field.values || []).join(' / ')} | ${statusLabel(field.productStatus)} | ${coverageLabel(field.surfaceCoverage)} | ${field.description} |`);
-      });
-    });
-  }
-
-  if (specification.views?.length) {
-    lines.push('', '### 视图矩阵', '', '| 视图 | 桌面路由 | 场景 | 产品状态 | 表面覆盖 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
-    specification.views.forEach((view) => lines.push(`| ${view.name} | \`${view.desktopRoute}\` | ${view.scenario} | ${statusLabel(view.productStatus)} | ${coverageLabel(view.surfaceCoverage)} | \`${view.reference}\` |`));
-  }
-
-  if (specification.rules?.length) {
-    lines.push('', '### 规则索引', '', '| 规则 | 实体 | 说明 | 产品状态 | 表面覆盖 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
-    specification.rules.forEach((rule) => lines.push(`| ${rule.name} | ${rule.entities.join('、')} | ${rule.description} | ${statusLabel(rule.productStatus)} | ${coverageLabel(rule.surfaceCoverage)} | \`${rule.reference}\` |`));
-  }
-
-  lines.push('', '<!-- product-wiki:managed:end -->', '');
-  return lines.join('\n');
-}
-
-function insertMarkers(markdown, specification) {
-  const referencesByHeading = new Map();
-  specification.references.forEach((reference) => {
-    const items = referencesByHeading.get(reference.heading) || [];
-    items.push(reference.id);
-    referencesByHeading.set(reference.heading, items);
-  });
-
-  let output = markdown;
-  for (const [heading, references] of referencesByHeading) {
-    const missing = references.filter((reference) => !output.includes(marker(reference)));
-    if (!missing.length) continue;
-    const match = new RegExp(`^${escapePattern(heading)}\\s*$`, 'm').exec(output);
-    if (!match || match.index === undefined) {
-      errors.push(`${specification.document}: cannot insert references for missing heading "${heading}"`);
-      continue;
-    }
-    output = `${output.slice(0, match.index)}${missing.map(marker).join('\n')}\n${output.slice(match.index)}`;
-  }
-  return output;
-}
-
-function syncDocument(markdown, specification) {
-  let output = insertMarkers(markdown, specification);
-  const generated = productTable(specification);
-  const managed = /<!-- product-wiki:managed:start -->[\s\S]*?<!-- product-wiki:managed:end -->\n?/;
-  if (managed.test(output)) return output.replace(managed, generated);
-  const title = /^# .+\n?/m.exec(output);
-  if (!title || title.index === undefined) {
-    errors.push(`${specification.document}: document needs one level-one title`);
-    return output;
-  }
-  const position = title.index + title[0].length;
-  return `${output.slice(0, position)}\n${generated}\n${output.slice(position)}`;
-}
-
-function checkDocument(markdown, specification) {
-  const knownReferences = new Set(specification.references.map((reference) => reference.id));
-  const foundReferences = [...markdown.matchAll(/<!--\s*product-ref:\s*([a-z][a-z0-9.-]*)\s*-->/g)].map((match) => match[1]);
-  specification.references.forEach((reference) => {
-    const count = foundReferences.filter((item) => item === reference.id).length;
-    if (count !== 1) errors.push(`${specification.document}: ${reference.id} must have exactly one marker (found ${count})`);
-  });
-  foundReferences.forEach((reference) => {
-    if (!knownReferences.has(reference)) errors.push(`${specification.document}: ${reference} has no specification entry`);
-  });
-  const headings = new Set();
-  specification.references.forEach((reference) => {
-    if (headings.has(reference.heading)) errors.push(`${specification.document}: references must not share heading ${reference.heading}`);
-    headings.add(reference.heading);
-    const expected = `${marker(reference.id)}\n${reference.heading}`;
-    if (!markdown.includes(expected)) errors.push(`${specification.document}: ${reference.id} marker must immediately precede ${reference.heading}`);
-  });
-  const managedless = markdown.replace(/<!-- product-wiki:managed:start -->[\s\S]*?<!-- product-wiki:managed:end -->/g, '');
-  const forbidden = [/^#{1,6}\s*.*(?:API|接口契约|技术架构|数据模型|核心字段|视图矩阵（当前状态）)/m, /^---\s*$/m];
-  forbidden.forEach((pattern) => {
-    if (pattern.test(managedless)) errors.push(`${specification.document}: contains legacy technical or YAML content outside the managed block`);
-  });
-  const expectedManaged = productTable(specification);
-  const existingManaged = markdown.match(/<!-- product-wiki:managed:start -->[\s\S]*?<!-- product-wiki:managed:end -->\n?/);
-  if (!existingManaged || existingManaged[0].trim() !== expectedManaged.trim()) {
-    errors.push(`${specification.document}: managed product block is stale; run product-wiki:sync`);
   }
 }
 
@@ -279,15 +160,6 @@ function collectActiveFeatures(specifications) {
   return features;
 }
 
-function compareVersionsDescending(left, right) {
-  const leftParts = left.slice(1).split('.').map(Number);
-  const rightParts = right.slice(1).split('.').map(Number);
-  for (let index = 0; index < 3; index += 1) {
-    if (leftParts[index] !== rightParts[index]) return rightParts[index] - leftParts[index];
-  }
-  return 0;
-}
-
 function latestChange(changes) {
   return changes.reduce((latest, change, index) => {
     if (!latest || latest.change.date < change.date || (latest.change.date === change.date && latest.index < index)) return { change, index };
@@ -319,25 +191,6 @@ function validateChangeLog(history, activeFeatures) {
     const previous = latestChange(earlier);
     if (previous && previous.date > change.date) errors.push(`product-wiki/changelog.json.changes[${index}]: feature history must be chronological`);
   });
-}
-
-function changelogTable(history) {
-  const versions = [...new Set(history.changes.map((change) => change.version))].sort(compareVersionsDescending);
-  const eventLabel = { baseline: '基线', introduced: '新增', changed: '修改', released: '发布', deprecated: '废弃', removed: '移除' };
-  const lines = ['# ProductWiki Changelog', '', '> 此文件由 `scripts/product-wiki.mjs` 生成，请编辑 `changelog.json`。', ''];
-  versions.forEach((version) => {
-    lines.push(`## ${version}`, '', '| 日期 | 模块 | 层级 | 功能 | 事件 | 产品状态 | 表面覆盖 | 摘要 |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
-    history.changes
-      .filter((change) => change.version === version)
-      .slice()
-      .sort((left, right) => left.feature.moduleTitle.localeCompare(right.feature.moduleTitle, 'zh-CN') || left.date.localeCompare(right.date) || left.feature.name.localeCompare(right.feature.name, 'zh-CN'))
-      .forEach((change) => {
-        const name = change.feature.parentName ? `${change.feature.parentName}.${change.feature.name}` : change.feature.name;
-        lines.push(`| ${change.date} | ${change.feature.moduleTitle} | ${change.feature.scope} | ${name} | ${eventLabel[change.event]} | ${statusLabel(change.productStatus)} | ${coverageLabel(change.surfaceCoverage)} | ${change.summary.replace(/\|/g, '\\|')} |`);
-      });
-    lines.push('');
-  });
-  return `${lines.join('\n')}\n`;
 }
 
 function versionResult(history, version) {
@@ -449,29 +302,12 @@ specifications.forEach(({ specification }) => {
       if (!viewIds.has(view)) errors.push(`${specification.id}: rule ${rule.id} references undefined local view ${view}`);
     });
   });
-  const documentPath = join(wikiRoot, specification.document);
-  if (!existsSync(documentPath)) {
-    errors.push(`${specification.id}: document ${specification.document} does not exist`);
-    return;
-  }
-  const current = readFileSync(documentPath, 'utf8');
-  const synced = syncDocument(current, specification);
-  if (write && synced !== current) writeFileSync(documentPath, synced, 'utf8');
-  if (!write) checkDocument(current, specification);
 });
 
 const expectedReferences = generatedReferences(allReferences);
 if (write) writeFileSync(generatedReferencesPath, expectedReferences, 'utf8');
 else if (!existsSync(generatedReferencesPath) || readFileSync(generatedReferencesPath, 'utf8') !== expectedReferences) {
   errors.push('src/references.generated.ts is stale; run product-wiki:sync');
-}
-
-if (history) {
-  const expectedChangelog = changelogTable(history);
-  if (write) writeFileSync(generatedChangelogPath, expectedChangelog, 'utf8');
-  else if (!existsSync(generatedChangelogPath) || readFileSync(generatedChangelogPath, 'utf8') !== expectedChangelog) {
-    errors.push('product-wiki/CHANGELOG.md is stale; run product-wiki:sync');
-  }
 }
 
 validateDesktopSurfaces(specifications.map(({ specification }) => specification), seenReferences);

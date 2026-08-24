@@ -1,6 +1,6 @@
 # 重复规则技术实现
 
-产品说明见 [重复规则 ProductWiki](../../../packages/product-wiki/wiki/growth/repeat/README.md)。
+产品说明见 [重复规则 ProductWiki](../../../packages/product-wiki/wiki/growth/repeat/spec.json)。
 
 重复分为两层：**共享调度实体 `repeat`**（Desktop 持久化）与 **规则算法包** `@true-north/components-repeat`（不落库）。不单独注册 RouteController；由 `repeat_todo` 与 Habit 关联使用。
 

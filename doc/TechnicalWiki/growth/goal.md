@@ -1,6 +1,6 @@
 # Goal 技术实现
 
-产品说明见 [目标管理 ProductWiki](../../../packages/product-wiki/wiki/growth/goal/README.md)。
+产品说明见 [目标管理 ProductWiki](../../../packages/product-wiki/wiki/growth/goal/spec.json)。
 
 ## 当前代码边界
 

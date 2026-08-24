@@ -6,8 +6,11 @@ const { ipcMain, WebContentsView } = electron;
 
 const CHANNELS = {
   selection: 'product-wiki:selection',
+  pageContext: 'product-wiki:page-context',
+  requestPageContext: 'product-wiki:request-page-context',
   cancel: 'product-wiki:cancel',
   setSelecting: 'product-wiki:set-selecting',
+  setHighlightVisible: 'product-wiki:set-highlight-visible',
   setVisible: 'product-wiki:set-visible',
   splitterCapturing: 'product-wiki:splitter-capturing',
   splitterDragStart: 'product-wiki:splitter-drag-start',
@@ -30,9 +33,13 @@ type ContentsView = InstanceType<typeof WebContentsView>;
 
 type HostIpc = {
   onSelection: (payload: unknown) => void;
+  onPageContext: (payload: unknown) => void;
+  onRequestPageContext: () => void;
   onCancel: () => void;
   onSetSelecting: (selecting: boolean) => void;
+  onSetHighlightVisible: (visible: boolean) => void;
   onSetVisible: (visible: boolean) => void;
+  onSetLabVisible: (visible: boolean) => void;
   onDragStart: (screenX?: number) => void;
   onDragMove: (screenX: number) => void;
   onDragEnd: (screenX?: number) => void;
@@ -111,6 +118,23 @@ export function createProductWikiInspectorHost(options: {
   const inspectorContents = () => inspectorView?.webContents;
   const labContents = () => labView?.webContents;
   const handleContents = () => handleView?.webContents;
+  const broadcastCancel = () => {
+    sendToWebContents(appContents(), CHANNELS.cancel);
+    sendToWebContents(inspectorContents(), CHANNELS.cancel);
+    sendToWebContents(appContents(), CHANNELS.setSelecting, false);
+  };
+  const requestPageContext = () => {
+    sendToWebContents(appContents(), CHANNELS.requestPageContext);
+  };
+  const sendToInspector = (channel: string, payload?: unknown) => {
+    const contents = inspectorContents();
+    const send = () => sendToWebContents(contents, channel, payload);
+    if (contents?.isLoading()) contents.once('did-finish-load', send);
+    else send();
+  };
+  const cancelWikiIfLeaving = (next: SideMode) => {
+    if (sideMode === 'wiki' && next !== 'wiki') broadcastCancel();
+  };
   const isDevToolsOpen = () => hostedDevToolsOpen || sideMode === 'devtools';
   const isVisible = () => sideMode === 'wiki' && Boolean(inspectorView);
   const getSideMode = () => sideMode;
@@ -144,12 +168,11 @@ export function createProductWikiInspectorHost(options: {
     const labOpen = sideMode === 'lab';
     const dtOpen = sideMode === 'devtools';
     const sideOpen = wikiOpen || labOpen || dtOpen;
-    const handle = sideOpen ? HANDLE_WIDTH : 0;
     let side = sideOpen ? clamp(Math.round(sideWidth), minSide(), MAX_SIDE_WIDTH) : 0;
-    let app = contentWidth - handle - side;
+    let app = contentWidth - side;
     if (sideOpen && app < MIN_APP_WIDTH) {
       side = Math.max(minSide(), side - (MIN_APP_WIDTH - app));
-      app = contentWidth - handle - side;
+      app = contentWidth - side;
     }
     app = Math.max(0, app);
     appView.setBounds({ x: 0, y: 0, width: app, height: contentHeight });
@@ -157,11 +180,11 @@ export function createProductWikiInspectorHost(options: {
       handleView.setVisible(sideOpen);
       handleView.setBounds(
         sideOpen
-          ? { x: app, y: 0, width: HANDLE_WIDTH, height: contentHeight }
+          ? { x: Math.max(0, app - HANDLE_WIDTH), y: 0, width: HANDLE_WIDTH, height: contentHeight }
           : { x: contentWidth, y: 0, width: 0, height: contentHeight },
       );
     }
-    const sideX = app + handle;
+    const sideX = app;
     if (inspectorView) {
       inspectorView.setVisible(wikiOpen);
       inspectorView.setBounds({
@@ -196,8 +219,7 @@ export function createProductWikiInspectorHost(options: {
     if (!window || window.isDestroyed() || !Number.isFinite(screenX)) return;
     const [contentWidth] = window.getContentSize();
     const cursorX = screenX - window.getContentBounds().x;
-    const handle = HANDLE_WIDTH;
-    sideWidth = clamp(contentWidth - handle - cursorX, minSide(), MAX_SIDE_WIDTH);
+    sideWidth = clamp(contentWidth - cursorX, minSide(), MAX_SIDE_WIDTH);
     layout();
   };
 
@@ -240,6 +262,7 @@ export function createProductWikiInspectorHost(options: {
   };
 
   const onDevToolsOpened = () => {
+    cancelWikiIfLeaving('devtools');
     hostedDevToolsOpen = true;
     sideMode = 'devtools';
     layout();
@@ -330,11 +353,15 @@ export function createProductWikiInspectorHost(options: {
       if (handleView) window.contentView.addChildView(handleView);
       if (labView) window.contentView.addChildView(labView);
       layout();
+      if (isVisible()) requestPageContext();
       return;
     }
 
     inspectorView = new WebContentsView({ webPreferences: viewPrefs() });
     inspectorView.webContents.loadURL(inspectorUrl());
+    inspectorView.webContents.on('did-finish-load', () => {
+      if (sideMode === 'wiki') requestPageContext();
+    });
     window.contentView.addChildView(inspectorView);
     if (labView) window.contentView.addChildView(labView);
     if (handleView) window.contentView.addChildView(handleView);
@@ -343,6 +370,7 @@ export function createProductWikiInspectorHost(options: {
   };
 
   const setSideMode = (mode: SideMode) => {
+    cancelWikiIfLeaving(mode);
     if (mode === 'devtools') {
       toggleDevTools(true);
       return;
@@ -357,6 +385,7 @@ export function createProductWikiInspectorHost(options: {
       attach();
     }
     layout();
+    if (mode === 'wiki') requestPageContext();
     options.onChanged?.();
   };
 
@@ -387,6 +416,7 @@ export function createProductWikiInspectorHost(options: {
       options.onChanged?.();
       return;
     }
+    cancelWikiIfLeaving('devtools');
     inspectorView?.setVisible(false);
     labView?.setVisible(false);
     try {
@@ -404,20 +434,27 @@ export function createProductWikiInspectorHost(options: {
   hostIpc = {
     onSelection: (payload) => {
       setVisible(true);
-      const contents = inspectorContents();
-      const send = () => sendToWebContents(contents, CHANNELS.selection, payload);
-      if (contents?.isLoading()) contents.once('did-finish-load', send);
-      else send();
+      sendToInspector(CHANNELS.selection, payload);
+    },
+    onPageContext: (payload) => {
+      sendToInspector(CHANNELS.pageContext, payload);
+    },
+    onRequestPageContext: () => {
+      requestPageContext();
     },
     onCancel: () => {
-      sendToWebContents(appContents(), CHANNELS.cancel);
-      sendToWebContents(inspectorContents(), CHANNELS.cancel);
-      sendToWebContents(appContents(), CHANNELS.setSelecting, false);
+      broadcastCancel();
     },
     onSetSelecting: (selecting) => {
       sendToWebContents(appContents(), CHANNELS.setSelecting, selecting);
     },
+    onSetHighlightVisible: (visible) => {
+      sendToWebContents(appContents(), CHANNELS.setHighlightVisible, Boolean(visible));
+    },
     onSetVisible: (visible) => setVisible(Boolean(visible)),
+    onSetLabVisible: (visible) => {
+      if (!visible) setSideMode('hidden');
+    },
     onDragStart: startDrag,
     onDragMove: applyDrag,
     onDragEnd: endDrag,
@@ -426,9 +463,15 @@ export function createProductWikiInspectorHost(options: {
   if (!inspectorIpcRegistered) {
     inspectorIpcRegistered = true;
     ipcMain.on(CHANNELS.selection, (_event, payload) => hostIpc?.onSelection(payload));
+    ipcMain.on(CHANNELS.pageContext, (_event, payload) => hostIpc?.onPageContext(payload));
+    ipcMain.on(CHANNELS.requestPageContext, () => hostIpc?.onRequestPageContext());
     ipcMain.on(CHANNELS.cancel, () => hostIpc?.onCancel());
     ipcMain.on(CHANNELS.setSelecting, (_event, selecting: boolean) => hostIpc?.onSetSelecting(selecting));
+    ipcMain.on(CHANNELS.setHighlightVisible, (_event, visible: boolean) =>
+      hostIpc?.onSetHighlightVisible(visible),
+    );
     ipcMain.on(CHANNELS.setVisible, (_event, visible: boolean) => hostIpc?.onSetVisible(visible));
+    ipcMain.on(labChannel.setVisible, (_event, visible: boolean) => hostIpc?.onSetLabVisible(visible));
     ipcMain.on(CHANNELS.splitterDragStart, (_event, payload) => {
       const screenX = typeof payload === 'number' ? payload : Number(payload?.screenX);
       hostIpc?.onDragStart(screenX);

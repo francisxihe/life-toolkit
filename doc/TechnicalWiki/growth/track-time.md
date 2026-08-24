@@ -1,6 +1,6 @@
 # Track-Time 技术实现
 
-产品说明见 [专注与时间追踪 ProductWiki](../../../packages/product-wiki/wiki/growth/track-time/README.md)。
+产品说明见 [专注与时间追踪 ProductWiki](../../../packages/product-wiki/wiki/growth/track-time/spec.json)。
 
 ## 当前代码边界
 

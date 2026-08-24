@@ -1,6 +1,6 @@
 # True North v0.1.0 PRD
 
-> 版本定位：对齐 `apps/prototype/product-wiki` 现有设计，交付基础可用的 Growth 套件 (Goal / Task / Todo / Habit) 以及共用交互骨架。本 PRD 仅描述 v0.1.0 范围，后续增量功能在模块级 PRD/TDD 中扩展。
+> 版本定位：对齐 `packages/product-wiki/wiki` 现有设计，交付基础可用的 Growth 套件 (Goal / Task / Todo / Habit) 以及共用交互骨架。本 PRD 仅描述 v0.1.0 范围，后续增量功能在模块级 PRD/TDD 中扩展。
 
 ---
 
@@ -37,7 +37,7 @@
 | Todo | 状态精简为三态；去掉开始操作；区间计划可关联全局专注计时 |
 | TrackTime | 支持关联待办；待办入口仅区间计划可管理计时，历史记录只读 |
 
-参见 ProductWiki · [待办管理](../../apps/prototype/product-wiki/growth/todo/README.md)、[专注与时间追踪](../../apps/prototype/product-wiki/growth/track-time/README.md)。
+参见 ProductWiki · [待办管理](../../packages/product-wiki/wiki/growth/todo/spec.json)、[专注与时间追踪](../../packages/product-wiki/wiki/growth/track-time/spec.json)。
 
 ---
 
@@ -116,4 +116,4 @@
 
 ## 6. 附录
 
-- 设计稿：参考 `apps/prototype/product-wiki/growth` 各模块的视图矩阵与交互描述。
+- 设计稿：参考 `packages/product-wiki/wiki/growth` 各模块的视图矩阵与交互描述。

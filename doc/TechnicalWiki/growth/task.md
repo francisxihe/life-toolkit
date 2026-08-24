@@ -1,6 +1,6 @@
 # Task 技术实现
 
-产品说明见 [任务管理 ProductWiki](../../../packages/product-wiki/wiki/growth/task/README.md)。
+产品说明见 [任务管理 ProductWiki](../../../packages/product-wiki/wiki/growth/task/spec.json)。
 
 ## 当前代码边界
 

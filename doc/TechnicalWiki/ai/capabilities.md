@@ -6,7 +6,7 @@ document_meta:
   last_updated: '2026-08-11'
 ```
 
-产品语义参见 ProductWiki · [目标管理 · AI 拆解](../../../packages/product-wiki/wiki/growth/goal/README.md)。平台抽象参见 [platform.md](./platform.md)。
+产品语义参见 ProductWiki · [目标管理 · AI 拆解](../../../packages/product-wiki/wiki/growth/goal/spec.json)。平台抽象参见 [platform.md](./platform.md)。
 
 ## 1. `goal.decompose`（v0.2.0 交付）
 
