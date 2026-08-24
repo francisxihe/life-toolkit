@@ -1,6 +1,6 @@
 import type { ProductRef } from './reference';
 import { collectProductRefsForRoute } from './route-refs';
-import { resolveProductReferenceFromSpecs, specSourcePath as defaultSpecSourcePath } from './resolve-reference';
+import { resolveProductReferenceFromSpecs } from './resolve-reference';
 import type { ProductChangeLog, ProductChangeLogEntry, ProductSpec, ProductWikiData, ResolvedProductReference } from './types';
 import { getProductVersionChanges, getProductVersions } from './version-history';
 
@@ -20,7 +20,6 @@ export function createWikiRuntime(wiki: ProductWikiData): WikiRuntime {
   const productSpecsById = new Map(productSpecs.map((spec) => [spec.id, spec]));
   const productHistory = wiki.history;
   const productVersions = getProductVersions(productHistory);
-  const specSourcePath = wiki.specSourcePath ?? defaultSpecSourcePath;
 
   return {
     productSpecs,
@@ -31,7 +30,6 @@ export function createWikiRuntime(wiki: ProductWikiData): WikiRuntime {
     productEnumValues: (moduleId, entityId, fieldId) =>
       productSpecsById.get(moduleId)?.entities?.find((entity) => entity.id === entityId)?.fields.find((field) => field.id === fieldId)?.values || [],
     resolveProductRefsForRoute: (route, visibleRefs) => collectProductRefsForRoute(productSpecs, route, visibleRefs),
-    resolveProductReference: (reference) =>
-      resolveProductReferenceFromSpecs(productSpecs, productHistory, reference, specSourcePath),
+    resolveProductReference: (reference) => resolveProductReferenceFromSpecs(productSpecs, productHistory, reference),
   };
 }

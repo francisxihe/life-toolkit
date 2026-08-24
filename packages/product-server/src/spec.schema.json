@@ -22,7 +22,7 @@
   "additionalProperties": false,
   "$defs": {
     "productStatus": { "enum": ["roadmap", "released", "deprecated"] },
-    "surfaceCoverage": { "enum": ["none", "partial", "complete"] },
+    "surfaceCoverage": { "enum": ["none", "complete"] },
     "entities": {
       "type": "array",
       "items": {

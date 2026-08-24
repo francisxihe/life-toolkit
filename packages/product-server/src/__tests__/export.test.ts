@@ -1,5 +1,5 @@
 import type { ProductChangeLogEntry, ProductSpec, ResolvedProductReference } from '../types';
-import { changelogJson, changelogMarkdown, specificationMarkdown, topicJson, topicMarkdown } from '../export/format';
+import { changelogJson, changelogMarkdown, coverageLabel, specificationMarkdown, statusLabel, topicJson, topicMarkdown } from '../export/format';
 
 const domain: ProductSpec = {
   id: 'growth',
@@ -27,7 +27,7 @@ const topic: ResolvedProductReference = {
   id: 'growth.habit.overview',
   title: '目标与价值',
   module: '习惯管理',
-  path: 'packages/product-wiki/wiki/growth/habit/spec.json',
+  breadcrumb: ['习惯管理', '目标与价值'],
   markdown: '习惯服务长期目标。',
   spec: moduleSpec,
   productStatus: 'roadmap',
@@ -41,7 +41,7 @@ const changes: ProductChangeLogEntry[] = [
     event: 'changed',
     summary: '调整习惯列表。',
     productStatus: 'roadmap',
-    surfaceCoverage: 'partial',
+    surfaceCoverage: 'complete',
     feature: {
       key: 'growth.habit:view:list',
       scope: 'view',
@@ -59,8 +59,12 @@ describe('ProductWiki export', () => {
       id: 'growth.habit.overview',
       title: '目标与价值',
       module: '习惯管理',
+      breadcrumb: ['习惯管理', '目标与价值'],
       body: '习惯服务长期目标。',
     });
+    expect(statusLabel('roadmap')).toBe('规划中');
+    expect(coverageLabel('complete')).toBe('实现');
+    expect(coverageLabel('none')).toBe('未实现');
   });
 
   it('exports a module with spec tables and generated child list', () => {

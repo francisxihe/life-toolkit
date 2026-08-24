@@ -14,11 +14,11 @@ export function childProductSpecs(specs: readonly ProductSpec[], parentId: strin
 }
 
 export function statusLabel(status: ProductStatus): string {
-  return ({ roadmap: '路线图', released: '已发布', deprecated: '已废弃' })[status] || status;
+  return ({ roadmap: '规划中', released: '已发布', deprecated: '已废弃' })[status];
 }
 
 export function coverageLabel(coverage: SurfaceCoverage): string {
-  return ({ none: '未覆盖', partial: '部分覆盖', complete: '完整覆盖' })[coverage] || coverage;
+  return coverage === 'complete' ? '实现' : '未实现';
 }
 
 export function eventLabel(event: ProductChangeLogEntry['event']): string {
@@ -41,7 +41,7 @@ export function specificationMarkdown(specification: ProductSpec, allSpecs: read
     `- 标识：\`${specification.id}\``,
     `- 类型：${specification.kind}`,
     `- 产品状态：${statusLabel(specification.productStatus)}`,
-    `- 表面覆盖：${coverageLabel(specification.surfaceCoverage)}`,
+    `- 实现：${coverageLabel(specification.surfaceCoverage)}`,
   ];
   if (specification.route) lines.push(`- 产品入口：\`${specification.route}\``);
   if (specification.positioning) lines.push(`- 产品定位：${specification.positioning}`);
@@ -50,11 +50,11 @@ export function specificationMarkdown(specification: ProductSpec, allSpecs: read
   }
 
   if (specification.entities?.length) {
-    lines.push('', '### 产品对象', '', '| 对象 | 产品状态 | 表面覆盖 |', '| --- | --- | --- |');
+    lines.push('', '### 产品对象', '', '| 对象 | 产品状态 | 实现 |', '| --- | --- | --- |');
     specification.entities.forEach((entity) => {
       lines.push(`| ${entity.name} | ${statusLabel(entity.productStatus)} | ${coverageLabel(entity.surfaceCoverage)} |`);
     });
-    lines.push('', '### 字段与枚举', '', '| 实体 | 字段 | 类型 | 必填 | 可选值 | 产品状态 | 表面覆盖 | 说明 |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
+    lines.push('', '### 字段与枚举', '', '| 实体 | 字段 | 类型 | 必填 | 可选值 | 产品状态 | 实现 | 说明 |', '| --- | --- | --- | --- | --- | --- | --- | --- |');
     specification.entities.forEach((entity) => {
       entity.fields.forEach((field, index) => {
         lines.push(`| ${index === 0 ? entity.name : ''} | \`${field.id}\` | ${field.type} | ${field.required ? '是' : '否'} | ${(field.values || []).join(' / ')} | ${statusLabel(field.productStatus)} | ${coverageLabel(field.surfaceCoverage)} | ${field.description} |`);
@@ -63,14 +63,14 @@ export function specificationMarkdown(specification: ProductSpec, allSpecs: read
   }
 
   if (specification.views?.length) {
-    lines.push('', '### 视图矩阵', '', '| 视图 | 桌面路由 | 场景 | 产品状态 | 表面覆盖 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
+    lines.push('', '### 视图矩阵', '', '| 视图 | 桌面路由 | 场景 | 产品状态 | 实现 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
     specification.views.forEach((view) => {
       lines.push(`| ${view.name} | \`${view.desktopRoute}\` | ${view.scenario} | ${statusLabel(view.productStatus)} | ${coverageLabel(view.surfaceCoverage)} | \`${view.reference}\` |`);
     });
   }
 
   if (specification.rules?.length) {
-    lines.push('', '### 规则索引', '', '| 规则 | 实体 | 说明 | 产品状态 | 表面覆盖 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
+    lines.push('', '### 规则索引', '', '| 规则 | 实体 | 说明 | 产品状态 | 实现 | 产品引用 |', '| --- | --- | --- | --- | --- | --- |');
     specification.rules.forEach((rule) => {
       lines.push(`| ${rule.name} | ${rule.entities.join('、')} | ${rule.description} | ${statusLabel(rule.productStatus)} | ${coverageLabel(rule.surfaceCoverage)} | \`${rule.reference}\` |`);
     });
@@ -103,7 +103,7 @@ export function topicJson(topic: ResolvedProductReference): string {
     id: topic.id,
     title: topic.title,
     module: topic.module,
-    path: topic.path,
+    breadcrumb: topic.breadcrumb,
     body: topic.markdown,
     productStatus: topic.productStatus,
     surfaceCoverage: topic.surfaceCoverage,
@@ -118,7 +118,7 @@ export function changelogMarkdown(version: string, changes: readonly ProductChan
   const lines = [
     `# ProductWiki ${version}`,
     '',
-    '| 日期 | 模块 | 层级 | 功能 | 事件 | 产品状态 | 表面覆盖 | 摘要 |',
+    '| 日期 | 模块 | 层级 | 功能 | 事件 | 产品状态 | 实现 | 摘要 |',
     '| --- | --- | --- | --- | --- | --- | --- | --- |',
   ];
   changes.forEach((change) => {

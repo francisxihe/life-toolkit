@@ -1,6 +1,6 @@
 export type ProductSpecKind = 'global' | 'domain' | 'module';
 export type ProductStatus = 'roadmap' | 'released' | 'deprecated';
-export type SurfaceCoverage = 'none' | 'partial' | 'complete';
+export type SurfaceCoverage = 'none' | 'complete';
 export type ProductFeatureScope = 'module' | 'entity' | 'field' | 'view' | 'rule';
 export type ProductChangeEvent = 'baseline' | 'introduced' | 'changed' | 'released' | 'deprecated' | 'removed';
 export type ProductChangeLogEntry = {
@@ -76,7 +76,7 @@ export type ResolvedProductReference = {
   id: string;
   title: string;
   module: string;
-  path: string;
+  breadcrumb: string[];
   markdown: string;
   spec: ProductSpec;
   productStatus: ProductStatus;
@@ -87,5 +87,4 @@ export type ResolvedProductReference = {
 export type ProductWikiData = {
   specs: readonly ProductSpec[];
   history: ProductChangeLog;
-  specSourcePath?: (specId: string) => string;
 };

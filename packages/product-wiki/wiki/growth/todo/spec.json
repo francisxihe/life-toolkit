@@ -103,7 +103,7 @@
       "scenario": "聚焦选定日期的行动",
       "reference": "growth.todo.view.today",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "week",
@@ -121,7 +121,7 @@
       "scenario": "查看长期排程",
       "reference": "growth.todo.view.calendar",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "all",
@@ -156,7 +156,7 @@
       ],
       "reference": "growth.todo.rule.related-inheritance",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "batch-limit",
@@ -170,7 +170,7 @@
       ],
       "reference": "growth.todo.rule.batch-limit",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "repeat-template",

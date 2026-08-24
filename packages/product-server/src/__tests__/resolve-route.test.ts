@@ -1,6 +1,6 @@
 import type { ProductChangeLog, ProductSpec } from '../types';
 import { collectProductRefsForRoute, matchDesktopRoute } from '../route-refs';
-import { resolveProductReferenceFromSpecs, specSourcePath } from '../resolve-reference';
+import { productBreadcrumb, resolveProductReferenceFromSpecs } from '../resolve-reference';
 
 const specs = [
   {
@@ -17,7 +17,7 @@ const specs = [
         desktopRoute: '/growth/todo/todo-today',
         scenario: '今天',
         productStatus: 'roadmap',
-        surfaceCoverage: 'partial',
+        surfaceCoverage: 'complete',
         reference: 'growth.todo.view.today',
       },
       {
@@ -35,7 +35,7 @@ const specs = [
         desktopRoute: '/growth/todo/todo-calendar',
         scenario: '日历',
         productStatus: 'roadmap',
-        surfaceCoverage: 'partial',
+        surfaceCoverage: 'complete',
         reference: 'growth.todo.view.calendar',
       },
     ],
@@ -59,7 +59,7 @@ const specs = [
         desktopRoute: '/growth/habit/habit-detail/:id',
         scenario: '详情',
         productStatus: 'roadmap',
-        surfaceCoverage: 'partial',
+        surfaceCoverage: 'complete',
         reference: 'growth.habit.view.detail',
       },
     ],
@@ -79,7 +79,7 @@ const specs = [
         desktopRoute: '/growth/goal',
         scenario: '树',
         productStatus: 'roadmap',
-        surfaceCoverage: 'partial',
+        surfaceCoverage: 'complete',
         reference: 'growth.goal.view.tree',
       },
       {
@@ -168,10 +168,45 @@ describe('resolveProductReferenceFromSpecs', () => {
       id: 'growth.todo.view.today',
       title: '当前待办',
       module: '待办管理',
-      path: specSourcePath('growth.todo'),
+      breadcrumb: ['待办管理', '当前待办'],
       markdown: '按日期查看待办。',
       productStatus: 'roadmap',
-      surfaceCoverage: 'partial',
+      surfaceCoverage: 'complete',
     });
+  });
+
+  it('names module documentation as module / title', () => {
+    expect(productBreadcrumb(specs[0], 'growth.todo.overview')).toEqual(['待办管理', '目标与价值']);
+  });
+
+  it('names a field as module / entity / field', () => {
+    const spec: ProductSpec = {
+      id: 'growth.task',
+      kind: 'module',
+      title: '任务管理',
+      productStatus: 'roadmap',
+      surfaceCoverage: 'complete',
+      entities: [
+        {
+          id: 'task',
+          name: '任务',
+          productStatus: 'roadmap',
+          surfaceCoverage: 'complete',
+          fields: [
+            {
+              id: 'estimated',
+              name: '预计耗时',
+              type: 'number',
+              required: true,
+              description: '用于排程和时间对比。',
+              productStatus: 'roadmap',
+              surfaceCoverage: 'complete',
+            },
+          ],
+        },
+      ],
+      references: [{ id: 'growth.task.overview', title: '目标与价值', body: '' }],
+    };
+    expect(productBreadcrumb(spec, 'growth.task.task.estimated')).toEqual(['任务管理', '任务', '预计耗时']);
   });
 });

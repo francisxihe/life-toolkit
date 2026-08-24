@@ -16,7 +16,7 @@
           "event": { "enum": ["baseline", "introduced", "changed", "released", "deprecated", "removed"] },
           "summary": { "type": "string", "minLength": 1 },
           "productStatus": { "enum": ["roadmap", "released", "deprecated"] },
-          "surfaceCoverage": { "enum": ["none", "partial", "complete"] },
+          "surfaceCoverage": { "enum": ["none", "complete"] },
           "feature": {
             "type": "object",
             "required": ["key", "scope", "moduleId", "moduleTitle", "name"],

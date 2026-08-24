@@ -68,7 +68,7 @@
       "scenario": "聚焦选定日期的执行与逾期事项",
       "reference": "growth.task.view.today",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "week",
@@ -86,7 +86,7 @@
       "scenario": "全量筛选与治理",
       "reference": "growth.task.view.all",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "statistics",
@@ -104,7 +104,7 @@
       "scenario": "查看任务日期安排",
       "reference": "growth.task.view.calendar",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "detail",
@@ -140,7 +140,7 @@
       ],
       "reference": "growth.task.rule.single-parent",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "time-inheritance",
@@ -170,7 +170,7 @@
       ],
       "reference": "growth.task.rule.ai-decompose-generation",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "ai-decompose-adopt",
@@ -225,7 +225,7 @@
     {
       "id": "growth.task.view.all",
       "title": "全部任务",
-      "body": "全部任务用于搜索、回顾和整理跨周期的任务存量。它需要支持按状态、关联和时间筛选；原型覆盖了主要列表与部分筛选场景。"
+      "body": "全部任务用于搜索、回顾和整理跨周期的任务存量。主要列表已实现；按状态、关联和时间筛选仍在规划中。"
     },
     {
       "id": "growth.task.view.statistics",
@@ -235,7 +235,7 @@
     {
       "id": "growth.task.view.calendar",
       "title": "月度排程",
-      "body": "月度排程以时间维度检查任务分布和期限冲突，帮助用户避免把重要工作集中到同一时段。格子可新建任务（预填当日计划）；复杂拖拽调整尚未覆盖。"
+      "body": "月度排程以时间维度检查任务分布和期限冲突，帮助用户避免把重要工作集中到同一时段。格子可新建任务（预填当日计划）；复杂拖拽调整仍在规划中。"
     },
     {
       "id": "growth.task.view.detail",

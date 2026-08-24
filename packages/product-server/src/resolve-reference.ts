@@ -2,32 +2,41 @@ import type { ProductRef } from './reference';
 import type { ProductChangeLog, ProductSpec, ResolvedProductReference } from './types';
 import { featureKey, latestProductChange } from './version-history';
 
-export function specSourcePath(specId: string): string {
-  return `${specId.replaceAll('.', '/')}/spec.json`;
+export function productBreadcrumb(spec: ProductSpec, reference: string): string[] {
+  const view = spec.views?.find((item) => item.reference === reference);
+  if (view) return [spec.title, view.name];
+  const rule = spec.rules?.find((item) => item.reference === reference);
+  if (rule) return [spec.title, rule.name];
+  for (const entity of spec.entities || []) {
+    if (reference === `${spec.id}.${entity.id}`) return [spec.title, entity.name];
+    for (const field of entity.fields) {
+      if (reference === `${spec.id}.${entity.id}.${field.id}`) return [spec.title, entity.name, field.name];
+    }
+  }
+  const entry = spec.references.find((item) => item.id === reference);
+  if (entry && entry.title !== spec.title) return [spec.title, entry.title];
+  return [spec.title];
 }
 
 export function resolveProductReferenceFromSpecs(
   specs: readonly ProductSpec[],
   history: ProductChangeLog,
   reference: ProductRef,
-  resolvePath: (specId: string) => string = specSourcePath,
 ): ResolvedProductReference | undefined {
   for (const spec of specs) {
     const entry = spec.references.find((item) => item.id === reference);
     if (!entry) continue;
+    const view = spec.views?.find((item) => item.reference === entry.id);
+    const rule = spec.rules?.find((item) => item.reference === entry.id);
     return {
       id: entry.id,
       title: entry.title,
       module: spec.title,
-      path: resolvePath(spec.id),
+      breadcrumb: productBreadcrumb(spec, entry.id),
       markdown: entry.body,
       spec,
-      productStatus: spec.views?.find((view) => view.reference === entry.id)?.productStatus
-        ?? spec.rules?.find((rule) => rule.reference === entry.id)?.productStatus
-        ?? spec.productStatus,
-      surfaceCoverage: spec.views?.find((view) => view.reference === entry.id)?.surfaceCoverage
-        ?? spec.rules?.find((rule) => rule.reference === entry.id)?.surfaceCoverage
-        ?? spec.surfaceCoverage,
+      productStatus: view?.productStatus ?? rule?.productStatus ?? spec.productStatus,
+      surfaceCoverage: view?.surfaceCoverage ?? rule?.surfaceCoverage ?? spec.surfaceCoverage,
       latestChange: latestProductChange(history, featureKeysForReference(spec, entry.id)),
     };
   }

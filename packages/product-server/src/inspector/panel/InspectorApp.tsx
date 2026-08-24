@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  Breadcrumb,
   Button,
   CloseOutlined,
   ConfigProvider,
+  Dropdown,
   Empty,
   Flex,
   Select,
@@ -35,6 +37,7 @@ import type {
 } from '../protocol';
 
 type PanelMode = 'wiki' | 'versions';
+type ExportItem = { key: string; label: string; onClick: () => void };
 
 function inspectorApi(): ProductWikiInspectorPanel | undefined {
   return window.productWikiInspectorPanel;
@@ -200,7 +203,9 @@ function InspectorShell() {
           ) : wikiSelection ? (
             <SelectionView selection={wikiSelection} />
           ) : (
-            <Empty description="当前路由暂无对应说明" />
+            <div className="productInspectorBody">
+              <Empty description="当前页面暂无对应说明" />
+            </div>
           )}
         </Flex>
       </Flex>
@@ -236,8 +241,39 @@ function InspectorSplitter({ api }: { api: ProductWikiInspectorPanel | undefined
   );
 }
 
+function ExportMenu({ items }: { items: ExportItem[] }) {
+  return (
+    <Dropdown trigger={['click']} placement="bottomRight" menu={{ items }}>
+      <Button size="small">导出</Button>
+    </Dropdown>
+  );
+}
+
+function ContentHeader({
+  breadcrumb,
+  exportItems,
+}: {
+  breadcrumb?: string[];
+  exportItems?: ExportItem[];
+}) {
+  if (!breadcrumb?.length && !exportItems?.length) return null;
+  return (
+    <Flex container="fixed" className="productInspectorContentHeader" align="center" gap={8} justify="space-between">
+      {breadcrumb?.length ? (
+        <Breadcrumb
+          className="productInspectorBreadcrumb"
+          items={breadcrumb.map((title) => ({ title }))}
+        />
+      ) : (
+        <span />
+      )}
+      {exportItems?.length ? <ExportMenu items={exportItems} /> : null}
+    </Flex>
+  );
+}
+
 function SelectionView({ selection }: { selection: InspectorSelection }) {
-  const { resolveProductReference } = useWikiRuntime();
+  const { resolveProductReference, productSpecs } = useWikiRuntime();
   const topics = useMemo(
     () =>
       selection.productRefs
@@ -254,40 +290,66 @@ function SelectionView({ selection }: { selection: InspectorSelection }) {
 
   if (!topics.length) {
     return (
-      <>
-        <span className="productInspectorPath">路由 {selection.route}</span>
+      <div className="productInspectorBody">
         <Empty
           description={
             selection.source === 'page'
-              ? '当前路由暂无对应说明'
+              ? '当前页面暂无对应说明'
               : selection.productRefs.length
                 ? '未解析到对应产品说明'
                 : '该元素暂无产品说明'
           }
         />
-      </>
+      </div>
     );
   }
 
+  const exportItems: ExportItem[] | undefined = active
+    ? [
+        {
+          key: 'topic-md',
+          label: '本条 Markdown',
+          onClick: () => downloadText(`${active.id}.md`, topicMarkdown(active), 'text/markdown'),
+        },
+        {
+          key: 'topic-json',
+          label: '本条 JSON',
+          onClick: () => downloadText(`${active.id}.json`, topicJson(active), 'application/json'),
+        },
+        {
+          key: 'spec-md',
+          label: '模块 Markdown',
+          onClick: () => downloadText(`${active.spec.id}.md`, specificationMarkdown(active.spec, productSpecs), 'text/markdown'),
+        },
+        {
+          key: 'spec-json',
+          label: '模块 JSON',
+          onClick: () => downloadText(`${active.spec.id}.json`, specificationJson(active.spec), 'application/json'),
+        },
+      ]
+    : undefined;
+
   return (
     <>
-      <span className="productInspectorPath">路由 {selection.route}</span>
-      {topics.length > 1 ? (
-        <div className="productInspectorStack">
-          {topics.map((topic, index) => (
-            <button
-              key={topic.id}
-              type="button"
-              className="productInspectorStackItem"
-              aria-current={topic.id === active.id ? 'true' : undefined}
-              onClick={() => setTopicId(topic.id)}
-            >
-              {index + 1}. {topic.title}
-            </button>
-          ))}
-        </div>
-      ) : null}
-      {active ? <WikiTopic topic={active} stacked={topics.length > 1} source={selection.source} /> : null}
+      <ContentHeader breadcrumb={active?.breadcrumb} exportItems={exportItems} />
+      <div className="productInspectorBody">
+        {topics.length > 1 ? (
+          <div className="productInspectorStack">
+            {topics.map((topic, index) => (
+              <button
+                key={topic.id}
+                type="button"
+                className="productInspectorStackItem"
+                aria-current={topic.id === active.id ? 'true' : undefined}
+                onClick={() => setTopicId(topic.id)}
+              >
+                {index + 1}. {topic.title}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {active ? <WikiTopic topic={active} stacked={topics.length > 1} source={selection.source} /> : null}
+      </div>
     </>
   );
 }
@@ -307,50 +369,62 @@ function VersionView() {
   }, [changes]);
 
   if (!productVersions.length) {
-    return <Empty description="暂无可查看的版本记录" />;
+    return (
+      <div className="productInspectorBody">
+        <Empty description="暂无可查看的版本记录" />
+      </div>
+    );
   }
+
+  const exportItems: ExportItem[] | undefined = changes.length
+    ? [
+        {
+          key: 'changelog-md',
+          label: 'Markdown',
+          onClick: () => downloadText(`${version}.md`, changelogMarkdown(version, changes), 'text/markdown'),
+        },
+        {
+          key: 'changelog-json',
+          label: 'JSON',
+          onClick: () => downloadText(`${version}.json`, changelogJson(version, changes), 'application/json'),
+        },
+      ]
+    : undefined;
 
   return (
     <>
-      <label className="productInspectorVersionControl">
-        <span>版本</span>
-        <Select
-          aria-label="选择版本"
-          value={version}
-          onChange={(value) => setVersion(String(value))}
-          options={productVersions.map((item) => ({ value: item, label: item }))}
-          style={{ width: '100%' }}
-        />
-      </label>
-      <p className="productInspectorVersionSummary">
-        {version} 共 {changes.length} 项变更
-      </p>
-      {changes.length ? (
-        <Flex gap={8} className="productInspectorExport">
-          <Button size="small" onClick={() => downloadText(`${version}.md`, changelogMarkdown(version, changes), 'text/markdown')}>
-            导出 Markdown
-          </Button>
-          <Button size="small" onClick={() => downloadText(`${version}.json`, changelogJson(version, changes), 'application/json')}>
-            导出 JSON
-          </Button>
-        </Flex>
-      ) : null}
-      {changes.length ? (
-        <div className="productInspectorVersionList">
-          {[...groups.entries()].map(([moduleTitle, items]) => (
-            <section key={moduleTitle} className="productInspectorVersionGroup">
-              <h2>{moduleTitle}</h2>
-              <div className="productInspectorVersionEntries">
-                {items.map((change) => (
-                  <VersionChangeEntry key={`${change.feature.key}-${change.version}-${change.date}`} change={change} />
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      ) : (
-        <Empty description="该版本暂无变更记录" />
-      )}
+      <ContentHeader exportItems={exportItems} />
+      <div className="productInspectorBody">
+        <label className="productInspectorVersionControl">
+          <span>版本</span>
+          <Select
+            aria-label="选择版本"
+            value={version}
+            onChange={(value) => setVersion(String(value))}
+            options={productVersions.map((item) => ({ value: item, label: item }))}
+            style={{ width: '100%' }}
+          />
+        </label>
+        <p className="productInspectorVersionSummary">
+          {version} 共 {changes.length} 项变更
+        </p>
+        {changes.length ? (
+          <div className="productInspectorVersionList">
+            {[...groups.entries()].map(([moduleTitle, items]) => (
+              <section key={moduleTitle} className="productInspectorVersionGroup">
+                <h2>{moduleTitle}</h2>
+                <div className="productInspectorVersionEntries">
+                  {items.map((change) => (
+                    <VersionChangeEntry key={`${change.feature.key}-${change.version}-${change.date}`} change={change} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <Empty description="该版本暂无变更记录" />
+        )}
+      </div>
     </>
   );
 }
@@ -382,7 +456,6 @@ function WikiTopic({
   stacked: boolean;
   source?: InspectorSelection['source'];
 }) {
-  const { productSpecs } = useWikiRuntime();
   const html = useMemo(
     () => DOMPurify.sanitize(marked.parse(topic.markdown, { gfm: true }) as string),
     [topic.markdown],
@@ -391,35 +464,15 @@ function WikiTopic({
   return (
     <section className="productInspectorTopic">
       <Flex gap={8} className="productInspectorTags">
-        <Tag>{topic.module}</Tag>
-        <Tag>{topic.title}</Tag>
-        <Tag>产品：{statusLabel(topic.productStatus)}</Tag>
-        <Tag>表面：{coverageLabel(topic.surfaceCoverage)}</Tag>
+        <Tag>{statusLabel(topic.productStatus)}</Tag>
+        <Tag>{coverageLabel(topic.surfaceCoverage)}</Tag>
         {stacked ? <Tag>{source === 'page' ? '本页' : '祖先链'}</Tag> : null}
       </Flex>
-      <span className="productInspectorPath">{topic.path}</span>
       {topic.latestChange ? (
         <p className="productInspectorChange">
           最近变更 {topic.latestChange.version} · {topic.latestChange.date} · {topic.latestChange.summary}
         </p>
       ) : null}
-      <Flex gap={8} className="productInspectorExport">
-        <Button size="small" onClick={() => downloadText(`${topic.id}.md`, topicMarkdown(topic), 'text/markdown')}>
-          导出本条 Markdown
-        </Button>
-        <Button size="small" onClick={() => downloadText(`${topic.id}.json`, topicJson(topic), 'application/json')}>
-          导出本条 JSON
-        </Button>
-        <Button
-          size="small"
-          onClick={() => downloadText(`${topic.spec.id}.md`, specificationMarkdown(topic.spec, productSpecs), 'text/markdown')}
-        >
-          导出模块 Markdown
-        </Button>
-        <Button size="small" onClick={() => downloadText(`${topic.spec.id}.json`, specificationJson(topic.spec), 'application/json')}>
-          导出模块 JSON
-        </Button>
-      </Flex>
       <article className="productInspectorMarkdown" dangerouslySetInnerHTML={{ __html: html }} />
     </section>
   );

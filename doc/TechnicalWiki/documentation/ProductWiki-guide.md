@@ -1,16 +1,16 @@
 # ProductWiki 编写规范
 
-ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 表面覆盖情况。规格形状由 `packages/product-server/src/spec.schema.json` 与 `packages/product-server/src/changelog.schema.json` 约束，`wiki/` 只写内容。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。检查器实现在 `@true-north/product-server`，desktop 承接层把 `productWiki` 数据注入后再激活。
+ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 是否实现。规格形状由 `packages/product-server/src/spec.schema.json` 与 `packages/product-server/src/changelog.schema.json` 约束，`wiki/` 只写内容。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。检查器实现在 `@true-north/product-server`，desktop 承接层把 `productWiki` 数据注入后再激活。
 
 ## 内容来源
 
 每个模块只有一份 `spec.json`。
 
-- 结构化事实：模块、实体字段、枚举、视图、规则、产品状态、表面覆盖度。
+- 结构化事实：模块、实体字段、枚举、视图、规则、产品状态、是否实现。
 - 讲解正文：`references[].title` 与 `references[].body`（`body` 为 Markdown 字符串，供检查器渲染）。
 - 变更记录：根目录 `changelog.json`。
 
-产品状态使用 `roadmap`、`released`、`deprecated`；表面覆盖度使用 `none`、`partial`、`complete`，表达 desktop 是否已用 `ProductSurface` / `productRef()` 钉上对应 view/rule。产品基线不是产品发布，不能仅因界面存在就标记为 `released`。
+产品状态使用 `roadmap`（规划中）、`released`（已发布）、`deprecated`（已废弃）。是否实现使用 `none`（未实现）、`complete`（实现），表达 desktop 是否已用 `ProductSurface` / `productRef()` 钉上对应 view/rule。没有「部分实现」：若只落地一部分能力，应拆成更细的 view/rule，已钉的标 `complete`，未做的标 `none` 放到下一期。产品基线不是产品发布，不能仅因界面存在就标记为 `released`。
 
 页面编辑尚未提供，当前仍直接修改 `spec.json` / `changelog.json`。阅读与 Markdown / JSON 导出在检查器中完成。
 

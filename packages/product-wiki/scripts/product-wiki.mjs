@@ -269,9 +269,6 @@ function validateDesktopSurfaces(specifications, knownReferences) {
       if (item.surfaceCoverage === 'none' && count !== 0) {
         errors.push(`${label}: surfaceCoverage none must not appear in desktop render (found ${count})`);
       }
-      if (item.surfaceCoverage === 'partial' && count < 1) {
-        errors.push(`${label}: surfaceCoverage partial requires at least one desktop surface (found ${count})`);
-      }
     });
   });
 }

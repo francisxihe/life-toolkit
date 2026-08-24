@@ -406,7 +406,7 @@
       "event": "introduced",
       "summary": "目标详情提供 AI 拆解抽屉：展示分析摘要与子目标/任务/待办/习惯建议，支持勾选、冲突提示与已采纳态。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:view:ai-decomposition",
         "scope": "view",
@@ -422,7 +422,7 @@
       "event": "changed",
       "summary": "AI 拆解从目标详情抽屉改为发起绑定会话，并在会话页右侧工作台审阅采纳。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:view:ai-decomposition",
         "scope": "view",
@@ -438,7 +438,7 @@
       "event": "changed",
       "summary": "工作台建议统一为编辑仅缓存预览、采纳用当前预览；已采纳置灰不可再操作；支持勾选后对已选追问。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:view:ai-decomposition",
         "scope": "view",
@@ -470,7 +470,7 @@
       "event": "introduced",
       "summary": "正式产品由已接入的模型结合目标上下文生成建议；原型仅演示交互与建议形态；模型不可用时明确失败而非静默假建议。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:rule:ai-decompose-generation",
         "scope": "rule",
@@ -486,7 +486,7 @@
       "event": "changed",
       "summary": "建议生成结果改为以会话消息中的结构化工作台块交付。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:rule:ai-decompose-generation",
         "scope": "rule",
@@ -534,7 +534,7 @@
       "event": "changed",
       "summary": "「编辑后采纳」改为「编辑」仅回写预览缓存；采纳以当前预览创建；已采纳置灰且不可再编辑/采纳/勾选。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.goal:rule:ai-decompose-adopt",
         "scope": "rule",
@@ -630,7 +630,7 @@
       "event": "changed",
       "summary": "待办列表直接露出完成与放弃（习惯/周期以标记未完成结算）。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.todo:view:today",
         "scope": "view",
@@ -1014,7 +1014,7 @@
       "event": "introduced",
       "summary": "正式产品由模型结合任务上下文生成子任务与待办建议；结果以会话工作台块交付；原型仅演示交互。",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial",
+      "surfaceCoverage": "complete",
       "feature": {
         "key": "growth.task:rule:ai-decompose-generation",
         "scope": "rule",

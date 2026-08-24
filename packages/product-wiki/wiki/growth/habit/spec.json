@@ -70,7 +70,7 @@
       "scenario": "日常打卡与进度查看",
       "reference": "growth.habit.view.list",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "detail",
@@ -79,7 +79,7 @@
       "scenario": "查看关联目标和日志",
       "reference": "growth.habit.view.detail",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "statistics",
@@ -114,7 +114,7 @@
       ],
       "reference": "growth.habit.rule.goal-required",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     }
   ],
   "references": [
@@ -141,12 +141,12 @@
     {
       "id": "growth.habit.view.statistics",
       "title": "习惯统计",
-      "body": "习惯统计展示完成趋势、连续次数和间断情况，帮助用户判断习惯是否真正可持续。原型覆盖基础统计表达。"
+      "body": "习惯统计展示完成趋势、连续次数和间断情况。该能力已废弃，不再提供独立统计页。"
     },
     {
       "id": "growth.habit.view.calendar",
       "title": "打卡日历",
-      "body": "打卡日历计划按日期展示执行密度和中断位置，帮助用户发现规律。该能力仍在路线图中，尚未提供原型覆盖。"
+      "body": "打卡日历计划按日期展示执行密度和中断位置。该能力已废弃，尚未作为独立页面实现。"
     },
     {
       "id": "growth.habit.interaction",

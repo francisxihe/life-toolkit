@@ -79,7 +79,7 @@
       "scenario": "构建和浏览目标层级",
       "reference": "growth.goal.view.tree",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "detail",
@@ -97,7 +97,7 @@
       "scenario": "理解目标与任务关系",
       "reference": "growth.goal.view.mindmap",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "dashboard",
@@ -174,7 +174,7 @@
       ],
       "reference": "growth.goal.rule.ai-decompose-generation",
       "productStatus": "roadmap",
-      "surfaceCoverage": "partial"
+      "surfaceCoverage": "complete"
     },
     {
       "id": "ai-decompose-adopt",
@@ -229,12 +229,12 @@
     {
       "id": "growth.goal.view.mindmap",
       "title": "目标脑图",
-      "body": "目标脑图以关系图方式呈现目标、子目标和已关联任务，帮助用户发现拆解缺口或重复投入。原型提供结构示意，正式产品需要支持更完整的导航与编辑。"
+      "body": "目标脑图以关系图方式呈现目标、子目标和已关联任务，帮助用户发现拆解缺口或重复投入。结构示意已实现；更完整的导航与编辑仍在规划中。"
     },
     {
       "id": "growth.goal.view.dashboard",
       "title": "目标健康面板",
-      "body": "健康面板计划聚合期限风险、近期行动和习惯贡献，用于识别需要干预的目标。该能力已纳入路线图，尚无原型实现。"
+      "body": "健康面板计划聚合期限风险、近期行动和习惯贡献，用于识别需要干预的目标。该能力仍在规划中，尚未实现。"
     },
     {
       "id": "growth.goal.view.ai-decomposition",
