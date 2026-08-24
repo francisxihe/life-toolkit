@@ -1,9 +1,8 @@
 import { Children, cloneElement, isValidElement, type ReactElement, type ReactNode } from 'react';
 import { mergeProductRefAttribute, type ProductSurfaceHostProps } from './product-ref-attr';
-import type { ProductRef } from './reference';
 
 type ProductSurfaceProps = {
-  id: ProductRef;
+  id: string;
   children: ReactNode;
 };
 

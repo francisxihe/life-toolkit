@@ -3,7 +3,8 @@
 import { useEffect } from 'react';
 import { TaskFilters } from './TaskFilters';
 import { Flex } from '@sue/design-web-react';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import { TaskAllProvider } from './context';
 import TaskTable from './TaskTable';
 import { useTaskAllContext } from './context';

@@ -7,7 +7,8 @@ import { Difficulty } from '@true-north/enum';
 import dayjs from 'dayjs';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 import RepeatSelector, { createDefaultRepeatSetting, type RepeatSelectorValue } from '@true-north/components-repeat';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import { emitHabitChanged } from '../../events';
 
 const { TextArea } = Input;

@@ -28,6 +28,7 @@
     "@true-north/components-repeat": "workspace:*",
     "@true-north/dev-lab": "workspace:*",
     "@true-north/enum": "workspace:*",
+    "@true-north/product-server": "workspace:*",
     "@true-north/product-wiki": "workspace:*",
     "@true-north/web-service": "workspace:*",
     "@turf/turf": "^6.5.0",

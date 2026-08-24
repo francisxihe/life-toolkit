@@ -5,7 +5,8 @@ import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
 import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import styles from './style.module.less';
 
 const DEFAULT_DURATION = 25 * 60;

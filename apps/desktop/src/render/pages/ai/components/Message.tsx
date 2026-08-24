@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Button, Flex } from '@sue/design-web-react';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import type {
   AiTextPartVo,
   AiToolPartVo,

@@ -13,13 +13,8 @@ import zhCN from '@sue/design-web-react/locale/zh_CN';
 import { Inspect } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
-import {
-  productSpecs,
-  productVersionChanges,
-  productVersions,
-  resolveProductReference,
-  resolveProductRefsForRoute,
-} from '../../registry';
+import { useWikiRuntime, WikiRuntimeProvider } from './runtime-context';
+import type { WikiRuntime } from '../../runtime';
 import {
   changelogJson,
   changelogMarkdown,
@@ -45,16 +40,19 @@ function inspectorApi(): ProductWikiInspectorPanel | undefined {
   return window.productWikiInspectorPanel;
 }
 
-export function InspectorApp() {
+export function InspectorApp({ runtime }: { runtime: WikiRuntime }) {
   return (
-    <ConfigProvider locale={zhCN}>
-      <InspectorShell />
-    </ConfigProvider>
+    <WikiRuntimeProvider runtime={runtime}>
+      <ConfigProvider locale={zhCN}>
+        <InspectorShell />
+      </ConfigProvider>
+    </WikiRuntimeProvider>
   );
 }
 
 function InspectorShell() {
   const api = inspectorApi();
+  const { resolveProductRefsForRoute } = useWikiRuntime();
   const [selecting, setSelectingState] = useState(false);
   const [panelMode, setPanelMode] = useState<PanelMode>('wiki');
   const [pageContext, setPageContext] = useState<InspectorPageContext | undefined>();
@@ -107,7 +105,7 @@ function InspectorShell() {
       route: pageContext.route,
       source: 'page',
     };
-  }, [pageContext]);
+  }, [pageContext, resolveProductRefsForRoute]);
 
   const wikiSelection = inspectSelection ?? pageSelection;
 
@@ -239,12 +237,13 @@ function InspectorSplitter({ api }: { api: ProductWikiInspectorPanel | undefined
 }
 
 function SelectionView({ selection }: { selection: InspectorSelection }) {
+  const { resolveProductReference } = useWikiRuntime();
   const topics = useMemo(
     () =>
       selection.productRefs
         .map((reference) => resolveProductReference(reference))
         .filter((topic): topic is ResolvedProductReference => Boolean(topic)),
-    [selection.productRefs],
+    [selection.productRefs, resolveProductReference],
   );
   const [topicId, setTopicId] = useState(topics[0]?.id);
   const active = topics.find((topic) => topic.id === topicId) || topics[0];
@@ -294,8 +293,9 @@ function SelectionView({ selection }: { selection: InspectorSelection }) {
 }
 
 function VersionView() {
+  const { productVersions, productVersionChanges } = useWikiRuntime();
   const [version, setVersion] = useState(productVersions[0] || '');
-  const changes = useMemo(() => (version ? productVersionChanges(version) : []), [version]);
+  const changes = useMemo(() => (version ? productVersionChanges(version) : []), [version, productVersionChanges]);
   const groups = useMemo(() => {
     const next = new Map<string, ProductChangeLogEntry[]>();
     changes.forEach((change) => {
@@ -382,6 +382,7 @@ function WikiTopic({
   stacked: boolean;
   source?: InspectorSelection['source'];
 }) {
+  const { productSpecs } = useWikiRuntime();
   const html = useMemo(
     () => DOMPurify.sanitize(marked.parse(topic.markdown, { gfm: true }) as string),
     [topic.markdown],

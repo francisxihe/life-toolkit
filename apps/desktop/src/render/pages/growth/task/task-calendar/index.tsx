@@ -1,5 +1,6 @@
 import { Calendar } from '@sue/design-web-react';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import { useEffect } from 'react';
 import { CalendarProvider } from './context';
 import CalendarCell from './CalendarCell';

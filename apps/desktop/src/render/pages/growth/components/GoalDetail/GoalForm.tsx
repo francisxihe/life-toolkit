@@ -9,7 +9,8 @@ import { useGoalDetailContext } from './context';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 import GoalTreeSelector from '../GoalTreeSelector';
 import { useGoalFormConstraints } from './hooks';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;

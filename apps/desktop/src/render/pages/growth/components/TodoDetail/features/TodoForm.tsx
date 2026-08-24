@@ -22,7 +22,8 @@ import RepeatSelector, {
   createDefaultRepeatSetting,
   type RepeatSelectorValue,
 } from '@true-north/components-repeat';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import type { TodoFormData } from '@true-north/web-service';
 import { TrackTimeController } from '@true-north/web-service';
 import {

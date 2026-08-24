@@ -1,6 +1,6 @@
 # ProductWiki 编写规范
 
-ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 表面覆盖情况。规格形状由 `packages/product-wiki/src/spec.schema.json` 与 `src/changelog.schema.json` 约束，`wiki/` 只写内容。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。
+ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 表面覆盖情况。规格形状由 `packages/product-server/src/spec.schema.json` 与 `packages/product-server/src/changelog.schema.json` 约束，`wiki/` 只写内容。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。检查器实现在 `@true-north/product-server`，desktop 承接层把 `productWiki` 数据注入后再激活。
 
 ## 内容来源
 
@@ -18,7 +18,7 @@ ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不�
 
 1. 修改对应模块的 `spec.json`，并为受影响对象在 `changelog.json` 追加变更记录。
 2. 把产品语义写进对应 `references[].body`；不要在正文里复制字段、视图或规则表格（检查器导出模块时会从规格组装）。
-3. 在 desktop 页面组装层用 `ProductSurface` 钉 view 与有独立落点的 rule；复用组件不要 `import productRef`。
+3. 在 desktop 页面组装层用 `ProductSurface`（`@true-north/product-server`）钉 view 与有独立落点的 rule，引用 ID 用 `productRef()`（`@true-north/product-wiki`）；复用组件不要 `import productRef`。
 4. 执行 `pnpm --filter @true-north/product-wiki product-wiki:sync` 生成引用类型。
 5. 执行 `pnpm --filter @true-north/product-wiki product-wiki:check` 校验 Schema、引用、生命周期与 desktop 表面。
 

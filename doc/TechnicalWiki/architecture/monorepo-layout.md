@@ -12,7 +12,8 @@ true-north/
 │   ├── common-web/           # Web 通用能力
 │   ├── components/           # 可复用组件
 │   ├── dev-lab/              # DEV Lab：采集器、协议与面板 UI
-│   └── product-wiki/         # 产品 SSOT 与 DEV 检查器
+│   ├── product-server/      # 产品检查器引擎（解析、钉表面、DEV inspector）
+│   └── product-wiki/         # 产品 SSOT 数据
 ├── doc/
 │   ├── TechnicalWiki/        # 技术 Wiki
 │   └── {version}/            # 版本交付 PRD/TDD（如 v0.1.0/）

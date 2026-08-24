@@ -1,22 +1,9 @@
 import electron from 'electron';
 import { labChannel } from '@true-north/dev-lab';
 import { snapshotDevTrace, subscribeDevTrace } from '@true-north/dev-lab/collector';
+import { inspectorChannel } from '@true-north/product-server/inspector/protocol';
 
 const { ipcMain, WebContentsView } = electron;
-
-const CHANNELS = {
-  selection: 'product-wiki:selection',
-  pageContext: 'product-wiki:page-context',
-  requestPageContext: 'product-wiki:request-page-context',
-  cancel: 'product-wiki:cancel',
-  setSelecting: 'product-wiki:set-selecting',
-  setHighlightVisible: 'product-wiki:set-highlight-visible',
-  setVisible: 'product-wiki:set-visible',
-  splitterCapturing: 'product-wiki:splitter-capturing',
-  splitterDragStart: 'product-wiki:splitter-drag-start',
-  splitterDragMove: 'product-wiki:splitter-drag-move',
-  splitterDragEnd: 'product-wiki:splitter-drag-end',
-} as const;
 
 const DEFAULT_SIDE_WIDTH = 420;
 const MIN_WIKI_WIDTH = 360;
@@ -119,12 +106,12 @@ export function createProductWikiInspectorHost(options: {
   const labContents = () => labView?.webContents;
   const handleContents = () => handleView?.webContents;
   const broadcastCancel = () => {
-    sendToWebContents(appContents(), CHANNELS.cancel);
-    sendToWebContents(inspectorContents(), CHANNELS.cancel);
-    sendToWebContents(appContents(), CHANNELS.setSelecting, false);
+    sendToWebContents(appContents(), inspectorChannel.cancel);
+    sendToWebContents(inspectorContents(), inspectorChannel.cancel);
+    sendToWebContents(appContents(), inspectorChannel.setSelecting, false);
   };
   const requestPageContext = () => {
-    sendToWebContents(appContents(), CHANNELS.requestPageContext);
+    sendToWebContents(appContents(), inspectorChannel.requestPageContext);
   };
   const sendToInspector = (channel: string, payload?: unknown) => {
     const contents = inspectorContents();
@@ -225,7 +212,7 @@ export function createProductWikiInspectorHost(options: {
 
   const setCapturing = (on: boolean) => {
     dragging = on;
-    broadcast(CHANNELS.splitterCapturing, on);
+    broadcast(inspectorChannel.splitterCapturing, on);
   };
 
   const startDrag = (screenX?: number) => {
@@ -238,8 +225,8 @@ export function createProductWikiInspectorHost(options: {
     if (!dragging) return;
     if (Number.isFinite(screenX)) applyDrag(Number(screenX));
     setCapturing(false);
-    sendToWebContents(inspectorContents(), CHANNELS.splitterDragEnd);
-    sendToWebContents(handleContents(), CHANNELS.splitterDragEnd);
+    sendToWebContents(inspectorContents(), inspectorChannel.splitterDragEnd);
+    sendToWebContents(handleContents(), inspectorChannel.splitterDragEnd);
   };
 
   const closeHostedDevTools = () => {
@@ -434,10 +421,10 @@ export function createProductWikiInspectorHost(options: {
   hostIpc = {
     onSelection: (payload) => {
       setVisible(true);
-      sendToInspector(CHANNELS.selection, payload);
+      sendToInspector(inspectorChannel.selection, payload);
     },
     onPageContext: (payload) => {
-      sendToInspector(CHANNELS.pageContext, payload);
+      sendToInspector(inspectorChannel.pageContext, payload);
     },
     onRequestPageContext: () => {
       requestPageContext();
@@ -446,10 +433,10 @@ export function createProductWikiInspectorHost(options: {
       broadcastCancel();
     },
     onSetSelecting: (selecting) => {
-      sendToWebContents(appContents(), CHANNELS.setSelecting, selecting);
+      sendToWebContents(appContents(), inspectorChannel.setSelecting, selecting);
     },
     onSetHighlightVisible: (visible) => {
-      sendToWebContents(appContents(), CHANNELS.setHighlightVisible, Boolean(visible));
+      sendToWebContents(appContents(), inspectorChannel.setHighlightVisible, Boolean(visible));
     },
     onSetVisible: (visible) => setVisible(Boolean(visible)),
     onSetLabVisible: (visible) => {
@@ -462,22 +449,22 @@ export function createProductWikiInspectorHost(options: {
 
   if (!inspectorIpcRegistered) {
     inspectorIpcRegistered = true;
-    ipcMain.on(CHANNELS.selection, (_event, payload) => hostIpc?.onSelection(payload));
-    ipcMain.on(CHANNELS.pageContext, (_event, payload) => hostIpc?.onPageContext(payload));
-    ipcMain.on(CHANNELS.requestPageContext, () => hostIpc?.onRequestPageContext());
-    ipcMain.on(CHANNELS.cancel, () => hostIpc?.onCancel());
-    ipcMain.on(CHANNELS.setSelecting, (_event, selecting: boolean) => hostIpc?.onSetSelecting(selecting));
-    ipcMain.on(CHANNELS.setHighlightVisible, (_event, visible: boolean) =>
+    ipcMain.on(inspectorChannel.selection, (_event, payload) => hostIpc?.onSelection(payload));
+    ipcMain.on(inspectorChannel.pageContext, (_event, payload) => hostIpc?.onPageContext(payload));
+    ipcMain.on(inspectorChannel.requestPageContext, () => hostIpc?.onRequestPageContext());
+    ipcMain.on(inspectorChannel.cancel, () => hostIpc?.onCancel());
+    ipcMain.on(inspectorChannel.setSelecting, (_event, selecting: boolean) => hostIpc?.onSetSelecting(selecting));
+    ipcMain.on(inspectorChannel.setHighlightVisible, (_event, visible: boolean) =>
       hostIpc?.onSetHighlightVisible(visible),
     );
-    ipcMain.on(CHANNELS.setVisible, (_event, visible: boolean) => hostIpc?.onSetVisible(visible));
+    ipcMain.on(inspectorChannel.setVisible, (_event, visible: boolean) => hostIpc?.onSetVisible(visible));
     ipcMain.on(labChannel.setVisible, (_event, visible: boolean) => hostIpc?.onSetLabVisible(visible));
-    ipcMain.on(CHANNELS.splitterDragStart, (_event, payload) => {
+    ipcMain.on(inspectorChannel.splitterDragStart, (_event, payload) => {
       const screenX = typeof payload === 'number' ? payload : Number(payload?.screenX);
       hostIpc?.onDragStart(screenX);
     });
-    ipcMain.on(CHANNELS.splitterDragMove, (_event, screenX: number) => hostIpc?.onDragMove(screenX));
-    ipcMain.on(CHANNELS.splitterDragEnd, (_event, screenX?: number) => hostIpc?.onDragEnd(screenX));
+    ipcMain.on(inspectorChannel.splitterDragMove, (_event, screenX: number) => hostIpc?.onDragMove(screenX));
+    ipcMain.on(inspectorChannel.splitterDragEnd, (_event, screenX?: number) => hostIpc?.onDragEnd(screenX));
   }
 
   return {

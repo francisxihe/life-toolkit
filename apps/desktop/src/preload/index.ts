@@ -1,6 +1,7 @@
 // 导入模块
 const { contextBridge, ipcRenderer } = require('electron');
 import type { ElectronAPI } from '@true-north/web-service/electron-types';
+import { inspectorChannel } from '@true-north/product-server/inspector/protocol';
 
 // 检查当前环境是否为Electron
 const isElectron = () => {
@@ -54,69 +55,69 @@ const exposeAPI = () => {
 
     if (process.env.NODE_ENV === 'development') {
       let splitterCapturing = false;
-      ipcRenderer.on('product-wiki:splitter-capturing', (_event, on) => {
+      ipcRenderer.on(inspectorChannel.splitterCapturing, (_event, on) => {
         splitterCapturing = Boolean(on);
       });
       window.addEventListener('mousemove', (event) => {
-        if (splitterCapturing) ipcRenderer.send('product-wiki:splitter-drag-move', event.screenX);
+        if (splitterCapturing) ipcRenderer.send(inspectorChannel.splitterDragMove, event.screenX);
       });
       window.addEventListener('mouseup', (event) => {
-        if (splitterCapturing) ipcRenderer.send('product-wiki:splitter-drag-end', event.screenX);
+        if (splitterCapturing) ipcRenderer.send(inspectorChannel.splitterDragEnd, event.screenX);
       });
       contextBridge.exposeInMainWorld('productWikiInspectorBridge', {
-        sendSelection: (payload) => ipcRenderer.send('product-wiki:selection', payload),
-        sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
-        sendPageContext: (payload) => ipcRenderer.send('product-wiki:page-context', payload),
+        sendSelection: (payload) => ipcRenderer.send(inspectorChannel.selection, payload),
+        sendCancel: () => ipcRenderer.send(inspectorChannel.cancel),
+        sendPageContext: (payload) => ipcRenderer.send(inspectorChannel.pageContext, payload),
         onSetSelecting: (listener) => {
           const handler = (_event, selecting) => listener(selecting);
-          ipcRenderer.on('product-wiki:set-selecting', handler);
-          return () => ipcRenderer.removeListener('product-wiki:set-selecting', handler);
+          ipcRenderer.on(inspectorChannel.setSelecting, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.setSelecting, handler);
         },
         onSetHighlightVisible: (listener) => {
           const handler = (_event, visible) => listener(Boolean(visible));
-          ipcRenderer.on('product-wiki:set-highlight-visible', handler);
-          return () => ipcRenderer.removeListener('product-wiki:set-highlight-visible', handler);
+          ipcRenderer.on(inspectorChannel.setHighlightVisible, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.setHighlightVisible, handler);
         },
         onCancel: (listener) => {
           const handler = () => listener();
-          ipcRenderer.on('product-wiki:cancel', handler);
-          return () => ipcRenderer.removeListener('product-wiki:cancel', handler);
+          ipcRenderer.on(inspectorChannel.cancel, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.cancel, handler);
         },
         onRequestPageContext: (listener) => {
           const handler = () => listener();
-          ipcRenderer.on('product-wiki:request-page-context', handler);
-          return () => ipcRenderer.removeListener('product-wiki:request-page-context', handler);
+          ipcRenderer.on(inspectorChannel.requestPageContext, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.requestPageContext, handler);
         },
       });
       contextBridge.exposeInMainWorld('productWikiInspectorPanel', {
-        sendSetSelecting: (selecting) => ipcRenderer.send('product-wiki:set-selecting', selecting),
-        sendSetHighlightVisible: (visible) => ipcRenderer.send('product-wiki:set-highlight-visible', visible),
-        sendCancel: () => ipcRenderer.send('product-wiki:cancel'),
-        sendSetVisible: (visible) => ipcRenderer.send('product-wiki:set-visible', visible),
-        sendRequestPageContext: () => ipcRenderer.send('product-wiki:request-page-context'),
+        sendSetSelecting: (selecting) => ipcRenderer.send(inspectorChannel.setSelecting, selecting),
+        sendSetHighlightVisible: (visible) => ipcRenderer.send(inspectorChannel.setHighlightVisible, visible),
+        sendCancel: () => ipcRenderer.send(inspectorChannel.cancel),
+        sendSetVisible: (visible) => ipcRenderer.send(inspectorChannel.setVisible, visible),
+        sendRequestPageContext: () => ipcRenderer.send(inspectorChannel.requestPageContext),
         sendSplitterDragStart: (edge, screenX) =>
-          ipcRenderer.send('product-wiki:splitter-drag-start', { edge, screenX }),
-        sendSplitterDragMove: (screenX) => ipcRenderer.send('product-wiki:splitter-drag-move', screenX),
-        sendSplitterDragEnd: (screenX) => ipcRenderer.send('product-wiki:splitter-drag-end', screenX),
+          ipcRenderer.send(inspectorChannel.splitterDragStart, { edge, screenX }),
+        sendSplitterDragMove: (screenX) => ipcRenderer.send(inspectorChannel.splitterDragMove, screenX),
+        sendSplitterDragEnd: (screenX) => ipcRenderer.send(inspectorChannel.splitterDragEnd, screenX),
         onSelection: (listener) => {
           const handler = (_event, payload) => listener(payload);
-          ipcRenderer.on('product-wiki:selection', handler);
-          return () => ipcRenderer.removeListener('product-wiki:selection', handler);
+          ipcRenderer.on(inspectorChannel.selection, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.selection, handler);
         },
         onPageContext: (listener) => {
           const handler = (_event, payload) => listener(payload);
-          ipcRenderer.on('product-wiki:page-context', handler);
-          return () => ipcRenderer.removeListener('product-wiki:page-context', handler);
+          ipcRenderer.on(inspectorChannel.pageContext, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.pageContext, handler);
         },
         onCancel: (listener) => {
           const handler = () => listener();
-          ipcRenderer.on('product-wiki:cancel', handler);
-          return () => ipcRenderer.removeListener('product-wiki:cancel', handler);
+          ipcRenderer.on(inspectorChannel.cancel, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.cancel, handler);
         },
         onSplitterDragEnd: (listener) => {
           const handler = () => listener();
-          ipcRenderer.on('product-wiki:splitter-drag-end', handler);
-          return () => ipcRenderer.removeListener('product-wiki:splitter-drag-end', handler);
+          ipcRenderer.on(inspectorChannel.splitterDragEnd, handler);
+          return () => ipcRenderer.removeListener(inspectorChannel.splitterDragEnd, handler);
         },
       });
       contextBridge.exposeInMainWorld('labPanel', {

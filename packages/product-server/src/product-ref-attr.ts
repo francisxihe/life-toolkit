@@ -11,7 +11,7 @@ export function parseProductRefAttribute(value: string | null | undefined): Prod
   for (const part of value.trim().split(/\s+/)) {
     if (!part || seen.has(part)) continue;
     seen.add(part);
-    refs.push(part as ProductRef);
+    refs.push(part);
   }
   return refs;
 }

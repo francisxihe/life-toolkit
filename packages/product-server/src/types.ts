@@ -1,5 +1,3 @@
-import type { ProductReferenceId } from './references.generated';
-
 export type ProductSpecKind = 'global' | 'domain' | 'module';
 export type ProductStatus = 'roadmap' | 'released' | 'deprecated';
 export type SurfaceCoverage = 'none' | 'partial' | 'complete';
@@ -56,7 +54,7 @@ export type ProductRuleSpec = {
   productStatus: ProductStatus;
   surfaceCoverage: SurfaceCoverage;
 };
-export type ProductDocumentationReference = { id: ProductReferenceId; title: string; body: string };
+export type ProductDocumentationReference = { id: string; title: string; body: string };
 
 export type ProductSpec = {
   id: string;
@@ -75,7 +73,7 @@ export type ProductSpec = {
 };
 
 export type ResolvedProductReference = {
-  id: ProductReferenceId;
+  id: string;
   title: string;
   module: string;
   path: string;
@@ -84,4 +82,10 @@ export type ResolvedProductReference = {
   productStatus: ProductStatus;
   surfaceCoverage: SurfaceCoverage;
   latestChange?: ProductChangeLogEntry;
+};
+
+export type ProductWikiData = {
+  specs: readonly ProductSpec[];
+  history: ProductChangeLog;
+  specSourcePath?: (specId: string) => string;
 };

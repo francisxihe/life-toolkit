@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import { Flex, Input, Select } from '@sue/design-web-react';
-import { ProductSurface, productRef, type ProductSurfaceHostProps } from '@true-north/product-wiki';
+import { ProductSurface, type ProductSurfaceHostProps } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 import type { AiEntityLinkVo } from '@true-north/vo';
 import {
   Conversation,

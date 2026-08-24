@@ -10,7 +10,8 @@ import GoalTreeSelector from '../GoalTreeSelector';
 import { useTaskFormConstraints } from './hooks';
 import { TaskService, GoalService } from '@true-north/web-service';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { ProductSurface, productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@true-north/product-server';
+import { productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;
 const TextArea = Input.TextArea;

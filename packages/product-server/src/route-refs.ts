@@ -14,7 +14,7 @@ function uniqueRefs(values: readonly string[]): ProductRef[] {
   for (const value of values) {
     if (!value || seen.has(value)) continue;
     seen.add(value);
-    refs.push(value as ProductRef);
+    refs.push(value);
   }
   return refs;
 }

@@ -3,13 +3,14 @@ import type { ProductChangeLog, ProductSpec, ResolvedProductReference } from './
 import { featureKey, latestProductChange } from './version-history';
 
 export function specSourcePath(specId: string): string {
-  return `packages/product-wiki/wiki/${specId.replaceAll('.', '/')}/spec.json`;
+  return `${specId.replaceAll('.', '/')}/spec.json`;
 }
 
 export function resolveProductReferenceFromSpecs(
   specs: readonly ProductSpec[],
   history: ProductChangeLog,
   reference: ProductRef,
+  resolvePath: (specId: string) => string = specSourcePath,
 ): ResolvedProductReference | undefined {
   for (const spec of specs) {
     const entry = spec.references.find((item) => item.id === reference);
@@ -18,7 +19,7 @@ export function resolveProductReferenceFromSpecs(
       id: entry.id,
       title: entry.title,
       module: spec.title,
-      path: specSourcePath(spec.id),
+      path: resolvePath(spec.id),
       markdown: entry.body,
       spec,
       productStatus: spec.views?.find((view) => view.reference === entry.id)?.productStatus
