@@ -13,7 +13,7 @@ import { TodoRelatedType, TodoStatus } from '@true-north/enum';
 
 import { TodoVo } from '@true-north/vo';
 import { emitTodoChanged } from '../../events';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import { useFocusTimer } from '../../focus-timer';
 

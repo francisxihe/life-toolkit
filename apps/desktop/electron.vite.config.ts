@@ -57,10 +57,6 @@ export default defineConfig({
           '../../packages/dev-lab/src/collector.ts',
         ),
         '@true-north/dev-lab': path.resolve(currentDirPath, '../../packages/dev-lab/src/index.ts'),
-        '@true-north/product-server/inspector/protocol': path.resolve(
-          currentDirPath,
-          '../../packages/product-server/src/inspector/protocol.ts',
-        ),
       },
       extensions: ['.ts', '.js', '.json'],
     },
@@ -97,7 +93,6 @@ export default defineConfig({
                 path.resolve(srcDir, 'main/**/*'),
                 path.resolve(srcDir, 'service/**/*'),
                 path.resolve(currentDirPath, '../../packages/dev-lab/src/**/*'),
-                path.resolve(currentDirPath, '../../packages/product-server/src/**/*'),
               ],
             }
           : undefined,
@@ -108,14 +103,6 @@ export default defineConfig({
     },
   },
   preload: {
-    resolve: {
-      alias: {
-        '@true-north/product-server/inspector/protocol': path.resolve(
-          currentDirPath,
-          '../../packages/product-server/src/inspector/protocol.ts',
-        ),
-      },
-    },
     // 预加载脚本配置
     build: {
       outDir: 'dist/preload',
@@ -202,24 +189,6 @@ export default defineConfig({
         {
           find: '@true-north/dev-lab',
           replacement: path.resolve(currentDirPath, '../../packages/dev-lab/src/index.ts'),
-        },
-        {
-          find: '@true-north/product-server/inspector/bridge',
-          replacement: path.resolve(
-            currentDirPath,
-            '../../packages/product-server/src/inspector/bridge.ts',
-          ),
-        },
-        {
-          find: '@true-north/product-server/inspector/panel',
-          replacement: path.resolve(
-            currentDirPath,
-            '../../packages/product-server/src/inspector/panel/index.ts',
-          ),
-        },
-        {
-          find: '@true-north/product-server',
-          replacement: path.resolve(currentDirPath, '../../packages/product-server/src/index.ts'),
         },
         {
           find: '@true-north/product-wiki/data',

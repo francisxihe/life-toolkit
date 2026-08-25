@@ -10,7 +10,7 @@ import GoalTreeSelector from '../GoalTreeSelector';
 import { useTaskFormConstraints } from './hooks';
 import { TaskService, GoalService } from '@true-north/web-service';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;

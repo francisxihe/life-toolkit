@@ -20,7 +20,7 @@ import { Difficulty, Importance, TodoRelatedType, TodoStatus } from '@true-north
 import type { AiDecomposePayloadVo, AiWorkspaceSuggestionVo } from '@true-north/vo';
 import { TaskService, TodoService } from '@true-north/web-service';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import styles from '../style.module.less';
 

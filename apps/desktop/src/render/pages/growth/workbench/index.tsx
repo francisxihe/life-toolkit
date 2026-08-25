@@ -5,7 +5,7 @@ import { GoalStatus, HabitStatus, TaskStatus, TodoRelatedType, TodoStatus } from
 import { GoalService, HabitService, TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import { HabitVo, TaskWithoutRelationsVo, TodoVo } from '@true-north/vo';
 import { useNavigate } from 'react-router-dom';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import dayjs from 'dayjs';
 import { onHabitChanged, onTaskChanged, onTodoChanged } from '../events';

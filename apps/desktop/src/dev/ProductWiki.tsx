@@ -1,6 +1,6 @@
 import '@sue/design-web-react/dist/sue.css';
-import { bootstrapProductInspectorPanel } from '@true-north/product-server/inspector/panel';
-import type { ProductWikiData } from '@true-north/product-server';
+import { bootstrapProductInspectorPanel } from '@ylib/product-server/inspector/panel';
+import type { ProductWikiData } from '@ylib/product-server';
 import { productWiki } from '@true-north/product-wiki/data';
 
 function mediaTheme(): 'light' | 'dark' {

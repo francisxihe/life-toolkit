@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Flex } from '@sue/design-web-react';
-import type { ProductSurfaceHostProps } from '@true-north/product-server';
+import type { ProductSurfaceHostProps } from '@ylib/product-server';
 import { EmptyWorkspace } from '../components/EmptyWorkspace';
 import { useAiSessionContext } from '../context';
 import { workspaceRegistry } from '../workspaces/registry';

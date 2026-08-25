@@ -3,7 +3,7 @@
 | 文档 | 路径 | 说明 |
 | --- | --- | --- |
 | 产品 Wiki | [packages/product-wiki/wiki](../packages/product-wiki/wiki/README.md) | desktop 产品事实来源：定位、业务域与设计规范 |
-| 编写规范 | [packages/product-server/WIKI.md](../packages/product-server/WIKI.md) | ProductWiki 形状与写法（schema 同包） |
+| 编写规范 | `@ylib/product-server` 的 `WIKI.md` | ProductWiki 形状与写法（schema 同包） |
 | 技术 Wiki | [TechnicalWiki/TechnicalWiki.md](./TechnicalWiki/TechnicalWiki.md) | Monorepo、Desktop 分层、代码规范 |
 | 版本交付 | [v0.1.0/TDD.md](./v0.1.0/TDD.md) · [v0.2.0/TDD.md](./v0.2.0/TDD.md) | 本版技术设计位于 `doc/{version}/`（可再放其它技术文件，不放 PRD） |
 | AI 技术域 | [TechnicalWiki/ai](./TechnicalWiki/ai/README.md) | AI 平台与 Capability 设计基线（`status: design`） |

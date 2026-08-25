@@ -3,7 +3,7 @@ import { Button, Col, Flex, Row, Space, Statistic, Tag } from '@sue/design-web-r
 import dayjs from 'dayjs';
 import { Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import { useGoalContext } from '../context';
 import { useGoalDetailContext } from '../../components/GoalDetail/context';

@@ -29,7 +29,7 @@ import { GoalService, HabitService, TaskService, TodoService } from '@true-north
 import { createDefaultRepeatSetting } from '@true-north/components-repeat';
 import { RepeatEndMode, RepeatMode } from '@true-north/components-repeat/types';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import styles from '../style.module.less';
 

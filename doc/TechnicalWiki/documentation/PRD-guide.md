@@ -1,12 +1,12 @@
 # 产品需求概述
 
-True North 不再在 `doc/{version}/` 写独立 PRD。产品需求的事实来源是 ProductWiki；本文件只说明落点、模型与协作边界。写法与 schema 由 `@true-north/product-server` 提供，wiki 包只写内容。
+True North 不再在 `doc/{version}/` 写独立 PRD。产品需求的事实来源是 ProductWiki；本文件只说明落点、模型与协作边界。写法与 schema 由 `@ylib/product-server` 提供，wiki 包只写内容。
 
 ## 落点
 
 | 层级 | 路径 | 职责 |
 | --- | --- | --- |
-| 形状与写法 | [packages/product-server/WIKI.md](../../../packages/product-server/WIKI.md)、[spec.schema.json](../../../packages/product-server/src/spec.schema.json)、[changelog.schema.json](../../../packages/product-server/src/changelog.schema.json) | 规格形状、检查器约定、如何改 spec |
+| 形状与写法 | `@ylib/product-server`（`WIKI.md`、`spec.schema.json`、`changelog.schema.json`） | 规格形状、检查器约定、如何改 spec |
 | 产品细节 | [packages/product-wiki/wiki](../../../packages/product-wiki/wiki/README.md) | 各模块 `spec.json`、根目录 `changelog.json`、`references[].body` |
 | 本版实现 | `doc/{version}/TDD.md` | 技术设计；版本目录可再放其它技术文件，不放 PRD |
 | 工程规范 | [TechnicalWiki](../TechnicalWiki.md) | 架构、分层、代码约定 |

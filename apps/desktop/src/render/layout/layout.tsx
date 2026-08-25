@@ -9,7 +9,7 @@ import useLocale from '../utils/useLocale';
 import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 
 const Aside = Layout.Sider;

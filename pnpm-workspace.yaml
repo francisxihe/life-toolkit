@@ -15,6 +15,7 @@ minimumReleaseAgeExclude:
   - electron-to-chromium@1.5.400
   - node-releases@2.0.52
   - terser@5.49.1
+  - '@ylib/product-server@0.0.1'
 
 overrides:
   typescript: ^6.0.0

@@ -5,7 +5,7 @@ import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
 import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import styles from './style.module.less';
 

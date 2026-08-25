@@ -3,7 +3,7 @@
 import { GoalProvider } from './context';
 import React, { useState } from 'react';
 import { Flex, Tabs } from '@sue/design-web-react';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import GoalMain from './GoalMain';
 import GoalAside from './GoalAside';

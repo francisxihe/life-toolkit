@@ -101,9 +101,6 @@ importers:
       '@true-north/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
-      '@true-north/product-server':
-        specifier: workspace:*
-        version: link:../../packages/product-server
       '@true-north/product-wiki':
         specifier: workspace:*
         version: link:../../packages/product-wiki
@@ -113,6 +110,9 @@ importers:
       '@turf/turf':
         specifier: ^6.5.0
         version: 6.5.0
+      '@ylib/product-server':
+        specifier: 0.2.0
+        version: 0.2.0(@sue/design-web-react@0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(lucide-react@0.460.0(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       bizcharts:
         specifier: ^4.1.11
         version: 4.1.23(@babel/core@7.29.7(supports-color@8.1.1))(react@18.3.1)(supports-color@8.1.1)
@@ -462,50 +462,11 @@ importers:
         specifier: ^6.0.0
         version: 6.0.3
 
-  packages/product-server:
-    dependencies:
-      '@sue/design-web-react':
-        specifier: 0.0.3-beta.1
-        version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      dompurify:
-        specifier: 3.4.12
-        version: 3.4.12
-      fe-selector:
-        specifier: 0.1.0
-        version: 0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      lucide-react:
-        specifier: ^0.460.0
-        version: 0.460.0(react@18.3.1)
-      marked:
-        specifier: 18.0.7
-        version: 18.0.7
-      react:
-        specifier: ^18.0.0
-        version: 18.3.1
-      react-dom:
-        specifier: ^18.0.0
-        version: 18.3.1(react@18.3.1)
-    devDependencies:
-      '@types/jest':
-        specifier: ^29.5.0
-        version: 29.5.14
-      '@types/react':
-        specifier: ^18.2.0
-        version: 18.3.31
-      '@types/react-dom':
-        specifier: ^18.2.0
-        version: 18.3.7(@types/react@18.3.31)
-      jest:
-        specifier: ^29.5.0
-        version: 29.7.0(@types/node@22.13.0)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
-      ts-jest:
-        specifier: ^29.1.0
-        version: 29.4.12(@babel/core@7.29.7(supports-color@8.1.1))(@jest/transform@29.7.0(supports-color@8.1.1))(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1))(esbuild@0.28.1)(jest-util@29.7.0)(jest@29.7.0(@types/node@22.13.0)(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3)))(typescript@6.0.3)
-      typescript:
-        specifier: ^6.0.0
-        version: 6.0.3
-
   packages/product-wiki:
+    dependencies:
+      '@ylib/product-server':
+        specifier: 0.2.0
+        version: 0.2.0(@sue/design-web-react@0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(lucide-react@0.460.0(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     devDependencies:
       typescript:
         specifier: ^6.0.0
@@ -3599,6 +3560,14 @@ packages:
 
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
+
+  '@ylib/product-server@0.2.0':
+    resolution: {integrity: sha512-6SfSCT0S07lBkPLYNcvDMdva4RyAHAGYROoKmfGSeoKhXv9sYokZtYN1Atrvtwypfd1iT9MZKFhkt0P9dp7SNg==, tarball: https://packages.aliyun.com/6141c43fdd62cdb60fbbdbda/npm/npm-registry/@ylib/product-server/-/@ylib/product-server-0.2.0.tgz}
+    peerDependencies:
+      '@sue/design-web-react': 0.0.3-beta.1
+      lucide-react: ^0.460.0
+      react: ^18.0.0
+      react-dom: ^18.0.0
 
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
@@ -12698,6 +12667,16 @@ snapshots:
   '@xtuc/ieee754@1.2.0': {}
 
   '@xtuc/long@4.2.2': {}
+
+  '@ylib/product-server@0.2.0(@sue/design-web-react@0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(lucide-react@0.460.0(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@sue/design-web-react': 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      dompurify: 3.4.12
+      fe-selector: 0.1.0(patch_hash=5a0369e229deb013fd24cb24bcedd79c68538bd2c2bff57028f6febc085c0ebe)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      lucide-react: 0.460.0(react@18.3.1)
+      marked: 18.0.7
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   abbrev@1.1.1:
     optional: true

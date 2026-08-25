@@ -9,7 +9,7 @@ import { useGoalDetailContext } from './context';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 import GoalTreeSelector from '../GoalTreeSelector';
 import { useGoalFormConstraints } from './hooks';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 
 const RangePicker = DatePicker.RangePicker;

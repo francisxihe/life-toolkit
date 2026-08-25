@@ -44,7 +44,7 @@ doc/
 | 层级 | 路径 | 作用 |
 | --- | --- | --- |
 | 产品 SSOT | [packages/product-wiki/wiki](../../../packages/product-wiki/wiki/README.md) | 产品架构、业务规范 |
-| 写法与形状 | [packages/product-server/WIKI.md](../../../packages/product-server/WIKI.md) | ProductWiki 编写规范与 schema |
+| 写法与形状 | `@ylib/product-server`（`WIKI.md` 与 schema） | ProductWiki 编写规范与 schema |
 | 技术 SSOT | [TechnicalWiki/TechnicalWiki.md](../TechnicalWiki.md) | 工程架构、代码规范 |
 | 版本交付 | `doc/{version}/`（示例 [v0.1.0 TDD](../../v0.1.0/TDD.md)、[v0.2.0 TDD](../../v0.2.0/TDD.md)） | 本版本 TDD（可扩展） |
 
@@ -54,7 +54,7 @@ doc/
 
 - [PRD-guide.md](./PRD-guide.md) — 产品需求概述（落点 ProductWiki）
 - [TDD-guide.md](./TDD-guide.md)
-- [packages/product-server/WIKI.md](../../../packages/product-server/WIKI.md) — ProductWiki 编写规范
+- `@ylib/product-server` `WIKI.md` — ProductWiki 编写规范
 
 ## 维护原则
 

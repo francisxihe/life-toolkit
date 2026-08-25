@@ -178,7 +178,7 @@ function LifeToolkitApp() {
 createRoot(document.getElementById('root') as HTMLElement).render(<LifeToolkitApp />);
 
 if (import.meta.env.DEV) {
-  void import('@true-north/product-server/inspector/bridge').then((module) =>
+  void import('@ylib/product-server/inspector/bridge').then((module) =>
     module.bootstrapProductInspectorBridge(),
   );
 }

@@ -1,5 +1,5 @@
 import { Calendar } from '@sue/design-web-react';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import { useEffect } from 'react';
 import { CalendarProvider } from './context';

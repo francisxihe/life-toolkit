@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import { TaskService } from '@true-north/web-service';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import { useTaskDetailContext } from './context';
 import { useTodoDetail } from '../../components/TodoDetail';

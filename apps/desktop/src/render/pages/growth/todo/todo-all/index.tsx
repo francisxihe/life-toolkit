@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { TodoFilters } from './TodoFilters';
 import { Button, Flex, message } from '@sue/design-web-react';
-import { ProductSurface } from '@true-north/product-server';
+import { ProductSurface } from '@ylib/product-server';
 import { productRef } from '@true-north/product-wiki';
 import { TodoService } from '@true-north/web-service';
 import { TodoStatus } from '@true-north/enum';

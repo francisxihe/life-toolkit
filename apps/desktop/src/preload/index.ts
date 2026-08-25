@@ -1,7 +1,7 @@
 // 导入模块
 const { contextBridge, ipcRenderer } = require('electron');
 import type { ElectronAPI } from '@true-north/web-service/electron-types';
-import { inspectorChannel } from '@true-north/product-server/inspector/protocol';
+import { inspectorChannel } from '@ylib/product-server/inspector/protocol';
 
 // 检查当前环境是否为Electron
 const isElectron = () => {

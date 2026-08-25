@@ -30,7 +30,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | [documentation/doc-tree.md](./documentation/doc-tree.md) | TDD / 版本目录约定 |
 | [documentation/PRD-guide.md](./documentation/PRD-guide.md) | 产品需求概述（落点 ProductWiki） |
 | [documentation/TDD-guide.md](./documentation/TDD-guide.md) | 技术设计文档写作规范 |
-| [packages/product-server/WIKI.md](../../packages/product-server/WIKI.md) | ProductWiki 编写规范 |
+| `@ylib/product-server` `WIKI.md` | ProductWiki 编写规范 |
 | [growth/README.md](./growth/README.md) | Growth 技术基线、路由与产品表面 / 实现缺口 |
 | [ai/README.md](./ai/README.md) | AI 平台域（设计基线）：Settings、Runner、Capability、目标拆解与聊天预留 |
 

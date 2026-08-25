@@ -19,6 +19,9 @@
     "product-wiki:sync": "node scripts/product-wiki.mjs --write",
     "product-wiki:version": "node scripts/product-wiki.mjs --version"
   },
+  "dependencies": {
+    "@ylib/product-server": "0.0.1"
+  },
   "devDependencies": {
     "typescript": "^6.0.3"
   }

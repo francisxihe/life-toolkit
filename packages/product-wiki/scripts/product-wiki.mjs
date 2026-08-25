@@ -1,14 +1,15 @@
+import { createRequire } from 'node:module';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+const require = createRequire(import.meta.url);
 const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = join(packageRoot, '../..');
 const wikiRoot = join(packageRoot, 'wiki');
 const srcRoot = join(packageRoot, 'src');
-const serverRoot = join(packageRoot, '../product-server');
-const schemaPath = join(serverRoot, 'src/spec.schema.json');
-const changelogSchemaPath = join(serverRoot, 'src/changelog.schema.json');
+const schemaPath = require.resolve('@ylib/product-server/spec.schema.json');
+const changelogSchemaPath = require.resolve('@ylib/product-server/changelog.schema.json');
 const changelogPath = join(wikiRoot, 'changelog.json');
 const generatedReferencesPath = join(srcRoot, 'references.generated.ts');
 const generatedCatalogPath = join(srcRoot, 'catalog.generated.ts');

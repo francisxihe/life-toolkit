@@ -1,7 +1,7 @@
 import electron from 'electron';
 import { labChannel } from '@true-north/dev-lab';
 import { snapshotDevTrace, subscribeDevTrace } from '@true-north/dev-lab/collector';
-import { inspectorChannel } from '@true-north/product-server/inspector/protocol';
+import { inspectorChannel } from '@ylib/product-server/inspector/protocol';
 
 const { ipcMain, WebContentsView } = electron;
 

@@ -24,8 +24,6 @@
     "paths": {
       "@/*": ["./src/render/*"],
       "@business/*": ["./src/service/*"],
-      "@true-north/product-server": ["../../packages/product-server/src/index.ts"],
-      "@true-north/product-server/*": ["../../packages/product-server/src/*"],
       "@true-north/product-wiki": ["../../packages/product-wiki/src/index.ts"],
       "@true-north/product-wiki/data": ["../../packages/product-wiki/src/data.ts"],
       "@true-north/dev-lab": ["../../packages/dev-lab/src/index.ts"],
