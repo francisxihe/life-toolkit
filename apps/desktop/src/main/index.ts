@@ -7,7 +7,7 @@ import fs from 'fs';
 // 在ESM环境中导入Electron
 import electron from 'electron';
 
-const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, shell } = electron;
+const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTheme, shell } = electron;
 
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
@@ -328,6 +328,11 @@ ipcMain.handle('get-app-info', () => {
     version: app.getVersion(),
     platform: process.platform,
   };
+});
+
+ipcMain.handle('set-native-theme-source', (_event, source: string) => {
+  if (source !== 'system' && source !== 'light' && source !== 'dark') return;
+  nativeTheme.themeSource = source;
 });
 
 // 设置CSP安全策略

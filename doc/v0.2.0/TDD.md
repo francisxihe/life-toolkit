@@ -18,7 +18,7 @@ scope:
   supplemental_contract: '会话聊天与拆解建议均外包本机编码 Agent CLI（本版仅 ChatGPT.app 内置 codex，展示名 ChatGPT）；应用不自研 agent-loop；领域工具经 loopback MCP（实现仍 tools.ts）；拆解 JSON 由当前会话 Agent 生成、Capability 只校验写入；无 HTTP Provider 生成回退；无设置页；本版不接 Cursor'
 ```
 
-桌面分层与数据流参见 [TechnicalWiki · 架构](../TechnicalWiki/architecture/overview.md)。AI 平台长期设计参见 [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)。产品规则参见 ProductWiki · [AI 会话](../../packages/product-wiki/wiki/ai/session/spec.json)、[目标管理](../../packages/product-wiki/wiki/growth/goal/spec.json)、[任务管理](../../packages/product-wiki/wiki/growth/task/spec.json)。本版产品范围见 [PRD](./PRD.md)。
+桌面分层与数据流参见 [TechnicalWiki · 架构](../TechnicalWiki/architecture/overview.md)。AI 平台长期设计参见 [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)。产品规则与本版范围参见 ProductWiki · [AI 会话](../../packages/product-wiki/wiki/ai/session/spec.json)、[目标管理](../../packages/product-wiki/wiki/growth/goal/spec.json)、[任务管理](../../packages/product-wiki/wiki/growth/task/spec.json)；变更记录见 [changelog.json](../../packages/product-wiki/wiki/changelog.json)。
 
 TechnicalWiki · [ai/platform](../TechnicalWiki/ai/platform.md) 仍描述「聊天与拆解共用 openai_compatible」。**本版以本文差异为准**（聊天与拆解都走本机 ChatGPT.app，不走 HTTP Provider）；功能确认后再回写 Wiki（保持既有约定，本轮不改 Wiki）。
 
@@ -314,7 +314,6 @@ pnpm --filter true-north-prototype product-wiki:check
 
 ## 相关文档
 
-- [PRD](./PRD.md)
 - [TechnicalWiki · AI](../TechnicalWiki/ai/README.md)
 - [TechnicalWiki · Goal](../TechnicalWiki/growth/goal.md)
 - [ProductWiki · AI 会话](../../packages/product-wiki/wiki/ai/session/spec.json)

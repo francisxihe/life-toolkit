@@ -1,1 +1,1 @@
-export { bootstrapProductInspectorPanel } from './panel/index';
+export { bootstrapProductInspectorPanel, type InspectorTheme } from './panel/index';

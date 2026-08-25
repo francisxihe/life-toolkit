@@ -7,6 +7,7 @@ export interface ElectronAPI {
   // 基础API
   getAppInfo: () => Promise<{ version: string; platform: string }>;
   loadURL: (url: string) => Promise<{ success: boolean; error?: string }>;
+  setNativeThemeSource: (source: 'system' | 'light' | 'dark') => Promise<void>;
   isElectron: boolean;
 
   // 文件操作

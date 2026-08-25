@@ -1,6 +1,8 @@
 # ProductWiki 编写规范
 
-ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 是否实现。规格形状由 `packages/product-server/src/spec.schema.json` 与 `packages/product-server/src/changelog.schema.json` 约束，`wiki/` 只写内容。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。检查器实现在 `@true-north/product-server`，desktop 承接层把 `productWiki` 数据注入后再激活。
+本包约束 ProductWiki 的规格形状与写法。Wiki **内容**写在消费方（True North 仓库里是 `packages/product-wiki/wiki/`），不放在本包内。
+
+ProductWiki 是产品事实来源，不是技术设计文档。它用于维护用户价值、产品对象、业务流程、交互语义、规则、路线图与 desktop 是否实现。规格形状由 [spec.schema.json](./src/spec.schema.json) 与 [changelog.schema.json](./src/changelog.schema.json) 约束。完整产品表面只在 `apps/desktop`；DEV 用主窗口右侧吸附的检查器阅读与导出，不把 Wiki 正文打进生产包。检查器实现在本包，desktop 承接层把 `productWiki` 数据注入后再激活。
 
 ## 内容来源
 
@@ -14,6 +16,8 @@ ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不�
 
 页面编辑尚未提供，当前仍直接修改 `spec.json` / `changelog.json`。阅读与 Markdown / JSON 导出在检查器中完成。
 
+规格模型（`parentId` 成树、无 `children` 字段）见 [README.md](./README.md)。
+
 ## 变更流程
 
 1. 修改对应模块的 `spec.json`，并为受影响对象在 `changelog.json` 追加变更记录。
@@ -24,6 +28,6 @@ ProductWiki 位于 `packages/product-wiki/wiki/`，是产品事实来源，不�
 
 ## 内容边界
 
-ProductWiki 不包含 API、IPC、DTO/VO、控制器、数据库实体、组件名或工程架构。上述内容应从当前代码重建到 [TechnicalWiki](../TechnicalWiki.md)。
+ProductWiki 不包含 API、IPC、DTO/VO、控制器、数据库实体、组件名或工程架构。上述内容应从当前代码重建到 [TechnicalWiki](../../doc/TechnicalWiki/TechnicalWiki.md)。
 
 可讲解区域通过页面组装层的 `productRef()` 写入 `data-product-ref`。检查器只接收 productRef 祖先链与当前路由，在主窗口中间栏解析 Wiki，左侧是业务页、右侧是主窗口 DevTools，三者互不覆盖。

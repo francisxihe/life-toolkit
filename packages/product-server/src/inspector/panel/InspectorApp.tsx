@@ -10,9 +10,10 @@ import {
   Select,
   Tabs,
   Tag,
+  theme as sueTheme,
 } from '@sue/design-web-react';
 import zhCN from '@sue/design-web-react/locale/zh_CN';
-import { Inspect } from 'lucide-react';
+import { ChevronDown, Inspect } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useWikiRuntime, WikiRuntimeProvider } from './runtime-context';
@@ -20,6 +21,7 @@ import type { WikiRuntime } from '../../runtime';
 import {
   changelogJson,
   changelogMarkdown,
+  childProductSpecs,
   coverageLabel,
   downloadText,
   eventLabel,
@@ -29,12 +31,15 @@ import {
   topicJson,
   topicMarkdown,
 } from '../../export/format';
-import type { ProductChangeLogEntry, ResolvedProductReference } from '../../types';
+import { specOverviewRef } from '../../route-refs';
+import type { ProductChangeLogEntry, ProductSpec, ProductViewSpec, ResolvedProductReference } from '../../types';
+import { specNavViews, wikiBreadcrumbPath, type WikiPathFocus, type WikiPathLevel } from '../../wiki-path';
 import type {
   InspectorPageContext,
   InspectorSelection,
   ProductWikiInspectorPanel,
 } from '../protocol';
+import { applyInspectorTheme, type InspectorTheme } from '../theme';
 
 type PanelMode = 'wiki' | 'versions';
 type ExportItem = { key: string; label: string; onClick: () => void };
@@ -43,10 +48,21 @@ function inspectorApi(): ProductWikiInspectorPanel | undefined {
   return window.productWikiInspectorPanel;
 }
 
-export function InspectorApp({ runtime }: { runtime: WikiRuntime }) {
+export function InspectorApp({ runtime, theme }: { runtime: WikiRuntime; theme: InspectorTheme }) {
+  useEffect(() => {
+    applyInspectorTheme(theme);
+  }, [theme]);
+
+  const sueThemeConfig = useMemo(
+    () => ({
+      algorithm: theme === 'dark' ? sueTheme.darkAlgorithm : sueTheme.defaultAlgorithm,
+    }),
+    [theme],
+  );
+
   return (
     <WikiRuntimeProvider runtime={runtime}>
-      <ConfigProvider locale={zhCN}>
+      <ConfigProvider locale={zhCN} theme={sueThemeConfig}>
         <InspectorShell />
       </ConfigProvider>
     </WikiRuntimeProvider>
@@ -249,20 +265,90 @@ function ExportMenu({ items }: { items: ExportItem[] }) {
   );
 }
 
+function breadcrumbSelectedKey(level: WikiPathLevel, activeRef?: string, activeSpecId?: string): string | undefined {
+  const byRef = level.siblings.find((item) => item.id === activeRef);
+  if (byRef) return byRef.id;
+  const bySpec = level.siblings.find((item) => item.kind === 'spec' && item.id === activeSpecId);
+  return bySpec?.id;
+}
+
+function BreadcrumbLevelTitle({
+  level,
+  activeRef,
+  activeSpecId,
+  onNavigate,
+}: {
+  level: WikiPathLevel;
+  activeRef?: string;
+  activeSpecId?: string;
+  onNavigate: (siblingId: string) => void;
+}) {
+  const title =
+    level.kind === 'spec' ? (
+      <button type="button" className="productInspectorBreadcrumbTrigger" onClick={() => onNavigate(level.currentId)}>
+        {level.title}
+      </button>
+    ) : (
+      level.title
+    );
+
+  if (!level.siblings.length) return title;
+
+  const selectedKey = breadcrumbSelectedKey(level, activeRef, activeSpecId);
+  return (
+    <span className="productInspectorBreadcrumbLevel">
+      {title}
+      <Dropdown
+        trigger={['click']}
+        menu={{
+          selectable: true,
+          selectedKeys: selectedKey ? [selectedKey] : [],
+          className: 'productInspectorBreadcrumbMenu',
+          items: level.siblings.map((sibling) => ({
+            key: sibling.id,
+            label: sibling.title,
+          })),
+          onClick: ({ key }) => onNavigate(String(key)),
+        }}
+      >
+        <button type="button" className="productInspectorBreadcrumbChevron" aria-haspopup="listbox" aria-label="切换下级">
+          <ChevronDown size={12} />
+        </button>
+      </Dropdown>
+    </span>
+  );
+}
+
 function ContentHeader({
-  breadcrumb,
+  path,
+  activeRef,
+  activeSpecId,
+  onNavigate,
   exportItems,
 }: {
-  breadcrumb?: string[];
+  path?: WikiPathLevel[];
+  activeRef?: string;
+  activeSpecId?: string;
+  onNavigate?: (level: WikiPathLevel, siblingId: string) => void;
   exportItems?: ExportItem[];
 }) {
-  if (!breadcrumb?.length && !exportItems?.length) return null;
+  if (!path?.length && !exportItems?.length) return null;
   return (
     <Flex container="fixed" className="productInspectorContentHeader" align="center" gap={8} justify="space-between">
-      {breadcrumb?.length ? (
+      {path?.length ? (
         <Breadcrumb
           className="productInspectorBreadcrumb"
-          items={breadcrumb.map((title) => ({ title }))}
+          items={path.map((level) => ({
+            key: level.key,
+            title: (
+              <BreadcrumbLevelTitle
+                level={level}
+                activeRef={activeRef}
+                activeSpecId={activeSpecId}
+                onNavigate={(siblingId) => onNavigate?.(level, siblingId)}
+              />
+            ),
+          }))}
         />
       ) : (
         <span />
@@ -272,8 +358,99 @@ function ContentHeader({
   );
 }
 
+function TopicPane({
+  topics,
+  displayed,
+  showStack,
+  source,
+  onSelectTopic,
+}: {
+  topics: readonly ResolvedProductReference[];
+  displayed: ResolvedProductReference;
+  showStack: boolean;
+  source?: InspectorSelection['source'];
+  onSelectTopic: (id: string) => void;
+}) {
+  return (
+    <>
+      {showStack ? (
+        <div className="productInspectorStack">
+          {topics.map((topic, index) => (
+            <button
+              key={topic.id}
+              type="button"
+              className="productInspectorStackItem"
+              aria-current={topic.id === displayed.id ? 'true' : undefined}
+              onClick={() => onSelectTopic(topic.id)}
+            >
+              {index + 1}. {topic.title}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <WikiTopic topic={displayed} stacked={showStack} source={source} />
+    </>
+  );
+}
+
+function SpecNav({
+  current,
+  childSpecs,
+  views,
+  currentSelected,
+  activeViewRef,
+  onSelectSpec,
+  onSelectView,
+}: {
+  current: ProductSpec;
+  childSpecs: readonly ProductSpec[];
+  views: readonly ProductViewSpec[];
+  currentSelected: boolean;
+  activeViewRef?: string;
+  onSelectSpec: (specId: string) => void;
+  onSelectView: (reference: string) => void;
+}) {
+  const items = childSpecs.length
+    ? childSpecs.map((spec) => (
+        <button
+          key={spec.id}
+          type="button"
+          className="productInspectorStackItem"
+          onClick={() => onSelectSpec(spec.id)}
+        >
+          <span>{spec.title}</span>
+        </button>
+      ))
+    : views.map((view) => (
+        <button
+          key={view.id}
+          type="button"
+          className="productInspectorStackItem"
+          aria-current={view.reference === activeViewRef ? 'true' : undefined}
+          onClick={() => onSelectView(view.reference)}
+        >
+          <span>{view.name}</span>
+        </button>
+      ));
+
+  return (
+    <nav className="productInspectorNav" aria-label={childSpecs.length ? '当前模块与子模块' : '当前模块与视图'}>
+      <button
+        type="button"
+        className="productInspectorStackItem"
+        aria-current={currentSelected ? 'true' : undefined}
+        onClick={() => onSelectSpec(current.id)}
+      >
+        <span>{current.title}</span>
+        <span className="productInspectorNavHint">当前</span>
+      </button>
+      {items}
+    </nav>
+  );
+}
+
 function SelectionView({ selection }: { selection: InspectorSelection }) {
-  const { resolveProductReference, productSpecs } = useWikiRuntime();
+  const { resolveProductReference, productSpecs, productSpecsById } = useWikiRuntime();
   const topics = useMemo(
     () =>
       selection.productRefs
@@ -281,14 +458,103 @@ function SelectionView({ selection }: { selection: InspectorSelection }) {
         .filter((topic): topic is ResolvedProductReference => Boolean(topic)),
     [selection.productRefs, resolveProductReference],
   );
-  const [topicId, setTopicId] = useState(topics[0]?.id);
-  const active = topics.find((topic) => topic.id === topicId) || topics[0];
+  const [displayedRef, setDisplayedRef] = useState(topics[0]?.id);
+  const [focusKind, setFocusKind] = useState<WikiPathFocus>('reference');
+  const originTopicIdRef = useRef(topics[0]?.id);
 
   useEffect(() => {
-    setTopicId(topics[0]?.id);
+    setDisplayedRef(topics[0]?.id);
+    originTopicIdRef.current = topics[0]?.id;
+    setFocusKind('reference');
   }, [topics]);
 
-  if (!topics.length) {
+  const displayed = useMemo(
+    () => (displayedRef ? resolveProductReference(displayedRef) : undefined) || topics[0],
+    [displayedRef, resolveProductReference, topics],
+  );
+
+  useEffect(() => {
+    if (displayed && topics.some((topic) => topic.id === displayed.id)) {
+      originTopicIdRef.current = displayed.id;
+    }
+  }, [displayed, topics]);
+
+  const childSpecs = useMemo(
+    () => (displayed ? childProductSpecs(productSpecs, displayed.spec.id) : []),
+    [displayed, productSpecs],
+  );
+  const navViews = useMemo(
+    () => (displayed && !childSpecs.length ? specNavViews(displayed.spec) : []),
+    [childSpecs.length, displayed],
+  );
+  const wikiPath = useMemo(
+    () => (displayed ? wikiBreadcrumbPath(productSpecs, displayed.spec, displayed.id, focusKind) : []),
+    [displayed, productSpecs, focusKind],
+  );
+  const originSpecId = topics[0]?.spec.id;
+  const showSplit = childSpecs.length > 0 || navViews.length > 0;
+  const activeViewRef =
+    focusKind === 'reference' && displayed && navViews.some((view) => view.reference === displayed.id)
+      ? displayed.id
+      : undefined;
+  const currentSelected = !activeViewRef;
+  const showStack = Boolean(
+    focusKind === 'reference' &&
+      displayed &&
+      topics.length > 1 &&
+      topics.some((topic) => topic.id === displayed.id),
+  );
+
+  const openReference = useCallback((reference: string | undefined) => {
+    if (!reference) return;
+    setFocusKind('reference');
+    setDisplayedRef(reference);
+  }, []);
+
+  const openSpec = useCallback(
+    (specId: string) => {
+      const spec = productSpecsById.get(specId);
+      const overview = spec ? specOverviewRef(spec) : undefined;
+      if (!overview) return;
+      setFocusKind('spec');
+      setDisplayedRef(overview);
+    },
+    [productSpecsById],
+  );
+
+  const onBreadcrumbNavigate = useCallback(
+    (level: WikiPathLevel, siblingId: string) => {
+      if (siblingId === level.currentId && level.kind === 'spec') {
+        openSpec(siblingId);
+        return;
+      }
+      const item = level.siblings.find((sibling) => sibling.id === siblingId);
+      if (item?.kind === 'view') {
+        openReference(siblingId);
+        return;
+      }
+      openSpec(siblingId);
+    },
+    [openReference, openSpec],
+  );
+
+  const onSelectNavSpec = useCallback(
+    (specId: string) => {
+      const originRef = originTopicIdRef.current || topics[0]?.id;
+      if (
+        specId === displayed?.spec.id &&
+        specId === originSpecId &&
+        focusKind === 'reference' &&
+        displayed.id === originRef
+      ) {
+        return;
+      }
+      openSpec(specId);
+    },
+    [displayed, focusKind, openSpec, originSpecId, topics],
+  );
+
+  if (!topics.length || !displayed) {
     return (
       <div className="productInspectorBody">
         <Empty
@@ -304,52 +570,64 @@ function SelectionView({ selection }: { selection: InspectorSelection }) {
     );
   }
 
-  const exportItems: ExportItem[] | undefined = active
-    ? [
-        {
-          key: 'topic-md',
-          label: '本条 Markdown',
-          onClick: () => downloadText(`${active.id}.md`, topicMarkdown(active), 'text/markdown'),
-        },
-        {
-          key: 'topic-json',
-          label: '本条 JSON',
-          onClick: () => downloadText(`${active.id}.json`, topicJson(active), 'application/json'),
-        },
-        {
-          key: 'spec-md',
-          label: '模块 Markdown',
-          onClick: () => downloadText(`${active.spec.id}.md`, specificationMarkdown(active.spec, productSpecs), 'text/markdown'),
-        },
-        {
-          key: 'spec-json',
-          label: '模块 JSON',
-          onClick: () => downloadText(`${active.spec.id}.json`, specificationJson(active.spec), 'application/json'),
-        },
-      ]
-    : undefined;
+  const exportItems: ExportItem[] = [
+    {
+      key: 'topic-md',
+      label: '本条 Markdown',
+      onClick: () => downloadText(`${displayed.id}.md`, topicMarkdown(displayed), 'text/markdown'),
+    },
+    {
+      key: 'topic-json',
+      label: '本条 JSON',
+      onClick: () => downloadText(`${displayed.id}.json`, topicJson(displayed), 'application/json'),
+    },
+    {
+      key: 'spec-md',
+      label: '模块 Markdown',
+      onClick: () => downloadText(`${displayed.spec.id}.md`, specificationMarkdown(displayed.spec, productSpecs), 'text/markdown'),
+    },
+    {
+      key: 'spec-json',
+      label: '模块 JSON',
+      onClick: () => downloadText(`${displayed.spec.id}.json`, specificationJson(displayed.spec), 'application/json'),
+    },
+  ];
+
+  const topicPane = (
+    <TopicPane
+      topics={topics}
+      displayed={displayed}
+      showStack={showStack}
+      source={selection.source}
+      onSelectTopic={openReference}
+    />
+  );
 
   return (
     <>
-      <ContentHeader breadcrumb={active?.breadcrumb} exportItems={exportItems} />
-      <div className="productInspectorBody">
-        {topics.length > 1 ? (
-          <div className="productInspectorStack">
-            {topics.map((topic, index) => (
-              <button
-                key={topic.id}
-                type="button"
-                className="productInspectorStackItem"
-                aria-current={topic.id === active.id ? 'true' : undefined}
-                onClick={() => setTopicId(topic.id)}
-              >
-                {index + 1}. {topic.title}
-              </button>
-            ))}
-          </div>
-        ) : null}
-        {active ? <WikiTopic topic={active} stacked={topics.length > 1} source={selection.source} /> : null}
-      </div>
+      <ContentHeader
+        path={wikiPath}
+        activeRef={displayed.id}
+        activeSpecId={displayed.spec.id}
+        onNavigate={onBreadcrumbNavigate}
+        exportItems={exportItems}
+      />
+      {showSplit ? (
+        <Flex container="fill" className="productInspectorSplit">
+          <SpecNav
+            current={displayed.spec}
+            childSpecs={childSpecs}
+            views={navViews}
+            currentSelected={currentSelected}
+            activeViewRef={activeViewRef}
+            onSelectSpec={onSelectNavSpec}
+            onSelectView={openReference}
+          />
+          <div className="productInspectorDoc">{topicPane}</div>
+        </Flex>
+      ) : (
+        <div className="productInspectorBody">{topicPane}</div>
+      )}
     </>
   );
 }

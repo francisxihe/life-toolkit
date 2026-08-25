@@ -98,7 +98,7 @@ body {
 }
 .productInspectorContent {
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   padding: 0;
   background: var(--sue-color-bg-container);
 }
@@ -119,8 +119,71 @@ body {
 .productInspectorBreadcrumb ol {
   flex-wrap: wrap;
 }
-.productInspectorBody {
+.productInspectorBreadcrumbLevel {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 2px;
+}
+.productInspectorBreadcrumbTrigger,
+.productInspectorBreadcrumbChevron {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.productInspectorBreadcrumbChevron {
+  opacity: 0.7;
+}
+.productInspectorBreadcrumbMenu {
+  max-height: 240px;
+  overflow-y: auto;
+}
+.productInspectorBody,
+.productInspectorDoc {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
   padding: 16px;
+}
+.productInspectorSplit {
+  min-width: 0;
+  min-height: 0;
+}
+.productInspectorNav {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 6px;
+  width: 132px;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 8px;
+  border-right: 1px solid var(--sue-color-border-secondary);
+}
+.productInspectorNav .productInspectorStackItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between !important;
+  gap: 6px;
+}
+.productInspectorNav .productInspectorStackItem > span:first-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.productInspectorNavHint {
+  flex: none;
+  color: var(--sue-color-text-secondary);
+  font-size: 11px;
 }
 .productInspectorTopic {
   min-width: 0;

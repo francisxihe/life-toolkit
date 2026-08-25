@@ -84,7 +84,7 @@ scope:
 
 ## 实施顺序与验收
 
-1. 更新 ProductWiki 与 PRD，完成 Goal/Task/Todo/TrackTime 差异设计。
+1. 更新 ProductWiki，完成 Goal/Task/Todo/TrackTime 差异设计。
 2. 落地 Service 级层级、删除与状态转换约束，再通过 RouteController 暴露新增 `done` IPC；删除待办 start/pause。
 3. 完成 Task 抽屉与 Todo 专注入口、TrackTime 待办关联；所有错误在操作位置反馈。
 4. 更新 TechnicalWiki 的现状与差距矩阵，保证版本 TDD 不复制长期工程规范。

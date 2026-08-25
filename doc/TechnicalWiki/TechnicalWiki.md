@@ -27,10 +27,10 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 
 | 文档 | 说明 |
 | --- | --- |
-| [documentation/doc-tree.md](./documentation/doc-tree.md) | PRD / TDD / README 目录约定 |
-| [documentation/PRD-guide.md](./documentation/PRD-guide.md) | 产品需求文档写作规范 |
+| [documentation/doc-tree.md](./documentation/doc-tree.md) | TDD / 版本目录约定 |
+| [documentation/PRD-guide.md](./documentation/PRD-guide.md) | 产品需求概述（落点 ProductWiki） |
 | [documentation/TDD-guide.md](./documentation/TDD-guide.md) | 技术设计文档写作规范 |
-| [documentation/ProductWiki-guide.md](./documentation/ProductWiki-guide.md) | ProductWiki 写作规范 |
+| [packages/product-server/WIKI.md](../../packages/product-server/WIKI.md) | ProductWiki 编写规范 |
 | [growth/README.md](./growth/README.md) | Growth 技术基线、路由与产品表面 / 实现缺口 |
 | [ai/README.md](./ai/README.md) | AI 平台域（设计基线）：Settings、Runner、Capability、目标拆解与聊天预留 |
 
@@ -52,12 +52,11 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 
 | 文档类型 | 职责 | 引用关系 |
 | --- | --- | --- |
-| **ProductWiki** | 产品架构、业务模型、设计规范 | PRD 引用，不复制全文 |
+| **ProductWiki** | 产品架构、业务模型、设计规范 | 事实来源；写法见 product-server |
 | **TechnicalWiki** | 工程架构、代码分层、实现规范 | TDD 引用，不复制全文 |
-| **PRD.md** | 单次需求/版本的功能与交互 | 业务规则 → ProductWiki |
 | **TDD.md** | 本版本技术设计与 API/数据模型 | 实现规范 → TechnicalWiki |
 
-变更流程（版本迭代）：PRD/TDD（本版本差异）→ 实现代码 → Wiki（功能入库，沉淀全局）。
+变更流程（版本迭代）：ProductWiki（`spec.json` + `changelog.json`）→ TDD（本版本实现）→ 代码 → TechnicalWiki（功能确认后回写）。
 
 对本仓库项目文档的新增、修改、删除、移动，Agent 应遵循项目 skill：`TrueNorth文档说明`（`.cursor/skills/TrueNorth文档说明/`）。
 
@@ -69,7 +68,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | --- | --- |
 | [packages/product-wiki/wiki/global/spec.json](../../packages/product-wiki/wiki/global/spec.json) | 产品全局 SSOT |
 | [doc/TechnicalWiki/TechnicalWiki.md](./TechnicalWiki.md) | 技术全局 SSOT |
-| `doc/{version}/`（如 [v0.1.0](../v0.1.0/)、[v0.2.0](../v0.2.0/)） | 本版本 PRD/TDD（唯一交付落点） |
+| `doc/{version}/`（如 [v0.1.0 TDD](../v0.1.0/TDD.md)、[v0.2.0 TDD](../v0.2.0/TDD.md)） | 本版本 TDD（可再放其它技术文件，不放 PRD） |
 
 ---
 

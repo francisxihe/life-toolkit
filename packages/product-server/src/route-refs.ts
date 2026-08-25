@@ -19,7 +19,7 @@ function uniqueRefs(values: readonly string[]): ProductRef[] {
   return refs;
 }
 
-function moduleOverviewRef(spec: ProductSpec): ProductRef | undefined {
+export function specOverviewRef(spec: ProductSpec): ProductRef | undefined {
   const overview =
     spec.references.find((item) => item.id === `${spec.id}.overview`) || spec.references[0];
   return overview?.id;
@@ -53,6 +53,6 @@ export function collectProductRefsForRoute(
     if (route !== spec.route && !route.startsWith(`${spec.route}/`)) continue;
     if (!best || spec.route.length > (best.route?.length || 0)) best = spec;
   }
-  const fallback = best ? moduleOverviewRef(best) : undefined;
+  const fallback = best ? specOverviewRef(best) : undefined;
   return fallback ? [fallback] : [];
 }

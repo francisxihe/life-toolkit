@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import React, { useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -36,6 +36,16 @@ dayjs.locale('zh-cn');
 
 const store = createStore(rootReducer);
 
+type ThemePreference = 'system' | 'light' | 'dark';
+
+function mediaTheme(): 'light' | 'dark' {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function isThemeOverride(value: string): value is 'light' | 'dark' {
+  return value === 'light' || value === 'dark';
+}
+
 if (process.env.NODE_ENV === 'development') {
   document.title = '知止 True North - Development';
 } else {
@@ -44,7 +54,8 @@ if (process.env.NODE_ENV === 'development') {
 
 function LifeToolkitApp() {
   const [lang, setLang] = useStorage('arco-lang', 'en-US');
-  const [themeMode, setThemeMode] = useStorage('arco-theme', 'light');
+  const [themePreference, setThemePreference] = useStorage('arco-theme', 'system');
+  const [systemTheme, setSystemTheme] = useState(mediaTheme);
 
   function getArcoLocale() {
     switch (lang) {
@@ -57,11 +68,18 @@ function LifeToolkitApp() {
     }
   }
 
+  const themeMode = isThemeOverride(themePreference) ? themePreference : systemTheme;
   const sueThemeConfig = useMemo(
     () => ({
       algorithm: themeMode === 'dark' ? sueTheme.darkAlgorithm : sueTheme.defaultAlgorithm,
     }),
     [themeMode],
+  );
+  const setTheme = useCallback(
+    (value: string) => {
+      setThemePreference(value === 'dark' ? 'dark' : 'light');
+    },
+    [setThemePreference],
   );
 
   function fetchUserInfo() {
@@ -101,6 +119,18 @@ function LifeToolkitApp() {
   }, []);
 
   useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => setSystemTheme(media.matches ? 'dark' : 'light');
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    const source: ThemePreference = isThemeOverride(themePreference) ? themePreference : 'system';
+    void window.electronAPI?.setNativeThemeSource?.(source);
+  }, [themePreference]);
+
+  useEffect(() => {
     changeTheme(themeMode);
   }, [themeMode]);
 
@@ -108,7 +138,7 @@ function LifeToolkitApp() {
     lang,
     setLang,
     theme: themeMode,
-    setTheme: setThemeMode,
+    setTheme,
   };
 
   return (

@@ -12,7 +12,7 @@ document_meta:
   owner: 'True North 开发团队'
   reviewers: ['backend_developer', 'frontend_developer']
   target_audience: ['backend_developer', 'frontend_developer', 'ai_assistant']
-  related_documents: ['doc/v0.1.0/PRD.md', 'doc/v0.1.0/TDD.md']
+  related_documents: ['doc/v0.1.0/TDD.md']
 
 tech_stack:
   backend:

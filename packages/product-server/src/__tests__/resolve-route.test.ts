@@ -1,5 +1,5 @@
 import type { ProductChangeLog, ProductSpec } from '../types';
-import { collectProductRefsForRoute, matchDesktopRoute } from '../route-refs';
+import { collectProductRefsForRoute, matchDesktopRoute, specOverviewRef } from '../route-refs';
 import { productBreadcrumb, resolveProductReferenceFromSpecs } from '../resolve-reference';
 
 const specs = [
@@ -158,6 +158,27 @@ describe('collectProductRefsForRoute', () => {
 
   it('returns nothing when no view or module route matches', () => {
     expect(collectProductRefsForRoute(specs, '/expenses/ledger')).toEqual([]);
+  });
+});
+
+describe('specOverviewRef', () => {
+  it('prefers the {id}.overview reference', () => {
+    expect(specOverviewRef(specs[0])).toBe('growth.todo.overview');
+  });
+
+  it('falls back to the first reference when overview is missing', () => {
+    const spec: ProductSpec = {
+      id: 'growth.note',
+      kind: 'module',
+      title: '笔记',
+      productStatus: 'roadmap',
+      surfaceCoverage: 'none',
+      references: [
+        { id: 'growth.note.intro', title: '说明', body: '第一篇。' },
+        { id: 'growth.note.extra', title: '补充', body: '第二篇。' },
+      ],
+    };
+    expect(specOverviewRef(spec)).toBe('growth.note.intro');
   });
 });
 

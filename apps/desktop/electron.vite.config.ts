@@ -142,6 +142,12 @@ export default defineConfig({
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据
       sourcemap: process.env.NODE_ENV !== 'production',
+      watch:
+        process.env.NODE_ENV === 'development'
+          ? {
+              include: [path.resolve(srcDir, 'preload/**/*')],
+            }
+          : undefined,
     },
   },
   renderer: {

@@ -12,7 +12,7 @@ document_meta:
   owner: '后端开发团队'
   reviewers: ['架构师', '前端负责人']
   target_audience: ['backend_developer', 'frontend_developer']
-  related_documents: ['doc/v0.1.0/PRD.md', 'doc/v0.1.0/TDD.md']
+  related_documents: ['doc/v0.1.0/TDD.md']
 
 tech_stack:
   backend:

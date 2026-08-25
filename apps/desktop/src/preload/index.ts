@@ -24,6 +24,8 @@ const exposeAPI = () => {
     contextBridge.exposeInMainWorld('electronAPI', {
       getAppInfo: () => ipcRenderer.invoke('get-app-info'),
       loadURL: (url: string) => ipcRenderer.invoke('load-url', url),
+      setNativeThemeSource: (source: 'system' | 'light' | 'dark') =>
+        ipcRenderer.invoke('set-native-theme-source', source),
       isElectron: true,
 
       get: (path: string, params: any) => ipcRenderer.invoke('REST', { method: 'GET', path, payload: params }),
@@ -141,6 +143,7 @@ const exposeAPI = () => {
             success: false,
             message: '在Web环境中不支持文件系统操作',
           }),
+        setNativeThemeSource: async () => undefined,
         on: () => false,
         removeListener: () => false,
         isElectron: false,

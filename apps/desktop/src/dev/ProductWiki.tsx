@@ -3,5 +3,20 @@ import { bootstrapProductInspectorPanel } from '@true-north/product-server/inspe
 import type { ProductWikiData } from '@true-north/product-server';
 import { productWiki } from '@true-north/product-wiki/data';
 
-const inspector = bootstrapProductInspectorPanel({ wiki: productWiki as ProductWikiData });
-if (import.meta.hot) import.meta.hot.dispose(inspector.destroy);
+function mediaTheme(): 'light' | 'dark' {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+const inspector = bootstrapProductInspectorPanel({
+  wiki: productWiki as ProductWikiData,
+  theme: mediaTheme(),
+});
+const media = window.matchMedia('(prefers-color-scheme: dark)');
+const onThemeChange = () => inspector.setTheme(mediaTheme());
+media.addEventListener('change', onThemeChange);
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    media.removeEventListener('change', onThemeChange);
+    inspector.destroy();
+  });
+}
