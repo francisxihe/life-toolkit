@@ -1,137 +1,68 @@
 {
   "id": "growth.task",
-  "kind": "module",
+  "kind": "page",
   "title": "任务管理",
   "parentId": "growth",
   "route": "/growth/task",
-  "positioning": "承接目标拆解，并向待办和时间追踪下发执行颗粒。",
-  "dependencies": [
-    "growth.goal"
-  ],
-  "entities": [
-    {
-      "id": "task",
-      "name": "任务",
-      "fields": [
-        {
-          "id": "goalId",
-          "name": "关联目标",
-          "type": "reference",
-          "required": false,
-          "description": "非子任务关联目标。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "parentId",
-          "name": "父任务",
-          "type": "reference",
-          "required": false,
-          "description": "子任务关联父任务。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "status",
-          "name": "状态",
-          "type": "enum",
-          "required": true,
-          "values": [
-            "todo",
-            "doing",
-            "done",
-            "abandoned"
-          ],
-          "description": "任务执行状态。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "estimated",
-          "name": "预计耗时",
-          "type": "number",
-          "required": true,
-          "description": "用于排程和时间对比。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        }
-      ],
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
-    }
-  ],
+  "productStatus": "roadmap",
   "views": [
     {
       "id": "today",
       "name": "当前任务",
-      "desktopRoute": "/growth/task/task-today",
+      "route": "/growth/task/task-today",
       "scenario": "聚焦选定日期的执行与逾期事项",
-      "reference": "growth.task.view.today",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "reference": "growth.task.view.today"
     },
     {
       "id": "week",
       "name": "本周任务",
-      "desktopRoute": "/growth/task/task-today",
       "scenario": "分组管理当前周执行",
-      "reference": "growth.task.view.week",
       "productStatus": "deprecated",
-      "surfaceCoverage": "none"
+      "reference": "growth.task.view.week"
     },
     {
       "id": "all",
       "name": "全部任务",
-      "desktopRoute": "/growth/task/task-all",
+      "route": "/growth/task/task-all",
       "scenario": "全量筛选与治理",
-      "reference": "growth.task.view.all",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "reference": "growth.task.view.all"
     },
     {
       "id": "statistics",
       "name": "任务统计",
-      "desktopRoute": "/growth/task/task-today",
       "scenario": "复盘任务执行状态",
-      "reference": "growth.task.view.statistics",
       "productStatus": "deprecated",
-      "surfaceCoverage": "none"
+      "reference": "growth.task.view.statistics"
     },
     {
       "id": "calendar",
       "name": "月度排程",
-      "desktopRoute": "/growth/task/task-calendar",
+      "route": "/growth/task/task-calendar",
       "scenario": "查看任务日期安排",
-      "reference": "growth.task.view.calendar",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "reference": "growth.task.view.calendar"
     },
     {
       "id": "detail",
       "name": "任务详情",
-      "desktopRoute": "/growth/task",
       "scenario": "独立运营任务及其关联对象；可发起 AI 拆解",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete",
       "reference": "growth.task.view.detail"
     },
     {
       "id": "ai-decomposition",
       "name": "AI 拆解",
-      "desktopRoute": "/ai",
       "scenario": "从任务详情发起 AI 会话；工作台审阅子任务与待办建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
-      "reference": "growth.task.view.ai-decomposition",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "reference": "growth.task.view.ai-decomposition"
     }
   ],
   "rules": [
     {
       "id": "single-parent",
       "name": "关联互斥",
-      "entities": [
-        "task"
-      ],
       "description": "任务应关联目标或父任务，避免形成双重上级。",
       "views": [
         "today",
@@ -139,15 +70,11 @@
         "all"
       ],
       "reference": "growth.task.rule.single-parent",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "time-inheritance",
       "name": "时间继承",
-      "entities": [
-        "task"
-      ],
       "description": "子任务时间范围受父级目标或任务约束。",
       "views": [
         "today",
@@ -155,50 +82,37 @@
         "calendar"
       ],
       "reference": "growth.task.rule.time-inheritance",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "ai-decompose-generation",
       "name": "AI 建议生成",
-      "entities": [
-        "task"
-      ],
       "description": "正式产品由已接入的模型结合当前任务上下文生成子任务与待办建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态。",
       "views": [
         "ai-decomposition"
       ],
       "reference": "growth.task.rule.ai-decompose-generation",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "ai-decompose-adopt",
       "name": "AI 建议采纳",
-      "entities": [
-        "task"
-      ],
       "description": "工作台内单条或批量采纳以当前预览创建子任务或待办；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
       "views": [
         "ai-decomposition"
       ],
       "reference": "growth.task.rule.ai-decompose-adopt",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "ai-decompose-followup",
       "name": "对已选建议追问",
-      "entities": [
-        "task"
-      ],
       "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
       "views": [
         "ai-decomposition"
       ],
       "reference": "growth.task.rule.ai-decompose-followup",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     }
   ],
   "references": [
@@ -277,7 +191,5 @@
       "title": "时间继承",
       "body": "任务的计划时间、重要度和难度应位于其归属目标或父任务的范围内。任务详情在任务树区域创建子任务时继承当前父级默认值，并在保存前执行该校验。"
     }
-  ],
-  "productStatus": "roadmap",
-  "surfaceCoverage": "complete"
+  ]
 }

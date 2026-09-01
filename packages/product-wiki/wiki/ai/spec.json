@@ -1,12 +1,10 @@
 {
   "id": "ai",
-  "kind": "domain",
+  "kind": "page",
   "title": "AI 能力",
   "parentId": "global",
-  "positioning": "AI 会话与可插拔工作台，承接结构化协助结果的审阅与落地。",
-  "dependencies": [
-    "global"
-  ],
+  "route": "/ai",
+  "productStatus": "roadmap",
   "references": [
     {
       "id": "ai.overview",
@@ -18,7 +16,5 @@
       "title": "模块协作",
       "body": "会话模块负责列表、消息与工作台容器。具体业务结果（如目标拆解）由对应成长模块定义采纳语义，会话页只负责发起、展示与按类型分发工作台。目标拆解与任务拆解工作台已实现；其他类型工作台仍在规划中。"
     }
-  ],
-  "productStatus": "roadmap",
-  "surfaceCoverage": "complete"
+  ]
 }

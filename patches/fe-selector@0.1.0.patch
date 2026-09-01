@@ -1,5 +1,5 @@
 diff --git a/dist/core.cjs.js b/dist/core.cjs.js
-index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60b1398c84 100644
+index d84631cb46f59edec2239da9a57668ff5cbccee5..55c85f08bfa8d7778a63d61c7ca3ab6565a86cb7 100644
 --- a/dist/core.cjs.js
 +++ b/dist/core.cjs.js
 @@ -232,6 +232,21 @@ function extractElementContext(el) {
@@ -24,7 +24,21 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
  const IGNORED_TAGS = /* @__PURE__ */ new Set(["HTML", "BODY", "HEAD", "SCRIPT", "STYLE", "LINK", "META"]);
  class Selector {
    constructor(options, transport) {
-@@ -275,7 +290,7 @@ class Selector {
+@@ -251,8 +266,12 @@ class Selector {
+       if (!el || el === this.hovered)
+         return;
+       this.hovered = el;
++      if (this.selected) {
++        this.overlay.show(this.selected, this.labelFor(this.selected), true);
++        return;
++      }
+       const ctx = extractElementContext(el);
+-      this.overlay.show(el, this.labelFor(el, ctx), el === this.selected);
++      this.overlay.show(el, this.labelFor(el, ctx), false);
+       this.transport.sendElementHover(ctx.domPath ?? el.tagName, el.getBoundingClientRect());
+     };
+     this.onClick = (e) => {
+@@ -275,7 +294,7 @@ class Selector {
        if (this.transport.isSandboxMode) {
          this.transport.sendElementSelected(ctx);
        } else if (!this.options.silent) {
@@ -33,7 +47,7 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
        }
      };
      this.onKeyDown = (e) => {
-@@ -304,7 +319,8 @@ class Selector {
+@@ -304,7 +323,8 @@ class Selector {
        activationKey: options.activationKey ?? "alt",
        onSelect: options.onSelect ?? (() => {
        }),
@@ -43,7 +57,7 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
      };
      if (this.options.activationKey === "none") {
        this.alwaysOn = true;
-@@ -365,14 +381,19 @@ class Selector {
+@@ -365,14 +385,19 @@ class Selector {
      this.alwaysOn = active;
      if (!active) {
        this.hovered = null;
@@ -67,7 +81,18 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
        return null;
      return el;
    }
-@@ -462,12 +483,18 @@ class Transport {
+@@ -384,7 +409,9 @@ class Selector {
+   /** 清除 hover 高亮（不影响已选中状态） */
+   clearHover() {
+     this.hovered = null;
+-    if (!this.selected)
++    if (this.selected)
++      this.overlay.show(this.selected, this.labelFor(this.selected), true);
++    else
+       this.overlay.hide();
+   }
+ }
+@@ -462,12 +489,18 @@ class Transport {
  }
  let instance = null;
  function init(options = {}) {
@@ -92,7 +117,7 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
  }
  function destroy() {
    if (!instance)
-@@ -479,5 +506,6 @@ function destroy() {
+@@ -479,5 +512,6 @@ function destroy() {
  exports.Transport = Transport;
  exports.destroy = destroy;
  exports.extractElementContext = extractElementContext;
@@ -100,7 +125,7 @@ index d84631cb46f59edec2239da9a57668ff5cbccee5..a8f44cd57e0719dfbadd1fb4146b6f60
  exports.init = init;
  //# sourceMappingURL=core.cjs.js.map
 diff --git a/dist/core.d.ts b/dist/core.d.ts
-index 63b206123c78d0da6adb98b343f9d406f99e9100..836d9f9973fb4c1b09e0b8d9745d74f87811bca1 100644
+index 63b206123c78d0da6adb98b343f9d406f99e9100..332522d541e92bad4a068dcf48b9538b7baab144 100644
 --- a/dist/core.d.ts
 +++ b/dist/core.d.ts
 @@ -19,9 +19,18 @@ export declare interface ElementContext {
@@ -142,7 +167,7 @@ index 63b206123c78d0da6adb98b343f9d406f99e9100..836d9f9973fb4c1b09e0b8d9745d74f8
  }
  
 diff --git a/dist/core.es.js b/dist/core.es.js
-index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c93dac788c 100644
+index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..cf1809f23d7869a00e29a7bbc4b0e52520841387 100644
 --- a/dist/core.es.js
 +++ b/dist/core.es.js
 @@ -230,6 +230,21 @@ function extractElementContext(el) {
@@ -167,7 +192,21 @@ index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c9
  const IGNORED_TAGS = /* @__PURE__ */ new Set(["HTML", "BODY", "HEAD", "SCRIPT", "STYLE", "LINK", "META"]);
  class Selector {
    constructor(options, transport) {
-@@ -273,7 +288,7 @@ class Selector {
+@@ -249,8 +264,12 @@ class Selector {
+       if (!el || el === this.hovered)
+         return;
+       this.hovered = el;
++      if (this.selected) {
++        this.overlay.show(this.selected, this.labelFor(this.selected), true);
++        return;
++      }
+       const ctx = extractElementContext(el);
+-      this.overlay.show(el, this.labelFor(el, ctx), el === this.selected);
++      this.overlay.show(el, this.labelFor(el, ctx), false);
+       this.transport.sendElementHover(ctx.domPath ?? el.tagName, el.getBoundingClientRect());
+     };
+     this.onClick = (e) => {
+@@ -273,7 +292,7 @@ class Selector {
        if (this.transport.isSandboxMode) {
          this.transport.sendElementSelected(ctx);
        } else if (!this.options.silent) {
@@ -176,7 +215,7 @@ index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c9
        }
      };
      this.onKeyDown = (e) => {
-@@ -302,7 +317,8 @@ class Selector {
+@@ -302,7 +321,8 @@ class Selector {
        activationKey: options.activationKey ?? "alt",
        onSelect: options.onSelect ?? (() => {
        }),
@@ -186,7 +225,7 @@ index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c9
      };
      if (this.options.activationKey === "none") {
        this.alwaysOn = true;
-@@ -363,14 +379,19 @@ class Selector {
+@@ -363,14 +383,19 @@ class Selector {
      this.alwaysOn = active;
      if (!active) {
        this.hovered = null;
@@ -210,7 +249,18 @@ index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c9
        return null;
      return el;
    }
-@@ -460,12 +481,18 @@ class Transport {
+@@ -382,7 +407,9 @@ class Selector {
+   /** 清除 hover 高亮（不影响已选中状态） */
+   clearHover() {
+     this.hovered = null;
+-    if (!this.selected)
++    if (this.selected)
++      this.overlay.show(this.selected, this.labelFor(this.selected), true);
++    else
+       this.overlay.hide();
+   }
+ }
+@@ -460,12 +487,18 @@ class Transport {
  }
  let instance = null;
  function init(options = {}) {
@@ -235,7 +285,7 @@ index 52062d3daf0adb2057d453cdd21ac1c84c5d130d..f19cbfb0b08d71b6b837b3c8729c14c9
  }
  function destroy() {
    if (!instance)
-@@ -478,6 +505,7 @@ export {
+@@ -478,6 +511,7 @@ export {
    Transport,
    destroy,
    extractElementContext,

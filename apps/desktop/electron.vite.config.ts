@@ -5,13 +5,14 @@ import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
+import { productWiki } from '@ylib/product-server/service/vite';
 import type { Plugin } from 'vite';
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = path.dirname(currentFilePath);
 const srcDir = path.resolve(currentDirPath, 'src');
-const desktopDevPages = ['ProductWiki', 'Lab'] as const;
+const desktopDevPages = ['Lab'] as const;
 
 function desktopDevPage(): Plugin {
   return {
@@ -32,6 +33,7 @@ function desktopDevPage(): Plugin {
           let html = fs.readFileSync(htmlPath, 'utf-8');
           html = html.replace(`./${page}.tsx`, entryUrl);
           html = await server.transformIndexHtml(`/${page}.html`, html);
+          html = html.replace(/<script[^>]*virtual:product-wiki-runtime[^>]*><\/script>/g, '');
           res.statusCode = 200;
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
           res.end(html);
@@ -93,6 +95,8 @@ export default defineConfig({
                 path.resolve(srcDir, 'main/**/*'),
                 path.resolve(srcDir, 'service/**/*'),
                 path.resolve(currentDirPath, '../../packages/dev-lab/src/**/*'),
+                path.resolve(currentDirPath, '../../packages/product-wiki/src/**/*'),
+                path.resolve(currentDirPath, '../../packages/product-wiki/wiki/**/*'),
               ],
             }
           : undefined,
@@ -140,6 +144,11 @@ export default defineConfig({
   renderer: {
     server: {
       port: 8100,
+      fs: {
+        allow: [
+          path.resolve(currentDirPath, '../..'),
+        ],
+      },
     },
     // 渲染进程配置
     root: path.resolve(srcDir, 'render'),
@@ -151,6 +160,9 @@ export default defineConfig({
         include: '**/*.svg',
       }),
       desktopDevPage(),
+      productWiki({
+        data: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
+      }),
     ],
     css: {
       preprocessorOptions: {
@@ -189,14 +201,6 @@ export default defineConfig({
         {
           find: '@true-north/dev-lab',
           replacement: path.resolve(currentDirPath, '../../packages/dev-lab/src/index.ts'),
-        },
-        {
-          find: '@true-north/product-wiki/data',
-          replacement: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
-        },
-        {
-          find: '@true-north/product-wiki',
-          replacement: path.resolve(currentDirPath, '../../packages/product-wiki/src/index.ts'),
         },
         {
           find: '@true-north/common-web-utils',

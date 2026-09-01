@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react';
 import { Button, Flex } from '@sue/design-web-react';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
 import type {
   AiTextPartVo,
   AiToolPartVo,
@@ -100,13 +98,11 @@ export function MessageWorkspacePart({
       ? `打开工作台：任务拆解${refLabel ? ` · ${refLabel}` : ''}`
       : `打开工作台：目标拆解${refLabel ? ` · ${refLabel}` : ''}`;
   return (
-    <ProductSurface id={productRef('ai.session.rule.workspace-dispatch')}>
       <div className={styles.workspaceChip}>
         <Button size="small" type="link" onClick={() => onOpenWorkspace(messageId)}>
           {label}
         </Button>
       </div>
-    </ProductSurface>
   );
 }
 

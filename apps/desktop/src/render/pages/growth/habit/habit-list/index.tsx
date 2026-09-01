@@ -4,8 +4,8 @@ import HabitListFilter from './HabitListFilter';
 import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
 import { Button, Drawer, Flex, PlusOutlined } from '@sue/design-web-react';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from '../components/CreateHabit';

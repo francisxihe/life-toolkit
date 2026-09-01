@@ -1,0 +1,102 @@
+diff --git a/dist/bin/product-wiki.js b/dist/bin/product-wiki.js
+index 17dce65a9769c88d743d5b76a6bd8346bf7bc24e..264ec74ba7f53686ba3da647faeb6a59eed266da 100755
+--- a/dist/bin/product-wiki.js
++++ b/dist/bin/product-wiki.js
+@@ -670,6 +670,9 @@ async function createViewsVite() {
+       fs: { allow: [root, process.cwd()] }
+     },
+     esbuild: { jsx: "automatic" },
++    optimizeDeps: {
++      include: ["react", "react-dom", "react-dom/client", "react/jsx-runtime", "react/jsx-dev-runtime"]
++    },
+     resolve: {
+       alias: {
+         "@ylib/product-server/views": viewsEntry,
+@@ -681,6 +684,19 @@ async function createViewsVite() {
+     },
+     plugins: [
+       stubViteClient(),
++      {
++        name: "product-wiki-views-dynamic-require",
++        transform(code, id) {
++          const file = id.split("?")[0].replace(/\\/g, "/");
++          if (!file.endsWith("/views/index.js")) return;
++          if (!code.includes('__require("react")')) return;
++          return {
++            code: `import __productWikiReact from "react";
++` + code.replaceAll('__require("react")', "__productWikiReact"),
++            map: null
++          };
++        }
++      },
+       {
+         name: "product-wiki-views-client",
+         resolveId(id) {
+diff --git a/dist/service/index.js b/dist/service/index.js
+index 1f2500ce15c626fc3ed631877ad0257beff18ddf..f51c9b07d05e2b72b1102bd71eba8de000a0487d 100644
+--- a/dist/service/index.js
++++ b/dist/service/index.js
+@@ -634,6 +634,9 @@ async function createViewsVite() {
+       fs: { allow: [root, process.cwd()] }
+     },
+     esbuild: { jsx: "automatic" },
++    optimizeDeps: {
++      include: ["react", "react-dom", "react-dom/client", "react/jsx-runtime", "react/jsx-dev-runtime"]
++    },
+     resolve: {
+       alias: {
+         "@ylib/product-server/views": viewsEntry,
+@@ -645,6 +648,19 @@ async function createViewsVite() {
+     },
+     plugins: [
+       stubViteClient(),
++      {
++        name: "product-wiki-views-dynamic-require",
++        transform(code, id) {
++          const file = id.split("?")[0].replace(/\\/g, "/");
++          if (!file.endsWith("/views/index.js")) return;
++          if (!code.includes('__require("react")')) return;
++          return {
++            code: `import __productWikiReact from "react";
++` + code.replaceAll('__require("react")', "__productWikiReact"),
++            map: null
++          };
++        }
++      },
+       {
+         name: "product-wiki-views-client",
+         resolveId(id) {
+diff --git a/dist/service/vite/index.js b/dist/service/vite/index.js
+index f0908deedc3cd12e621811843d5db6423745390c..6e044cd6b78449afb94675b5f13028cd9b9d772d 100644
+--- a/dist/service/vite/index.js
++++ b/dist/service/vite/index.js
+@@ -769,6 +769,9 @@ async function createViewsVite() {
+       fs: { allow: [root, process.cwd()] }
+     },
+     esbuild: { jsx: "automatic" },
++    optimizeDeps: {
++      include: ["react", "react-dom", "react-dom/client", "react/jsx-runtime", "react/jsx-dev-runtime"]
++    },
+     resolve: {
+       alias: {
+         "@ylib/product-server/views": viewsEntry,
+@@ -780,6 +783,19 @@ async function createViewsVite() {
+     },
+     plugins: [
+       stubViteClient(),
++      {
++        name: "product-wiki-views-dynamic-require",
++        transform(code, id) {
++          const file = id.split("?")[0].replace(/\\/g, "/");
++          if (!file.endsWith("/views/index.js")) return;
++          if (!code.includes('__require("react")')) return;
++          return {
++            code: `import __productWikiReact from "react";
++` + code.replaceAll('__require("react")', "__productWikiReact"),
++            map: null
++          };
++        }
++      },
+       {
+         name: "product-wiki-views-client",
+         resolveId(id) {

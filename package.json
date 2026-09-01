@@ -17,9 +17,12 @@
     "clean": "turbo run clean",
     "predeploy": "npm run build",
     "pre-commit": "turbo run pre-commit",
-    "dev:desktop": "turbo run dev --filter=true-north-desktop"
+    "dev:desktop": "turbo run dev --filter=true-north-desktop",
+    "skills:sync": "skills-manager install"
   },
   "devDependencies": {
+    "@ylib/product-server": "0.0.2",
+    "@ylib/skills-manager": "1.0.5",
     "@true-north/vo": "workspace:*",
     "@types/jest": "^29.5.0",
     "@types/lodash-es": "^4.17.12",

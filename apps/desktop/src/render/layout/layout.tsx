@@ -9,8 +9,6 @@ import useLocale from '../utils/useLocale';
 import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
 
 const Aside = Layout.Sider;
 
@@ -61,9 +59,7 @@ function PageLayout() {
                 breakpoint="xl"
               >
                 <div className={styles['menu-wrapper']}>
-                  <ProductSurface id={productRef('global.overview')}>
-                    <Navigate collapsed={collapsed} locale={locale} />
-                  </ProductSurface>
+                  <Navigate collapsed={collapsed} locale={locale} />
                 </div>
                 <Flex
                   className={styles['collapse-btn']}

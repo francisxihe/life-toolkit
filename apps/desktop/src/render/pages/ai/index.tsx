@@ -1,6 +1,6 @@
 import { Flex } from '@sue/design-web-react';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import { AiSessionProvider } from './context';
 import { ConversationPane } from './features/ConversationPane';
 import { SessionList } from './features/SessionList';

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "skills": [
+    {
+      "name": "setup-product-app",
+      "source": "npm:@ylib/product-skills",
+      "subpath": "skills/setup-product-app",
+      "peer": "@ylib/product-server"
+    },
+    {
+      "name": "write-product-wiki",
+      "source": "npm:@ylib/product-skills",
+      "subpath": "skills/write-product-wiki",
+      "peer": "@ylib/product-server"
+    }
+  ],
+  "agents": [
+    {
+      "name": "cursor",
+      "link": ".cursor",
+      "skills": ["setup-product-app", "write-product-wiki"]
+    }
+  ]
+}

@@ -32,8 +32,8 @@ import { DIFFICULTY_MAP } from '../constants';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from './components/CreateHabit';
 import { emitHabitChanged } from '../events';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';
 
 export const HabitDetailPage: React.FC = () => {

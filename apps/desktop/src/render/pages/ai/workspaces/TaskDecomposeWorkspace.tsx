@@ -20,8 +20,8 @@ import { Difficulty, Importance, TodoRelatedType, TodoStatus } from '@true-north
 import type { AiDecomposePayloadVo, AiWorkspaceSuggestionVo } from '@true-north/vo';
 import { TaskService, TodoService } from '@true-north/web-service';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import styles from '../style.module.less';
 
 const KIND_LABEL = { task: '子任务', todo: '待办' } as const;
@@ -193,24 +193,20 @@ export function TaskDecomposeWorkspace({
 
   return (
     <ProductSurface id={productRef('growth.task.view.ai-decomposition')}>
-      <ProductSurface id={productRef('growth.task.rule.ai-decompose-generation')}>
     <div>
       <Flex vertical gap={16}>
         <Flex className={styles.aiControls} justify="space-between" align="center" wrap="wrap" gap={12}>
           <Tag color="blue">当前任务：{task.name}</Tag>
           <Space wrap>
-            <ProductSurface id={productRef('growth.task.rule.ai-decompose-followup')}>
             <Button disabled={!selected.length} onClick={askSelected}>
               对已选追问 {selected.length || ''}
             </Button>
-            </ProductSurface>
             <Button disabled={!selected.length} onClick={() => setBatchOpen(true)}>
               采纳已选 {selected.length}
             </Button>
           </Space>
         </Flex>
         <Alert className={styles.aiAlert} type="info" showIcon title={payload.analysisSummary} />
-        <ProductSurface id={productRef('growth.task.rule.ai-decompose-adopt')}>
         <Flex vertical className={styles.aiSuggestions} gap={12}>
           {suggestions.map((suggestion) => {
             const isAccepted = Boolean(suggestion.accepted);
@@ -267,7 +263,6 @@ export function TaskDecomposeWorkspace({
             );
           })}
         </Flex>
-        </ProductSurface>
         <Modal
           title="批量采纳 AI 建议"
           open={batchOpen}
@@ -373,7 +368,6 @@ export function TaskDecomposeWorkspace({
         </Drawer>
       ) : null}
     </div>
-      </ProductSurface>
     </ProductSurface>
   );
 }

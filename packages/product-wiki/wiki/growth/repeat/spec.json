@@ -1,86 +1,38 @@
 {
   "id": "growth.repeat",
-  "kind": "module",
+  "kind": "dom",
   "title": "重复规则",
   "parentId": "growth",
-  "positioning": "为习惯和独立待办提供可验证、可计算、可终止的统一日历重复规则。",
-  "dependencies": [],
-  "entities": [
+  "productStatus": "roadmap",
+  "views": [
     {
-      "id": "repeat-rule",
-      "name": "重复规则",
-      "fields": [
-        {
-          "id": "repeatStartDate",
-          "name": "开始日期",
-          "type": "date",
-          "required": true,
-          "description": "规则开始生效的本地日历日期。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "repeatMode",
-          "name": "重复模式",
-          "type": "enum",
-          "required": true,
-          "values": [
-            "none",
-            "daily",
-            "weekly",
-            "monthly",
-            "yearly",
-            "weekdays",
-            "weekend",
-            "workdays",
-            "restDay",
-            "custom"
-          ],
-          "description": "定义日历匹配和下一次日期的计算方式。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "repeatEndMode",
-          "name": "结束条件",
-          "type": "enum",
-          "required": true,
-          "values": [
-            "forever",
-            "forTimes",
-            "toDate"
-          ],
-          "description": "永久重复、限定总实例次数或截至指定日期。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        }
-      ],
+      "id": "editor",
+      "name": "重复规则配置",
+      "scenario": "在习惯与独立待办中配置统一日历重复规则",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "reference": "growth.repeat.interaction"
     }
   ],
   "rules": [
     {
       "id": "valid-configuration",
       "name": "配置有效性",
-      "entities": [
-        "repeat-rule"
-      ],
       "description": "模式所需配置必须完整；习惯不允许不重复，待办选择不重复时作为一次性事项。",
       "reference": "growth.repeat.rule.valid-configuration",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "views": [
+        "editor"
+      ]
     },
     {
       "id": "template-lifecycle",
       "name": "模板推进",
-      "entities": [
-        "repeat-rule"
-      ],
       "description": "周期待办只维护当前实例，结算或逾期后推进；终止条件满足时停止生成。",
       "reference": "growth.repeat.rule.template-lifecycle",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "views": [
+        "editor"
+      ]
     }
   ],
   "references": [
@@ -104,7 +56,5 @@
       "title": "模板推进",
       "body": "周期待办仅维护一个当前实例，不预生成未来待办；当前实例在待办的当前、日历与全部视图中按指针日期展示。完成、标记未完成和逾期都会结算当前实例并计算下一次有效日期；限定次数把首次实例计入总数，截至日期不包含其后的日期。没有下一次有效日期时停止推进并保留已结算历史。逾期实例按一次未完成结算，并直接推进到当天或之后的第一个有效日期。删除系列定义见待办「删除入口与重复删除」：仅全部待办可删，且不删除已结算历史。"
     }
-  ],
-  "productStatus": "roadmap",
-  "surfaceCoverage": "complete"
+  ]
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
 import { Flex, Input, Select } from '@sue/design-web-react';
-import { ProductSurface, type ProductSurfaceHostProps } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface, type ProductSurfaceHostProps } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import type { AiEntityLinkVo } from '@true-north/vo';
 import {
   Conversation,
@@ -140,7 +140,6 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
 
   const agentPicker = (
     <ProductSurface id={productRef('ai.session.view.agent-picker')}>
-      <ProductSurface id={productRef('ai.session.rule.agent-switch')}>
         <Flex align="center" gap={8} wrap>
           <Select
         size="small"
@@ -160,7 +159,6 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
         </span>
       ) : null}
         </Flex>
-      </ProductSurface>
     </ProductSurface>
   );
 

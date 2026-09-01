@@ -1,6 +1,6 @@
 import { Button, Flex } from '@sue/design-web-react';
 import { Plus } from 'lucide-react';
-import type { ProductSurfaceHostProps } from '@ylib/product-server';
+import type { ProductSurfaceHostProps } from '@ylib/product-surface-react';
 import { useAiSessionContext } from '../context';
 import styles from '../style.module.less';
 

@@ -13,8 +13,6 @@ import { TodoRelatedType, TodoStatus } from '@true-north/enum';
 
 import { TodoVo } from '@true-north/vo';
 import { emitTodoChanged } from '../../events';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
 import { useFocusTimer } from '../../focus-timer';
 
 function relatedTypeLabel(relatedType?: TodoRelatedType): string {
@@ -173,7 +171,6 @@ export default function TodoTable(props: {
               </>
             )}
             {!(relatedType === TodoRelatedType.HABIT && isActive) && (
-              <ProductSurface id={productRef('growth.todo.rule.delete-boundary')}>
               <Button
                 type="text"
                 status="danger"
@@ -204,7 +201,6 @@ export default function TodoTable(props: {
               >
                 删除
               </Button>
-              </ProductSurface>
             )}
           </div>
         );

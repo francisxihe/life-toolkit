@@ -60,6 +60,7 @@ database.sqlite
 
 apps/server
 
-/.claude/
-/.codex/
-/.cursor/
+# Cursor: keep project skill links, ignore the rest
+/.cursor/*
+!/.cursor/skills/
+!/.cursor/skills/**

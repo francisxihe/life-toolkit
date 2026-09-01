@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { TodoFilters } from './TodoFilters';
 import { Button, Flex, message } from '@sue/design-web-react';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import { TodoService } from '@true-north/web-service';
 import { TodoStatus } from '@true-north/enum';
 import { TodoAllProvider } from './context';
@@ -67,13 +67,11 @@ function TodoAll() {
         />
       </Flex>
       {selectedRowKeys.length > 0 && (
-        <ProductSurface id={productRef('growth.todo.rule.batch-limit')}>
         <Flex container="fixed" className={styles.batchBar} justify="flex-end" align="center">
           <Button type="primary" loading={batchLoading} onClick={handleBatchDone}>
             批量完成 ({selectedRowKeys.length})
           </Button>
         </Flex>
-        </ProductSurface>
       )}
     </Flex>
     </ProductSurface>

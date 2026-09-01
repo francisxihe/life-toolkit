@@ -13,6 +13,7 @@ const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTh
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
 import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
+import { viewsChannel } from '@ylib/product-server/channel';
 import { createProductWikiInspectorHost } from './product-wiki-inspector';
 
 // 是否为开发环境
@@ -62,6 +63,7 @@ function getPreloadPath() {
 let mainWindow = null;
 let appView = null;
 let productWikiInspector = null;
+let wikiDockPreferred = true;
 
 // 默认加载的URL - 使用渲染进程的开发服务器
 let DEFAULT_URL: string;
@@ -79,6 +81,39 @@ function getAppWebContents() {
   if (appView && !appView.webContents.isDestroyed()) return appView.webContents;
   if (mainWindow instanceof BrowserWindow) return mainWindow.webContents;
   return null;
+}
+
+function nativeSideOpen() {
+  const mode = productWikiInspector?.getSideMode();
+  return mode === 'lab' || mode === 'devtools';
+}
+
+function sendWikiDockVisible(visible) {
+  const contents = getAppWebContents();
+  if (!contents) return;
+  contents
+    .executeJavaScript(
+      `window.__productWikiInspectTransport?.send(${JSON.stringify(viewsChannel.setVisible)}, ${JSON.stringify(visible)})`,
+    )
+    .catch((error) => console.warn('无法切换 ProductWiki dock', error));
+}
+
+function hideWikiDock() {
+  sendWikiDockVisible(false);
+}
+
+function setWikiDockPreferred(visible) {
+  wikiDockPreferred = visible;
+  sendWikiDockVisible(visible);
+  installDevApplicationMenu();
+}
+
+function syncDevChrome() {
+  if (nativeSideOpen()) {
+    wikiDockPreferred = false;
+    hideWikiDock();
+  }
+  installDevApplicationMenu();
 }
 
 function installDevApplicationMenu() {
@@ -125,10 +160,14 @@ function installDevApplicationMenu() {
         {
           label: 'ProductWiki',
           type: 'checkbox',
-          checked: productWikiInspector?.getSideMode() === 'wiki',
+          checked: wikiDockPreferred && !nativeSideOpen(),
           click: (item) => {
-            if (item.checked) productWikiInspector?.setSideMode('wiki');
-            else if (productWikiInspector?.getSideMode() === 'wiki') productWikiInspector?.setSideMode('hidden');
+            if (item.checked) {
+              setWikiDockPreferred(true);
+              if (nativeSideOpen()) productWikiInspector?.setSideMode('hidden');
+            } else {
+              setWikiDockPreferred(false);
+            }
           },
         },
         {
@@ -275,10 +314,10 @@ app.whenReady().then(async () => {
       getAppView: () => appView,
       getPreloadPath,
       rendererUrl: DEFAULT_URL,
-      onChanged: installDevApplicationMenu,
+      onChanged: syncDevChrome,
     });
     productWikiInspector?.attach();
-    installDevApplicationMenu();
+    syncDevChrome();
   }
 
   app.on('activate', () => {
@@ -291,10 +330,10 @@ app.whenReady().then(async () => {
           getAppView: () => appView,
           getPreloadPath,
           rendererUrl: DEFAULT_URL,
-          onChanged: installDevApplicationMenu,
+          onChanged: syncDevChrome,
         });
         productWikiInspector?.attach();
-        installDevApplicationMenu();
+        syncDevChrome();
       }
     }
   });

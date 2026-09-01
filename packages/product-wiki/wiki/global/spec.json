@@ -2,45 +2,14 @@
   "id": "global",
   "kind": "global",
   "title": "True North ProductWiki",
-  "positioning": "个人成长与生活管理工具套件的全局产品规范。",
-  "entities": [
-    {
-      "id": "user",
-      "name": "用户",
-      "fields": [
-        {
-          "id": "role",
-          "name": "角色",
-          "type": "enum",
-          "required": true,
-          "values": [
-            "个人用户",
-            "高级用户",
-            "管理员"
-          ],
-          "description": "决定可用的产品能力与限制。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        }
-      ],
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
-    }
-  ],
+  "productStatus": "roadmap",
   "rules": [
     {
       "id": "global.relationships",
       "name": "成长实体关联",
-      "entities": [
-        "goal",
-        "task",
-        "todo",
-        "habit"
-      ],
       "description": "Goal、Task、Todo 和 Habit 构成从规划到执行的关联链路。",
       "reference": "global.rules",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     }
   ],
   "references": [
@@ -52,14 +21,12 @@
     {
       "id": "global.architecture",
       "title": "产品能力边界",
-      "body": "产品以成长域为当前核心，提供目标、任务、待办、习惯与专注时间的协同管理。它不替代团队协作、财务记账或通用笔记工具；这些信息仅在影响个人行动优先级时成为关联上下文。\n\n本目录是产品事实来源。产品状态、是否实现、字段、视图、规则和变更记录写在 spec.json 中；背景、决策与交互解释写在各引用正文里。实现接口、数据传输对象和代码分层见 [TechnicalWiki](../../../../doc/TechnicalWiki/TechnicalWiki.md)。"
+      "body": "产品以成长域为当前核心，提供目标、任务、待办、习惯与专注时间的协同管理。它不替代团队协作、财务记账或通用笔记工具；这些信息仅在影响个人行动优先级时成为关联上下文。\n\n本目录是产品事实来源。产品状态、视图、规则和变更记录写在 wiki 中；背景、决策与交互解释写在各引用正文里。实现接口、数据传输对象和代码分层见 [TechnicalWiki](../../../../doc/TechnicalWiki/TechnicalWiki.md)。"
     },
     {
       "id": "global.rules",
       "title": "全局业务规则",
       "body": "所有成长对象都应服务于清晰的行动链路。目标承载方向，任务承载可安排的工作，待办承载当前可完成的动作，习惯承载重复投入，专注记录承载时间证据。对象可以独立使用，但建立关联后，用户应能从行动回看其服务的方向。"
     }
-  ],
-  "productStatus": "roadmap",
-  "surfaceCoverage": "complete"
+  ]
 }

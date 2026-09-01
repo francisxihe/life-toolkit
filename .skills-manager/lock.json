@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "skills": {
+    "setup-product-app": {
+      "revision": "0.0.2",
+      "contentHash": "965c5214b56c14a94a0b400501b5ee565733b8244af53d6693c99dc269d5640a",
+      "resolvedPeer": {
+        "name": "@ylib/product-server",
+        "version": "0.0.2"
+      }
+    },
+    "write-product-wiki": {
+      "revision": "0.0.2",
+      "contentHash": "ba311fd04242e6c92fb0ca78fb91a0ab9865f42054f2febaf400b6d48c443937",
+      "resolvedPeer": {
+        "name": "@ylib/product-server",
+        "version": "0.0.2"
+      }
+    }
+  },
+  "agents": [
+    {
+      "name": "cursor",
+      "link": ".cursor",
+      "skills": [
+        "setup-product-app",
+        "write-product-wiki"
+      ]
+    }
+  ]
+}

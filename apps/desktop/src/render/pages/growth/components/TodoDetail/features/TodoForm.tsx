@@ -22,8 +22,8 @@ import RepeatSelector, {
   createDefaultRepeatSetting,
   type RepeatSelectorValue,
 } from '@true-north/components-repeat';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import type { TodoFormData } from '@true-north/web-service';
 import { TrackTimeController } from '@true-north/web-service';
 import {
@@ -166,7 +166,6 @@ export default function TodoForm(props: TodoFormProps) {
   }
 
   return (
-    <ProductSurface id={productRef('growth.todo.rule.related-inheritance')}>
     <Flex vertical className={styles.container}>
       <Form
         form={form}
@@ -206,7 +205,6 @@ export default function TodoForm(props: TodoFormProps) {
               计划日期
               {!isEditor && (
                 <Tooltip title="启用重复">
-                  <ProductSurface id={productRef('growth.todo.rule.edit-no-repeat-toggle')}>
                   <Switch
                     size="small"
                     checked={Boolean(repeatValue)}
@@ -224,7 +222,6 @@ export default function TodoForm(props: TodoFormProps) {
                       });
                     }}
                   />
-                  </ProductSurface>
                 </Tooltip>
               )}
             </Flex>
@@ -240,8 +237,7 @@ export default function TodoForm(props: TodoFormProps) {
             />
           )}
           {repeatValue && !isSystemSourced && (
-            <ProductSurface id={productRef('growth.todo.rule.repeat-template')}>
-              <ProductSurface id={productRef('growth.repeat.interaction')}>
+            <ProductSurface id={productRef('growth.repeat.interaction')}>
             <RepeatSelector
               lang="zh-CN"
               value={repeatValue}
@@ -256,7 +252,6 @@ export default function TodoForm(props: TodoFormProps) {
                 form.setFieldValue('planDate', dayjs(nextPlanDate));
               }}
             />
-              </ProductSurface>
             </ProductSurface>
           )}
         </Form.Item>
@@ -350,8 +345,6 @@ export default function TodoForm(props: TodoFormProps) {
         </Row>
 
         {isEditor && currentTodo && (
-          <ProductSurface id={productRef('growth.todo.rule.focus-range-only')}>
-            <ProductSurface id={productRef('growth.track-time.rule.todo-range-focus')}>
           <Form.Item label="专注记录">
             <Flex vertical gap={8}>
               {canFocus ? (
@@ -389,8 +382,6 @@ export default function TodoForm(props: TodoFormProps) {
               )}
             </Flex>
           </Form.Item>
-            </ProductSurface>
-          </ProductSurface>
         )}
       </Form>
 
@@ -401,6 +392,5 @@ export default function TodoForm(props: TodoFormProps) {
         </Button>
       </Flex>
     </Flex>
-    </ProductSurface>
   );
 }

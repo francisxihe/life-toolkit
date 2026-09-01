@@ -11,7 +11,7 @@ import spec_growth_todo from '../wiki/growth/todo/spec.json';
 import spec_growth_track_time from '../wiki/growth/track-time/spec.json';
 import productHistory from '../wiki/changelog.json';
 
-export const productSpecs = [
+export const productWikis = [
   spec_ai_session,
   spec_ai,
   spec_global,

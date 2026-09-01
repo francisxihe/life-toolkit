@@ -9,8 +9,8 @@ import { useNavigate } from 'react-router-dom';
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import { TaskService } from '@true-north/web-service';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import { useTaskDetailContext } from './context';
 import { useTodoDetail } from '../../components/TodoDetail';
 import styles from './style.module.less';
@@ -216,7 +216,6 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
             {STATUS_CONFIG[task.status]?.label}
           </Tag>
 
-          <ProductSurface id={productRef('ai.session.rule.task-bound-start')}>
           <Button
             type="text"
             icon={<Sparkles size={15} />}
@@ -224,7 +223,6 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
           >
             AI 拆解
           </Button>
-          </ProductSurface>
 
           <Button type="text" onClick={onEdit}>
             编辑

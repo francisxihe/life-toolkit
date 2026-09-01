@@ -5,8 +5,8 @@ import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
 import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';
 
 const DEFAULT_DURATION = 25 * 60;
@@ -286,8 +286,6 @@ function RelatedSelector({
     return <span className={styles.taskName}>{lockedDisplay}</span>;
   }
   return (
-    <ProductSurface id={productRef('growth.track-time.rule.task-optional')}>
-      <ProductSurface id={productRef('growth.track-time.rule.todo-optional')}>
     <Select
       allowClear
       showSearch
@@ -300,8 +298,6 @@ function RelatedSelector({
       options={relatedOptions}
       onChange={(value) => onSelectRelated(value as string | undefined)}
     />
-      </ProductSurface>
-    </ProductSurface>
   );
 }
 

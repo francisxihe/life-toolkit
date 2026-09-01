@@ -1,60 +1,15 @@
 {
   "id": "growth.track-time",
-  "kind": "module",
+  "kind": "dom",
   "title": "专注与时间追踪",
   "parentId": "growth",
-  "positioning": "作为全局专注计时器，记录围绕任务或待办的投入，并为复盘提供时间证据。",
   "productStatus": "roadmap",
-  "surfaceCoverage": "complete",
-  "dependencies": [
-    "growth.task",
-    "growth.todo"
-  ],
-  "entities": [
-    {
-      "id": "track-time",
-      "name": "专注记录",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete",
-      "fields": [
-        {
-          "id": "taskId",
-          "name": "关联任务",
-          "type": "reference",
-          "required": false,
-          "description": "专注记录可关联一个任务；与关联待办互斥。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "todoId",
-          "name": "关联待办",
-          "type": "reference",
-          "required": false,
-          "description": "专注记录可关联一个待办；与关联任务互斥。顶栏联合选择或待办入口预填时使用。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        },
-        {
-          "id": "duration",
-          "name": "专注时长（秒）",
-          "type": "number",
-          "required": true,
-          "description": "单次专注投入的秒数；展示层可换算为小时和分钟。",
-          "productStatus": "roadmap",
-          "surfaceCoverage": "complete"
-        }
-      ]
-    }
-  ],
   "views": [
     {
       "id": "focus",
       "name": "专注计时",
-      "desktopRoute": "/focus-timer",
       "scenario": "从顶栏、任务或待办唤起全局计时；顶栏可搜索选择任务或待办，任务/待办入口锁定关联；迷你与全屏可切换",
       "productStatus": "roadmap",
-      "surfaceCoverage": "complete",
       "reference": "growth.track-time.overview"
     }
   ],
@@ -62,44 +17,32 @@
     {
       "id": "task-optional",
       "name": "任务可选关联",
-      "entities": [
-        "track-time"
-      ],
       "description": "专注记录可独立存在，也可归属一个任务。",
       "views": [
         "focus"
       ],
       "reference": "growth.track-time.rule.task-optional",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "todo-optional",
       "name": "待办可选关联",
-      "entities": [
-        "track-time"
-      ],
       "description": "专注记录可独立存在，也可归属一个待办；与任务关联互斥。顶栏计时可搜索选择待办；任务/待办入口锁定预填关联。结束专注不改变待办状态。",
       "views": [
         "focus"
       ],
       "reference": "growth.track-time.rule.todo-optional",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     },
     {
       "id": "todo-range-focus",
       "name": "待办入口仅区间可管理计时",
-      "entities": [
-        "track-time"
-      ],
       "description": "仅计划起止为时间区间的未完成待办可从待办入口开始或关联计时；时间点待办隐藏该入口，已有关联记录仍可只读查看。",
       "views": [
         "focus"
       ],
       "reference": "growth.track-time.rule.todo-range-focus",
-      "productStatus": "roadmap",
-      "surfaceCoverage": "complete"
+      "productStatus": "roadmap"
     }
   ],
   "references": [

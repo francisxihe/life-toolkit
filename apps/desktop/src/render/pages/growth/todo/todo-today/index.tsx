@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Flex } from '@sue/design-web-react';
-import { ProductSurface } from '@ylib/product-server';
-import { productRef } from '@true-north/product-wiki';
+import { ProductSurface } from '@ylib/product-surface-react';
+import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';
 import { TodoService } from '@true-north/web-service';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';

@@ -22,6 +22,7 @@ import 'dayjs/locale/zh-cn';
 import '@true-north/web-service/electron-types';
 import dayjs from 'dayjs';
 import { registerMessage } from '@true-north/web-service';
+import { ProductWikiAttach } from '../dev/ProductWikiAttach';
 
 const messageApi = {
   error: (params: string) => message.error(params),
@@ -152,6 +153,7 @@ function LifeToolkitApp() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Router />
+            {import.meta.env.DEV ? <ProductWikiAttach /> : null}
             {process.env.NODE_ENV === 'development' && (
               <div
                 style={{
@@ -176,9 +178,3 @@ function LifeToolkitApp() {
 }
 
 createRoot(document.getElementById('root') as HTMLElement).render(<LifeToolkitApp />);
-
-if (import.meta.env.DEV) {
-  void import('@ylib/product-server/inspector/bridge').then((module) =>
-    module.bootstrapProductInspectorBridge(),
-  );
-}

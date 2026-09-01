@@ -1,8 +1,8 @@
-import { productHistory, productSpecs } from './catalog.generated';
+import { productHistory, productWikis } from './catalog.generated';
 
 export const productWiki = {
-  specs: productSpecs,
+  wikis: productWikis,
   history: productHistory,
 };
 
-export { productHistory, productSpecs };
+export { productHistory, productWikis };
