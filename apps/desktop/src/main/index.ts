@@ -14,6 +14,8 @@ import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
 import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
 import { viewsChannel } from '@ylib/product-server/channel';
+import { labChannel } from '@true-north/dev-lab';
+import { subscribeDevTrace } from '@true-north/dev-lab/collector';
 import { createProductWikiInspectorHost } from './product-wiki-inspector';
 
 // 是否为开发环境
@@ -64,6 +66,7 @@ let mainWindow = null;
 let appView = null;
 let productWikiInspector = null;
 let wikiDockPreferred = true;
+let labDockPreferred = false;
 
 // 默认加载的URL - 使用渲染进程的开发服务器
 let DEFAULT_URL: string;
@@ -84,8 +87,7 @@ function getAppWebContents() {
 }
 
 function nativeSideOpen() {
-  const mode = productWikiInspector?.getSideMode();
-  return mode === 'lab' || mode === 'devtools';
+  return Boolean(productWikiInspector?.isDevToolsOpen());
 }
 
 function sendWikiDockVisible(visible) {
@@ -98,21 +100,46 @@ function sendWikiDockVisible(visible) {
     .catch((error) => console.warn('无法切换 ProductWiki dock', error));
 }
 
+function sendLabDockVisible(visible) {
+  const contents = getAppWebContents();
+  if (!contents) return;
+  contents
+    .executeJavaScript(
+      `window.__labDockPreferred = ${JSON.stringify(visible)}; window.__labDock?.setVisible(${JSON.stringify(visible)});`,
+    )
+    .catch((error) => console.warn('无法切换 Lab dock', error));
+}
+
 function hideWikiDock() {
   sendWikiDockVisible(false);
 }
 
 function setWikiDockPreferred(visible) {
   wikiDockPreferred = visible;
+  if (visible) {
+    labDockPreferred = false;
+    sendLabDockVisible(false);
+  }
   sendWikiDockVisible(visible);
   installDevApplicationMenu();
 }
 
-function syncDevChrome() {
-  if (nativeSideOpen()) {
+function setLabDockPreferred(visible) {
+  labDockPreferred = visible;
+  if (visible) {
     wikiDockPreferred = false;
     hideWikiDock();
   }
+  sendLabDockVisible(visible);
+  installDevApplicationMenu();
+}
+
+function syncDevChrome() {
+  if (nativeSideOpen() || labDockPreferred) {
+    wikiDockPreferred = false;
+    hideWikiDock();
+  }
+  sendLabDockVisible(labDockPreferred);
   installDevApplicationMenu();
 }
 
@@ -160,7 +187,7 @@ function installDevApplicationMenu() {
         {
           label: 'ProductWiki',
           type: 'checkbox',
-          checked: wikiDockPreferred && !nativeSideOpen(),
+          checked: wikiDockPreferred && !nativeSideOpen() && !labDockPreferred,
           click: (item) => {
             if (item.checked) {
               setWikiDockPreferred(true);
@@ -173,10 +200,9 @@ function installDevApplicationMenu() {
         {
           label: 'Lab',
           type: 'checkbox',
-          checked: productWikiInspector?.getSideMode() === 'lab',
+          checked: labDockPreferred,
           click: (item) => {
-            if (item.checked) productWikiInspector?.setSideMode('lab');
-            else if (productWikiInspector?.getSideMode() === 'lab') productWikiInspector?.setSideMode('hidden');
+            setLabDockPreferred(item.checked);
           },
         },
         {
@@ -308,12 +334,19 @@ app.whenReady().then(async () => {
 
   createWindow();
   if (isDev) {
+    subscribeDevTrace((snapshot) => {
+      const contents = getAppWebContents();
+      if (!contents || contents.isDestroyed()) return;
+      contents.send(labChannel.update, snapshot);
+    });
+    ipcMain.on(labChannel.setVisible, (_event, visible) => {
+      setLabDockPreferred(Boolean(visible));
+    });
     productWikiInspector = createProductWikiInspectorHost({
       isDev,
       getMainWindow: () => mainWindow,
       getAppView: () => appView,
       getPreloadPath,
-      rendererUrl: DEFAULT_URL,
       onChanged: syncDevChrome,
     });
     productWikiInspector?.attach();
@@ -329,7 +362,6 @@ app.whenReady().then(async () => {
           getMainWindow: () => mainWindow,
           getAppView: () => appView,
           getPreloadPath,
-          rendererUrl: DEFAULT_URL,
           onChanged: syncDevChrome,
         });
         productWikiInspector?.attach();

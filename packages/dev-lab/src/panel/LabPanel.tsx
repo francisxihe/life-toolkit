@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Button, CloseOutlined, ConfigProvider, Empty, Flex, Tabs, Tag } from '@sue/design-web-react';
 import zhCN from '@sue/design-web-react/locale/zh_CN';
-import '../protocol';
+import { getLabPanelBridge } from '../protocol';
 import type { TraceEntry, TraceSpan } from '../types';
 
 type LabToolId = 'request';
@@ -54,7 +54,7 @@ function LabShell() {
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
 
   useEffect(() => {
-    const api = window.labPanel;
+    const api = getLabPanelBridge();
     if (!api) return undefined;
     void api.snapshot().then(setEntries);
     return api.onUpdate(setEntries);
@@ -75,7 +75,7 @@ function LabShell() {
   const selected = ordered.find((entry) => entry.id === selectedEntryId);
 
   const clearEntries = () => {
-    void window.labPanel?.clear().then((next) => {
+    void getLabPanelBridge()?.clear().then((next) => {
       if (Array.isArray(next)) setEntries(next);
       else setEntries([]);
     });
@@ -103,7 +103,7 @@ function LabShell() {
           title="关闭 Lab"
           aria-label="关闭 Lab"
           icon={<CloseOutlined />}
-          onClick={() => window.labPanel?.sendSetVisible(false)}
+          onClick={() => getLabPanelBridge()?.sendSetVisible(false)}
         />
       </Flex>
       {tool === 'request' ? (

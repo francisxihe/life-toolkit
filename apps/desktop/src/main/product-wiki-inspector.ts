@@ -1,6 +1,4 @@
 import electron from 'electron';
-import { labChannel } from '@true-north/dev-lab';
-import { snapshotDevTrace, subscribeDevTrace } from '@true-north/dev-lab/collector';
 
 const { ipcMain, WebContentsView } = electron;
 
@@ -17,16 +15,15 @@ html,body{margin:0;width:100%;height:100%;cursor:col-resize;background:transpare
 type ContentsView = InstanceType<typeof WebContentsView>;
 
 type HostIpc = {
-  onSetLabVisible: (visible: boolean) => void;
   onDragStart: (screenX?: number) => void;
   onDragMove: (screenX: number) => void;
   onDragEnd: (screenX?: number) => void;
 };
 
 let hostIpc: HostIpc | null = null;
-let labIpcBound = false;
+let sideIpcBound = false;
 
-export type SideMode = 'lab' | 'devtools' | 'hidden';
+export type SideMode = 'devtools' | 'hidden';
 
 export type InspectorHost = {
   attach: () => void;
@@ -42,12 +39,10 @@ export function createProductWikiInspectorHost(options: {
   getMainWindow: () => electron.BaseWindow | electron.BrowserWindow | null;
   getAppView: () => ContentsView | null;
   getPreloadPath: () => string;
-  rendererUrl: string;
   onChanged?: () => void;
 }): InspectorHost | undefined {
   if (!options.isDev) return undefined;
 
-  let labView: ContentsView | null = null;
   let devtoolsView: ContentsView | null = null;
   let handleView: ContentsView | null = null;
   let sideMode: SideMode = 'hidden';
@@ -57,33 +52,16 @@ export function createProductWikiInspectorHost(options: {
   let boundWindow: electron.BaseWindow | null = null;
   let boundAppContents: electron.WebContents | null = null;
 
-  const labUrl = () => {
-    const page = '/Lab.html';
-    if (process.env.ELECTRON_RENDERER_URL) {
-      return `${process.env.ELECTRON_RENDERER_URL.replace(/\/$/, '')}${page}`;
-    }
-    if (options.rendererUrl.startsWith('http')) {
-      return `${options.rendererUrl.replace(/\/$/, '')}${page}`;
-    }
-    return `${options.rendererUrl.replace(/index\.html$/, '')}Lab.html`;
-  };
-
-  const sendToWebContents = (contents: electron.WebContents | undefined, channel: string, payload?: unknown) => {
-    if (!contents || contents.isDestroyed()) return;
-    contents.send(channel, payload);
-  };
-
   const appContents = () => {
     const view = options.getAppView();
     if (!view || view.webContents.isDestroyed()) return undefined;
     return view.webContents;
   };
 
-  const labContents = () => labView?.webContents;
   const isDevToolsOpen = () => hostedDevToolsOpen || sideMode === 'devtools';
   const getSideMode = () => sideMode;
   const minSide = () => MIN_DEVTOOLS_WIDTH;
-  const isNativeSideOpen = () => sideMode === 'lab' || sideMode === 'devtools';
+  const isNativeSideOpen = () => sideMode === 'devtools';
 
   const clamp = (value: number, min: number, max: number) => {
     if (max < min) return min;
@@ -102,9 +80,7 @@ export function createProductWikiInspectorHost(options: {
     const appView = options.getAppView();
     if (!window || window.isDestroyed() || !appView) return;
     const [contentWidth, contentHeight] = window.getContentSize();
-    const labOpen = sideMode === 'lab';
-    const dtOpen = sideMode === 'devtools';
-    const sideOpen = labOpen || dtOpen;
+    const sideOpen = isNativeSideOpen();
     let side = sideOpen ? clamp(Math.round(sideWidth), minSide(), MAX_SIDE_WIDTH) : 0;
     let app = contentWidth - side;
     if (sideOpen && app < MIN_APP_WIDTH) {
@@ -122,17 +98,8 @@ export function createProductWikiInspectorHost(options: {
       );
     }
     const sideX = app;
-    if (labView) {
-      labView.setVisible(labOpen);
-      labView.setBounds({
-        x: labOpen ? sideX : contentWidth,
-        y: 0,
-        width: labOpen ? side : 0,
-        height: contentHeight,
-      });
-    }
     if (devtoolsView) {
-      if (dtOpen && side > 0) {
+      if (sideOpen && side > 0) {
         devtoolsView.setVisible(true);
         devtoolsView.setBounds({ x: sideX, y: 0, width: side, height: contentHeight });
       } else {
@@ -246,23 +213,6 @@ export function createProductWikiInspectorHost(options: {
     window.contentView.addChildView(devtoolsView);
   };
 
-  const pushLabSnapshot = (snapshot: unknown) => {
-    sendToWebContents(labContents(), labChannel.update, snapshot);
-  };
-
-  const unsubscribeTrace = subscribeDevTrace(pushLabSnapshot);
-
-  const ensureLabView = (window: electron.BaseWindow) => {
-    if (labView && !labView.webContents.isDestroyed()) return;
-    labView = new WebContentsView({ webPreferences: viewPrefs() });
-    labView.setVisible(false);
-    labView.webContents.loadURL(labUrl());
-    labView.webContents.on('did-finish-load', () => {
-      pushLabSnapshot(snapshotDevTrace());
-    });
-    window.contentView.addChildView(labView);
-  };
-
   const attach = () => {
     const window = options.getMainWindow();
     const appView = options.getAppView();
@@ -271,9 +221,7 @@ export function createProductWikiInspectorHost(options: {
     bindWindow(window, contents);
     ensureDevToolsView(window);
     ensureHandleView(window);
-    ensureLabView(window);
     if (handleView) window.contentView.addChildView(handleView);
-    if (labView) window.contentView.addChildView(labView);
     layout();
     options.onChanged?.();
   };
@@ -284,13 +232,8 @@ export function createProductWikiInspectorHost(options: {
       return;
     }
     closeHostedDevTools();
-    sideMode = mode;
-    if (mode === 'hidden') {
-      labView?.setVisible(false);
-      if (dragging) endDrag();
-    } else {
-      attach();
-    }
+    sideMode = 'hidden';
+    if (dragging) endDrag();
     layout();
     options.onChanged?.();
   };
@@ -302,7 +245,6 @@ export function createProductWikiInspectorHost(options: {
     bindWindow(window, contents);
     ensureDevToolsView(window);
     ensureHandleView(window);
-    ensureLabView(window);
     if (!devtoolsView) return;
     if (hostedDevToolsOpen && !forceOpen) {
       closeHostedDevTools();
@@ -318,7 +260,6 @@ export function createProductWikiInspectorHost(options: {
       options.onChanged?.();
       return;
     }
-    labView?.setVisible(false);
     try {
       contents.setDevToolsWebContents(devtoolsView.webContents);
     } catch (error) {
@@ -332,17 +273,13 @@ export function createProductWikiInspectorHost(options: {
   }
 
   hostIpc = {
-    onSetLabVisible: (visible) => {
-      if (!visible) setSideMode('hidden');
-    },
     onDragStart: startDrag,
     onDragMove: applyDrag,
     onDragEnd: endDrag,
   };
 
-  if (!labIpcBound) {
-    labIpcBound = true;
-    ipcMain.on(labChannel.setVisible, (_event, visible: boolean) => hostIpc?.onSetLabVisible(visible));
+  if (!sideIpcBound) {
+    sideIpcBound = true;
     ipcMain.on('side-panel:drag-start', (_event, screenX: number) => {
       appContents()?.send('side-panel:drag-start');
       hostIpc?.onDragStart(screenX);
@@ -364,12 +301,10 @@ export function createProductWikiInspectorHost(options: {
       const window = options.getMainWindow();
       const appView = options.getAppView();
       if (hostIpc?.onDragStart === startDrag) hostIpc = null;
-      unsubscribeTrace();
       unbindWindow();
       dragging = false;
       closeHostedDevTools();
       if (window && !window.isDestroyed()) {
-        if (labView) window.contentView.removeChildView(labView);
         if (devtoolsView) window.contentView.removeChildView(devtoolsView);
         if (handleView) window.contentView.removeChildView(handleView);
         if (appView) {
@@ -377,10 +312,8 @@ export function createProductWikiInspectorHost(options: {
           appView.setBounds({ x: 0, y: 0, width: contentWidth, height: contentHeight });
         }
       }
-      if (labView && !labView.webContents.isDestroyed()) labView.webContents.close();
       if (devtoolsView && !devtoolsView.webContents.isDestroyed()) devtoolsView.webContents.close();
       if (handleView && !handleView.webContents.isDestroyed()) handleView.webContents.close();
-      labView = null;
       devtoolsView = null;
       handleView = null;
       sideMode = 'hidden';

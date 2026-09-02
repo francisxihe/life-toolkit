@@ -22,6 +22,7 @@ import 'dayjs/locale/zh-cn';
 import '@true-north/web-service/electron-types';
 import dayjs from 'dayjs';
 import { registerMessage } from '@true-north/web-service';
+import { LabAttach } from '../dev/LabAttach';
 import { ProductWikiAttach } from '../dev/ProductWikiAttach';
 
 const messageApi = {
@@ -154,6 +155,7 @@ function LifeToolkitApp() {
           <GlobalContext.Provider value={contextValue}>
             <Router />
             {import.meta.env.DEV ? <ProductWikiAttach /> : null}
+            {import.meta.env.DEV ? <LabAttach /> : null}
             {process.env.NODE_ENV === 'development' && (
               <div
                 style={{

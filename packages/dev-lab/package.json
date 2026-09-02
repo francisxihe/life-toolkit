@@ -15,7 +15,14 @@
     "./panel": {
       "types": "./src/panel/index.ts",
       "import": "./src/panel/index.ts"
+    },
+    "./dock": {
+      "types": "./src/dock.ts",
+      "import": "./src/dock.ts"
     }
+  },
+  "dependencies": {
+    "@ylib/product-dock": "0.0.3"
   },
   "peerDependencies": {
     "@sue/design-web-react": "0.0.3-beta.1",

@@ -13,6 +13,50 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = path.dirname(currentFilePath);
 const srcDir = path.resolve(currentDirPath, 'src');
 const desktopDevPages = ['Lab'] as const;
+const productWikiRoot = path.resolve(currentDirPath, '../../packages/product-wiki');
+const productDockEntry = path.resolve(currentDirPath, '../../node_modules/@ylib/product-dock/dist/index.js');
+
+function resolveProductWikiOutsideRoot(): Plugin {
+  const extensions = ['', '.ts', '.tsx', '.js', '.json'];
+  return {
+    name: 'resolve-product-wiki-outside-root',
+    enforce: 'pre',
+    resolveId(id, importer) {
+      const bare = id.split('?')[0];
+      if (bare === './catalog.generated' || bare === './catalog.generated.ts') {
+        const generated = path.join(productWikiRoot, 'src/catalog.generated.ts');
+        if (fs.existsSync(generated)) return generated;
+      }
+      if (bare.includes('wiki/') && bare.endsWith('.json')) {
+        const fromWikiSrc = path.normalize(path.resolve(path.join(productWikiRoot, 'src'), bare));
+        if (fromWikiSrc.startsWith(productWikiRoot) && fs.existsSync(fromWikiSrc)) return fromWikiSrc;
+      }
+      if (!bare.startsWith('.')) return;
+      const raw = importer ? importer.split('?')[0] : '';
+      const importerFile = raw.startsWith('file:') ? fileURLToPath(raw) : raw;
+      const fromDir = path.isAbsolute(importerFile)
+        ? path.dirname(importerFile)
+        : path.join(productWikiRoot, 'src');
+      if (!fromDir.startsWith(productWikiRoot)) return;
+      const base = path.resolve(fromDir, bare);
+      for (const ext of extensions) {
+        const candidate = !path.extname(base) && ext ? `${base}${ext}` : base;
+        if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) return candidate;
+      }
+      return undefined;
+    },
+  };
+}
+
+function resolveProductDock(): Plugin {
+  return {
+    name: 'resolve-product-dock',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id === '@ylib/product-dock') return productDockEntry;
+    },
+  };
+}
 
 function desktopDevPage(): Plugin {
   return {
@@ -160,6 +204,8 @@ export default defineConfig({
         include: '**/*.svg',
       }),
       desktopDevPage(),
+      resolveProductWikiOutsideRoot(),
+      resolveProductDock(),
       productWiki({
         data: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
       }),
@@ -189,6 +235,14 @@ export default defineConfig({
         {
           find: '@true-north/vo',
           replacement: path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
+        },
+        {
+          find: '@ylib/product-dock',
+          replacement: productDockEntry,
+        },
+        {
+          find: '@true-north/dev-lab/dock',
+          replacement: path.resolve(currentDirPath, '../../packages/dev-lab/src/dock.ts'),
         },
         {
           find: '@true-north/dev-lab/panel',
@@ -235,6 +289,7 @@ export default defineConfig({
         'fe-selector',
         'marked',
         'dompurify',
+        '@ylib/product-dock',
       ],
       exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar'],
     },

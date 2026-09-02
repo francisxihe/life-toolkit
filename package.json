@@ -21,7 +21,7 @@
     "skills:sync": "skills-manager install"
   },
   "devDependencies": {
-    "@ylib/product-server": "0.0.2",
+    "@ylib/product-server": "0.0.3",
     "@ylib/skills-manager": "1.0.5",
     "@true-north/vo": "workspace:*",
     "@types/jest": "^29.5.0",
