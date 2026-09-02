@@ -114,7 +114,6 @@ export default defineConfig({
         },
         external: [
           'electron',
-          'electron-devtools-installer',
           'sqlite3',
           'typeorm',
           'typeorm-naming-strategies',

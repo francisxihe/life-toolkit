@@ -8,8 +8,6 @@ import {
   type LabFrameMessage,
 } from './protocol';
 
-const WIKI_FRAME_ID = 'product-wiki-dock-frame';
-
 const LAB_DOCK_IDS = {
   style: 'lab-dock-style',
   root: 'lab-dock',
@@ -20,24 +18,6 @@ const LAB_DOCK_IDS = {
 
 function postToFrame(frame: HTMLIFrameElement, message: LabFrameMessage): void {
   frame.contentWindow?.postMessage(message, '*');
-}
-
-function wikiDockFrame(): HTMLIFrameElement | null {
-  return document.getElementById(WIKI_FRAME_ID) as HTMLIFrameElement | null;
-}
-
-function wikiDockVisible(): boolean {
-  const frame = wikiDockFrame();
-  if (!frame) return false;
-  if (frame.style.display === 'none') return false;
-  const width = frame.style.width;
-  return Boolean(width && width !== '0px');
-}
-
-function restoreWikiPaddingIfNeeded(): void {
-  if (!wikiDockVisible()) return;
-  const width = wikiDockFrame()?.style.width;
-  if (width) document.body.style.paddingRight = width;
 }
 
 export function installLabDock(options: { src?: string } = {}): LabDockHandle {
@@ -57,7 +37,6 @@ export function installLabDock(options: { src?: string } = {}): LabDockHandle {
   const setVisible = (next: boolean) => {
     window.__labDockPreferred = next;
     dock.setVisible(next);
-    if (!next) restoreWikiPaddingIfNeeded();
   };
 
   const reply = (id: string, entries: TraceEntry[]) => {
@@ -113,9 +92,7 @@ export function installLabDock(options: { src?: string } = {}): LabDockHandle {
     destroyed = true;
     unsubUpdate?.();
     window.removeEventListener('message', onMessage);
-    const keepWiki = wikiDockVisible();
     dock.destroy();
-    if (keepWiki) restoreWikiPaddingIfNeeded();
     if (window.__labDock === handleApi) delete window.__labDock;
   };
 

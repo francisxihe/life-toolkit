@@ -55,23 +55,6 @@ const exposeAPI = () => {
     } as ElectronAPI);
 
     if (process.env.NODE_ENV === 'development') {
-      let sideDragging = false;
-      ipcRenderer.on('side-panel:drag-start', () => {
-        sideDragging = true;
-      });
-      ipcRenderer.on('side-panel:drag-end', () => {
-        sideDragging = false;
-      });
-      window.addEventListener('mousemove', (event) => {
-        if (sideDragging) ipcRenderer.send('side-panel:drag-move', event.screenX);
-      });
-      window.addEventListener('mouseup', (event) => {
-        if (sideDragging) ipcRenderer.send('side-panel:drag-end', event.screenX);
-      });
-      contextBridge.exposeInMainWorld('sidePanelHandle', {
-        dragStart: (screenX: number) => ipcRenderer.send('side-panel:drag-start', screenX),
-      });
-
       contextBridge.exposeInMainWorld('labPanel', {
         snapshot: () => ipcRenderer.invoke('lab:snapshot'),
         clear: () => ipcRenderer.invoke('lab:clear'),

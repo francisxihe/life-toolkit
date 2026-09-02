@@ -34,7 +34,7 @@ diff --git a/dist/service/index.js b/dist/service/index.js
 diff --git a/dist/bin/product-wiki.js b/dist/bin/product-wiki.js
 --- a/dist/bin/product-wiki.js
 +++ b/dist/bin/product-wiki.js
-@@ -667,6 +667,9 @@
+@@ -669,6 +669,9 @@
        fs: { allow: [root, process.cwd()] }
      },
      esbuild: { jsx: "automatic" },
@@ -44,7 +44,7 @@ diff --git a/dist/bin/product-wiki.js b/dist/bin/product-wiki.js
      resolve: {
        alias: {
          "@ylib/product-server/views": viewsEntry,
-@@ -678,6 +681,19 @@
+@@ -680,6 +683,19 @@
      },
      plugins: [
        stubViteClient(),

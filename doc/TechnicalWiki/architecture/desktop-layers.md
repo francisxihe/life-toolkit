@@ -22,7 +22,7 @@ sequenceDiagram
 | `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller；DEV 下还有 REST / TypeORM Lab 钩子 |
 | `src/preload` | 隔离上下文 | 向 `window.electronAPI` 暴露 REST 风格 API |
 | `src/render` | Chromium | React UI、路由、模块 Context |
-| `src/dev` | Chromium（仅 DEV） | ProductWiki / Lab 的 html 薄入口 |
+| `src/dev` | Chromium（仅 DEV） | Lab iframe 薄入口（`Lab.html`）；ProductWiki 由 Vite 插件注入 dock |
 | `src/service` | Node（主进程侧） | TypeORM、业务 Service、**RouteController（IPC 入口）** |
 
 ## render 层约定
@@ -76,18 +76,13 @@ render/pages/
 
 ## DEV 主窗口分栏
 
-DEV 下主窗口保持两栏布局：左侧业务页，右侧中间栏三选一（互斥）：
+DEV 下 View 菜单 **ProductWiki** / **Lab** 为互斥 checkbox；**Toggle Developer Tools** 走 Electron 默认 `webContents.toggleDevTools()`，与两个 dock 无关。
 
-```
-业务页 | 中间栏（三选一）
-         ProductWiki  |  Lab  |  DevTools
-```
-
-- 主进程 `sideMode: 'wiki' | 'lab' | 'devtools'`（另有 `hidden` 表示收起中间栏）
-- View 菜单：**ProductWiki** / **Lab** / **Toggle Developer Tools**，三项为互斥 checkbox
-- 三个模式各自占用独立 `WebContentsView`（`inspectorView` / `labView` / `devtoolsView`），同一套右侧 bounds 与 splitter；不要把 Lab `loadURL` 到 ProductWiki 的 `inspectorView`
-- Lab 不进入主应用 React 树；入口为 `src/dev/Lab.html`（只 `bootstrapLabPanel()`），preload 仅 DEV 暴露 `labPanel` 桥
-- 生产构建不创建该分栏、不包装 REST、不采集 SQL / spawn / MCP
+- ProductWiki：Vite 插件 dock iframe，渲染进程 `ProductWikiAttach` → `attachProductWiki`
+- Lab：渲染进程 `LabAttach` → `installLabDock`，iframe 加载 `/Lab.html`（只 `bootstrapLabPanel()`）。preload 仅 DEV 暴露 `labPanel` IPC 桥；iframe 经 `postMessage` 与宿主 dock 通信
+- DevTools：对 app `webContents` 调用 `toggleDevTools()`，不托管分栏、不改 `appView` bounds
+- 主进程用 `wikiDockPreferred` / `labDockPreferred` 同步菜单与 dock 显隐，不把 Lab 装进独立 `labView`
+- 生产构建不挂 dock、不包装 REST、不采集 SQL / spawn / MCP
 
 Lab 当前第一个工具是**请求时间线**：一条 IPC 一行，展开可看 params、response、duration 以及子 span（sql / spawn / mcp）。并行的 `/task/list` 各占一行并用 `AsyncLocalStorage` 把 SQL 挂到对应 IPC。AI 的 `startMessageStream` 会在 handler 返回后继续跑 Codex/MCP，后续 span 通过已有 `streamId` 挂回同一行。
 

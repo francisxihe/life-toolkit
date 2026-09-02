@@ -16,7 +16,6 @@ import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/run
 import { viewsChannel } from '@ylib/product-server/channel';
 import { labChannel } from '@true-north/dev-lab';
 import { subscribeDevTrace } from '@true-north/dev-lab/collector';
-import { createProductWikiInspectorHost } from './product-wiki-inspector';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === 'development';
@@ -64,7 +63,6 @@ function getPreloadPath() {
 // 保持对window对象的全局引用
 let mainWindow = null;
 let appView = null;
-let productWikiInspector = null;
 let wikiDockPreferred = true;
 let labDockPreferred = false;
 
@@ -84,10 +82,6 @@ function getAppWebContents() {
   if (appView && !appView.webContents.isDestroyed()) return appView.webContents;
   if (mainWindow instanceof BrowserWindow) return mainWindow.webContents;
   return null;
-}
-
-function nativeSideOpen() {
-  return Boolean(productWikiInspector?.isDevToolsOpen());
 }
 
 function sendWikiDockVisible(visible) {
@@ -135,7 +129,7 @@ function setLabDockPreferred(visible) {
 }
 
 function syncDevChrome() {
-  if (nativeSideOpen() || labDockPreferred) {
+  if (labDockPreferred) {
     wikiDockPreferred = false;
     hideWikiDock();
   }
@@ -187,14 +181,9 @@ function installDevApplicationMenu() {
         {
           label: 'ProductWiki',
           type: 'checkbox',
-          checked: wikiDockPreferred && !nativeSideOpen() && !labDockPreferred,
+          checked: wikiDockPreferred && !labDockPreferred,
           click: (item) => {
-            if (item.checked) {
-              setWikiDockPreferred(true);
-              if (nativeSideOpen()) productWikiInspector?.setSideMode('hidden');
-            } else {
-              setWikiDockPreferred(false);
-            }
+            setWikiDockPreferred(item.checked);
           },
         },
         {
@@ -207,10 +196,8 @@ function installDevApplicationMenu() {
         },
         {
           label: 'Toggle Developer Tools',
-          type: 'checkbox',
-          checked: Boolean(productWikiInspector?.isDevToolsOpen()),
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-          click: () => productWikiInspector?.toggleDevTools(),
+          click: () => getAppWebContents()?.toggleDevTools(),
         },
         { type: 'separator' },
         {
@@ -254,8 +241,13 @@ function createWindow() {
     });
     appView = new WebContentsView({ webPreferences });
     mainWindow.contentView.addChildView(appView);
-    const [contentWidth, contentHeight] = mainWindow.getContentSize();
-    appView.setBounds({ x: 0, y: 0, width: contentWidth, height: contentHeight });
+    const layoutAppView = () => {
+      if (!mainWindow || mainWindow.isDestroyed() || !appView) return;
+      const [contentWidth, contentHeight] = mainWindow.getContentSize();
+      appView.setBounds({ x: 0, y: 0, width: contentWidth, height: contentHeight });
+    };
+    layoutAppView();
+    mainWindow.on('resize', layoutAppView);
     const contents = appView.webContents;
     contents.loadURL(DEFAULT_URL + '#/growth/task/task-today');
     contents.once('did-finish-load', () => {
@@ -302,8 +294,6 @@ function createWindow() {
   }
 
   mainWindow.on('closed', () => {
-    productWikiInspector?.destroy();
-    productWikiInspector = null;
     appView = null;
     mainWindow = null;
   });
@@ -342,31 +332,13 @@ app.whenReady().then(async () => {
     ipcMain.on(labChannel.setVisible, (_event, visible) => {
       setLabDockPreferred(Boolean(visible));
     });
-    productWikiInspector = createProductWikiInspectorHost({
-      isDev,
-      getMainWindow: () => mainWindow,
-      getAppView: () => appView,
-      getPreloadPath,
-      onChanged: syncDevChrome,
-    });
-    productWikiInspector?.attach();
     syncDevChrome();
   }
 
   app.on('activate', () => {
     if (mainWindow === null) {
       createWindow();
-      if (isDev) {
-        productWikiInspector = createProductWikiInspectorHost({
-          isDev,
-          getMainWindow: () => mainWindow,
-          getAppView: () => appView,
-          getPreloadPath,
-          onChanged: syncDevChrome,
-        });
-        productWikiInspector?.attach();
-        syncDevChrome();
-      }
+      if (isDev) syncDevChrome();
     }
   });
 });

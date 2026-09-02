@@ -47,10 +47,6 @@ export function subscribeDevTrace(listener: (snapshot: TraceEntry[]) => void): (
   };
 }
 
-export function currentTraceIpcId(): string | undefined {
-  return als.getStore()?.ipcId;
-}
-
 export async function runRestTrace<T>(
   req: { method?: string; path?: string; payload?: unknown },
   run: () => Promise<T>

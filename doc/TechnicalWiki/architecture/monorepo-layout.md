@@ -11,8 +11,7 @@ true-north/
 │   ├── common/               # 通用工具
 │   ├── common-web/           # Web 通用能力
 │   ├── components/           # 可复用组件
-│   ├── dev-lab/              # DEV Lab：采集器、协议与面板 UI
-│   ├── product-server/      # 产品检查器引擎（解析、钉表面、DEV inspector）
+│   ├── dev-lab/              # DEV Lab：采集器、协议、dock 与面板 UI
 │   └── product-wiki/         # 产品 SSOT 数据
 ├── doc/
 │   ├── TechnicalWiki/        # 技术 Wiki
@@ -29,7 +28,7 @@ apps/desktop/src/
 ├── main/           # Electron 主进程
 ├── preload/        # preload 脚本
 ├── render/         # React 渲染进程（pages、router、components）
-├── dev/            # DEV 薄入口（ProductWiki.html / Lab.html）
+├── dev/            # DEV 薄入口（Lab.html；ProductWiki 由插件注入）
 ├── service/        # 本地业务与数据库
 │   ├── db/         # TypeORM 数据源、BaseRepository
 │   ├── growth/     # 个人成长域模块
