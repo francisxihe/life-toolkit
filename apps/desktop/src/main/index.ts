@@ -13,7 +13,6 @@ const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTh
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
 import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
-import { viewsChannel } from '@ylib/product-server/channel';
 import { labChannel } from '@true-north/dev-lab';
 import { subscribeDevTrace } from '@true-north/dev-lab/collector';
 
@@ -84,56 +83,40 @@ function getAppWebContents() {
   return null;
 }
 
-function sendWikiDockVisible(visible) {
+function sendDevDock(tab, visible) {
   const contents = getAppWebContents();
   if (!contents) return;
+  const preferred = visible ? { tab, visible: true } : { tab, visible: false };
   contents
     .executeJavaScript(
-      `window.__productWikiInspectTransport?.send(${JSON.stringify(viewsChannel.setVisible)}, ${JSON.stringify(visible)})`,
+      `window.__devDockPreferred = ${JSON.stringify(preferred)};
+       if (${JSON.stringify(visible)}) window.__devDock?.activate(${JSON.stringify(tab)});
+       else window.__devDock?.setVisible(false);`,
     )
-    .catch((error) => console.warn('无法切换 ProductWiki dock', error));
-}
-
-function sendLabDockVisible(visible) {
-  const contents = getAppWebContents();
-  if (!contents) return;
-  contents
-    .executeJavaScript(
-      `window.__labDockPreferred = ${JSON.stringify(visible)}; window.__labDock?.setVisible(${JSON.stringify(visible)});`,
-    )
-    .catch((error) => console.warn('无法切换 Lab dock', error));
-}
-
-function hideWikiDock() {
-  sendWikiDockVisible(false);
+    .catch((error) => console.warn('无法切换 DEV dock', error));
 }
 
 function setWikiDockPreferred(visible) {
   wikiDockPreferred = visible;
-  if (visible) {
-    labDockPreferred = false;
-    sendLabDockVisible(false);
-  }
-  sendWikiDockVisible(visible);
+  if (visible) labDockPreferred = false;
+  sendDevDock('wiki', visible);
   installDevApplicationMenu();
 }
 
 function setLabDockPreferred(visible) {
   labDockPreferred = visible;
-  if (visible) {
-    wikiDockPreferred = false;
-    hideWikiDock();
-  }
-  sendLabDockVisible(visible);
+  if (visible) wikiDockPreferred = false;
+  sendDevDock('lab', visible);
   installDevApplicationMenu();
 }
 
 function syncDevChrome() {
   if (labDockPreferred) {
     wikiDockPreferred = false;
-    hideWikiDock();
+    sendDevDock('lab', true);
+  } else {
+    sendDevDock('wiki', wikiDockPreferred);
   }
-  sendLabDockVisible(labDockPreferred);
   installDevApplicationMenu();
 }
 
@@ -254,6 +237,7 @@ function createWindow() {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.showInactive();
       }
+      syncDevChrome();
     });
     contents.on('did-finish-load', () => {
       contents

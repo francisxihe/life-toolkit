@@ -6,15 +6,14 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import svgr from 'vite-plugin-svgr';
 import { productWiki } from '@ylib/product-server/service/vite';
+import { labEntryPath, labHtmlPath, labPageRoute } from '@true-north/dev-lab/page/paths';
 import type { Plugin } from 'vite';
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = path.dirname(currentFilePath);
 const srcDir = path.resolve(currentDirPath, 'src');
-const desktopDevPages = ['Lab'] as const;
 const productWikiRoot = path.resolve(currentDirPath, '../../packages/product-wiki');
-const productDockEntry = path.resolve(currentDirPath, '../../node_modules/@ylib/product-dock/dist/index.js');
 
 function resolveProductWikiOutsideRoot(): Plugin {
   const extensions = ['', '.ts', '.tsx', '.js', '.json'];
@@ -48,35 +47,21 @@ function resolveProductWikiOutsideRoot(): Plugin {
   };
 }
 
-function resolveProductDock(): Plugin {
+function desktopLabPage(): Plugin {
   return {
-    name: 'resolve-product-dock',
-    enforce: 'pre',
-    resolveId(id) {
-      if (id === '@ylib/product-dock') return productDockEntry;
-    },
-  };
-}
-
-function desktopDevPage(): Plugin {
-  return {
-    name: 'desktop-dev-pages',
+    name: 'desktop-lab-page',
     configureServer(server) {
-      server.watcher.add(path.resolve(srcDir, 'dev'));
+      server.watcher.add(path.dirname(labHtmlPath));
       server.middlewares.use(async (req, res, next) => {
-        const pathname = req.url?.split('?')[0];
-        const page = desktopDevPages.find((name) => pathname === `/${name}.html`);
-        if (!page) {
+        if (req.url?.split('?')[0] !== labPageRoute) {
           next();
           return;
         }
         try {
-          const htmlPath = path.resolve(srcDir, `dev/${page}.html`);
-          const entryPath = path.resolve(srcDir, `dev/${page}.tsx`);
-          const entryUrl = `/@fs/${entryPath.replace(/\\/g, '/').replace(/^\/+/, '')}`;
-          let html = fs.readFileSync(htmlPath, 'utf-8');
-          html = html.replace(`./${page}.tsx`, entryUrl);
-          html = await server.transformIndexHtml(`/${page}.html`, html);
+          const entryUrl = `/@fs/${labEntryPath.replace(/\\/g, '/').replace(/^\/+/, '')}`;
+          let html = fs.readFileSync(labHtmlPath, 'utf-8');
+          html = html.replace('./Lab.tsx', entryUrl);
+          html = await server.transformIndexHtml(labPageRoute, html);
           html = html.replace(/<script[^>]*virtual:product-wiki-runtime[^>]*><\/script>/g, '');
           res.statusCode = 200;
           res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -202,9 +187,8 @@ export default defineConfig({
         svgrOptions: { exportType: 'default' },
         include: '**/*.svg',
       }),
-      desktopDevPage(),
+      desktopLabPage(),
       resolveProductWikiOutsideRoot(),
-      resolveProductDock(),
       productWiki({
         data: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
       }),
@@ -236,8 +220,8 @@ export default defineConfig({
           replacement: path.resolve(currentDirPath, '../../packages/business/vo/index.ts'),
         },
         {
-          find: '@ylib/product-dock',
-          replacement: productDockEntry,
+          find: '@true-north/dev-lab/page',
+          replacement: path.resolve(currentDirPath, '../../packages/dev-lab/src/page/index.ts'),
         },
         {
           find: '@true-north/dev-lab/dock',
@@ -285,10 +269,8 @@ export default defineConfig({
         'react-dnd-html5-backend',
         'mitt',
         'lodash-es',
-        'fe-selector',
         'marked',
         'dompurify',
-        '@ylib/product-dock',
       ],
       exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar'],
     },

@@ -21,7 +21,7 @@
     "skills:sync": "skills-manager install"
   },
   "devDependencies": {
-    "@ylib/product-server": "0.0.4",
+    "@ylib/product-server": "0.0.6",
     "@ylib/skills-manager": "1.0.5",
     "@true-north/vo": "workspace:*",
     "@types/lodash-es": "^4.17.12",

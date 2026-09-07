@@ -15,10 +15,10 @@ minimumReleaseAgeExclude:
   - electron-to-chromium@1.5.400
   - node-releases@2.0.52
   - terser@5.49.1
-  - '@ylib/product-server@0.0.4'
-  - '@ylib/product-dock@0.0.4'
+  - '@ylib/product-server@0.0.6'
+  - '@ylib/product-dock@0.0.6'
   - '@ylib/product-surface-react@0.0.2'
-  - '@ylib/product-skills@0.0.4'
+  - '@ylib/product-skills@0.0.6'
   - '@ylib/skills-manager@1.0.5'
 
 overrides:
@@ -29,10 +29,6 @@ overrides:
   '@sue/design-web-react>dayjs': ^1.11.13
   '@sue/design-web-react>@ant-design/colors': ^8.0.1
   '@sue/design-web-react>@ant-design/fast-color': ^3.0.1
-
-patchedDependencies:
-  '@ylib/product-server@0.0.4': patches/@ylib__product-server@0.0.4.patch
-  fe-selector@0.1.0: patches/fe-selector@0.1.0.patch
 
 allowBuilds:
   '@swc/core': true

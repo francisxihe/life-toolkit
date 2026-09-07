@@ -31,16 +31,13 @@ export type LabFrameMessage =
   | { type: typeof labFrameChannel.update; entries: TraceEntry[] }
   | { type: typeof labFrameChannel.setVisible; visible: boolean };
 
-export type LabDockHandle = {
-  setVisible: (visible: boolean) => void;
+export type LabFrameHandle = {
   destroy: () => void;
 };
 
 declare global {
   interface Window {
     labPanel?: LabPanelBridge;
-    __labDock?: LabDockHandle;
-    __labDockPreferred?: boolean;
   }
 }
 

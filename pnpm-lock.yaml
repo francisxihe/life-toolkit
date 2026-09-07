@@ -13,10 +13,6 @@ overrides:
   '@sue/design-web-react>@ant-design/colors': ^8.0.1
   '@sue/design-web-react>@ant-design/fast-color': ^3.0.1
 
-patchedDependencies:
-  '@ylib/product-server@0.0.4': 86a715270aba287aac40541985796af91170743e868d869bcab7c22870f8082f
-  fe-selector@0.1.0: e9076c4aedf59fe144a0c7f5d337ae8747b9156d1ffc689773c4d6587b25c202
-
 importers:
 
   .:
@@ -37,8 +33,8 @@ importers:
         specifier: ^8.67.0
         version: 8.67.0(eslint@9.39.5(jiti@2.7.0)(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
       '@ylib/product-server':
-        specifier: 0.0.4
-        version: 0.0.4(patch_hash=86a715270aba287aac40541985796af91170743e868d869bcab7c22870f8082f)(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
+        specifier: 0.0.6
+        version: 0.0.6(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
       '@ylib/skills-manager':
         specifier: 1.0.5
         version: 1.0.5
@@ -100,11 +96,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/business/web-service
       '@ylib/product-dock':
-        specifier: 0.0.4
-        version: 0.0.4
+        specifier: 0.0.6
+        version: 0.0.6
       '@ylib/product-server':
-        specifier: 0.0.4
-        version: 0.0.4(patch_hash=86a715270aba287aac40541985796af91170743e868d869bcab7c22870f8082f)(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
+        specifier: 0.0.6
+        version: 0.0.6(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
       '@ylib/product-surface-react':
         specifier: 0.0.2
         version: 0.0.2(react-router@6.30.4(react@18.3.1))(react@18.3.1)
@@ -407,9 +403,6 @@ importers:
       '@sue/design-web-react':
         specifier: 0.0.3-beta.1
         version: 0.0.3-beta.1(date-fns@3.6.0)(luxon@3.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@ylib/product-dock':
-        specifier: 0.0.4
-        version: 0.0.4
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -430,8 +423,8 @@ importers:
   packages/product-wiki:
     dependencies:
       '@ylib/product-server':
-        specifier: 0.0.4
-        version: 0.0.4(patch_hash=86a715270aba287aac40541985796af91170743e868d869bcab7c22870f8082f)(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
+        specifier: 0.0.6
+        version: 0.0.6(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))
     devDependencies:
       typescript:
         specifier: ^6.0.0
@@ -2727,11 +2720,11 @@ packages:
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
 
-  '@ylib/product-dock@0.0.4':
-    resolution: {integrity: sha512-0xGr2ECeV2on3oVEBlyv9B07Kis71fYXZG+MynD/6DwnOWvRhmUSnpQQm+8E34RiuXfkZeIC/ZsQroCTNnDhzw==, tarball: https://packages.aliyun.com/6141c43fdd62cdb60fbbdbda/npm/npm-registry/@ylib/product-dock/-/@ylib/product-dock-0.0.4.tgz}
+  '@ylib/product-dock@0.0.6':
+    resolution: {integrity: sha512-AzEGxK8+K4PaU9rg2fS8URcJf5bmJunp7QkSJieFVG9A/yCGLukxllERoZfnZqH2J6LdUq/nh8KKweho7CBOvw==, tarball: https://packages.aliyun.com/6141c43fdd62cdb60fbbdbda/npm/npm-registry/@ylib/product-dock/-/@ylib/product-dock-0.0.6.tgz}
 
-  '@ylib/product-server@0.0.4':
-    resolution: {integrity: sha512-pzNZ1RkM7ufjL3GXvOPn+sqiBlhoQIR4/xUWYYThGNPvrDtKD3pqLcZ5SqdDXMr47kqhyMSuI3wEp/XdR6mLcw==, tarball: https://packages.aliyun.com/6141c43fdd62cdb60fbbdbda/npm/npm-registry/@ylib/product-server/-/@ylib/product-server-0.0.4.tgz}
+  '@ylib/product-server@0.0.6':
+    resolution: {integrity: sha512-OUtPGuikVwS39uMP8sSSrY+1crKYvrkdB+Rt5luP3smFMGNR9chWPKjyPinsrh9/8SAiEflPAzD8RlSMKnSLJg==, tarball: https://packages.aliyun.com/6141c43fdd62cdb60fbbdbda/npm/npm-registry/@ylib/product-server/-/@ylib/product-server-0.0.6.tgz}
     hasBin: true
     peerDependencies:
       react: ^18.0.0
@@ -3823,17 +3816,6 @@ packages:
       picomatch: ^3 || ^4
     peerDependenciesMeta:
       picomatch:
-        optional: true
-
-  fe-selector@0.1.0:
-    resolution: {integrity: sha512-+tZZiakl/nUYt9XAU5QHntULpVE++g3uFttRytKVBUM8bXmZFRZAYz/5InunQ+iwUVkeNU0eyrFPtyaq0CbhPg==}
-    peerDependencies:
-      react: '>=18.0.0'
-      react-dom: '>=18.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
         optional: true
 
   file-entry-cache@6.0.1:
@@ -9660,9 +9642,9 @@ snapshots:
 
   '@xobotyi/scrollbar-width@1.9.5': {}
 
-  '@ylib/product-dock@0.0.4': {}
+  '@ylib/product-dock@0.0.6': {}
 
-  '@ylib/product-server@0.0.4(patch_hash=86a715270aba287aac40541985796af91170743e868d869bcab7c22870f8082f)(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))':
+  '@ylib/product-server@0.0.6(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@6.0.3)(vite@5.4.15(@types/node@22.13.0)(less@4.8.1(supports-color@8.1.1))(lightningcss@1.32.0)(terser@5.49.1))':
     dependencies:
       '@tiptap/extension-link': 3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5)
       '@tiptap/extension-placeholder': 3.30.5(@tiptap/extensions@3.30.5(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5))
@@ -9670,8 +9652,7 @@ snapshots:
       '@tiptap/pm': 3.30.5
       '@tiptap/react': 3.30.5(@floating-ui/dom@1.8.0)(@tiptap/core@3.30.5(@tiptap/pm@3.30.5))(@tiptap/pm@3.30.5)(@types/react-dom@18.3.7(@types/react@18.3.31))(@types/react@18.3.31)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tiptap/starter-kit': 3.30.5
-      '@ylib/product-dock': 0.0.4
-      fe-selector: 0.1.0(patch_hash=e9076c4aedf59fe144a0c7f5d337ae8747b9156d1ffc689773c4d6587b25c202)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      use-sync-external-store: 1.6.0(react@18.3.1)
       ws: 8.21.3
     optionalDependencies:
       react: 18.3.1
@@ -11097,11 +11078,6 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.5):
     optionalDependencies:
       picomatch: 4.0.5
-
-  fe-selector@0.1.0(patch_hash=e9076c4aedf59fe144a0c7f5d337ae8747b9156d1ffc689773c4d6587b25c202)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    optionalDependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
 
   file-entry-cache@6.0.1:
     dependencies:

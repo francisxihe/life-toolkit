@@ -9,7 +9,7 @@ Runs the business UI.
 | Piece | Role |
 | --- | --- |
 | `ProductSurface` | DEV-only `data-product-ref` on a single element child |
-| `attachProductWiki({ router })` | DEV: pick elements, emit page context, apply wiki `navigate` (wraps `bootstrapProductInspect`) |
+| `attachProductWiki({ router, onSetVisible })` | DEV: pick elements, emit page context, apply wiki `navigate` (wraps `bootstrapProductInspect`). `onSetVisible` is for the consumer to hide/show their dock |
 | `ProductRouterPort` | `getPath()`, `subscribe(listener)`, `navigate(path)` |
 | Router path | Page path equals `wiki.route` (home is `/`). Parallel router entries are sibling pages; nested router `children` equal `view.route` when present. A view with no inherited route is global DOM |
 
@@ -37,22 +37,33 @@ Keep **hash** history in the playgrounds for now so wiki routes stay stable.
 import { productWiki } from '@ylib/product-server/service/vite';
 plugins: [productWiki({ data: './src/wiki.ts', playwright: true })]
 
-// main.ts (DEV)
-attachProductWiki({ router: bindVueRouter(router) });
+// DEV host
+import { installHostDock } from '@ylib/product-dock';
+
+const dock = installHostDock({ minWidth: 480, defaultWidth: 640 });
+const frame = document.createElement('iframe');
+frame.src = window.__productWikiService?.viewsUrl ?? 'http://127.0.0.1:5101/views';
+dock.register({ id: 'wiki', label: '讲解面板', content: frame });
+attachProductWiki({
+  router: bindVueRouter(router),
+  onSetVisible: (visible) => dock.setVisible(visible),
+});
 ```
 
 The plugin is a production no-op (`apply: 'serve'`):
 
 1. Discover or start the local service (reuse if the port is in use — multiple Vite apps can share one)
 2. Register the current origin and push wiki into the service (Vite `ssrLoadModule`; a JSON directory is the non-Vite fallback)
-3. Inject the inspect client and a right dock iframe pointing at the service views page. The splitter lives in the injected dock, not in consumer code
+3. Inject the inspect client. The right column is `@ylib/product-dock`: callers `register({ id, label, content })`. The splitter and vertical tabs live in the dock, not in `product-server`.
 
 The service serves views (`bootstrapProductViews`) so the React wiki panel does not enter the business production graph, and forwards `viewsChannel` over WebSocket.
 
 - Single app: the plugin may auto-start the service
 - Multi-app / explicit: `product-wiki serve --data <path>`
 
-This repo: start one playground at a time (`pnpm dev:react` on `:5102`, `pnpm dev:vue` on `:5103`). The Vite plugin starts or reuses the local service. There is no framework switcher host. `pnpm dev:electron` is only a `BrowserWindow` on `:5102` (or `PRODUCT_WIKI_ELECTRON_URL`); start `pnpm dev:react` first.
+This repo: start one playground at a time (`pnpm dev:react` on `:5102`, `pnpm dev:vue` on `:5103`). The Vite plugin starts or reuses the local service. Playgrounds `register` the views iframe into product-dock. There is no framework switcher host. `pnpm dev:electron` is only a `BrowserWindow` on `:5102` (or `PRODUCT_WIKI_ELECTRON_URL`); start `pnpm dev:react` first.
+
+Playgrounds demonstrate the default Wiki service. Overlay layout against the dock (modal / drawer / float button staying in the host pane) lives in `demo-dock-react` (`:5104`) and `demo-dock-vue` (`:5105`), which call `installHostDock` + `register` and do not load ProductWiki.
 
 ## Channel (`viewsChannel`)
 

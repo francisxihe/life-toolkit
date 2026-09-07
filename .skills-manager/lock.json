@@ -2,19 +2,19 @@
   "schemaVersion": 1,
   "skills": {
     "setup-product-app": {
-      "revision": "0.0.4",
-      "contentHash": "965c5214b56c14a94a0b400501b5ee565733b8244af53d6693c99dc269d5640a",
+      "revision": "0.0.6",
+      "contentHash": "5ccd590579f1f31d5b6b84b01e15566c96229a3126b1283275410e8cd840d220",
       "resolvedPeer": {
         "name": "@ylib/product-server",
-        "version": "0.0.4"
+        "version": "0.0.6"
       }
     },
     "write-product-wiki": {
-      "revision": "0.0.4",
+      "revision": "0.0.6",
       "contentHash": "ba311fd04242e6c92fb0ca78fb91a0ab9865f42054f2febaf400b6d48c443937",
       "resolvedPeer": {
         "name": "@ylib/product-server",
-        "version": "0.0.4"
+        "version": "0.0.6"
       }
     }
   },

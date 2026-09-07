@@ -22,7 +22,7 @@ sequenceDiagram
 | `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller；DEV 下还有 REST / TypeORM Lab 钩子 |
 | `src/preload` | 隔离上下文 | 向 `window.electronAPI` 暴露 REST 风格 API |
 | `src/render` | Chromium | React UI、路由、模块 Context |
-| `src/dev` | Chromium（仅 DEV） | Lab iframe 薄入口（`Lab.html`）；ProductWiki 由 Vite 插件注入 dock |
+| `src/dev` | Chromium（仅 DEV） | `DevDockAttach` 挂 `@ylib/product-dock` 并注册讲解面板 / Lab |
 | `src/service` | Node（主进程侧） | TypeORM、业务 Service、**RouteController（IPC 入口）** |
 
 ## render 层约定
@@ -76,12 +76,13 @@ render/pages/
 
 ## DEV 主窗口分栏
 
-DEV 下 View 菜单 **ProductWiki** / **Lab** 为互斥 checkbox；**Toggle Developer Tools** 走 Electron 默认 `webContents.toggleDevTools()`，与两个 dock 无关。
+DEV 下 View 菜单 **ProductWiki** / **Lab** 为互斥 checkbox；**Toggle Developer Tools** 走 Electron 默认 `webContents.toggleDevTools()`，与 dock 无关。
 
-- ProductWiki：Vite 插件 dock iframe，渲染进程 `ProductWikiAttach` → `attachProductWiki`
-- Lab：渲染进程 `LabAttach` → `installLabDock`，iframe 加载 `/Lab.html`（只 `bootstrapLabPanel()`）。preload 仅 DEV 暴露 `labPanel` IPC 桥；iframe 经 `postMessage` 与宿主 dock 通信
+- 右栏是一个 `@ylib/product-dock`：竖向 tab 为讲解面板 / Lab。渲染进程 `DevDockAttach` 自己 `installHostDock()` 再 `register`
+- ProductWiki：iframe 指向 `window.__productWikiService.viewsUrl`；`attachProductWiki({ router, onSetVisible })` 只负责 inspect，关面板走 `dock.setVisible`
+- Lab：同一 dock 的 tab，iframe 加载 `@true-north/dev-lab` 的 `labPageRoute`（`Lab.html` + `Lab.tsx`，只 `bootstrapLabPanel()`）。preload 仅 DEV 暴露 `labPanel` IPC 桥；iframe 经 `postMessage` 与宿主 `bindLabFrame` 通信
 - DevTools：对 app `webContents` 调用 `toggleDevTools()`，不托管分栏、不改 `appView` bounds
-- 主进程用 `wikiDockPreferred` / `labDockPreferred` 同步菜单与 dock 显隐，不把 Lab 装进独立 `labView`
+- 主进程用 `wikiDockPreferred` / `labDockPreferred` 同步菜单与 `window.__devDock` 的 tab / 显隐，不把 Lab 装进独立 `labView`
 - 生产构建不挂 dock、不包装 REST、不采集 SQL / spawn / MCP
 
 Lab 当前第一个工具是**请求时间线**：一条 IPC 一行，展开可看 params、response、duration 以及子 span（sql / spawn / mcp）。并行的 `/task/list` 各占一行并用 `AsyncLocalStorage` 把 SQL 挂到对应 IPC。AI 的 `startMessageStream` 会在 handler 返回后继续跑 Codex/MCP，后续 span 通过已有 `streamId` 挂回同一行。

@@ -1,5 +1,5 @@
 import '@sue/design-web-react/dist/sue.css';
-import { bootstrapLabPanel } from '@true-north/dev-lab/panel';
+import { bootstrapLabPanel } from '../panel';
 
 const lab = bootstrapLabPanel();
 if (import.meta.hot) import.meta.hot.dispose(lab.destroy);

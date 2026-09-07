@@ -22,8 +22,7 @@ import 'dayjs/locale/zh-cn';
 import '@true-north/web-service/electron-types';
 import dayjs from 'dayjs';
 import { registerMessage } from '@true-north/web-service';
-import { LabAttach } from '../dev/LabAttach';
-import { ProductWikiAttach } from '../dev/ProductWikiAttach';
+import { DevDockAttach } from '../dev/DevDockAttach';
 
 const messageApi = {
   error: (params: string) => message.error(params),
@@ -154,8 +153,7 @@ function LifeToolkitApp() {
         <Provider store={store}>
           <GlobalContext.Provider value={contextValue}>
             <Router />
-            {import.meta.env.DEV ? <ProductWikiAttach /> : null}
-            {import.meta.env.DEV ? <LabAttach /> : null}
+            {import.meta.env.DEV ? <DevDockAttach theme={themeMode} /> : null}
             {process.env.NODE_ENV === 'development' && (
               <div
                 style={{

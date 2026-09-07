@@ -3,7 +3,7 @@ name: setup-product-app
 description: >-
   Splits a product host so the business UI stays independent of ProductWiki
   inspect/views, wires ProductSurface, attachProductWiki / bootstrapProductInspect,
-  ProductRouterPort, and the ProductWiki service (Vite plugin + Node service).
+  ProductRouterPort, @ylib/product-dock, and the ProductWiki service (Vite plugin + Node service).
   Use when scaffolding a product app, adding the DEV wiki panel, connecting wiki
   navigation to the consumer router, or choosing the views transport.
 ---
@@ -24,6 +24,7 @@ Full wiring, channel events, and what not to copy from the playground: [host-arc
 - Wiki **content** (`ProductWikiData`) is owned by the consumer, not `@ylib/product-server`.
 - Do not put `productRef` on route meta. Sync by **path**: `wiki.route` is the page (home is `wiki.route: '/'`). Parallel router entries are sibling pages; nested `view.route` is only for a router child path. A view with no inherited route is global DOM.
 - `product-server` must not depend on `vue-router` / `react-router`. Bind via `ProductRouterPort` only.
+- `product-server` must not depend on `@ylib/product-dock`. The host mounts the dock and registers named panels.
 - `launchApp(name)` is reserved. Do not implement launching other local apps.
 
 ## Content app (business page)
@@ -32,13 +33,13 @@ Full wiring, channel events, and what not to copy from the playground: [host-arc
 2. Adapt the consumer router to `ProductRouterPort` (`getPath` / `subscribe` / `navigate`).
    - Vue: `bindVueRouter(router)` from `@ylib/product-surface-vue/router`.
    - React: `bindReactRouter(router)` or `ProductRouterSync` from `@ylib/product-surface-react/router`.
-3. Add `productWiki({ data: './src/wiki.ts', playwright: true })` to `vite.config.ts` (or `playwright: 'e2e'`). The plugin installs `productWikiInspect` and the dock iframe. `playwright: true` POSTs `{ root, origin }` to `/api/playwright` so the tests tab can spawn `npx playwright test` from the matching consumer.
-4. Call `attachProductWiki({ router })` in DEV. If `router` is omitted, Inspect falls back to `location.hash` / `pathname`.
+3. Add `productWiki({ data: './src/wiki.ts', playwright: true })` to `vite.config.ts` (or `playwright: 'e2e'`). The plugin installs `productWikiInspect` and starts/reuses the Node service. It does **not** mount a dock. `playwright: true` POSTs `{ root, origin }` to `/api/playwright` so the tests tab can spawn `npx playwright test` from the matching consumer.
+4. In DEV, `installHostDock()` from `@ylib/product-dock`, `register({ id, label, content })` with a name for the vertical tab. Point an iframe at `window.__productWikiService.viewsUrl` (injected by the Vite plugin; fallback `http://127.0.0.1:5101/views`). Then `attachProductWiki({ router, onSetVisible: (visible) => dock.setVisible(visible) })`. If `router` is omitted, Inspect falls back to `location.hash` / `pathname`.
 5. Page paths in the wiki must match the consumer **router tree** (`/`, `/spec`, …), not a hash prefix like `#/spec`, and not URL string nesting. `kind: page` uses `wiki.route`. The home page is `kind: page` with `wiki.route: '/'`. `/overview` beside `/` in the router is a sibling page, not a child of `/`. `global` has no `wiki.route` and only holds global DOM. Nested `view.route` values must match nested router `children` paths. Page DOM omits `view.route` and inherits the nearest wiki `route`. Global DOM inherits no route. `kind: dom` has no `route` and must hang under a `page` or `global`. A view must have `ProductSurface` + `productRef`. Page overview is anchored by `wiki.route`.
 
 ## Views
 
-The Node service mounts `bootstrapProductViews` on its views page. The plugin dock iframes that page.
+The Node service mounts `bootstrapProductViews` on its views page. The consumer registers that page (typically an iframe) into `@ylib/product-dock`. Dock does not create iframes.
 
 Do not put the React wiki panel in the business production graph.
 

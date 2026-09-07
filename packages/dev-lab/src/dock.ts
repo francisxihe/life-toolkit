@@ -1,43 +1,22 @@
-import { installHostDock } from '@ylib/product-dock';
 import type { TraceEntry } from './types';
 import {
   getLabPanelBridge,
   isLabFrameMessage,
   labFrameChannel,
-  type LabDockHandle,
+  type LabFrameHandle,
   type LabFrameMessage,
 } from './protocol';
-
-const LAB_DOCK_IDS = {
-  style: 'lab-dock-style',
-  root: 'lab-dock',
-  frame: 'lab-dock-frame',
-  handle: 'lab-dock-handle',
-  capture: 'lab-dock-capture',
-} as const;
 
 function postToFrame(frame: HTMLIFrameElement, message: LabFrameMessage): void {
   frame.contentWindow?.postMessage(message, '*');
 }
 
-export function installLabDock(options: { src?: string } = {}): LabDockHandle {
-  document.getElementById(LAB_DOCK_IDS.capture)?.remove();
-  const dock = installHostDock({
-    src: options.src ?? '/Lab.html',
-    frameTitle: 'Lab',
-    ids: LAB_DOCK_IDS,
-    minWidth: 320,
-    defaultWidth: 420,
-  });
-
+export function bindLabFrame(
+  frame: HTMLIFrameElement,
+  options: { setVisible: (visible: boolean) => void },
+): LabFrameHandle {
   let destroyed = false;
   const pending = new Map<string, 'snapshot' | 'clear'>();
-  const frame = dock.frame;
-
-  const setVisible = (next: boolean) => {
-    window.__labDockPreferred = next;
-    dock.setVisible(next);
-  };
 
   const reply = (id: string, entries: TraceEntry[]) => {
     const kind = pending.get(id);
@@ -69,7 +48,7 @@ export function installLabDock(options: { src?: string } = {}): LabDockHandle {
       return;
     }
     if (message.type === labFrameChannel.setVisible) {
-      setVisible(message.visible);
+      options.setVisible(message.visible);
       api?.sendSetVisible(message.visible);
     }
   };
@@ -80,26 +59,21 @@ export function installLabDock(options: { src?: string } = {}): LabDockHandle {
 
   const api = getLabPanelBridge();
   const unsubUpdate = api?.onUpdate(pushUpdate);
-  frame.addEventListener('load', () => {
+  const onLoad = () => {
     void api?.snapshot().then((entries) => {
       if (entries) pushUpdate(entries);
     });
-  });
+  };
+  frame.addEventListener('load', onLoad);
   window.addEventListener('message', onMessage);
 
-  const destroy = () => {
-    if (destroyed) return;
-    destroyed = true;
-    unsubUpdate?.();
-    window.removeEventListener('message', onMessage);
-    dock.destroy();
-    if (window.__labDock === handleApi) delete window.__labDock;
+  return {
+    destroy: () => {
+      if (destroyed) return;
+      destroyed = true;
+      unsubUpdate?.();
+      frame.removeEventListener('load', onLoad);
+      window.removeEventListener('message', onMessage);
+    },
   };
-
-  const handleApi: LabDockHandle = { setVisible, destroy };
-  window.__labDock = handleApi;
-  if (window.__labDockPreferred) setVisible(true);
-  else setVisible(false);
-
-  return handleApi;
 }
