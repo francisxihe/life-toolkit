@@ -7,14 +7,30 @@
   "productStatus": "roadmap",
   "views": [
     {
+      "id": "nav",
+      "name": "设置导航",
+      "scenario": "返回进入前的应用页，并在本机设置栏目间切换",
+      "productStatus": "roadmap",
+      "reference": "setting.view.nav"
+    },
+    {
       "id": "appearance",
       "name": "外观",
+      "route": "/setting/appearance",
       "scenario": "选择这台设备的界面语言与主题",
       "productStatus": "roadmap",
       "reference": "setting.view.appearance"
     }
   ],
   "rules": [
+    {
+      "id": "independent-shell",
+      "name": "独立于功能菜单",
+      "description": "本机设置是独立全页，不使用功能侧栏与顶栏。左侧为设置菜单，可返回进入前的应用页。",
+      "views": ["nav"],
+      "reference": "setting.rule.independent-shell",
+      "productStatus": "roadmap"
+    },
     {
       "id": "persist-language",
       "name": "语言立即生效",
@@ -44,12 +60,22 @@
     {
       "id": "setting.overview",
       "title": "目标与价值",
-      "body": "本机设置是独立页面，从头像菜单进入，不出现在侧栏。用户在此调整这台设备的界面语言与外观。语言与主题立即生效并在下次打开时保持；它们属于本机，不是账号资料。"
+      "body": "本机设置是独立全页，从头像菜单进入，不占用功能侧栏与顶栏。左侧是设置菜单，可返回进入前的应用页。用户在此调整这台设备的界面语言与外观。语言与主题立即生效并在下次打开时保持；它们属于本机，不是账号资料。"
+    },
+    {
+      "id": "setting.view.nav",
+      "title": "设置导航",
+      "body": "设置导航固定在本机设置左侧。顶部返回进入设置前的应用页；没有进入记录时回到 AI 会话。下方列出本机设置栏目，当前只有外观。"
     },
     {
       "id": "setting.view.appearance",
       "title": "外观",
-      "body": "外观提供界面语言（中文 / English）与主题（跟随系统 / 浅色 / 深色）。选择立即生效，无需另存。语言与主题不再从顶栏快捷切换。"
+      "body": "外观是本机设置中的独立栏目。提供界面语言（中文 / English）与主题（跟随系统 / 浅色 / 深色）。选择立即生效，无需另存。语言与主题不再从顶栏快捷切换。"
+    },
+    {
+      "id": "setting.rule.independent-shell",
+      "title": "独立于功能菜单",
+      "body": "进入本机设置后离开功能侧栏、顶栏与工作台。用户只看到设置菜单与当前栏目，并可返回进入前的应用页。"
     },
     {
       "id": "setting.rule.persist-language",

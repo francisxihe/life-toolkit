@@ -1,4 +1,4 @@
-const mod = import.meta.glob('../pages/**/*.tsx');
+const mod = import.meta.glob('../features/**/*.tsx');
 
 /**
  * 移除路径中的动态路由参数
@@ -26,12 +26,12 @@ export function getComponentModule(key: string) {
   const componentPath = removeDynamicParams(key);
 
   // 尝试匹配 index.tsx 文件
-  if (mod[`../pages${componentPath}/index.tsx`]) {
-    return mod[`../pages${componentPath}/index.tsx`];
+  if (mod[`../features${componentPath}/index.tsx`]) {
+    return mod[`../features${componentPath}/index.tsx`];
   }
   // 尝试匹配直接的 .tsx 文件
-  else if (mod[`../pages${componentPath}.tsx`]) {
-    return mod[`../pages${componentPath}.tsx`];
+  else if (mod[`../features${componentPath}.tsx`]) {
+    return mod[`../features${componentPath}.tsx`];
   }
 
   throw new Error(`Component ${key} not found (resolved to: ${componentPath})`);

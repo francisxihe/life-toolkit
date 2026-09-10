@@ -12,8 +12,8 @@ import IconButton from './IconButton';
 import styles from './style/index.module.less';
 import useStorage from '@/utils/useStorage';
 import { generatePermission } from '@/router/routes';
-import { useFocusTimer } from '@/pages/growth/focus-timer';
-import { useWorkbenchOptional } from '@/pages/workbench';
+import { useFocusTimer } from '@/features/growth/focus-timer';
+import { useWorkbenchOptional } from '@/features/workbench';
 
 function Navbar() {
   const t = useLocale();

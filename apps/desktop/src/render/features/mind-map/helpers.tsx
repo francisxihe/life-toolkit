@@ -1,6 +1,6 @@
 import { Drawer, message, Modal } from '@sue/design-web-react';
-import GoalEditor from '@/pages/growth/components/GoalDetail/GoalEditor';
-import GoalCreator from '@/pages/growth/components/GoalDetail/GoalCreator';
+import GoalEditor from '@/features/growth/components/GoalDetail/GoalEditor';
+import GoalCreator from '@/features/growth/components/GoalDetail/GoalCreator';
 import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
 import { GoalService } from '@true-north/web-service';
 

@@ -1,6 +1,8 @@
 const i18n = {
   'en-US': {
     'menu.setting': 'Device settings',
+    'setting.nav.back': 'Back to app',
+    'setting.appearance': 'Appearance',
     'setting.appearance.language': 'Language',
     'setting.appearance.language.zh': '中文',
     'setting.appearance.language.en': 'English',
@@ -11,6 +13,8 @@ const i18n = {
   },
   'zh-CN': {
     'menu.setting': '本机设置',
+    'setting.nav.back': '返回应用',
+    'setting.appearance': '外观',
     'setting.appearance.language': '语言',
     'setting.appearance.language.zh': '中文',
     'setting.appearance.language.en': 'English',

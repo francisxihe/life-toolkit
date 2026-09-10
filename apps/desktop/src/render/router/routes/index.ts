@@ -1,9 +1,17 @@
+import type { ComponentType, SVGProps } from 'react';
+import { User } from 'lucide-react';
 import auth, { AuthParams } from '@/utils/authentication';
 import { useEffect, useMemo, useState } from 'react';
 import { aiRoutes } from '@/router/routes/ai.routes';
 import { expensesRoutes } from '@/router/routes/expenses.routes';
 import { erpRoutes } from '@/router/routes/erp.routes';
-import { growthRoutes } from '@/pages/growth/routes';
+import { growthRoutes } from '@/router/routes/growth.routes';
+
+export type RouteIcon = ComponentType<SVGProps<SVGSVGElement> & { size?: number | string }>;
+
+export type IRouteMeta = {
+  icon?: RouteIcon;
+};
 
 export type IRoute = AuthParams & {
   name: string;
@@ -17,13 +25,7 @@ export type IRoute = AuthParams & {
   ignore?: boolean;
   /** 是否为页面组件 */
   onlyMenu?: boolean;
-};
-
-export const settingRoute: IRoute = {
-  name: 'menu.setting',
-  key: '/setting',
-  ignore: true,
-  breadcrumb: true,
+  meta?: IRouteMeta;
 };
 
 export const userRoute: IRoute = {
@@ -31,6 +33,7 @@ export const userRoute: IRoute = {
   key: '/user',
   ignore: true,
   breadcrumb: true,
+  meta: { icon: User },
 };
 
 export const routes: IRoute[] = [
@@ -38,7 +41,6 @@ export const routes: IRoute[] = [
   growthRoutes,
   expensesRoutes,
   erpRoutes,
-  settingRoute,
   userRoute,
 ];
 

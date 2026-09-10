@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { IRoute } from '@/router/routes';
 import useRouter from '@/router/useRouter';
-import { getIconFromKey } from './helpers';
+import styles from '../layout.module.less';
 
 interface NavigateProps {
   collapsed: boolean;
@@ -123,9 +123,14 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale, 'data-product-re
       return _routes
         .map((route) => {
           const { breadcrumb = true, ignore } = route;
+          const Icon = route.meta?.icon;
           const titleDom = (
             <span className="inline-flex items-center gap-2">
-              {getIconFromKey(route.fullPath)}
+              {Icon ? (
+                <Icon size={16} className={styles.icon} />
+              ) : (
+                <div className={styles['icon-empty']} />
+              )}
 
               {collapsed && level === 1
                 ? null

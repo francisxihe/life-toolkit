@@ -1,15 +1,18 @@
+import { Calendar, FolderKanban, Grid2X2, ListTodo, Target, TrendingUp } from 'lucide-react';
 import { IRoute } from '@/router/routes';
 
 export const workbenchRoutes: IRoute = {
   name: 'menu.workbench',
   key: '/growth/workbench',
   breadcrumb: true,
+  meta: { icon: Grid2X2 },
 };
 
 export const todoRoutes: IRoute = {
   name: 'menu.todo',
   key: '/growth/todo',
   breadcrumb: false,
+  meta: { icon: ListTodo },
   redirect: '/growth/todo/todo-today',
   children: [
     {
@@ -37,6 +40,7 @@ export const taskRoutes: IRoute = {
   name: 'menu.task',
   key: '/growth/task',
   breadcrumb: false,
+  meta: { icon: FolderKanban },
   redirect: '/growth/task/task-today',
   children: [
     {
@@ -64,6 +68,7 @@ export const goalRoutes: IRoute = {
   name: 'menu.goal',
   key: '/growth/goal',
   breadcrumb: false,
+  meta: { icon: Target },
   // redirect: '/growth/goal',
   // children: [
   //   {
@@ -91,6 +96,7 @@ export const habitRoutes: IRoute = {
   name: 'menu.habit',
   key: '/growth/habit',
   breadcrumb: true,
+  meta: { icon: TrendingUp },
   redirect: '/growth/habit/habit-list',
   children: [
     {
@@ -112,6 +118,7 @@ export const growthRoutes: IRoute = {
   name: 'menu.growth',
   key: '/growth',
   breadcrumb: false,
+  meta: { icon: Calendar },
   children: [
     workbenchRoutes,
     todoRoutes,

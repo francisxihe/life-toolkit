@@ -22,8 +22,8 @@ import {
   TodoService,
   TrackTimeController,
 } from '@true-north/web-service';
-import Flip from '@/pages/timer/normal/Flip';
-import { getTimeArr } from '@/pages/timer/utils';
+import Flip from '@/features/timer/normal/Flip';
+import { getTimeArr } from '@/features/timer/utils';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';

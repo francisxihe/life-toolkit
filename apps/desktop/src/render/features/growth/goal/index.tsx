@@ -7,7 +7,7 @@ import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import GoalMain from './GoalMain';
 import GoalAside from './GoalAside';
-import GoalMindMap from '@/pages/mind-map';
+import GoalMindMap from '@/features/mind-map';
 import styles from './style.module.less';
 
 interface GoalTreeViewProps {

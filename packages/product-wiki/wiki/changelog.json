@@ -4,6 +4,65 @@
       "version": "v0.3.0",
       "date": "2026-09-10",
       "event": "changed",
+      "summary": "本机设置改为独立全页，左侧是设置菜单，可返回进入前的应用页，不再嵌在功能菜单中。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting",
+        "scope": "module",
+        "name": "本机设置",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "设置导航提供返回应用与栏目菜单，当前栏目只有外观。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:view:nav",
+        "scope": "view",
+        "name": "设置导航",
+        "reference": "setting.view.nav",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "外观作为本机设置中的独立栏目，仍只选择这台设备的语言与主题。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:view:appearance",
+        "scope": "view",
+        "name": "外观",
+        "reference": "setting.view.appearance",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "本机设置离开应用壳，不使用功能侧栏与顶栏，可返回进入前的应用页。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:rule:independent-shell",
+        "scope": "rule",
+        "name": "独立于功能菜单",
+        "reference": "setting.rule.independent-shell",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
       "summary": "当前任务列表以勾选完成，名称与计划时间同一行；结束日早于今天时时间以红色展示。",
       "productStatus": "roadmap",
       "feature": {

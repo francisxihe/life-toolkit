@@ -5,12 +5,12 @@ import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import cs from 'clsx';
 
 import { useSelector } from 'react-redux';
-import Navbar from '../components/NavBar';
-import useLocale from '../utils/useLocale';
-import { GlobalState } from '../store';
+import Navbar from '@/components/NavBar';
+import useLocale from '@/utils/useLocale';
+import { GlobalState } from '@/store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
-import { WorkbenchPanel } from '@/pages/workbench';
+import { WorkbenchPanel } from '@/features/workbench';
 
 const Aside = Layout.Sider;
 
