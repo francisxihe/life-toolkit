@@ -4,6 +4,21 @@
       "version": "v0.3.0",
       "date": "2026-09-10",
       "event": "changed",
+      "summary": "删除当前会话后自动选中列表中第一条剩余会话；没有剩余则对话区为空，删除非当前会话时选中不变。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:session-maintain",
+        "scope": "rule",
+        "name": "会话维护",
+        "reference": "ai.session.rule.session-maintain",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
       "summary": "用户设置改为本机设置，只保留这台设备的语言与主题，不再包含账号资料。",
       "productStatus": "roadmap",
       "feature": {

@@ -493,8 +493,13 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
         message.error(result.message);
         return;
       }
-      setConversations((items) => items.filter((item) => item.id !== id));
+      const remaining = conversations.filter((item) => item.id !== id);
+      setConversations(remaining);
       if (activeConversationIdRef.current !== id) return;
+      if (remaining[0]) {
+        selectConversation(remaining[0].id);
+        return;
+      }
       setActiveConversationId(null);
       setActiveMessages([]);
       setStreamError(null);
@@ -503,7 +508,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
       next.delete('conversationId');
       setSearchParams(next, { replace: true });
     },
-    [searchParams, setSearchParams]
+    [conversations, searchParams, selectConversation, setSearchParams]
   );
 
   const selectCodingAgent = useCallback(
