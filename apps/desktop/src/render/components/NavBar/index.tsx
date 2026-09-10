@@ -1,7 +1,7 @@
-import { ClockCircleOutlined, CompassOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Tooltip, Avatar, Dropdown, LoadingOutlined, NotificationOutlined, PoweroffOutlined, SettingOutlined, UserOutlined, Flex } from '@sue/design-web-react';
+import { Tooltip, Avatar, Dropdown, Flex } from '@sue/design-web-react';
+import { Bell, Clock, Compass, Loader2, Power, Settings, User } from 'lucide-react';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { GlobalState } from '@/store';
@@ -60,7 +60,7 @@ function Navbar() {
         key: 'user',
         label: (
           <span>
-            <UserOutlined className={styles['dropdown-icon']} />
+            <User size={16} className={styles['dropdown-icon']} />
             {t['menu.user']}
           </span>
         ),
@@ -69,7 +69,7 @@ function Navbar() {
         key: 'setting',
         label: (
           <span>
-            <SettingOutlined className={styles['dropdown-icon']} />
+            <Settings size={16} className={styles['dropdown-icon']} />
             {t['menu.setting']}
           </span>
         ),
@@ -79,7 +79,7 @@ function Navbar() {
         key: 'logout',
         label: (
           <span>
-            <PoweroffOutlined className={styles['dropdown-icon']} />
+            <Power size={16} className={styles['dropdown-icon']} />
             {t['navbar.logout']}
           </span>
         ),
@@ -99,18 +99,18 @@ function Navbar() {
       <Flex component="ul" className={styles.right}>
         <Flex component="li" align="center">
           <MessageBox>
-            <IconButton icon={<NotificationOutlined />} />
+            <IconButton icon={<Bell size={16} />} />
           </MessageBox>
         </Flex>
         <Flex component="li" align="center">
           <Tooltip title="打开专注计时">
-            <IconButton icon={<ClockCircleOutlined />} onClick={() => openFocusTimer()} />
+            <IconButton icon={<Clock size={16} />} onClick={() => openFocusTimer()} />
           </Tooltip>
         </Flex>
         {workbench && window.electronAPI?.isElectron ? (
           <Flex component="li" align="center">
             <Tooltip title={workbench.open ? t['navbar.workbench.close'] : t['navbar.workbench.open']}>
-              <IconButton icon={<CompassOutlined />} onClick={workbench.toggle} />
+              <IconButton icon={<Compass size={16} />} onClick={workbench.toggle} />
             </Tooltip>
           </Flex>
         ) : null}
@@ -123,7 +123,7 @@ function Navbar() {
             >
               <Avatar size={32} style={{ cursor: 'pointer' }}>
                 {userLoading ? (
-                  <LoadingOutlined />
+                  <Loader2 size={16} className="animate-spin" />
                 ) : (
                   <img alt="avatar" src={userInfo.avatar} />
                 )}

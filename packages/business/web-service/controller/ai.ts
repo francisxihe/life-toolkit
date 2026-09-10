@@ -11,6 +11,7 @@ import type {
   MessageVo,
   PatchConversationRuntimeRequestVo,
   PatchWorkspaceRequestVo,
+  PinConversationRequestVo,
   PutRuntimeSelectionRequestVo,
   RenameConversationRequestVo,
   RuntimeAgentVo,
@@ -80,6 +81,10 @@ export default class AiController {
 
   static async renameConversation(id: string, body: RenameConversationRequestVo) {
     return request<ConversationVo>({ method: 'put' })(`/ai/conversations/${id}`, body);
+  }
+
+  static async pinConversation(id: string, body: PinConversationRequestVo) {
+    return request<ConversationVo>({ method: 'put' })(`/ai/conversations/${id}/pin`, body);
   }
 
   static async deleteConversation(id: string) {

@@ -1,5 +1,6 @@
 import type { FormEvent, ReactNode } from 'react';
-import { ArrowUpOutlined, Button, CloseOutlined, Flex } from '@sue/design-web-react';
+import { Button, Flex } from '@sue/design-web-react';
+import { ArrowUp, X } from 'lucide-react';
 import styles from '../style.module.less';
 
 type PromptInputProps = {
@@ -21,13 +22,13 @@ export function PromptInputSubmit({
 }) {
   if (streaming) {
     return (
-      <Button htmlType="button" icon={<CloseOutlined />} onClick={() => onStop?.()}>
+      <Button htmlType="button" icon={<X size={16} />} onClick={() => onStop?.()}>
         停止
       </Button>
     );
   }
   return (
-    <Button htmlType="submit" type="primary" size="small" icon={<ArrowUpOutlined />} disabled={disabled}>
+    <Button htmlType="submit" type="primary" size="small" icon={<ArrowUp size={16} />} disabled={disabled}>
       发送
     </Button>
   );

@@ -7,13 +7,8 @@ import {
   Button,
   Breadcrumb,
   Flex,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-  RightOutlined,
 } from '@sue/design-web-react';
+import { Check, ChevronRight, Ellipsis, Pencil, Trash2, X } from 'lucide-react';
 
 import { GoalController, GoalService } from '@true-north/web-service';
 import { useGoalContext } from '../context';
@@ -171,7 +166,7 @@ const GoalMainHeader: React.FC = () => {
     {
       key: 'edit',
       label: '编辑',
-      icon: <EditOutlined />,
+      icon: <Pencil size={16} />,
       onClick: handleEdit,
     },
     ...(canAbandon
@@ -179,7 +174,7 @@ const GoalMainHeader: React.FC = () => {
           {
             key: 'abandon',
             label: '放弃',
-            icon: <CloseOutlined />,
+            icon: <X size={16} />,
             onClick: handleAbandon,
           },
         ]
@@ -187,7 +182,7 @@ const GoalMainHeader: React.FC = () => {
     {
       key: 'delete',
       label: '删除',
-      icon: <DeleteOutlined />,
+      icon: <Trash2 size={16} />,
       danger: true,
       className: styles.dangerAction,
       onClick: handleDelete,
@@ -208,7 +203,7 @@ const GoalMainHeader: React.FC = () => {
               fontSize: 16,
             },
           }}
-          separator={<RightOutlined />}
+          separator={<ChevronRight size={16} />}
           items={breadcrumbPath.map((item, index) => ({
             key: item.id,
             title: item.name,
@@ -235,7 +230,7 @@ const GoalMainHeader: React.FC = () => {
         >
           <Button
             type="text"
-            icon={<EllipsisOutlined />}
+            icon={<Ellipsis size={16} />}
             aria-label="目标更多操作"
           />
         </Dropdown>
@@ -245,7 +240,7 @@ const GoalMainHeader: React.FC = () => {
             selectedGoal.status === GoalStatus.DOING) && (
             <Button
               type="primary"
-              icon={<CheckOutlined />}
+              icon={<Check size={16} />}
               onClick={handleComplete}
             >
               标记完成

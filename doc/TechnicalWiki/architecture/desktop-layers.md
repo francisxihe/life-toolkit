@@ -19,10 +19,10 @@ sequenceDiagram
 
 | 目录 | 运行环境 | 职责 |
 | --- | --- | --- |
-| `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller；DEV 下还有 REST / TypeORM Lab 钩子 |
+| `src/main` | Node（主进程） | 创建窗口、`initIpcRouter` 注册 route-controller；`pnpm dev` 下还有 REST / TypeORM Lab 钩子 |
 | `src/preload` | 隔离上下文 | 向 `window.electronAPI` 暴露 REST 风格 API |
 | `src/render` | Chromium | React UI、路由、模块 Context |
-| `src/dev` | Chromium（仅 DEV） | `DevDockAttach` 挂 `@ylib/product-dock` 并注册讲解面板 / Lab |
+| `src/dev` | Chromium（仅 DEV） | `DevDockAttach` 挂 `@ylib/product-dock`；`pnpm dev` 注册 Lab，`pnpm dev:product` 注册讲解面板 |
 | `src/service` | Node（主进程侧） | TypeORM、业务 Service、**RouteController（IPC 入口）** |
 
 ## render 层约定
@@ -76,12 +76,19 @@ render/pages/
 
 ## DEV 主窗口分栏
 
-DEV 下 View 菜单 **ProductWiki** / **Lab** 为互斥 checkbox；**Toggle Developer Tools** 走 Electron 默认 `webContents.toggleDevTools()`，与 dock 无关。
+两条启动脚本通过 `TN_DEV_PROFILE` 分流，互不加载对方的面板：
 
-- 右栏是一个 `@ylib/product-dock`：竖向 tab 为讲解面板 / Lab。渲染进程 `DevDockAttach` 自己 `installHostDock()` 再 `register`
-- ProductWiki：iframe 指向 `window.__productWikiService.viewsUrl`；`attachProductWiki({ router, onSetVisible })` 只负责 inspect，关面板走 `dock.setVisible`
-- Lab：同一 dock 的 tab，iframe 加载 `@true-north/dev-lab` 的 `labPageRoute`（`Lab.html` + `Lab.tsx`，只 `bootstrapLabPanel()`）。preload 仅 DEV 暴露 `labPanel` IPC 桥；iframe 经 `postMessage` 与宿主 `bindLabFrame` 通信
-- DevTools：对 app `webContents` 调用 `toggleDevTools()`，不托管分栏、不改 `appView` bounds
+| 脚本 | profile | DevTools | dock |
+| --- | --- | --- | --- |
+| `pnpm dev` | `lab`（默认） | 首次加载后 `openDevTools()` | 加载 Lab，默认关闭；View 菜单只有 **Lab** |
+| `pnpm dev:product` | `product` | 不自动打开 | 加载讲解面板并默认打开；View 菜单只有 **ProductWiki** |
+
+**Toggle Developer Tools** 走 Electron 默认 `webContents.toggleDevTools()`，与 dock 无关。
+
+- 右栏是一个 `@ylib/product-dock`：竖向 tab 为当前 profile 注册的面板。渲染进程 `DevDockAttach` 自己 `installHostDock()` 再 `register`
+- ProductWiki（仅 `dev:product`）：Vite 插件启动讲解服务；iframe 指向 `window.__productWikiService.viewsUrl`；`attachProductWiki({ router, onSetVisible })` 只负责 inspect，关面板走 `dock.setVisible`
+- Lab（仅 `pnpm dev`）：iframe 加载 `@true-north/dev-lab` 的 `labPageRoute`（`Lab.html` + `Lab.tsx`，只 `bootstrapLabPanel()`）。preload 仅 lab profile 暴露 `labPanel` IPC 桥；iframe 经 `postMessage` 与宿主 `bindLabFrame` 通信
+- DevTools：对 app `webContents` 调用 `openDevTools()` / `toggleDevTools()`，不托管分栏、不改 `appView` bounds
 - 主进程用 `wikiDockPreferred` / `labDockPreferred` 同步菜单与 `window.__devDock` 的 tab / 显隐，不把 Lab 装进独立 `labView`
 - 生产构建不挂 dock、不包装 REST、不采集 SQL / spawn / MCP
 

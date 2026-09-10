@@ -6,8 +6,7 @@ import {
   Flex,
   Tooltip,
 } from '@sue/design-web-react';
-import SiteIcon from '@/components/SiteIcon';
-import { PlayCircleOutlined, CloseOutlined } from '@ant-design/icons';
+import { CirclePlay, Repeat, X } from 'lucide-react';
 import { isToday } from 'date-fns';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
@@ -76,12 +75,7 @@ function TodoItem(props: TodoItemProps) {
             >
               {todo.name}
               {todo.relatedType === TodoRelatedType.IS_REPEAT && (
-                <SiteIcon
-                  id="repeat"
-                  className={styles.repeatIcon}
-                  width={20}
-                  height={20}
-                />
+                <Repeat size={20} className={styles.repeatIcon} />
               )}
             </Flex>
           </Tooltip>
@@ -135,7 +129,7 @@ function TodoItem(props: TodoItemProps) {
             <Tooltip title="开始专注">
               <Button
                 size="small"
-                icon={<PlayCircleOutlined />}
+                icon={<CirclePlay size={16} />}
                 aria-label={`为${todo.name}开始专注`}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -147,7 +141,7 @@ function TodoItem(props: TodoItemProps) {
           <Tooltip title="放弃">
             <Button
               size="small"
-              icon={<CloseOutlined />}
+              icon={<X size={16} />}
               aria-label={`放弃 ${todo.name}`}
               onClick={async (event) => {
                 event.stopPropagation();

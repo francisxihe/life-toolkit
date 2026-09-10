@@ -9,7 +9,8 @@ import {
   isValidElement,
   type ReactNode,
 } from 'react';
-import { ArrowDownOutlined, Button, Flex } from '@sue/design-web-react';
+import { Button, Flex } from '@sue/design-web-react';
+import { ArrowDown } from 'lucide-react';
 import styles from '../style.module.less';
 
 const NEAR_BOTTOM_PX = 56;
@@ -152,7 +153,7 @@ export function ConversationScrollButton() {
       className={styles.scrollToBottom}
       size="small"
       aria-label="滚动到底部"
-      icon={<ArrowDownOutlined />}
+      icon={<ArrowDown size={16} />}
       onClick={() => api.scrollToBottom('smooth')}
     />
   );

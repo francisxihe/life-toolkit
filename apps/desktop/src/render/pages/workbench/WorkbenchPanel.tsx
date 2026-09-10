@@ -1,15 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  CloseOutlined,
-  CompassOutlined,
-  DownloadOutlined,
-  LeftOutlined,
-  LoadingOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
 import { Flex, Input } from '@sue/design-web-react';
+import { ChevronLeft, ChevronRight, Compass, Download, Loader2, Plus, RefreshCw, X } from 'lucide-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import type { ProductSurfaceHostProps } from '@ylib/product-surface-react';
@@ -50,16 +41,16 @@ function TabBar({ 'data-product-ref': productRefAttr }: ProductSurfaceHostProps)
                 }
               }}
             >
-              <CloseOutlined />
+              <X size={16} />
             </span>
           </button>
         ))}
       </Flex>
       <button type="button" className={styles.iconBtn} aria-label="新标签页" onClick={() => void createTab()}>
-        <PlusOutlined />
+        <Plus size={16} />
       </button>
       <button type="button" className={styles.iconBtn} aria-label="关闭工作台" onClick={close}>
-        <CloseOutlined />
+        <X size={16} />
       </button>
     </Flex>
   );
@@ -83,7 +74,7 @@ function AddressBar({ 'data-product-ref': productRefAttr }: ProductSurfaceHostPr
         disabled={!activeWebTab?.canGoBack}
         onClick={() => void goBack()}
       >
-        <LeftOutlined />
+        <ChevronLeft size={16} />
       </button>
       <button
         type="button"
@@ -92,7 +83,7 @@ function AddressBar({ 'data-product-ref': productRefAttr }: ProductSurfaceHostPr
         disabled={!activeWebTab?.canGoForward}
         onClick={() => void goForward()}
       >
-        <RightOutlined />
+        <ChevronRight size={16} />
       </button>
       <button
         type="button"
@@ -101,7 +92,7 @@ function AddressBar({ 'data-product-ref': productRefAttr }: ProductSurfaceHostPr
         disabled={!activeWebTab?.url}
         onClick={() => void reload()}
       >
-        {activeWebTab?.loading ? <LoadingOutlined /> : <ReloadOutlined />}
+        {activeWebTab?.loading ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
       </button>
       <Input
         ref={addressInputRef as never}
@@ -143,7 +134,7 @@ function ExtractButton({ 'data-product-ref': productRefAttr }: ProductSurfaceHos
         void extractActiveTab().finally(() => setBusy(false));
       }}
     >
-      {busy ? <LoadingOutlined /> : <DownloadOutlined />}
+      {busy ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
     </button>
   );
 }
@@ -161,7 +152,7 @@ function Stage({ 'data-product-ref': productRefAttr }: ProductSurfaceHostProps) 
       className={styles.empty}
       data-product-ref={productRefAttr}
     >
-      <CompassOutlined className={styles.emptyIcon} />
+      <Compass size={64} className={styles.emptyIcon} />
       <p className={styles.emptyTitle}>开始浏览</p>
       <p className={styles.emptyHint}>输入 URL 以打开页面</p>
     </Flex>

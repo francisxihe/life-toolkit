@@ -1,7 +1,7 @@
 'use client';
 
 import { Popover, Button, Card } from '@sue/design-web-react';
-import SiteIcon from '@/components/SiteIcon';
+import { Ellipsis } from 'lucide-react';
 import IconSelector from '../IconSelector';
 import { GoalService } from '@true-north/web-service';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
@@ -75,7 +75,7 @@ function GoalItem(props: GoalItemProps) {
               }}
               type="text"
               size="small"
-              icon={<SiteIcon id="more-for-goal" />}
+              icon={<Ellipsis size={16} />}
               className="!flex justify-center items-center !text-text" />
 
           </Popover>

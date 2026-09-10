@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Card, Col, Flex, Row, Spin, Statistic, message } from '@sue/design-web-react';
-import { CheckCircleOutlined, ClockCircleOutlined, FireOutlined, FlagOutlined, RightOutlined } from '@ant-design/icons';
+import { Check, ChevronRight, CircleCheck, Clock, Flag, Flame } from 'lucide-react';
 import { GoalStatus, HabitStatus, TaskStatus, TodoRelatedType, TodoStatus } from '@true-north/enum';
 import { GoalService, HabitService, TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
 import { HabitVo, TaskWithoutRelationsVo, TodoVo } from '@true-north/vo';
@@ -159,10 +159,10 @@ export default function Workbench() {
       </Flex>
       <Spin spinning={loading}>
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} xl={6}><Metric title="活跃目标" value={activeGoals} icon={<FlagOutlined />} /></Col>
-          <Col xs={24} sm={12} xl={6}><Metric title="今日待办" value={dueTodos.length} icon={<CheckCircleOutlined />} /></Col>
-          <Col xs={24} sm={12} xl={6}><Metric title="专注投入" value={formatHours(data.focusSeconds)} icon={<ClockCircleOutlined />} /></Col>
-          <Col xs={24} sm={12} xl={6}><Metric title="习惯连续" value={longestStreak} suffix="天" icon={<FireOutlined />} /></Col>
+          <Col xs={24} sm={12} xl={6}><Metric title="活跃目标" value={activeGoals} icon={<Flag size={16} />} /></Col>
+          <Col xs={24} sm={12} xl={6}><Metric title="今日待办" value={dueTodos.length} icon={<CircleCheck size={16} />} /></Col>
+          <Col xs={24} sm={12} xl={6}><Metric title="专注投入" value={formatHours(data.focusSeconds)} icon={<Clock size={16} />} /></Col>
+          <Col xs={24} sm={12} xl={6}><Metric title="习惯连续" value={longestStreak} suffix="天" icon={<Flame size={16} />} /></Col>
         </Row>
         <Flex vertical gap={12} className={styles.statistics}>
           <h2>执行概览</h2>
@@ -194,10 +194,10 @@ export default function Workbench() {
                 {dueTodos.length ? dueTodos.slice(0, 8).map((todo) => (
                   <Flex key={todo.id} align="center" justify="space-between" gap={12} className={styles.listRow}>
                     <Flex align="center" gap={10} className={styles.todoTitle}>
-                      <Button type="text" shape="circle" icon={<CheckCircleOutlined />} aria-label={`完成 ${todo.name}`} onClick={() => void handleCompleteTodo(todo)} />
+                      <Button type="text" shape="circle" icon={<Check size={16} />} aria-label={`完成 ${todo.name}`} onClick={() => void handleCompleteTodo(todo)} />
                       <div><b>{todo.name}</b><span>{formatDate(todo.planDate)}</span></div>
                     </Flex>
-                    <Button type="text" icon={<RightOutlined />} aria-label={`查看 ${todo.name}`} onClick={() => navigate('/growth/todo/todo-all')} />
+                    <Button type="text" icon={<ChevronRight size={16} />} aria-label={`查看 ${todo.name}`} onClick={() => navigate('/growth/todo/todo-all')} />
                   </Flex>
                 )) : (
                   <Flex align="center" className={styles.empty}>
@@ -213,7 +213,7 @@ export default function Workbench() {
                 {data.habits.length ? data.habits.slice(0, 6).map((habit) => (
                   <Flex key={habit.id} align="center" justify="space-between" gap={12} className={styles.listRow}>
                     <Flex align="center" gap={10} className={styles.todoTitle}>
-                      <FireOutlined className={styles.habitIcon} />
+                      <Flame size={18} className={styles.habitIcon} />
                       <div>
                         <b>{habit.name}</b>
                         <span>
@@ -261,7 +261,7 @@ function HabitCheckInActions({
     return (
       <Flex gap={6} align="center">
         <span className={styles.habitStatus}>下一次待办已安排</span>
-        <Button type="text" icon={<RightOutlined />} aria-label={`查看 ${habit.name}`} onClick={onOpenDetail} />
+        <Button type="text" icon={<ChevronRight size={16} />} aria-label={`查看 ${habit.name}`} onClick={onOpenDetail} />
       </Flex>
     );
   }

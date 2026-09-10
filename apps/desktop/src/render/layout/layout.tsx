@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
-import { Layout, Breadcrumb, Spin, Flex, MenuFoldOutlined, MenuUnfoldOutlined } from '@sue/design-web-react';
+import { Layout, Breadcrumb, Spin, Flex } from '@sue/design-web-react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import cs from 'clsx';
 
 import { useSelector } from 'react-redux';
@@ -68,7 +69,7 @@ function PageLayout() {
                   justify="center"
                   onClick={toggleCollapse}
                 >
-                  {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  {collapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
                 </Flex>
               </Aside>
             </Flex>

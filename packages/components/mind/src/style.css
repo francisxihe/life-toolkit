@@ -4,8 +4,8 @@
   bottom: 20px;
   width: 150px;
   height: 120px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ddd;
+  background-color: var(--color-bg-1, #fff);
+  border: 1px solid var(--color-border, #ddd);
   border-radius: 4px;
   z-index: 999;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
@@ -26,6 +26,9 @@
   display: flex;
   gap: 8px;
   align-items: center;
+  padding: 8px;
+  background: var(--color-bg-1, #fff);
+  border-bottom: 1px solid var(--color-border, #e5e6eb);
 }
 
 .mind-map-canvas {

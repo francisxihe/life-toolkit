@@ -54,7 +54,7 @@ const exposeAPI = () => {
       },
     } as ElectronAPI);
 
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && process.env.TN_DEV_PROFILE !== 'product') {
       contextBridge.exposeInMainWorld('labPanel', {
         snapshot: () => ipcRenderer.invoke('lab:snapshot'),
         clear: () => ipcRenderer.invoke('lab:clear'),

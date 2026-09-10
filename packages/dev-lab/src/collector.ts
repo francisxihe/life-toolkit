@@ -26,7 +26,7 @@ const listeners = new Set<(snapshot: TraceEntry[]) => void>();
 let emitTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function isDevTraceEnabled(): boolean {
-  return isDev;
+  return isDev && process.env.TN_DEV_PROFILE !== 'product';
 }
 
 export function snapshotDevTrace(): TraceEntry[] {

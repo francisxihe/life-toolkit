@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
@@ -130,9 +130,10 @@ function LifeToolkitApp() {
     void window.electronAPI?.setNativeThemeSource?.(source);
   }, [themePreference]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    ConfigProvider.config({ theme: sueThemeConfig });
     changeTheme(themeMode);
-  }, [themeMode]);
+  }, [themeMode, sueThemeConfig]);
 
   useEffect(() => {
     dayjs.locale(lang === 'zh-CN' ? 'zh-cn' : 'en');

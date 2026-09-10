@@ -5,7 +5,10 @@ import {
   labFrameChannel,
   type LabFrameHandle,
   type LabFrameMessage,
+  type LabTheme,
 } from './protocol';
+
+export type { LabFrameHandle, LabTheme } from './protocol';
 
 function postToFrame(frame: HTMLIFrameElement, message: LabFrameMessage): void {
   frame.contentWindow?.postMessage(message, '*');
@@ -13,10 +16,17 @@ function postToFrame(frame: HTMLIFrameElement, message: LabFrameMessage): void {
 
 export function bindLabFrame(
   frame: HTMLIFrameElement,
-  options: { setVisible: (visible: boolean) => void },
+  options: {
+    setVisible: (visible: boolean) => void;
+    getTheme: () => LabTheme;
+  },
 ): LabFrameHandle {
   let destroyed = false;
   const pending = new Map<string, 'snapshot' | 'clear'>();
+
+  const postTheme = (theme: LabTheme) => {
+    postToFrame(frame, { type: labFrameChannel.setTheme, theme });
+  };
 
   const reply = (id: string, entries: TraceEntry[]) => {
     const kind = pending.get(id);
@@ -50,6 +60,10 @@ export function bindLabFrame(
     if (message.type === labFrameChannel.setVisible) {
       options.setVisible(message.visible);
       api?.sendSetVisible(message.visible);
+      return;
+    }
+    if (message.type === labFrameChannel.ready) {
+      postTheme(options.getTheme());
     }
   };
 
@@ -60,6 +74,7 @@ export function bindLabFrame(
   const api = getLabPanelBridge();
   const unsubUpdate = api?.onUpdate(pushUpdate);
   const onLoad = () => {
+    postTheme(options.getTheme());
     void api?.snapshot().then((entries) => {
       if (entries) pushUpdate(entries);
     });
@@ -68,6 +83,7 @@ export function bindLabFrame(
   window.addEventListener('message', onMessage);
 
   return {
+    setTheme: postTheme,
     destroy: () => {
       if (destroyed) return;
       destroyed = true;

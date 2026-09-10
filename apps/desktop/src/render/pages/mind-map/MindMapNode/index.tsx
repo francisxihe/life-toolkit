@@ -1,5 +1,4 @@
-import { PlusCircleOutlined } from '@ant-design/icons';
-import { EllipsisOutlined, MinusCircleOutlined } from '@sue/design-web-react';
+import { CircleMinus, CirclePlus, Ellipsis } from 'lucide-react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ReactShape } from '@antv/x6-react-shape';
 import { ENodeType } from '@true-north/components-mind/src/types';
@@ -190,7 +189,7 @@ const MindMapNode: React.FC<CustomNodeProps> = ({
         onClick={handleMenuClick}
         title="更多操作"
       >
-        <EllipsisOutlined style={{ fontSize: '16px' }} />
+        <Ellipsis size={16} />
       </div>
 
       {/* 折叠/展开指示器 */}
@@ -200,15 +199,16 @@ const MindMapNode: React.FC<CustomNodeProps> = ({
           onClick={onClickCollapsedButton}
         >
           {isCollapsed ? (
-            <PlusCircleOutlined
+            <CirclePlus
+              size={18}
               style={{
-                fontSize: '18px',
                 position: 'absolute',
               }}
             />
           ) : (
-            <MinusCircleOutlined
-              style={{ fontSize: '18px', position: 'absolute' }}
+            <CircleMinus
+              size={18}
+              style={{ position: 'absolute' }}
             />
           )}
         </div>

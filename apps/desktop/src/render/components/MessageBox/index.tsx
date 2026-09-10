@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { groupBy } from 'lodash-es';
-import { Popover, Badge, Tabs, Avatar, Spin, Button, CustomerServiceOutlined, DesktopOutlined, FileOutlined, MessageOutlined } from '@sue/design-web-react';
+import { Popover, Badge, Tabs, Avatar, Spin, Button } from '@sue/design-web-react';
+import { File, Headset, MessageSquare, Monitor } from 'lucide-react';
 
 import useLocale from '../../utils/useLocale';
 import MessageList, { MessageListType } from './list';
@@ -54,20 +55,20 @@ function DropContent() {
     {
       key: 'message',
       title: t['message.tab.title.message'],
-      titleIcon: <MessageOutlined />,
+      titleIcon: <MessageSquare size={16} />,
     },
     {
       key: 'notice',
       title: t['message.tab.title.notice'],
-      titleIcon: <CustomerServiceOutlined />,
+      titleIcon: <Headset size={16} />,
     },
     {
       key: 'todo',
       title: t['message.tab.title.todo'],
-      titleIcon: <FileOutlined />,
+      titleIcon: <File size={16} />,
       avatar: (
         <Avatar style={{ backgroundColor: '#0FC6C2' }}>
-          <DesktopOutlined />
+          <Monitor size={16} />
         </Avatar>
       ),
     },

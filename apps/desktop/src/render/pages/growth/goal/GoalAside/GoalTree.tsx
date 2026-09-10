@@ -6,11 +6,8 @@ import {
   Modal,
   message,
   Flex,
-  CopyOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  PlusOutlined,
 } from '@sue/design-web-react';
+import { Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 import ContextMenu from '@/components/ContextMenu';
 import { GoalVo } from '@true-north/vo';
@@ -140,25 +137,25 @@ const GoalTreePanel: React.FC = () => {
             {
               key: 'edit',
               label: '编辑',
-              icon: <EditOutlined />,
+              icon: <Pencil size={16} />,
               onClick: () => handleEdit(goal),
             },
             {
               key: 'addChild',
               label: '添加子目标',
-              icon: <PlusOutlined />,
+              icon: <Plus size={16} />,
               onClick: () => handleAddChild(goal),
             },
             {
               key: 'addSibling',
               label: '添加同级目标',
-              icon: <PlusOutlined />,
+              icon: <Plus size={16} />,
               onClick: () => handleAddSibling(goal),
             },
             {
               key: 'copy',
               label: '复制',
-              icon: <CopyOutlined />,
+              icon: <Copy size={16} />,
               onClick: () => handleCopy(goal),
             },
             {
@@ -169,7 +166,7 @@ const GoalTreePanel: React.FC = () => {
             {
               key: 'delete',
               label: '删除',
-              icon: <DeleteOutlined />,
+              icon: <Trash2 size={16} />,
               onClick: () => handleDelete(goal),
             },
           ]}

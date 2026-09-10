@@ -1,6 +1,7 @@
 'use client';
 
-import { Input, Select, DatePicker, Row, Col, SearchOutlined } from '@sue/design-web-react';
+import { Input, Select, DatePicker, Row, Col } from '@sue/design-web-react';
+import { Search } from 'lucide-react';
 import dayjs from 'dayjs';
 
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
@@ -27,7 +28,7 @@ export function TodoFilters() {
       <Row gutter={[16, 16]}>
         <Col span={6}>
           <Input
-            prefix={<SearchOutlined />}
+            prefix={<Search size={16} />}
             placeholder="关键字"
             value={filters.keyword}
             onChange={(event) => {

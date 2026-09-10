@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
-import { Avatar, Empty, Flex, LoadingOutlined } from '@sue/design-web-react';
+import { Avatar, Empty, Flex } from '@sue/design-web-react';
+import { Loader2 } from 'lucide-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import DefaultPage from '@/components/Layout/DefaultPage';
@@ -21,7 +22,7 @@ function UserPage() {
             <Flex align="center" gap={16}>
               <Avatar size={64}>
                 {userLoading ? (
-                  <LoadingOutlined />
+                  <Loader2 size={16} className="animate-spin" />
                 ) : userInfo?.avatar ? (
                   <img alt="" src={userInfo.avatar} />
                 ) : null}

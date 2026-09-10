@@ -61,9 +61,9 @@ export default function GoalForeign(props: GoalForeignProps) {
                   'rounded-lg',
                   'font-[500]',
                   'cursor-pointer',
-                  'hover:bg-gray-100',
+                  'hover:bg-fill-2',
                   activeTab === item.value
-                    ? ['bg-gray-100', 'text-text-1']
+                    ? ['bg-fill-2', 'text-text-1']
                     : ['text-text-2'],
                 )}
                 onClick={() => {

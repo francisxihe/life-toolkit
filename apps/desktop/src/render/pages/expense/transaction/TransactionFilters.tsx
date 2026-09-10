@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Select, DatePicker, Row, Col, CalendarOutlined } from '@sue/design-web-react';
+import { Select, DatePicker, Row, Col } from '@sue/design-web-react';
+import { Calendar } from 'lucide-react';
 
 import { useExpenses } from '../context';
 import { PERIODS } from '../constants';
@@ -62,7 +63,7 @@ export function TransactionFilters() {
               handleDateSelect(date?.toDate());
             }}
             placeholder="Pick a date"
-            prefix={<CalendarOutlined />}
+            prefix={<Calendar size={16} />}
           />
         </Col>
         <Col flex="auto" span={6}>

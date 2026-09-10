@@ -4,6 +4,36 @@
       "version": "v0.3.0",
       "date": "2026-09-10",
       "event": "changed",
+      "summary": "当前任务列表以勾选完成，名称与计划时间同一行；结束日早于今天时时间以红色展示。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.task:view:today",
+        "scope": "view",
+        "name": "当前任务",
+        "reference": "growth.task.view.today",
+        "wikiId": "growth.task",
+        "wikiTitle": "任务管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "进入产品后打开 AI 会话页；有历史会话时选中最近一条，没有则对话区为空，不自动新建空白会话。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:default-open",
+        "scope": "rule",
+        "name": "进入产品默认打开",
+        "reference": "ai.session.rule.default-open",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
       "summary": "删除当前会话后自动选中列表中第一条剩余会话；没有剩余则对话区为空，删除非当前会话时选中不变。",
       "productStatus": "roadmap",
       "feature": {
@@ -1878,6 +1908,36 @@
         "scope": "view",
         "name": "会话列表",
         "reference": "ai.session.view.session-list",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "会话列表只展示标题；创建与更新时间、绑定信息不常驻，悬停会话弹出；可置顶。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:view:session-list",
+        "scope": "view",
+        "name": "会话列表",
+        "reference": "ai.session.view.session-list",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "用户可置顶或取消置顶会话，置顶不改标题与绑定；置顶会话排在未置顶之前，组内仍按最近更新。删除当前会话后仍选列表第一条剩余会话。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:session-maintain",
+        "scope": "rule",
+        "name": "会话维护",
+        "reference": "ai.session.rule.session-maintain",
         "wikiId": "ai.session",
         "wikiTitle": "AI 会话"
       }

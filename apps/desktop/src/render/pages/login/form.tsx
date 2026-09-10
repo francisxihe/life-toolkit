@@ -1,4 +1,5 @@
-import { Form, Input, Checkbox, Button, Space, Flex, LockOutlined, UserOutlined } from '@sue/design-web-react';
+import { Form, Input, Checkbox, Button, Space, Flex } from '@sue/design-web-react';
+import { Lock, User } from 'lucide-react';
 import { FormInstance } from '@sue/design-web-react';
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -76,7 +77,7 @@ export default function LoginForm() {
           rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}>
 
           <Input
-            prefix={<UserOutlined />}
+            prefix={<User size={16} />}
             placeholder={t['login.form.userName.placeholder']}
             onPressEnter={onSubmitClick} />
 
@@ -86,7 +87,7 @@ export default function LoginForm() {
           rules={[{ required: true, message: t['login.form.password.errMsg'] }]}>
 
           <Input.Password
-            prefix={<LockOutlined />}
+            prefix={<Lock size={16} />}
             placeholder={t['login.form.password.placeholder']}
             onPressEnter={onSubmitClick} />
 

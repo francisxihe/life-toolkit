@@ -20,6 +20,8 @@ import { subscribeDevTrace } from '@true-north/dev-lab/collector';
 
 // 是否为开发环境
 const isDev = process.env.NODE_ENV === 'development';
+const isProductDev = isDev && process.env.TN_DEV_PROFILE === 'product';
+const isLabDev = isDev && !isProductDev;
 
 // 获取当前文件的目录路径
 const currentFilePath = fileURLToPath(import.meta.url);
@@ -64,7 +66,7 @@ function getPreloadPath() {
 // 保持对window对象的全局引用
 let mainWindow = null;
 let appView = null;
-let wikiDockPreferred = true;
+let wikiDockPreferred = isProductDev;
 let labDockPreferred = false;
 
 // 默认加载的URL - 使用渲染进程的开发服务器
@@ -113,11 +115,10 @@ function setLabDockPreferred(visible) {
 }
 
 function syncDevChrome() {
-  if (labDockPreferred) {
-    wikiDockPreferred = false;
-    sendDevDock('lab', true);
-  } else {
+  if (isProductDev) {
     sendDevDock('wiki', wikiDockPreferred);
+  } else if (isLabDev) {
+    sendDevDock('lab', labDockPreferred);
   }
   installDevApplicationMenu();
 }
@@ -163,22 +164,30 @@ function installDevApplicationMenu() {
           click: () => withAppContents((contents) => contents.reloadIgnoringCache()),
         },
         { type: 'separator' },
-        {
-          label: 'ProductWiki',
-          type: 'checkbox',
-          checked: wikiDockPreferred && !labDockPreferred,
-          click: (item) => {
-            setWikiDockPreferred(item.checked);
-          },
-        },
-        {
-          label: 'Lab',
-          type: 'checkbox',
-          checked: labDockPreferred,
-          click: (item) => {
-            setLabDockPreferred(item.checked);
-          },
-        },
+        ...(isProductDev
+          ? [
+              {
+                label: 'ProductWiki',
+                type: 'checkbox',
+                checked: wikiDockPreferred,
+                click: (item) => {
+                  setWikiDockPreferred(item.checked);
+                },
+              },
+            ]
+          : []),
+        ...(isLabDev
+          ? [
+              {
+                label: 'Lab',
+                type: 'checkbox',
+                checked: labDockPreferred,
+                click: (item) => {
+                  setLabDockPreferred(item.checked);
+                },
+              },
+            ]
+          : []),
         {
           label: 'Toggle Developer Tools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
@@ -234,10 +243,13 @@ function createWindow() {
     layoutAppView();
     mainWindow.on('resize', layoutAppView);
     const contents = appView.webContents;
-    contents.loadURL(DEFAULT_URL + '#/growth/task/task-today');
+    contents.loadURL(DEFAULT_URL + '#/ai');
     contents.once('did-finish-load', () => {
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.showInactive();
+      }
+      if (isLabDev) {
+        contents.openDevTools();
       }
       syncDevChrome();
     });
@@ -318,7 +330,7 @@ app.whenReady().then(async () => {
   }
 
   createWindow();
-  if (isDev) {
+  if (isLabDev) {
     subscribeDevTrace((snapshot) => {
       const contents = getAppWebContents();
       if (!contents || contents.isDestroyed()) return;
@@ -327,6 +339,8 @@ app.whenReady().then(async () => {
     ipcMain.on(labChannel.setVisible, (_event, visible) => {
       setLabDockPreferred(Boolean(visible));
     });
+  }
+  if (isDev) {
     syncDevChrome();
   }
 

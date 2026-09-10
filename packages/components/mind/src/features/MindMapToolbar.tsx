@@ -1,6 +1,17 @@
-import { ExportOutlined, FullscreenOutlined, ImportOutlined, RedoOutlined, ShrinkOutlined, SnippetsOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
-import { Button, Tooltip, Space, Switch, CopyOutlined, DeleteOutlined, HolderOutlined, PlusOutlined, UndoOutlined, ZoomInOutlined, ZoomOutOutlined } from '@sue/design-web-react';
+import React from 'react';
+import { Button, Tooltip, Switch } from '@sue/design-web-react';
+import {
+  ClipboardPaste,
+  Copy,
+  GripVertical,
+  Maximize,
+  Redo2,
+  Undo2,
+  Upload,
+  Download,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
 
 import { useMindMapContext } from '../context';
 import { graphEventEmitter } from '../graph/eventEmitter';
@@ -110,19 +121,19 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   }) => (
     <>
       <ToolButton
-        icon={<ZoomOutOutlined />}
+        icon={<ZoomOut size={16} />}
         content="缩小 (Ctrl -)"
         onClick={() => graphEventEmitter.zoomOut()}
         size={size}
       />
       <ToolButton
-        icon={<ZoomInOutlined />}
+        icon={<ZoomIn size={16} />}
         content="放大 (Ctrl +)"
         onClick={() => graphEventEmitter.zoomIn()}
         size={size}
       />
       <ToolButton
-        icon={<HolderOutlined />}
+        icon={<GripVertical size={16} />}
         content="居中内容"
         onClick={() => graphEventEmitter.centerContent()}
         size={size}
@@ -151,21 +162,21 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
   // 编辑操作按钮组
   const EditControls = () => (
     <>
-      <ToolButton icon={<UndoOutlined />} content="撤销 (Ctrl+Z)" onClick={handleUndo} />
-      <ToolButton icon={<RedoOutlined />} content="重做 (Ctrl+Y)" onClick={handleRedo} />
+      <ToolButton icon={<Undo2 size={16} />} content="撤销 (Ctrl+Z)" onClick={handleUndo} />
+      <ToolButton icon={<Redo2 size={16} />} content="重做 (Ctrl+Y)" onClick={handleRedo} />
       <ToolButton
-        icon={<CopyOutlined />}
+        icon={<Copy size={16} />}
         content="复制 (Ctrl+C)"
         onClick={handleCopy}
         disabled={!selectedNodeId}
       />
-      <ToolButton icon={<SnippetsOutlined />} content="粘贴 (Ctrl+V)" onClick={handlePaste} />
+      <ToolButton icon={<ClipboardPaste size={16} />} content="粘贴 (Ctrl+V)" onClick={handlePaste} />
     </>
   );
 
   // 完整模式渲染
   return (
-    <div className={`mind-map-toolbar p-2 bg-white border-b border-gray-200 ${className || ''}`}>
+    <div className={`mind-map-toolbar ${className || ''}`}>
       {/* 编辑操作 */}
       <EditControls />
 
@@ -174,9 +185,9 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
 
       {/* 其他功能 */}
       <MinimapControl />
-      <ToolButton icon={<FullscreenOutlined />} content="全屏" onClick={handleFullscreen} />
-      <ToolButton icon={<ExportOutlined />} content="导出" onClick={handleExport} />
-      {onImport && <ToolButton icon={<ImportOutlined />} content="导入" onClick={onImport} />}
+      <ToolButton icon={<Maximize size={16} />} content="全屏" onClick={handleFullscreen} />
+      <ToolButton icon={<Download size={16} />} content="导出" onClick={handleExport} />
+      {onImport && <ToolButton icon={<Upload size={16} />} content="导入" onClick={onImport} />}
     </div>
   );
 };

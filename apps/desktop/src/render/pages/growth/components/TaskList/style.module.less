@@ -4,7 +4,17 @@
 
 .taskItem {
   width: 100%;
+}
+
+.taskItem.done,
+.taskItem.abandoned {
+  opacity: 0.58;
+}
+
+.itemLayout {
+  min-width: 0;
   min-height: 64px;
+  padding: 10px 4px;
   border-bottom: 1px solid var(--sue-color-border-secondary);
 }
 
@@ -12,14 +22,14 @@
   border-bottom: 0;
 }
 
-.row {
-  min-width: 0;
-  padding: 10px 4px;
+.checkbox {
+  height: 100%;
+  padding-top: 3px;
 }
 
 .statusIndicator {
   width: 3px;
-  height: 28px;
+  height: 20px;
   flex: 0 0 3px;
   border-radius: var(--sue-border-radius-sm);
   background: var(--sue-color-primary);
@@ -33,38 +43,40 @@
   background: var(--sue-color-text-quaternary);
 }
 
-.done,
-.abandoned {
-  opacity: 0.58;
-}
-
-.executionContent {
+.content {
   min-width: 0;
-  flex: 1 1 auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  text-align: left;
   cursor: pointer;
 }
 
-.title,
-.executionMeta {
-  display: block;
-  max-width: 100%;
+.content:hover .title {
+  color: var(--sue-color-primary);
+}
+
+.header {
+  min-width: 0;
+}
+
+.title {
+  min-width: 0;
   overflow: hidden;
+  color: var(--sue-color-text);
+  font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.title {
-  color: var(--sue-color-text);
-  font-weight: 500;
-}
-
-.executionMeta {
+.meta {
+  min-height: 24px;
   color: var(--sue-color-text-tertiary);
   font-size: 12px;
+}
+
+.date {
+  color: var(--sue-color-text-tertiary);
+}
+
+.overdue {
+  color: var(--sue-color-error);
 }
 
 .executionActions {

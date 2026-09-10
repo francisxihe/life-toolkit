@@ -6,7 +6,7 @@ import { TodoStatus } from '@true-north/enum';
 import { useMemo } from 'react';
 import clsx from 'clsx';
 import { useTodoDetail } from '../../components';
-import SiteIcon from '@/components/SiteIcon';
+import { Plus } from 'lucide-react';
 import styles from './style.module.less';
 
 function TodoItem({ todo }: { todo: TodoVo }) {
@@ -101,7 +101,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                     });
                   }}
                 >
-                  <SiteIcon id="add" className="w-3 h-3" />
+                  <Plus size={12} className="w-3 h-3" />
                   添加待办
                 </Flex>
               </div>

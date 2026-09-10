@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Menu, Flex, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@sue/design-web-react';
+import { Menu, Flex } from '@sue/design-web-react';
+import { Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 
 import styles from './style.module.less';
 
@@ -68,7 +69,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
   const menuItems = [
     {
       key: 'edit',
-      icon: <EditOutlined style={{ fontSize: 16 }} />,
+      icon: <Pencil size={16} />,
       label: '编辑目标',
       onClick: () => {
         onEdit?.(nodeId);
@@ -77,7 +78,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'addChild',
-      icon: <PlusOutlined style={{ fontSize: 16 }} />,
+      icon: <Plus size={16} />,
       label: '添加子目标',
       onClick: () => {
         onAddChild?.(nodeId);
@@ -86,7 +87,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'addSibling',
-      icon: <PlusOutlined style={{ fontSize: 16 }} />,
+      icon: <Plus size={16} />,
       label: '添加同级目标',
       onClick: () => {
         onAddSibling?.(nodeId);
@@ -95,7 +96,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'copy',
-      icon: <CopyOutlined style={{ fontSize: 16 }} />,
+      icon: <Copy size={16} />,
       label: '复制目标',
       onClick: () => {
         onCopy?.(nodeId);
@@ -104,7 +105,7 @@ const NodeMenu: React.FC<NodeMenuProps> = ({
     },
     {
       key: 'delete',
-      icon: <DeleteOutlined style={{ fontSize: 16 }} />,
+      icon: <Trash2 size={16} />,
       label: '删除节点',
       className: styles['menu-item-danger'],
       onClick: () => {

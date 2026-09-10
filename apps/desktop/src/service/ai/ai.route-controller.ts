@@ -11,6 +11,7 @@ import type {
   MessageVo,
   PatchConversationRuntimeRequestVo,
   PatchWorkspaceRequestVo,
+  PinConversationRequestVo,
   PutRuntimeSelectionRequestVo,
   RenameConversationRequestVo,
   RuntimeAgentVo,
@@ -124,6 +125,20 @@ export class AiController {
     try {
       if (!id?.trim()) throw AiPlatformError.internal('缺少 conversationId');
       return await this.conversations.rename(id.trim(), body?.title);
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Put('/conversations/:id/pin', { description: '置顶或取消置顶会话' })
+  async pinConversation(
+    @Param('id') id: string,
+    @Body() body: PinConversationRequestVo
+  ): Promise<ConversationVo> {
+    try {
+      if (!id?.trim()) throw AiPlatformError.internal('缺少 conversationId');
+      if (typeof body?.pinned !== 'boolean') throw AiPlatformError.internal('缺少 pinned');
+      return await this.conversations.pin(id.trim(), body.pinned);
     } catch (error) {
       throw toIpcError(error);
     }

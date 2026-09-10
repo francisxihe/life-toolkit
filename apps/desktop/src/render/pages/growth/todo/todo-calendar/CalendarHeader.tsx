@@ -1,6 +1,7 @@
 
 import dayjs, { type Dayjs } from 'dayjs';
-import { Button, Space, Flex, LeftOutlined, RightOutlined } from '@sue/design-web-react';
+import { Button, Space, Flex } from '@sue/design-web-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type CalendarHeaderProps = {
   value: Dayjs;
@@ -24,7 +25,7 @@ function CalendarHeader(props: CalendarHeaderProps) {
             className=""
             onClick={() => onChange(value.subtract(1, 'month'))}
           >
-            {<LeftOutlined />}
+            {<ChevronLeft size={16} />}
           </Button>
           <Button
             onClick={() => onChange(dayjs())}
@@ -32,7 +33,7 @@ function CalendarHeader(props: CalendarHeaderProps) {
             今天
           </Button>
           <Button onClick={() => onChange(value.add(1, 'month'))}>
-            {<RightOutlined />}
+            {<ChevronRight size={16} />}
           </Button>
         </Space.Compact>
       </Flex>

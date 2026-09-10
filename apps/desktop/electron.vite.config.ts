@@ -14,6 +14,11 @@ const currentFilePath = fileURLToPath(import.meta.url);
 const currentDirPath = path.dirname(currentFilePath);
 const srcDir = path.resolve(currentDirPath, 'src');
 const productWikiRoot = path.resolve(currentDirPath, '../../packages/product-wiki');
+const isProductDev = process.env.TN_DEV_PROFILE === 'product';
+const devProfile = isProductDev ? 'product' : 'lab';
+const profileDefine = {
+  'process.env.TN_DEV_PROFILE': JSON.stringify(devProfile),
+};
 
 function resolveProductWikiOutsideRoot(): Plugin {
   const extensions = ['', '.ts', '.tsx', '.js', '.json'];
@@ -123,9 +128,12 @@ export default defineConfig({
               include: [
                 path.resolve(srcDir, 'main/**/*'),
                 path.resolve(srcDir, 'service/**/*'),
-                path.resolve(currentDirPath, '../../packages/dev-lab/src/**/*'),
-                path.resolve(currentDirPath, '../../packages/product-wiki/src/**/*'),
-                path.resolve(currentDirPath, '../../packages/product-wiki/wiki/**/*'),
+                ...(isProductDev
+                  ? [
+                      path.resolve(currentDirPath, '../../packages/product-wiki/src/**/*'),
+                      path.resolve(currentDirPath, '../../packages/product-wiki/wiki/**/*'),
+                    ]
+                  : [path.resolve(currentDirPath, '../../packages/dev-lab/src/**/*')]),
               ],
             }
           : undefined,
@@ -133,9 +141,11 @@ export default defineConfig({
     // 开发环境配置
     define: {
       __DEV__: process.env.NODE_ENV === 'development',
+      ...profileDefine,
     },
   },
   preload: {
+    define: profileDefine,
     // 预加载脚本配置
     build: {
       outDir: 'dist/preload',
@@ -181,6 +191,9 @@ export default defineConfig({
     },
     // 渲染进程配置
     root: path.resolve(srcDir, 'render'),
+    define: {
+      'import.meta.env.VITE_DEV_PROFILE': JSON.stringify(devProfile),
+    },
     plugins: [
       react(),
       tailwindcss(),
@@ -188,11 +201,14 @@ export default defineConfig({
         svgrOptions: { exportType: 'default' },
         include: '**/*.svg',
       }),
-      desktopLabPage(),
-      resolveProductWikiOutsideRoot(),
-      productWiki({
-        data: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
-      }),
+      ...(isProductDev
+        ? [
+            resolveProductWikiOutsideRoot(),
+            productWiki({
+              data: path.resolve(currentDirPath, '../../packages/product-wiki/src/data.ts'),
+            }),
+          ]
+        : [desktopLabPage()]),
     ],
     css: {
       preprocessorOptions: {

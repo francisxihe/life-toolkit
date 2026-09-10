@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Navigate, Routes, Route } from 'react-router-dom';
 import Login from '../pages/login';
 import PageLayout from '../layout/layout';
 import lazyload from '../utils/lazyload';
@@ -36,6 +36,7 @@ function Router() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<PageLayout />}>
+              <Route index element={<Navigate to="/ai" replace />} />
               {renderRouteComponent(
                 router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath),
               )}

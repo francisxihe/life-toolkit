@@ -1,8 +1,27 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Card, Flex, Select, Space, Tooltip, message } from '@sue/design-web-react';
-import { CompressOutlined, ExpandOutlined, PauseCircleOutlined, PlayCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Button,
+  Card,
+  Flex,
+  Select,
+  Space,
+  Tooltip,
+  message,
+} from '@sue/design-web-react';
+import { Maximize2, Minimize2, Pause, Play, RefreshCw } from 'lucide-react';
 import { TaskStatus, TodoStatus, TrackTimeRelatedType } from '@true-north/enum';
-import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
+import {
+  TaskService,
+  TodoService,
+  TrackTimeController,
+} from '@true-north/web-service';
 import Flip from '@/pages/timer/normal/Flip';
 import { getTimeArr } from '@/pages/timer/utils';
 import { ProductSurface } from '@ylib/product-surface-react';
@@ -52,7 +71,9 @@ export function useFocusTimer() {
   return { open: openFocusTimer };
 }
 
-function normalizeOpenOptions(related?: string | FocusTimerOpenOptions): FocusTimerOpenOptions {
+function normalizeOpenOptions(
+  related?: string | FocusTimerOpenOptions,
+): FocusTimerOpenOptions {
   if (!related) return {};
   if (typeof related === 'string') return { taskId: related };
   return related;
@@ -64,7 +85,10 @@ function toSelectValue(taskId?: string, todoId?: string) {
   return undefined;
 }
 
-function parseSelectValue(value?: string): { taskId?: string; todoId?: string } {
+function parseSelectValue(value?: string): {
+  taskId?: string;
+  todoId?: string;
+} {
   if (!value) return {};
   if (value.startsWith(RELATED_PREFIX.todo)) {
     return { todoId: value.slice(RELATED_PREFIX.todo.length) };
@@ -75,7 +99,11 @@ function parseSelectValue(value?: string): { taskId?: string; todoId?: string } 
   return {};
 }
 
-export function FocusTimerProvider({ children }: { children: React.ReactNode }) {
+export function FocusTimerProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [visible, setVisible] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [taskId, setTaskId] = useState<string>();
@@ -85,7 +113,9 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
   const [running, setRunning] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [startedAt, setStartedAt] = useState<number>();
-  const [relatedOptions, setRelatedOptions] = useState<RelatedOptionGroup[]>([]);
+  const [relatedOptions, setRelatedOptions] = useState<RelatedOptionGroup[]>(
+    [],
+  );
 
   const loadTimerData = useCallback(async () => {
     try {
@@ -94,8 +124,15 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
         TodoService.list({ status: TodoStatus.TODO }),
       ]);
       const taskOptions = (taskResult?.list || [])
-        .filter((task) => task.status !== TaskStatus.DONE && task.status !== TaskStatus.ABANDONED)
-        .map((task) => ({ value: `${RELATED_PREFIX.task}${task.id}`, label: task.name }));
+        .filter(
+          (task) =>
+            task.status !== TaskStatus.DONE &&
+            task.status !== TaskStatus.ABANDONED,
+        )
+        .map((task) => ({
+          value: `${RELATED_PREFIX.task}${task.id}`,
+          label: task.name,
+        }));
       const todoOptions = (todoResult?.list || []).map((todo) => ({
         value: `${RELATED_PREFIX.todo}${todo.id}`,
         label: todo.name,
@@ -110,24 +147,27 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
     }
   }, []);
 
-  const open = useCallback((related?: string | FocusTimerOpenOptions) => {
-    const options = normalizeOpenOptions(related);
-    const nextTodoId = options.todoId;
-    const nextTaskId = options.todoId ? undefined : options.taskId;
-    setTodoId(nextTodoId);
-    setTaskId(nextTaskId);
-    setRelatedLocked(Boolean(options.taskId || options.todoId));
-    setLockedLabel(
-      nextTodoId
-        ? options.label || '待办专注'
-        : nextTaskId
-          ? options.label || '任务专注'
-          : undefined,
-    );
-    setVisible(true);
-    setFullScreen(false);
-    void loadTimerData();
-  }, [loadTimerData]);
+  const open = useCallback(
+    (related?: string | FocusTimerOpenOptions) => {
+      const options = normalizeOpenOptions(related);
+      const nextTodoId = options.todoId;
+      const nextTaskId = options.todoId ? undefined : options.taskId;
+      setTodoId(nextTodoId);
+      setTaskId(nextTaskId);
+      setRelatedLocked(Boolean(options.taskId || options.todoId));
+      setLockedLabel(
+        nextTodoId
+          ? options.label || '待办专注'
+          : nextTaskId
+            ? options.label || '任务专注'
+            : undefined,
+      );
+      setVisible(true);
+      setFullScreen(false);
+      void loadTimerData();
+    },
+    [loadTimerData],
+  );
 
   useEffect(() => {
     registeredOpen = open;
@@ -227,7 +267,9 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
 
   const relatedName = useMemo(() => {
     if (relatedLocked && lockedLabel) return lockedLabel;
-    const selected = flatOptions.find((option) => option.value === toSelectValue(taskId, todoId));
+    const selected = flatOptions.find(
+      (option) => option.value === toSelectValue(taskId, todoId),
+    );
     if (selected) return selected.label;
     if (todoId) return lockedLabel || '待办专注';
     if (taskId) return lockedLabel || '任务专注';
@@ -245,22 +287,22 @@ export function FocusTimerProvider({ children }: { children: React.ReactNode }) 
       {children}
       {visible && (
         <ProductSurface id={productRef('growth.track-time.overview')}>
-        <FocusTimerOverlay
-          elapsed={elapsed}
-          fullScreen={fullScreen}
-          relatedLocked={relatedLocked}
-          relatedName={relatedName}
-          lockedDisplay={lockedDisplay}
-          running={running}
-          selectValue={toSelectValue(taskId, todoId)}
-          relatedOptions={relatedOptions}
-          onClose={close}
-          onFinish={finish}
-          onReset={reset}
-          onSelectRelated={onSelectRelated}
-          onToggleFullScreen={() => setFullScreen((value) => !value)}
-          onToggleRunning={toggleRunning}
-        />
+          <FocusTimerOverlay
+            elapsed={elapsed}
+            fullScreen={fullScreen}
+            relatedLocked={relatedLocked}
+            relatedName={relatedName}
+            lockedDisplay={lockedDisplay}
+            running={running}
+            selectValue={toSelectValue(taskId, todoId)}
+            relatedOptions={relatedOptions}
+            onClose={close}
+            onFinish={finish}
+            onReset={reset}
+            onSelectRelated={onSelectRelated}
+            onToggleFullScreen={() => setFullScreen((value) => !value)}
+            onToggleRunning={toggleRunning}
+          />
         </ProductSurface>
       )}
     </FocusTimerContext.Provider>
@@ -339,14 +381,18 @@ function FocusTimerOverlay({
   const controls = (
     <Space size={8}>
       <Tooltip title="重置计时">
-        <Button shape="circle" icon={<ReloadOutlined />} aria-label="重置计时" onClick={onReset} />
+        <Button
+          shape="circle"
+          icon={<RefreshCw size={16} />}
+          aria-label="重置计时"
+          onClick={onReset}
+        />
       </Tooltip>
       <Tooltip title={running ? '暂停计时' : '开始计时'}>
         <Button
           type="primary"
           shape="circle"
-          size="large"
-          icon={running ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+          icon={running ? <Pause size={16} /> : <Play size={16} />}
           aria-label={running ? '暂停计时' : '开始计时'}
           onClick={onToggleRunning}
         />
@@ -359,7 +405,9 @@ function FocusTimerOverlay({
       lockedDisplay={lockedDisplay}
       selectValue={selectValue}
       relatedOptions={relatedOptions}
-      className={fullScreen ? styles.fullscreenTaskSelector : styles.taskSelector}
+      className={
+        fullScreen ? styles.fullscreenTaskSelector : styles.taskSelector
+      }
       onSelectRelated={onSelectRelated}
     />
   );
@@ -368,7 +416,11 @@ function FocusTimerOverlay({
     return (
       <div className={styles.fullscreen} data-product-ref={productRefAttr}>
         <div className={styles.fullscreenContent}>
-          <Flex className={styles.fullscreenHeader} align="center" justify="space-between">
+          <Flex
+            className={styles.fullscreenHeader}
+            align="center"
+            justify="space-between"
+          >
             <div>
               <h1>专注计时</h1>
               <p>{relatedName}</p>
@@ -389,22 +441,36 @@ function FocusTimerOverlay({
           </Flex>
           <Flex align="center" gap={8} className={styles.fullscreenActions}>
             <Tooltip title="重置计时">
-              <Button shape="circle" icon={<ReloadOutlined />} aria-label="重置计时" onClick={onReset} />
+              <Button
+                shape="circle"
+                icon={<RefreshCw size={16} />}
+                aria-label="重置计时"
+                onClick={onReset}
+              />
             </Tooltip>
             <Tooltip title={running ? '暂停计时' : '开始计时'}>
               <Button
                 type="primary"
                 shape="circle"
-                icon={running ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+                icon={running ? <Pause size={16} /> : <Play size={16} />}
                 aria-label={running ? '暂停计时' : '开始计时'}
                 onClick={onToggleRunning}
               />
             </Tooltip>
-            <button type="button" className={styles.recordButton} onClick={onFinish}>
+            <button
+              type="button"
+              className={styles.recordButton}
+              onClick={onFinish}
+            >
               结束并记录
             </button>
             <Tooltip title="最小化">
-              <Button shape="circle" icon={<CompressOutlined />} aria-label="最小化计时器" onClick={onToggleFullScreen} />
+              <Button
+                shape="circle"
+                icon={<Minimize2 size={16} />}
+                aria-label="最小化计时器"
+                onClick={onToggleFullScreen}
+              />
             </Tooltip>
           </Flex>
         </div>
@@ -418,23 +484,54 @@ function FocusTimerOverlay({
         <Flex align="center" justify="space-between">
           <b>专注计时</b>
           <Space size={0}>
-            <Tooltip title="展开全屏"><Button type="text" size="small" icon={<ExpandOutlined />} aria-label="展开全屏计时器" onClick={onToggleFullScreen} /></Tooltip>
-            <Tooltip title={running ? '计时进行中，保持迷你浮层' : '关闭计时器'}><Button type="text" size="small" aria-label="关闭计时器" onClick={onClose}>关闭</Button></Tooltip>
+            <Tooltip title="展开全屏">
+              <Button
+                type="text"
+                size="small"
+                icon={<Maximize2 size={16} />}
+                aria-label="展开全屏计时器"
+                onClick={onToggleFullScreen}
+              />
+            </Tooltip>
+            <Tooltip
+              title={running ? '计时进行中，保持迷你浮层' : '关闭计时器'}
+            >
+              <Button
+                type="text"
+                size="small"
+                aria-label="关闭计时器"
+                onClick={onClose}
+              >
+                关闭
+              </Button>
+            </Tooltip>
           </Space>
         </Flex>
         {selector}
-        <Flex className={styles.miniBody} align="center" justify="space-between" gap={12}>
-          <Flex vertical gap={2}><b className={styles.miniTime}>{formatSeconds(remaining)}</b><span className={styles.taskName}>{relatedName}</span></Flex>
+        <Flex
+          className={styles.miniBody}
+          align="center"
+          justify="space-between"
+          gap={12}
+        >
+          <Flex vertical gap={2}>
+            <b className={styles.miniTime}>{formatSeconds(remaining)}</b>
+            <span className={styles.taskName}>{relatedName}</span>
+          </Flex>
           {controls}
         </Flex>
-        <Button type="link" className={styles.finishButton} onClick={onFinish}>结束并记录</Button>
+        <Button type="link" className={styles.finishButton} onClick={onFinish}>
+          结束并记录
+        </Button>
       </Flex>
     </Card>
   );
 }
 
 function formatSeconds(total: number) {
-  const minutes = Math.floor(total / 60).toString().padStart(2, '0');
+  const minutes = Math.floor(total / 60)
+    .toString()
+    .padStart(2, '0');
   const seconds = (total % 60).toString().padStart(2, '0');
   return `${minutes}:${seconds}`;
 }

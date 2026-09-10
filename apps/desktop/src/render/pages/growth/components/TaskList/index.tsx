@@ -2,6 +2,7 @@
 
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import TaskItem from './TaskItem';
+import TriggerTaskStatus from './TriggerTaskStatus';
 import styles from './style.module.less';
 
 function TaskList(props: {
@@ -17,6 +18,9 @@ function TaskList(props: {
           task={task}
           onClickTask={props.onClickTask}
           refreshTaskList={props.refreshTaskList}
+          TriggerCheckbox={
+            <TriggerTaskStatus task={task} onChange={props.refreshTaskList} />
+          }
         />
       ))}
     </div>

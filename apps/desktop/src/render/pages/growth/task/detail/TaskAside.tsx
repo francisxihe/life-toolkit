@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tree, Button, Empty, Flex, PlusOutlined } from '@sue/design-web-react';
+import { Tree, Button, Empty, Flex } from '@sue/design-web-react';
+import { Plus } from 'lucide-react';
 
 import { useTaskDetailContext } from './context';
 import { TaskVo } from '@true-north/vo';
@@ -127,7 +128,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
       <div className={styles.asideToolbar}>
         <Button
           type="primary"
-          icon={<PlusOutlined />}
+          icon={<Plus size={16} />}
           size="small"
           className={styles.createButton}
           onClick={() =>

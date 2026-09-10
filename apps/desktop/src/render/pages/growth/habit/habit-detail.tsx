@@ -16,13 +16,8 @@ import {
   Badge,
   Row,
   Col,
-  CheckOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
 } from '@sue/design-web-react';
-import { CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
+import { Check, ChevronLeft, Pause, Pencil, Play, Trash2, X } from 'lucide-react';
 import { HabitService, TodoController, GoalController } from '@true-north/web-service';
 import { HabitVo } from '@true-north/vo';
 import { HABIT_STATUS_OPTIONS } from './constants';
@@ -197,7 +192,7 @@ export const HabitDetailPage: React.FC = () => {
         <div className="flex justify-between items-start">
           <div className="flex items-center space-x-4">
             <Button
-              icon={<LeftOutlined />}
+              icon={<ChevronLeft size={16} />}
               onClick={() => navigate('/growth/habit/habit-list')}>
 
               返回
@@ -224,14 +219,14 @@ export const HabitDetailPage: React.FC = () => {
             <>
                 <Button
                 type="primary"
-                icon={<CheckOutlined />}
+                icon={<Check size={16} />}
                 loading={actionLoading}
                 onClick={() => handleHabitAction('complete')}>
 
                   完成
                 </Button>
                 <Button
-                icon={<PauseOutlined />}
+                icon={<Pause size={16} />}
                 loading={actionLoading}
                 onClick={() => handleHabitAction('pause')}>
 
@@ -243,7 +238,7 @@ export const HabitDetailPage: React.FC = () => {
             {(habit.status === HabitStatus.ABANDONED || habit.status === HabitStatus.PAUSED) &&
             <Button
               type="primary"
-              icon={<CaretRightOutlined />}
+              icon={<Play size={16} />}
               loading={actionLoading}
               onClick={() => handleHabitAction('resume')}>
 
@@ -254,7 +249,7 @@ export const HabitDetailPage: React.FC = () => {
             {(habit.status === HabitStatus.ACTIVE ||
             habit.status === HabitStatus.PAUSED) &&
             <Button
-              icon={<CloseOutlined />}
+              icon={<X size={16} />}
               loading={actionLoading}
               onClick={() => handleHabitAction('abandon')}>
 
@@ -262,11 +257,11 @@ export const HabitDetailPage: React.FC = () => {
               </Button>
             }
 
-            <Button icon={<EditOutlined />} onClick={handleEdit}>编辑</Button>
+            <Button icon={<Pencil size={16} />} onClick={handleEdit}>编辑</Button>
             <Button
               type="primary"
               danger
-              icon={<DeleteOutlined />}
+              icon={<Trash2 size={16} />}
               onClick={handleDelete}>
 
               删除

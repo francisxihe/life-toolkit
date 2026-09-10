@@ -57,7 +57,7 @@ graph TB
 
 ## 工具链
 
-- 开发：`pnpm dev`（Turbo 并行）
+- 开发：`pnpm dev`（Lab + 默认开 DevTools）；产品讲解：`pnpm dev:product`
 - 构建：`pnpm build`
 - 质量：ESLint + Prettier + Husky
 - 测试：Jest（按需）

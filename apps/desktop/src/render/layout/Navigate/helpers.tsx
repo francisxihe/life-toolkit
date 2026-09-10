@@ -1,30 +1,26 @@
 import {
-  AppstoreOutlined,
-  UserOutlined,
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  FileOutlined,
-  SettingOutlined,
-} from '@sue/design-web-react';
-import {
-  DashboardOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons';
-import {
+  Calendar,
+  CircleAlert,
+  CircleCheck,
+  File,
   FolderKanban,
   Grid2X2,
+  LayoutDashboard,
+  LayoutGrid,
+  List,
   ListTodo,
+  Settings,
   Sparkles,
   Target,
   TrendingUp,
+  User,
 } from 'lucide-react';
-import SiteIcon from '@/components/SiteIcon';
 import styles from '../layout.module.less';
 
 export function getIconFromKey(key: string): React.ReactNode {
   switch (key) {
     case '/growth':
-      return <SiteIcon id="calendar-sidebar" className={styles.icon} />;
+      return <Calendar size={16} className={styles.icon} />;
     case '/growth/workbench':
       return <Grid2X2 size={16} className={styles.icon} />;
     case '/growth/todo':
@@ -38,21 +34,21 @@ export function getIconFromKey(key: string): React.ReactNode {
     case '/ai':
       return <Sparkles size={16} className={styles.icon} />;
     case '/dashboard':
-      return <DashboardOutlined className={styles.icon} />;
+      return <LayoutDashboard size={16} className={styles.icon} />;
     case '/list':
-      return <UnorderedListOutlined className={styles.icon} />;
+      return <List size={16} className={styles.icon} />;
     case '/form':
-      return <SettingOutlined className={styles.icon} />;
+      return <Settings size={16} className={styles.icon} />;
     case '/profile':
-      return <FileOutlined className={styles.icon} />;
+      return <File size={16} className={styles.icon} />;
     case '/visualization':
-      return <AppstoreOutlined className={styles.icon} />;
+      return <LayoutGrid size={16} className={styles.icon} />;
     case '/result':
-      return <CheckCircleOutlined className={styles.icon} />;
+      return <CircleCheck size={16} className={styles.icon} />;
     case '/exception':
-      return <ExclamationCircleOutlined className={styles.icon} />;
+      return <CircleAlert size={16} className={styles.icon} />;
     case '/user':
-      return <UserOutlined className={styles.icon} />;
+      return <User size={16} className={styles.icon} />;
     default:
       return <div className={styles['icon-empty']} />;
   }

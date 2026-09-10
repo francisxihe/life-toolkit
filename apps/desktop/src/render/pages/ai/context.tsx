@@ -480,6 +480,21 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     return true;
   }, []);
 
+  const pinConversation = useCallback(async (id: string, pinned: boolean) => {
+    const result = await AiService.pinConversation(id, { pinned });
+    if (result.ok === false) {
+      message.error(result.message);
+      return false;
+    }
+    setConversations((items) =>
+      [...items.map((item) => (item.id === id ? result.data : item))].sort((a, b) => {
+        if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      })
+    );
+    return true;
+  }, []);
+
   const deleteConversation = useCallback(
     async (id: string) => {
       const streamId = streamIdRef.current;
@@ -641,6 +656,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     selectConversation,
     createBlankConversation,
     renameConversation,
+    pinConversation,
     deleteConversation,
     sendUserMessage,
     cancelStreaming,

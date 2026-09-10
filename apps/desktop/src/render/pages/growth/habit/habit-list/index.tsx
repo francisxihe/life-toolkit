@@ -3,7 +3,8 @@ import DefaultPage from '@/components/Layout/DefaultPage';
 import HabitListFilter from './HabitListFilter';
 import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
-import { Button, Drawer, Flex, PlusOutlined } from '@sue/design-web-react';
+import { Button, Drawer, Flex } from '@sue/design-web-react';
+import { Plus } from 'lucide-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 
@@ -43,7 +44,7 @@ export const HabitListPage: React.FC = () => {
         <Flex container="fixed" className={styles.actions} gap={8}>
           <Button
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<Plus size={16} />}
             onClick={() => {
               openCreateHabitModal();
             }}

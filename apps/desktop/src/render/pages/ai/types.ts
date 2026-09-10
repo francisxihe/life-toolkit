@@ -38,6 +38,7 @@ export type AiSessionContextValue = {
   selectConversation: (id: string) => void;
   createBlankConversation: () => Promise<void>;
   renameConversation: (id: string, title: string) => Promise<boolean>;
+  pinConversation: (id: string, pinned: boolean) => Promise<boolean>;
   deleteConversation: (id: string) => Promise<void>;
   sendUserMessage: () => Promise<void>;
   cancelStreaming: () => Promise<void>;

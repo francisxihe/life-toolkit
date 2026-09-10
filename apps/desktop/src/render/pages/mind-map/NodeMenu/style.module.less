@@ -1,8 +1,8 @@
 .node-menu {
-  background: white;
+  background: var(--color-bg-1);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  border: 1px solid #e5e6eb;
+  border: 1px solid var(--color-border);
   min-width: 160px;
   padding: 4px 0;
 
@@ -28,17 +28,17 @@
 
 .menu-item {
   font-size: 14px;
-  color: #1d2129;
+  color: var(--color-text-1);
   cursor: pointer;
   transition: all 0.1s ease;
 }
 
 .menu-item-danger {
   .menu-item {
-    color: #f53f3f;
+    color: rgb(var(--danger-6));
 
     &:hover {
-      background-color: #ffece8;
+      background-color: var(--color-danger-light-1);
     }
   }
 }

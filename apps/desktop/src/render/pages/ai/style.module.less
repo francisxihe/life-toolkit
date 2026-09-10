@@ -27,7 +27,7 @@
 .sessionItem {
   position: relative;
   width: 100%;
-  padding: 10px 28px 10px 12px;
+  padding: 10px 52px 10px 12px;
   border: 0;
   border-radius: var(--sue-border-radius-sm);
   background: transparent;
@@ -52,20 +52,17 @@
   white-space: nowrap;
 }
 
-.sessionMeta {
-  display: block;
-  margin-top: 4px;
-  color: var(--sue-color-text-tertiary);
-  font-size: 12px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sessionMore {
+.sessionActions {
   position: absolute;
   top: 8px;
   right: 4px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.sessionPin,
+.sessionMore {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,11 +77,47 @@
   cursor: pointer;
 }
 
+.sessionItem:hover .sessionPin,
+.sessionItem:focus-within .sessionPin,
+.sessionPin:focus-visible,
+.sessionPinPinned,
 .sessionItem:hover .sessionMore,
 .sessionItem:focus-within .sessionMore,
 .sessionMore:focus-visible,
 .sessionMoreOpen {
   opacity: 1;
+}
+
+.sessionPreview {
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.sessionPreviewTitle {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sessionPreviewBound {
+  margin-top: 6px;
+  color: var(--sue-color-text-secondary);
+  font-size: 12px;
+}
+
+.sessionPreviewRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  color: var(--sue-color-text-tertiary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sessionPreviewLabel {
+  flex-shrink: 0;
+  width: 28px;
 }
 
 .conversation {

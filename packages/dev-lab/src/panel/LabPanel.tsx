@@ -1,7 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Button, CloseOutlined, ConfigProvider, Empty, Flex, Tabs, Tag } from '@sue/design-web-react';
+import { Button, ConfigProvider, Empty, Flex, Tabs, Tag, theme as sueTheme } from '@sue/design-web-react';
+import { X } from 'lucide-react';
 import zhCN from '@sue/design-web-react/locale/zh_CN';
-import { getLabPanelBridge } from '../protocol';
+import {
+  getLabPanelBridge,
+  isLabFrameMessage,
+  isLabTheme,
+  labFrameChannel,
+  type LabFrameMessage,
+  type LabTheme,
+} from '../protocol';
 import type { TraceEntry, TraceSpan } from '../types';
 
 type LabToolId = 'request';
@@ -40,9 +48,47 @@ function statusClass(entry: TraceEntry): string {
   return '';
 }
 
+function applyLabDocumentTheme(theme: LabTheme) {
+  const root = document.documentElement;
+  if (theme === 'dark') {
+    document.body.setAttribute('data-theme', 'dark');
+    root.classList.add('dark');
+    root.style.colorScheme = 'dark';
+  } else {
+    document.body.removeAttribute('data-theme');
+    root.classList.remove('dark');
+    root.style.colorScheme = 'light';
+  }
+}
+
 export function LabApp() {
+  const [theme, setTheme] = useState<LabTheme>('light');
+  const sueThemeConfig = useMemo(
+    () => ({
+      algorithm: theme === 'dark' ? sueTheme.darkAlgorithm : sueTheme.defaultAlgorithm,
+    }),
+    [theme],
+  );
+
+  useEffect(() => {
+    applyLabDocumentTheme(theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== window.parent) return;
+      if (!isLabFrameMessage(event.data) || event.data.type !== labFrameChannel.setTheme) return;
+      if (isLabTheme(event.data.theme)) setTheme(event.data.theme);
+    };
+    window.addEventListener('message', onMessage);
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: labFrameChannel.ready } satisfies LabFrameMessage, '*');
+    }
+    return () => window.removeEventListener('message', onMessage);
+  }, []);
+
   return (
-    <ConfigProvider locale={zhCN}>
+    <ConfigProvider locale={zhCN} theme={sueThemeConfig}>
       <LabShell />
     </ConfigProvider>
   );
@@ -102,7 +148,7 @@ function LabShell() {
           className="labHeaderClose"
           title="关闭 Lab"
           aria-label="关闭 Lab"
-          icon={<CloseOutlined />}
+          icon={<X size={16} />}
           onClick={() => getLabPanelBridge()?.sendSetVisible(false)}
         />
       </Flex>

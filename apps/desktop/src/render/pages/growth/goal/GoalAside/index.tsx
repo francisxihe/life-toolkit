@@ -3,10 +3,8 @@ import {
   Button,
   Flex,
   Tooltip,
-  CloseOutlined,
-  PlusOutlined,
 } from '@sue/design-web-react';
-import { SlidersHorizontal } from 'lucide-react';
+import { Plus, SlidersHorizontal, X } from 'lucide-react';
 
 import GoalFilters from './GoalFilters';
 import GoalTree from './GoalTree';
@@ -51,7 +49,7 @@ export default function GoalAside() {
               <Button
                 type="text"
                 size="small"
-                icon={<CloseOutlined />}
+                icon={<X size={16} />}
                 aria-label="清空筛选"
                 onClick={handleClearFilters}
               />
@@ -71,7 +69,7 @@ export default function GoalAside() {
             <Button
               type="text"
               size="small"
-              icon={<PlusOutlined />}
+              icon={<Plus size={16} />}
               aria-label="新建目标"
               onClick={() =>
                 openCreateDrawer({

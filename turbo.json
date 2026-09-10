@@ -37,6 +37,11 @@
       "persistent": true,
       "inputs": ["apps/desktop/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}"]
     },
+    "dev:product": {
+      "cache": false,
+      "persistent": true,
+      "inputs": ["apps/desktop/**/*.{ts,tsx}", "packages/**/*.{ts,tsx}"]
+    },
     "dev:electron": {
       "cache": false,
       "persistent": true,

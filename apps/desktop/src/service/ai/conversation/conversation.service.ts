@@ -46,6 +46,7 @@ function toConversationVo(entity: AiConversation): ConversationVo {
     title: entity.title,
     updatedAt: toIso(entity.updatedAt),
     createdAt: toIso(entity.createdAt),
+    pinned: Boolean(entity.pinned),
     refType: entity.refType || undefined,
     refId: entity.refId || undefined,
     runtimeId: entity.runtimeId || undefined,
@@ -123,6 +124,7 @@ export class ConversationService {
   async createBlank(title?: string): Promise<ConversationVo> {
     const entity = new AiConversation();
     entity.title = (title || DEFAULT_TITLE).trim() || DEFAULT_TITLE;
+    entity.pinned = false;
     const saved = await this.conversationRepository.create(entity);
     return toConversationVo(saved);
   }
@@ -144,6 +146,7 @@ export class ConversationService {
     entity.title = `拆解：${goal.name}`;
     entity.refType = 'goal';
     entity.refId = id;
+    entity.pinned = false;
     const saved = await this.conversationRepository.create(entity);
     return { conversation: toConversationVo(saved), created: true };
   }
@@ -165,6 +168,7 @@ export class ConversationService {
     entity.title = `拆解：${task.name}`;
     entity.refType = 'task';
     entity.refId = id;
+    entity.pinned = false;
     const saved = await this.conversationRepository.create(entity);
     return { conversation: toConversationVo(saved), created: true };
   }
@@ -175,6 +179,11 @@ export class ConversationService {
     const conversation = await this.conversationRepository.find(conversationId);
     conversation.title = nextTitle;
     const saved = await this.conversationRepository.update(conversation);
+    return toConversationVo(saved);
+  }
+
+  async pin(conversationId: string, pinned: boolean): Promise<ConversationVo> {
+    const saved = await this.conversationRepository.setPinned(conversationId, pinned);
     return toConversationVo(saved);
   }
 

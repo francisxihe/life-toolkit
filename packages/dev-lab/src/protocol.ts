@@ -7,6 +7,8 @@ export const labChannel = {
   setVisible: 'lab:set-visible',
 } as const;
 
+export type LabTheme = 'light' | 'dark';
+
 export const labFrameChannel = {
   snapshotRequest: 'lab:snapshot-request',
   snapshotResult: 'lab:snapshot-result',
@@ -14,6 +16,8 @@ export const labFrameChannel = {
   clearResult: 'lab:clear-result',
   update: 'lab:update',
   setVisible: 'lab:set-visible',
+  setTheme: 'lab:set-theme',
+  ready: 'lab:ready',
 } as const;
 
 export type LabPanelBridge = {
@@ -29,11 +33,18 @@ export type LabFrameMessage =
   | { type: typeof labFrameChannel.clearRequest; id: string }
   | { type: typeof labFrameChannel.clearResult; id: string; entries: TraceEntry[] }
   | { type: typeof labFrameChannel.update; entries: TraceEntry[] }
-  | { type: typeof labFrameChannel.setVisible; visible: boolean };
+  | { type: typeof labFrameChannel.setVisible; visible: boolean }
+  | { type: typeof labFrameChannel.setTheme; theme: LabTheme }
+  | { type: typeof labFrameChannel.ready };
 
 export type LabFrameHandle = {
   destroy: () => void;
+  setTheme: (theme: LabTheme) => void;
 };
+
+export function isLabTheme(value: unknown): value is LabTheme {
+  return value === 'light' || value === 'dark';
+}
 
 declare global {
   interface Window {
@@ -55,6 +66,10 @@ export function isLabFrameMessage(value: unknown): value is LabFrameMessage {
       return Array.isArray((value as { entries?: unknown }).entries);
     case labFrameChannel.setVisible:
       return typeof (value as { visible?: unknown }).visible === 'boolean';
+    case labFrameChannel.setTheme:
+      return isLabTheme((value as { theme?: unknown }).theme);
+    case labFrameChannel.ready:
+      return true;
     default:
       return false;
   }

@@ -25,8 +25,16 @@ export class AiConversationRepository extends BaseRepositoryImpl<AiConversation,
       if (filter.refId) {
         qb = qb.andWhere('ai_conversation.refId = :refId', { refId: filter.refId });
       }
-      return qb.orderBy('ai_conversation.updatedAt', 'DESC');
+      return qb
+        .orderBy('ai_conversation.pinned', 'DESC')
+        .addOrderBy('ai_conversation.updatedAt', 'DESC');
     }
     super(AppDataSource.getRepository(AiConversation), buildQuery);
+  }
+
+  async setPinned(id: string, pinned: boolean): Promise<AiConversation> {
+    await this.find(id);
+    await this.repo.query('UPDATE ai_conversation SET pinned = ? WHERE id = ?', [pinned ? 1 : 0, id]);
+    return this.find(id);
   }
 }

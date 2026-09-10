@@ -53,6 +53,7 @@ export type ConversationVo = {
   title: string;
   updatedAt: string;
   createdAt?: string;
+  pinned: boolean;
   refType?: ConversationRefType;
   refId?: string;
   runtimeId?: string;
@@ -72,6 +73,10 @@ export type CreateConversationRequestVo = {
 
 export type RenameConversationRequestVo = {
   title: string;
+};
+
+export type PinConversationRequestVo = {
+  pinned: boolean;
 };
 
 export type StartMessageStreamRequestVo = {

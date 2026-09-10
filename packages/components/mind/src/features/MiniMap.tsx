@@ -99,9 +99,9 @@ export default function MiniMapContainer() {
         right: '20px',
         width: '150px',
         height: '120px',
-        border: '1px solid #d9d9d9',
+        border: '1px solid var(--color-border, #d9d9d9)',
         borderRadius: '4px',
-        backgroundColor: '#fff',
+        backgroundColor: 'var(--color-bg-1, #fff)',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
         zIndex: 1000,
         visibility: minimapVisible ? 'visible' : 'hidden', // 使用visibility而不是display

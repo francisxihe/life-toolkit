@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Tabs, Tag, Dropdown, Menu, Button, Modal, message, Flex, CheckOutlined, CloseOutlined, DeleteOutlined, EllipsisOutlined, Empty } from '@sue/design-web-react';
+import { Tabs, Tag, Dropdown, Menu, Button, Modal, message, Flex, Empty } from '@sue/design-web-react';
 import dayjs from 'dayjs';
-import { Sparkles } from 'lucide-react';
+import { Check, Ellipsis, Sparkles, Trash2, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import { TaskVo } from '@true-north/vo';
@@ -156,11 +156,11 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
       )}
       {(task.status === TaskStatus.TODO || task.status === TaskStatus.DOING) && (
         <Menu.Item key="abandon" onClick={handleAbandon}>
-          <CloseOutlined /> 放弃
+          <X size={16} /> 放弃
         </Menu.Item>
       )}
       <Menu.Item key="delete" onClick={handleDelete} className={styles.dangerAction}>
-        <DeleteOutlined /> 删除
+        <Trash2 size={16} /> 删除
       </Menu.Item>
     </Menu>
   );
@@ -171,7 +171,7 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
       case TaskStatus.TODO:
       case TaskStatus.DOING:
         return (
-          <Button type="primary" icon={<CheckOutlined />} onClick={handleComplete}>
+          <Button type="primary" icon={<Check size={16} />} onClick={handleComplete}>
             标记完成
           </Button>
         );
@@ -233,7 +233,7 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
             popupRender={() => renderActionMenu()}
             placement="bottomRight"
           >
-            <Button type="text" icon={<EllipsisOutlined />} />
+            <Button type="text" icon={<Ellipsis size={16} />} />
           </Dropdown>
 
           {/* 主要按钮 */}

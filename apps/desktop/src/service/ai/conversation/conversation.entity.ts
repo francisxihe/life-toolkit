@@ -18,4 +18,7 @@ export class AiConversation extends BaseEntity {
 
   @Column('varchar', { length: 128, nullable: true })
   runtimeThreadId?: string | null;
+
+  @Column('boolean', { default: false })
+  pinned!: boolean;
 }

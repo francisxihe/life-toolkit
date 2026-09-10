@@ -6,7 +6,7 @@ import { useTaskDetail } from '../../components/TaskDetail';
 import { openTaskDetailDrawer } from '../detail/TaskDetailDrawer';
 import { useMemo } from 'react';
 import clsx from 'clsx';
-import SiteIcon from '@/components/SiteIcon';
+import { Plus } from 'lucide-react';
 import { TaskStatus } from '@true-north/enum';
 import styles from './style.module.less';
 
@@ -108,7 +108,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                       'opacity-0.75 bg-secondary hover:bg-secondary-hover active:bg-secondary-active',
                     ])}
                   >
-                    <SiteIcon id="add" className="w-3 h-3" />
+                    <Plus size={12} className="w-3 h-3" />
                     添加任务
                   </Flex>
                 </CreateTaskPopover>

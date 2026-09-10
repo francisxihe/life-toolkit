@@ -7,11 +7,8 @@ import {
   Dropdown,
   Menu,
   Badge,
-  CheckOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  EllipsisOutlined,
 } from '@sue/design-web-react';
+import { Check, Ellipsis, Pencil, Trash2 } from 'lucide-react';
 import { HabitWithoutRelationsVo } from '@true-north/vo';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { formatHabitRepeatLabel } from '../formatHabitRepeatLabel';
@@ -48,7 +45,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
     if (onComplete) {
       menuItems.push(
         <Menu.Item key="complete" onClick={onComplete}>
-          <CheckOutlined /> 标记完成
+          <Check size={16} /> 标记完成
         </Menu.Item>,
       );
     }
@@ -83,14 +80,14 @@ export const HabitCard: React.FC<HabitCardProps> = ({
     if (onEdit) {
       menuItems.push(
         <Menu.Item key="edit" onClick={onEdit}>
-          <EditOutlined /> 编辑习惯
+          <Pencil size={16} /> 编辑习惯
         </Menu.Item>,
       );
     }
     if (onDelete) {
       menuItems.push(
         <Menu.Item key="delete" onClick={onDelete} className={styles.dangerAction}>
-          <DeleteOutlined /> 删除习惯
+          <Trash2 size={16} /> 删除习惯
         </Menu.Item>,
       );
     }
@@ -104,7 +101,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
       hoverable
       actions={[
         <Dropdown key="more" popupRender={() => renderActionMenu()} placement="bottomRight">
-          <Button type="text" icon={<EllipsisOutlined />} />
+          <Button type="text" icon={<Ellipsis size={16} />} />
         </Dropdown>,
       ]}
     >
@@ -137,7 +134,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
               <Button
                 type="primary"
                 size="small"
-                icon={<CheckOutlined />}
+                icon={<Check size={16} />}
                 onClick={onComplete}
                 className={styles.completeButton}
               >
