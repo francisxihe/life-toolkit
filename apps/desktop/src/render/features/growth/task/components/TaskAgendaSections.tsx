@@ -1,6 +1,6 @@
 import { Flex } from '@sue/design-web-react';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
-import TaskList from '../../components/TaskList';
+import TaskList from '../../components/task-list';
 import styles from './TaskAgendaSections.module.less';
 
 export type TaskAgendaGroup = {

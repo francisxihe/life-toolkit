@@ -2,8 +2,8 @@ import dayjs, { Dayjs } from 'dayjs';
 import { Flex } from '@sue/design-web-react';
 import { useCalendarContext } from './context';
 import { TaskVo } from '@true-north/vo';
-import { useTaskDetail } from '../../components/TaskDetail';
-import { openTaskDetailDrawer } from '../detail/TaskDetailDrawer';
+import { useTaskDetail } from '../../components/task-detail';
+import { openTaskDrawer } from '../detail/TaskDrawer';
 import { useMemo } from 'react';
 import clsx from 'clsx';
 import { Plus } from 'lucide-react';
@@ -17,7 +17,7 @@ function TaskItem({ task }: { task: TaskVo }) {
     <div
       onClick={(e) => {
         e.stopPropagation();
-        openTaskDetailDrawer({ taskId: task.id, onRefresh: getTaskList });
+        openTaskDrawer({ taskId: task.id, onRefresh: getTaskList });
       }}
       className={clsx([
         `text-body-1 px-1.5 leading-[20px] rounded-[2px]`,
@@ -39,9 +39,9 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const {
     taskList,
     pageShowDate,
-    showAddTaskDate,
+    addDate,
     getTaskList,
-    setShowAddTaskDate,
+    setAddDate,
   } = useCalendarContext();
 
   const {
@@ -72,9 +72,9 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
             cellDate.isAfter(pageShowDate, 'month'),
         })}
         onMouseEnter={() => {
-          setShowAddTaskDate(cellDate);
+          setAddDate(cellDate);
         }}
-        onMouseLeave={() => setShowAddTaskDate(null)}
+        onMouseLeave={() => setAddDate(null)}
       >
         <div className={styles.cellDate}>{cellDate.date()}</div>
         <>
@@ -83,7 +83,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                 <TaskItem key={task.id} task={task} />
               ))}
             </Flex>
-            {(showAddTaskDate?.isSame(cellDate) ||
+            {(addDate?.isSame(cellDate) ||
               createTaskPopoverVisible) && (
               <div className={styles.cellCreate}>
                 <CreateTaskPopover

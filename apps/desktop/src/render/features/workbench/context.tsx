@@ -55,7 +55,7 @@ export type WorkbenchWebTab = {
 
 export type WorkbenchTab = WorkbenchWebTab | WorkbenchToolTab;
 
-export type OpenToolTabInput = {
+export type TabInput = {
   conversationId: string;
   messageId: string;
   workspaceKey: AiWorkspaceKey;
@@ -84,9 +84,9 @@ type WorkbenchContextValue = {
   createTab: () => Promise<void>;
   closeTab: (id: string) => Promise<void>;
   activateTab: (id: string) => Promise<void>;
-  openToolTab: (input: OpenToolTabInput) => Promise<void>;
+  openToolTab: (input: TabInput) => Promise<void>;
   requestFollowUp: (conversationId: string, text: string) => void;
-  clearPendingFollowUp: () => void;
+  clearFollowUp: () => void;
   navigate: (url: string) => Promise<void>;
   goBack: () => Promise<void>;
   reload: () => Promise<void>;
@@ -261,7 +261,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
   );
 
   const openToolTab = useCallback(
-    async (input: OpenToolTabInput) => {
+    async (input: TabInput) => {
       const id = input.messageId;
       setToolTabs((prev) => {
         const existing = prev.find((tab) => tab.id === id);
@@ -300,7 +300,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
     [navigate],
   );
 
-  const clearPendingFollowUp = useCallback(() => {
+  const clearFollowUp = useCallback(() => {
     setPendingFollowUp(null);
   }, []);
 
@@ -441,7 +441,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       activateTab,
       openToolTab,
       requestFollowUp,
-      clearPendingFollowUp,
+      clearFollowUp,
       navigate: navigateUrl,
       goBack,
       goForward,
@@ -454,7 +454,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       activeId,
       activeTab,
       activeWebTab,
-      clearPendingFollowUp,
+      clearFollowUp,
       close,
       closeTab,
       createTab,

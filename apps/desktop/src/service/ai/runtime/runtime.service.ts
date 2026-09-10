@@ -6,12 +6,12 @@ import type {
   RuntimeSelectionVo,
 } from '@true-north/vo';
 import { AiPlatformError } from '../ai-error';
-import { emitChatStreamEvent } from '../conversation/stream-bus';
+import { emitStream } from '../conversation/stream-bus';
 import { spawnCodex } from './adapters/codex';
-import { getLoopbackMcpUrl } from './mcp/loopback-server';
+import { mcpUrl } from './mcp/loopback-server';
 import { probeAllAgents, toRuntimeAgentVo } from './probe';
-import { getRuntimeAgentDef } from './registry';
-import { readSelectedRuntimeId, writeSelectedRuntimeId } from './selection-store';
+import { agentDef } from './registry';
+import { readRuntimeId, writeRuntimeId } from './selection-store';
 import { bindStreamSession, unbindStreamSession } from './stream-session';
 import type { RuntimeProbeResult, RuntimeSpawnInput, StreamSessionContext } from './types';
 import { conversationWorkspaceDir } from './workspace';
@@ -27,7 +27,7 @@ function concatTextParts(parts: AiMessagePartVo[]): string {
     .join('');
 }
 
-function collectTextEntityLinks(parts: AiMessagePartVo[]): NonNullable<AiTextPartVo['entityLinks']> {
+function collectLinks(parts: AiMessagePartVo[]): NonNullable<AiTextPartVo['entityLinks']> {
   const links: NonNullable<AiTextPartVo['entityLinks']> = [];
   for (const part of parts) {
     if (part.type === 'text') {
@@ -44,12 +44,12 @@ function pickGrownText(current: string, incoming: string): string {
   return current.length >= incoming.length ? current : incoming;
 }
 
-function mergePartsGrowText(current: AiMessagePartVo[], incoming: AiMessagePartVo[]): AiMessagePartVo[] {
+function mergeParts(current: AiMessagePartVo[], incoming: AiMessagePartVo[]): AiMessagePartVo[] {
   const currentText = concatTextParts(current);
   const incomingText = concatTextParts(incoming);
   const grown = pickGrownText(currentText, incomingText);
   const useCurrentLinks = grown === currentText && grown !== incomingText;
-  const entityLinks = useCurrentLinks ? collectTextEntityLinks(current) : collectTextEntityLinks(incoming);
+  const entityLinks = useCurrentLinks ? collectLinks(current) : collectLinks(incoming);
   const textPart: AiTextPartVo = entityLinks.length
     ? { type: 'text', text: grown, entityLinks }
     : { type: 'text', text: grown };
@@ -107,7 +107,7 @@ function enqueueLock() {
 }
 
 export function resolvePreferredAgent(probes: RuntimeProbeResult[]): RuntimeProbeResult | undefined {
-  const saved = readSelectedRuntimeId();
+  const saved = readRuntimeId();
   const savedProbe = saved ? probes.find((item) => item.id === saved) : undefined;
   if (savedProbe?.available) return savedProbe;
   return probes.find((item) => item.available) || savedProbe || probes[0];
@@ -119,15 +119,15 @@ export class RuntimeService {
   }
 
   getSelection(): RuntimeSelectionVo {
-    return { runtimeId: readSelectedRuntimeId() };
+    return { runtimeId: readRuntimeId() };
   }
 
   putSelection(runtimeId: string): RuntimeSelectionVo {
-    const def = getRuntimeAgentDef(runtimeId);
+    const def = agentDef(runtimeId);
     if (!def) {
       throw AiPlatformError.agentUnavailable(`未知编码 Agent: ${runtimeId}`);
     }
-    return { runtimeId: writeSelectedRuntimeId(def.id) };
+    return { runtimeId: writeRuntimeId(def.id) };
   }
 
   resolveForSend(): RuntimeProbeResult {
@@ -158,7 +158,7 @@ export class RuntimeService {
     persistParts: (parts: AiMessagePartVo[]) => Promise<MessageVo>;
   }): Promise<{ message: MessageVo; threadId?: string; runtimeId: string }> {
     const selected = this.resolveForSend();
-    const def = getRuntimeAgentDef(selected.id);
+    const def = agentDef(selected.id);
     if (!def || !selected.resolvedPath) {
       throw AiPlatformError.agentUnavailable('当前选择不可用');
     }
@@ -179,7 +179,7 @@ export class RuntimeService {
       return input.persistParts(parts);
     };
     ctx.persistParts = (incoming: AiMessagePartVo[]) =>
-      enqueue(() => persistCanonical(mergePartsGrowText(parts, incoming)));
+      enqueue(() => persistCanonical(mergeParts(parts, incoming)));
     await ctx.persistParts(ctx.parts);
     bindStreamSession(ctx);
 
@@ -189,7 +189,7 @@ export class RuntimeService {
       def,
       binPath: selected.resolvedPath,
       workspaceDir: conversationWorkspaceDir(input.conversationId),
-      mcpUrl: getLoopbackMcpUrl(input.streamId),
+      mcpUrl: mcpUrl(input.streamId),
       prompt: input.prompt,
       resumeThreadId: input.resumeThreadId,
       signal: input.signal,
@@ -197,7 +197,7 @@ export class RuntimeService {
         void enqueue(() => {
           parts = appendDelta(parts, delta);
           ctx.parts = parts;
-          emitChatStreamEvent({ streamId: input.streamId, event: 'delta', delta });
+          emitStream({ streamId: input.streamId, event: 'delta', delta });
         });
       },
       onThreadId: (id) => {

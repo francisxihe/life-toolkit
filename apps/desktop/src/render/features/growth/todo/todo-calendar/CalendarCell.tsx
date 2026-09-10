@@ -44,9 +44,9 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
   const {
     todoList,
     pageShowDate,
-    showAddTaskDate,
+    addDate,
     getTodoList,
-    setShowAddTaskDate,
+    setAddDate,
   } = useCalendarContext();
 
   const todayTodoList = useMemo(() => {
@@ -66,9 +66,9 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
           cellDate.isAfter(pageShowDate, 'month'),
         })}
         onMouseEnter={() => {
-          setShowAddTaskDate(cellDate);
+          setAddDate(cellDate);
         }}
-        onMouseLeave={() => setShowAddTaskDate(null)}
+        onMouseLeave={() => setAddDate(null)}
       >
         <div className={styles.cellDate}>{cellDate.date()}</div>
         <>
@@ -77,7 +77,7 @@ export default function CalendarCell({ cellDate }: { cellDate: Dayjs }) {
                 <TodoItem key={todo.id} todo={todo} />
               ))}
             </Flex>
-            {showAddTaskDate?.isSame(cellDate) && (
+            {addDate?.isSame(cellDate) && (
               <div className={styles.cellCreate}>
                 <Flex
                   align="center"

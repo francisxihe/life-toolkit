@@ -11,7 +11,7 @@ type DevDockAttachProps = {
   theme: ViewsTheme;
 };
 
-function syncProductWikiTheme(theme: ViewsTheme): void {
+function syncWikiTheme(theme: ViewsTheme): void {
   window.productWikiInspect?.sendSetTheme(theme);
 }
 
@@ -60,7 +60,7 @@ export function DevDockAttach({ theme }: DevDockAttachProps) {
         router,
         onSetVisible: (visible) => dock.setVisible(visible),
       });
-      syncProductWikiTheme(themeRef.current);
+      syncWikiTheme(themeRef.current);
     } else {
       const labFrame = createFrame(labPageRoute, 'Lab');
       dock.register({ id: 'lab', label: 'Lab', content: labFrame });
@@ -103,7 +103,7 @@ export function DevDockAttach({ theme }: DevDockAttachProps) {
 
   useEffect(() => {
     dockRef.current?.setTheme(theme);
-    if (isProductDev) syncProductWikiTheme(theme);
+    if (isProductDev) syncWikiTheme(theme);
     else labRef.current?.setTheme(theme);
   }, [theme, isProductDev]);
 

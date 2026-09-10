@@ -12,7 +12,7 @@ import { TaskService } from '@true-north/web-service';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { useTaskDetailContext } from './context';
-import { useTodoDetail } from '../../components/TodoDetail';
+import { useTodoDetail } from '../../components/todo-detail';
 import styles from './style.module.less';
 import { useFocusTimer } from '../../focus-timer';
 import { emitTaskChanged } from '../../events';

@@ -4,11 +4,11 @@ import { Outlet } from 'react-router-dom';
 import TabsPage from '@/components/Layout/TabsPage';
 import { CreateButton } from '@/components/Button/CreateButton';
 import { useTodoDetail } from '../components';
-import { DayAgendaDateProvider, useDayAgendaDate } from '../components/DayAgenda/context';
+import { AgendaProvider, useAgendaDate } from '../components/day-agenda/context';
 
 function TodoPageContent() {
   const { openCreateDrawer } = useTodoDetail();
-  const { selectedDate } = useDayAgendaDate();
+  const { selectedDate } = useAgendaDate();
 
   return (
     <TabsPage
@@ -40,8 +40,8 @@ function TodoPageContent() {
 
 export default function TodoPage() {
   return (
-    <DayAgendaDateProvider>
+    <AgendaProvider>
       <TodoPageContent />
-    </DayAgendaDateProvider>
+    </AgendaProvider>
   );
 }

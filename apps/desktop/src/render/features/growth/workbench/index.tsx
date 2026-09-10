@@ -7,7 +7,7 @@ import { HabitVo, TaskWithoutRelationsVo, TodoVo } from '@true-north/vo';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { onHabitChanged, onTaskChanged, onTodoChanged } from '../events';
-import { formatHabitRepeatLabel } from '../habit/formatHabitRepeatLabel';
+import { formatRepeatLabel } from '../habit/repeatLabel';
 import styles from './style.module.less';
 
 type DashboardData = {
@@ -217,12 +217,12 @@ export default function Workbench() {
                       <div>
                         <b>{habit.name}</b>
                         <span>
-                          {formatHabitRepeatLabel(habit)} · 连续 {habit.currentStreak || 0} 天 ·{' '}
+                          {formatRepeatLabel(habit)} · 连续 {habit.currentStreak || 0} 天 ·{' '}
                           {habit.goals?.[0]?.name || '—'}
                         </span>
                       </div>
                     </Flex>
-                    <HabitCheckInActions
+                    <CheckInActions
                       habit={habit}
                       onComplete={() => void handleHabitComplete(habit)}
                       onIncomplete={() => void handleHabitIncomplete(habit)}
@@ -243,7 +243,7 @@ export default function Workbench() {
   );
 }
 
-function HabitCheckInActions({
+function CheckInActions({
   habit,
   onComplete,
   onIncomplete,

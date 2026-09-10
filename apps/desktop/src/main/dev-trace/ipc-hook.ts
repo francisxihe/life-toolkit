@@ -7,7 +7,7 @@ const { ipcMain } = electron;
 let restHookInstalled = false;
 let labIpcInstalled = false;
 
-export function installRestTraceHook(): void {
+export function installRestHook(): void {
   if (!isDevTraceEnabled() || restHookInstalled) return;
   const ipc = ipcMain as typeof ipcMain & { __devTraceRestWrapped?: boolean };
   if (ipc.__devTraceRestWrapped) {
@@ -25,7 +25,7 @@ export function installRestTraceHook(): void {
   }) as typeof ipcMain.handle;
 }
 
-export function installLabPanelIpc(): void {
+export function installLabIpc(): void {
   if (!isDevTraceEnabled() || labIpcInstalled) return;
   const ipc = ipcMain as typeof ipcMain & { __devTraceLabIpc?: boolean };
   if (ipc.__devTraceLabIpc) {

@@ -1,7 +1,7 @@
 import type { Logger, QueryRunner } from 'typeorm';
 import { isDevTraceEnabled, recordSql } from '@true-north/dev-lab/collector';
 
-export class DevTraceTypeormLogger implements Logger {
+export class SqlLogger implements Logger {
   logQuery(query: string, parameters?: any[], _queryRunner?: QueryRunner): void {
     if (!isDevTraceEnabled()) return;
     recordSql({ query, parameters });
@@ -28,7 +28,7 @@ export class DevTraceTypeormLogger implements Logger {
   log(): void {}
 }
 
-export function createDevTraceTypeormLogger(): Logger | undefined {
+export function createSqlLogger(): Logger | undefined {
   if (!isDevTraceEnabled()) return undefined;
-  return new DevTraceTypeormLogger();
+  return new SqlLogger();
 }

@@ -7,10 +7,10 @@ import { TaskService } from '@true-north/web-service';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import DayAgendaCalendar, {
-  formatDayAgendaTitle,
-} from '../../components/DayAgenda';
-import { useDayAgendaDate } from '../../components/DayAgenda/context';
-import { openTaskDetailDrawer } from '../detail/TaskDetailDrawer';
+  formatAgendaTitle,
+} from '../../components/day-agenda';
+import { useAgendaDate } from '../../components/day-agenda/context';
+import { openTaskDrawer } from '../detail/TaskDrawer';
 import TaskAgendaSections from '../components/TaskAgendaSections';
 import styles from './style.module.less';
 import { onTaskChanged } from '../../events';
@@ -31,7 +31,7 @@ const emptyGroups: TaskGroups = {
 
 export default function TaskToday() {
   const { selectedDate, setSelectedDate, visibleMonth, setVisibleMonth } =
-    useDayAgendaDate();
+    useAgendaDate();
   const [groups, setGroups] = useState<TaskGroups>(emptyGroups);
   const [calendarCounts, setCalendarCounts] = useState<Record<string, number>>(
     {},
@@ -170,7 +170,7 @@ export default function TaskToday() {
         <Flex vertical container="fill" className={styles.main}>
           <Flex container="fixed" align="center" className={styles.toolbar}>
             <h1 className={styles.title}>
-              {formatDayAgendaTitle(selectedDate)}
+              {formatAgendaTitle(selectedDate)}
             </h1>
           </Flex>
           <Flex container="fill" className={styles.content}>
@@ -199,7 +199,7 @@ export default function TaskToday() {
               ]}
               emptyLabel="当天没有任务"
               onClickTask={async (id) => {
-                openTaskDetailDrawer({ taskId: id, onRefresh: refreshData });
+                openTaskDrawer({ taskId: id, onRefresh: refreshData });
               }}
               refreshTaskList={refreshData}
             />

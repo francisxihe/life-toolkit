@@ -8,7 +8,7 @@ import { useTaskDetailContext } from './context';
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import clsx from 'clsx';
-import { useTaskDetail } from '../../components/TaskDetail';
+import { useTaskDetail } from '../../components/task-detail';
 import styles from './style.module.less';
 
 interface TaskAsideProps {
@@ -29,7 +29,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
 
   // 构建树形数据
   const buildTreeData = (tasks: TaskVo[]) => {
-    const convertToTreeNode = (task: TaskVo): any => {
+    const toTreeNode = (task: TaskVo): any => {
       const children = task.children || [];
       return {
         key: task.id,
@@ -53,12 +53,12 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
             </Flex>
           </Flex>
         ),
-        children: children.map(convertToTreeNode),
+        children: children.map(toTreeNode),
         isLeaf: children.length === 0,
       };
     };
 
-    return tasks.map(convertToTreeNode);
+    return tasks.map(toTreeNode);
   };
 
   // 获取状态标签

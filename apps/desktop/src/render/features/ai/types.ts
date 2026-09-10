@@ -14,7 +14,7 @@ export type AiDraft = {
   links: AiEntityLinkVo[];
 };
 
-export type AiSessionContextValue = {
+export type SessionValue = {
   conversations: ConversationVo[];
   activeConversationId: string | null;
   activeConversation: ConversationVo | undefined;
@@ -33,7 +33,7 @@ export type AiSessionContextValue = {
   selectedAgentId: string;
   selectedAgent: RuntimeAgentVo | undefined;
   selectCodingAgent: (id: string) => Promise<void>;
-  canSendWithSelectedAgent: boolean;
+  canSend: boolean;
   threadWillReset: boolean;
   selectConversation: (id: string) => void;
   createBlankConversation: () => Promise<void>;
@@ -42,7 +42,7 @@ export type AiSessionContextValue = {
   deleteConversation: (id: string) => Promise<void>;
   sendUserMessage: () => Promise<void>;
   cancelStreaming: () => Promise<void>;
-  openWorkspaceFromMessage: (messageId: string) => void;
+  openWorkspace: (messageId: string) => void;
   goalTitle: (goalId?: string) => string | undefined;
   taskTitle: (taskId?: string) => string | undefined;
   onOpenGoal: (goalId: string) => void;

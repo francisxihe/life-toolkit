@@ -149,8 +149,8 @@ export class TodoService {
 
   async list(filter: TodoFilterDto): Promise<TodoDto[]> {
     const todoDtoList = await this.findByFilter(filter);
-    const todoRepeatDtoList = await this.todoRepeatService.generateTodoByRepeat(filter);
-    return [...todoDtoList, ...todoRepeatDtoList];
+    const repeatList = await this.todoRepeatService.generateTodoByRepeat(filter);
+    return [...todoDtoList, ...repeatList];
   }
 
   async deleteByTaskIds(taskIds: string[]): Promise<void> {

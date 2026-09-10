@@ -32,7 +32,7 @@ function Navbar() {
     window.location.href = `/login`;
   }
 
-  function onMenuItemClick(key: string) {
+  function onMenuClick(key: string) {
     if (key === 'logout') {
       logout();
     } else if (key === 'setting') {
@@ -85,7 +85,7 @@ function Navbar() {
         ),
       },
     ],
-    onClick: ({ key }: { key: string }) => onMenuItemClick(key),
+    onClick: ({ key }: { key: string }) => onMenuClick(key),
   };
 
   return (

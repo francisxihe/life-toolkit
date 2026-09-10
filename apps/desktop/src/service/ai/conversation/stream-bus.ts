@@ -23,7 +23,7 @@ export function finishStream(streamId: string): void {
   controllers.delete(streamId);
 }
 
-export function emitChatStreamEvent(event: AiChatStreamEventVo): void {
+export function emitStream(event: AiChatStreamEventVo): void {
   for (const win of BrowserWindow.getAllWindows()) {
     if (!win.isDestroyed()) {
       win.webContents.send(AI_CONVERSATION_STREAM_CHANNEL, event);

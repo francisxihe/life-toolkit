@@ -17,7 +17,7 @@ import { TrackTime } from '../growth/track-time/entity';
 import { AiSuggestionCache } from '../ai/cache/ai-suggestion-cache.entity';
 import { AiConversation } from '../ai/conversation/conversation.entity';
 import { AiMessage } from '../ai/conversation/message.entity';
-import { createDevTraceTypeormLogger } from '../../main/dev-trace';
+import { createSqlLogger } from '../../main/dev-trace';
 
 const getDatabasePath = () => {
   if (process.env.NODE_ENV === 'development') {
@@ -39,7 +39,7 @@ export const AppDataSource = new DataSource({
   database: databasePath,
   synchronize: true,
   logging: isDev ? ['query', 'error'] : undefined,
-  logger: createDevTraceTypeormLogger(),
+  logger: createSqlLogger(),
   maxQueryExecutionTime: isDev ? -1 : undefined,
   entities: [
     User,
@@ -62,13 +62,13 @@ export const AppDataSource = new DataSource({
 export const initializeDatabase = async (): Promise<void> => {
   try {
     if (!AppDataSource.isInitialized) {
-      await repairGrowthV010BeforeSynchronize();
-      await migrateAiConversationAgentBeforeSynchronize();
+      await repairGrowthV010();
+      await migrateAiAgent();
       await AppDataSource.initialize();
       await migrateGrowthV010();
       await migrateGrowthV011();
       await migrateGrowthRepeatRefactor();
-      await migrateTodoRepeatToRepeatTodo();
+      await migrateTodoRepeat();
       console.log('数据库连接已建立', databasePath);
     }
   } catch (error) {
@@ -82,7 +82,7 @@ export const initializeDatabase = async (): Promise<void> => {
  * new Goal and Task schemas. Legacy values must be normalized before their
  * new CHECK and NOT NULL constraints are applied.
  */
-async function repairGrowthV010BeforeSynchronize(): Promise<void> {
+async function repairGrowthV010(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const database = new sqlite3.Database(databasePath, (openError) => {
       if (openError) {
@@ -218,7 +218,7 @@ async function migrateGrowthRepeatRefactor(): Promise<void> {
 /**
  * Split legacy todo_repeat into shared repeat + content-only repeat_todo (keep original ids).
  */
-async function migrateTodoRepeatToRepeatTodo(): Promise<void> {
+async function migrateTodoRepeat(): Promise<void> {
   const tables: Array<{ name: string }> = await AppDataSource.query(
     `SELECT name FROM sqlite_master WHERE type='table' AND name IN ('todo_repeat','repeat_todo','repeat')`
   );
@@ -312,7 +312,7 @@ async function migrateTodoRepeatToRepeatTodo(): Promise<void> {
  * Copy conversation ref onto workspace payloads and pluralize entityLinks
  * before TypeORM drops ai_conversation.ref_type / ref_id.
  */
-async function migrateAiConversationAgentBeforeSynchronize(): Promise<void> {
+async function migrateAiAgent(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const database = new sqlite3.Database(databasePath, (openError) => {
       if (openError) {

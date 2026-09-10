@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 import { Difficulty, Importance, TodoRelatedType, TodoStatus } from '@true-north/enum';
 import type { AiDecomposePayloadVo, AiWorkspaceSuggestionVo } from '@true-north/vo';
 import { TaskService, TodoService } from '@true-north/web-service';
-import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@/utils/drawerStyles';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import styles from '../style.module.less';
@@ -305,7 +305,7 @@ export function TaskDecomposeWorkspace({
           }}
           size="large"
           destroyOnHidden
-          styles={drawerPaddedBodyStyles}
+          styles={drawerBodyStyles}
           extra={
             <Button type="primary" onClick={() => void saveEdit()}>
               保存

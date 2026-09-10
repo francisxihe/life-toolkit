@@ -6,8 +6,8 @@ import { useTodoAllContext } from './context';
 import { TodoService } from '@true-north/web-service';
 import {
   useTodoDetail,
-  formatTodoPlanTime,
-  isTodoPlanRange,
+  formatPlanTime,
+  isPlanRange,
 } from '../../components';
 import { TodoRelatedType, TodoStatus } from '@true-north/enum';
 
@@ -104,7 +104,7 @@ export default function TodoTable(props: {
       title: '计划日期',
       key: 'planDate',
       render: (_, record) => {
-        const planTime = formatTodoPlanTime(record.planStartTime, record.planEndTime);
+        const planTime = formatPlanTime(record.planStartTime, record.planEndTime);
         return (
           <div>
             {dayjs(record.planDate).format('YYYY-MM-DD')}
@@ -138,7 +138,7 @@ export default function TodoTable(props: {
             <Button type="text" onClick={() => openEdit(record)}>
               编辑
             </Button>
-            {isActive && isTodoPlanRange(record.planStartTime, record.planEndTime) && (
+            {isActive && isPlanRange(record.planStartTime, record.planEndTime) && (
               <Button
                 type="text"
                 onClick={() => openFocusTimer({ todoId: record.id, label: record.name })}

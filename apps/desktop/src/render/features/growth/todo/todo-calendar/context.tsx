@@ -9,10 +9,10 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     todoList: TodoVo[];
     searchQuery: string;
     pageShowDate: Dayjs;
-    showAddTaskDate: Dayjs | null;
+    addDate: Dayjs | null;
     setSearchQuery: (query: string) => void;
     setPageShowDate: (date: Dayjs) => void;
-    setShowAddTaskDate: (date: Dayjs | null) => void;
+    setAddDate: (date: Dayjs | null) => void;
     getTodoList: (date?: Dayjs) => Promise<void>;
   };
 }>(() => {
@@ -30,16 +30,16 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     setTodoList(response?.list ?? []);
   }, [pageShowDate]);
 
-  const [showAddTaskDate, setShowAddTaskDate] = useState<Dayjs | null>(null);
+  const [addDate, setAddDate] = useState<Dayjs | null>(null);
 
   return {
     todoList,
     searchQuery,
     pageShowDate,
-    showAddTaskDate,
+    addDate,
     setSearchQuery,
     setPageShowDate,
     getTodoList,
-    setShowAddTaskDate,
+    setAddDate,
   };
 });

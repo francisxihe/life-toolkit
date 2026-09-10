@@ -12,7 +12,7 @@ const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTh
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
-import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
+import { startMcpServer, stopMcpServer } from '../service/ai/runtime';
 import { embeddedBrowserHost } from '../service/browser';
 import { EMBEDDED_BROWSER_PARTITION } from '@true-north/vo';
 import { labChannel } from '@true-north/dev-lab';
@@ -81,14 +81,14 @@ if (isDev) {
   DEFAULT_URL = `file://${path.join(__dirname, '../renderer/index.html')}`;
 }
 
-function getAppWebContents() {
+function appContents() {
   if (appView && !appView.webContents.isDestroyed()) return appView.webContents;
   if (mainWindow instanceof BrowserWindow) return mainWindow.webContents;
   return null;
 }
 
 function sendDevDock(tab, visible) {
-  const contents = getAppWebContents();
+  const contents = appContents();
   if (!contents) return;
   const preferred = visible ? { tab, visible: true } : { tab, visible: false };
   contents
@@ -104,14 +104,14 @@ function setWikiDockPreferred(visible) {
   wikiDockPreferred = visible;
   if (visible) labDockPreferred = false;
   sendDevDock('wiki', visible);
-  installDevApplicationMenu();
+  installDevMenu();
 }
 
 function setLabDockPreferred(visible) {
   labDockPreferred = visible;
   if (visible) wikiDockPreferred = false;
   sendDevDock('lab', visible);
-  installDevApplicationMenu();
+  installDevMenu();
 }
 
 function syncDevChrome() {
@@ -120,13 +120,13 @@ function syncDevChrome() {
   } else if (isLabDev) {
     sendDevDock('lab', labDockPreferred);
   }
-  installDevApplicationMenu();
+  installDevMenu();
 }
 
-function installDevApplicationMenu() {
+function installDevMenu() {
   const isMac = process.platform === 'darwin';
   const withAppContents = (run) => {
-    const contents = getAppWebContents();
+    const contents = appContents();
     if (contents) run(contents);
   };
   const template = [
@@ -191,7 +191,7 @@ function installDevApplicationMenu() {
         {
           label: 'Toggle Developer Tools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',
-          click: () => getAppWebContents()?.toggleDevTools(),
+          click: () => appContents()?.toggleDevTools(),
         },
         { type: 'separator' },
         {
@@ -294,7 +294,7 @@ function createWindow() {
   embeddedBrowserHost.attach({
     window: mainWindow,
     send: (channel, payload) => {
-      const contents = getAppWebContents();
+      const contents = appContents();
       if (contents && !contents.isDestroyed()) contents.send(channel, payload);
     },
   });
@@ -323,7 +323,7 @@ app.whenReady().then(async () => {
   initIpcRouter();
 
   try {
-    const mcpPort = await startLoopbackMcpServer();
+    const mcpPort = await startMcpServer();
     console.log('Loopback MCP 已启动', `127.0.0.1:${mcpPort}`);
   } catch (error) {
     console.error('Loopback MCP 启动失败:', error);
@@ -332,7 +332,7 @@ app.whenReady().then(async () => {
   createWindow();
   if (isLabDev) {
     subscribeDevTrace((snapshot) => {
-      const contents = getAppWebContents();
+      const contents = appContents();
       if (!contents || contents.isDestroyed()) return;
       contents.send(labChannel.update, snapshot);
     });
@@ -361,12 +361,12 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
-  void stopLoopbackMcpServer();
+  void stopMcpServer();
 });
 
 // 提供加载新URL的方法
 ipcMain.handle('load-url', async (_: any, url: string) => {
-  const contents = getAppWebContents();
+  const contents = appContents();
   if (contents) {
     await contents.loadURL(url);
     return { success: true };

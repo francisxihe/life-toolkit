@@ -1,2 +1,2 @@
-export { installLabPanelIpc, installRestTraceHook } from './ipc-hook';
-export { createDevTraceTypeormLogger, DevTraceTypeormLogger } from './sql-logger';
+export { installLabIpc, installRestHook } from './ipc-hook';
+export { createSqlLogger, SqlLogger } from './sql-logger';

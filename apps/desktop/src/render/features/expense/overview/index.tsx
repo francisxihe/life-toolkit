@@ -1,5 +1,5 @@
 import { Flex } from '@sue/design-web-react';
-import { BudgetOverview } from '../overview/budget-overview';
+import { BudgetOverview } from './BudgetOverview';
 
 export default function Overview() {
   return (

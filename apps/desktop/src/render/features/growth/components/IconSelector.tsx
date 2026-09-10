@@ -1,14 +1,18 @@
-import SiteIcon from '@/components/SiteIcon';
+import type { LucideIcon } from 'lucide-react';
 import { Flex, Popover, Tooltip } from '@sue/design-web-react';
+
+function tokenColor(color?: string) {
+  return color ? `rgb(var(--${color}-6))` : undefined;
+}
 
 export default function IconSelector(props: {
   map: Map<number, { color: string; label: string }>;
   value: number | null;
-  iconName: string;
+  icon: LucideIcon;
   readonly?: boolean;
   onChange?: (value: number | null) => void;
 }) {
-  const { map, iconName, value, readonly, onChange } = props;
+  const { map, icon: Icon, value, readonly, onChange } = props;
 
   return (
     <Popover
@@ -16,8 +20,8 @@ export default function IconSelector(props: {
       content={
         <Flex vertical gap={16}>
           <div className="py-1">
-            {[...Array.from(map.entries())].map(([key, value], index) => {
-              const { color, label } = value;
+            {[...Array.from(map.entries())].map(([key, option], index) => {
+              const { color, label } = option;
               return (
                 <Flex
                   key={index}
@@ -25,15 +29,10 @@ export default function IconSelector(props: {
                   gap={8}
                   className="px-3 py-1 cursor-pointer"
                   onClick={() => {
-                    onChange(key);
+                    onChange?.(key);
                   }}
                 >
-                  <SiteIcon
-                    width={16}
-                    height={16}
-                    id={iconName}
-                    style={{ color: `rgb(var(--${color}-6))` }}
-                  />
+                  <Icon size={16} style={{ color: tokenColor(color) }} />
                   <div className="text-body-3">{label}</div>
                 </Flex>
               );
@@ -56,12 +55,10 @@ export default function IconSelector(props: {
             readonly ? 'w-4 h-4' : 'w-7 h-7 cursor-pointer hover:bg-fill-3'
           }`}
         >
-          <SiteIcon
-            width={16}
-            height={16}
-            id={iconName}
-            className={`cursor-pointer`}
-            style={{ color: `rgb(var(--${map.get(value)?.color}-6))` }}
+          <Icon
+            size={16}
+            className="cursor-pointer"
+            style={{ color: tokenColor(map.get(value)?.color) }}
           />
         </Flex>
       </Tooltip>

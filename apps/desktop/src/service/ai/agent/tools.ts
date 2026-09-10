@@ -34,7 +34,7 @@ const taskIdSchema = z.object({
   taskId: z.string().min(1),
 });
 
-const goalSuggestionDraftSchema = z.object({
+const goalDraftSchema = z.object({
   kind: z.enum(['goal', 'task', 'todo', 'habit']),
   title: z.string().min(1),
   reason: z.string().optional(),
@@ -44,7 +44,7 @@ const goalSuggestionDraftSchema = z.object({
   difficulty: z.coerce.number().optional(),
 });
 
-const taskSuggestionDraftSchema = z.object({
+const taskDraftSchema = z.object({
   kind: z.enum(['task', 'todo']),
   title: z.string().min(1),
   reason: z.string().optional(),
@@ -57,13 +57,13 @@ const taskSuggestionDraftSchema = z.object({
 const decomposeGoalSchema = z.object({
   goalId: z.string().min(1),
   analysisSummary: z.string().optional(),
-  suggestions: z.array(goalSuggestionDraftSchema).min(1),
+  suggestions: z.array(goalDraftSchema).min(1),
 });
 
 const decomposeTaskSchema = z.object({
   taskId: z.string().min(1),
   analysisSummary: z.string().optional(),
-  suggestions: z.array(taskSuggestionDraftSchema).min(1),
+  suggestions: z.array(taskDraftSchema).min(1),
 });
 
 const suggestionItemProperties = {

@@ -8,7 +8,7 @@ import { getControllerMetadata, ControllerMethodMetadata } from './index';
 /**
  * 获取业务控制器的方法元数据
  */
-export function getBusinessControllerMethods(controllerName: string): ControllerMethodMetadata[] {
+export function controllerMethods(controllerName: string): ControllerMethodMetadata[] {
   const methodsMap = getControllerMetadata(controllerName);
   return Array.from(methodsMap.values());
 }

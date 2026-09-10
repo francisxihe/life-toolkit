@@ -5,8 +5,8 @@ import {
   createGoalConverter,
   MindMapData,
 } from '@true-north/components-mind/src/index';
-import MindMapNode from './MindMapNode';
-import MenuManager, { MenuManagerRef } from './NodeMenu/MenuManager';
+import MindMapNode from './mind-map-node';
+import MenuManager, { MenuManagerRef } from './node-menu/MenuManager';
 import { useGoalMindMapContext } from './context';
 import {
   handleAddChild,
@@ -66,8 +66,8 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
 
   onShowMenuRef.current = handleShowMenu;
 
-  const StableMindMapNode = useMemo(() => {
-    return function BoundMindMapNode(props: any) {
+  const BoundNode = useMemo(() => {
+    return function Node(props: any) {
       return (
         <MindMapNode
           {...props}
@@ -96,7 +96,7 @@ const X6MindMap: React.FC<X6MindMapProps> = ({
           }}
           showToolbar={showToolbar}
           onNodeClick={onNodeClick}
-          MindMapNode={StableMindMapNode}
+          MindMapNode={BoundNode}
         />
       ) : (
         <div className={styles.empty}>暂无目标数据</div>

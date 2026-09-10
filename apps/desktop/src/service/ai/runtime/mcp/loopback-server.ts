@@ -19,7 +19,7 @@ type JsonRpcRequest = {
   params?: Record<string, unknown>;
 };
 
-function streamIdFromRequest(req: IncomingMessage, url: URL): string | undefined {
+function streamIdOf(req: IncomingMessage, url: URL): string | undefined {
   const fromQuery = url.searchParams.get('s') || url.searchParams.get('streamId');
   if (fromQuery) return fromQuery;
   const fromHeader = req.headers['x-true-north-stream'];
@@ -207,7 +207,7 @@ function wrapError(id: JsonRpcRequest['id'], code: number, message: string) {
 }
 
 async function handlePost(req: IncomingMessage, res: ServerResponse, url: URL) {
-  const streamId = streamIdFromRequest(req, url);
+  const streamId = streamIdOf(req, url);
   const sessionId = (typeof req.headers['mcp-session-id'] === 'string' && req.headers['mcp-session-id']) || randomUUID();
   const raw = await readBody(req);
   let parsed: unknown;
@@ -266,7 +266,7 @@ function handleGet(_req: IncomingMessage, res: ServerResponse) {
   });
 }
 
-export function getLoopbackMcpUrl(streamId: string): string {
+export function mcpUrl(streamId: string): string {
   if (!port) {
     throw new Error('Loopback MCP 尚未启动');
   }
@@ -274,7 +274,7 @@ export function getLoopbackMcpUrl(streamId: string): string {
   return `http://127.0.0.1:${port}/mcp/${encoded}?s=${encoded}`;
 }
 
-export function startLoopbackMcpServer(): Promise<number> {
+export function startMcpServer(): Promise<number> {
   if (server && port) return Promise.resolve(port);
   return new Promise((resolve, reject) => {
     server = http.createServer((req, res) => {
@@ -319,7 +319,7 @@ export function startLoopbackMcpServer(): Promise<number> {
   });
 }
 
-export function stopLoopbackMcpServer(): Promise<void> {
+export function stopMcpServer(): Promise<void> {
   return new Promise((resolve) => {
     if (!server) {
       port = null;

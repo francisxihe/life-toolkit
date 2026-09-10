@@ -5,7 +5,7 @@ export type TodoRelatedTask = { relatedType: TodoRelatedType.TASK; relatedId: st
 export type TodoRelatedHabit = { relatedType: TodoRelatedType.HABIT; relatedId: string };
 export type TodoRelatedRepeat = { relatedType: TodoRelatedType.REPEAT; relatedId: string };
 export type TodoRelatedGoal = { relatedType: TodoRelatedType.GOAL; relatedId: string };
-export type TodoRelatedIsRepeat = { relatedType: TodoRelatedType.IS_REPEAT; relatedId?: string };
+export type RepeatRelated = { relatedType: TodoRelatedType.IS_REPEAT; relatedId?: string };
 
 export type NarrowedTodoRelated =
   | TodoRelatedNone
@@ -13,7 +13,7 @@ export type NarrowedTodoRelated =
   | TodoRelatedHabit
   | TodoRelatedRepeat
   | TodoRelatedGoal
-  | TodoRelatedIsRepeat;
+  | RepeatRelated;
 
 export type TodoRelatedLike = {
   relatedType?: TodoRelatedType | null;
@@ -71,7 +71,7 @@ export function deriveCompatIds(input: TodoRelatedLike): {
 }
 
 /** 将旧 VO 的 taskId/habitId/repeatId 映射为 relatedType + relatedId */
-export function mapCompatIdsToRelated(input: {
+export function mapRelatedIds(input: {
   relatedType?: TodoRelatedType;
   relatedId?: string;
   taskId?: string;

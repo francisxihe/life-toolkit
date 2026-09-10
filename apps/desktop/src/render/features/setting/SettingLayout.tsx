@@ -7,7 +7,7 @@ import clsx from 'clsx';
 import useLocale from '@/utils/useLocale';
 import { settingRoutes } from '@/router/routes/setting.routes';
 import locale from './locale';
-import { getSettingReturnPath } from './return-path';
+import { getReturnPath } from './returnPath';
 import styles from './SettingLayout.module.less';
 
 function SettingLayout() {
@@ -24,7 +24,7 @@ function SettingLayout() {
             <button
               type="button"
               className={styles.back}
-              onClick={() => navigate(getSettingReturnPath())}
+              onClick={() => navigate(getReturnPath())}
             >
               <ArrowLeft size={16} />
               {t['setting.nav.back']}

@@ -28,7 +28,7 @@ import type { AiDecomposePayloadVo, AiWorkspaceSuggestionVo } from '@true-north/
 import { GoalService, HabitService, TaskService, TodoService } from '@true-north/web-service';
 import { createDefaultRepeatSetting } from '@true-north/components-repeat';
 import { RepeatEndMode, RepeatMode } from '@true-north/components-repeat/types';
-import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@/utils/drawerStyles';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import styles from '../style.module.less';
@@ -357,7 +357,7 @@ export function GoalDecomposeWorkspace({
           }}
           size="large"
           destroyOnHidden
-          styles={drawerPaddedBodyStyles}
+          styles={drawerBodyStyles}
           extra={
             <Button type="primary" onClick={() => void saveEdit()}>
               保存

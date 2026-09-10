@@ -1,6 +1,6 @@
 import { Flex } from '@sue/design-web-react';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
-import TodoList from '../../components/TodoList';
+import TodoList from '../../components/todo-list';
 import styles from './TodoAgendaSections.module.less';
 
 export type TodoAgendaGroup = {

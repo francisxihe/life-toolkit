@@ -9,15 +9,15 @@ import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
 import { TodoStatus } from '@true-north/enum';
 import { useTodoDetail } from '../../components';
 import DayAgendaCalendar, {
-  formatDayAgendaTitle,
-} from '../../components/DayAgenda';
-import { useDayAgendaDate } from '../../components/DayAgenda/context';
+  formatAgendaTitle,
+} from '../../components/day-agenda';
+import { useAgendaDate } from '../../components/day-agenda/context';
 import TodoAgendaSections from '../components/TodoAgendaSections';
 import { onTodoChanged } from '../../events';
 
 export default function TodoToday() {
   const { selectedDate, setSelectedDate, visibleMonth, setVisibleMonth } =
-    useDayAgendaDate();
+    useAgendaDate();
   const [scheduledTodos, setScheduledTodos] = useState<TodoVo[]>([]);
   const [doneTodos, setDoneTodos] = useState<TodoVo[]>([]);
   const [expiredTodos, setExpiredTodos] = useState<TodoVo[]>([]);
@@ -129,7 +129,7 @@ export default function TodoToday() {
       </Flex>
       <Flex vertical container="fill" className={styles.main}>
         <Flex container="fixed" align="center" className={styles.toolbar}>
-          <h1 className={styles.title}>{formatDayAgendaTitle(selectedDate)}</h1>
+          <h1 className={styles.title}>{formatAgendaTitle(selectedDate)}</h1>
         </Flex>
         <Flex container="fill" className={styles.content}>
           <TodoAgendaSections

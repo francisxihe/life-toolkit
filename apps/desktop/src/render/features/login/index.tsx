@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Flex } from '@sue/design-web-react';
 import Footer from '@/components/Footer';
 import Logo from '@/assets/logo.svg';
-import LoginForm from './form';
-import LoginBanner from './banner';
+import LoginForm from './LoginForm';
+import LoginBanner from './LoginBanner';
 import styles from './style/index.module.less';
 
 function Login() {

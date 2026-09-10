@@ -8,7 +8,7 @@ function selectionPath(): string {
   return path.join(app.getPath('userData'), FILE_NAME);
 }
 
-export function readSelectedRuntimeId(): string | null {
+export function readRuntimeId(): string | null {
   try {
     const raw = fs.readFileSync(selectionPath(), 'utf8');
     const parsed = JSON.parse(raw) as { runtimeId?: unknown };
@@ -18,7 +18,7 @@ export function readSelectedRuntimeId(): string | null {
   }
 }
 
-export function writeSelectedRuntimeId(runtimeId: string): string {
+export function writeRuntimeId(runtimeId: string): string {
   const next = runtimeId.trim();
   fs.writeFileSync(selectionPath(), `${JSON.stringify({ runtimeId: next }, null, 2)}\n`, 'utf8');
   return next;

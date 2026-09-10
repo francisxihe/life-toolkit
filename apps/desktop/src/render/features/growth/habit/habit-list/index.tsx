@@ -8,17 +8,17 @@ import { Plus } from 'lucide-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 
-import { drawerPaddedBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@/utils/drawerStyles';
 import { CreateHabit } from '../components/CreateHabit';
 import styles from './style.module.less';
 
 export const HabitListPage: React.FC = () => {
   const { goals, handleRefresh } = useHabitListContext();
-  const openCreateHabitModal = () => {
+  const openCreateModal = () => {
     const instance = Drawer.open({
       title: '新增习惯',
       size: 800,
-      styles: drawerPaddedBodyStyles,
+      styles: drawerBodyStyles,
       content: (
         <CreateHabit
           goals={goals}
@@ -46,7 +46,7 @@ export const HabitListPage: React.FC = () => {
             type="primary"
             icon={<Plus size={16} />}
             onClick={() => {
-              openCreateHabitModal();
+              openCreateModal();
             }}
           >
             新增习惯

@@ -1,17 +1,17 @@
 import { useEffect, useMemo } from 'react';
 import { Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import Login from '@/features/login';
-import PageLayout from '@/features/app';
+import PageLayout from '@/features/app/Layout';
 import SettingLayout from '@/features/setting/SettingLayout';
 import lazyload from '../utils/lazyload';
 import useRouter, { FlattenRoute, RouterContext, getFlattenRoutes } from './useRouter';
-import { TaskDetailDrawerHost } from '@/features/growth/task/detail/TaskDetailDrawer';
+import { TaskDrawerHost } from '@/features/growth/task/detail/TaskDrawer';
 import { FocusTimerProvider } from '@/features/growth/focus-timer';
 import { WorkbenchProvider } from '@/features/workbench';
-import { rememberSettingReturnPath } from '@/features/setting/return-path';
+import { rememberReturnPath } from '@/features/setting/returnPath';
 import { settingRoutes } from './routes/setting.routes';
 
-const ForbiddenPage = lazyload(() => import('@/features/exception/403'));
+const ForbiddenPage = lazyload(() => import('@/features/app/exception/403'));
 
 function Router() {
   const router = useRouter();
@@ -22,7 +22,7 @@ function Router() {
   );
 
   useEffect(() => {
-    rememberSettingReturnPath(location.pathname);
+    rememberReturnPath(location.pathname);
   }, [location.pathname]);
 
   function renderRouteComponent(routes: FlattenRoute[]) {
@@ -45,7 +45,7 @@ function Router() {
     <RouterContext.Provider value={{ router }}>
       <FocusTimerProvider>
         <WorkbenchProvider>
-          <TaskDetailDrawerHost />
+          <TaskDrawerHost />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/setting" element={<SettingLayout />}>

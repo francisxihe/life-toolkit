@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 
 const FormItem = Form.Item;
 
-type CreateBudgetFormData = {
+type BudgetForm = {
   category?: CreateBudgetVo['category'];
   amount?: CreateBudgetVo['amount'];
   period?: CreateBudgetVo['period'];
@@ -18,8 +18,8 @@ function CreateBudget({
   initialValues,
   onChange,
 }: {
-  initialValues: CreateBudgetFormData;
-  onChange: (formData: Partial<CreateBudgetFormData>) => void;
+  initialValues: BudgetForm;
+  onChange: (formData: Partial<BudgetForm>) => void;
 }) {
   return (
     <Form
@@ -70,7 +70,7 @@ export function useCreateBudget({
 }: {
   onConfirm: (values: CreateBudgetVo) => void;
 }) {
-  const initialValues: CreateBudgetFormData = {
+  const initialValues: BudgetForm = {
     category: '',
     amount: undefined,
     period: 'monthly' as const,
@@ -78,7 +78,7 @@ export function useCreateBudget({
     endDate: dayjs().add(1, 'month').format('YYYY-MM-DD'),
   };
 
-  const formDataRef = useRef<CreateBudgetFormData>();
+  const formDataRef = useRef<BudgetForm>();
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;

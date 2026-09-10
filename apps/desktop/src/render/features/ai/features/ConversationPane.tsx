@@ -42,7 +42,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
     cancelStreaming,
     streaming,
     streamingAssistantId,
-    openWorkspaceFromMessage,
+    openWorkspace,
     onOpenGoal,
     onOpenTask,
     goals,
@@ -51,7 +51,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
     selectedAgentId,
     selectedAgent,
     selectCodingAgent,
-    canSendWithSelectedAgent,
+    canSend,
     threadWillReset,
     composerInputRef,
   } = useAiSessionContext();
@@ -102,7 +102,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
     });
   };
 
-  const handleComposerKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+  const onComposerKey = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Escape' && mentionOpen) {
       event.preventDefault();
       setMentionOpen(false);
@@ -135,8 +135,8 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
   };
 
   const isEmpty = !activeConversation || activeMessages.length === 0;
-  const composerDisabled = !activeConversation || streaming || !canSendWithSelectedAgent;
-  const sendDisabled = !canSendWithSelectedAgent || !draft.text.trim() || !activeConversation;
+  const composerDisabled = !activeConversation || streaming || !canSend;
+  const sendDisabled = !canSend || !draft.text.trim() || !activeConversation;
 
   const agentPicker = (
     <ProductSurface id={productRef('ai.session.view.agent-picker')}>
@@ -215,7 +215,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
                   streaming={streaming && message.id === streamingAssistantId}
                   onOpenGoal={onOpenGoal}
                   onOpenTask={onOpenTask}
-                  onOpenWorkspace={openWorkspaceFromMessage}
+                  onOpenWorkspace={openWorkspace}
                 />
               </MessageContent>
             </Message>
@@ -244,10 +244,10 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
           autoSize={{ minRows: 1, maxRows: 6 }}
           value={draft.text}
           placeholder={
-            canSendWithSelectedAgent ? '继续追问，输入 @ 引用目标或任务…' : '当前 Agent 不可用，无法发送'
+            canSend ? '继续追问，输入 @ 引用目标或任务…' : '当前 Agent 不可用，无法发送'
           }
           disabled={composerDisabled}
-          onKeyDown={handleComposerKeyDown}
+          onKeyDown={onComposerKey}
           onChange={(event) => {
             const nextText = event.target.value;
             const nextCursor = event.target.selectionStart ?? nextText.length;

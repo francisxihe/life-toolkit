@@ -45,7 +45,7 @@ export default function GoalTreeSelector(props: GoalTreeSelectorProps) {
 
       if (data) {
         const blockedIds = collectDescendantIds(data, excludeId);
-        const tree = convertToTreeNodes(data, blockedIds, excludeId);
+        const tree = toTreeNodes(data, blockedIds, excludeId);
         setTreeData(tree);
       }
     } catch (error) {
@@ -74,7 +74,7 @@ export default function GoalTreeSelector(props: GoalTreeSelectorProps) {
     return new Set();
   };
 
-  const convertToTreeNodes = (
+  const toTreeNodes = (
     goals: GoalVo[],
     blockedIds: Set<string>,
     excludeId?: string,
@@ -92,7 +92,7 @@ export default function GoalTreeSelector(props: GoalTreeSelectorProps) {
 
         // 递归处理子目标
         if (goal.children && goal.children.length > 0) {
-          node.children = convertToTreeNodes(goal.children, blockedIds, excludeId);
+          node.children = toTreeNodes(goal.children, blockedIds, excludeId);
         }
 
         return node;

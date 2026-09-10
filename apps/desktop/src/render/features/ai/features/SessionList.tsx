@@ -173,7 +173,7 @@ function SessionItem({
     event.stopPropagation();
   };
 
-  const onTitleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const onTitleKey = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Escape') {
       event.preventDefault();
       cancelRename();
@@ -196,7 +196,7 @@ function SessionItem({
           onChange={(event) => setDraftTitle(event.target.value)}
           onPressEnter={() => void commitRename()}
           onBlur={() => void commitRename()}
-          onKeyDown={onTitleKeyDown}
+          onKeyDown={onTitleKey}
         />
       ) : (
         <>

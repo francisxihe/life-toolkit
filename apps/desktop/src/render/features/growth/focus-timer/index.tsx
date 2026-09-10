@@ -36,27 +36,27 @@ const RELATED_PREFIX = {
   todo: 'todo:',
 } as const;
 
-export type FocusTimerOpenOptions = {
+export type TimerOptions = {
   taskId?: string;
   todoId?: string;
   label?: string;
 };
 
-type FocusTimerOpenFn = (related?: string | FocusTimerOpenOptions) => void;
+type TimerOpenFn = (related?: string | TimerOptions) => void;
 
-type FocusTimerContextValue = {
-  open: FocusTimerOpenFn;
+type TimerValue = {
+  open: TimerOpenFn;
 };
 
 type RelatedOption = { value: string; label: string };
 type RelatedOptionGroup = { label: string; options: RelatedOption[] };
 
-const FocusTimerContext = createContext<FocusTimerContextValue | null>(null);
+const FocusTimerContext = createContext<TimerValue | null>(null);
 
 /** Static Drawer/Modal portals leave the React tree; Provider registers here. */
-let registeredOpen: FocusTimerOpenFn | null = null;
+let registeredOpen: TimerOpenFn | null = null;
 
-export function openFocusTimer(related?: string | FocusTimerOpenOptions) {
+export function openFocusTimer(related?: string | TimerOptions) {
   if (!registeredOpen) {
     message.warning('专注计时器未就绪');
     return;
@@ -72,8 +72,8 @@ export function useFocusTimer() {
 }
 
 function normalizeOpenOptions(
-  related?: string | FocusTimerOpenOptions,
-): FocusTimerOpenOptions {
+  related?: string | TimerOptions,
+): TimerOptions {
   if (!related) return {};
   if (typeof related === 'string') return { taskId: related };
   return related;
@@ -148,7 +148,7 @@ export function FocusTimerProvider({
   }, []);
 
   const open = useCallback(
-    (related?: string | FocusTimerOpenOptions) => {
+    (related?: string | TimerOptions) => {
       const options = normalizeOpenOptions(related);
       const nextTodoId = options.todoId;
       const nextTaskId = options.todoId ? undefined : options.taskId;

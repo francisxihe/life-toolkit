@@ -16,7 +16,7 @@ import type {
 import { AiPlatformError } from '../ai-error';
 import { GoalRepository } from '../../growth/goal/goal.repository';
 import { TaskRepository } from '../../growth/task/task.repository';
-import { getRuntimeAgentDef } from '../runtime/registry';
+import { agentDef } from '../runtime/registry';
 import { killChildProcess, runtimeService } from '../runtime';
 import { AiConversation } from './conversation.entity';
 import { AiConversationRepository } from './conversation.repository';
@@ -24,7 +24,7 @@ import { AiMessage } from './message.entity';
 import { AiMessageRepository } from './message.repository';
 import {
   cancelStream,
-  emitChatStreamEvent,
+  emitStream,
   finishStream,
   registerStreamAbort,
 } from './stream-bus';
@@ -68,7 +68,7 @@ function formatEntityLinks(links: AiEntityLinkVo[] | undefined): string {
   return links.map((link) => `@${link.label} {${link.type}:${link.id}}`).join(', ');
 }
 
-function extractTextFromParts(parts: AiMessagePartVo[]): string {
+function textFromParts(parts: AiMessagePartVo[]): string {
   const texts: string[] = [];
   for (const part of parts) {
     if (part.type === 'text') {
@@ -91,7 +91,7 @@ function buildHistoryExcerpt(history: AiMessage[]): string {
   const lines: string[] = [];
   let chars = 0;
   for (const item of recent) {
-    const content = extractTextFromParts(item.parts || []);
+    const content = textFromParts(item.parts || []);
     if (!content.trim()) continue;
     const role = item.role === AiMessageRole.ASSISTANT ? 'Assistant' : 'User';
     const line = `${role}: ${content}`;
@@ -195,7 +195,7 @@ export class ConversationService {
 
   async patchRuntime(conversationId: string, body: PatchConversationRuntimeRequestVo): Promise<ConversationVo> {
     const runtimeId = body?.runtimeId?.trim();
-    if (!runtimeId || !getRuntimeAgentDef(runtimeId)) {
+    if (!runtimeId || !agentDef(runtimeId)) {
       throw AiPlatformError.agentUnavailable('未知编码 Agent');
     }
     const conversation = await this.conversationRepository.find(conversationId);
@@ -309,14 +309,14 @@ export class ConversationService {
       const history = await this.messageRepository.findByFilter({ conversationId });
       const withoutPlaceholder = history.filter((item) => item.id !== assistantId);
       const latestUser = [...withoutPlaceholder].reverse().find((item) => item.role === AiMessageRole.USER);
-      const latestUserText = latestUser ? extractTextFromParts(latestUser.parts || []) : '';
+      const latestUserText = latestUser ? textFromParts(latestUser.parts || []) : '';
 
       const persistParts = async (parts: AiMessagePartVo[]): Promise<MessageVo> => {
         const assistant = await this.messageRepository.find(assistantId);
         assistant.parts = parts.length ? parts : [{ type: 'text', text: '' }];
         const saved = await this.messageRepository.update(assistant);
         const vo = toMessageVo(saved);
-        emitChatStreamEvent({ streamId, event: 'message', message: vo });
+        emitStream({ streamId, event: 'message', message: vo });
         return vo;
       };
 
@@ -338,7 +338,7 @@ export class ConversationService {
       if (result.threadId) latest.runtimeThreadId = result.threadId;
       latest.updatedAt = new Date();
       await this.conversationRepository.update(latest);
-      emitChatStreamEvent({ streamId, event: 'done', message: result.message });
+      emitStream({ streamId, event: 'done', message: result.message });
     } catch (error) {
       const code =
         error instanceof AiPlatformError
@@ -354,7 +354,7 @@ export class ConversationService {
       } catch {
         // ignore
       }
-      emitChatStreamEvent({ streamId, event: 'error', code, messageText });
+      emitStream({ streamId, event: 'error', code, messageText });
     } finally {
       finishStream(streamId);
       killChildProcess(streamId);

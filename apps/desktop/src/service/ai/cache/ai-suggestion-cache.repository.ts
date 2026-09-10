@@ -10,7 +10,7 @@ export type AiSuggestionCacheFilterDto = {
   refId?: string;
 };
 
-export class AiSuggestionCacheRepository extends BaseRepositoryImpl<
+export class CacheRepository extends BaseRepositoryImpl<
   AiSuggestionCache,
   AiSuggestionCacheFilterDto
 > {

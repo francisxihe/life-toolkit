@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { AiCapabilityKey, AiSuggestionKind } from '@true-north/enum';
 import type { AiSuggestionVo, TaskDecomposeRequestVo, TaskDecomposeResponseVo } from '@true-north/vo';
 import { AiPlatformError } from '../ai-error';
-import { aiSuggestionCacheService, fingerprintPromptContext } from '../cache/ai-suggestion-cache.service';
+import { cacheService, fingerprintPromptContext } from '../cache/ai-suggestion-cache.service';
 import { taskContextBuilder } from '../context/task-context.builder';
 
 const TOTAL_CAP = 8;
@@ -97,7 +97,7 @@ export class TaskDecomposeCapability {
 
     const hasDrafts = Array.isArray(input.suggestions) && input.suggestions.length > 0;
     if (!hasDrafts) {
-      const cached = await aiSuggestionCacheService.findMatching({
+      const cached = await cacheService.findMatching({
         capabilityKey: this.key,
         refType: REF_TYPE,
         refId: input.taskId,
@@ -137,7 +137,7 @@ export class TaskDecomposeCapability {
       suggestions,
     };
 
-    await aiSuggestionCacheService.upsert({
+    await cacheService.upsert({
       capabilityKey: this.key,
       refType: REF_TYPE,
       refId: input.taskId,

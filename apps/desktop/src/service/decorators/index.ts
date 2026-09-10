@@ -77,7 +77,7 @@ export function BusinessMethod(options: Partial<ControllerMethodMetadata> = {}) 
 
 type MethodOptions = { description?: string };
 
-function createBridgedMethodDecorator(
+function bridgedDecorator(
   httpMethod: ControllerMethodMetadata['httpMethod'],
   ipcDecorator: (path?: string) => MethodDecorator
 ) {
@@ -98,22 +98,22 @@ function createBridgedMethodDecorator(
 /**
  * HTTP GET 方法装饰器
  */
-export const Get = createBridgedMethodDecorator('GET', IpcGet);
+export const Get = bridgedDecorator('GET', IpcGet);
 
 /**
  * HTTP POST 方法装饰器
  */
-export const Post = createBridgedMethodDecorator('POST', IpcPost);
+export const Post = bridgedDecorator('POST', IpcPost);
 
 /**
  * HTTP PUT 方法装饰器
  */
-export const Put = createBridgedMethodDecorator('PUT', IpcPut);
+export const Put = bridgedDecorator('PUT', IpcPut);
 
 /**
  * HTTP DELETE 方法装饰器
  */
-export const Delete = createBridgedMethodDecorator('DELETE', IpcDelete);
+export const Delete = bridgedDecorator('DELETE', IpcDelete);
 
 /**
  * HTTP PATCH 方法装饰器（仅业务元数据；electron-ipc-restful 暂无 PATCH）

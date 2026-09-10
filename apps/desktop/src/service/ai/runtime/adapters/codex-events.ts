@@ -27,7 +27,7 @@ function emitSnapshotSuffix(lastAgentText: string, text: string): CodexAgentDelt
   return { nextLastAgentText: lastAgentText };
 }
 
-export function extractCodexAgentDelta(
+export function extractDelta(
   event: Record<string, unknown>,
   lastAgentText: string
 ): CodexAgentDelta {

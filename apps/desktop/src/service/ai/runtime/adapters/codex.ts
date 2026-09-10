@@ -5,7 +5,7 @@ import { consumeJsonl, readString } from '../jsonl';
 import { registerChildProcess } from '../process-registry';
 import { prepareCodexWorkspace } from '../workspace';
 import type { RuntimeSpawnInput, RuntimeSpawnResult } from '../types';
-import { extractCodexAgentDelta } from './codex-events';
+import { extractDelta } from './codex-events';
 
 function helpIncludes(binPath: string, flag: string): boolean {
   const result = spawnSync(binPath, ['exec', '--help'], {
@@ -18,7 +18,7 @@ function helpIncludes(binPath: string, flag: string): boolean {
   return text.includes(flag);
 }
 
-function needsDangerFullAccess(
+function needsFullAccess(
   platform: NodeJS.Platform = process.platform,
   env: NodeJS.ProcessEnv = process.env,
 ): boolean {
@@ -26,14 +26,14 @@ function needsDangerFullAccess(
   return Boolean(env.WSL_DISTRO_NAME?.trim());
 }
 
-export function buildCodexExecArgs(input: {
+export function execArgs(input: {
   resumeThreadId?: string;
   skipGitRepoCheck: boolean;
   platform?: NodeJS.Platform;
   env?: NodeJS.ProcessEnv;
 }): string[] {
   const resume = Boolean(input.resumeThreadId);
-  const danger = needsDangerFullAccess(input.platform, input.env);
+  const danger = needsFullAccess(input.platform, input.env);
   const sandboxArgs = danger
     ? resume
       ? ['-c', 'sandbox_mode="danger-full-access"']
@@ -72,7 +72,7 @@ async function spawnCodexProcess(
 ): Promise<RuntimeSpawnResult> {
   const { binPath, workspaceDir, mcpUrl, prompt, resumeThreadId, signal } = input;
   const codexHome = prepareCodexWorkspace(workspaceDir, mcpUrl);
-  const args = buildCodexExecArgs({
+  const args = execArgs({
     resumeThreadId,
     skipGitRepoCheck: helpIncludes(binPath, '--skip-git-repo-check'),
   });
@@ -122,7 +122,7 @@ async function spawnCodexProcess(
         }
         return;
       }
-      const parsed = extractCodexAgentDelta(event, lastAgentText);
+      const parsed = extractDelta(event, lastAgentText);
       lastAgentText = parsed.nextLastAgentText;
       if (parsed.delta) input.onDelta(parsed.delta);
     });

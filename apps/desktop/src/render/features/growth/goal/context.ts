@@ -118,7 +118,7 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
       const childrenData = Array.isArray(children) ? children : [];
 
       // 更新树形数据，将子节点添加到对应的父节点
-      const updateTreeWithChildren = (nodes: GoalVo[]): GoalVo[] => {
+      const updateTree = (nodes: GoalVo[]): GoalVo[] => {
         return nodes.map((node) => {
           if (node.id === parentId) {
             return {
@@ -134,14 +134,14 @@ export const [GoalProvider, useGoalContext] = createInjectState<{
           if (node.children && node.children.length > 0) {
             return {
               ...node,
-              children: updateTreeWithChildren(node.children),
+              children: updateTree(node.children),
             };
           }
           return node;
         });
       };
 
-      setGoalTree((prevTree) => updateTreeWithChildren(prevTree));
+      setGoalTree((prevTree) => updateTree(prevTree));
     } catch (error) {
       console.error('加载子节点失败:', error);
       message.error('加载子节点失败');

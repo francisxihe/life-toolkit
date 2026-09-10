@@ -1,14 +1,14 @@
 import { createHash } from 'crypto';
 import type { GoalDecomposeResponseVo } from '@true-north/vo';
 import { AiSuggestionCache } from './ai-suggestion-cache.entity';
-import { AiSuggestionCacheRepository } from './ai-suggestion-cache.repository';
+import { CacheRepository } from './ai-suggestion-cache.repository';
 
 export function fingerprintPromptContext(promptContext: string): string {
   return createHash('sha256').update(promptContext).digest('hex');
 }
 
-export class AiSuggestionCacheService {
-  constructor(private readonly repository = new AiSuggestionCacheRepository()) {}
+export class CacheService {
+  constructor(private readonly repository = new CacheRepository()) {}
 
   async findMatching(input: {
     capabilityKey: string;
@@ -68,4 +68,4 @@ export class AiSuggestionCacheService {
   }
 }
 
-export const aiSuggestionCacheService = new AiSuggestionCacheService();
+export const cacheService = new CacheService();

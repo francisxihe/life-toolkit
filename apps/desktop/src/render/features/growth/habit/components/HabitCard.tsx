@@ -11,7 +11,7 @@ import {
 import { Check, Ellipsis, Pencil, Trash2 } from 'lucide-react';
 import { HabitWithoutRelationsVo } from '@true-north/vo';
 import { HABIT_STATUS_OPTIONS } from '../constants';
-import { formatHabitRepeatLabel } from '../formatHabitRepeatLabel';
+import { formatRepeatLabel } from '../repeatLabel';
 import styles from './HabitCard.module.less';
 
 interface HabitCardProps {
@@ -119,7 +119,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({
 
       <Flex vertical gap={10}>
         {goalLabel ? <p className={styles.goalLabel}>{goalLabel}</p> : null}
-        <p className={styles.repeatLabel}>执行规则：{formatHabitRepeatLabel(habit)}</p>
+        <p className={styles.repeatLabel}>执行规则：{formatRepeatLabel(habit)}</p>
         <Flex align="center" justify="space-between" className={styles.progressHeader}>
           <span>当前连续</span>
           <strong>{habit.currentStreak || 0} 天</strong>

@@ -8,6 +8,6 @@ export const RUNTIME_AGENT_DEFS: RuntimeAgentDef[] = [
   },
 ];
 
-export function getRuntimeAgentDef(id: string): RuntimeAgentDef | undefined {
+export function agentDef(id: string): RuntimeAgentDef | undefined {
   return RUNTIME_AGENT_DEFS.find((item) => item.id === id);
 }

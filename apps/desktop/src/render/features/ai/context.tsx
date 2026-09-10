@@ -20,12 +20,12 @@ import type {
 } from '@true-north/vo';
 import { AiService, GoalService, TaskService } from '@true-north/web-service';
 import { useWorkbench } from '../workbench';
-import { openTaskDetailDrawer } from '../growth/task/detail/TaskDetailDrawer';
-import type { AiDraft, AiSessionContextValue, ComposerInputRef } from './types';
+import { openTaskDrawer } from '../growth/task/detail/TaskDrawer';
+import type { AiDraft, SessionValue, ComposerInputRef } from './types';
 
 const EMPTY_DRAFT: AiDraft = { text: '', links: [] };
 
-function resolveSelectedAgentId(agents: RuntimeAgentVo[], savedId: string | null): string {
+function resolveAgentId(agents: RuntimeAgentVo[], savedId: string | null): string {
   const saved = savedId ? agents.find((item) => item.id === savedId) : undefined;
   if (saved?.available) return saved.id;
   const firstAvailable = agents.find((item) => item.available);
@@ -33,7 +33,7 @@ function resolveSelectedAgentId(agents: RuntimeAgentVo[], savedId: string | null
   return savedId || agents[0]?.id || '';
 }
 
-const AiSessionContext = createContext<AiSessionContextValue | null>(null);
+const AiSessionContext = createContext<SessionValue | null>(null);
 
 function collectEntityRefs(messages: MessageVo[]): AiEntityLinkVo[] {
   const map = new Map<string, AiEntityLinkVo>();
@@ -53,7 +53,7 @@ function collectEntityRefs(messages: MessageVo[]): AiEntityLinkVo[] {
   return [...map.values()];
 }
 
-function appendDeltaToParts(item: MessageVo, delta: string): MessageVo {
+function appendDelta(item: MessageVo, delta: string): MessageVo {
   const parts = [...(item.parts || [])];
   const last = parts[parts.length - 1];
   if (last && last.type === 'text') {
@@ -71,7 +71,7 @@ function concatTextParts(parts: MessageVo['parts']): string {
     .join('');
 }
 
-function collectTextEntityLinks(parts: MessageVo['parts']): AiEntityLinkVo[] {
+function collectLinks(parts: MessageVo['parts']): AiEntityLinkVo[] {
   const links: AiEntityLinkVo[] = [];
   for (const part of parts) {
     if (part.type === 'text') {
@@ -86,8 +86,8 @@ function mergeAssistantMessage(local: MessageVo, incoming: MessageVo): MessageVo
   const incomingParts = incoming.parts || [];
   const localText = concatTextParts(localParts);
   const incomingText = concatTextParts(incomingParts);
-  const localLinks = collectTextEntityLinks(localParts);
-  const incomingLinks = collectTextEntityLinks(incomingParts);
+  const localLinks = collectLinks(localParts);
+  const incomingLinks = collectLinks(incomingParts);
 
   let text = incomingText;
   let entityLinks = incomingLinks;
@@ -120,7 +120,7 @@ function mergeAssistantMessage(local: MessageVo, incoming: MessageVo): MessageVo
   return { ...incoming, parts };
 }
 
-function linksStillInText(text: string, links: AiEntityLinkVo[]): AiEntityLinkVo[] {
+function linksInText(text: string, links: AiEntityLinkVo[]): AiEntityLinkVo[] {
   return links.filter((link) => text.includes(`@${link.label}`));
 }
 
@@ -132,7 +132,7 @@ function toolTabTitle(part: AiWorkspacePartVo): string {
 
 export function AiSessionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
-  const { openToolTab, pendingFollowUp, clearPendingFollowUp } = useWorkbench();
+  const { openToolTab, pendingFollowUp, clearFollowUp } = useWorkbench();
   const [searchParams, setSearchParams] = useSearchParams();
   const [conversations, setConversations] = useState<ConversationVo[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
@@ -150,14 +150,14 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
   const streamingConversationIdRef = useRef<string | null>(null);
   const suppressStreamErrorRef = useRef(false);
   const composerInputRef = useRef<ComposerInputRef>(null);
-  const streamingAssistantIdRef = useRef<string | null>(null);
+  const assistantIdRef = useRef<string | null>(null);
   const [streamingAssistantId, setStreamingAssistantId] = useState<string | null>(null);
-  const activeConversationIdRef = useRef<string | null>(null);
-  activeConversationIdRef.current = activeConversationId;
+  const conversationIdRef = useRef<string | null>(null);
+  conversationIdRef.current = activeConversationId;
 
   const activeConversation = conversations.find((item) => item.id === activeConversationId);
   const selectedAgent = codingAgents.find((item) => item.id === selectedAgentId);
-  const canSendWithSelectedAgent = Boolean(selectedAgent?.available);
+  const canSend = Boolean(selectedAgent?.available);
   const threadWillReset = Boolean(
     pendingThreadReset ||
       (activeConversation?.runtimeId && activeConversation.runtimeId !== selectedAgentId)
@@ -187,10 +187,10 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     }
     setDraft(pendingFollowUp.text);
     focusComposer();
-    clearPendingFollowUp();
+    clearFollowUp();
   }, [
     activeConversationId,
-    clearPendingFollowUp,
+    clearFollowUp,
     focusComposer,
     pendingFollowUp,
     searchParams,
@@ -207,7 +207,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     setConversations(result.data);
     if (preferId && result.data.some((item) => item.id === preferId)) {
       setActiveConversationId(preferId);
-    } else if (!preferId && !activeConversationIdRef.current && result.data[0]) {
+    } else if (!preferId && !conversationIdRef.current && result.data[0]) {
       setActiveConversationId(result.data[0].id);
     }
     return result.data;
@@ -235,7 +235,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     const agents = agentsResult.ok === false ? [] : agentsResult.data;
     setCodingAgents(agents);
     const savedId = selectionResult.ok === false ? null : selectionResult.data.runtimeId;
-    setSelectedAgentId(resolveSelectedAgentId(agents, savedId));
+    setSelectedAgentId(resolveAgentId(agents, savedId));
   }, []);
 
   useEffect(() => {
@@ -361,7 +361,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
           } else if (!cancelled) {
             streamIdRef.current = result.data.streamId;
             streamingConversationIdRef.current = bound.data.conversation.id;
-            streamingAssistantIdRef.current = result.data.assistant.id;
+            assistantIdRef.current = result.data.assistant.id;
             setStreamingAssistantId(result.data.assistant.id);
             setActiveMessages([result.data.user, result.data.assistant]);
           }
@@ -396,10 +396,10 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
       if (!streamIdRef.current || event.streamId !== streamIdRef.current) return;
 
       if (event.event === 'delta') {
-        const assistantId = streamingAssistantIdRef.current;
+        const assistantId = assistantIdRef.current;
         if (!assistantId) return;
         setActiveMessages((items) =>
-          items.map((item) => (item.id === assistantId ? appendDeltaToParts(item, event.delta) : item))
+          items.map((item) => (item.id === assistantId ? appendDelta(item, event.delta) : item))
         );
         return;
       }
@@ -421,11 +421,11 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
         );
         streamIdRef.current = null;
         streamingConversationIdRef.current = null;
-        streamingAssistantIdRef.current = null;
+        assistantIdRef.current = null;
         setStreamingAssistantId(null);
         setStreaming(false);
         setPendingThreadReset(false);
-        void refreshConversations(activeConversationIdRef.current);
+        void refreshConversations(conversationIdRef.current);
         return;
       }
 
@@ -434,14 +434,14 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
         suppressStreamErrorRef.current = false;
         streamIdRef.current = null;
         streamingConversationIdRef.current = null;
-        streamingAssistantIdRef.current = null;
+        assistantIdRef.current = null;
         setStreamingAssistantId(null);
         setStreaming(false);
         if (suppressed) return;
         setStreamError(event.messageText);
         message.error(event.messageText);
-        if (activeConversationIdRef.current) {
-          void loadMessages(activeConversationIdRef.current);
+        if (conversationIdRef.current) {
+          void loadMessages(conversationIdRef.current);
         }
       }
     });
@@ -510,7 +510,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
       }
       const remaining = conversations.filter((item) => item.id !== id);
       setConversations(remaining);
-      if (activeConversationIdRef.current !== id) return;
+      if (conversationIdRef.current !== id) return;
       if (remaining[0]) {
         selectConversation(remaining[0].id);
         return;
@@ -563,8 +563,8 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
 
   const sendUserMessage = useCallback(async () => {
     const text = draft.text.trim();
-    if (!text || !activeConversationId || streaming || !canSendWithSelectedAgent) return;
-    const entityLinks = linksStillInText(text, draft.links);
+    if (!text || !activeConversationId || streaming || !canSend) return;
+    const entityLinks = linksInText(text, draft.links);
 
     setDraftState(EMPTY_DRAFT);
     setStreamError(null);
@@ -583,12 +583,12 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
 
     streamIdRef.current = result.data.streamId;
     streamingConversationIdRef.current = activeConversationId;
-    streamingAssistantIdRef.current = result.data.assistant.id;
+    assistantIdRef.current = result.data.assistant.id;
     setStreamingAssistantId(result.data.assistant.id);
     setActiveMessages((items) => [...items, result.data.user, result.data.assistant]);
-  }, [activeConversationId, canSendWithSelectedAgent, draft, streaming]);
+  }, [activeConversationId, canSend, draft, streaming]);
 
-  const openWorkspaceFromMessage = useCallback(
+  const openWorkspace = useCallback(
     (messageId: string) => {
       const item = activeMessages.find((entry) => entry.id === messageId);
       const part = item?.parts.find((entry): entry is AiWorkspacePartVo => entry.type === 'workspace');
@@ -629,10 +629,10 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
   );
 
   const onOpenTask = useCallback((taskId: string) => {
-    openTaskDetailDrawer({ taskId });
+    openTaskDrawer({ taskId });
   }, []);
 
-  const value: AiSessionContextValue = {
+  const value: SessionValue = {
     conversations,
     activeConversationId,
     activeConversation,
@@ -651,7 +651,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     selectedAgentId,
     selectedAgent,
     selectCodingAgent,
-    canSendWithSelectedAgent,
+    canSend,
     threadWillReset,
     selectConversation,
     createBlankConversation,
@@ -660,7 +660,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     deleteConversation,
     sendUserMessage,
     cancelStreaming,
-    openWorkspaceFromMessage,
+    openWorkspace,
     goalTitle,
     taskTitle,
     onOpenGoal,

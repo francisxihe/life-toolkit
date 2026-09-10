@@ -95,7 +95,7 @@ function DropContent() {
               onItemClick={(entry) => {
                 readMessage([entry]);
               }}
-              onAllBtnClick={(unread) => {
+              onAllClick={(unread) => {
                 readMessage(unread);
               }}
             />

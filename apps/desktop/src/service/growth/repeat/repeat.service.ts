@@ -84,7 +84,7 @@ export class RepeatService {
     });
     const settledCurrentDate = fixed.currentDate || fixed.repeatStartDate;
 
-    const calculatedNextDateResult = calculateNextDate(dayjs(settledCurrentDate), {
+    const calcResult = calculateNextDate(dayjs(settledCurrentDate), {
       repeatMode: fixed.repeatMode,
       repeatConfig: fixed.repeatConfig,
       repeatEndMode: fixed.repeatEndMode,
@@ -92,11 +92,11 @@ export class RepeatService {
       repeatTimes: fixed.repeatTimes,
       repeatStartDate: fixed.repeatStartDate,
     });
-    if (calculatedNextDateResult.ok === false) {
-      throw new RepeatValidationError(calculatedNextDateResult.issues);
+    if (calcResult.ok === false) {
+      throw new RepeatValidationError(calcResult.issues);
     }
-    const nextDate = calculatedNextDateResult.value
-      ? calculatedNextDateResult.value.format('YYYY-MM-DD')
+    const nextDate = calcResult.value
+      ? calcResult.value.format('YYYY-MM-DD')
       : null;
 
     if (nextDate) {
@@ -121,18 +121,18 @@ export class RepeatService {
     };
 
     const currentDate = dayjs(input.currentDate);
-    const isCurrentDateValidResult = isValidDate(currentDate, repeatConfig);
-    if (isCurrentDateValidResult.ok === false) {
-      throw new RepeatValidationError(isCurrentDateValidResult.issues);
+    const validResult = isValidDate(currentDate, repeatConfig);
+    if (validResult.ok === false) {
+      throw new RepeatValidationError(validResult.issues);
     }
 
-    if (!isCurrentDateValidResult.value) {
-      const validNextDateResult = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
-      if (validNextDateResult.ok === false) {
-        throw new RepeatValidationError(validNextDateResult.issues);
+    if (!validResult.value) {
+      const nextValid = calculateNextDate(currentDate.subtract(1, 'day'), repeatConfig);
+      if (nextValid.ok === false) {
+        throw new RepeatValidationError(nextValid.issues);
       }
-      if (validNextDateResult.value) {
-        input.currentDate = validNextDateResult.value.format('YYYY-MM-DD');
+      if (nextValid.value) {
+        input.currentDate = nextValid.value.format('YYYY-MM-DD');
       }
     }
 

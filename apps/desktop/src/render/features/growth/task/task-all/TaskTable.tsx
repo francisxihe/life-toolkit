@@ -7,7 +7,7 @@ import { TaskService } from '@true-north/web-service';
 import { TaskVo } from '@true-north/vo';
 import { emitTaskChanged } from '../../events';
 import { TaskStatus } from '@true-north/enum';
-import { openTaskDetailDrawer } from '../detail/TaskDetailDrawer';
+import { openTaskDrawer } from '../detail/TaskDrawer';
 
 export default function TaskTable() {
   const {
@@ -91,7 +91,7 @@ export default function TaskTable() {
           <Button
             type="text"
             onClick={() => {
-              openTaskDetailDrawer({ taskId: record.id, onRefresh: getTaskPage });
+              openTaskDrawer({ taskId: record.id, onRefresh: getTaskPage });
             }}
           >
             查看

@@ -24,7 +24,7 @@ interface MessageListProps {
   data: MessageItemData[];
   unReadData: MessageItemData[];
   onItemClick?: (item: MessageItemData, index: number) => void;
-  onAllBtnClick?: (
+  onAllClick?: (
     unReadData: MessageItemData[],
     data: MessageItemData[],
   ) => void;
@@ -39,8 +39,8 @@ function MessageList(props: MessageListProps) {
     props.onItemClick && props.onItemClick(item, index);
   }
 
-  function onAllBtnClick() {
-    props.onAllBtnClick && props.onAllBtnClick(unReadData, data);
+  function onAllClick() {
+    props.onAllClick && props.onAllClick(unReadData, data);
   }
 
   return (
@@ -114,7 +114,7 @@ function MessageList(props: MessageListProps) {
       )}
       <Flex className={styles.footer}>
         <Flex flex={1} justify="center" className={styles['footer-item']}>
-          <Button type="link" size="small" onClick={onAllBtnClick}>
+          <Button type="link" size="small" onClick={onAllClick}>
             {t['message.allRead']}
           </Button>
         </Flex>

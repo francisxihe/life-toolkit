@@ -6,7 +6,7 @@ import { CreateTransactionVo } from '@true-north/vo';
 
 const FormItem = Form.Item;
 
-type CreateTransactionFormData = {
+type TransactionForm = {
   type?: CreateTransactionVo['type'];
   amount?: CreateTransactionVo['amount'];
   description?: CreateTransactionVo['description'];
@@ -19,8 +19,8 @@ export function TransactionForm({
   initialValues,
   onChange,
 }: {
-  initialValues: CreateTransactionFormData;
-  onChange: (data: Partial<CreateTransactionFormData>) => void;
+  initialValues: TransactionForm;
+  onChange: (data: Partial<TransactionForm>) => void;
 }) {
   const [form] = Form.useForm();
 
@@ -97,7 +97,7 @@ export function useCreateTransaction({
 }: {
   onConfirm: (values: CreateTransactionVo) => void;
 }) {
-  const initialValues: CreateTransactionFormData = {
+  const initialValues: TransactionForm = {
     type: 'expense' as const,
     amount: undefined,
     description: undefined,
@@ -106,7 +106,7 @@ export function useCreateTransaction({
     transactionDateTime: undefined,
   };
 
-  const formDataRef = useRef<CreateTransactionFormData>();
+  const formDataRef = useRef<TransactionForm>();
 
   const openCreateModal = () => {
     formDataRef.current = initialValues;

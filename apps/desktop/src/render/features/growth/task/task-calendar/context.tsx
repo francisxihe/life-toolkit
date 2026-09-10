@@ -11,15 +11,15 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     setSearchQuery: (query: string) => void;
     pageShowDate: Dayjs;
     setPageShowDate: (date: Dayjs) => void;
-    showAddTaskDate: Dayjs | null;
-    setShowAddTaskDate: (date: Dayjs | null) => void;
+    addDate: Dayjs | null;
+    setAddDate: (date: Dayjs | null) => void;
     getTaskList: (date?: Dayjs) => Promise<void>;
   };
 }>(() => {
   const [searchQuery, setSearchQuery] = useState('');
   const [taskList, setTaskList] = useState<TaskVo[]>([]);
   const [pageShowDate, setPageShowDate] = useState(dayjs());
-  const [showAddTaskDate, setShowAddTaskDate] = useState<Dayjs | null>(null);
+  const [addDate, setAddDate] = useState<Dayjs | null>(null);
 
   const getTaskList = useCallback(async (date = pageShowDate) => {
     const visibleStart = date.startOf('month').startOf('week');
@@ -37,8 +37,8 @@ export const [CalendarProvider, useCalendarContext] = createInjectState<{
     setSearchQuery,
     pageShowDate,
     setPageShowDate,
-    showAddTaskDate,
-    setShowAddTaskDate,
+    addDate,
+    setAddDate,
     getTaskList,
   };
 });

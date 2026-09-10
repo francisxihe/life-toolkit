@@ -4,7 +4,7 @@ import { Todo as TodoVO } from '@true-north/vo';
 import dayjs from 'dayjs';
 import { TodoDto } from './todo-model.dto';
 import { Todo } from '../todo.entity';
-import { mapCompatIdsToRelated } from '../todo-related';
+import { mapRelatedIds } from '../todo-related';
 
 export class CreateTodoDto extends PickType(TodoDto, [
   'name',
@@ -40,7 +40,7 @@ export class CreateTodoDto extends PickType(TodoDto, [
 
   exportCreateEntity(): Todo {
     const todo = new Todo();
-    const related = mapCompatIdsToRelated({
+    const related = mapRelatedIds({
       relatedType: this.relatedType,
       relatedId: this.relatedId,
       taskId: this.taskId,
@@ -118,7 +118,7 @@ export class UpdateTodoDto extends IntersectionType(
     if (this.doneAt !== undefined) todo.doneAt = this.doneAt;
     if (this.abandonedAt !== undefined) todo.abandonedAt = this.abandonedAt;
     if (this.relatedType !== undefined || this.relatedId !== undefined || this.taskId !== undefined) {
-      const related = mapCompatIdsToRelated({
+      const related = mapRelatedIds({
         relatedType: this.relatedType,
         relatedId: this.relatedId,
         taskId: this.taskId,
