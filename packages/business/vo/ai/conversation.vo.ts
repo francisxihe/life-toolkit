@@ -70,6 +70,10 @@ export type CreateConversationRequestVo = {
   title?: string;
 };
 
+export type RenameConversationRequestVo = {
+  title: string;
+};
+
 export type StartMessageStreamRequestVo = {
   text: string;
   entityLinks?: AiEntityLinkVo[];

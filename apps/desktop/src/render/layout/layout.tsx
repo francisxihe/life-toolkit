@@ -9,6 +9,7 @@ import useLocale from '../utils/useLocale';
 import { GlobalState } from '../store';
 import styles from './layout.module.less';
 import Navigate from './Navigate';
+import { WorkbenchPanel } from '@/pages/workbench';
 
 const Aside = Layout.Sider;
 
@@ -93,6 +94,7 @@ function PageLayout() {
                 <Outlet />
               </Flex>
             </Flex>
+            <WorkbenchPanel />
           </>
         )}
       </Flex>

@@ -19,11 +19,27 @@ export type IRoute = AuthParams & {
   onlyMenu?: boolean;
 };
 
+export const settingRoute: IRoute = {
+  name: 'menu.setting',
+  key: '/setting',
+  ignore: true,
+  breadcrumb: true,
+};
+
+export const userRoute: IRoute = {
+  name: 'menu.user',
+  key: '/user',
+  ignore: true,
+  breadcrumb: true,
+};
+
 export const routes: IRoute[] = [
   aiRoutes,
   growthRoutes,
   expensesRoutes,
   erpRoutes,
+  settingRoute,
+  userRoute,
 ];
 
 export const getName = (path: string, routes) => {

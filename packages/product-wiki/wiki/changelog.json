@@ -1,6 +1,451 @@
 {
   "changes": [
     {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "用户设置改为本机设置，只保留这台设备的语言与主题，不再包含账号资料。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting",
+        "scope": "module",
+        "name": "本机设置",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "外观迁到本机设置，只选择这台设备的语言与主题。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:view:appearance",
+        "scope": "view",
+        "name": "外观",
+        "reference": "setting.view.appearance",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "切换语言后立即生效并在下次打开时保持，且只作用于这台设备。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:rule:persist-language",
+        "scope": "rule",
+        "name": "语言立即生效",
+        "reference": "setting.rule.persist-language",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "切换主题后立即生效并在下次打开时保持，且只作用于这台设备。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:rule:persist-theme",
+        "scope": "rule",
+        "name": "主题立即生效",
+        "reference": "setting.rule.persist-theme",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "语言与主题只作用于这台设备，不随用户带走，也不进入后续同步。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "setting:rule:local-only",
+        "scope": "rule",
+        "name": "外观只作用于本机",
+        "reference": "setting.rule.local-only",
+        "wikiId": "setting",
+        "wikiTitle": "本机设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "removed",
+      "summary": "账号资料示意从设置中移除，改由用户页承担身份。",
+      "productStatus": "deprecated",
+      "feature": {
+        "key": "user.setting:view:profile",
+        "scope": "view",
+        "name": "基本信息",
+        "reference": "user.setting.view.profile",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "removed",
+      "summary": "安全设置示意从设置中移除，不再作为当前产品入口。",
+      "productStatus": "deprecated",
+      "feature": {
+        "key": "user.setting:view:security",
+        "scope": "view",
+        "name": "安全设置",
+        "reference": "user.setting.view.security",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "新增用户页，从头像菜单进入，展示当前身份并预留数据传输与同步入口。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user",
+        "scope": "module",
+        "name": "用户",
+        "wikiId": "user",
+        "wikiTitle": "用户"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "在用户页查看后续传输与同步所依附的身份，不是本机外观。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user:view:identity",
+        "scope": "view",
+        "name": "当前身份",
+        "reference": "user.view.identity",
+        "wikiId": "user",
+        "wikiTitle": "用户"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "在用户页看到数据传输与同步入口，当前尚未开放。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user:view:transfer",
+        "scope": "view",
+        "name": "数据传输与同步",
+        "reference": "user.view.transfer",
+        "wikiId": "user",
+        "wikiTitle": "用户"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "传输与同步入口可见但不可用，不提供导入、导出或同步。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user:rule:sync-unavailable",
+        "scope": "rule",
+        "name": "同步尚未开放",
+        "reference": "user.rule.sync-unavailable",
+        "wikiId": "user",
+        "wikiTitle": "用户"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "用户页不提供语言或主题，这些选择只在本机设置中完成。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user:rule:not-appearance",
+        "scope": "rule",
+        "name": "用户不提供本机外观",
+        "reference": "user.rule.not-appearance",
+        "wikiId": "user",
+        "wikiTitle": "用户"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "本机外观与语言属于设备；用户身份留给后续数据传输与同步。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "global",
+        "scope": "module",
+        "name": "True North ProductWiki",
+        "wikiId": "global",
+        "wikiTitle": "True North ProductWiki"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "用户可重命名任意会话标题（不改绑定），删除需确认；删当前会话后对话区为空，已打开的工作台标签不关闭。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:session-maintain",
+        "scope": "rule",
+        "name": "会话维护",
+        "reference": "ai.session.rule.session-maintain",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "新增用户设置页，从头像菜单进入，用于调整界面语言与外观，并查看账号资料示意。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting",
+        "scope": "module",
+        "name": "用户设置",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "在用户设置中选择中文或 English，以及跟随系统、浅色或深色主题。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting:view:appearance",
+        "scope": "view",
+        "name": "外观",
+        "reference": "user.setting.view.appearance",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "在用户设置中查看与编辑账号资料示意，保存不写入真实账号。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting:view:profile",
+        "scope": "view",
+        "name": "基本信息",
+        "reference": "user.setting.view.profile",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "在用户设置中查看登录密码与安全绑定示意。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting:view:security",
+        "scope": "view",
+        "name": "安全设置",
+        "reference": "user.setting.view.security",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "切换语言后界面立即使用所选语言，下次打开仍保持该选择。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting:rule:persist-language",
+        "scope": "rule",
+        "name": "语言立即生效",
+        "reference": "user.setting.rule.persist-language",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "切换浅色或深色后立即生效；跟随系统时随设备外观变化，下次打开仍保持该选择。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "user.setting:rule:persist-theme",
+        "scope": "rule",
+        "name": "主题立即生效",
+        "reference": "user.setting.rule.persist-theme",
+        "wikiId": "user.setting",
+        "wikiTitle": "用户设置"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "新增应用内嵌浏览器官方面板，可从任意已登录页打开而不离开当前工作。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser",
+        "scope": "module",
+        "name": "内嵌浏览器",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "顶栏打开右侧浏览器官方面板，可拉宽与关闭；关闭后标签仍保留。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:shell",
+        "scope": "view",
+        "name": "浏览器官方面板",
+        "reference": "browser.view.shell",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "多标签切换、新建与关闭；未打开页面的标签称为新标签页。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:tab-bar",
+        "scope": "view",
+        "name": "标签栏",
+        "reference": "browser.view.tab-bar",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "输入网址打开页面；已打开页可后退、前进与刷新。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:address-bar",
+        "scope": "view",
+        "name": "地址栏",
+        "reference": "browser.view.address-bar",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "未输入网址时显示开始浏览空态；打开后在舞台呈现网页。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:stage",
+        "scope": "view",
+        "name": "浏览舞台",
+        "reference": "browser.view.stage",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "关闭浏览器官方面板后不丢弃标签，再次打开回到关闭前的标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:panel-persist",
+        "scope": "rule",
+        "name": "关面板保留标签",
+        "reference": "browser.rule.panel-persist",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "地址栏只打开 http 或 https 网址；无法识别为网址的输入不打开页面。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:https-only",
+        "scope": "rule",
+        "name": "仅打开网址",
+        "reference": "browser.rule.https-only",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-09",
+      "event": "introduced",
+      "summary": "尚未输入网址的标签不加载网页，舞台显示开始浏览提示。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:empty-stage",
+        "scope": "rule",
+        "name": "新标签为空态",
+        "reference": "browser.rule.empty-stage",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "已打开网页时从地址栏拉取当前页正文，保存为本地 Markdown。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:capture",
+        "scope": "view",
+        "name": "拉取当前页",
+        "reference": "browser.view.capture",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "已打开的页面可抽成本地 Markdown（含图片）；登录墙只说明原因、不落盘。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:extract-to-markdown",
+        "scope": "rule",
+        "name": "当前页可抽成本地文稿",
+        "reference": "browser.rule.extract-to-markdown",
+        "wikiId": "browser",
+        "wikiTitle": "内嵌浏览器"
+      }
+    },
+    {
       "version": "v0.2.0",
       "date": "2026-08-19",
       "event": "changed",
@@ -913,6 +1358,513 @@
         "reference": "growth.task.rule.time-inheritance",
         "wikiId": "growth.task",
         "wikiTitle": "任务管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "内嵌浏览器官方面板升格为全局工作台，同时承载网页与会话工具标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:module:browser",
+        "scope": "module",
+        "name": "工作台",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "顶栏打开的右侧面板改称工作台；关闭后网页标签与会话工具标签都保留。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:shell",
+        "scope": "view",
+        "name": "工作台面板",
+        "reference": "browser.view.shell",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "标签栏同时列出网页标签与会话工具标签，新建仍只开空白网页标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:tab-bar",
+        "scope": "view",
+        "name": "标签栏",
+        "reference": "browser.view.tab-bar",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "地址栏仅在当前为网页标签时出现。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:address-bar",
+        "scope": "view",
+        "name": "地址栏",
+        "reference": "browser.view.address-bar",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "浏览舞台只服务当前网页标签；会话工具改在独立舞台呈现。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:stage",
+        "scope": "view",
+        "name": "浏览舞台",
+        "reference": "browser.view.stage",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "从会话打开的拆解等功能以工作台标签呈现，可与网页标签并存。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:view:tool-stage",
+        "scope": "view",
+        "name": "会话工具舞台",
+        "reference": "browser.view.tool-stage",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "关闭工作台后网页标签与会话工具标签都保留，再次打开回到关闭前的标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:panel-persist",
+        "scope": "rule",
+        "name": "关面板保留标签",
+        "reference": "browser.rule.panel-persist",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "introduced",
+      "summary": "点选会话中的工作台入口后打开或聚焦对应功能标签；切会话不关标签，也不自动打开。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "browser:rule:session-tool-tab",
+        "scope": "rule",
+        "name": "会话打开工具标签",
+        "reference": "browser.rule.session-tool-tab",
+        "wikiId": "browser",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "这一全局面板正式称为工作台，不再称为内嵌浏览器；网页与会话工具仍在同一面板里。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:module:workbench",
+        "scope": "module",
+        "name": "工作台",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "顶栏打开的右侧工作台可拉宽与关闭；关闭后网页标签与会话工具标签都保留。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:shell",
+        "scope": "view",
+        "name": "工作台面板",
+        "reference": "workbench.view.shell",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "标签栏同时列出网页标签与会话工具标签，新建仍只开空白网页标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:tab-bar",
+        "scope": "view",
+        "name": "标签栏",
+        "reference": "workbench.view.tab-bar",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "地址栏仅在当前为网页标签时出现。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:address-bar",
+        "scope": "view",
+        "name": "地址栏",
+        "reference": "workbench.view.address-bar",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "浏览舞台只服务当前网页标签；会话工具改在独立舞台呈现。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:stage",
+        "scope": "view",
+        "name": "浏览舞台",
+        "reference": "workbench.view.stage",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "从会话打开的拆解等功能以工作台标签呈现，可与网页标签并存。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:tool-stage",
+        "scope": "view",
+        "name": "会话工具舞台",
+        "reference": "workbench.view.tool-stage",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "已打开网页时从地址栏拉取当前页正文，保存为本地 Markdown。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:view:capture",
+        "scope": "view",
+        "name": "拉取当前页",
+        "reference": "workbench.view.capture",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "关闭工作台后网页标签与会话工具标签都保留，再次打开回到关闭前的标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:rule:panel-persist",
+        "scope": "rule",
+        "name": "关面板保留标签",
+        "reference": "workbench.rule.panel-persist",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "地址栏只打开 http 或 https 网址；无法识别为网址的输入不打开页面。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:rule:https-only",
+        "scope": "rule",
+        "name": "仅打开网址",
+        "reference": "workbench.rule.https-only",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "尚未输入网址的网页标签不加载网页，舞台显示开始浏览提示。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:rule:empty-stage",
+        "scope": "rule",
+        "name": "新标签为空态",
+        "reference": "workbench.rule.empty-stage",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "已打开的页面可抽成本地 Markdown（含图片）；登录墙只说明原因、不落盘。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:rule:extract-to-markdown",
+        "scope": "rule",
+        "name": "当前页可抽成本地文稿",
+        "reference": "workbench.rule.extract-to-markdown",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "点选会话中的工作台入口后打开或聚焦对应功能标签；切会话不关标签，也不自动打开。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "workbench:rule:session-tool-tab",
+        "scope": "rule",
+        "name": "会话打开工具标签",
+        "reference": "workbench.rule.session-tool-tab",
+        "wikiId": "workbench",
+        "wikiTitle": "工作台"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "会话页改为两栏：列表与对话；结构化结果改在全局工作台打开。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:view:shell",
+        "scope": "view",
+        "name": "AI 会话壳层",
+        "reference": "ai.session.view.shell",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "对话中的结构化块改为在全局工作台打开对应功能标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:view:conversation",
+        "scope": "view",
+        "name": "会话对话",
+        "reference": "ai.session.view.conversation",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "deprecated",
+      "summary": "会话页内右侧工作台容器废弃，结构化结果改在全局工作台以标签打开。",
+      "productStatus": "deprecated",
+      "feature": {
+        "key": "ai.session:view:workspace-host",
+        "scope": "view",
+        "name": "工作台容器",
+        "reference": "ai.session.view.workspace-host",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "点选工作台块后在全局工作台打开对应标签；切换会话不再关闭已开标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:workspace-dispatch",
+        "scope": "rule",
+        "name": "工作台分发",
+        "reference": "ai.session.rule.workspace-dispatch",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "目标绑定发起仍不自动打开工作台；审阅改在全局工作台标签中完成。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:goal-bound-start",
+        "scope": "rule",
+        "name": "目标绑定发起",
+        "reference": "ai.session.rule.goal-bound-start",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "任务绑定发起仍不自动打开工作台；审阅改在全局工作台标签中完成。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:task-bound-start",
+        "scope": "rule",
+        "name": "任务绑定发起",
+        "reference": "ai.session.rule.task-bound-start",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "切换编码 Agent 仍不自动打开工作台；工作台已从会话页迁到全局面板。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:rule:agent-switch",
+        "scope": "rule",
+        "name": "编码 Agent 切换",
+        "reference": "ai.session.rule.agent-switch",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "会话只负责列表与消息；结构化结果改在全局工作台按类型打开标签。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai:module:ai",
+        "scope": "module",
+        "name": "AI 能力",
+        "wikiId": "ai",
+        "wikiTitle": "AI 能力"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "目标拆解结果改在全局工作台标签中审阅与采纳。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.goal:view:ai-decomposition",
+        "scope": "view",
+        "name": "AI 拆解",
+        "reference": "growth.goal.view.ai-decomposition",
+        "wikiId": "growth.goal",
+        "wikiTitle": "目标管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "目标拆解建议改为在全局工作台的目标拆解标签中呈现。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.goal:rule:ai-decompose-generation",
+        "scope": "rule",
+        "name": "AI 建议生成",
+        "reference": "growth.goal.rule.ai-decompose-generation",
+        "wikiId": "growth.goal",
+        "wikiTitle": "目标管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "目标拆解采纳改在全局工作台的目标拆解标签内完成。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.goal:rule:ai-decompose-adopt",
+        "scope": "rule",
+        "name": "AI 建议采纳",
+        "reference": "growth.goal.rule.ai-decompose-adopt",
+        "wikiId": "growth.goal",
+        "wikiTitle": "目标管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "任务拆解结果改在全局工作台标签中审阅与采纳。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.task:view:ai-decomposition",
+        "scope": "view",
+        "name": "AI 拆解",
+        "reference": "growth.task.view.ai-decomposition",
+        "wikiId": "growth.task",
+        "wikiTitle": "任务管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "任务拆解采纳改在全局工作台的任务拆解标签内完成。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "growth.task:rule:ai-decompose-adopt",
+        "scope": "rule",
+        "name": "AI 建议采纳",
+        "reference": "growth.task.rule.ai-decompose-adopt",
+        "wikiId": "growth.task",
+        "wikiTitle": "任务管理"
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "date": "2026-09-10",
+      "event": "changed",
+      "summary": "会话列表支持重命名与删除；入口为右键菜单或悬停 ⋯。",
+      "productStatus": "roadmap",
+      "feature": {
+        "key": "ai.session:view:session-list",
+        "scope": "view",
+        "name": "会话列表",
+        "reference": "ai.session.view.session-list",
+        "wikiId": "ai.session",
+        "wikiTitle": "AI 会话"
       }
     }
   ]

@@ -12,6 +12,7 @@ import type {
   PatchConversationRuntimeRequestVo,
   PatchWorkspaceRequestVo,
   PutRuntimeSelectionRequestVo,
+  RenameConversationRequestVo,
   RuntimeAgentVo,
   RuntimeSelectionVo,
   StartMessageStreamRequestVo,
@@ -75,5 +76,13 @@ export default class AiController {
 
   static async patchConversationRuntime(id: string, body: PatchConversationRuntimeRequestVo) {
     return request<ConversationVo>({ method: 'put' })(`/ai/conversations/${id}/runtime`, body);
+  }
+
+  static async renameConversation(id: string, body: RenameConversationRequestVo) {
+    return request<ConversationVo>({ method: 'put' })(`/ai/conversations/${id}`, body);
+  }
+
+  static async deleteConversation(id: string) {
+    return request<void>({ method: 'remove' })(`/ai/conversations/${id}`);
   }
 }

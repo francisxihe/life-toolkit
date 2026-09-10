@@ -6,6 +6,7 @@ import { HabitController } from '../service/growth/habit/habit.route-controller'
 import { TaskController } from '../service/growth/task/task.route-controller';
 import { TodoController } from '../service/growth/todo/todo.route-controller';
 import { TrackTimeController } from '../service/growth/track-time/track-time.route-controller';
+import { BrowserController } from '../service/browser';
 
 /**
  * 初始化所有 IPC 处理器
@@ -22,6 +23,7 @@ export function initIpcRouter(): void {
       TodoController,
       TrackTimeController,
       AiController,
+      BrowserController,
     ],
   });
 }

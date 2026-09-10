@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { installHostDock } from '@ylib/product-dock';
+import { installHostDock, type HostDock } from '@ylib/product-dock';
 import { attachProductWiki } from '@ylib/product-server/agent';
 import type { ViewsTheme } from '@ylib/product-server/channel';
 import { useProductRouterPort } from '@ylib/product-surface-react/router';
@@ -40,9 +40,11 @@ export function DevDockAttach({ theme }: DevDockAttachProps) {
   const router = useProductRouterPort();
   const themeRef = useRef(theme);
   themeRef.current = theme;
+  const dockRef = useRef<HostDock | null>(null);
 
   useEffect(() => {
-    const dock = installHostDock({ minWidth: 480, defaultWidth: 640 });
+    const dock = installHostDock({ minWidth: 480, defaultWidth: 640, theme: themeRef.current });
+    dockRef.current = dock;
     const wikiFrame = createFrame(
       window.__productWikiService?.viewsUrl ?? 'http://127.0.0.1:5101/views',
       '讲解面板',
@@ -71,6 +73,7 @@ export function DevDockAttach({ theme }: DevDockAttachProps) {
         lab.destroy();
         wiki.destroy();
         dock.destroy();
+        if (dockRef.current === dock) dockRef.current = null;
         if (window.__devDock === handleApi) delete window.__devDock;
       },
     };
@@ -87,6 +90,7 @@ export function DevDockAttach({ theme }: DevDockAttachProps) {
   }, [router]);
 
   useEffect(() => {
+    dockRef.current?.setTheme(theme);
     syncProductWikiTheme(theme);
   }, [theme]);
 

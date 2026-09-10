@@ -7,12 +7,14 @@ import fs from 'fs';
 // 在ESM环境中导入Electron
 import electron from 'electron';
 
-const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTheme, shell } = electron;
+const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTheme, session, shell } = electron;
 
 // 导入数据库初始化功能
 import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
 import { startLoopbackMcpServer, stopLoopbackMcpServer } from '../service/ai/runtime';
+import { embeddedBrowserHost } from '../service/browser';
+import { EMBEDDED_BROWSER_PARTITION } from '@true-north/vo';
 import { labChannel } from '@true-north/dev-lab';
 import { subscribeDevTrace } from '@true-north/dev-lab/collector';
 
@@ -277,7 +279,16 @@ function createWindow() {
     });
   }
 
+  embeddedBrowserHost.attach({
+    window: mainWindow,
+    send: (channel, payload) => {
+      const contents = getAppWebContents();
+      if (contents && !contents.isDestroyed()) contents.send(channel, payload);
+    },
+  });
+
   mainWindow.on('closed', () => {
+    embeddedBrowserHost.detach();
     appView = null;
     mainWindow = null;
   });
@@ -364,6 +375,7 @@ ipcMain.handle('set-native-theme-source', (_event, source: string) => {
 
 // 设置CSP安全策略
 app.on('web-contents-created', (_, contents) => {
+  if (contents.session === session.fromPartition(EMBEDDED_BROWSER_PARTITION)) return;
   // 开发环境中，关闭CSP校验
   if (isDev) {
     contents.session.webRequest.onHeadersReceived((details, callback) => {

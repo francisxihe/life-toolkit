@@ -169,6 +169,21 @@ export class ConversationService {
     return { conversation: toConversationVo(saved), created: true };
   }
 
+  async rename(conversationId: string, title?: string): Promise<ConversationVo> {
+    const nextTitle = title?.trim();
+    if (!nextTitle) throw AiPlatformError.internal('会话标题不能为空');
+    const conversation = await this.conversationRepository.find(conversationId);
+    conversation.title = nextTitle;
+    const saved = await this.conversationRepository.update(conversation);
+    return toConversationVo(saved);
+  }
+
+  async remove(conversationId: string): Promise<void> {
+    await this.conversationRepository.find(conversationId);
+    await this.messageRepository.softDeleteByFilter({ conversationId });
+    await this.conversationRepository.softDelete(conversationId);
+  }
+
   async patchRuntime(conversationId: string, body: PatchConversationRuntimeRequestVo): Promise<ConversationVo> {
     const runtimeId = body?.runtimeId?.trim();
     if (!runtimeId || !getRuntimeAgentDef(runtimeId)) {

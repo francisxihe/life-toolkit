@@ -36,6 +36,7 @@ Keep **hash** history in the playgrounds for now so wiki routes stay stable.
 // vite.config.ts
 import { productWiki } from '@ylib/product-server/service/vite';
 plugins: [productWiki({ data: './src/wiki.ts', playwright: true })]
+// concurrent projects: pass port: 6101 or PRODUCT_WIKI_PORT so wiki services stay isolated
 
 // DEV host
 import { installHostDock } from '@ylib/product-dock';
@@ -52,7 +53,7 @@ attachProductWiki({
 
 The plugin is a production no-op (`apply: 'serve'`):
 
-1. Discover or start the local service (reuse if the port is in use — multiple Vite apps can share one)
+1. Discover or start the local service (reuse only if `/health` matches the same `viewsEntry` and wiki file). Multiple Vite apps sharing one wiki file can share one service. Different projects should pass `port` / `PRODUCT_WIKI_PORT`. An explicit port that is occupied by something else fails instead of picking a random port.
 2. Register the current origin and push wiki into the service (Vite `ssrLoadModule`; a JSON directory is the non-Vite fallback)
 3. Inject the inspect client. The right column is `@ylib/product-dock`: callers `register({ id, label, content })`. The splitter and vertical tabs live in the dock, not in `product-server`.
 

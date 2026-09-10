@@ -1,0 +1,70 @@
+{
+  "id": "setting",
+  "kind": "page",
+  "title": "本机设置",
+  "parentId": "global",
+  "route": "/setting",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "appearance",
+      "name": "外观",
+      "scenario": "选择这台设备的界面语言与主题",
+      "productStatus": "roadmap",
+      "reference": "setting.view.appearance"
+    }
+  ],
+  "rules": [
+    {
+      "id": "persist-language",
+      "name": "语言立即生效",
+      "description": "切换语言后界面立即使用所选语言，下次打开仍保持该选择。",
+      "views": ["appearance"],
+      "reference": "setting.rule.persist-language",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "persist-theme",
+      "name": "主题立即生效",
+      "description": "切换浅色或深色后界面立即使用所选外观；选择跟随系统时随设备外观变化。下次打开仍保持该选择。",
+      "views": ["appearance"],
+      "reference": "setting.rule.persist-theme",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "local-only",
+      "name": "外观只作用于本机",
+      "description": "语言与主题只作用于这台设备，不随用户带走，也不进入后续数据传输与同步。",
+      "views": ["appearance"],
+      "reference": "setting.rule.local-only",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "setting.overview",
+      "title": "目标与价值",
+      "body": "本机设置是独立页面，从头像菜单进入，不出现在侧栏。用户在此调整这台设备的界面语言与外观。语言与主题立即生效并在下次打开时保持；它们属于本机，不是账号资料。"
+    },
+    {
+      "id": "setting.view.appearance",
+      "title": "外观",
+      "body": "外观提供界面语言（中文 / English）与主题（跟随系统 / 浅色 / 深色）。选择立即生效，无需另存。语言与主题不再从顶栏快捷切换。"
+    },
+    {
+      "id": "setting.rule.persist-language",
+      "title": "语言立即生效",
+      "body": "用户选择中文或 English 后，当前界面立即切换。下次打开产品时仍使用上次选择的语言。"
+    },
+    {
+      "id": "setting.rule.persist-theme",
+      "title": "主题立即生效",
+      "body": "用户选择浅色或深色后，当前界面立即切换。选择跟随系统时，外观随设备浅色或深色变化。下次打开产品时仍使用上次选择。"
+    },
+    {
+      "id": "setting.rule.local-only",
+      "title": "外观只作用于本机",
+      "body": "语言与主题只保存在这台设备上。后续即使用户身份用于传输与同步，也不会带走或覆盖本机外观。"
+    }
+  ]
+}

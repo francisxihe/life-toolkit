@@ -15,10 +15,10 @@ minimumReleaseAgeExclude:
   - electron-to-chromium@1.5.400
   - node-releases@2.0.52
   - terser@5.49.1
-  - '@ylib/product-server@0.0.6'
-  - '@ylib/product-dock@0.0.6'
+  - '@ylib/product-server@0.0.7'
+  - '@ylib/product-dock@0.0.7'
   - '@ylib/product-surface-react@0.0.2'
-  - '@ylib/product-skills@0.0.6'
+  - '@ylib/product-skills@0.0.7'
   - '@ylib/skills-manager@1.0.5'
 
 overrides:

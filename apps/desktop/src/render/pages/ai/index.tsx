@@ -4,7 +4,6 @@ import { productRef } from '@ylib/product-server';
 import { AiSessionProvider } from './context';
 import { ConversationPane } from './features/ConversationPane';
 import { SessionList } from './features/SessionList';
-import { WorkspaceHost } from './features/WorkspaceHost';
 import styles from './style.module.less';
 
 export default function AiSessionPage() {
@@ -17,9 +16,6 @@ export default function AiSessionPage() {
           </ProductSurface>
           <ProductSurface id={productRef('ai.session.view.conversation')}>
             <ConversationPane />
-          </ProductSurface>
-          <ProductSurface id={productRef('ai.session.view.workspace-host')}>
-            <WorkspaceHost />
           </ProductSurface>
         </Flex>
       </ProductSurface>

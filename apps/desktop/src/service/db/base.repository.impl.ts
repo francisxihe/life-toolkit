@@ -20,8 +20,9 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   }
 
   async deleteByFilter(filter: FilterDto): Promise<DeleteResult> {
-    const qb = this.buildQuery(filter);
-    return await qb.delete().execute();
+    const ids = await this.findIdsByFilter(filter);
+    if (!ids.length) return { raw: [], affected: 0 };
+    return await this.repo.delete(ids);
   }
 
   async softDelete(id: Entity['id']): Promise<DeleteResult> {
@@ -29,8 +30,9 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   }
 
   async softDeleteByFilter(filter: FilterDto): Promise<DeleteResult> {
-    const qb = this.buildQuery(filter);
-    return await qb.softDelete().execute();
+    const ids = await this.findIdsByFilter(filter);
+    if (!ids.length) return { raw: [], affected: 0 };
+    return await this.repo.softDelete(ids);
   }
 
   async update(updateEntity: Entity): Promise<Entity> {
@@ -40,8 +42,14 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   }
 
   async updateByFilter(filter: FilterDto, updateEntity: Entity): Promise<UpdateResult> {
-    const qb = this.buildQuery(filter);
-    return await qb.update(updateEntity as any).execute();
+    const ids = await this.findIdsByFilter(filter);
+    if (!ids.length) return { raw: [], generatedMaps: [], affected: 0 };
+    return await this.repo
+      .createQueryBuilder()
+      .update()
+      .set(updateEntity as any)
+      .whereInIds(ids)
+      .execute();
   }
 
   async find(id: Entity['id']): Promise<Entity> {
@@ -53,6 +61,11 @@ export class BaseRepository<Entity extends BaseEntity, FilterDto> {
   async findByFilter(filter: FilterDto): Promise<Entity[]> {
     const qb = this.buildQuery(filter);
     return await qb.getMany();
+  }
+
+  private async findIdsByFilter(filter: FilterDto): Promise<Entity['id'][]> {
+    const list = await this.findByFilter(filter);
+    return list.map((item) => item.id);
   }
 
   async page(

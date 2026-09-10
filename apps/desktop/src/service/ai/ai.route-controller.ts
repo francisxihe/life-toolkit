@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@business/decorators';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@business/decorators';
 import type {
   CancelStreamResponseVo,
   ConversationVo,
@@ -12,6 +12,7 @@ import type {
   PatchConversationRuntimeRequestVo,
   PatchWorkspaceRequestVo,
   PutRuntimeSelectionRequestVo,
+  RenameConversationRequestVo,
   RuntimeAgentVo,
   RuntimeSelectionVo,
   StartMessageStreamRequestVo,
@@ -110,6 +111,29 @@ export class AiController {
   async ensureBoundTask(@Body() body: EnsureBoundTaskRequestVo): Promise<EnsureBoundConversationResponseVo> {
     try {
       return await this.conversations.ensureBoundTask(body?.taskId);
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Put('/conversations/:id', { description: '重命名会话' })
+  async renameConversation(
+    @Param('id') id: string,
+    @Body() body: RenameConversationRequestVo
+  ): Promise<ConversationVo> {
+    try {
+      if (!id?.trim()) throw AiPlatformError.internal('缺少 conversationId');
+      return await this.conversations.rename(id.trim(), body?.title);
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Delete('/conversations/:id', { description: '删除会话及其消息' })
+  async deleteConversation(@Param('id') id: string): Promise<void> {
+    try {
+      if (!id?.trim()) throw AiPlatformError.internal('缺少 conversationId');
+      await this.conversations.remove(id.trim());
     } catch (error) {
       throw toIpcError(error);
     }

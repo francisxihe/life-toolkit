@@ -1,0 +1,155 @@
+{
+  "id": "workbench",
+  "kind": "dom",
+  "title": "工作台",
+  "parentId": "global",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "shell",
+      "name": "工作台面板",
+      "scenario": "任何已登录页从顶栏打开右侧工作台；可拉宽与关闭；关闭后网页标签与会话工具标签仍保留",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.shell"
+    },
+    {
+      "id": "tab-bar",
+      "name": "标签栏",
+      "scenario": "网页标签与会话工具标签并存、切换、新建网页标签与关闭；未打开页面的网页标签称为新标签页",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.tab-bar"
+    },
+    {
+      "id": "address-bar",
+      "name": "地址栏",
+      "scenario": "当前为网页标签时输入网址打开页面；已打开页可后退、前进与刷新",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.address-bar"
+    },
+    {
+      "id": "stage",
+      "name": "浏览舞台",
+      "scenario": "当前为网页标签且未输入网址时显示开始浏览空态；打开后在此呈现网页",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.stage"
+    },
+    {
+      "id": "tool-stage",
+      "name": "会话工具舞台",
+      "scenario": "从会话打开的拆解等功能在此以标签呈现；可与网页标签并存切换",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.tool-stage"
+    },
+    {
+      "id": "capture",
+      "name": "拉取当前页",
+      "scenario": "当前为已打开的网页标签时从地址栏拉取正文，保存为本地 Markdown",
+      "productStatus": "roadmap",
+      "reference": "workbench.view.capture"
+    }
+  ],
+  "rules": [
+    {
+      "id": "panel-persist",
+      "name": "关面板保留标签",
+      "description": "顶栏开关打开或关闭工作台。关闭后面板不再占据主区，已打开的网页标签、会话工具标签与当前页仍保留；再次打开时回到关闭前的标签。",
+      "views": ["shell", "tab-bar"],
+      "reference": "workbench.rule.panel-persist",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "https-only",
+      "name": "仅打开网址",
+      "description": "地址栏只打开 http 或 https 网址。已是完整网址则原样打开；看起来像主机名则按安全连接打开。无法识别为网址的输入不打开页面，并告知原因。",
+      "views": ["address-bar"],
+      "reference": "workbench.rule.https-only",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "empty-stage",
+      "name": "新标签为空态",
+      "description": "尚未输入网址的网页标签不加载网页，舞台显示开始浏览与输入网址的提示。",
+      "views": ["stage", "tab-bar"],
+      "reference": "workbench.rule.empty-stage",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "extract-to-markdown",
+      "name": "当前页可抽成本地文稿",
+      "description": "已打开的页面可从地址栏拉取正文，连同图片保存为本地 Markdown。需要登录才能阅读的页面只说明原因，不落盘。尚未打开网址或当前不是网页标签时不可拉取。",
+      "views": ["capture"],
+      "reference": "workbench.rule.extract-to-markdown",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "session-tool-tab",
+      "name": "会话打开工具标签",
+      "description": "用户点选会话中的工作台入口后，全局工作台打开或聚焦对应功能标签。同一条消息不重复开标签。切换会话不关闭已开标签。绑定发起与流式完成不会自动打开。",
+      "views": ["tool-stage", "tab-bar", "shell"],
+      "reference": "workbench.rule.session-tool-tab",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "workbench.overview",
+      "title": "目标与价值",
+      "body": "工作台是全局面板，不是独立业务页。用户在任何已登录页都能打开，对照网页资料，或审阅会话里产出的结构化结果，而不离开当前的规划与执行上下文。"
+    },
+    {
+      "id": "workbench.view.shell",
+      "title": "工作台面板",
+      "body": "面板停在主区右侧，与侧栏、当前页并排。顶栏提供开关；面板可拉宽，并用关闭收回。关闭只收起面板，不丢弃网页标签或会话工具标签。面板打开时当前页仍可见，不被网页盖住标签栏与地址栏。"
+    },
+    {
+      "id": "workbench.view.tab-bar",
+      "title": "标签栏",
+      "body": "用户可同时打开网页标签与会话工具标签、切换当前标签、新建空白网页标签，以及关闭标签。未打开页面的网页标签标题为新标签页。关掉最后一个标签后仍留下一个新标签页，以便继续输入网址或从会话再打开工具。"
+    },
+    {
+      "id": "workbench.view.address-bar",
+      "title": "地址栏",
+      "body": "当前为网页标签时，用户在地址栏输入网址并确认后打开页面。已打开的页面可后退、前进与刷新；新标签页或无法移动历史时，对应操作不可用。当前为会话工具标签时不显示地址栏。"
+    },
+    {
+      "id": "workbench.view.stage",
+      "title": "浏览舞台",
+      "body": "舞台在当前为网页标签时呈现网页。新标签页显示开始浏览，并提示输入网址以打开页面。打开网址后，网页只出现在舞台内，不覆盖标签栏与地址栏。"
+    },
+    {
+      "id": "workbench.view.tool-stage",
+      "title": "会话工具舞台",
+      "body": "从会话打开的功能（如目标拆解、任务拆解）出现在工作台的工具标签里。未知类型时给出不可用提示，而不是静默失败。工具标签与网页标签共用同一套标签栏，互不顶替。"
+    },
+    {
+      "id": "workbench.rule.panel-persist",
+      "title": "关面板保留标签",
+      "body": "从顶栏打开或关闭面板。关闭后主区恢复为侧栏加当前页；再次打开时，先前的网页标签、会话工具标签、当前标签与已打开的页面仍在。进程退出后不恢复上次网页。"
+    },
+    {
+      "id": "workbench.rule.https-only",
+      "title": "仅打开网址",
+      "body": "只打开以 http 或 https 访问的网址。用户输入完整网址则按该地址打开；输入带点的主机名则按加密连接补全后打开。空输入、含空格的句子或非网页协议都不打开，并说明不是有效网址。"
+    },
+    {
+      "id": "workbench.rule.empty-stage",
+      "title": "新标签为空态",
+      "body": "网页标签在用户确认网址之前不加载任何网页。舞台中央提示开始浏览，并说明需输入网址才能打开页面。"
+    },
+    {
+      "id": "workbench.view.capture",
+      "title": "拉取当前页",
+      "body": "地址栏提供拉取当前页。已打开网页时可用；新标签页、尚未输入网址或当前不是网页标签时不可用。用户觉得当前页值得留下，就从这里取走正文。"
+    },
+    {
+      "id": "workbench.rule.extract-to-markdown",
+      "title": "当前页可抽成本地文稿",
+      "body": "拉取后把当前页正文保存为本地 Markdown，页面里的图片一并收下。需要登录或无法识别正文时只说明原因，不写入文件。"
+    },
+    {
+      "id": "workbench.rule.session-tool-tab",
+      "title": "会话打开工具标签",
+      "body": "用户点选会话消息上的打开入口后，工作台打开并挂上对应功能标签；同一条消息再次点选只回到已有标签。切换会话或离开会话页都不关闭这些标签。从目标或任务绑定发起、流式完成或切换编码 Agent 都不会自动打开工作台。"
+    }
+  ]
+}

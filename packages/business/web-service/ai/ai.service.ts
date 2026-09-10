@@ -12,6 +12,7 @@ import type {
   PatchConversationRuntimeRequestVo,
   PatchWorkspaceRequestVo,
   PutRuntimeSelectionRequestVo,
+  RenameConversationRequestVo,
   RuntimeAgentVo,
   RuntimeSelectionVo,
   StartMessageStreamRequestVo,
@@ -106,6 +107,17 @@ export default class AiService {
     body: PatchConversationRuntimeRequestVo
   ): Promise<AiResult<ConversationVo>> {
     return wrap(() => AiController.patchConversationRuntime(conversationId, body));
+  }
+
+  static async renameConversation(
+    conversationId: string,
+    body: RenameConversationRequestVo
+  ): Promise<AiResult<ConversationVo>> {
+    return wrap(() => AiController.renameConversation(conversationId, body));
+  }
+
+  static async deleteConversation(conversationId: string): Promise<AiResult<void>> {
+    return wrap(() => AiController.deleteConversation(conversationId));
   }
 
   static async listMessages(conversationId: string): Promise<AiResult<MessageVo[]>> {

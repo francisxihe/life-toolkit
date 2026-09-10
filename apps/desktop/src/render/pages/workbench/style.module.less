@@ -1,0 +1,150 @@
+.shell {
+  position: relative;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  border-left: 1px solid var(--sue-color-border-secondary);
+  background: var(--sue-color-bg-container);
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  width: 4px;
+  cursor: col-resize;
+}
+
+.resizeHandle:hover,
+.resizeHandleActive {
+  background: var(--sue-color-primary);
+}
+
+.tabBar {
+  min-height: 36px;
+  padding: 4px 8px 0;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.tabScroller {
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 160px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: var(--sue-border-radius-sm) var(--sue-border-radius-sm) 0 0;
+  background: transparent;
+  color: var(--sue-color-text-secondary);
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--sue-color-fill-tertiary);
+}
+
+.tabActive {
+  background: var(--sue-color-fill-secondary);
+  color: var(--sue-color-text);
+}
+
+.tabTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tabClose,
+.iconBtn {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sue-border-radius-sm);
+  background: transparent;
+  color: var(--sue-color-text-secondary);
+  cursor: pointer;
+}
+
+.tabClose:hover,
+.iconBtn:hover:not(:disabled) {
+  background: var(--sue-color-fill-tertiary);
+  color: var(--sue-color-text);
+}
+
+.iconBtn:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.addressBar {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.addressInput {
+  min-width: 0;
+}
+
+.stageWrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stageWrap > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.stageFill,
+.empty {
+  height: 100%;
+}
+
+.empty {
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+  background: var(--sue-color-bg-layout, #1f1f1f);
+}
+
+.emptyIcon {
+  font-size: 64px;
+  line-height: 1;
+  opacity: 0.45;
+}
+
+.emptyTitle {
+  margin: 16px 0 0;
+  color: var(--sue-color-text-secondary);
+  font-size: 16px;
+}
+
+.emptyHint {
+  margin: 8px 0 0;
+  font-size: 13px;
+}
+
+.toolStage {
+  height: 100%;
+  overflow: auto;
+  padding: 16px;
+  min-height: 0;
+}
+
+.toolStageError {
+  margin: 72px 16px 0;
+  color: var(--sue-color-text-tertiary);
+  text-align: center;
+  line-height: 1.7;
+}

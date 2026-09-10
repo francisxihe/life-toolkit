@@ -1,0 +1,69 @@
+{
+  "id": "user",
+  "kind": "page",
+  "title": "用户",
+  "parentId": "global",
+  "route": "/user",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "identity",
+      "name": "当前身份",
+      "scenario": "查看后续传输与同步所依附的身份",
+      "productStatus": "roadmap",
+      "reference": "user.view.identity"
+    },
+    {
+      "id": "transfer",
+      "name": "数据传输与同步",
+      "scenario": "查看传输与同步入口；当前尚未开放",
+      "productStatus": "roadmap",
+      "reference": "user.view.transfer"
+    }
+  ],
+  "rules": [
+    {
+      "id": "sync-unavailable",
+      "name": "同步尚未开放",
+      "description": "数据传输与同步入口可见，但当前不可用，不提供导入、导出或同步操作。",
+      "views": ["transfer"],
+      "reference": "user.rule.sync-unavailable",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "not-appearance",
+      "name": "用户不提供本机外观",
+      "description": "用户页只展示身份与后续同步入口，不提供语言或主题设置。",
+      "views": ["identity"],
+      "reference": "user.rule.not-appearance",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "user.overview",
+      "title": "目标与价值",
+      "body": "用户是独立页面，从头像菜单进入，不出现在侧栏。当前展示登录身份，并预留数据传输与同步入口。用户身份后续用于在设备间传输与同步数据；本机外观不属于用户。"
+    },
+    {
+      "id": "user.view.identity",
+      "title": "当前身份",
+      "body": "当前身份展示头像与名称，说明这是后续传输与同步所依附的身份，而不是本机外观设置。"
+    },
+    {
+      "id": "user.view.transfer",
+      "title": "数据传输与同步",
+      "body": "数据传输与同步展示尚未开放的入口，用于说明后续能力位置。当前不能导入、导出或同步数据。"
+    },
+    {
+      "id": "user.rule.sync-unavailable",
+      "title": "同步尚未开放",
+      "body": "传输与同步入口可以看见，但当前不可用。用户不能从这里导入、导出或在设备间同步数据。"
+    },
+    {
+      "id": "user.rule.not-appearance",
+      "title": "用户不提供本机外观",
+      "body": "用户页不提供语言或主题。这些选择在本机设置中完成，只作用于这台设备。"
+    }
+  ]
+}

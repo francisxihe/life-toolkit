@@ -9,6 +9,9 @@ import spec_growth from '../wiki/growth/spec.json';
 import spec_growth_task from '../wiki/growth/task/spec.json';
 import spec_growth_todo from '../wiki/growth/todo/spec.json';
 import spec_growth_track_time from '../wiki/growth/track-time/spec.json';
+import spec_setting from '../wiki/setting/spec.json';
+import spec_user from '../wiki/user/spec.json';
+import spec_workbench from '../wiki/workbench/spec.json';
 import productHistory from '../wiki/changelog.json';
 
 export const productWikis = [
@@ -22,6 +25,9 @@ export const productWikis = [
   spec_growth_task,
   spec_growth_todo,
   spec_growth_track_time,
+  spec_setting,
+  spec_user,
+  spec_workbench,
 ];
 
 export { productHistory };

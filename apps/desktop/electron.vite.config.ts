@@ -112,6 +112,7 @@ export default defineConfig({
           'chinese-holiday-calendar',
           // 只保留必要的外部依赖，让 @true-north 包被正确打包
           '@true-north/electron-typeorm',
+          '@sue/extract',
         ],
       },
       minify: false, // 禁用压缩以保留 TypeORM 装饰器元数据

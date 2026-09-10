@@ -5,6 +5,7 @@ import lazyload from '../utils/lazyload';
 import useRouter, { FlattenRoute, RouterContext } from './useRouter';
 import { TaskDetailDrawerHost } from '../pages/growth/task/detail/TaskDetailDrawer';
 import { FocusTimerProvider } from '../pages/growth/focus-timer';
+import { WorkbenchProvider } from '../pages/workbench';
 
 const ForbiddenPage = lazyload(() => import('../pages/exception/403'));
 
@@ -30,16 +31,18 @@ function Router() {
   return (
     <RouterContext.Provider value={{ router }}>
       <FocusTimerProvider>
-        <TaskDetailDrawerHost />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<PageLayout />}>
-            {renderRouteComponent(
-              router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath),
-            )}
-            <Route path="*" element={<ForbiddenPage />} />
-          </Route>
-        </Routes>
+        <WorkbenchProvider>
+          <TaskDetailDrawerHost />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<PageLayout />}>
+              {renderRouteComponent(
+                router.flattenRoutes.filter((r) => /^\//.test(r.key) && r.fullPath),
+              )}
+              <Route path="*" element={<ForbiddenPage />} />
+            </Route>
+          </Routes>
+        </WorkbenchProvider>
       </FocusTimerProvider>
     </RouterContext.Provider>
   );

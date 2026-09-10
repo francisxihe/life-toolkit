@@ -3,7 +3,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -15,12 +14,12 @@ import type {
   AiEntityLinkVo,
   AiTextPartVo,
   AiWorkspacePartVo,
-  AiWorkspaceSuggestionVo,
   ConversationVo,
   MessageVo,
   RuntimeAgentVo,
 } from '@true-north/vo';
 import { AiService, GoalService, TaskService } from '@true-north/web-service';
+import { useWorkbench } from '../workbench';
 import { openTaskDetailDrawer } from '../growth/task/detail/TaskDetailDrawer';
 import type { AiDraft, AiSessionContextValue, ComposerInputRef } from './types';
 
@@ -35,17 +34,6 @@ function resolveSelectedAgentId(agents: RuntimeAgentVo[], savedId: string | null
 }
 
 const AiSessionContext = createContext<AiSessionContextValue | null>(null);
-
-function resolveActiveWorkspacePart(
-  messages: MessageVo[],
-  activeWorkspaceMessageId: string | null
-): AiWorkspacePartVo | null {
-  if (!activeWorkspaceMessageId) return null;
-  const picked = messages.find((item) => item.id === activeWorkspaceMessageId);
-  return (
-    picked?.parts.find((part): part is AiWorkspacePartVo => part.type === 'workspace') || null
-  );
-}
 
 function collectEntityRefs(messages: MessageVo[]): AiEntityLinkVo[] {
   const map = new Map<string, AiEntityLinkVo>();
@@ -136,13 +124,19 @@ function linksStillInText(text: string, links: AiEntityLinkVo[]): AiEntityLinkVo
   return links.filter((link) => text.includes(`@${link.label}`));
 }
 
+function toolTabTitle(part: AiWorkspacePartVo): string {
+  const refLabel = part.payload.ref?.label;
+  const base = part.workspaceKey === 'task.decompose' ? '任务拆解' : '目标拆解';
+  return refLabel ? `${base} · ${refLabel}` : base;
+}
+
 export function AiSessionProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
+  const { openToolTab, pendingFollowUp, clearPendingFollowUp } = useWorkbench();
   const [searchParams, setSearchParams] = useSearchParams();
   const [conversations, setConversations] = useState<ConversationVo[]>([]);
   const [activeConversationId, setActiveConversationId] = useState<string | null>(null);
   const [activeMessages, setActiveMessages] = useState<MessageVo[]>([]);
-  const [activeWorkspaceMessageId, setActiveWorkspaceMessageId] = useState<string | null>(null);
   const [draft, setDraftState] = useState<AiDraft>(EMPTY_DRAFT);
   const [streaming, setStreaming] = useState(false);
   const [streamError, setStreamError] = useState<string | null>(null);
@@ -153,6 +147,8 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
   const [selectedAgentId, setSelectedAgentId] = useState('');
   const [pendingThreadReset, setPendingThreadReset] = useState(false);
   const streamIdRef = useRef<string | null>(null);
+  const streamingConversationIdRef = useRef<string | null>(null);
+  const suppressStreamErrorRef = useRef(false);
   const composerInputRef = useRef<ComposerInputRef>(null);
   const streamingAssistantIdRef = useRef<string | null>(null);
   const [streamingAssistantId, setStreamingAssistantId] = useState<string | null>(null);
@@ -160,10 +156,6 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
   activeConversationIdRef.current = activeConversationId;
 
   const activeConversation = conversations.find((item) => item.id === activeConversationId);
-  const activeWorkspacePart = useMemo(
-    () => resolveActiveWorkspacePart(activeMessages, activeWorkspaceMessageId),
-    [activeMessages, activeWorkspaceMessageId]
-  );
   const selectedAgent = codingAgents.find((item) => item.id === selectedAgentId);
   const canSendWithSelectedAgent = Boolean(selectedAgent?.available);
   const threadWillReset = Boolean(
@@ -182,6 +174,29 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
   const focusComposer = useCallback(() => {
     composerInputRef.current?.focus({ preventScroll: true });
   }, []);
+
+  useEffect(() => {
+    if (!pendingFollowUp) return;
+    if (pendingFollowUp.conversationId !== activeConversationId) {
+      const next = new URLSearchParams(searchParams);
+      next.set('conversationId', pendingFollowUp.conversationId);
+      next.delete('goalId');
+      next.delete('taskId');
+      setSearchParams(next, { replace: true });
+      return;
+    }
+    setDraft(pendingFollowUp.text);
+    focusComposer();
+    clearPendingFollowUp();
+  }, [
+    activeConversationId,
+    clearPendingFollowUp,
+    focusComposer,
+    pendingFollowUp,
+    searchParams,
+    setDraft,
+    setSearchParams,
+  ]);
 
   const refreshConversations = useCallback(async (preferId?: string | null) => {
     const result = await AiService.listConversations();
@@ -330,7 +345,6 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
         }
         if (cancelled) return;
 
-        setActiveWorkspaceMessageId(null);
         await refreshConversations(bound.data.conversation.id);
 
         if (bound.data.created) {
@@ -346,6 +360,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
             message.error(result.message);
           } else if (!cancelled) {
             streamIdRef.current = result.data.streamId;
+            streamingConversationIdRef.current = bound.data.conversation.id;
             streamingAssistantIdRef.current = result.data.assistant.id;
             setStreamingAssistantId(result.data.assistant.id);
             setActiveMessages([result.data.user, result.data.assistant]);
@@ -373,7 +388,6 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     const conversationId = searchParams.get('conversationId');
     if (conversationId && conversationId !== activeConversationId) {
       setActiveConversationId(conversationId);
-      setActiveWorkspaceMessageId(null);
     }
   }, [searchParams, activeConversationId]);
 
@@ -406,6 +420,7 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
           )
         );
         streamIdRef.current = null;
+        streamingConversationIdRef.current = null;
         streamingAssistantIdRef.current = null;
         setStreamingAssistantId(null);
         setStreaming(false);
@@ -415,11 +430,15 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
       }
 
       if (event.event === 'error') {
-        setStreamError(event.messageText);
+        const suppressed = suppressStreamErrorRef.current;
+        suppressStreamErrorRef.current = false;
         streamIdRef.current = null;
+        streamingConversationIdRef.current = null;
         streamingAssistantIdRef.current = null;
         setStreamingAssistantId(null);
         setStreaming(false);
+        if (suppressed) return;
+        setStreamError(event.messageText);
         message.error(event.messageText);
         if (activeConversationIdRef.current) {
           void loadMessages(activeConversationIdRef.current);
@@ -431,7 +450,6 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
 
   const selectConversation = useCallback((id: string) => {
     setActiveConversationId(id);
-    setActiveWorkspaceMessageId(null);
     setStreamError(null);
     setPendingThreadReset(false);
     const next = new URLSearchParams(searchParams);
@@ -448,10 +466,45 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
       return;
     }
     await refreshConversations(result.data.id);
-    setActiveWorkspaceMessageId(null);
     setPendingThreadReset(false);
     setActiveMessages([]);
   }, [refreshConversations]);
+
+  const renameConversation = useCallback(async (id: string, title: string) => {
+    const result = await AiService.renameConversation(id, { title });
+    if (result.ok === false) {
+      message.error(result.message);
+      return false;
+    }
+    setConversations((items) => items.map((item) => (item.id === id ? result.data : item)));
+    return true;
+  }, []);
+
+  const deleteConversation = useCallback(
+    async (id: string) => {
+      const streamId = streamIdRef.current;
+      if (streamingConversationIdRef.current === id && streamId) {
+        suppressStreamErrorRef.current = true;
+        await AiService.cancelMessageStream(streamId);
+      }
+      const result = await AiService.deleteConversation(id);
+      if (result.ok === false) {
+        suppressStreamErrorRef.current = false;
+        message.error(result.message);
+        return;
+      }
+      setConversations((items) => items.filter((item) => item.id !== id));
+      if (activeConversationIdRef.current !== id) return;
+      setActiveConversationId(null);
+      setActiveMessages([]);
+      setStreamError(null);
+      setPendingThreadReset(false);
+      const next = new URLSearchParams(searchParams);
+      next.delete('conversationId');
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const selectCodingAgent = useCallback(
     async (id: string) => {
@@ -509,26 +562,26 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     }
 
     streamIdRef.current = result.data.streamId;
+    streamingConversationIdRef.current = activeConversationId;
     streamingAssistantIdRef.current = result.data.assistant.id;
     setStreamingAssistantId(result.data.assistant.id);
     setActiveMessages((items) => [...items, result.data.user, result.data.assistant]);
   }, [activeConversationId, canSendWithSelectedAgent, draft, streaming]);
 
-  const openWorkspaceFromMessage = useCallback((messageId: string) => {
-    setActiveWorkspaceMessageId(messageId);
-  }, []);
-
-  const patchWorkspace = useCallback(
-    async (messageId: string, suggestions: AiWorkspaceSuggestionVo[], analysisSummary?: string) => {
-      const result = await AiService.patchWorkspace(messageId, { suggestions, analysisSummary });
-      if (result.ok === false) {
-        message.error(result.message);
-        return false;
-      }
-      setActiveMessages((items) => items.map((item) => (item.id === messageId ? result.data : item)));
-      return true;
+  const openWorkspaceFromMessage = useCallback(
+    (messageId: string) => {
+      const item = activeMessages.find((entry) => entry.id === messageId);
+      const part = item?.parts.find((entry): entry is AiWorkspacePartVo => entry.type === 'workspace');
+      if (!item || !part) return;
+      void openToolTab({
+        conversationId: item.conversationId || activeConversationId || '',
+        messageId,
+        workspaceKey: part.workspaceKey,
+        title: toolTabTitle(part),
+        payload: part.payload,
+      });
     },
-    []
+    [activeConversationId, activeMessages, openToolTab],
   );
 
   const goalTitle = useCallback(
@@ -564,8 +617,6 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     activeConversationId,
     activeConversation,
     activeMessages,
-    activeWorkspaceMessageId,
-    activeWorkspacePart,
     draft,
     setDraft,
     composerInputRef,
@@ -584,10 +635,11 @@ export function AiSessionProvider({ children }: { children: ReactNode }) {
     threadWillReset,
     selectConversation,
     createBlankConversation,
+    renameConversation,
+    deleteConversation,
     sendUserMessage,
     cancelStreaming,
     openWorkspaceFromMessage,
-    patchWorkspace,
     goalTitle,
     taskTitle,
     onOpenGoal,

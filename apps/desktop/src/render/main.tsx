@@ -11,7 +11,7 @@ import './style/tailwind.css';
 import './style/global.less';
 import { HashRouter } from 'react-router-dom';
 import rootReducer from './store';
-import { GlobalContext } from './context';
+import { GlobalContext, type ThemePreference } from './context';
 import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
@@ -19,6 +19,7 @@ import './mock';
 import Router from './router';
 import { generatePermission } from './router/routes';
 import 'dayjs/locale/zh-cn';
+import 'dayjs/locale/en';
 import '@true-north/web-service/electron-types';
 import dayjs from 'dayjs';
 import { registerMessage } from '@true-north/web-service';
@@ -33,11 +34,7 @@ const messageApi = {
 
 registerMessage(messageApi);
 
-dayjs.locale('zh-cn');
-
 const store = createStore(rootReducer);
-
-type ThemePreference = 'system' | 'light' | 'dark';
 
 function mediaTheme(): 'light' | 'dark' {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -76,9 +73,11 @@ function LifeToolkitApp() {
     }),
     [themeMode],
   );
-  const setTheme = useCallback(
-    (value: string) => {
-      setThemePreference(value === 'dark' ? 'dark' : 'light');
+  const setThemePreferenceValue = useCallback(
+    (value: ThemePreference) => {
+      if (value === 'system' || value === 'light' || value === 'dark') {
+        setThemePreference(value);
+      }
     },
     [setThemePreference],
   );
@@ -135,11 +134,18 @@ function LifeToolkitApp() {
     changeTheme(themeMode);
   }, [themeMode]);
 
+  useEffect(() => {
+    dayjs.locale(lang === 'zh-CN' ? 'zh-cn' : 'en');
+  }, [lang]);
+
   const contextValue = {
     lang,
     setLang,
     theme: themeMode,
-    setTheme,
+    themePreference: (themePreference === 'light' || themePreference === 'dark'
+      ? themePreference
+      : 'system') as ThemePreference,
+    setThemePreference: setThemePreferenceValue,
   };
 
   return (
