@@ -13,15 +13,43 @@ export default function IconSelector(props: {
   onChange?: (value: number | null) => void;
 }) {
   const { map, icon: Icon, value, readonly, onChange } = props;
+  const label = map.get(value)?.label;
+
+  const trigger = (
+    <Flex
+      align="center"
+      justify="center"
+      className={`rounded-sm ${
+        readonly ? 'w-4 h-4' : 'w-7 h-7 cursor-pointer hover:bg-fill-3'
+      }`}
+    >
+      <Icon
+        size={16}
+        className="cursor-pointer"
+        style={{ color: tokenColor(map.get(value)?.color) }}
+      />
+    </Flex>
+  );
+
+  const labeled = label ? (
+    <Tooltip title={<span className="text-text-2">{label}</span>} color="var(--color-bg-2)">
+      {trigger}
+    </Tooltip>
+  ) : (
+    trigger
+  );
+
+  if (readonly) {
+    return labeled;
+  }
 
   return (
     <Popover
-      disabled={readonly}
       content={
         <Flex vertical gap={16}>
           <div className="py-1">
             {[...Array.from(map.entries())].map(([key, option], index) => {
-              const { color, label } = option;
+              const { color, label: optionLabel } = option;
               return (
                 <Flex
                   key={index}
@@ -33,35 +61,16 @@ export default function IconSelector(props: {
                   }}
                 >
                   <Icon size={16} style={{ color: tokenColor(color) }} />
-                  <div className="text-body-3">{label}</div>
+                  <div className="text-body-3">{optionLabel}</div>
                 </Flex>
               );
             })}
           </div>
         </Flex>
       }
-      trigger={readonly ? 'hover' : 'click'}
+      trigger="click"
     >
-      <Tooltip
-        content={<span className="text-text-2">{map.get(value)?.label}</span>}
-        mini
-        color="var(--color-bg-2)"
-        disabled={!map.get(value)?.label}
-      >
-        <Flex
-          align="center"
-          justify="center"
-          className={`rounded-sm ${
-            readonly ? 'w-4 h-4' : 'w-7 h-7 cursor-pointer hover:bg-fill-3'
-          }`}
-        >
-          <Icon
-            size={16}
-            className="cursor-pointer"
-            style={{ color: tokenColor(map.get(value)?.color) }}
-          />
-        </Flex>
-      </Tooltip>
+      {labeled}
     </Popover>
   );
 }

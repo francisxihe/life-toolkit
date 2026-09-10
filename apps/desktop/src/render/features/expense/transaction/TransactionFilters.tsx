@@ -7,7 +7,7 @@ import { Calendar } from 'lucide-react';
 import { useExpenses } from '../context';
 import { PERIODS } from '../constants';
 import { TagSelector } from '@/components/TagSelector';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 export function TransactionFilters() {
   const { filters, setFilters } = useExpenses();
@@ -58,7 +58,7 @@ export function TransactionFilters() {
         <Col flex="auto" span={12}>
           <DatePicker
             className="w-[200px]"
-            value={date}
+            value={date ? dayjs(date) : undefined}
             onChange={(date: Dayjs) => {
               handleDateSelect(date?.toDate());
             }}

@@ -34,6 +34,12 @@ interface ToolButtonProps {
   children?: React.ReactNode;
 }
 
+const toButtonSize = (size?: 'mini' | 'small' | 'default' | 'large') => {
+  if (size === 'mini' || size === 'small') return 'small' as const;
+  if (size === 'large') return 'large' as const;
+  return 'medium' as const;
+};
+
 // 可复用的工具按钮组件
 const ToolButton: React.FC<ToolButtonProps> = ({
   icon,
@@ -44,14 +50,14 @@ const ToolButton: React.FC<ToolButtonProps> = ({
   size = 'default',
   children,
 }) => (
-  <Tooltip content={content}>
+  <Tooltip title={content}>
     <Button
       type="default"
       icon={icon}
       onClick={onClick}
       disabled={disabled}
-      status={status}
-      size={size}
+      danger={status === 'danger'}
+      size={toButtonSize(size)}
     >
       {children}
     </Button>
@@ -153,7 +159,7 @@ const MindMapToolbar: React.FC<MindMapToolbarProps> = ({
         <Switch
           checked={minimapVisible}
           onChange={handleToggleMinimap}
-          size={size === 'small' ? 'small' : 'default'}
+          size={size === 'small' ? 'small' : 'medium'}
         />
       </div>
     );

@@ -1,3 +1,10 @@
 .wrapper { width: 100%; min-width: 0; }
-.loading, .empty { width: 100%; min-height: 280px; }
+.loading,
+.empty {
+  width: 100%;
+  min-height: 0;
+}
+.empty :global(.sue-empty) {
+  margin: 0;
+}
 .pagination { padding: 12px 0 0; border-top: 1px solid var(--sue-color-border-secondary); color: var(--sue-color-text-tertiary); font-size: 12px; }

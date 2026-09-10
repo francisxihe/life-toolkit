@@ -84,7 +84,7 @@ export default function TaskForm() {
   const { allowedDateRange, allowedImportance, allowedDifficulty, updateByConstraints } =
     useTaskFormConstraints(parentTask, parentGoal);
   const constraintOwner = parentTask ? '父任务' : '目标';
-  const datePlaceholder = allowedDateRange
+  const datePlaceholder: [string, string] = allowedDateRange
     ? [
         `开始时间（最早：${dayjs(allowedDateRange[0]).format('YYYY-MM-DD HH:mm')}）`,
         `结束时间（最晚：${dayjs(allowedDateRange[1]).format('YYYY-MM-DD HH:mm')}）`,
@@ -115,7 +115,7 @@ export default function TaskForm() {
   ]);
 
   if (loading) {
-    return <Spin dot />;
+    return <Spin />;
   }
   if (!taskFormData) return null;
   return (

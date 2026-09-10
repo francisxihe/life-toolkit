@@ -54,7 +54,7 @@ export default function ERPPage() {
 
       <Form
         form={form}
-        onSubmit={onSubmit}
+        onFinish={onSubmit}
         layout="vertical"
         className="space-y-4"
       >
@@ -72,11 +72,13 @@ export default function ERPPage() {
           rules={[
             { required: true, message: 'Price is required' },
             {
-              validator: (value) => {
+              validator: (_, value) => {
                 if (isNaN(Number(value)) || Number(value) <= 0) {
-                  return 'Price must be a positive number';
+                  return Promise.reject(
+                    new Error('Price must be a positive number'),
+                  );
                 }
-                return true;
+                return Promise.resolve();
               },
             },
           ]}
@@ -90,11 +92,13 @@ export default function ERPPage() {
           rules={[
             { required: true, message: 'Quantity is required' },
             {
-              validator: (value) => {
+              validator: (_, value) => {
                 if (isNaN(Number(value)) || Number(value) < 0) {
-                  return 'Quantity must be a non-negative number';
+                  return Promise.reject(
+                    new Error('Quantity must be a non-negative number'),
+                  );
                 }
-                return true;
+                return Promise.resolve();
               },
             },
           ]}

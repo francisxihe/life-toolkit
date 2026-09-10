@@ -70,17 +70,17 @@ const InternalMindMap: React.FC<EnhancedMindMapProps> = ({
       </div>
 
       <NodeEditor
-        open={nodeEditorVisible}
+        visible={nodeEditorVisible}
         nodeId={selectedNodeId}
         onClose={() => setNodeEditorVisible(false)}
       />
 
       <MiniMapContainer />
 
-      <ExportModal open={exportModalVisible} onClose={() => setExportModalVisible(false)} />
+      <ExportModal visible={exportModalVisible} onClose={() => setExportModalVisible(false)} />
 
       <ImportModal
-        open={importModalVisible}
+        visible={importModalVisible}
         onClose={() => setImportModalVisible(false)}
         onImport={handleImport}
       />

@@ -21,28 +21,46 @@ export type TagProps =
       onChange: (value: string) => void;
     };
 
-export function TagEditor({ value, multiple = true, onChange }: TagProps) {
+export function TagEditor(props: TagProps) {
+  const { value } = props;
+  const multiple = props.multiple !== false;
+
   return (
     <Select
       mode={multiple ? 'tags' : undefined}
       maxTagCount={multiple ? 'responsive' : undefined}
       placeholder={'添加标签'}
       defaultValue={value}
-      onChange={(e) => onChange(e)}
+      onChange={(next) => {
+        if (props.multiple !== false) {
+          props.onChange(next as string[]);
+        } else {
+          props.onChange(next as string);
+        }
+      }}
       options={options}
       allowClear
     ></Select>
   );
 }
 
-export function TagSelector({ value, multiple = true, onChange }: TagProps) {
+export function TagSelector(props: TagProps) {
+  const { value } = props;
+  const multiple = props.multiple !== false;
+
   return (
     <Select
       mode={multiple ? 'multiple' : undefined}
       maxTagCount={multiple ? 'responsive' : undefined}
       placeholder={'选择标签'}
       defaultValue={value}
-      onChange={(e) => onChange(e)}
+      onChange={(next) => {
+        if (props.multiple !== false) {
+          props.onChange(next as string[]);
+        } else {
+          props.onChange(next as string);
+        }
+      }}
       options={options}
       allowClear
     ></Select>

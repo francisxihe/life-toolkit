@@ -24,13 +24,17 @@ export default function HabitListTable() {
 
   if (loading && !habits.length) {
     return (
-      <Flex className={styles.loading} align="center" justify="center">
+      <Flex container="full" className={styles.loading} align="center" justify="center">
         <Spin />
       </Flex>
     );
   }
   if (!habits.length) {
-    return <Empty className={styles.empty} description="暂无习惯，开始建立一个可持续的行动吧" />;
+    return (
+      <Flex container="full" className={styles.empty} align="center" justify="center">
+        <Empty description="暂无习惯，开始建立一个可持续的行动吧" />
+      </Flex>
+    );
   }
 
   return (

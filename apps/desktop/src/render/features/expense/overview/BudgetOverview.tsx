@@ -31,8 +31,8 @@ export function BudgetOverview() {
               </div>
               <Progress
                 percent={percentage}
-                status={percentage > 100 ? 'error' : 'normal'}
-                formatText={() => `${percentage.toFixed(1)}%`}
+                status={percentage > 100 ? 'exception' : 'normal'}
+                format={() => `${percentage.toFixed(1)}%`}
               />
             </Card>
           );

@@ -129,25 +129,50 @@ function installDevMenu() {
     const contents = appContents();
     if (contents) run(contents);
   };
-  const template = [
-    ...(isMac
-      ? [
-          {
-            label: app.name,
-            submenu: [
-              { role: 'about' },
-              { type: 'separator' },
-              { role: 'services' },
-              { type: 'separator' },
-              { role: 'hide' },
-              { role: 'hideOthers' },
-              { role: 'unhide' },
-              { type: 'separator' },
-              { role: 'quit' },
-            ],
+  const macAppMenu: electron.MenuItemConstructorOptions[] = isMac
+    ? [
+        {
+          label: app.name,
+          submenu: [
+            { role: 'about' },
+            { type: 'separator' },
+            { role: 'services' },
+            { type: 'separator' },
+            { role: 'hide' },
+            { role: 'hideOthers' },
+            { role: 'unhide' },
+            { type: 'separator' },
+            { role: 'quit' },
+          ],
+        },
+      ]
+    : [];
+  const productWikiMenu: electron.MenuItemConstructorOptions[] = isProductDev
+    ? [
+        {
+          label: 'ProductWiki',
+          type: 'checkbox',
+          checked: wikiDockPreferred,
+          click: (item) => {
+            setWikiDockPreferred(item.checked);
           },
-        ]
-      : []),
+        },
+      ]
+    : [];
+  const labMenu: electron.MenuItemConstructorOptions[] = isLabDev
+    ? [
+        {
+          label: 'Lab',
+          type: 'checkbox',
+          checked: labDockPreferred,
+          click: (item) => {
+            setLabDockPreferred(item.checked);
+          },
+        },
+      ]
+    : [];
+  const template: electron.MenuItemConstructorOptions[] = [
+    ...macAppMenu,
     { role: 'fileMenu' },
     { role: 'editMenu' },
     {
@@ -164,30 +189,8 @@ function installDevMenu() {
           click: () => withAppContents((contents) => contents.reloadIgnoringCache()),
         },
         { type: 'separator' },
-        ...(isProductDev
-          ? [
-              {
-                label: 'ProductWiki',
-                type: 'checkbox',
-                checked: wikiDockPreferred,
-                click: (item) => {
-                  setWikiDockPreferred(item.checked);
-                },
-              },
-            ]
-          : []),
-        ...(isLabDev
-          ? [
-              {
-                label: 'Lab',
-                type: 'checkbox',
-                checked: labDockPreferred,
-                click: (item) => {
-                  setLabDockPreferred(item.checked);
-                },
-              },
-            ]
-          : []),
+        ...productWikiMenu,
+        ...labMenu,
         {
           label: 'Toggle Developer Tools',
           accelerator: isMac ? 'Alt+Command+I' : 'Ctrl+Shift+I',

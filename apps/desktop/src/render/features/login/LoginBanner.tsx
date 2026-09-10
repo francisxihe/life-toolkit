@@ -27,7 +27,7 @@ export default function LoginBanner() {
     },
   ];
   return (
-    <Carousel className={styles.carousel} animation="fade">
+    <Carousel className={styles.carousel} effect="fade">
       {data.map((item, index) => (
         <div key={`${index}`}>
           <Flex

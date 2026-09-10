@@ -151,7 +151,7 @@ export default function TaskTable() {
         loading={loading}
         pagination={false}
         rowKey="id"
-        onExpand={onExpandTable}
+        onExpand={(expanded, record) => void onExpandTable(record, expanded)}
         expandedRowRender={(record) => {
           if (subTaskLoadingStatus[record.id] === 'unLoading') return true;
           if (subTaskLoadingStatus[record.id] === 'loading') {

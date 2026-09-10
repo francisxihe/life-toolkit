@@ -268,7 +268,6 @@ const TaskMain: React.FC<TaskMainProps> = ({ task, onDeleted, onEdit }) => {
                           <span className={styles.label}>状态：</span>
                           <Tag
                             color={STATUS_CONFIG[task.status]?.color}
-                            size="small"
                           >
                             {STATUS_CONFIG[task.status]?.label}
                           </Tag>

@@ -13,17 +13,11 @@ export type GoalForeignProps = {
 };
 
 export default function GoalForeign(props: GoalForeignProps) {
-  const [loading, setLoading] = useState(false);
   const { goalId, onChangeGoal } = props;
-  const { refreshGoalDetail, readonly } = useGoalDetailContext();
+  const { refreshGoalDetail, readonly, currentGoal } = useGoalDetailContext();
 
   useEffect(() => {
-    async function init() {
-      setLoading(true);
-      await refreshGoalDetail(goalId);
-      setLoading(false);
-    }
-    init();
+    void refreshGoalDetail(goalId);
   }, [refreshGoalDetail, goalId]);
 
   const [localActiveTab, setLocalActiveTab] = useState<'children' | 'taskList'>(
@@ -41,12 +35,16 @@ export default function GoalForeign(props: GoalForeignProps) {
     },
   ] as const;
 
-  if (loading) {
-    return <Spin dot />;
+  if (!currentGoal || currentGoal.id !== goalId) {
+    return (
+      <Flex container="full" align="center" justify="center">
+        <Spin />
+      </Flex>
+    );
   }
 
   return (
-    <>
+    <Flex vertical container="full">
       {!props.activeTab && (
         <Flex
           container="fixed"
@@ -84,12 +82,12 @@ export default function GoalForeign(props: GoalForeignProps) {
           {activeTab === 'children' ? <CreateGoal /> : <CreateTask />}
         </Flex>
       )}
-      <Flex container="fill">
+      <Flex vertical container="fill" className="min-h-0 overflow-auto">
         {activeTab === 'children' && (
           <GoalChildren onChangeGoal={onChangeGoal} />
         )}
         {activeTab === 'taskList' && <GoalTaskList />}
       </Flex>
-    </>
+    </Flex>
   );
 }

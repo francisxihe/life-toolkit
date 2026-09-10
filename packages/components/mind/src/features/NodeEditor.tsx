@@ -101,8 +101,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
       open={visible}
       onCancel={onClose}
       footer={null}
-      autoFocus={false}
-      maskClosable={true}
     >
       <div className="space-y-4">
         <div>
@@ -110,7 +108,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({ visible, nodeId, onClose }) => 
           <Input
             ref={inputRef}
             value={nodeLabel}
-            onChange={setNodeLabel}
+            onChange={(e) => setNodeLabel(e.target.value)}
             placeholder="请输入节点内容"
             onKeyDown={handleKeyDown}
             autoComplete="off"

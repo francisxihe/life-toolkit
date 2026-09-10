@@ -1,4 +1,11 @@
-import { Form, Input, Checkbox, Button, Space, Flex } from '@sue/design-web-react';
+import {
+  Form,
+  Input,
+  Checkbox,
+  Button,
+  Space,
+  Flex,
+} from '@sue/design-web-react';
 import { Lock, User } from 'lucide-react';
 import { FormInstance } from '@sue/design-web-react';
 
@@ -13,7 +20,7 @@ export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [loginParams, setLoginParams, removeLoginParams] =
-  useStorage('loginParams');
+    useStorage('loginParams');
   const t = useLocale(locale);
   const [rememberPassword, setRememberPassword] = useState(!!loginParams);
   function afterLoginSuccess(params) {
@@ -31,19 +38,19 @@ export default function LoginForm() {
   function login(params) {
     setErrorMessage('');
     setLoading(true);
-    axios.
-    post('/api/user/login', params).
-    then((res) => {
-      const { status, msg } = res.data;
-      if (status === 'ok') {
-        afterLoginSuccess(params);
-      } else {
-        setErrorMessage(msg || t['login.form.login.errMsg']);
-      }
-    }).
-    finally(() => {
-      setLoading(false);
-    });
+    axios
+      .post('/api/user/login', params)
+      .then((res) => {
+        const { status, msg } = res.data;
+        if (status === 'ok') {
+          afterLoginSuccess(params);
+        } else {
+          setErrorMessage(msg || t['login.form.login.errMsg']);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
   function onSubmitClick() {
     formRef.current.validateFields().then((values) => {
@@ -70,47 +77,52 @@ export default function LoginForm() {
         className={styles['login-form']}
         layout="vertical"
         ref={formRef}
-        initialValues={{ userName: 'admin', password: 'admin' }}>
-
+        initialValues={{ userName: 'admin', password: 'admin' }}
+      >
         <Form.Item
           name="userName"
-          rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}>
-
+          rules={[{ required: true, message: t['login.form.userName.errMsg'] }]}
+        >
           <Input
             prefix={<User size={16} />}
             placeholder={t['login.form.userName.placeholder']}
-            onPressEnter={onSubmitClick} />
-
+            onPressEnter={onSubmitClick}
+          />
         </Form.Item>
         <Form.Item
           name="password"
-          rules={[{ required: true, message: t['login.form.password.errMsg'] }]}>
-
+          rules={[{ required: true, message: t['login.form.password.errMsg'] }]}
+        >
           <Input.Password
             prefix={<Lock size={16} />}
             placeholder={t['login.form.password.placeholder']}
-            onPressEnter={onSubmitClick} />
-
+            onPressEnter={onSubmitClick}
+          />
         </Form.Item>
-        <Space size={16} direction="vertical">
+        <Space size={16} vertical>
           <Flex justify="space-between">
-            <Checkbox checked={rememberPassword} onChange={(event) => setRememberPassword(event.target.checked)}>
+            <Checkbox
+              checked={rememberPassword}
+              onChange={(event) => setRememberPassword(event.target.checked)}
+            >
               {t['login.form.rememberPassword']}
             </Checkbox>
-            <a style={{ color: "var(--color-primary-6)" }}>{t['login.form.forgetPassword']}</a>
+            <a style={{ color: 'var(--color-primary-6)' }}>
+              {t['login.form.forgetPassword']}
+            </a>
           </Flex>
-          <Button type="primary" long onClick={onSubmitClick} loading={loading}>
+          <Button type="primary" block onClick={onSubmitClick} loading={loading}>
             {t['login.form.login']}
           </Button>
           <Button
             type="text"
-            long
-            className={styles['login-form-register-btn']}>
-
+            block
+            className={styles['login-form-register-btn']}
+          >
             {t['login.form.register']}
           </Button>
         </Space>
       </Form>
-    </div>);
-
+    </div>
+  );
 }

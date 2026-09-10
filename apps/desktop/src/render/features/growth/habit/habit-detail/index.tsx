@@ -171,7 +171,7 @@ export const HabitDetailPage: React.FC = () => {
   if (loading) {
     return (
       <Flex align="center" justify="center" className={styles.loading}>
-        <Spin size={40} />
+        <Spin size="large" />
       </Flex>
     );
   }

@@ -6,8 +6,20 @@
   height: 100%;
   min-height: 0;
 }
+.tabs :global(.sue-tabs-body-holder),
+.tabs :global(.sue-tabs-content-holder),
+.tabs :global(.sue-tabs-body) {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.tabs :global(.sue-tabs-content),
+.tabs :global(.sue-tabs-tabpane) {
+  height: 100%;
+}
 .treeLayout {
   overflow: hidden;
+  min-height: 0;
 }
 .sider {
   min-width: 260px;
@@ -16,4 +28,5 @@
 }
 .content {
   min-width: 0;
+  min-height: 0;
 }

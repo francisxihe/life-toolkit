@@ -270,7 +270,6 @@ function Item(props: {
           labelAlign="left"
           labelCol={{ span: labelCol }}
           wrapperCol={{ span: wrapperCol }}
-          requiredSymbol={{ position: 'end' }}
           rules={props.rules}
           className={clsx(
             '[&_.sue-form-item-label>label]:flex',
@@ -281,7 +280,7 @@ function Item(props: {
           <Form.Item
             name={props.name}
             rules={props.rules}
-            noStyle={{ showErrorTip: true }}
+            noStyle
           >
             {props.children}
           </Form.Item>
@@ -300,7 +299,6 @@ function Item(props: {
         labelCol={{ span: labelCol }}
         wrapperCol={{ span: wrapperCol }}
         rules={props.rules}
-        requiredSymbol={{ position: 'end' }}
         className={clsx(
           '[&_.sue-form-item-label>label]:flex',
           '[&_.sue-form-item-label>label]:items-center',

@@ -173,7 +173,7 @@ export default function TodoTable(props: {
             {!(relatedType === TodoRelatedType.HABIT && isActive) && (
               <Button
                 type="text"
-                status="danger"
+                danger
                 onClick={() => {
                   const isRepeatSeries = relatedType === TodoRelatedType.IS_REPEAT;
                   Modal.confirm({

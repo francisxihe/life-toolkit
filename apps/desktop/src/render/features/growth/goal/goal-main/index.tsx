@@ -47,12 +47,15 @@ const GoalDetail: React.FC = () => {
     >
       <Flex vertical container="full" className={styles.detail}>
         <GoalMainHeader />
-        <Flex container="fill" className={styles.body}>
+        <Flex vertical container="fill" className={styles.body}>
           <Tabs
             tabBarStyle={{ padding: '0 12px' }}
             styles={{
               body: {
                 padding: '8px 12px',
+                height: '100%',
+                minHeight: 0,
+                overflow: 'auto',
               },
             }}
             size='small'

@@ -45,7 +45,6 @@ function TaskItem(props: TaskItemProps) {
         [styles.done]: task.status === TaskStatus.DONE,
         [styles.abandoned]: task.status === TaskStatus.ABANDONED,
       })}
-      container="full"
       align="center"
       gap={12}
     >

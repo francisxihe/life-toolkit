@@ -152,7 +152,7 @@ const TaskAside: React.FC<TaskAsideProps> = ({ currentTaskId }) => {
             selectedKeys={[selectedTaskId]}
             expandedKeys={expandedKeys}
             onSelect={handleSelect}
-            onExpand={setExpandedKeys}
+            onExpand={(keys) => setExpandedKeys(keys as string[])}
             blockNode
             showLine
             className={styles.taskTree}

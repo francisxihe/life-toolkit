@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Input, Select, Button, Space, message, Divider } from '@sue/design-web-react';
+import { Form, Input, Select, Button, Space, message, Divider, Row, Col } from '@sue/design-web-react';
 
 import { HabitController } from '@true-north/web-service';
 import { CreateHabitVo, GoalVo, HabitVo } from '@true-north/vo';
@@ -29,7 +29,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [repeatSetting, setRepeatSetting] = useState<RepeatSelectorValue>(() =>
     createDefaultRepeatSetting(dayjs().format('YYYY-MM-DD'))
   );
@@ -38,7 +37,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
   useEffect(() => {
     form.resetFields();
     if (!habit) {
-      setSelectedGoals([]);
       setRepeatSetting(createDefaultRepeatSetting(dayjs().format('YYYY-MM-DD')));
       return;
     }
@@ -48,8 +46,8 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
       importance: habit.importance,
       difficulty: habit.difficulty,
       tags: habit.tags,
+      goalIds: habit.goals?.map((goal) => goal.id) || [],
     });
-    setSelectedGoals(habit.goals?.map((goal) => goal.id) || []);
     setRepeatSetting({
       repeatMode: habit.repeatMode,
       repeatConfig: habit.repeatConfig,
@@ -65,11 +63,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
     try {
       const values = await form.validateFields();
 
-      if (selectedGoals.length === 0) {
-        message.error('请至少选择一个关联目标');
-        return;
-      }
-
       setLoading(true);
 
       const habitData: CreateHabitVo = {
@@ -78,7 +71,7 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
         importance: values.importance || 3,
         difficulty: values.difficulty || Difficulty.Challenger,
         tags: values.tags || [],
-        goalIds: selectedGoals,
+        goalIds: values.goalIds,
         ...repeatSetting,
       };
 
@@ -92,6 +85,9 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
       emitHabitChanged();
       onSuccess();
     } catch (error) {
+      if (error && typeof error === 'object' && 'errorFields' in error) {
+        return;
+      }
       console.error('创建习惯失败:', error);
       message.error('创建习惯失败');
     } finally {
@@ -99,131 +95,123 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
     }
   };
 
-  // 处理目标选择变更
-  const handleGoalChange = (goalIds: string[]) => {
-    setSelectedGoals(goalIds);
-  };
-
   return (
     <div>
-      <Form form={form} layout="vertical" autoComplete="off">
-        {/* 基础信息 */}
+      <Form
+        form={form}
+        layout="vertical"
+        autoComplete="off"
+        initialValues={{
+          importance: 3,
+          difficulty: Difficulty.Challenger,
+          goalIds: [],
+        }}
+      >
         <Form.Item
           label="习惯名称"
           name="name"
           rules={[
-          { required: true, message: '请输入习惯名称' },
-          {
-            minLength: 1,
-            maxLength: 50,
-            message: '习惯名称长度为1-50个字符'
-          }]
-          }>
-
+            { required: true, message: '请输入习惯名称' },
+            {
+              type: 'string',
+              min: 1,
+              max: 50,
+              message: '习惯名称长度为1-50个字符'
+            },
+          ]}
+        >
           <Input placeholder="请输入习惯名称，如：每日阅读30分钟" />
         </Form.Item>
 
         <Form.Item
           label="习惯描述"
           name="description"
-          rules={[{ maxLength: 200, message: '描述长度不能超过200个字符' }]}>
-
+          rules={[{ type: 'string', max: 200, message: '描述长度不能超过200个字符' }]}
+        >
           <TextArea
             placeholder="请描述这个习惯的具体内容和要求"
             rows={3}
             showCount
-            maxLength={200} />
-
+            maxLength={200}
+          />
         </Form.Item>
 
-        {/* 目标关联 - 强制选择 */}
-        <div>
-          <span className="block mb-2 font-medium">
-            关联目标 <span className="text-red-500">*</span>
-          </span>
-          <span className="text-text-3 block mb-3 text-sm">
-            每个习惯必须关联至少一个目标，习惯的执行将推进目标的达成
-          </span>
-
-          {goals.length === 0 ?
-          <div className="text-center py-4 text-gray-500">
-              <span>暂无可关联的目标，请先创建目标</span>
-            </div> :
-
+        <Form.Item
+          label="关联目标"
+          name="goalIds"
+          required
+          extra="每个习惯必须关联至少一个目标，习惯的执行将推进目标的达成"
+          rules={[
+            { required: true, type: 'array', min: 1, message: '请至少选择一个关联目标' },
+          ]}
+        >
           <Select
             mode="multiple"
-            placeholder="请选择要支撑的目标"
-            value={selectedGoals}
-            onChange={handleGoalChange}
+            placeholder={
+              goals.length === 0
+                ? '暂无可关联的目标，请先创建目标'
+                : '请选择要支撑的目标'
+            }
+            disabled={goals.length === 0}
             style={{ width: '100%' }}
-            maxTagCount={3}>
+            maxTagCount={3}
+          >
+            {goals.filter((goal) => goal.id).map((goal) => (
+              <Option key={goal.id} value={goal.id}>
+                <div>
+                  <div className="font-medium">{goal.name}</div>
+                  {goal.description && (
+                    <div className="text-sm text-gray-500 truncate">
+                      {goal.description}
+                    </div>
+                  )}
+                </div>
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
 
-              {goals.filter((goal) => goal.id).map((goal) =>
-            <Option key={goal.id} value={goal.id}>
-                  <div>
-                    <div className="font-medium">{goal.name}</div>
-                    {goal.description &&
-                <div className="text-sm text-gray-500 truncate">
-                        {goal.description}
-                      </div>
-                }
-                  </div>
-                </Option>
-            )}
-            </Select>
-          }
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item label="重要程度" name="importance">
+              <Select
+                placeholder="选择重要程度"
+                options={[...IMPORTANCE_MAP.entries()].map(([value, option]) => ({
+                  value,
+                  label: option.label,
+                  color: option.color
+                }))}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item label="难度等级" name="difficulty">
+              <Select
+                placeholder="选择难度等级"
+                options={[...DIFFICULTY_MAP.entries()].map(([value, option]) => ({
+                  value,
+                  label: option.label,
+                  color: option.color
+                }))}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
 
-          {selectedGoals.length === 0 &&
-          <span className="text-sm mt-1" style={{ color: "#f53f3f" }}>
-              请至少选择一个关联目标
-            </span>
-          }
-        </div>
-
-        {/* 属性设置 */}
-        <div className="grid grid-cols-2 gap-4">
-          <Form.Item label="重要程度" name="importance" initialValue={3}>
-            <Select
-              placeholder="选择重要程度"
-              options={[...IMPORTANCE_MAP.entries()].map(([value, option]) => ({
-                value,
-                label: option.label,
-                color: option.color
-              }))}>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-            label="难度等级"
-            name="difficulty"
-            initialValue={Difficulty.Challenger}>
-
-            <Select
-              placeholder="选择难度等级"
-              options={[...DIFFICULTY_MAP.entries()].map(([value, option]) => ({
-                value,
-                label: option.label,
-                color: option.color
-              }))}>
-            </Select>
-          </Form.Item>
-        </div>
-
-        {/* 标签 */}
         <Form.Item label="标签" name="tags">
           <Select
             mode="tags"
             placeholder="添加标签，最多5个"
             maxTagCount={5}
             allowClear
-            style={{ width: '100%' }} />
-
+            style={{ width: '100%' }}
+          />
         </Form.Item>
 
         <div>
           <span className="block mb-2 font-medium">重复规则</span>
           <ProductSurface id={productRef('growth.repeat.interaction')}>
-          <RepeatSelector lang="zh-CN" value={repeatSetting} onChange={setRepeatSetting} />
+            <RepeatSelector lang="zh-CN" value={repeatSetting} onChange={setRepeatSetting} />
           </ProductSurface>
         </div>
 
@@ -236,6 +224,6 @@ export const CreateHabit: React.FC<CreateHabitProps> = ({
           {habit ? '保存' : '创建'}
         </Button>
       </Space>
-    </div>);
-
+    </div>
+  );
 };

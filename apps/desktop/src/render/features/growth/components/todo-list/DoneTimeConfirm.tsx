@@ -29,7 +29,8 @@ export default function DoneTimeConfirm(props: {
       </div>
       <Radio.Group
         value={doneType}
-        onChange={(value) => {
+        onChange={(e) => {
+          const value = e.target.value as typeof doneType;
           setDoneType(value);
           if (value === 'onTime') {
             onDoneTime(dayjs(todo.planDate + ' ' + planEndTime()));

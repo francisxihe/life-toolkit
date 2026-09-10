@@ -53,7 +53,7 @@ export default function TransactionTable() {
       render: (tags: string[]) => (
         <div className="flex flex-wrap gap-1">
           {tags.map((tag, index) => (
-            <Tag key={index} bordered>
+            <Tag key={index} variant="outlined">
               {tag}
             </Tag>
           ))}

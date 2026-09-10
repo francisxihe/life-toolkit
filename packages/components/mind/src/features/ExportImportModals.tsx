@@ -73,7 +73,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, onClose }) => {
       <div className="space-y-4">
         <div>
           <div className="mb-2 font-medium">导出格式</div>
-          <Radio.Group type="button" name="exportType" value={exportType} onChange={setExportType}>
+          <Radio.Group optionType="button" name="exportType" value={exportType} onChange={(e) => setExportType(e.target.value)}>
             <Radio value="png">PNG 图片</Radio>
             <Radio value="svg">SVG 矢量图</Radio>
             <Radio value="json">JSON 数据</Radio>
@@ -84,10 +84,10 @@ const ExportModal: React.FC<ExportModalProps> = ({ visible, onClose }) => {
           <div>
             <div className="mb-2 font-medium">背景选项</div>
             <Radio.Group
-              type="button"
+              optionType="button"
               name="transparent"
               value={transparent}
-              onChange={setTransparent}
+              onChange={(e) => setTransparent(e.target.value)}
             >
               <Radio value={false}>白色背景</Radio>
               <Radio value={true}>透明背景</Radio>
