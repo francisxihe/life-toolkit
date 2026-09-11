@@ -12,15 +12,22 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { message } from '@sue/design-web-react';
 import { BrowserService } from '@true-north/web-service';
+import { registerWorkbenchOpener, WorkbenchRuntimeContext } from '@true-north/plugin-sdk';
 import type {
-  AiDecomposePayloadVo,
-  AiWorkspaceKey,
+  AiWorkspacePayloadVo,
   BrowserBoundsVo,
   BrowserExtractResultVo,
   BrowserStateVo,
   BrowserTabVo,
 } from '@true-north/vo';
 import { normalizeBrowserUrl } from '@true-north/vo';
+import type {
+  WorkbenchExtractHandler,
+  WorkbenchToolDefinition,
+  WorkbenchToolRegistry,
+  WorkbenchWorkspaceHost,
+} from './types';
+import { createWorkbenchToolRegistry } from './types';
 
 const DEFAULT_WIDTH = 480;
 const MIN_WIDTH = 360;
@@ -41,9 +48,9 @@ export type WorkbenchToolTab = {
   id: string;
   conversationId: string;
   messageId: string;
-  workspaceKey: AiWorkspaceKey;
+  workspaceKey: string;
   title: string;
-  payload: AiDecomposePayloadVo;
+  payload: AiWorkspacePayloadVo;
 };
 
 export type WorkbenchWebTab = {
@@ -58,9 +65,9 @@ export type WorkbenchTab = WorkbenchWebTab | WorkbenchToolTab;
 export type TabInput = {
   conversationId: string;
   messageId: string;
-  workspaceKey: AiWorkspaceKey;
+  workspaceKey: string;
   title: string;
-  payload: AiDecomposePayloadVo;
+  payload: AiWorkspacePayloadVo;
 };
 
 export type WorkbenchFollowUp = {
@@ -81,6 +88,7 @@ type WorkbenchContextValue = {
   toggle: () => void;
   close: () => void;
   setWidth: (width: number) => void;
+  setLeftReserve: (width: number) => void;
   createTab: () => Promise<void>;
   closeTab: (id: string) => Promise<void>;
   activateTab: (id: string) => Promise<void>;
@@ -93,9 +101,11 @@ type WorkbenchContextValue = {
   goForward: () => Promise<void>;
   extractActiveTab: () => Promise<BrowserExtractResultVo | undefined>;
   reportBounds: (bounds: BrowserBoundsVo) => void;
+  tools: WorkbenchToolRegistry;
+  workspaceHost: WorkbenchWorkspaceHost;
 };
 
-const WorkbenchContext = createContext<WorkbenchContextValue | null>(null);
+const WorkbenchContext = WorkbenchRuntimeContext as unknown as ReturnType<typeof createContext<WorkbenchContextValue | null>>;
 
 function readStoredWidth(): number {
   if (typeof window === 'undefined') return DEFAULT_WIDTH;
@@ -105,9 +115,12 @@ function readStoredWidth(): number {
   return Math.max(MIN_WIDTH, parsed);
 }
 
-function maxPanelWidth() {
+const DEFAULT_LEFT_RESERVE = 280;
+const MIN_CONVERSATION_WIDTH = 360;
+
+function maxPanelWidth(leftReserve: number) {
   if (typeof window === 'undefined') return DEFAULT_WIDTH;
-  return Math.max(MIN_WIDTH, window.innerWidth - 280);
+  return Math.max(MIN_WIDTH, window.innerWidth - leftReserve - MIN_CONVERSATION_WIDTH);
 }
 
 function neighborId(order: string[], closedId: string): string | null {
@@ -138,10 +151,22 @@ async function withState(
   }
 }
 
-export function WorkbenchProvider({ children }: { children: ReactNode }) {
+export function WorkbenchProvider({
+  children,
+  tools: toolDefinitions,
+  workspaceHost,
+  extractHandler,
+}: {
+  children: ReactNode;
+  tools: WorkbenchToolDefinition[];
+  workspaceHost: WorkbenchWorkspaceHost;
+  extractHandler?: WorkbenchExtractHandler;
+}) {
+  const tools = useMemo(() => createWorkbenchToolRegistry(toolDefinitions), [toolDefinitions]);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [width, setWidthState] = useState(readStoredWidth);
+  const [leftReserve, setLeftReserveState] = useState(DEFAULT_LEFT_RESERVE);
   const [state, setState] = useState<BrowserStateVo>(EMPTY_STATE);
   const [toolTabs, setToolTabs] = useState<WorkbenchToolTab[]>([]);
   const [tabOrder, setTabOrder] = useState<string[]>([]);
@@ -181,9 +206,18 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
   }, [applyState]);
 
   const setWidth = useCallback((next: number) => {
-    const clamped = Math.min(maxPanelWidth(), Math.max(MIN_WIDTH, Math.round(next)));
+    const clamped = Math.min(maxPanelWidth(leftReserve), Math.max(MIN_WIDTH, Math.round(next)));
     setWidthState(clamped);
     window.localStorage.setItem(WIDTH_KEY, String(clamped));
+  }, [leftReserve]);
+
+  const setLeftReserve = useCallback((next: number) => {
+    setLeftReserveState(next);
+    setWidthState((current) => {
+      const clamped = Math.min(maxPanelWidth(next), Math.max(MIN_WIDTH, current));
+      if (clamped !== current) window.localStorage.setItem(WIDTH_KEY, String(clamped));
+      return clamped;
+    });
   }, []);
 
   const createTab = useCallback(async () => {
@@ -344,8 +378,11 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
         message.warning(result.reason || '未能拉取正文');
         return result;
       }
-      if (result.markdownPath) {
-        message.success(`已保存到 ${result.markdownPath}`);
+      if (extractHandler) {
+        const url = state.tabs.find((tab) => tab.id === tabId)?.url || '';
+        await extractHandler({ result, url });
+      } else if (result.markdownPath) {
+        message.success('已拉取正文');
       } else {
         message.success('已拉取正文');
       }
@@ -354,7 +391,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       message.error(error instanceof Error ? error.message : '拉取失败');
       return undefined;
     }
-  }, [activeId]);
+  }, [activeId, extractHandler, state.tabs]);
 
   const reportBounds = useCallback((bounds: BrowserBoundsVo) => {
     pendingBounds.current = bounds;
@@ -436,6 +473,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       toggle,
       close,
       setWidth,
+      setLeftReserve,
       createTab,
       closeTab,
       activateTab,
@@ -448,6 +486,8 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       reload,
       extractActiveTab,
       reportBounds,
+      tools,
+      workspaceHost,
     }),
     [
       activateTab,
@@ -468,13 +508,24 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       reload,
       reportBounds,
       requestFollowUp,
+      setLeftReserve,
       setWidth,
       state,
       tabs,
       toggle,
+      tools,
       width,
+      workspaceHost,
     ],
   );
+
+  useEffect(() => {
+    registerWorkbenchOpener((shouldOpen) => {
+      if (shouldOpen === false) close();
+      else if (!open) toggle();
+    });
+    return () => registerWorkbenchOpener(null);
+  }, [close, open, toggle]);
 
   return <WorkbenchContext.Provider value={value}>{children}</WorkbenchContext.Provider>;
 }

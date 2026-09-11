@@ -1,0 +1,57 @@
+{
+  "id": "library",
+  "kind": "page",
+  "title": "收藏",
+  "parentId": "plugins",
+  "route": "/plugins/library",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "search",
+      "name": "收藏检索",
+      "scenario": "搜索本地网页文稿，打开原网页、本地文稿或定位文件",
+      "productStatus": "roadmap",
+      "reference": "library.view.search"
+    }
+  ],
+  "rules": [
+    {
+      "id": "same-url",
+      "name": "同一网址去重提示",
+      "description": "再次收藏同一网址时提示更新已有文稿或另存一份，不静默覆盖。",
+      "views": ["search"],
+      "reference": "library.rule.same-url",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "missing-file",
+      "name": "本地文件不可用",
+      "description": "文稿被移动或删除时，索引仍在，并明确显示本地文件不可用，不静默丢掉记录。",
+      "views": ["search"],
+      "reference": "library.rule.missing-file",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "library.overview",
+      "title": "目标与价值",
+      "body": "收藏从活动页进入，是本机网页文稿的索引。用户从工作台把当前页收到本地后，可在此按标题、摘要或标签找回，并打开原网页或本地文稿。文件仍在本机文稿目录，产品只保存索引和活动关联。"
+    },
+    {
+      "id": "library.view.search",
+      "title": "收藏检索",
+      "body": "列表展示标题、原始网址、摘要、标签和收藏时间。用户可搜索、打开原网页、打开本地文稿，或在文件夹中定位文件。"
+    },
+    {
+      "id": "library.rule.same-url",
+      "title": "同一网址去重提示",
+      "body": "这个网址已经收过时，用户选择更新已有收藏或再存一份。不会在不知情时覆盖。"
+    },
+    {
+      "id": "library.rule.missing-file",
+      "title": "本地文件不可用",
+      "body": "文件不在原来的位置时，这条收藏还在，并标明本地文件不可用。用户仍能看到标题和原网址。"
+    }
+  ]
+}

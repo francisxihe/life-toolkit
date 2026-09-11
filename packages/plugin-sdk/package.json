@@ -1,0 +1,54 @@
+{
+  "name": "@true-north/plugin-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./host": {
+      "types": "./src/host/index.ts",
+      "import": "./src/host/index.ts",
+      "default": "./src/host/index.ts"
+    }
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@true-north/enum": "workspace:*",
+    "@true-north/vo": "workspace:*",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
+    "dayjs": "^1.11.13",
+    "electron-ipc-restful": "0.0.1",
+    "zod": "^3.24.1",
+    "react": "^18.2.0",
+    "typeorm-naming-strategies": "^4.1.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.25.1",
+    "typeorm": "^0.3.17"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    },
+    "react-router-dom": {
+      "optional": true
+    },
+    "typeorm": {
+      "optional": true
+    }
+  }
+}

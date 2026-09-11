@@ -29,6 +29,8 @@
     }
   },
   "include": [
+    "src/plugin/**/*.ts",
+    "src/plugin/**/*.tsx",
     "src/dev/**/*.ts",
     "src/dev/**/*.tsx",
     "src/render/**/*.ts",
@@ -39,6 +41,10 @@
     "src/config/**/*.ts",
     "**/*.d.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.md"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.md"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

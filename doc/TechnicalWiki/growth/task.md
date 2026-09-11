@@ -23,7 +23,7 @@
 
 ## 产品表面 / 实现缺口
 
-桌面端增长任务入口为 `/growth/task/task-today`、`/growth/task/task-calendar` 和 `/growth/task/task-all`；`task-today` 是当前日期工作清单，左侧日程日历可切换选定日期，列表按「已过期 / **未完成** / 已完成 / 已放弃」分组（仅选定今天时显示已过期）。能力集以 desktop 为准。不做任务联动摘要。独立周视图和统计页已移除，工作台承担聚合统计。
+桌面端增长任务入口为 `/activity/growth/task/task-today`、`/activity/growth/task/task-calendar` 和 `/activity/growth/task/task-all`；`task-today` 是当前日期工作清单，左侧日程日历可切换选定日期，列表按「已过期 / **未完成** / 已完成 / 已放弃」分组（仅选定今天时显示已过期）。能力集以 desktop 为准。不做任务联动摘要。独立周视图和统计页已移除，工作台承担聚合统计。
 
 | 产品契约 | v0.1.0 状态 | 当前实现 |
 | --- | --- | --- |

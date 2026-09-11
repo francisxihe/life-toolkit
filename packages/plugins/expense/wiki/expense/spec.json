@@ -1,0 +1,81 @@
+{
+  "id": "expense",
+  "kind": "page",
+  "title": "记账",
+  "parentId": "plugins",
+  "route": "/plugins/expense",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "transaction",
+      "name": "账单",
+      "scenario": "记录和筛选收支",
+      "productStatus": "roadmap",
+      "reference": "expense.view.transaction"
+    },
+    {
+      "id": "budget",
+      "name": "预算",
+      "scenario": "按分类设定并查看预算",
+      "productStatus": "roadmap",
+      "reference": "expense.view.budget"
+    },
+    {
+      "id": "overview",
+      "name": "总览",
+      "scenario": "查看收支与预算执行摘要",
+      "productStatus": "roadmap",
+      "reference": "expense.view.overview"
+    }
+  ],
+  "rules": [
+    {
+      "id": "persist",
+      "name": "记账持久保存",
+      "description": "交易与预算保存在本机，关闭或重启后仍在。预算不以页面临时计算为唯一真源。",
+      "views": ["transaction", "budget", "overview"],
+      "reference": "expense.rule.persist",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "create-activity",
+      "name": "记一笔留下活动卡",
+      "description": "从记账页直接创建交易后，自动留下一张关联该交易的活动卡，供活动时间线回看。",
+      "views": ["transaction"],
+      "reference": "expense.rule.create-activity",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "expense.overview",
+      "title": "目标与价值",
+      "body": "记账从活动页进入，数据上与成长平级。用户记录收入与支出、设定分类预算，并在总览里看执行情况。金额以交易记录为真源。"
+    },
+    {
+      "id": "expense.view.transaction",
+      "title": "账单",
+      "body": "账单列出收支。每笔记录类型、金额、分类、发生时间、备注和标签。用户可筛选后新增、修改或删除。"
+    },
+    {
+      "id": "expense.view.budget",
+      "title": "预算",
+      "body": "预算按分类和周期设定额度。已用金额来自已保存的交易，而不是只在打开页面时临时相加。"
+    },
+    {
+      "id": "expense.view.overview",
+      "title": "总览",
+      "body": "总览汇总当前筛选范围内的收入、支出与预算执行，帮助用户看见钱花在哪里。"
+    },
+    {
+      "id": "expense.rule.persist",
+      "title": "记账持久保存",
+      "body": "记过的账和设过的预算下次打开还在。刷新或重启不会清空。"
+    },
+    {
+      "id": "expense.rule.create-activity",
+      "title": "记一笔留下活动卡",
+      "body": "在账单里直接记一笔，时间线上会出现对应活动。从 AI 会话记下并确认的支出，与采购等建议写在同一张活动卡上。"
+    }
+  ]
+}

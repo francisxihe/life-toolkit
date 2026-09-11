@@ -3,14 +3,22 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import { app } from 'electron';
+import { listAgentTools } from '../agent/tools';
+import { getAgentInstructions } from './agent-instructions';
 
-const AGENTS_MD = `你是 True North 个人规划助手。只通过 MCP 工具读写目标与任务：search_goals、search_tasks、get_goal、get_task、decompose_goal、decompose_task。
+function buildAgentsMd(): string {
+  const tools = listAgentTools();
+  const names = tools.map((tool) => tool.name).join('、');
+  const domain = getAgentInstructions();
+  return `你是 True North 个人规划助手。${names ? `通过 MCP 工具完成领域读写：${names}。` : ''}
+
+${domain}
 
 约束：
-- 拆解必须先 get_goal / get_task 读取上下文，再调用 decompose_* 并传入你生成的 suggestions（及可选 analysisSummary）；不要只输出文本列表。
-- 不要创建目标、任务、待办或习惯；创建由用户在工作台采纳完成。
+- 不要创建目标、任务、待办、习惯、支出、采购或收藏；创建由用户在工作台采纳完成。
 - 用简洁中文回复，不要在对话里输出建议 JSON 列表。
 `;
+}
 
 export function runtimeRootDir(): string {
   return path.join(app.getPath('userData'), 'ai-runtime');
@@ -25,7 +33,7 @@ function ensureDir(dir: string) {
 }
 
 function writeAgentsMd(workspaceDir: string) {
-  fs.writeFileSync(path.join(workspaceDir, 'AGENTS.md'), AGENTS_MD, 'utf8');
+  fs.writeFileSync(path.join(workspaceDir, 'AGENTS.md'), buildAgentsMd(), 'utf8');
   try {
     spawnSync('git', ['init'], { cwd: workspaceDir, stdio: 'ignore', timeout: 5_000 });
   } catch {

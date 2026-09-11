@@ -8,11 +8,22 @@ const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const repoRoot = join(packageRoot, '../..');
 const wikiRoot = join(packageRoot, 'wiki');
 const srcRoot = join(packageRoot, 'src');
+const desktopRenderRoot = join(repoRoot, 'apps/desktop/src/render');
+const wikiRoots = [
+  { pluginId: 'host', root: wikiRoot },
+  { pluginId: 'growth', root: join(repoRoot, 'packages/plugins/growth/wiki') },
+  { pluginId: 'expense', root: join(repoRoot, 'packages/plugins/expense/wiki') },
+  { pluginId: 'purchase', root: join(repoRoot, 'packages/plugins/purchase/wiki') },
+  { pluginId: 'library', root: join(repoRoot, 'packages/plugins/library/wiki') },
+];
+const desktopSurfaceRoots = [
+  desktopRenderRoot,
+  join(repoRoot, 'packages/plugins'),
+];
 const schemaPath = require.resolve('@ylib/product-server/wiki.schema.json');
 const changelogSchemaPath = require.resolve('@ylib/product-server/changelog.schema.json');
 const changelogPath = join(wikiRoot, 'changelog.json');
 const generatedCatalogPath = join(srcRoot, 'catalog.generated.ts');
-const desktopRenderRoot = join(repoRoot, 'apps/desktop/src/render');
 const write = process.argv.includes('--write') || process.argv.includes('sync');
 const versionArgumentIndex = process.argv.indexOf('--version');
 const requestedVersion = versionArgumentIndex === -1
@@ -127,15 +138,19 @@ function validateSpecification(specification, path) {
 }
 
 function specImportName(specPath) {
-  const id = relative(wikiRoot, dirname(specPath)).replaceAll('\\', '/').replace(/[^a-z0-9]+/gi, '_');
+  const id = relative(repoRoot, dirname(specPath)).replaceAll('\\', '/').replace(/[^a-z0-9]+/gi, '_');
   return `spec_${id}`;
 }
 
 function generatedCatalog(specPaths) {
-  const imports = specPaths.map((path) => ({
-    name: specImportName(path),
-    specifier: `../wiki/${relative(wikiRoot, path).replaceAll('\\', '/')}`,
-  }));
+  const imports = specPaths.map((path) => {
+    let specifier = relative(srcRoot, path).replaceAll('\\', '/');
+    if (!specifier.startsWith('.')) specifier = `./${specifier}`;
+    return {
+      name: specImportName(path),
+      specifier,
+    };
+  });
   const importLines = [
     ...imports.map(({ name, specifier }) => `import ${name} from '${specifier}';`),
     "import productHistory from '../wiki/changelog.json';",
@@ -225,11 +240,13 @@ function sourceFilesIn(directory) {
 function collectDesktopSurfaceIds() {
   const counts = new Map();
   const productRefPattern = /productRef\(\s*['"]([a-z][a-z0-9.-]*)['"]\s*\)/g;
-  sourceFilesIn(desktopRenderRoot).forEach((path) => {
-    const source = readFileSync(path, 'utf8');
-    for (const match of source.matchAll(productRefPattern)) {
-      counts.set(match[1], (counts.get(match[1]) || 0) + 1);
-    }
+  desktopSurfaceRoots.forEach((root) => {
+    sourceFilesIn(root).forEach((path) => {
+      const source = readFileSync(path, 'utf8');
+      for (const match of source.matchAll(productRefPattern)) {
+        counts.set(match[1], (counts.get(match[1]) || 0) + 1);
+      }
+    });
   });
   return counts;
 }
@@ -258,11 +275,25 @@ function validateDesktopSurfaces(wikis, knownReferences) {
 }
 
 const history = parseSpecification(changelogPath);
+if (history && Array.isArray(history.changes)) {
+  wikiRoots.forEach((entry) => {
+    if (entry.pluginId === 'host') return;
+    const fragmentPath = join(entry.root, 'changes.json');
+    if (!existsSync(fragmentPath)) return;
+    const fragment = parseSpecification(fragmentPath);
+    if (fragment && Array.isArray(fragment.changes) && fragment.changes.length) {
+      history.changes.push(...fragment.changes);
+    }
+  });
+}
 if (versionArgumentIndex !== -1 && (!requestedVersion || !/^v[0-9]+\.[0-9]+\.[0-9]+$/.test(requestedVersion))) {
   errors.push('product-wiki:version requires a version in v<major>.<minor>.<patch> form');
 }
 
-const specifications = filesIn(wikiRoot, 'spec.json').slice().sort().map((path) => ({ path, specification: parseSpecification(path) })).filter((item) => item.specification);
+const specifications = wikiRoots.flatMap((entry) => {
+  if (!existsSync(entry.root)) return [];
+  return filesIn(entry.root, 'spec.json').map((path) => ({ path, pluginId: entry.pluginId, specification: parseSpecification(path) }));
+}).filter((item) => item.specification).slice().sort((left, right) => left.path.localeCompare(right.path));
 specifications.forEach(({ path, specification }) => validateSpecification(specification, path));
 const allSpecificationIds = new Set();
 const allReferences = [];

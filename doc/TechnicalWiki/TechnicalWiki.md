@@ -18,6 +18,7 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 
 | 文档 | 说明 |
 | --- | --- |
+| [plugin-platform.md](./plugin-platform.md) | 一等插件目录、契约与宿主组装 |
 | [architecture/overview.md](./architecture/overview.md) | 技术栈与分层总览 |
 | [architecture/monorepo-layout.md](./architecture/monorepo-layout.md) | 仓库目录与包职责 |
 | [architecture/desktop-layers.md](./architecture/desktop-layers.md) | main / preload / render / service |
@@ -31,8 +32,12 @@ Growth 等业务域的产品级约束不在本文重复，参见 [ProductWiki ·
 | [documentation/PRD-guide.md](./documentation/PRD-guide.md) | 产品需求概述（落点 ProductWiki） |
 | [documentation/TDD-guide.md](./documentation/TDD-guide.md) | 技术设计文档写作规范 |
 | `@ylib/product-server` `WIKI.md` | ProductWiki 编写规范 |
-| [growth/README.md](./growth/README.md) | Growth 技术基线、路由与产品表面 / 实现缺口 |
-| [ai/README.md](./ai/README.md) | AI 平台域（设计基线）：Settings、Runner、Capability、目标拆解与聊天预留 |
+| [growth/README.md](./growth/README.md) | Growth 技术基线；原成长聚合页已并入 Home |
+| [activity/README.md](./activity/README.md) | 活动卡索引与跨领域采纳事务 |
+| [expense/README.md](./expense/README.md) | 记账 SQLite 持久化 |
+| [purchase/README.md](./purchase/README.md) | 家庭采购（替换 ERP 演示） |
+| [library/README.md](./library/README.md) | 本地网页 Markdown 收藏索引 |
+| [ai/README.md](./ai/README.md) | AI 平台域：Capability、收集箱、拆解与 capture workspace |
 
 ### 开发规范
 

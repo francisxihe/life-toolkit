@@ -2,146 +2,81 @@
 
 ```yaml
 document_meta:
-  status: 'design'
-  last_updated: '2026-08-11'
+  status: 'active'
+  last_updated: '2026-09-11'
 ```
 
 参见 [AI 域总览](./README.md)。通用 Desktop 分层不在此复述。
 
-## 1. 配置（v0.2.0：主进程配置文件写死）
+AI 会话与 Workbench 是宿主平台，不是插件。业务通过 `AiContribution` 注入 Capability、MCP 工具、实体解析器和 Agent 指令；渲染层通过 `WorkbenchToolDefinition` 与 `AiEntitySource` 注入展示与跳转。工具必须走 capability registry，不能直接 import capability 单例。协议细节见 [Plugin Platform](../plugin-platform.md)。
 
-### 本版策略
-
-- 使用主进程内**静态配置模块**（建议 `apps/desktop/src/service/ai/ai.config.ts`）提供 `providerKind`、`baseUrl`、`model`、`apiKey`、`timeoutMs` 等。
-- **密钥写死在该配置文件**（仅主进程可读）；**不**做用户设置 UI、**不**做 `safeStorage`、**不**暴露 `/ai/settings*` IPC。
-- 配置文件不得被渲染进程 import；`apiKey` 不得经 preload/IPC 回传。
-- 缺必要项时 Runner 返回 `NOT_CONFIGURED`（提示检查主进程配置，而非打开设置页）。
-
-### 逻辑字段
-
-| 字段 | 说明 |
-| --- | --- |
-| `providerKind` | 首版仅 `openai_compatible` |
-| `baseUrl` | 兼容端点根（需规范化是否已含 `/v1`） |
-| `model` | 模型名 |
-| `apiKey` | 仅主进程配置文件 |
-| `timeoutMs` | 默认建议 60000 |
-| `maxTokens` | 可选 |
-
-### 后续演进（仅架构留白，本版不实现）
-
-日后可替换为：userData + `safeStorage`、设置页、脱敏 `/ai/settings*`。替换时保持 `CompletionRunner` 只依赖「读配置」抽象（如 `AiConfigProvider.get()`），避免 Capability 感知存储形态。
-
-## 2. Provider
+## 1. 贡献与注册表
 
 ```ts
-interface AiProvider {
-  kind: AiProviderKind;
-  complete(req: ProviderCompleteRequest): Promise<ProviderCompleteResult>;
-  // stream?(req): AsyncIterable<ProviderStreamChunk>; // 后续聊天等能力可扩展，本版不实现
-}
+type AiDomainContribution = {
+  capabilities?: AiCapability[];
+  tools?: AgentTool[];
+  entityResolvers?: EntityResolver[];
+  agentInstructions?: string;
+};
+
+type AiCapability<I, O> = {
+  key: string;
+  execute(input: I): Promise<O>;
+};
 ```
 
-- **首版实现**：`OpenAICompatibleProvider`，`POST {baseUrl}/chat/completions`（原生 `fetch` + zod 校验响应）。
-- **注册表**：`AiProviderRegistry` 按 `providerKind` 解析实现。
-- 渲染层与 Capability **不得**依赖具体 SDK。
+- `CapabilityRegistry` / `AgentToolRegistry` / `entityResolverRegistry`：重复 key 抛错；读取未知 key 抛错。
+- 主进程在 `initIpcRouter` / MCP 启动前调用 `composeAiPlatform()`。
+- MCP `tools/list` 与 `tools/call` 只枚举/执行已注册工具；`AGENTS.md` 由已注册工具名 + 业务 `agentInstructions` 生成。
+- 会话绑定通过 entity resolver 校验并命名，不直接 import Goal/Task repository。
 
-## 3. CompletionRunner
+兼容入口（调用方切完后可删）：`POST /ai/capabilities/goal/decompose`、`/task/decompose`，以及 `/ai/conversations/bound/goal|task`。规范入口是 `POST /ai/capabilities/:key` 与 `POST /ai/conversations/bound`。
 
-统一补全入口：
+## 2. 运行时
 
-```ts
-complete(input: {
-  capabilityKey: AiCapabilityKey;
-  messages: { role: 'system' | 'user' | 'assistant'; content: string }[];
-  responseFormat: 'json' | 'text';
-  schema?: ZodTypeAny; // json 时
-  ref?: { type: string; id: string }; // 如 goal；后续可扩 conversation
-  temperature?: number;
-}): Promise<{ content: string; parsed?: unknown; runId: string }>
-```
+本机编码 Agent（当前为 Codex）按会话准备独立 workspace，经 loopback MCP 调工具。应用级 Agent 选择存在 `runtime/selection-store`；会话可覆盖 `runtimeId`。切换 Agent 会清空该会话原生线程，下一次发送重新开始。
 
-固定职责：
+历史 HTTP `CompletionRunner` / `AiProvider` / 设置页密钥不是当前执行路径。结构化结果由 Agent 生成后交给业务 Capability 规范化，再写入助手消息的 workspace 块。
 
-1. 读取配置；未配置 → `AiErrorCode.NOT_CONFIGURED`
-2. 选择 Provider 发起请求（超时 → `TIMEOUT`；HTTP 失败 → `PROVIDER_HTTP`）
-3. `json` 模式：解析 + schema 校验；失败则**一次** repair 补全；仍失败 → `INVALID_MODEL_OUTPUT`
-4. 写入 `AiRun`（成功/失败）
-5. 不解析 Goal/Chat 业务语义
+## 3. 缓存
 
-接口形状上预留日后 `stream(...)`（与 `complete` 共用 Provider），**本版不实现 stream、不接 preload 流式通道**。
+`service/ai/cache/` 的 `AiSuggestionCache` 仍按 `capabilityKey + refType + refId` 覆盖写最近一次成功结构化结果。指纹变化或业务侧 `forceRefresh` 才重新生成。缓存命中不视为一次新的模型调用。
 
-## 4. PromptRegistry / CapabilityRegistry
+## 4. 统一错误码
 
-- `PromptRegistry`：按 capability key 提供 system/user 模板或构建函数。
-- `CapabilityRegistry`：注册 `AiCapability<I,O>`，由 route-controller 或应用服务按 key 调度。
-
-```ts
-interface AiCapability<I, O> {
-  key: AiCapabilityKey;
-  execute(input: I, ctx: CapabilityContext): Promise<O>;
-}
-```
-
-`CapabilityContext` 提供：`runner`、配置只读视图、run 写入、只读 growth 上下文 builder（或注入的 repository 门面）。
-
-## 5. AiRun（SQLite）
-
-审计与排障实体，注册于 `database.config.ts`。
-
-| 字段 | 说明 |
-| --- | --- |
-| id | 主键 |
-| capabilityKey | 如 `goal.decompose` |
-| status | `pending` / `succeeded` / `failed` |
-| providerKind / model / baseUrlHost | 不存 key |
-| requestSummary / responseSummary | 截断摘要，控制隐私与体积 |
-| errorCode / errorMessage | 失败时 |
-| latencyMs | 可选 |
-| refType / refId | 如 `goal` + goalId |
-| createdAt / finishedAt | 时间戳 |
-
-本版可不做 Runs 列表 UI；**实际打模型**的 decompose 必须写库；缓存命中不新建 AiRun。
-
-## 5.1 AiSuggestionCache（SQLite）
-
-按 Capability + 业务引用缓存最近一次成功结构化结果，避免重复打模型。
-
-| 字段 | 说明 |
-| --- | --- |
-| capabilityKey / refType / refId | 查找键（如 `goal.decompose` + `goal` + goalId）；一引用一行覆盖写 |
-| contextFingerprint | `promptContext` 的 sha256 |
-| runId | 生成时的 AiRun id |
-| payloadJson | 完整响应 JSON（如 `GoalDecomposeResponseVo`） |
-
-命中条件：指纹一致且未 `forceRefresh`；命中后仍可对建议重算 `conflict`。目录：`service/ai/cache/`。
-
-## 6. 统一错误码
-
-经 IPC 返回稳定 shape（建议 `{ code, message, details? }`），避免仅抛无结构字符串。
+经 IPC 返回稳定 shape（`{ code, message, details? }`）。
 
 | code | 含义 |
 | --- | --- |
-| `NOT_CONFIGURED` | 主进程配置缺少 baseUrl/model/key |
+| `NOT_CONFIGURED` | 运行时未配置 |
 | `PROVIDER_HTTP` | 上游 HTTP/鉴权错误 |
 | `TIMEOUT` | 超时 |
 | `INVALID_MODEL_OUTPUT` | JSON/schema 失败 |
-| `CONTEXT_NOT_FOUND` | 如 goalId 不存在 |
+| `CONTEXT_NOT_FOUND` | 绑定实体不存在 |
+| `AGENT_UNAVAILABLE` / `AGENT_UNAUTHENTICATED` | 本机 Agent 不可用或未登录 |
 | `INTERNAL` | 其它 |
 
-## 7. 会话与消息（设计基线）
+## 5. 会话与消息
 
-产品语义参见 ProductWiki · [AI 会话](../../../packages/product-wiki/wiki/ai/session/spec.json)。本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+产品语义参见 ProductWiki · [AI 会话](../../../packages/product-wiki/wiki/ai/session/spec.json)。
 
-会话壳复用平台配置、Provider、Runner、AiRun；结构化结果经 Capability 生成后写入消息中的工作台块，由渲染层按类型挂载工作台。
+### 协议
+
+- `AiWorkspacePartVo.workspaceKey` 为 `string`；`payload` 为 opaque `Record<string, unknown>`。
+- 通用实体引用：`{ type, id, label }`。`workspaceEntityRef(payload)` 读取可选 `payload.ref`。
+- `PUT /ai/messages/:id/workspace` 用完整 payload 替换当前 workspace 块，不支持字段级 patch。
+- 业务载荷 VO（拆解建议、capture 建议）分别放在 Growth / Activity VO，由对应 `parsePayload` 校验。
 
 ### Conversation
 
 | 字段 | 说明 |
 | --- | --- |
 | title | 展示标题 |
-| refType / refId | 可选业务关联；当前仅 `goal` + goalId |
-| updatedAt | 最近消息或状态变更时间 |
+| purpose | `chat` / `capture` |
+| refType / refId | 可选业务关联（字符串，由 entity resolver 解释） |
+| runtimeId | 会话所用编码 Agent |
+| pinned / updatedAt | 列表排序 |
 
 ### Message
 
@@ -149,34 +84,42 @@ interface AiCapability<I, O> {
 | --- | --- |
 | conversationId | 所属会话 |
 | role | `user` / `assistant` |
-| parts | JSON 数组：文本块与工作台块（工作台块含 `type` 与载荷） |
+| parts | `text`（可含 entityLinks）/ `tool` / `workspace` |
 | createdAt | 创建时间 |
 
-### 约定
+### 渲染桥
 
-- 工作台默认不自动打开；仅用户点选消息中的块后挂载；切换会话关闭工作台。
-- 从目标发起：ensure 绑定会话，写入发起消息与含拆解块的助手消息，**不**自动打开工作台。
-- 本版工作台类型仅 `goal.decompose`。
+- `AiSessionProvider` 注入 `entitySources`：mention、绑定启动、消息实体跳转、会话列表绑定标签均走该列表。
+- `createAiWorkspaceHost` 实现 Workbench 的 load/subscribe/patch，内部只调 AI 会话 API。
+- 标题、入口文案、auto-open 来自 `WorkbenchToolDefinition`，不在会话组件里按业务 key 分支。
 
-### 仍后置（不预埋）
+## 6. Workbench 端口
 
-- AI 设置 UI、`safeStorage`、`/ai/settings*`
-- preload 流式通道、tool-calling、RAG
+Workbench 只做标签、网页宿主和通用 tool stage：查找 definition、校验 payload、把 host actions 交给业务组件。业务 UI 自行读实体、调领域 API。
 
-## 8. 目录草案（v0.2.0 落地范围）
+网页「收藏到 Library」由 Library 提供 `WorkbenchExtractHandler`，在 composition root 注入；Workbench 核心不 import Library。
+
+## 7. 目录
 
 ```
 apps/desktop/src/service/ai/
-  ai.config.ts           # 写死 baseUrl / model / apiKey 等
-  ai.route-controller.ts # decompose + 会话必要路由
-  provider/
-  completion/
-  prompt/
-  capability/            # goal-decompose
-  cache/                 # ai_suggestion_cache（目标+上下文指纹）
-  run/
-  context/               # goal-context.builder
-  conversation/          # Conversation / Message Entity、Repository、Service
-```
+  contribution.ts
+  capability/capability.registry.ts
+  agent/tools.ts
+  entity/entity-resolver.registry.ts
+  conversation/
+  runtime/                 # Agent 探测、MCP、workspace AGENTS.md
+  cache/
+  ai.route-controller.ts   # runtime + 会话 + 泛型 capability/bound
 
-主进程注册：`initIpcRouter` 增加 AI route-controller。密钥与网络仅出现在该树内。
+apps/desktop/src/main/ai.composition.ts
+apps/desktop/src/render/app.composition.ts
+apps/desktop/src/render/features/ai/
+  context.tsx              # 会话状态与 Workbench 同步桥
+  entity-source.ts
+  workspace-host.ts
+apps/desktop/src/render/features/workbench/
+  types.ts                 # WorkbenchToolDefinition / host / registry
+  ToolStage.tsx
+  context.tsx
+```

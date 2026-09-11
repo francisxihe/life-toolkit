@@ -20,6 +20,11 @@ export type PatchConversationRuntimeRequestVo = {
   runtimeId: string;
 };
 
+export type EnsureBoundConversationRequestVo = {
+  refType: string;
+  refId: string;
+};
+
 export type EnsureBoundGoalRequestVo = {
   goalId: string;
 };
@@ -31,4 +36,9 @@ export type EnsureBoundTaskRequestVo = {
 export type EnsureBoundConversationResponseVo = {
   conversation: ConversationVo;
   created: boolean;
+};
+
+export type ExecuteCapabilityRequestVo = {
+  key: string;
+  input: Record<string, unknown>;
 };

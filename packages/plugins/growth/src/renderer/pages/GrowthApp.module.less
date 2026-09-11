@@ -1,0 +1,49 @@
+.page {
+  min-width: 0;
+  min-height: 0;
+}
+
+.tabs {
+  flex-shrink: 0;
+  height: 40px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--sue-color-border-secondary);
+}
+
+.tab {
+  position: relative;
+  height: 100%;
+  padding: 0 10px;
+  border: 0;
+  background: transparent;
+  color: var(--sue-color-text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--sue-color-primary);
+}
+
+.tabActive {
+  color: var(--sue-color-primary);
+  cursor: default;
+  font-weight: 600;
+}
+
+.tabActive::after {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  left: 10px;
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--sue-color-primary);
+  content: '';
+}
+
+.stage {
+  min-width: 0;
+  min-height: 0;
+}

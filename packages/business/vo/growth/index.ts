@@ -15,3 +15,4 @@ export * from './task';
 export * from './track-time';
 export * from './goal';
 export * from './habit';
+export * from './ai-decompose.vo';

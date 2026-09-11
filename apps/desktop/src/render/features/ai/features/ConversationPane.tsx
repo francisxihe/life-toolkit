@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from 'react';
-import { Flex, Input, Select } from '@sue/design-web-react';
+import { Input, Select } from '@sue/design-web-react';
 import { ProductSurface, type ProductSurfaceHostProps } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import type { AiEntityLinkVo } from '@true-north/vo';
@@ -43,10 +43,9 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
     streaming,
     streamingAssistantId,
     openWorkspace,
-    onOpenGoal,
-    onOpenTask,
-    goals,
-    tasks,
+    openEntity,
+    entities,
+    entitySources,
     codingAgents,
     selectedAgentId,
     selectedAgent,
@@ -63,20 +62,14 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
   const mentionItems = useMemo(() => {
     if (!mention) return [] as MentionItem[];
     const keyword = mention.query.trim().toLowerCase();
-    const goalItems: MentionItem[] = goals.map((goal) => ({
-      type: 'goal' as const,
-      id: goal.id,
-      label: goal.name,
+    const all: MentionItem[] = entities.map((entity) => ({
+      type: entity.type,
+      id: entity.id,
+      label: entity.label,
     }));
-    const taskItems: MentionItem[] = tasks.map((task) => ({
-      type: 'task' as const,
-      id: task.id,
-      label: task.name,
-    }));
-    const all = [...goalItems, ...taskItems];
     if (!keyword) return all.slice(0, 12);
     return all.filter((item) => item.label.toLowerCase().includes(keyword)).slice(0, 12);
-  }, [goals, mention, tasks]);
+  }, [entities, mention]);
 
   useEffect(() => {
     setMentionIndex(0);
@@ -134,18 +127,24 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
     event.currentTarget.form?.requestSubmit();
   };
 
-  const isEmpty = !activeConversation || activeMessages.length === 0;
-  const composerDisabled = !activeConversation || streaming || !canSend;
-  const sendDisabled = !canSend || !draft.text.trim() || !activeConversation;
+  const isEmpty = activeMessages.length === 0;
+  const composerDisabled = streaming || !canSend;
+  const sendDisabled = !canSend || !draft.text.trim() || streaming;
+  const unavailableReason = !codingAgents.length
+    ? '还没有可用的 AI，无法发送'
+    : selectedAgent && !selectedAgent.available
+      ? selectedAgent.unavailableReason || '当前 Agent 不可用，无法发送'
+      : '当前 Agent 不可用，无法发送';
 
   const agentPicker = (
     <ProductSurface id={productRef('ai.session.view.agent-picker')}>
-        <Flex align="center" gap={8} wrap>
-          <Select
+      <Select
         size="small"
+        variant="borderless"
         value={selectedAgentId || undefined}
         aria-label="编码 Agent"
-        style={{ minWidth: 180 }}
+        className={styles.agentSelect}
+        popupMatchSelectWidth={false}
         options={codingAgents.map((agent) => ({
           value: agent.id,
           label: agent.available ? agent.name : `${agent.name}（${agent.unavailableReason}）`,
@@ -153,14 +152,15 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
         }))}
         onChange={(value) => void selectCodingAgent(String(value))}
       />
-      {threadWillReset && selectedAgent ? (
-        <span className={styles.agentSwitchHint}>
-          之后的发送将由「{selectedAgent.name}」重新开始，不会续跑上一 Agent 的对话线程。
-        </span>
-      ) : null}
-        </Flex>
     </ProductSurface>
   );
+
+  const agentHint =
+    threadWillReset && selectedAgent ? (
+      <span className={styles.agentSwitchHint}>
+        之后的发送将由「{selectedAgent.name}」重新开始，不会续跑上一 Agent 的对话线程。
+      </span>
+    ) : null;
 
   const mentionSlot =
     mention && mentionItems.length ? (
@@ -179,7 +179,9 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
               insertMention(item);
             }}
           >
-            <span className={styles.mentionKind}>{item.type === 'goal' ? '目标' : '任务'}</span>
+            <span className={styles.mentionKind}>
+              {entitySources.find((source) => source.type === item.type)?.kindLabel || item.type}
+            </span>
             <span>{item.label}</span>
           </button>
         ))}
@@ -198,14 +200,9 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
 
   return (
     <Conversation data-product-ref={productRefAttr}>
-      {activeConversation ? (
-        <Flex container="fixed" className={`${styles.conversationHeader} w-full`}>
-          <strong>{activeConversation.title}</strong>
-        </Flex>
-      ) : null}
       <ConversationViewport resetKey={activeConversationId} followOnSend={streaming}>
         {isEmpty ? (
-          <ConversationEmptyState>选择或新建一个会话开始对话</ConversationEmptyState>
+          <ConversationEmptyState>开始一段新对话，或直接记下今天的事</ConversationEmptyState>
         ) : (
           activeMessages.map((message) => (
             <Message key={message.id} role={message.role}>
@@ -213,8 +210,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
                 <MessageParts
                   message={message}
                   streaming={streaming && message.id === streamingAssistantId}
-                  onOpenGoal={onOpenGoal}
-                  onOpenTask={onOpenTask}
+                  onOpenEntity={openEntity}
                   onOpenWorkspace={openWorkspace}
                 />
               </MessageContent>
@@ -226,6 +222,7 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
       <PromptInput
         mentionSlot={mentionSlot}
         tools={agentPicker}
+        hint={agentHint}
         submit={
           <PromptInputSubmit
             streaming={streaming}
@@ -241,10 +238,14 @@ export function ConversationPane({ 'data-product-ref': productRefAttr }: Product
           ref={composerInputRef}
           className="w-full"
           variant="borderless"
-          autoSize={{ minRows: 1, maxRows: 6 }}
+          autoSize={{ minRows: 2, maxRows: 8 }}
           value={draft.text}
           placeholder={
-            canSend ? '继续追问，输入 @ 引用目标或任务…' : '当前 Agent 不可用，无法发送'
+            canSend
+              ? activeConversation
+                ? `继续追问，输入 @ 引用${entitySources.map((source) => source.kindLabel).join('或') || '实体'}…`
+                : '记下今天的事，或直接提问…'
+              : unavailableReason
           }
           disabled={composerDisabled}
           onKeyDown={onComposerKey}

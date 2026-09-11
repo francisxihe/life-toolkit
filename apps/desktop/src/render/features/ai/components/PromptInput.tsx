@@ -1,11 +1,12 @@
 import type { FormEvent, ReactNode } from 'react';
 import { Button, Flex } from '@sue/design-web-react';
-import { ArrowUp, X } from 'lucide-react';
+import { ArrowUp, Square } from 'lucide-react';
 import styles from '../style.module.less';
 
 type PromptInputProps = {
   mentionSlot?: ReactNode;
   tools?: ReactNode;
+  hint?: ReactNode;
   submit?: ReactNode;
   onSubmit?: () => void;
   children: ReactNode;
@@ -22,19 +23,31 @@ export function PromptInputSubmit({
 }) {
   if (streaming) {
     return (
-      <Button htmlType="button" icon={<X size={16} />} onClick={() => onStop?.()}>
-        停止
-      </Button>
+      <Button
+        htmlType="button"
+        type="primary"
+        shape="circle"
+        className={styles.composerSubmit}
+        icon={<Square size={12} />}
+        aria-label="停止"
+        onClick={() => onStop?.()}
+      />
     );
   }
   return (
-    <Button htmlType="submit" type="primary" size="small" icon={<ArrowUp size={16} />} disabled={disabled}>
-      发送
-    </Button>
+    <Button
+      htmlType="submit"
+      type="primary"
+      shape="circle"
+      className={styles.composerSubmit}
+      icon={<ArrowUp size={16} />}
+      disabled={disabled}
+      aria-label="发送"
+    />
   );
 }
 
-export function PromptInput({ mentionSlot, tools, submit, onSubmit, children }: PromptInputProps) {
+export function PromptInput({ mentionSlot, tools, hint, submit, onSubmit, children }: PromptInputProps) {
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     onSubmit?.();
@@ -45,7 +58,7 @@ export function PromptInput({ mentionSlot, tools, submit, onSubmit, children }: 
       <Flex
         vertical
         component="form"
-        className={`${styles.composerCard} w-full`}
+        className={styles.composerCard}
         gap={8}
         onSubmit={handleSubmit}
       >
@@ -53,8 +66,9 @@ export function PromptInput({ mentionSlot, tools, submit, onSubmit, children }: 
           {mentionSlot}
           {children}
         </Flex>
-        <Flex className="w-full" align="center" justify="space-between" gap={8}>
-          <Flex flex={1} align="center" gap={8} wrap className="min-w-0">
+        {hint}
+        <Flex className={`${styles.composerToolbar} w-full`} align="center" justify="flex-end" gap={8}>
+          <Flex align="center" className="min-w-0">
             {tools}
           </Flex>
           <Flex container="fixed">{submit}</Flex>

@@ -1,36 +1,28 @@
-import { AiCapabilityKey } from '@true-north/enum';
-import type {
-  GoalDecomposeRequestVo,
-  GoalDecomposeResponseVo,
-  TaskDecomposeRequestVo,
-  TaskDecomposeResponseVo,
-} from '@true-north/vo';
-import { goalDecomposeCapability } from './goal-decompose.capability';
-import { taskDecomposeCapability } from './task-decompose.capability';
-
-type AnyCapability = {
+export type AiCapability<I = unknown, O = unknown> = {
   key: string;
-  execute(input: any): Promise<any>;
+  execute(input: I): Promise<O>;
 };
 
-const capabilities = new Map<string, AnyCapability>([
-  [AiCapabilityKey.GOAL_DECOMPOSE, goalDecomposeCapability],
-  [AiCapabilityKey.TASK_DECOMPOSE, taskDecomposeCapability],
-]);
-
 export class CapabilityRegistry {
-  getGoalDecompose() {
-    return capabilities.get(AiCapabilityKey.GOAL_DECOMPOSE)! as {
-      key: string;
-      execute(input: GoalDecomposeRequestVo): Promise<GoalDecomposeResponseVo>;
-    };
+  private readonly capabilities = new Map<string, AiCapability>();
+
+  register(capability: AiCapability) {
+    if (this.capabilities.has(capability.key)) {
+      throw new Error(`重复注册 capability: ${capability.key}`);
+    }
+    this.capabilities.set(capability.key, capability);
   }
 
-  getTaskDecompose() {
-    return capabilities.get(AiCapabilityKey.TASK_DECOMPOSE)! as {
-      key: string;
-      execute(input: TaskDecomposeRequestVo): Promise<TaskDecomposeResponseVo>;
-    };
+  get<I = unknown, O = unknown>(key: string): AiCapability<I, O> {
+    const capability = this.capabilities.get(key);
+    if (!capability) {
+      throw new Error(`未知 capability: ${key}`);
+    }
+    return capability as AiCapability<I, O>;
+  }
+
+  has(key: string): boolean {
+    return this.capabilities.has(key);
   }
 }
 

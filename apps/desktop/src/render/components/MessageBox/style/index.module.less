@@ -3,46 +3,21 @@
   max-height: 800px;
   background-color: var(--color-bg-1);
   border: 1px solid var(--color-border-2);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 10%);
   border-radius: 6px;
-
-  :global(.sue-tabs-nav) {
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--color-border-2);
-  }
-
-  :global(.sue-list-item-meta) {
-    align-items: flex-start;
-  }
-
-  :global(.sue-list-item-meta-content) {
-    width: 100%;
-  }
-
-  :global(.sue-tabs-content) {
-    padding-top: 0;
-  }
 }
 
-.message-title {
-  margin-bottom: 4px;
+.today {
+  padding: 16px;
+  gap: 12px;
 }
 
-.footer {
-  border-top: 1px solid var(--color-border-2);
+.heading {
+  font-size: 15px;
 }
 
-.footer-item {
-  &:first-child {
-    border-right: 1px solid var(--color-border-2);
-  }
-}
-
-.clear-icon {
+.empty {
+  margin: 0;
   color: var(--color-text-3);
-  cursor: pointer;
-
-  &:hover {
-    color: rgb(var(--primary-6));
-  }
+  font-size: 13px;
 }

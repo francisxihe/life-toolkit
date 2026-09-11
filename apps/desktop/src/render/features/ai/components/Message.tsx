@@ -6,6 +6,7 @@ import type {
   AiWorkspacePartVo,
   MessageVo,
 } from '@true-north/vo';
+import { useWorkbench } from '../../workbench';
 import { Tool } from './Tool';
 import styles from '../style.module.less';
 
@@ -17,8 +18,7 @@ type MessageProps = {
 type MessagePartsProps = {
   message: MessageVo;
   streaming?: boolean;
-  onOpenGoal?: (goalId: string) => void;
-  onOpenTask?: (taskId: string) => void;
+  onOpenEntity?: (type: string, id: string) => void;
   onOpenWorkspace?: (messageId: string) => void;
 };
 
@@ -42,13 +42,11 @@ export function MessageContent({ role, children }: { role?: MessageVo['role']; c
 export function MessageTextPart({
   part,
   showCursor,
-  onOpenGoal,
-  onOpenTask,
+  onOpenEntity,
 }: {
   part: AiTextPartVo;
   showCursor?: boolean;
-  onOpenGoal?: (goalId: string) => void;
-  onOpenTask?: (taskId: string) => void;
+  onOpenEntity?: (type: string, id: string) => void;
 }) {
   const links = part.entityLinks || [];
   if (!part.text && !links.length && !showCursor) return null;
@@ -62,20 +60,16 @@ export function MessageTextPart({
       ) : null}
       {links.length ? (
         <Flex gap={8} wrap="wrap">
-          {links.map((link) => {
-            const open = link.type === 'goal' ? onOpenGoal : link.type === 'task' ? onOpenTask : undefined;
-            if (!open) return null;
-            return (
-              <button
-                key={`${link.type}-${link.id}`}
-                type="button"
-                className={styles.entityLink}
-                onClick={() => open(link.id)}
-              >
-                @{link.label}
-              </button>
-            );
-          })}
+          {links.map((link) => (
+            <button
+              key={`${link.type}-${link.id}`}
+              type="button"
+              className={styles.entityLink}
+              onClick={() => onOpenEntity?.(link.type, link.id)}
+            >
+              @{link.label}
+            </button>
+          ))}
         </Flex>
       ) : null}
     </>
@@ -91,12 +85,17 @@ export function MessageWorkspacePart({
   messageId: string;
   onOpenWorkspace?: (messageId: string) => void;
 }) {
+  const { tools } = useWorkbench();
   if (!onOpenWorkspace) return null;
-  const refLabel = part.payload.ref?.label;
-  const label =
-    part.workspaceKey === 'task.decompose'
-      ? `打开工作台：任务拆解${refLabel ? ` · ${refLabel}` : ''}`
-      : `打开工作台：目标拆解${refLabel ? ` · ${refLabel}` : ''}`;
+  const definition = tools.find(part.workspaceKey);
+  let label = '打开工作台';
+  if (definition) {
+    try {
+      label = definition.entryLabel(definition.parsePayload(part.payload) as never);
+    } catch {
+      label = '打开工作台';
+    }
+  }
   return (
       <div className={styles.workspaceChip}>
         <Button size="small" type="link" onClick={() => onOpenWorkspace(messageId)}>
@@ -109,8 +108,7 @@ export function MessageWorkspacePart({
 export function MessageParts({
   message,
   streaming,
-  onOpenGoal,
-  onOpenTask,
+  onOpenEntity,
   onOpenWorkspace,
 }: MessagePartsProps) {
   const parts = message.parts || [];
@@ -126,8 +124,7 @@ export function MessageParts({
               key={key}
               part={part}
               showCursor={Boolean(streaming && index === lastTextIndex)}
-              onOpenGoal={onOpenGoal}
-              onOpenTask={onOpenTask}
+              onOpenEntity={onOpenEntity}
             />
           );
         }

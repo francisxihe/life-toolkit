@@ -28,62 +28,53 @@ const Navigate: React.FC<NavigateProps> = ({ collapsed, locale, 'data-product-re
   const pathname = location.pathname;
   const { fullPathRoutes, to, defaultRoute } = useRouter();
 
-  // 根据当前路径找到匹配的菜单项
+  // 根据当前路径找到匹配的菜单项；ignore 子路由高亮最近的可见祖先
   const matchMenuKey = (pathname: string) => {
-    // 如果是根路径，直接返回默认路由
     if (pathname === '/') {
-      return defaultRoute;
+      return defaultRoute || '/ai';
     }
 
-    // 遍历所有路由，找到最匹配的菜单项
-    const findInRoutes = (routes: any[], parentPath = ''): string | null => {
-      let bestMatch: string | null = null;
+    const findMatch = (
+      routes: IRoute[],
+      ancestors: IRoute[] = [],
+    ): { route: IRoute; ancestors: IRoute[] } | null => {
+      let best: { route: IRoute; ancestors: IRoute[] } | null = null;
       let bestMatchLength = 0;
 
       for (const route of routes) {
-        const routePath =
-          route.fullPath || `${parentPath}/${route.key}`.replace(/\/+/g, '/');
+        const routePath = route.fullPath;
+        if (!routePath) continue;
 
-        // 精确匹配
-        if (pathname === routePath) {
-          // 如果当前路由是 ignore 的，返回父路由的 fullPath
-          if (route.ignore && parentPath) {
-            return parentPath;
-          }
-          return routePath;
+        const matches =
+          pathname === routePath || pathname.startsWith(`${routePath}/`);
+        if (!matches) continue;
+
+        const nextAncestors = [...ancestors, route];
+        if (route.children?.length) {
+          const childMatch = findMatch(route.children, nextAncestors);
+          if (childMatch) return childMatch;
         }
 
-        // 如果当前路径以路由路径开头
-        if (
-          pathname.startsWith(routePath + '/') ||
-          pathname.startsWith(routePath)
-        ) {
-          if (route.children) {
-            const childMatch = findInRoutes(route.children, routePath);
-            if (childMatch) {
-              return childMatch;
-            }
-            // 如果子路由都是 ignore 的，返回父路由的 fullPath
-            const hasVisibleChildren = route.children.some(
-              (child) => !child.ignore,
-            );
-            if (!hasVisibleChildren && routePath.length > bestMatchLength) {
-              bestMatch = routePath;
-              bestMatchLength = routePath.length;
-            }
-          } else if (routePath.length > bestMatchLength) {
-            // 没有子路由的情况下，记录最长匹配
-            bestMatch = routePath;
-            bestMatchLength = routePath.length;
-          }
+        if (routePath.length > bestMatchLength) {
+          best = { route, ancestors: nextAncestors };
+          bestMatchLength = routePath.length;
         }
       }
 
-      return bestMatch;
+      return best;
     };
 
-    const result = findInRoutes(fullPathRoutes);
-    return result || defaultRoute;
+    const found = findMatch(fullPathRoutes);
+    if (!found) return defaultRoute;
+
+    for (let i = found.ancestors.length - 1; i >= 0; i -= 1) {
+      const candidate = found.ancestors[i];
+      if (!candidate.ignore && candidate.fullPath) {
+        return candidate.fullPath;
+      }
+    }
+
+    return found.route.fullPath || defaultRoute;
   };
 
   const matchingKey = matchMenuKey(pathname);

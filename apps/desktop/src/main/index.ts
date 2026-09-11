@@ -10,9 +10,9 @@ import electron from 'electron';
 const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTheme, session, shell } = electron;
 
 // 导入数据库初始化功能
-import { initDB, setupDatabaseCleanup } from '../service/db/init';
 import { initIpcRouter } from './ipc-handlers';
-import { startMcpServer, stopMcpServer } from '../service/ai/runtime';
+import { bootPluginPlatform, startHostMcp, stopHostMcp } from '../plugin/registry';
+import { setupDatabaseCleanup } from '../service/db/init';
 import { embeddedBrowserHost } from '../service/browser';
 import { EMBEDDED_BROWSER_PARTITION } from '@true-north/vo';
 import { labChannel } from '@true-north/dev-lab';
@@ -313,10 +313,10 @@ function createWindow() {
 app.whenReady().then(async () => {
   // 初始化数据库
   try {
-    await initDB();
-    console.log('数据库初始化完成');
+    await bootPluginPlatform();
+    console.log('插件平台与数据库初始化完成');
   } catch (error) {
-    console.error('数据库初始化失败:', error);
+    console.error('插件平台初始化失败:', error);
   }
 
   // 设置数据库清理
@@ -326,7 +326,7 @@ app.whenReady().then(async () => {
   initIpcRouter();
 
   try {
-    const mcpPort = await startMcpServer();
+    const mcpPort = await startHostMcp();
     console.log('Loopback MCP 已启动', `127.0.0.1:${mcpPort}`);
   } catch (error) {
     console.error('Loopback MCP 启动失败:', error);
@@ -364,7 +364,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', () => {
-  void stopMcpServer();
+  void stopHostMcp();
 });
 
 // 提供加载新URL的方法

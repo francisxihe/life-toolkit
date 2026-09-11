@@ -3,49 +3,62 @@
 ```yaml
 document_meta:
   title: 'AI TechnicalWiki'
-  status: 'design'
-  last_updated: '2026-08-11'
-  note: '设计基线；实现入库后与代码对齐并可将 status 调整为 active'
+  status: 'active'
+  last_updated: '2026-09-11'
 ```
 
-> AI 是横切平台域：提供模型配置读取、补全调用、能力（Capability）编排、运行审计，以及会话壳与工作台分发所需的持久化。Growth 等业务域通过 Capability 消费 AI，不在业务 Service 内直接请求模型。产品语义见 ProductWiki；本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+> AI 是可注入的宿主平台：负责会话、本机 Agent 运行时、工具调度，以及把工作台块交给 Workbench。Growth、Activity 等业务域显式贡献 Capability、Agent 工具、实体解析器和 Workbench 工具 UI。产品语义见 ProductWiki；本版交付差异见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
 
 ## 定位与边界
 
 | 负责 | 不负责 |
 | --- | --- |
-| Provider 适配、CompletionRunner、Prompt/Capability 注册、主进程配置读取、AiRun | Goal/Task/Todo/Habit 的业务 CRUD 与校验 |
-| 结构化补全、统一错误码 | 云端代理、向量检索、多租户计费 |
-| 密钥仅存主进程配置 | 渲染进程持有或经 IPC 回传明文 API Key |
-| Conversation / Message、会话 IPC、工作台块载荷约定 | AI 设置 UI、流式通道（未立项前不预埋） |
+| 会话 / 消息持久化、流式通道、绑定会话 | Goal/Task/Todo 等业务 CRUD 与校验 |
+| 泛型 Capability / AgentTool / EntityResolver 注册表 | 封闭的业务枚举（`goal.decompose` 等常量归各业务） |
+| 本机编码 Agent 探测、MCP loopback、从注册表生成 Agent 指令 | 在 `service/ai` 内实现拆解/收集业务逻辑 |
+| 通用 workspace 消息块（`workspaceKey: string` + opaque payload） | 工作台 UI、标题、入口文案、自动打开策略 |
+| 把工作台写回请求转成完整 payload 替换 | 跨域采纳事务（由 Activity 编排） |
 
-与 Growth 的关系：目标 AI 拆解的**生成**在 AI 域完成；**采纳创建**仍走现有 Growth IPC/Service；业务页只负责**发起**绑定会话，审阅在会话工作台。参见 [growth/goal.md](../growth/goal.md)。
+依赖方向：业务贡献 → AI 契约/注册表 → 通用消息块 → 会话桥 → Workbench 端口 → 业务工具 UI。
+
+普通会话输入自动识别记录意图，需要落库时由 Activity 贡献的 `capture_activity` 产出 `activity.capture` workspace；已有 `purpose: capture` 会话只当普通历史读取。目标/任务拆解由 Growth 贡献。**生成**走业务 Capability；**采纳**走领域 Service，多意图采纳由 Activity 事务编排。自动打开策略由 Workbench 工具定义提供：绑定拆解发起带 `force`；`activity.capture` 仅在 `capture_activity` 工具 `done` 时打开。普通聊天、追问和切换 Agent 不自动打开。
 
 ## 文档导航
 
 | 文档 | 说明 |
 | --- | --- |
-| [platform.md](./platform.md) | 配置、Provider、Runner、Prompt、Capability、AiRun、会话/消息、错误码 |
-| [capabilities.md](./capabilities.md) | `goal.decompose` 契约；后续 Capability 扩展说明 |
+| [platform.md](./platform.md) | 注册表、会话协议、运行时、composition root、扩展规范 |
+| [capabilities.md](./capabilities.md) | 现有业务能力的归属、IPC 与工作台约定 |
 
-## 代码落点（v0.2.0）
+## 代码落点
 
 ```
-packages/business/enum/…          # AiProviderKind、AiRunStatus、AiCapabilityKey…
-packages/business/vo/ai/          # Run / GoalDecompose / Conversation / Message（无 Settings VO）
-packages/business/web-service/    # controller/ai.ts（decompose + 会话）
-apps/desktop/src/service/ai/      # ai.config.ts、route-controller、provider、completion、prompt、capability、run、cache、context、conversation
-apps/desktop/src/render/…        # /ai 三栏会话壳与工作台 registry
-apps/desktop/src/main/ipc-handlers.ts
-apps/desktop/src/service/db/database.config.ts  # AiRun、AiSuggestionCache、Conversation、Message
+packages/business/enum/ai/                 # 会话 purpose、错误码、消息角色
+packages/business/vo/ai/                   # 通用 Conversation / Message / workspace 协议
+packages/business/web-service/             # 泛型 executeCapability / ensureBoundConversation；旧路径兼容代理
+apps/desktop/src/service/ai/               # 注册表、会话、运行时、MCP；不含业务 Capability 实现
+apps/desktop/src/main/ai.composition.ts    # 显式装配 Growth / Activity 贡献与 capture 适配器
+apps/desktop/src/render/features/ai/       # 会话壳、entity source、workspace host
+apps/desktop/src/render/app.composition.ts # 显式汇总 Workbench 工具与实体源
+apps/desktop/src/render/features/workbench/# 通用标签宿主；不 import 业务实现
+```
+
+业务实现不在 AI 目录：
+
+```
+apps/desktop/src/service/growth/ai/        # 拆解 Capability、MCP 工具、实体 resolver
+apps/desktop/src/service/activity/ai/      # capture Capability 与工具
+apps/desktop/src/render/features/growth/workbench/ai-decomposition/
+apps/desktop/src/render/features/activity/workbench/
 ```
 
 分层与 IPC 注册约定参见 [desktop-layers](../architecture/desktop-layers.md)、[controller-desktop](../development/controller/controller-desktop.md)。
 
 ## 扩展原则
 
-1. **Capability 不直连网络**——只通过 `CompletionRunner`。
-2. **业务实体创建不进 Provider**——生成与采纳分离。
-3. **新能力只新增 Capability + 所需持久化/UI**，不复制配置读取与 Runner；会话壳复用，工作台按类型扩展。
-4. **REST IPC 承载请求-响应**；若未来需要流式，再增加独立 preload 通道，不破坏现有 `electron-ipc-restful`。
-5. **留白不等于预埋代码**——未立项能力（设置页、stream、RAG 等）只写在文档约束里，不建空表/空目录。
+1. **显式 composition root**——在 `main/ai.composition.ts` / `render/app.composition.ts` 装配贡献，禁止 import 副作用注册。
+2. **注册表立即失败**——重复 key、未知 key、非法 payload 抛错，不静默覆盖。
+3. **业务实体创建不进 Agent 工具**——生成与采纳分离；创建由用户在工作台确认。
+4. **新能力写在业务域**：Capability + Agent 工具 +（如需）实体 resolver + Workbench `WorkbenchToolDefinition`，再在 composition root 注入。
+5. **REST IPC 承载请求-响应**；流式走独立 preload 通道 `AI_CONVERSATION_STREAM_CHANNEL`。
+6. **workspaceKey 字符串保持稳定**——已持久化的 `goal.decompose`、`task.decompose`、`activity.capture` 不得改名。

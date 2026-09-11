@@ -1,0 +1,43 @@
+{
+  "id": "notification",
+  "kind": "dom",
+  "title": "侧栏通知",
+  "parentId": "global",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "today",
+      "name": "今天",
+      "scenario": "在品牌右侧打开今天还要处理的待办、习惯、待购和正在进行的专注",
+      "productStatus": "roadmap",
+      "reference": "notification.view.today"
+    }
+  ],
+  "rules": [
+    {
+      "id": "action-list",
+      "name": "今天是行动清单",
+      "description": "「今天」是常驻待处理清单，不是消息推送。条目没有已读或未读；处理完即从清单消失。",
+      "views": ["today"],
+      "reference": "notification.rule.action-list",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "notification.overview",
+      "title": "目标与价值",
+      "body": "侧栏通知承接今天还要处理的事。用户不必回到某个聚合页，就能勾选待办、打卡习惯、查看待购，或继续正在进行的专注。"
+    },
+    {
+      "id": "notification.view.today",
+      "title": "今天",
+      "body": "打开品牌右侧的铃铛后，固定展示「今天」分组：已过期与今日待办、今天可打卡的习惯、待采购或今天计划购买的物品，以及正在运行的专注。每项可就地完成或进入对应领域。没有待处理项时说明今天没有需要处理的事项。"
+    },
+    {
+      "id": "notification.rule.action-list",
+      "title": "今天是行动清单",
+      "body": "清单只回答「现在还该做什么」。完成待办、打卡习惯或买完物品后，该项不再出现。不使用全部已读、清空或未读红点来表示这些事项。"
+    }
+  ]
+}

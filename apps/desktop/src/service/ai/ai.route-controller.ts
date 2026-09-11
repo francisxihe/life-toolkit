@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@business/decorators';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@true-north/plugin-sdk/host';
 import type {
   CancelStreamResponseVo,
   ConversationVo,
   CreateConversationRequestVo,
+  EnsureBoundConversationRequestVo,
   EnsureBoundConversationResponseVo,
   EnsureBoundGoalRequestVo,
   EnsureBoundTaskRequestVo,
@@ -65,7 +66,7 @@ export class AiController {
   async decomposeGoal(@Body() body: GoalDecomposeRequestVo): Promise<GoalDecomposeResponseVo> {
     try {
       if (!body?.goalId?.trim()) throw AiPlatformError.internal('缺少 goalId');
-      return await capabilityRegistry.getGoalDecompose().execute(body);
+      return (await capabilityRegistry.get('goal.decompose').execute(body)) as GoalDecomposeResponseVo;
     } catch (error) {
       throw toIpcError(error);
     }
@@ -75,7 +76,20 @@ export class AiController {
   async decomposeTask(@Body() body: TaskDecomposeRequestVo): Promise<TaskDecomposeResponseVo> {
     try {
       if (!body?.taskId?.trim()) throw AiPlatformError.internal('缺少 taskId');
-      return await capabilityRegistry.getTaskDecompose().execute(body);
+      return (await capabilityRegistry.get('task.decompose').execute(body)) as TaskDecomposeResponseVo;
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Post('/capabilities/:key', { description: '执行已注册 Capability' })
+  async executeCapability(
+    @Param('key') key: string,
+    @Body() body: Record<string, unknown>
+  ): Promise<unknown> {
+    try {
+      if (!key?.trim()) throw AiPlatformError.internal('缺少 capability key');
+      return await capabilityRegistry.get(key.trim()).execute(body || {});
     } catch (error) {
       throw toIpcError(error);
     }
@@ -93,7 +107,27 @@ export class AiController {
   @Post('/conversations', { description: '创建空白会话' })
   async createConversation(@Body() body: CreateConversationRequestVo): Promise<ConversationVo> {
     try {
-      return await this.conversations.createBlank(body?.title);
+      return await this.conversations.createBlank(body?.title, body?.purpose === 'capture' ? 'capture' : 'chat');
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Post('/conversations/capture', { description: '确保收集箱会话' })
+  async ensureCaptureInbox(): Promise<ConversationVo> {
+    try {
+      return await this.conversations.ensureCaptureInbox();
+    } catch (error) {
+      throw toIpcError(error);
+    }
+  }
+
+  @Post('/conversations/bound', { description: '确保业务实体绑定会话' })
+  async ensureBoundConversation(
+    @Body() body: EnsureBoundConversationRequestVo
+  ): Promise<EnsureBoundConversationResponseVo> {
+    try {
+      return await this.conversations.ensureBoundConversation(body?.refType, body?.refId);
     } catch (error) {
       throw toIpcError(error);
     }
@@ -102,7 +136,7 @@ export class AiController {
   @Post('/conversations/bound/goal', { description: '确保目标绑定会话' })
   async ensureBoundGoal(@Body() body: EnsureBoundGoalRequestVo): Promise<EnsureBoundConversationResponseVo> {
     try {
-      return await this.conversations.ensureBoundGoal(body?.goalId);
+      return await this.conversations.ensureBoundConversation('goal', body?.goalId);
     } catch (error) {
       throw toIpcError(error);
     }
@@ -111,7 +145,7 @@ export class AiController {
   @Post('/conversations/bound/task', { description: '确保任务绑定会话' })
   async ensureBoundTask(@Body() body: EnsureBoundTaskRequestVo): Promise<EnsureBoundConversationResponseVo> {
     try {
-      return await this.conversations.ensureBoundTask(body?.taskId);
+      return await this.conversations.ensureBoundConversation('task', body?.taskId);
     } catch (error) {
       throw toIpcError(error);
     }
@@ -211,7 +245,7 @@ export class AiController {
   ): Promise<MessageVo> {
     try {
       if (!id?.trim()) throw AiPlatformError.internal('缺少 messageId');
-      return await this.conversations.patchWorkspacePayload(id.trim(), body || { suggestions: [] });
+      return await this.conversations.patchWorkspacePayload(id.trim(), body || { payload: {} });
     } catch (error) {
       throw toIpcError(error);
     }

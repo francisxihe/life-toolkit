@@ -3,6 +3,7 @@ import type {
   CancelStreamResponseVo,
   ConversationVo,
   CreateConversationRequestVo,
+  EnsureBoundConversationRequestVo,
   EnsureBoundConversationResponseVo,
   EnsureBoundGoalRequestVo,
   EnsureBoundTaskRequestVo,
@@ -29,6 +30,10 @@ export default class AiController {
 
   static async createConversation(body: CreateConversationRequestVo) {
     return request<ConversationVo>({ method: 'post' })(`/ai/conversations`, body);
+  }
+
+  static async ensureCaptureInbox() {
+    return request<ConversationVo>({ method: 'post' })(`/ai/conversations/capture`);
   }
 
   static async listMessages(id: string) {
@@ -59,12 +64,20 @@ export default class AiController {
     return request<RuntimeSelectionVo>({ method: 'put' })(`/ai/runtime/selection`, body);
   }
 
+  static async executeCapability<T>(key: string, body: Record<string, unknown>) {
+    return request<T>({ method: 'post' })(`/ai/capabilities/${encodeURIComponent(key)}`, body);
+  }
+
   static async decomposeGoal(body: GoalDecomposeRequestVo) {
     return request<GoalDecomposeResponseVo>({ method: 'post' })(`/ai/capabilities/goal/decompose`, body);
   }
 
   static async decomposeTask(body: TaskDecomposeRequestVo) {
     return request<TaskDecomposeResponseVo>({ method: 'post' })(`/ai/capabilities/task/decompose`, body);
+  }
+
+  static async ensureBoundConversation(body: EnsureBoundConversationRequestVo) {
+    return request<EnsureBoundConversationResponseVo>({ method: 'post' })(`/ai/conversations/bound`, body);
   }
 
   static async ensureBoundGoal(body: EnsureBoundGoalRequestVo) {

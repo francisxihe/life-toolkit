@@ -1,0 +1,57 @@
+{
+  "id": "purchase",
+  "kind": "page",
+  "title": "家庭采购",
+  "parentId": "plugins",
+  "route": "/plugins/purchase",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "list",
+      "name": "采购清单",
+      "scenario": "管理待购、已购和取消的家庭物品",
+      "productStatus": "roadmap",
+      "reference": "purchase.view.list"
+    }
+  ],
+  "rules": [
+    {
+      "id": "status",
+      "name": "采购三项状态",
+      "description": "采购项只有待购、已购、取消。已购时可记下购入时间，并可关联一笔交易。",
+      "views": ["list"],
+      "reference": "purchase.rule.status",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "not-inventory",
+      "name": "不是进销存",
+      "description": "本页只解决家庭清单与购买记录，不提供库存、供应商或企业进销存。",
+      "views": ["list"],
+      "reference": "purchase.rule.not-inventory",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "purchase.overview",
+      "title": "目标与价值",
+      "body": "家庭采购从活动页进入，用来记下家里要买的东西，并留下买过的记录。它替换不符合个人生活语义的进销存演示。采购状态以采购项为真源。"
+    },
+    {
+      "id": "purchase.view.list",
+      "title": "采购清单",
+      "body": "列表展示名称、数量或单位、需要时间、状态和备注。用户可新增、改为已购或取消。已购且花了钱时，可以关联一笔记账。"
+    },
+    {
+      "id": "purchase.rule.status",
+      "title": "采购三项状态",
+      "body": "待购表示还要买，已购表示买到了，取消表示不再买。从 AI 会话写下「买牛奶 28 元」并确认后，会同时留下采购和支出，并挂在同一张活动卡上。"
+    },
+    {
+      "id": "purchase.rule.not-inventory",
+      "title": "不是进销存",
+      "body": "这里没有仓库、供应商或批次。只回答家里还缺什么、买过什么。"
+    }
+  ]
+}

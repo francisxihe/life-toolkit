@@ -1,0 +1,41 @@
+{
+  "id": "plugins",
+  "kind": "page",
+  "title": "插件",
+  "parentId": "global",
+  "route": "/plugins",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "catalog",
+      "name": "插件目录",
+      "scenario": "在插件中心搜索已启用插件，从图标栏或分类列表进入领域",
+      "productStatus": "roadmap",
+      "reference": "plugins.view.catalog"
+    },
+    {
+      "id": "hub-nav",
+      "name": "领域导航",
+      "scenario": "进入某个插件后只作为该插件详情页返回插件中心；插件内部栏目在页内切换",
+      "productStatus": "roadmap",
+      "reference": "plugins.view.hub-nav"
+    }
+  ],
+  "references": [
+    {
+      "id": "plugins.overview",
+      "title": "目标与价值",
+      "body": "插件页是进入成长、记账、采购与收藏的目录。默认打开插件中心，不默认进入某个领域。用户可搜索已启用插件，从图标栏或分类列表进入该插件自己的入口。没有安装或在线市场。侧栏只保留 AI 与插件两项。活动不是插件，而是本页下方的跨域回看。原先单独打开的活动页会回到插件中心。"
+    },
+    {
+      "id": "plugins.view.catalog",
+      "title": "插件目录",
+      "body": "页面给出标题、说明和搜索。已启用插件以图标列出；下方按分类列出名称与一句说明。点图标或卡片进入该插件自己的入口页。没有安装、公开或个人市场。"
+    },
+    {
+      "id": "plugins.view.hub-nav",
+      "title": "领域导航",
+      "body": "进入某个插件即进入该插件详情。上方只提供返回插件中心，不再列出其它插件。成长的待办、任务、习惯、目标，以及记账的账单、预算、总览，都是该插件页内的栏目切换，不是另一条路径。"
+    }
+  ]
+}

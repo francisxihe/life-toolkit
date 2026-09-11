@@ -1,5 +1,5 @@
-import { AppDataSource } from '../../db/database.config';
-import { BaseRepository as BaseRepositoryImpl } from '../../db/base.repository.impl';
+import { store } from '../storage';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
 import { AiSuggestionCache } from './ai-suggestion-cache.entity';
 
 export type AiSuggestionCacheFilterDto = {
@@ -42,7 +42,7 @@ export class CacheRepository extends BaseRepositoryImpl<
       }
       return qb.orderBy('ai_suggestion_cache.updatedAt', 'DESC');
     }
-    super(AppDataSource.getRepository(AiSuggestionCache), buildQuery);
+    super(() => store().getRepository(AiSuggestionCache), buildQuery);
   }
 
   async findOneByLookup(

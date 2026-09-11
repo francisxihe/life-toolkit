@@ -1,13 +1,13 @@
 import { useRef, useState, type KeyboardEvent, type MouseEvent } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
-  Button,
   Dropdown,
   Flex,
   Input,
   Modal,
   Popover,
 } from '@sue/design-web-react';
-import { Ellipsis, Pencil, Pin, Plus, Trash2 } from 'lucide-react';
+import { Ellipsis, Pencil, Pin, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { ProductSurfaceHostProps } from '@ylib/product-surface-react';
@@ -287,38 +287,27 @@ function SessionItem({
 export function SessionList({
   'data-product-ref': productRefAttr,
 }: ProductSurfaceHostProps) {
+  const location = useLocation();
+  const onAiPage = location.pathname === '/ai' || location.pathname.startsWith('/ai/');
   const {
     conversations,
     activeConversationId,
     selectConversation,
-    createBlankConversation,
     renameConversation,
     pinConversation,
     deleteConversation,
-    goalTitle,
-    taskTitle,
+    boundLabel,
   } = useAiSessionContext();
 
   return (
     <Flex
       vertical
-      container="fixed"
+      container="fill"
       className={`${styles.sessionList} h-full`}
       data-product-ref={productRefAttr}
     >
-      <Flex
-        className={styles.sessionListHeader}
-        justify="space-between"
-        align="center"
-      >
-        <strong>会话</strong>
-        <Button
-          size="small"
-          icon={<Plus size={14} />}
-          onClick={() => void createBlankConversation()}
-        >
-          新建
-        </Button>
+      <Flex className={styles.sessionListHeader} align="center">
+        <span className={styles.sessionListTitle}>会话</span>
       </Flex>
       <Flex
         vertical
@@ -330,14 +319,8 @@ export function SessionList({
           <SessionItem
             key={conversation.id}
             conversation={conversation}
-            active={conversation.id === activeConversationId}
-            boundLabel={
-              conversation.refType === 'goal' && conversation.refId
-                ? `目标 · ${goalTitle(conversation.refId) || '目标'}`
-                : conversation.refType === 'task' && conversation.refId
-                  ? `任务 · ${taskTitle(conversation.refId) || '任务'}`
-                  : ''
-            }
+            active={onAiPage && conversation.id === activeConversationId}
+            boundLabel={boundLabel(conversation.refType, conversation.refId)}
             onSelect={() => selectConversation(conversation.id)}
             onRename={(title) => renameConversation(conversation.id, title)}
             onPin={(pinned) => pinConversation(conversation.id, pinned)}

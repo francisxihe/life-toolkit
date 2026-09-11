@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@business/common';
+import { BaseEntity } from '@true-north/plugin-sdk/host';
 
 @Entity('ai_conversation')
 export class AiConversation extends BaseEntity {
@@ -21,4 +21,7 @@ export class AiConversation extends BaseEntity {
 
   @Column('boolean', { default: false })
   pinned!: boolean;
+
+  @Column('varchar', { length: 16, nullable: true })
+  purpose?: 'chat' | 'capture' | null;
 }

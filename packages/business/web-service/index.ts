@@ -10,3 +10,7 @@ export { default as TodoController } from './controller/todo';
 export { default as TrackTimeController } from './controller/track-time';
 export { default as AiController } from './controller/ai';
 export { default as BrowserController } from './controller/browser';
+export { default as ActivityController } from './controller/activity';
+export { default as ExpenseController } from './controller/expense';
+export { default as PurchaseController } from './controller/purchase';
+export { default as LibraryController } from './controller/library';

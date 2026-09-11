@@ -33,6 +33,6 @@
 
 ### AI 拆解（消费方）
 
-目标详情「AI 拆解」仅**发起**绑定该目标的 AI 会话；**模型调用与建议生成**属于 AI 平台域，不在 `/goal/*` CRUD 内实现；审阅与采纳在会话页右侧工作台完成，不再使用详情抽屉。参见 [TechnicalWiki · AI](../ai/README.md)、[capabilities · goal.decompose](../ai/capabilities.md)。采纳创建仍使用本模块既有 create 接口。版本差异与验收见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
+目标详情「AI 拆解」仅**发起**绑定该目标的 AI 会话（`goalId` 查询参数）。拆解 Capability、MCP 工具、实体 resolver 位于 `service/growth/ai/`，工作台 UI 位于 `render/features/growth/workbench/ai-decomposition/`，由 composition root 注入 AI 注册表与 Workbench。不在 `/goal/*` CRUD 内打模型。采纳仍使用本模块既有 create 接口。参见 [TechnicalWiki · AI](../ai/README.md)、[capabilities · goal.decompose](../ai/capabilities.md)。版本差异与验收见 [v0.2.0 TDD](../../v0.2.0/TDD.md)。
 
 版本内 Goal CRUD 设计见 [v0.1.0 TDD](../../v0.1.0/TDD.md)。

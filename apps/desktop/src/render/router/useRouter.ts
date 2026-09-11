@@ -9,7 +9,6 @@ import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import { useNavigate } from 'react-router-dom';
 import { createContext } from 'react';
-import { getComponentModule } from './helpers';
 
 export const RouterContext = createContext(null);
 
@@ -34,18 +33,24 @@ export default function useRouter() {
 
   function routerTo(key) {
     const currentRoute = flattenRoutes.find((r) => r.fullPath === key);
-    const component = currentRoute.component;
-    const preload = component.preload();
-    NProgress.start();
-    preload.then(() => {
-      let path = `/${key}`;
+    if (!currentRoute) return;
+
+    const go = () => {
+      let path = currentRoute.fullPath || `/${key}`;
       if (currentRoute.redirect) {
         path = currentRoute.redirect;
-      } else if (currentRoute.fullPath) {
-        path = currentRoute.fullPath;
       }
-
       navigate(path);
+    };
+
+    if (!currentRoute.component?.preload) {
+      go();
+      return;
+    }
+
+    NProgress.start();
+    currentRoute.component.preload().then(() => {
+      go();
       NProgress.done();
     });
   }
@@ -74,9 +79,11 @@ export function getFlattenRoutes(routes: IRoute[]) {
           }
         }
         if (flattenRoute.fullPath && !flattenRoute.onlyMenu) {
-          flattenRoute.component = lazyload(
-            getComponentModule(flattenRoute.fullPath),
-          );
+          if (flattenRoute.component) {
+            // already loaded
+          } else if (flattenRoute.loader) {
+            flattenRoute.component = lazyload(flattenRoute.loader);
+          }
         }
       } catch (e) {
         // console.log(flattenRoute.key);
@@ -84,7 +91,7 @@ export function getFlattenRoutes(routes: IRoute[]) {
       }
 
       if (isArray(flattenRoute.children) && flattenRoute.children.length) {
-        flattenRoute.children = travel(flattenRoute.children, flattenRoute.key);
+        flattenRoute.children = travel(flattenRoute.children, flattenRoute.fullPath || flattenRoute.key);
       }
       flattenRoutes.push(flattenRoute);
       return flattenRoute;

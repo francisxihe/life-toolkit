@@ -1,5 +1,5 @@
-import { AppDataSource } from '../../db/database.config';
-import { BaseRepository as BaseRepositoryImpl } from '../../db/base.repository.impl';
+import { store } from '../storage';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
 import { AiMessage } from './message.entity';
 
 export type AiMessageFilterDto = {
@@ -25,6 +25,6 @@ export class AiMessageRepository extends BaseRepositoryImpl<AiMessage, AiMessage
       }
       return qb.orderBy('ai_message.createdAt', 'ASC');
     }
-    super(AppDataSource.getRepository(AiMessage), buildQuery);
+    super(() => store().getRepository(AiMessage), buildQuery);
   }
 }

@@ -1,7 +1,12 @@
 import { createHash } from 'crypto';
-import type { GoalDecomposeResponseVo } from '@true-north/vo';
 import { AiSuggestionCache } from './ai-suggestion-cache.entity';
 import { CacheRepository } from './ai-suggestion-cache.repository';
+
+export type CachedCapabilityResponse = {
+  runId: string;
+  analysisSummary: string;
+  suggestions: unknown[];
+};
 
 export function fingerprintPromptContext(promptContext: string): string {
   return createHash('sha256').update(promptContext).digest('hex');
@@ -10,12 +15,12 @@ export function fingerprintPromptContext(promptContext: string): string {
 export class CacheService {
   constructor(private readonly repository = new CacheRepository()) {}
 
-  async findMatching(input: {
+  async findMatching<T extends CachedCapabilityResponse>(input: {
     capabilityKey: string;
     refType: string;
     refId: string;
     contextFingerprint: string;
-  }): Promise<GoalDecomposeResponseVo | null> {
+  }): Promise<T | null> {
     const row = await this.repository.findOneByLookup(
       input.capabilityKey,
       input.refType,
@@ -25,7 +30,7 @@ export class CacheService {
       return null;
     }
     try {
-      const parsed = JSON.parse(row.payloadJson) as GoalDecomposeResponseVo;
+      const parsed = JSON.parse(row.payloadJson) as T;
       if (!parsed?.runId || !Array.isArray(parsed.suggestions)) {
         return null;
       }
@@ -40,7 +45,7 @@ export class CacheService {
     refType: string;
     refId: string;
     contextFingerprint: string;
-    response: GoalDecomposeResponseVo;
+    response: CachedCapabilityResponse;
   }): Promise<void> {
     const existing = await this.repository.findOneByLookup(
       input.capabilityKey,

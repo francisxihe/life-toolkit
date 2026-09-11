@@ -1,0 +1,179 @@
+{
+  "id": "growth.goal",
+  "kind": "dom",
+  "title": "目标管理",
+  "parentId": "growth",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "tree",
+      "name": "目标树",
+      "scenario": "构建和浏览目标层级",
+      "productStatus": "roadmap",
+      "reference": "growth.goal.view.tree"
+    },
+    {
+      "id": "detail",
+      "name": "目标详情",
+      "scenario": "查看和编辑单个目标",
+      "productStatus": "roadmap",
+      "reference": "growth.goal.view.detail"
+    },
+    {
+      "id": "mindmap",
+      "name": "目标脑图",
+      "scenario": "理解目标与任务关系",
+      "productStatus": "roadmap",
+      "reference": "growth.goal.view.mindmap"
+    },
+    {
+      "id": "dashboard",
+      "name": "目标健康面板",
+      "scenario": "查看结构健康与指标趋势",
+      "productStatus": "deprecated",
+      "reference": "growth.goal.view.dashboard"
+    },
+    {
+      "id": "ai-decomposition",
+      "name": "AI 拆解",
+      "scenario": "从目标详情发起 AI 会话；工作台审阅建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
+      "productStatus": "roadmap",
+      "reference": "growth.goal.view.ai-decomposition"
+    }
+  ],
+  "rules": [
+    {
+      "id": "time-frame",
+      "name": "时间范围",
+      "description": "目标的计划时间范围由开始和结束日期确定，并约束层级排期。",
+      "views": [
+        "tree",
+        "detail"
+      ],
+      "reference": "growth.goal.rule.time-frame",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "type",
+      "name": "类型规则",
+      "description": "目标仅分为规划和指标，并受直接父子层级约束。",
+      "views": [
+        "detail"
+      ],
+      "reference": "growth.goal.rule.type",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "priority-inheritance",
+      "name": "优先级继承",
+      "description": "子目标的重要度和难度不得超过父目标。",
+      "views": [
+        "detail"
+      ],
+      "reference": "growth.goal.rule.priority-inheritance",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-generation",
+      "name": "AI 建议生成",
+      "description": "正式产品由已接入的模型结合当前目标上下文生成建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态，不作为生成算法规格。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-generation",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-adopt",
+      "name": "AI 建议采纳",
+      "description": "工作台内单条或批量采纳以当前预览创建实体；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-adopt",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-followup",
+      "name": "对已选建议追问",
+      "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.goal.rule.ai-decompose-followup",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.goal.overview",
+      "title": "目标与价值",
+      "body": "桌面端当前入口为目标树和目标脑图；目标详情以内嵌概览、子目标、关联任务三 Tab 展示，并支持从详情发起 AI 拆解、受控状态操作和删除影响检查。AI 拆解由已接入的模型结合当前目标上下文生成可采纳建议，结果以 AI 会话消息中的结构化工作台块交付；原型在会话页工作台演示交互与建议形态，正式产品不以原型本地假数据作为生成规格。独立目标健康面板已废弃，结构摘要由目标详情和工作台承载。多轮对话在 AI 会话页进行；目标详情只负责发起。\n\n目标管理用于表达希望达成的方向、完成期限和重要程度。它让长期愿景可以分解为可检查的阶段成果，并成为任务、待办和习惯的共同上下文。\n\n工程实现资料见 [目标管理 TechnicalWiki](../../../../../doc/TechnicalWiki/activity/growth/goal.md)。"
+    },
+    {
+      "id": "growth.goal.structure",
+      "title": "业务流程",
+      "body": "用户先创建顶层目标，再在必要时建立子目标，补充时间范围与优先级。后续行动关联目标后，用户可从目标回看投入和完成情况。目标被暂停或放弃时，历史关联保留以支持复盘。"
+    },
+    {
+      "id": "growth.goal.view.tree",
+      "title": "目标树",
+      "body": "目标树用于浏览父子层级、切换当前上下文并快速进入编辑。它支持按名称、状态、类型和计划时间范围组合筛选，并保留命中目标的父级路径；适合在规划或周度回顾时检查方向是否完整。"
+    },
+    {
+      "id": "growth.goal.view.detail",
+      "title": "目标详情",
+      "body": "详情聚焦单个目标的描述、期限、优先级和关联行动。状态仅以 Tag 展示；右上操作区提供完成、编辑、删除与放弃，并提供「AI 拆解」入口以发起绑定该目标的 AI 会话。关联任务可直接打开任务详情抽屉，完成操作会提示关联影响并提供撤销入口。"
+    },
+    {
+      "id": "growth.goal.view.mindmap",
+      "title": "目标脑图",
+      "body": "目标脑图以关系图方式呈现目标、子目标和已关联任务，帮助用户发现拆解缺口或重复投入。结构示意已实现；更完整的导航与编辑仍在规划中。"
+    },
+    {
+      "id": "growth.goal.view.dashboard",
+      "title": "目标健康面板",
+      "body": "健康面板计划聚合期限风险、近期行动和习惯贡献，用于识别需要干预的目标。该能力仍在规划中，尚未实现。"
+    },
+    {
+      "id": "growth.goal.view.ai-decomposition",
+      "title": "AI 拆解",
+      "body": "用户从目标详情发起 AI 拆解后，进入 AI 会话页并打开（或新建）绑定该目标的会话；拆解结果在全局工作台的标签中审阅与采纳。工作台展示对该目标的分析摘要，以及可勾选的建议列表。每条建议属于子目标、任务、待办或习惯之一，并说明理由、预期影响、计划日期与重要度；四类建议共用同一套交互。\n\n用户可单条采纳，或勾选后批量采纳（需确认）。「编辑」打开编辑态，保存只回写该条建议在本工作台块内的预览缓存，不创建实体；采纳时使用当前预览数据（未编辑则为模型原文）。存在冲突时不可勾选、不可直接采纳，但允许打开编辑；保存后按当前预览重算冲突提示，仍冲突则仍不可采纳。采纳成功后建议进入对应实体生命周期，工作台呈现「已采纳」且预览内容置灰，不可再编辑、再采纳或勾选。工作台另提供「对已选追问」，与「采纳已选」并列。模型不可用时，正式产品应给出可理解的失败反馈，而不是静默用本地假建议冒充模型结果。"
+    },
+    {
+      "id": "growth.goal.interaction",
+      "title": "交互语义",
+      "body": "创建和编辑应在当前目标上下文中完成。用户删除或暂停目标前需要看到受影响的关联行动；系统应保留历史记录，避免让复盘链路断裂。AI 拆解由目标详情发起，审阅与采纳在全局工作台完成；建议的创建与常规新建共用同一套实体约束。"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-generation",
+      "title": "AI 建议生成",
+      "body": "正式产品根据当前目标及其关联的子目标、任务、待办与习惯等上下文，调用已接入的模型生成建议。建议形态包括标题、类型、理由、影响、计划日期与重要度等，供用户判断是否采纳。生成结果以会话消息中的结构化工作台块交付，并在全局工作台的目标拆解标签中呈现。\n\n原型中的固定本地建议仅用于演示工作台交互与建议卡片信息架构，不约束正式产品的提示词、模型厂商或生成条数策略。模型未接入或生成失败时，应给出可理解的失败反馈；可选的本地兜底必须由用户显式选择，并标明非模型结果。"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-adopt",
+      "title": "AI 建议采纳",
+      "body": "采纳发生在全局工作台的目标拆解标签内，将建议落实为子目标、任务、待办或习惯实体。待办采纳后应关联到当前目标；子目标、任务与习惯亦须落在当前目标上下文中，并遵守各自模块的既有约束。四类建议规则相同。\n\n「编辑」仅把修改写回该条建议的工作台预览缓存，不创建实体；单条或批量采纳均以当前预览为准。存在重复或冲突提示的建议不可勾选、不可直接采纳；允许编辑后按当前预览重算冲突。批量采纳前需确认将创建所选建议。已成功采纳的建议显示「已采纳」、预览置灰，并禁用再次编辑、采纳与勾选。"
+    },
+    {
+      "id": "growth.goal.rule.ai-decompose-followup",
+      "title": "对已选建议追问",
+      "body": "用户在目标拆解工作台勾选一条或多条建议（非冲突、非已采纳）后，可点击「对已选追问」。系统将所选建议摘要（类型、标题及当前预览中的必要字段）预填进当前会话底部输入框并聚焦，用户确认或改写后再发送。发送后仅追加文本往返，不自动打开或替换工作台；若助手再产出工作台块，仍须用户点选打开。摘要内容使用各条当前预览（含已编辑缓存）。"
+    },
+    {
+      "id": "growth.goal.rule.time-frame",
+      "title": "时间范围",
+      "body": "每个目标都以“开始日期”和“结束日期”定义计划时间范围，边界均包含在范围内。它用于表达目标的期限、在目标树和详情中呈现排期，并为层级拆解提供时间边界；结束日期不能早于开始日期。\n\n顶层目标没有上级时间约束。创建或编辑子目标时，开始日期必须不早于父目标的开始日期，结束日期必须不晚于父目标的结束日期。选择或变更父级目标后，系统按新父目标的计划时间范围重新判断；不满足约束时禁止保存，并提示用户调整子目标的日期或父级目标。\n\n调整父目标计划时间范围时，所有直接子目标仍须落在调整后的范围内。若调整会造成任一子目标越界，用户需要先处理这些冲突后再保存父目标。\n\n原型同时校验父目标改期后的直接子目标范围；存在越界子目标时禁止保存并提示先处理冲突。"
+    },
+    {
+      "id": "growth.goal.rule.type",
+      "title": "类型规则",
+      "body": "目标类型仅有规划和指标。无父目标的顶层目标必须为规划；规划目标可以拆分为规划或指标子目标；指标目标只能拆分为指标子目标。规则只检查直接父子关系。\n\n编辑目标时，选择指标父目标会自动将子目标类型改为指标，并只保留指标选项；清除父级目标会自动改为规划。将已有子目标的父目标改为指标前，必须先将其所有直接子目标调整为指标，否则不能保存。"
+    },
+    {
+      "id": "growth.goal.rule.priority-inheritance",
+      "title": "优先级继承",
+      "body": "子目标的重要度与难度不能高于父目标。调整父目标的对应值时，系统会检查所有直接子目标，存在冲突时禁止保存。"
+    }
+  ]
+}

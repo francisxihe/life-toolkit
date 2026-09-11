@@ -92,6 +92,21 @@ importers:
       '@true-north/enum':
         specifier: workspace:*
         version: link:../../packages/business/enum
+      '@true-north/plugin-expense':
+        specifier: workspace:*
+        version: link:../../packages/plugins/expense
+      '@true-north/plugin-growth':
+        specifier: workspace:*
+        version: link:../../packages/plugins/growth
+      '@true-north/plugin-library':
+        specifier: workspace:*
+        version: link:../../packages/plugins/library
+      '@true-north/plugin-purchase':
+        specifier: workspace:*
+        version: link:../../packages/plugins/purchase
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../packages/plugin-sdk
       '@true-north/web-service':
         specifier: workspace:*
         version: link:../../packages/business/web-service
@@ -410,6 +425,225 @@ importers:
       typescript:
         specifier: ^6.0.0
         version: 6.0.3
+
+  packages/plugin-sdk:
+    dependencies:
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../business/enum
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../business/vo
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.0
+        version: 0.14.4
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      electron-ipc-restful:
+        specifier: 0.0.1
+        version: 0.0.1(electron@36.0.0(supports-color@8.1.1))
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+      typeorm-naming-strategies:
+        specifier: ^4.1.0
+        version: 4.1.0(typeorm@0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3)))
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+
+  packages/plugins/activity:
+    dependencies:
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../../business/enum
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../plugin-sdk
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../../business/vo
+      '@true-north/web-service':
+        specifier: workspace:*
+        version: link:../../business/web-service
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+
+  packages/plugins/expense:
+    dependencies:
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../../business/enum
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../plugin-sdk
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../../business/vo
+      '@true-north/web-service':
+        specifier: workspace:*
+        version: link:../../business/web-service
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+
+  packages/plugins/growth:
+    dependencies:
+      '@true-north/common-web-utils':
+        specifier: workspace:*
+        version: link:../../common-web/utils
+      '@true-north/components-mind':
+        specifier: workspace:*
+        version: link:../../components/mind
+      '@true-north/components-repeat':
+        specifier: workspace:*
+        version: link:../../components/repeat
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../../business/enum
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../plugin-sdk
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../../business/vo
+      '@true-north/web-service':
+        specifier: workspace:*
+        version: link:../../business/web-service
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.0
+        version: 0.14.4
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      francis-mapped-types:
+        specifier: 0.0.1
+        version: 0.0.1
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+
+  packages/plugins/library:
+    dependencies:
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../../business/enum
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../plugin-sdk
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../../business/vo
+      '@true-north/web-service':
+        specifier: workspace:*
+        version: link:../../business/web-service
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+
+  packages/plugins/purchase:
+    dependencies:
+      '@true-north/enum':
+        specifier: workspace:*
+        version: link:../../business/enum
+      '@true-north/plugin-sdk':
+        specifier: workspace:*
+        version: link:../../plugin-sdk
+      '@true-north/vo':
+        specifier: workspace:*
+        version: link:../../business/vo
+      '@true-north/web-service':
+        specifier: workspace:*
+        version: link:../../business/web-service
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.21
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
+      react-router-dom:
+        specifier: ^6.25.1
+        version: 6.30.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      typeorm:
+        specifier: ^0.3.17
+        version: 0.3.31(mysql2@3.15.0)(sqlite3@5.1.7(bluebird@3.7.2)(supports-color@8.1.1))(supports-color@8.1.1)(ts-node@10.9.2(@swc/core@1.15.47)(@types/node@22.13.0)(typescript@6.0.3))
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
 
   packages/product-wiki:
     dependencies:

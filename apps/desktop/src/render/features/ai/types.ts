@@ -6,6 +6,7 @@ import type {
   MessageVo,
   RuntimeAgentVo,
 } from '@true-north/vo';
+import type { AiEntityRecord, AiEntitySource } from './entity-source';
 
 export type ComposerInputRef = GetRef<typeof Input.TextArea>;
 
@@ -27,8 +28,8 @@ export type SessionValue = {
   streamingAssistantId: string | null;
   streamError: string | null;
   loading: boolean;
-  goals: any[];
-  tasks: any[];
+  entities: AiEntityRecord[];
+  entitySources: AiEntitySource[];
   codingAgents: RuntimeAgentVo[];
   selectedAgentId: string;
   selectedAgent: RuntimeAgentVo | undefined;
@@ -43,10 +44,6 @@ export type SessionValue = {
   sendUserMessage: () => Promise<void>;
   cancelStreaming: () => Promise<void>;
   openWorkspace: (messageId: string) => void;
-  goalTitle: (goalId?: string) => string | undefined;
-  taskTitle: (taskId?: string) => string | undefined;
-  onOpenGoal: (goalId: string) => void;
-  onOpenTask: (taskId: string) => void;
-  findGoal: (goalId?: string) => any | undefined;
-  findTask: (taskId?: string) => any | undefined;
+  openEntity: (type: string, id: string) => void;
+  boundLabel: (refType?: string, refId?: string) => string;
 };

@@ -1,0 +1,195 @@
+{
+  "id": "growth.todo",
+  "kind": "dom",
+  "title": "待办管理",
+  "parentId": "growth",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "today",
+      "name": "当前待办",
+      "scenario": "聚焦选定日期的行动",
+      "productStatus": "roadmap",
+      "reference": "growth.todo.view.today"
+    },
+    {
+      "id": "week",
+      "name": "本周待办",
+      "scenario": "安排周度执行",
+      "productStatus": "deprecated",
+      "reference": "growth.todo.view.week"
+    },
+    {
+      "id": "calendar",
+      "name": "待办日历",
+      "scenario": "查看长期排程",
+      "productStatus": "roadmap",
+      "reference": "growth.todo.view.calendar"
+    },
+    {
+      "id": "all",
+      "name": "全部待办",
+      "scenario": "筛选与批量治理；含进行中重复当前实例，并提供删除",
+      "productStatus": "roadmap",
+      "reference": "growth.todo.view.all"
+    },
+    {
+      "id": "statistics",
+      "name": "待办统计",
+      "scenario": "复盘效率和优先级分布",
+      "productStatus": "deprecated",
+      "reference": "growth.todo.view.statistics"
+    }
+  ],
+  "rules": [
+    {
+      "id": "related-inheritance",
+      "name": "关联约束继承",
+      "description": "系统生成待办可关联目标、任务或习惯，来源不可通过手动编辑改写；关联目标或任务时需遵守其时间和重要度约束。",
+      "views": [
+        "today",
+        "all"
+      ],
+      "reference": "growth.todo.rule.related-inheritance",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "batch-limit",
+      "name": "批量操作上限",
+      "description": "批量操作单次最多处理 50 条待办。",
+      "views": [
+        "all"
+      ],
+      "reference": "growth.todo.rule.batch-limit",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "repeat-template",
+      "name": "周期待办模板推进",
+      "description": "独立周期待办只维护当前实例，并在当前、日历与全部中展示；结算后留下历史实例并推进下一次，达到结束条件则保留已结算历史。",
+      "views": [
+        "today",
+        "calendar",
+        "all"
+      ],
+      "reference": "growth.todo.rule.repeat-template",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "focus-range-only",
+      "name": "区间计划可关联专注",
+      "description": "未完成且计划起止时间为区间的待办，可从待办入口唤起全局专注计时并关联该待办；计划为时间点时不可从待办入口管理计时，已有关联记录仍可只读查看。专注结束不改变待办状态。",
+      "views": [
+        "today",
+        "all"
+      ],
+      "reference": "growth.todo.rule.focus-range-only",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "edit-no-repeat-toggle",
+      "name": "编辑不可切换是否重复",
+      "description": "仅新建独立待办时可开启或关闭重复；编辑时不可切换是否重复，已启用重复时仍可调整规则细节。",
+      "views": [
+        "today",
+        "all"
+      ],
+      "reference": "growth.todo.rule.edit-no-repeat-toggle",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "delete-boundary",
+      "name": "删除入口与重复删除",
+      "description": "当前待办与待办日历不提供删除；全部待办提供删除。进行中的独立重复待办只能在全部待办删除系列定义；删除后停止后续生成，已完成或已放弃的历史实例保留。",
+      "views": [
+        "today",
+        "calendar",
+        "all"
+      ],
+      "reference": "growth.todo.rule.delete-boundary",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.todo.overview",
+      "title": "目标与价值",
+      "body": "桌面端当前入口为“当前待办、待办日历、全部待办”。“当前待办”沿用统一日期语义，日期选择由当前页面的日程日历驱动；本周待办和待办统计已废弃，不属于当前桌面导航。\n\n待办管理承载用户当下可完成的最小行动，帮助用户把计划转化为今天可以执行的清单。手动创建的待办固定为独立事项；目标、任务、习惯等来源只由系统生成待办时写入，不能在待办编辑中手动改写。\n\n工程实现资料见 [待办管理 TechnicalWiki](../../../../../doc/TechnicalWiki/activity/growth/todo.md)。"
+    },
+    {
+      "id": "growth.todo.structure",
+      "title": "业务流程",
+      "body": "用户记录独立待办、安排时间和优先级，并可为独立待办设置周期。周期待办仅维护当前实例，结算后推进下一次；系统生成的待办会保留唯一来源，用于回溯目标、任务或习惯的执行状态，且不能手动改写重复配置。"
+    },
+    {
+      "id": "growth.todo.view.today",
+      "title": "当前待办",
+      "body": "当前待办由侧边日程月历选择日期，主区按「已过期 / 未完成 / 已完成 / 已放弃」分组（**仅选定演示日/今天时显示已过期**），并按日内计划开始时间排列。每项待办在列表直接提供完成与放弃（习惯/周期待办以「标记未完成」结算）；区间计划的未完成待办可开始专注计时。**不提供删除**。批量完成仅在「全部待办」提供，当前页不支持多选批量。进行中的独立重复待办以当前指针日期的一条实例出现在对应日期分组中。"
+    },
+    {
+      "id": "growth.todo.view.week",
+      "title": "本周待办",
+      "body": "本周待办已废弃；桌面端当前由可切换日期的“当前待办”与待办日历覆盖，不再提供独立周视图。"
+    },
+    {
+      "id": "growth.todo.view.calendar",
+      "title": "待办日历",
+      "body": "待办日历以月度网格按计划日期和日内开始时间呈现待办分布，用于发现过度排程和遗漏日期，并可直接打开当天待办进行编辑。**不提供删除**。进行中的独立重复待办按当前指针日期落在对应日期格子中。"
+    },
+    {
+      "id": "growth.todo.view.all",
+      "title": "全部待办",
+      "body": "全部待办用于整理未完成、已完成和已放弃事项，并支持按关联对象回溯。列表包含进行中的独立重复待办（当前指针日期上的那一条实例），以及已结算的历史实例。**删除入口仅在全部待办提供**；重复系列只能在此删除。"
+    },
+    {
+      "id": "growth.todo.view.statistics",
+      "title": "待办统计",
+      "body": "待办统计已废弃；桌面端当前工作台提供待办执行概览，不再提供独立待办统计页。"
+    },
+    {
+      "id": "growth.todo.interaction",
+      "title": "交互语义",
+      "body": "当前与日历列表直接露出完成与放弃（或周期「标记未完成」），**不露出删除**。全部待办额外提供删除。待办不再提供「开始 / 进行中」状态流转；投入时间通过关联专注计时记录。新建时可配置是否重复，编辑时不可开关是否重复（已有重复规则仍可调整细节）。批量操作只处理用户确认的项目。"
+    },
+    {
+      "id": "growth.todo.priority",
+      "title": "优先级矩阵",
+      "body": "优先级由重要度和紧急度共同表达，用于排序和筛选，而不是替代用户判断。系统应让高重要且高紧急事项更容易被看见。"
+    },
+    {
+      "id": "growth.todo.rule.related-inheritance",
+      "title": "关联约束继承",
+      "body": "系统生成待办只能关联一个来源。关联目标或任务时，应遵循上级的时间与有效状态约束；习惯来源待办完成或记为未完成时，会同步结算习惯并安排下一次周期实例。"
+    },
+    {
+      "id": "growth.todo.rule.batch-limit",
+      "title": "批量操作上限",
+      "body": "批量完成仅在「全部待办」提供。单次最多处理 50 条待办；超出上限时，系统只执行明确告知的范围，避免大规模误操作。"
+    },
+    {
+      "id": "growth.todo.rule.repeat-template",
+      "title": "周期待办模板推进",
+      "body": "独立待办选择重复模式后成为一个模板，而非预先生成多条未来待办。当前与日历、全部均展示指针日期上的当前实例。完成、标记未完成或逾期均视为一次结算并留下历史实例，再推进下一次；首次实例计入限定次数。达到次数上限、截至日期或没有下一次有效日期时，系列结束且保留已结算历史。"
+    },
+    {
+      "id": "growth.todo.rule.focus-range-only",
+      "title": "区间计划可关联专注",
+      "body": "未完成且计划开始时间不等于结束时间的待办，可从列表或详情唤起全局专注计时并预关联该待办；结束专注只写入时间记录，不改变待办状态。计划为时间点时，不从待办入口提供开始或关联计时；若已有关联记录，详情中仍可只读查看。"
+    },
+    {
+      "id": "growth.todo.rule.edit-no-repeat-toggle",
+      "title": "编辑不可切换是否重复",
+      "body": "仅新建独立待办时可开启或关闭重复。编辑已有待办时不得切换「是否重复」；若已启用重复，仍可调整重复规则细节。"
+    },
+    {
+      "id": "growth.todo.rule.delete-boundary",
+      "title": "删除入口与重复删除",
+      "body": "删除仅出现在「全部待办」。当前待办与待办日历不提供删除。进行中的独立重复待办只能在全部待办删除其系列定义（当前实例视图随之消失）；删除后停止后续生成，**已完成或已放弃的历史实例保留**。习惯周期待办不可单独删除。"
+    },
+    {
+      "id": "growth.todo.metrics",
+      "title": "复盘指标",
+      "body": "完成率、逾期量和重新安排次数用于复盘行动节奏。这些指标用于发现计划与执行的偏差，而非对用户进行评分。"
+    }
+  ]
+}

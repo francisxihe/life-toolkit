@@ -2,19 +2,19 @@
 
 import { Flex } from '@sue/design-web-react';
 import clsx from 'clsx';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styles from './TabsPage.module.less';
 
 export default function TabsPage(props: {
   tabs: {
     name: string;
-    path: string;
+    href: string;
+    active?: boolean;
   }[];
   children: React.ReactNode;
   extra?: React.ReactNode;
 }) {
   const navigate = useNavigate();
-  const location = useLocation();
 
   return (
     <Flex vertical container="full" className={styles.page}>
@@ -22,13 +22,13 @@ export default function TabsPage(props: {
         <Flex container="fill" className={styles.tabs} align="center" gap={4}>
           {props.tabs.map((tab) => (
             <Flex
-              key={tab.path}
+              key={tab.href}
               align="center"
               className={clsx(styles.tab, {
-                [styles.tabActive]: location.pathname === tab.path,
+                [styles.tabActive]: tab.active,
               })}
               onClick={() => {
-                navigate(tab.path);
+                if (!tab.active) navigate(tab.href);
               }}
             >
               {tab.name}

@@ -24,8 +24,13 @@ doc/{version}/
 ```
 doc/
 ├── TechnicalWiki/
-│   ├── growth/                         # Growth 域代码实现、DTO/VO 和路由入口
-│   ├── ai/                             # AI 平台域（Settings/Runner/Capability）
+│   ├── plugin-platform.md              # 一等插件目录与宿主组装
+│   ├── growth/                         # Growth 域；今日待处理在侧栏通知
+│   ├── activity/                       # 活动卡索引与采纳事务
+│   ├── expense/                        # 记账持久化
+│   ├── purchase/                       # 家庭采购
+│   ├── library/                        # 本地收藏索引
+│   ├── ai/                             # AI 宿主平台（注册表 / 会话 / 运行时）
 ├── {version}/
 │   └── TDD.md
 └── README.md

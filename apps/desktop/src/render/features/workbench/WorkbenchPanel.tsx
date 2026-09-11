@@ -125,7 +125,7 @@ function ExtractButton({ 'data-product-ref': productRefAttr }: ProductSurfaceHos
     <button
       type="button"
       className={styles.iconBtn}
-      aria-label="拉取当前页"
+      aria-label="收藏到本地"
       disabled={!activeWebTab?.url || busy}
       data-product-ref={productRefAttr}
       onClick={() => {

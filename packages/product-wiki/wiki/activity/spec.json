@@ -1,0 +1,68 @@
+{
+  "id": "activity",
+  "kind": "dom",
+  "title": "最近活动",
+  "parentId": "plugins",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "today-summary",
+      "name": "今日摘要",
+      "scenario": "查看今天已沉淀的花费、待购、专注和收藏数量",
+      "productStatus": "roadmap",
+      "reference": "activity.view.today-summary"
+    },
+    {
+      "id": "timeline",
+      "name": "活动时间线",
+      "scenario": "按日期和类型回看跨领域活动，并打开原始领域记录",
+      "productStatus": "roadmap",
+      "reference": "activity.view.timeline"
+    }
+  ],
+  "rules": [
+    {
+      "id": "card-not-parent",
+      "name": "活动卡不是父实体",
+      "description": "活动卡只保存发生时间、标题或摘要、来源和可选的收集原文。金额、采购状态、文稿路径仍以各领域记录为真源。",
+      "views": ["timeline"],
+      "reference": "activity.rule.card-not-parent",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "delete-no-cascade",
+      "name": "删除不级联",
+      "description": "删除活动卡不删除领域数据。删除领域数据时，对应关联移除或失效。",
+      "views": ["timeline"],
+      "reference": "activity.rule.delete-no-cascade",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "activity.overview",
+      "title": "目标与价值",
+      "body": "最近活动是插件中心里的跨域时间线。用户在这里回看发生过的事，打开当时留下的待办、支出、采购或收藏。从领域页直接创建的数据也会留下单条关联的活动卡。旧的活动入口会回到插件中心。"
+    },
+    {
+      "id": "activity.view.today-summary",
+      "title": "今日摘要",
+      "body": "顶部展示今天已沉淀的花费、待购数、专注时长和收藏数。这些是已经发生的结果，不出现在侧栏通知里。"
+    },
+    {
+      "id": "activity.view.timeline",
+      "title": "活动时间线",
+      "body": "列表按发生时间排列。一张活动卡可同时挂多条领域记录，并标明各自角色。用户可筛选日期与类型，点击关联进入原始领域记录。"
+    },
+    {
+      "id": "activity.rule.card-not-parent",
+      "title": "活动卡不是父实体",
+      "body": "活动卡不保存金额、采购是否已买、文稿存在哪。这些事实分别写在记账、采购和收藏里。活动卡只把同一件事串起来。"
+    },
+    {
+      "id": "activity.rule.delete-no-cascade",
+      "title": "删除不级联",
+      "body": "拿掉活动卡不会抹掉支出或采购。删掉一条支出时，这张卡上的对应关联消失或失效，其它关联仍在。"
+    }
+  ]
+}

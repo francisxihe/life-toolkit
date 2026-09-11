@@ -184,7 +184,9 @@ export function ConversationViewport({
     <ConversationViewportContext.Provider value={{ stuck, scrollToBottom }}>
       <Flex vertical container="fill" className={styles.conversationViewport}>
         <div ref={viewportRef} className={styles.conversationBody}>
-          <div ref={innerRef}>{content}</div>
+          <div ref={innerRef} className={styles.conversationLane}>
+            {content}
+          </div>
         </div>
         {overlay}
       </Flex>

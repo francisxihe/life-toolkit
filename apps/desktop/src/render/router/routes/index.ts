@@ -2,10 +2,8 @@ import type { ComponentType, SVGProps } from 'react';
 import { User } from 'lucide-react';
 import auth, { AuthParams } from '@/utils/authentication';
 import { useEffect, useMemo, useState } from 'react';
-import { aiRoutes } from '@/router/routes/ai.routes';
-import { expensesRoutes } from '@/router/routes/expenses.routes';
-import { erpRoutes } from '@/router/routes/erp.routes';
-import { growthRoutes } from '@/router/routes/growth.routes';
+import { attachPageLoaders, pluginRoutes } from '@/plugin/catalog';
+import { getRendererRuntimeOptional } from '@true-north/plugin-sdk';
 
 export type RouteIcon = ComponentType<SVGProps<SVGSVGElement> & { size?: number | string }>;
 
@@ -17,13 +15,14 @@ export type IRoute = AuthParams & {
   name: string;
   key: string;
   fullPath?: string;
+  /** 页面组件在 features 下的路径，默认等于 fullPath */
+  componentPath?: string;
+  component?: any;
+  loader?: () => Promise<{ default: any }>;
   redirect?: string;
   children?: IRoute[];
-  // 当前页是否展示面包屑
   breadcrumb?: boolean;
-  // 当前路由是否渲染菜单项，为 true 的话不会在菜单中显示，但可通过路由地址访问。
   ignore?: boolean;
-  /** 是否为页面组件 */
   onlyMenu?: boolean;
   meta?: IRouteMeta;
 };
@@ -36,13 +35,12 @@ export const userRoute: IRoute = {
   meta: { icon: User },
 };
 
-export const routes: IRoute[] = [
-  aiRoutes,
-  growthRoutes,
-  expensesRoutes,
-  erpRoutes,
-  userRoute,
-];
+export const routes: IRoute[] = [];
+
+function currentRoutes(): IRoute[] {
+  if (!getRendererRuntimeOptional()) return [userRoute];
+  return [...attachPageLoaders(pluginRoutes()), userRoute];
+}
 
 export const getName = (path: string, routes) => {
   return routes.find((item) => {
@@ -58,7 +56,7 @@ export const getName = (path: string, routes) => {
 export const generatePermission = (role: string) => {
   const actions = role === 'admin' ? ['*'] : ['read'];
   const result = {};
-  routes.forEach((item) => {
+  currentRoutes().forEach((item) => {
     if (item.children) {
       item.children.forEach((child) => {
         result[child.name] = actions;
@@ -97,10 +95,10 @@ const useRoute = (userPermission): [IRoute[], string] => {
     return arr;
   };
 
-  const [permissionRoute, setPermissionRoute] = useState(routes);
+  const [permissionRoute, setPermissionRoute] = useState<IRoute[]>([]);
 
   useEffect(() => {
-    const newRoutes = filterRoute(routes);
+    const newRoutes = filterRoute(currentRoutes());
     setPermissionRoute(newRoutes);
   }, [JSON.stringify(userPermission)]);
 

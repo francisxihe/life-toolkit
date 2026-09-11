@@ -1,12 +1,13 @@
-import { AppDataSource } from '../../db/database.config';
-import { BaseRepository as BaseRepositoryImpl } from '../../db/base.repository.impl';
+import { store } from '../storage';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
 import { AiConversation } from './conversation.entity';
 
 export type AiConversationFilterDto = {
   includeIds?: string[];
   excludeIds?: string[];
-  refType?: 'goal' | 'task';
+  refType?: string;
   refId?: string;
+  purpose?: 'chat' | 'capture';
 };
 
 export class AiConversationRepository extends BaseRepositoryImpl<AiConversation, AiConversationFilterDto> {
@@ -25,11 +26,14 @@ export class AiConversationRepository extends BaseRepositoryImpl<AiConversation,
       if (filter.refId) {
         qb = qb.andWhere('ai_conversation.refId = :refId', { refId: filter.refId });
       }
+      if (filter.purpose) {
+        qb = qb.andWhere('ai_conversation.purpose = :purpose', { purpose: filter.purpose });
+      }
       return qb
         .orderBy('ai_conversation.pinned', 'DESC')
         .addOrderBy('ai_conversation.updatedAt', 'DESC');
     }
-    super(AppDataSource.getRepository(AiConversation), buildQuery);
+    super(() => store().getRepository(AiConversation), buildQuery);
   }
 
   async setPinned(id: string, pinned: boolean): Promise<AiConversation> {

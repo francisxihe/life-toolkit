@@ -65,7 +65,7 @@
 
 ## 产品表面 / 实现缺口
 
-桌面端入口：`/growth/todo/todo-today`、`todo-calendar`、`todo-all`。批量完成仅在 `todo-all`（单次 ≤50）。
+桌面端入口：`/activity/growth/todo/todo-today`、`todo-calendar`、`todo-all`。批量完成仅在 `todo-all`（单次 ≤50）。
 
 | 产品语义 | 实现边界 |
 | --- | --- |

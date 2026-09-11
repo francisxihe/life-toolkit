@@ -1,0 +1,52 @@
+{
+  "name": "@true-north/plugin-growth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./manifest": {
+      "types": "./src/manifest.ts",
+      "import": "./src/manifest.ts",
+      "default": "./src/manifest.ts"
+    },
+    "./contract": {
+      "types": "./src/contract/index.ts",
+      "import": "./src/contract/index.ts",
+      "default": "./src/contract/index.ts"
+    },
+    "./main": {
+      "types": "./src/main/index.ts",
+      "import": "./src/main/index.ts",
+      "default": "./src/main/index.ts"
+    },
+    "./renderer": {
+      "types": "./src/renderer/index.tsx",
+      "import": "./src/renderer/index.tsx",
+      "default": "./src/renderer/index.tsx"
+    },
+    "./wiki": {
+      "types": "./wiki/index.ts",
+      "import": "./wiki/index.ts",
+      "default": "./wiki/index.ts"
+    }
+  },
+  "dependencies": {
+    "@true-north/plugin-sdk": "workspace:*",
+    "@true-north/enum": "workspace:*",
+    "@true-north/vo": "workspace:*",
+    "@true-north/web-service": "workspace:*",
+    "dayjs": "^1.11.13",
+    "class-validator": "^0.14.0",
+    "class-transformer": "^0.5.1",
+    "francis-mapped-types": "0.0.1",
+    "@true-north/components-repeat": "workspace:*",
+    "@true-north/components-mind": "workspace:*",
+    "@true-north/common-web-utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.25.1",
+    "typeorm": "^0.3.17"
+  }
+}

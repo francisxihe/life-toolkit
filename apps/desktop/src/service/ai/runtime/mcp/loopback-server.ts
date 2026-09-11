@@ -2,7 +2,7 @@ import http from 'http';
 import type { IncomingMessage, ServerResponse } from 'http';
 import { randomUUID } from 'crypto';
 import type { AiMessagePartVo, AiToolPartVo, AiWorkspacePartVo } from '@true-north/vo';
-import { agentTools, executeAgentTool, summarizeToolArgs } from '../../agent/tools';
+import { executeAgentTool, listAgentTools, summarizeToolArgs } from '../../agent/tools';
 import { traceExternal } from '@true-north/dev-lab/collector';
 import { getStreamSession } from '../stream-session';
 
@@ -155,13 +155,12 @@ async function handleRpc(message: JsonRpcRequest, streamId?: string): Promise<un
   }
 
   if (method === 'tools/list') {
-    const readOnlyTools = new Set(['search_goals', 'search_tasks', 'get_goal', 'get_task']);
     return {
-      tools: agentTools.map((tool) => ({
+      tools: listAgentTools().map((tool) => ({
         name: tool.name,
         description: tool.description,
         inputSchema: tool.parameters,
-        ...(readOnlyTools.has(tool.name) ? { annotations: { readOnlyHint: true } } : {}),
+        ...(tool.readOnly ? { annotations: { readOnlyHint: true } } : {}),
       })),
     };
   }

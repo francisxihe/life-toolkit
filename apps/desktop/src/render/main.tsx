@@ -16,6 +16,7 @@ import checkLogin from './utils/checkLogin';
 import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
 import './mock';
+import { bootRendererPlugins } from './plugin/catalog';
 import Router from './router';
 import { generatePermission } from './router/routes';
 import 'dayjs/locale/zh-cn';
@@ -51,6 +52,11 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function LifeToolkitApp() {
+  const [pluginsReady, setPluginsReady] = useState(false);
+
+  useEffect(() => {
+    void bootRendererPlugins().then(() => setPluginsReady(true));
+  }, []);
   const [lang, setLang] = useStorage('arco-lang', 'en-US');
   const [themePreference, setThemePreference] = useStorage('arco-theme', 'system');
   const [systemTheme, setSystemTheme] = useState(mediaTheme);
@@ -148,6 +154,10 @@ function LifeToolkitApp() {
       : 'system') as ThemePreference,
     setThemePreference: setThemePreferenceValue,
   };
+
+  if (!pluginsReady) {
+    return null;
+  }
 
   return (
     <HashRouter

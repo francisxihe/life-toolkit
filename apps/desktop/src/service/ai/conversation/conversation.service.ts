@@ -1,11 +1,11 @@
 import { randomUUID } from 'crypto';
+import type { EntityManager } from 'typeorm';
 import { AiMessageRole } from '@true-north/enum';
 import type {
   AiEntityLinkVo,
   AiMessagePartVo,
   AiTextPartVo,
   AiWorkspacePartVo,
-  AiWorkspaceSuggestionVo,
   ConversationVo,
   EnsureBoundConversationResponseVo,
   MessageVo,
@@ -13,9 +13,9 @@ import type {
   PatchWorkspaceRequestVo,
   StartMessageStreamResponseVo,
 } from '@true-north/vo';
+import { workspaceEntityRef } from '@true-north/vo';
 import { AiPlatformError } from '../ai-error';
-import { GoalRepository } from '../../growth/goal/goal.repository';
-import { TaskRepository } from '../../growth/task/task.repository';
+import { entityResolverRegistry } from '../entity/entity-resolver.registry';
 import { agentDef } from '../runtime/registry';
 import { killChildProcess, runtimeService } from '../runtime';
 import { AiConversation } from './conversation.entity';
@@ -47,6 +47,7 @@ function toConversationVo(entity: AiConversation): ConversationVo {
     updatedAt: toIso(entity.updatedAt),
     createdAt: toIso(entity.createdAt),
     pinned: Boolean(entity.pinned),
+    purpose: entity.purpose || 'chat',
     refType: entity.refType || undefined,
     refId: entity.refId || undefined,
     runtimeId: entity.runtimeId || undefined,
@@ -76,9 +77,10 @@ function textFromParts(parts: AiMessagePartVo[]): string {
       const refs = formatEntityLinks(part.entityLinks);
       texts.push(refs ? `${body}\n[引用: ${refs}]`.trim() : body);
     } else if (part.type === 'workspace') {
-      const ref = part.payload.ref;
+      const ref = workspaceEntityRef(part.payload);
       const refLabel = ref ? ` ${ref.type}:${ref.id} ${ref.label}` : '';
-      texts.push(`[工作台:${part.workspaceKey}${refLabel}] ${part.payload.analysisSummary || ''}`.trim());
+      const summary = typeof part.payload.analysisSummary === 'string' ? part.payload.analysisSummary : '';
+      texts.push(`[工作台:${part.workspaceKey}${refLabel}] ${summary}`.trim());
     } else if (part.type === 'tool') {
       texts.push(`[工具:${part.toolName} ${part.status}] ${part.resultSummary || part.argsSummary || ''}`.trim());
     }
@@ -112,8 +114,6 @@ export class ConversationService {
   constructor(
     private readonly conversationRepository = new AiConversationRepository(),
     private readonly messageRepository = new AiMessageRepository(),
-    private readonly goalRepository = new GoalRepository(),
-    private readonly taskRepository = new TaskRepository()
   ) {}
 
   async list(): Promise<ConversationVo[]> {
@@ -121,56 +121,46 @@ export class ConversationService {
     return list.map(toConversationVo);
   }
 
-  async createBlank(title?: string): Promise<ConversationVo> {
+  async createBlank(title?: string, purpose?: 'chat' | 'capture'): Promise<ConversationVo> {
     const entity = new AiConversation();
     entity.title = (title || DEFAULT_TITLE).trim() || DEFAULT_TITLE;
     entity.pinned = false;
+    entity.purpose = purpose || 'chat';
     const saved = await this.conversationRepository.create(entity);
     return toConversationVo(saved);
   }
 
-  async ensureBoundGoal(goalId: string): Promise<EnsureBoundConversationResponseVo> {
-    const id = goalId?.trim();
-    if (!id) throw AiPlatformError.internal('缺少 goalId');
-    let goal;
-    try {
-      goal = await this.goalRepository.find(id);
-    } catch {
-      throw AiPlatformError.contextNotFound(`目标不存在或已删除: ${id}`);
-    }
-    const existing = await this.conversationRepository.findByFilter({ refType: 'goal', refId: id });
+  async ensureCaptureInbox(): Promise<ConversationVo> {
+    const existing = await this.conversationRepository.findByFilter({ purpose: 'capture' });
+    if (existing[0]) return toConversationVo(existing[0]);
+    return this.createBlank('收集箱', 'capture');
+  }
+
+  async ensureBoundConversation(refType: string, refId: string): Promise<EnsureBoundConversationResponseVo> {
+    const type = refType?.trim();
+    const id = refId?.trim();
+    if (!type) throw AiPlatformError.internal('缺少 refType');
+    if (!id) throw AiPlatformError.internal('缺少 refId');
+    const resolved = await entityResolverRegistry.resolve(type, id);
+    const existing = await this.conversationRepository.findByFilter({ refType: type, refId: id });
     if (existing[0]) {
       return { conversation: toConversationVo(existing[0]), created: false };
     }
     const entity = new AiConversation();
-    entity.title = `拆解：${goal.name}`;
-    entity.refType = 'goal';
+    entity.title = `拆解：${resolved.name}`;
+    entity.refType = type as 'goal' | 'task';
     entity.refId = id;
     entity.pinned = false;
     const saved = await this.conversationRepository.create(entity);
     return { conversation: toConversationVo(saved), created: true };
   }
 
+  async ensureBoundGoal(goalId: string): Promise<EnsureBoundConversationResponseVo> {
+    return this.ensureBoundConversation('goal', goalId);
+  }
+
   async ensureBoundTask(taskId: string): Promise<EnsureBoundConversationResponseVo> {
-    const id = taskId?.trim();
-    if (!id) throw AiPlatformError.internal('缺少 taskId');
-    let task;
-    try {
-      task = await this.taskRepository.find(id);
-    } catch {
-      throw AiPlatformError.contextNotFound(`任务不存在或已删除: ${id}`);
-    }
-    const existing = await this.conversationRepository.findByFilter({ refType: 'task', refId: id });
-    if (existing[0]) {
-      return { conversation: toConversationVo(existing[0]), created: false };
-    }
-    const entity = new AiConversation();
-    entity.title = `拆解：${task.name}`;
-    entity.refType = 'task';
-    entity.refId = id;
-    entity.pinned = false;
-    const saved = await this.conversationRepository.create(entity);
-    return { conversation: toConversationVo(saved), created: true };
+    return this.ensureBoundConversation('task', taskId);
   }
 
   async rename(conversationId: string, title?: string): Promise<ConversationVo> {
@@ -269,31 +259,50 @@ export class ConversationService {
     return { ok: true };
   }
 
-  async patchWorkspacePayload(messageId: string, body: PatchWorkspaceRequestVo): Promise<MessageVo> {
-    const message = await this.messageRepository.find(messageId);
-    const parts = [...(message.parts || [])];
-    const workspaceIndex = parts.findIndex((part) => part.type === 'workspace');
-    if (workspaceIndex < 0) {
-      throw AiPlatformError.internal('消息中不存在工作台块');
+  async patchWorkspacePayload(
+    messageId: string,
+    body: PatchWorkspaceRequestVo,
+    manager?: EntityManager
+  ): Promise<MessageVo> {
+    const payload = body?.payload;
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      throw AiPlatformError.internal('缺少工作台载荷');
     }
-    const workspace = parts[workspaceIndex] as AiWorkspacePartVo;
-    const suggestions: AiWorkspaceSuggestionVo[] = body.suggestions || [];
-    parts[workspaceIndex] = {
-      ...workspace,
-      payload: {
-        ...workspace.payload,
-        analysisSummary:
-          body.analysisSummary !== undefined ? body.analysisSummary : workspace.payload.analysisSummary,
-        suggestions,
-      },
-    };
-    message.parts = parts;
-    const saved = await this.messageRepository.update(message);
 
+    const apply = async (message: AiMessage) => {
+      const parts = [...(message.parts || [])];
+      const workspaceIndex = parts.findIndex((part) => part.type === 'workspace');
+      if (workspaceIndex < 0) {
+        throw AiPlatformError.internal('消息中不存在工作台块');
+      }
+      const workspace = parts[workspaceIndex] as AiWorkspacePartVo;
+      parts[workspaceIndex] = {
+        ...workspace,
+        payload,
+      };
+      message.parts = parts;
+      return message;
+    };
+
+    if (manager) {
+      const repo = manager.getRepository(AiMessage);
+      const message = await repo.findOne({ where: { id: messageId } });
+      if (!message) throw AiPlatformError.internal('消息不存在');
+      await repo.save(await apply(message));
+      const conversationRepo = manager.getRepository(AiConversation);
+      const conversation = await conversationRepo.findOne({ where: { id: message.conversationId } });
+      if (conversation) {
+        conversation.updatedAt = new Date();
+        await conversationRepo.save(conversation);
+      }
+      return toMessageVo(message);
+    }
+
+    const message = await apply(await this.messageRepository.find(messageId));
+    const saved = await this.messageRepository.update(message);
     const conversation = await this.conversationRepository.find(message.conversationId);
     conversation.updatedAt = new Date();
     await this.conversationRepository.update(conversation);
-
     return toMessageVo(saved);
   }
 

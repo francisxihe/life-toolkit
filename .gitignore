@@ -57,6 +57,7 @@ yarn-error.log*
 .stylelintcache
 
 database.sqlite
+apps/desktop/plugin-data/
 
 apps/server
 

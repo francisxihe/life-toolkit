@@ -1,6 +1,6 @@
-export enum AiCapabilityKey {
-  GOAL_DECOMPOSE = 'goal.decompose',
-  TASK_DECOMPOSE = 'task.decompose',
+export enum AiConversationPurpose {
+  CHAT = 'chat',
+  CAPTURE = 'capture',
 }
 
 export enum AiErrorCode {
@@ -12,13 +12,6 @@ export enum AiErrorCode {
   AGENT_UNAVAILABLE = 'AGENT_UNAVAILABLE',
   AGENT_UNAUTHENTICATED = 'AGENT_UNAUTHENTICATED',
   INTERNAL = 'INTERNAL',
-}
-
-export enum AiSuggestionKind {
-  GOAL = 'goal',
-  TASK = 'task',
-  TODO = 'todo',
-  HABIT = 'habit',
 }
 
 export enum AiMessageRole {

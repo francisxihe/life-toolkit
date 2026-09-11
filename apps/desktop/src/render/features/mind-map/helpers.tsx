@@ -1,11 +1,17 @@
 import { Drawer, message, Modal } from '@sue/design-web-react';
-import GoalEditor from '@/features/growth/components/goal-detail/GoalEditor';
-import GoalCreator from '@/features/growth/components/goal-detail/GoalCreator';
 import { drawerBodyStyles } from '@/utils/drawerStyles';
 import { GoalService } from '@true-north/web-service';
+import { getGoalMindMapEditors } from './editors';
 
 export const handleAddChild = (nodeId: string) => {
   return new Promise((resolve) => {
+    const editors = getGoalMindMapEditors();
+    if (!editors) {
+      message.warning('成长插件未启用');
+      resolve(false);
+      return;
+    }
+    const { GoalCreator } = editors;
     const instance = Drawer.open({
       title: '新增子目标',
       size: 800,
@@ -29,6 +35,13 @@ export const handleAddChild = (nodeId: string) => {
 
 export const handleAddSibling = async (nodeId: string) => {
   return new Promise(async (resolve) => {
+    const editors = getGoalMindMapEditors();
+    if (!editors) {
+      message.warning('成长插件未启用');
+      resolve(false);
+      return;
+    }
+    const { GoalCreator } = editors;
     try {
       // 获取当前节点信息，以获取其父级ID
       const currentGoal = await GoalService.find(nodeId);
@@ -62,6 +75,13 @@ export const handleAddSibling = async (nodeId: string) => {
 
 export const handleCopyNode = async (nodeId: string) => {
   return new Promise(async (resolve) => {
+    const editors = getGoalMindMapEditors();
+    if (!editors) {
+      message.warning('成长插件未启用');
+      resolve(false);
+      return;
+    }
+    const { GoalCreator } = editors;
     try {
       // 获取当前节点信息
       const currentGoal = await GoalService.find(nodeId);
@@ -113,6 +133,13 @@ export const handleDeleteNode = (nodeId: string) => {
 
 export const handleEditNode = (nodeId: string) => {
   return new Promise((resolve) => {
+    const editors = getGoalMindMapEditors();
+    if (!editors) {
+      message.warning('成长插件未启用');
+      resolve(false);
+      return;
+    }
+    const { GoalEditor } = editors;
     const instance = Drawer.open({
       title: '编辑目标',
       size: 800,

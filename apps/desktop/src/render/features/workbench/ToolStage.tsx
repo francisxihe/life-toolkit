@@ -1,21 +1,13 @@
 import { useEffect, useState } from 'react';
 import { message } from '@sue/design-web-react';
-import type { AiWorkspacePartVo, AiWorkspaceSuggestionVo, MessageVo } from '@true-north/vo';
-import { AiService, GoalService, TaskService } from '@true-north/web-service';
-import { workspaceRegistry } from '../ai/workspaces/registry';
+import type { AiWorkspacePayloadVo } from '@true-north/vo';
 import { useWorkbench, type WorkbenchToolTab } from './context';
 import styles from './style.module.less';
 
-function readWorkspacePart(item: MessageVo): AiWorkspacePartVo | null {
-  return item.parts.find((part): part is AiWorkspacePartVo => part.type === 'workspace') || null;
-}
-
 export function ToolStage({ tab }: { tab: WorkbenchToolTab }) {
-  const { requestFollowUp } = useWorkbench();
+  const { requestFollowUp, tools, workspaceHost } = useWorkbench();
   const [payload, setPayload] = useState(tab.payload);
   const [workspaceKey, setWorkspaceKey] = useState(tab.workspaceKey);
-  const [goal, setGoal] = useState<any>();
-  const [task, setTask] = useState<any>();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -26,97 +18,67 @@ export function ToolStage({ tab }: { tab: WorkbenchToolTab }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const result = await AiService.listMessages(tab.conversationId);
-      if (cancelled) return;
-      if (result.ok === false) {
-        setError(result.message);
-        return;
-      }
-      const item = result.data.find((entry) => entry.id === tab.messageId);
-      const part = item ? readWorkspacePart(item) : null;
-      if (!part) {
-        setError('未找到对应的工作台内容');
-        return;
-      }
-      setError(null);
-      setWorkspaceKey(part.workspaceKey);
-      setPayload(part.payload);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [tab.conversationId, tab.messageId]);
-
-  useEffect(() => {
-    return AiService.subscribeChatStream((event) => {
-      if (event.event !== 'message' && event.event !== 'done') return;
-      if (event.message.id !== tab.messageId) return;
-      const part = readWorkspacePart(event.message);
-      if (!part) return;
-      setWorkspaceKey(part.workspaceKey);
-      setPayload(part.payload);
-    });
-  }, [tab.messageId]);
-
-  useEffect(() => {
-    const ref = payload.ref;
-    if (!ref) return undefined;
-    let cancelled = false;
-    (async () => {
       try {
-        if (ref.type === 'goal') {
-          const found = await GoalService.find(ref.id);
-          if (!cancelled) setGoal(found?.id ? found : undefined);
-        } else {
-          const found = await TaskService.find(ref.id);
-          if (!cancelled) setTask(found?.id ? found : undefined);
-        }
-      } catch {
-        if (!cancelled) {
-          setGoal(undefined);
-          setTask(undefined);
-        }
+        const next = await workspaceHost.load(tab.conversationId, tab.messageId);
+        if (cancelled) return;
+        setError(null);
+        setWorkspaceKey(next.workspaceKey);
+        setPayload(next.payload);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : '未找到对应的工作台内容');
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [payload.ref]);
+  }, [tab.conversationId, tab.messageId, workspaceHost]);
 
-  const patchWorkspace = async (
-    messageId: string,
-    suggestions: AiWorkspaceSuggestionVo[],
-    analysisSummary?: string,
-  ) => {
-    const result = await AiService.patchWorkspace(messageId, { suggestions, analysisSummary });
-    if (result.ok === false) {
-      message.error(result.message);
+  useEffect(() => {
+    return workspaceHost.subscribe(tab.messageId, (next) => {
+      setWorkspaceKey(next.workspaceKey);
+      setPayload(next.payload);
+    });
+  }, [tab.messageId, workspaceHost]);
+
+  const definition = tools.find(workspaceKey);
+
+  const updatePayload = async (next: AiWorkspacePayloadVo) => {
+    try {
+      const saved = await workspaceHost.patch(tab.messageId, next);
+      setPayload(saved);
+      return true;
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : '保存失败');
       return false;
     }
-    const part = readWorkspacePart(result.data);
-    if (part) setPayload(part.payload);
-    return true;
   };
 
-  const Comp = workspaceRegistry[workspaceKey];
-  const ref = payload.ref;
-  const goalId = ref?.type === 'goal' ? ref.id : undefined;
-  const taskId = ref?.type === 'task' ? ref.id : undefined;
+  let parsed: unknown = payload;
+  let parseError: string | null = null;
+  if (definition) {
+    try {
+      parsed = definition.parsePayload(payload);
+    } catch (err) {
+      parseError = err instanceof Error ? err.message : '工作台载荷无效';
+    }
+  }
+
+  const Comp = definition?.Component;
+  const displayError = error || parseError || (!definition ? `未知工作台类型：${workspaceKey}` : null);
 
   return (
     <div className={styles.toolStage}>
-      {error ? (
-        <p className={styles.toolStageError}>{error}</p>
+      {displayError ? (
+        <p className={styles.toolStageError}>{displayError}</p>
       ) : Comp ? (
         <Comp
-          payload={payload}
+          payload={parsed as never}
           messageId={tab.messageId}
-          goalId={goalId}
-          taskId={taskId}
-          goal={goal}
-          task={task}
-          setDraft={(text) => requestFollowUp(tab.conversationId, text)}
-          patchWorkspace={patchWorkspace}
+          conversationId={tab.conversationId}
+          actions={{
+            updatePayload,
+            requestFollowUp: (text) => requestFollowUp(tab.conversationId, text),
+          }}
         />
       ) : (
         <p className={styles.toolStageError}>未知工作台类型：{workspaceKey}</p>

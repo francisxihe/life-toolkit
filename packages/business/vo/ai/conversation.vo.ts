@@ -1,8 +1,7 @@
-import type { AiMessageRole } from '@true-north/enum';
-import type { AiSuggestionVo } from './goal-decompose.vo';
+import type { AiConversationPurpose, AiMessageRole } from '@true-north/enum';
 
 export type AiEntityLinkVo = {
-  type: 'goal' | 'task';
+  type: string;
   id: string;
   label: string;
 };
@@ -13,26 +12,26 @@ export type AiTextPartVo = {
   entityLinks?: AiEntityLinkVo[];
 };
 
-export type AiWorkspaceKey = 'goal.decompose' | 'task.decompose';
-
-export type AiWorkspaceSuggestionVo = AiSuggestionVo & {
-  /** 持久化已采纳 */
-  accepted?: boolean;
-};
-
-export type AiDecomposePayloadVo = {
-  runId?: string;
-  analysisSummary: string;
-  suggestions: AiWorkspaceSuggestionVo[];
-  /** 工作台绑定的业务实体，自包含不依赖会话 */
-  ref?: AiEntityLinkVo;
-};
+export type AiWorkspaceKey = string;
+export type AiWorkspacePayloadVo = Record<string, unknown>;
 
 export type AiWorkspacePartVo = {
   type: 'workspace';
-  workspaceKey: AiWorkspaceKey;
-  payload: AiDecomposePayloadVo;
+  workspaceKey: string;
+  payload: AiWorkspacePayloadVo;
 };
+
+export function workspaceEntityRef(payload: AiWorkspacePayloadVo): AiEntityLinkVo | undefined {
+  const ref = payload.ref;
+  if (!ref || typeof ref !== 'object' || Array.isArray(ref)) return undefined;
+  const candidate = ref as Record<string, unknown>;
+  if (typeof candidate.type !== 'string' || typeof candidate.id !== 'string') return undefined;
+  return {
+    type: candidate.type,
+    id: candidate.id,
+    label: typeof candidate.label === 'string' ? candidate.label : candidate.id,
+  };
+}
 
 export type AiToolPartStatus = 'running' | 'done' | 'error';
 
@@ -46,7 +45,7 @@ export type AiToolPartVo = {
 
 export type AiMessagePartVo = AiTextPartVo | AiWorkspacePartVo | AiToolPartVo;
 
-export type ConversationRefType = 'goal' | 'task';
+export type ConversationPurpose = AiConversationPurpose | `${AiConversationPurpose}` | 'chat' | 'capture';
 
 export type ConversationVo = {
   id: string;
@@ -54,7 +53,8 @@ export type ConversationVo = {
   updatedAt: string;
   createdAt?: string;
   pinned: boolean;
-  refType?: ConversationRefType;
+  purpose?: ConversationPurpose;
+  refType?: string;
   refId?: string;
   runtimeId?: string;
 };
@@ -69,6 +69,7 @@ export type MessageVo = {
 
 export type CreateConversationRequestVo = {
   title?: string;
+  purpose?: ConversationPurpose;
 };
 
 export type RenameConversationRequestVo = {
@@ -91,8 +92,7 @@ export type StartMessageStreamResponseVo = {
 };
 
 export type PatchWorkspaceRequestVo = {
-  suggestions: AiWorkspaceSuggestionVo[];
-  analysisSummary?: string;
+  payload: AiWorkspacePayloadVo;
 };
 
 export type CancelStreamResponseVo = {

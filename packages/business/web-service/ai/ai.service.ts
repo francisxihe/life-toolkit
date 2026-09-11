@@ -3,6 +3,7 @@ import type {
   CancelStreamResponseVo,
   ConversationVo,
   CreateConversationRequestVo,
+  EnsureBoundConversationRequestVo,
   EnsureBoundConversationResponseVo,
   EnsureBoundGoalRequestVo,
   EnsureBoundTaskRequestVo,
@@ -79,6 +80,10 @@ export default class AiService {
     return wrap(() => AiController.putRuntimeSelection(body));
   }
 
+  static async executeCapability<T>(key: string, body: Record<string, unknown>): Promise<AiResult<T>> {
+    return wrap(() => AiController.executeCapability<T>(key, body));
+  }
+
   static async decomposeGoal(body: GoalDecomposeRequestVo): Promise<AiResult<GoalDecomposeResponseVo>> {
     return wrap(() => AiController.decomposeGoal(body));
   }
@@ -93,6 +98,16 @@ export default class AiService {
 
   static async createConversation(body?: CreateConversationRequestVo): Promise<AiResult<ConversationVo>> {
     return wrap(() => AiController.createConversation(body || {}));
+  }
+
+  static async ensureCaptureInbox(): Promise<AiResult<ConversationVo>> {
+    return wrap(() => AiController.ensureCaptureInbox());
+  }
+
+  static async ensureBoundConversation(
+    body: EnsureBoundConversationRequestVo
+  ): Promise<AiResult<EnsureBoundConversationResponseVo>> {
+    return wrap(() => AiController.ensureBoundConversation(body));
   }
 
   static async ensureBoundGoal(body: EnsureBoundGoalRequestVo): Promise<AiResult<EnsureBoundConversationResponseVo>> {

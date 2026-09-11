@@ -1,0 +1,191 @@
+{
+  "id": "growth.task",
+  "kind": "dom",
+  "title": "任务管理",
+  "parentId": "growth",
+  "productStatus": "roadmap",
+  "views": [
+    {
+      "id": "today",
+      "name": "当前任务",
+      "scenario": "聚焦选定日期的执行与逾期事项",
+      "productStatus": "roadmap",
+      "reference": "growth.task.view.today"
+    },
+    {
+      "id": "week",
+      "name": "本周任务",
+      "scenario": "分组管理当前周执行",
+      "productStatus": "deprecated",
+      "reference": "growth.task.view.week"
+    },
+    {
+      "id": "all",
+      "name": "全部任务",
+      "scenario": "全量筛选与治理",
+      "productStatus": "roadmap",
+      "reference": "growth.task.view.all"
+    },
+    {
+      "id": "statistics",
+      "name": "任务统计",
+      "scenario": "复盘任务执行状态",
+      "productStatus": "deprecated",
+      "reference": "growth.task.view.statistics"
+    },
+    {
+      "id": "calendar",
+      "name": "月度排程",
+      "scenario": "查看任务日期安排",
+      "productStatus": "roadmap",
+      "reference": "growth.task.view.calendar"
+    },
+    {
+      "id": "detail",
+      "name": "任务详情",
+      "scenario": "独立运营任务及其关联对象；可发起 AI 拆解",
+      "productStatus": "roadmap",
+      "reference": "growth.task.view.detail"
+    },
+    {
+      "id": "ai-decomposition",
+      "name": "AI 拆解",
+      "scenario": "从任务详情发起 AI 会话；工作台审阅子任务与待办建议：编辑缓存预览、采纳置灰、勾选后对已选追问或批量采纳",
+      "productStatus": "roadmap",
+      "reference": "growth.task.view.ai-decomposition"
+    }
+  ],
+  "rules": [
+    {
+      "id": "single-parent",
+      "name": "关联互斥",
+      "description": "任务应关联目标或父任务，避免形成双重上级。",
+      "views": [
+        "today",
+        "week",
+        "all"
+      ],
+      "reference": "growth.task.rule.single-parent",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "time-inheritance",
+      "name": "时间继承",
+      "description": "子任务时间范围受父级目标或任务约束。",
+      "views": [
+        "today",
+        "week",
+        "calendar"
+      ],
+      "reference": "growth.task.rule.time-inheritance",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-generation",
+      "name": "AI 建议生成",
+      "description": "正式产品由已接入的模型结合当前任务上下文生成子任务与待办建议；结果以会话消息中的结构化工作台块交付；原型仅演示交互与建议形态。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-generation",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-adopt",
+      "name": "AI 建议采纳",
+      "description": "工作台内单条或批量采纳以当前预览创建子任务或待办；编辑仅缓存预览不创建；冲突不可勾选/采纳但可编辑后重算；已采纳置灰且不可再操作。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-adopt",
+      "productStatus": "roadmap"
+    },
+    {
+      "id": "ai-decompose-followup",
+      "name": "对已选建议追问",
+      "description": "勾选非冲突、非已采纳建议后，「对已选追问」将摘要预填会话输入框，用户确认后发送；不自动打开或替换工作台。",
+      "views": [
+        "ai-decomposition"
+      ],
+      "reference": "growth.task.rule.ai-decompose-followup",
+      "productStatus": "roadmap"
+    }
+  ],
+  "references": [
+    {
+      "id": "growth.task.overview",
+      "title": "目标与价值",
+      "body": "桌面端当前入口为“当前任务、任务日历、全部任务”。“当前任务”沿用统一日期语义，日期选择由当前页面的日程日历驱动；本周任务和任务统计已废弃，不属于当前桌面导航。\n\n任务管理将目标转化为可计划的工作单元。用户借此安排今日和本周工作、查看积压事项，并把完成结果与上层方向连接起来。\n\n工程实现资料见 [任务管理 TechnicalWiki](../../../../../doc/TechnicalWiki/activity/growth/task.md)。"
+    },
+    {
+      "id": "growth.task.structure",
+      "title": "业务流程",
+      "body": "用户创建任务后选择关联目标或父任务，设置计划时间和优先级，并在执行过程中更新状态。实际开始和结束日期可在编辑时维护；实际耗时由关联任务的专注计时累计。任务可以拆分为子任务；待办和专注时间可围绕任务持续记录，使计划与真实投入保持可追踪。"
+    },
+    {
+      "id": "growth.task.view.today",
+      "title": "当前任务",
+      "body": "当前任务由侧边日程月历选择日期，主区按「已过期 / 未完成 / 已完成 / 已放弃」分组（**仅选定演示日/今天时显示已过期**）。每项任务以勾选完成（与当前待办一致），并可开始专注或打开详情。名称与计划时间同一行；结束日早于今天时时间以红色展示。不展示任务联动摘要。"
+    },
+    {
+      "id": "growth.task.view.week",
+      "title": "本周任务",
+      "body": "本周任务已废弃；桌面端当前已由可切换日期的“当前任务”与任务日历覆盖，不再提供独立周视图。"
+    },
+    {
+      "id": "growth.task.view.all",
+      "title": "全部任务",
+      "body": "全部任务用于搜索、回顾和整理跨周期的任务存量。主要列表已实现；按状态、关联和时间筛选仍在规划中。"
+    },
+    {
+      "id": "growth.task.view.statistics",
+      "title": "任务统计",
+      "body": "任务统计已废弃；桌面端当前工作台提供任务执行概览，不再提供独立任务统计页。"
+    },
+    {
+      "id": "growth.task.view.calendar",
+      "title": "月度排程",
+      "body": "月度排程以时间维度检查任务分布和期限冲突，帮助用户避免把重要工作集中到同一时段。格子可新建任务（预填当日计划）；复杂拖拽调整仍在规划中。"
+    },
+    {
+      "id": "growth.task.view.detail",
+      "title": "任务详情",
+      "body": "任务详情以抽屉形式在任务列表上方呈现，汇聚概览、关联待办和 TrackTime 入口。抽屉左侧始终展示当前根任务及其全部后代；独立任务也显示仅包含自身的一节点树。任务树不提供筛选，新增子任务在树头创建并以当前选中任务为父级。状态仅以 Tag 展示，完成、恢复、编辑、放弃和删除均在右上操作区处理，并提供「AI 拆解」入口以发起绑定该任务的 AI 会话。"
+    },
+    {
+      "id": "growth.task.view.ai-decomposition",
+      "title": "AI 拆解",
+      "body": "用户从任务详情发起 AI 拆解后，进入 AI 会话页并打开（或新建）绑定该任务的会话；拆解结果在全局工作台的标签中审阅与采纳。工作台展示对该任务的分析摘要，以及可勾选的建议列表。每条建议属于**子任务或待办**之一（不含子目标与习惯），并说明理由、预期影响、计划日期与重要度；两类建议共用与目标拆解工作台相同的交互。\n\n用户可单条采纳，或勾选后批量采纳（需确认）。「编辑」打开编辑态，保存只回写该条建议在本工作台块内的预览缓存，不创建实体；采纳时使用当前预览数据。存在冲突时不可勾选、不可直接采纳，但允许打开编辑；保存后按当前预览重算冲突提示。采纳成功后呈现「已采纳」且预览置灰。工作台另提供「对已选追问」。模型不可用时，正式产品应给出可理解的失败反馈。"
+    },
+    {
+      "id": "growth.task.interaction",
+      "title": "交互语义",
+      "body": "任务的创建、编辑、完成、暂停和恢复都应保留清晰状态。用户在切换状态时应看见关联影响，避免把未完成工作误认为已经结束。AI 拆解由任务详情发起，审阅与采纳在全局工作台完成；建议的创建与常规新建共用同一套实体约束。"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-generation",
+      "title": "AI 建议生成",
+      "body": "正式产品根据当前任务及其子任务、关联待办等上下文，调用已接入的模型生成**子任务与待办**建议。生成结果以会话消息中的结构化工作台块交付。原型中的固定本地建议仅用于演示交互，不约束正式生成算法。"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-adopt",
+      "title": "AI 建议采纳",
+      "body": "采纳发生在全局工作台的任务拆解标签内。子任务采纳后以当前任务为父级；待办采纳后关联当前任务。编辑仅缓存预览；单条或批量采纳均以当前预览为准。与已有直接子任务标题冲突的建议不可勾选、不可直接采纳；允许编辑后重算。已采纳建议置灰且不可再操作。"
+    },
+    {
+      "id": "growth.task.rule.ai-decompose-followup",
+      "title": "对已选建议追问",
+      "body": "用户在任务拆解工作台勾选一条或多条建议（非冲突、非已采纳）后，可点击「对已选追问」。系统将所选建议摘要预填进当前会话底部输入框并聚焦，用户确认或改写后再发送。发送后仅追加文本往返，不自动打开或替换工作台。"
+    },
+    {
+      "id": "growth.task.rule.single-parent",
+      "title": "关联互斥",
+      "body": "一个任务在同一层级只能选择一个直接归属：目标或父任务。该约束保证工作归属可解释，避免重复计入多个方向。"
+    },
+    {
+      "id": "growth.task.rule.time-inheritance",
+      "title": "时间继承",
+      "body": "任务的计划时间、重要度和难度应位于其归属目标或父任务的范围内。任务详情在任务树区域创建子任务时继承当前父级默认值，并在保存前执行该校验。"
+    }
+  ]
+}
