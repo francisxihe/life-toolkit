@@ -10,7 +10,7 @@ import {
 } from '@sue/design-web-react';
 import { Check, ChevronRight, Ellipsis, Pencil, Trash2, X } from 'lucide-react';
 
-import { GoalController, GoalService } from '@true-north/web-service';
+import { GoalController, GoalService } from '../../../../client';
 import { useGoalContext } from '../context';
 import { useGoalDetail } from '../../components/goal-detail';
 import { GoalStatus } from '@true-north/enum';

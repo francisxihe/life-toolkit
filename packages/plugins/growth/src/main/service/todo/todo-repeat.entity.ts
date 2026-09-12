@@ -3,7 +3,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { TodoRepeatStatus } from '@true-north/enum';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { Repeat } from '../repeat/repeat.entity';
 
 export class TodoRepeatWithoutRelations extends BaseEntity {

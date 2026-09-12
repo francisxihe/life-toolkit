@@ -1,6 +1,6 @@
 import { Form, Input, Select, Button, DatePicker, InputNumber, Modal } from '@sue/design-web-react';
 import { DEFAULT_CATEGORIES } from '../constants';
-import { TagEditor } from '@/components/TagSelector';
+import { TagEditor } from '@true-north/plugin-ui';
 import { useEffect, useRef } from 'react';
 import { CreateTransactionVo } from '@true-north/vo';
 

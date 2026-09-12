@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Entity, Column } from 'typeorm';
 import { RepeatMode, RepeatEndMode, type RepeatConfigPayload } from '@true-north/components-repeat/types';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 
 export class RepeatWithoutRelations extends BaseEntity {
   /** 重复模式 */

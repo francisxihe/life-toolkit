@@ -1,12 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {
-  bindPluginStore,
-  pluginStore,
-  unbindPluginStore,
-  createHostStorageRuntime,
-  storeIdsForDataSource,
-} from '../src/host/storage-runtime.ts';
+import { StorageRegistry, createHostStorageRuntime } from '../src/host/storage-runtime.ts';
 
 function stubDataSource(id: string) {
   const ds = {
@@ -26,24 +20,19 @@ function stubDataSource(id: string) {
 test('transaction rebind only affects stores on the same DataSource', async () => {
   const hostDb = stubDataSource('host');
   const pluginDb = stubDataSource('plugin');
-  const hostRuntime = createHostStorageRuntime(hostDb);
-  const pluginRuntime = createHostStorageRuntime(pluginDb, undefined, { capability: 'self-managed' });
-  bindPluginStore('ai', hostRuntime);
-  bindPluginStore('activity', hostRuntime);
-  bindPluginStore('growth', pluginRuntime);
-  try {
-    assert.deepEqual(storeIdsForDataSource(hostDb).sort(), ['activity', 'ai']);
-    assert.deepEqual(storeIdsForDataSource(pluginDb), ['growth']);
-    await hostRuntime.runInTransaction(async (tx) => {
-      assert.equal(pluginStore('ai').manager, tx.manager);
-      assert.equal(pluginStore('activity').manager, tx.manager);
-      assert.equal(pluginStore('growth').dataSource, pluginDb);
-    });
-    assert.equal(pluginStore('growth').dataSource, pluginDb);
-    assert.equal(pluginStore('ai').dataSource, hostDb);
-  } finally {
-    unbindPluginStore('ai');
-    unbindPluginStore('activity');
-    unbindPluginStore('growth');
-  }
+  const registry = new StorageRegistry();
+  const hostRuntime = createHostStorageRuntime(hostDb, undefined, { registry });
+  const pluginRuntime = createHostStorageRuntime(pluginDb, undefined, { registry, capability: 'self-managed' });
+  registry.bind('host:ai', hostRuntime);
+  registry.bind('host:activity', hostRuntime);
+  registry.bind('growth', pluginRuntime);
+  assert.deepEqual(registry.idsForDataSource(hostDb).sort(), ['host:activity', 'host:ai']);
+  assert.deepEqual(registry.idsForDataSource(pluginDb), ['growth']);
+  await hostRuntime.runInTransaction(async (tx) => {
+    assert.equal(registry.get('host:ai').manager, tx.manager);
+    assert.equal(registry.get('host:activity').manager, tx.manager);
+    assert.equal(registry.get('growth').dataSource, pluginDb);
+  });
+  assert.equal(registry.get('growth').dataSource, pluginDb);
+  assert.equal(registry.get('host:ai').dataSource, hostDb);
 });

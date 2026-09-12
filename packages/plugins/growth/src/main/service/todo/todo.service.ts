@@ -53,11 +53,13 @@ export class TodoService {
     todoDto.importEntity(entity);
     if (!options?.skipActivity) {
       try {
-        const { recordDomainActivity } = await import('../../ports');
-        await recordDomainActivity({
+        const { recordGrowthActivity } = await import('../../context');
+        await recordGrowthActivity({
           title: todoDto.name,
-          source: 'domain',
-          links: [{ domain: 'todo', entityId: todoDto.id, role: 'todo', label: todoDto.name }],
+          entityType: 'todo',
+          entityId: todoDto.id,
+          role: 'todo',
+          label: todoDto.name,
         });
       } catch {
         // activity card is supplementary

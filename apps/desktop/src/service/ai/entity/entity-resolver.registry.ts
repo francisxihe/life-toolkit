@@ -30,4 +30,13 @@ export class EntityResolverRegistry {
   }
 }
 
-export const entityResolverRegistry = new EntityResolverRegistry();
+let attached: EntityResolverRegistry | null = null;
+
+export function attachEntityResolverRegistry(registry: EntityResolverRegistry) {
+  attached = registry;
+}
+
+export function entityResolverRegistry(): EntityResolverRegistry {
+  if (!attached) throw new Error('Entity resolvers are not attached');
+  return attached;
+}

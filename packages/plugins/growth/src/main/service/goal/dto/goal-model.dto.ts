@@ -1,5 +1,5 @@
 import { Goal, GoalWithoutRelations } from '../goal.entity';
-import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/main';
 import { OmitType, IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { Goal as GoalVO, ResponsePageVo, ResponseListVo, ResponseTreeVo } from '@true-north/vo';

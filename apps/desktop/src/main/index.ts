@@ -11,7 +11,7 @@ const { app, BaseWindow, BrowserWindow, Menu, WebContentsView, ipcMain, nativeTh
 
 // 导入数据库初始化功能
 import { initIpcRouter } from './ipc-handlers';
-import { bootPluginPlatform, startHostMcp, stopHostMcp } from '../plugin/registry';
+import { bootPluginPlatform, startHostMcp } from '../plugin/host';
 import { setupDatabaseCleanup } from '../service/db/init';
 import { embeddedBrowserHost } from '../service/browser';
 import { EMBEDDED_BROWSER_PARTITION } from '@true-north/vo';
@@ -311,18 +311,16 @@ function createWindow() {
 
 // 当Electron完成初始化时创建窗口
 app.whenReady().then(async () => {
-  // 初始化数据库
   try {
     await bootPluginPlatform();
     console.log('插件平台与数据库初始化完成');
   } catch (error) {
     console.error('插件平台初始化失败:', error);
+    app.exit(1);
+    return;
   }
 
-  // 设置数据库清理
   setupDatabaseCleanup();
-
-  // 注册 IPC 处理器
   initIpcRouter();
 
   try {
@@ -361,10 +359,6 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-});
-
-app.on('before-quit', () => {
-  void stopHostMcp();
 });
 
 // 提供加载新URL的方法

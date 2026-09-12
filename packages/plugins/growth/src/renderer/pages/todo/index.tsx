@@ -1,7 +1,7 @@
 'use client';
 
-import TabsPage from '@/components/Layout/TabsPage';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { TabsPage } from '@true-north/plugin-ui';
+import { CreateButton } from '@true-north/plugin-ui';
 import { useTodoDetail } from '../components';
 import { AgendaProvider, useAgendaDate } from '../components/day-agenda/context';
 import { growthHref } from '@true-north/plugin-growth/contract';

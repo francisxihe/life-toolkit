@@ -1,7 +1,7 @@
 import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@true-north/vo';
 import { CreateHabitDto, UpdateHabitDto, HabitDto, HabitFilterDto, HabitPageFilterDto } from './dto';
 import { HabitService, habitService as defaultHabitService } from './habit.service';
-import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/host';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/main';
 
 @Controller('/habit')
 export class HabitController {

@@ -1,6 +1,6 @@
 import { TreeSelect } from '@sue/design-web-react';
 import { useEffect, useState } from 'react';
-import { GoalService } from '@true-north/web-service';
+import { GoalService } from '../../../client';
 import type { GoalVo } from '@true-north/vo';
 
 interface GoalTreeSelectorProps {

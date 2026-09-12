@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Get, Delete, Body, Param, Query } from '@true-north/plugin-sdk/host';
+import { Controller, Post, Put, Get, Delete, Body, Param, Query } from '@true-north/plugin-sdk/main';
 import type { Goal as GoalVO, ResponsePageVo, ResponseListVo, ResponseTreeVo } from '@true-north/vo';
 import { GoalFilterDto, GoalPageFilterDto, CreateGoalDto, UpdateGoalDto, GoalDto } from './dto';
 import { GoalService, goalService as defaultGoalService } from './goal.service';

@@ -4,13 +4,15 @@ import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { BookmarkFileStatus } from '@true-north/enum';
 import type { BookmarkVo } from '@true-north/vo';
-import { BrowserService, LibraryController } from '@true-north/web-service';
-import { requestOpenWorkbench } from '@true-north/plugin-sdk';
+import { HOST_BROWSER_OPEN, HOST_WORKBENCH_OPEN } from '@true-north/plugin-sdk';
+import { useHostActions } from '@true-north/plugin-sdk/renderer';
+import { LibraryController } from '../../client';
 import dayjs from 'dayjs';
 
 export default function LibraryPage() {
   const [list, setList] = useState<BookmarkVo[]>([]);
   const [keyword, setKeyword] = useState('');
+  const hostActions = useHostActions();
 
   const load = async () => {
     const result = await LibraryController.list({ keyword: keyword || undefined });
@@ -21,14 +23,9 @@ export default function LibraryPage() {
     void load();
   }, [keyword]);
 
-  const openUrl = async (url: string) => {
-    await BrowserService.setVisible(true);
-    await BrowserService.createTab(url);
-  };
-
   const openWeb = async (url: string) => {
-    requestOpenWorkbench(true);
-    await openUrl(url);
+    await hostActions.invoke(HOST_WORKBENCH_OPEN, true);
+    await hostActions.invoke(HOST_BROWSER_OPEN, url);
   };
 
   return (

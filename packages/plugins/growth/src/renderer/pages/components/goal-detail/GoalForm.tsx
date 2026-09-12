@@ -3,7 +3,7 @@ import { Input, DatePicker, Select, Form, Radio, Tag, Flex, Button, type FormRul
 
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { GoalService } from '@true-north/web-service';
+import { GoalService } from '../../../../client';
 import { GoalType } from '@true-north/enum';
 import { useGoalDetailContext } from './context';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';

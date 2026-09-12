@@ -3,7 +3,7 @@ import TaskList from '../task-list';
 import clsx from 'clsx';
 import { Flex } from '@sue/design-web-react';
 import { useTaskDetail } from '.';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 
 export default function TaskChildren() {
   const { currentTask, showSubTask, refreshTaskDetail } =

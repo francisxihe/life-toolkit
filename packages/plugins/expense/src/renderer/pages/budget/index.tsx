@@ -5,7 +5,7 @@ import { useCreateBudget } from './CreateBudget';
 import { useExpenses } from '../context';
 import BudgetTable from './BudgetTable';
 import BudgetFilters from './BudgetFilters';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 
 export default function Budgets() {
   const { addBudget } = useExpenses();

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { TodoStatus, TodoRelatedType } from '@true-north/enum';
 import { Entity, Column } from 'typeorm';
 import { IsString, IsOptional, IsEnum, IsNumber, IsISO8601 } from 'class-validator';

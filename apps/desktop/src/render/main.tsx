@@ -17,6 +17,7 @@ import changeTheme from './utils/changeTheme';
 import useStorage from './utils/useStorage';
 import './mock';
 import { bootRendererPlugins } from './plugin/catalog';
+import { RendererPlatform, RendererPlatformProvider } from '@true-north/plugin-sdk/renderer';
 import Router from './router';
 import { generatePermission } from './router/routes';
 import 'dayjs/locale/zh-cn';
@@ -25,6 +26,7 @@ import '@true-north/web-service/electron-types';
 import dayjs from 'dayjs';
 import { registerMessage } from '@true-north/web-service';
 import { DevDockAttach } from '../dev/DevDockAttach';
+import defaultLocale from './locale';
 
 const messageApi = {
   error: (params: string) => message.error(params),
@@ -52,10 +54,13 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function LifeToolkitApp() {
-  const [pluginsReady, setPluginsReady] = useState(false);
+  const [platform, setPlatform] = useState<RendererPlatform | null>(null);
+  const [bootError, setBootError] = useState<string | null>(null);
 
   useEffect(() => {
-    void bootRendererPlugins().then(() => setPluginsReady(true));
+    void bootRendererPlugins()
+      .then(setPlatform)
+      .catch((error) => setBootError(error instanceof Error ? error.message : String(error)));
   }, []);
   const [lang, setLang] = useStorage('arco-lang', 'en-US');
   const [themePreference, setThemePreference] = useStorage('arco-theme', 'system');
@@ -155,11 +160,30 @@ function LifeToolkitApp() {
     setThemePreference: setThemePreferenceValue,
   };
 
-  if (!pluginsReady) {
+  const livePlatform = useMemo(() => {
+    if (!platform) return null;
+    return new RendererPlatform({
+      ...platform.state,
+      lang,
+      hostMessages: defaultLocale,
+    });
+  }, [platform, lang]);
+
+  if (bootError) {
+    return (
+      <div className="p-8">
+        <h1 className="text-title-1">插件启动失败</h1>
+        <pre className="mt-4 whitespace-pre-wrap text-text-3">{bootError}</pre>
+      </div>
+    );
+  }
+
+  if (!livePlatform) {
     return null;
   }
 
   return (
+    <RendererPlatformProvider platform={livePlatform}>
     <HashRouter
       future={{
         v7_startTransition: true,
@@ -191,6 +215,7 @@ function LifeToolkitApp() {
         </Provider>
       </ConfigProvider>
     </HashRouter>
+    </RendererPlatformProvider>
   );
 }
 

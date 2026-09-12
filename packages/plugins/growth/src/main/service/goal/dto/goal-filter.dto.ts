@@ -2,8 +2,8 @@ import { IsOptional, IsString, IsDateString, IsBoolean, IsArray } from 'class-va
 import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { GoalFilterVo, GoalPageFilterVo } from '@true-north/vo';
 import { GoalDto } from './goal-model.dto';
-import { PageFilterDto } from '@true-north/plugin-sdk/host';
-import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/host';
+import { PageFilterDto } from '@true-north/plugin-sdk/main';
+import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/main';
 import { GoalStatus } from '@true-north/enum';
 
 // 列表过滤DTO - 选择可过滤的字段

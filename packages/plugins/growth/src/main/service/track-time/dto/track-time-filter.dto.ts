@@ -2,8 +2,8 @@ import { IsOptional, IsString, IsDateString, IsNumber } from 'class-validator';
 import { PartialType, PickType, IntersectionType } from 'francis-mapped-types';
 import { TrackTimeFilterVo, TrackTimePageFilterVo } from '@true-north/vo';
 import { TrackTimeDto } from './track-time-model.dto';
-import { PageFilterDto } from '@true-north/plugin-sdk/host';
-import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/host';
+import { PageFilterDto } from '@true-north/plugin-sdk/main';
+import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/main';
 
 // 列表过滤DTO - 选择可过滤的字段
 export class TrackTimeFilterDto extends IntersectionType(

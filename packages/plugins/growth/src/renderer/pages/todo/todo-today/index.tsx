@@ -4,7 +4,7 @@ import { Flex } from '@sue/design-web-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';
-import { TodoService } from '@true-north/web-service';
+import { TodoService } from '../../../../client';
 import { TodoVo, TodoWithoutRelationsVo } from '@true-north/vo';
 import { TodoStatus } from '@true-north/enum';
 import { useTodoDetail } from '../../components';

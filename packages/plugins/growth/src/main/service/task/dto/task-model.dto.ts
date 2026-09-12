@@ -1,11 +1,11 @@
 import { Task, TaskWithoutRelations } from '../task.entity';
-import { BaseModelDto } from '@true-north/plugin-sdk/host';
+import { BaseModelDto } from '@true-north/plugin-sdk/main';
 import { OmitType, IntersectionType } from 'francis-mapped-types';
 import { GoalDto } from '../../goal/dto/goal-model.dto';
 import { TrackTimeDto } from '../../track-time/dto/track-time-model.dto';
 import { TodoDto } from '../../todo/dto/todo-model.dto';
 import dayjs from 'dayjs';
-import { BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseMapper } from '@true-north/plugin-sdk/main';
 import { Difficulty } from '@true-north/enum';
 import type { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@true-north/vo';
 

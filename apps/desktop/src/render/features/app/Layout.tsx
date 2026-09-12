@@ -3,11 +3,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { Flex, Layout, Spin } from '@sue/design-web-react';
 import cs from 'clsx';
 import { useSelector } from 'react-redux';
-import { useWorkbenchOptional } from '@true-north/plugin-sdk';
 import { RouterContext } from '@/router/useRouter';
 import { GlobalState } from '@/store';
 import { AppAside } from './AppAside';
-import { WorkbenchPanel } from '@/features/workbench';
+import { useWorkbenchOptional, WorkbenchPanel } from '@/features/workbench';
 import styles from './Layout.module.less';
 
 const Aside = Layout.Sider;

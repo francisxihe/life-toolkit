@@ -1,4 +1,4 @@
-import { pluginPath } from '@true-north/plugin-sdk';
+import { pluginPath } from '@true-north/plugin-contract';
 
 export const LIBRARY_PLUGIN_ID = 'library';
 export const LIBRARY_EXTRACT_ACTION = 'library.extract';

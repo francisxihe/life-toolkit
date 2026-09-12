@@ -2,7 +2,7 @@ import { useTaskDetailContext } from './context';
 import TodoItems from '../todo-list';
 import clsx from 'clsx';
 import { Flex } from '@sue/design-web-react';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 import { useTodoDetail } from '../todo-detail';
 
 export default function TodoList() {

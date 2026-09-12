@@ -12,7 +12,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { message } from '@sue/design-web-react';
 import { BrowserService } from '@true-north/web-service';
-import { registerWorkbenchOpener, WorkbenchRuntimeContext } from '@true-north/plugin-sdk';
+import { HOST_BROWSER_OPEN, HOST_WORKBENCH_OPEN } from '@true-north/plugin-sdk';
+import { useHostActions, WorkbenchRuntimeContext } from '@true-north/plugin-sdk/renderer';
 import type {
   AiWorkspacePayloadVo,
   BrowserBoundsVo,
@@ -519,13 +520,23 @@ export function WorkbenchProvider({
     ],
   );
 
+  const hostActions = useHostActions();
+
   useEffect(() => {
-    registerWorkbenchOpener((shouldOpen) => {
-      if (shouldOpen === false) close();
+    const offWorkbench = hostActions.register(HOST_WORKBENCH_OPEN, (input) => {
+      if (input === false) close();
       else if (!open) toggle();
     });
-    return () => registerWorkbenchOpener(null);
-  }, [close, open, toggle]);
+    const offBrowser = hostActions.register(HOST_BROWSER_OPEN, async (input) => {
+      const url = typeof input === 'string' ? input : (input as { url?: string } | undefined)?.url;
+      await BrowserService.setVisible(true);
+      if (url) await BrowserService.createTab(url);
+    });
+    return () => {
+      offWorkbench();
+      offBrowser();
+    };
+  }, [close, hostActions, open, toggle]);
 
   return <WorkbenchContext.Provider value={value}>{children}</WorkbenchContext.Provider>;
 }

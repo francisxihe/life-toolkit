@@ -3,7 +3,6 @@ import { User } from 'lucide-react';
 import auth, { AuthParams } from '@/utils/authentication';
 import { useEffect, useMemo, useState } from 'react';
 import { attachPageLoaders, pluginRoutes } from '@/plugin/catalog';
-import { getRendererRuntimeOptional } from '@true-north/plugin-sdk';
 
 export type RouteIcon = ComponentType<SVGProps<SVGSVGElement> & { size?: number | string }>;
 
@@ -38,7 +37,6 @@ export const userRoute: IRoute = {
 export const routes: IRoute[] = [];
 
 function currentRoutes(): IRoute[] {
-  if (!getRendererRuntimeOptional()) return [userRoute];
   return [...attachPageLoaders(pluginRoutes()), userRoute];
 }
 

@@ -1,7 +1,8 @@
 import { z } from 'zod';
 import { GoalDecomposeKey, TaskDecomposeKey } from '@true-north/enum';
 import type { AiSuggestionDraftVo, AiWorkspaceSuggestionVo } from '@true-north/vo';
-import { getAiCapability, type AgentTool } from '@true-north/plugin-sdk';
+import { type AgentTool } from '@true-north/plugin-sdk';
+import { growthAi } from '../../context';
 import { GoalRepository } from '../goal/goal.repository';
 import { GoalFilterDto } from '../goal/dto';
 import { TaskRepository } from '../task/task.repository';
@@ -204,7 +205,7 @@ const decomposeGoal: AgentTool = {
   async execute(args, ctx) {
     const { goalId, analysisSummary, suggestions: drafts } = decomposeGoalSchema.parse(args);
     const [result, context] = await Promise.all([
-      getAiCapability<typeof drafts, { runId: string; analysisSummary: string; suggestions: AiWorkspaceSuggestionVo[] }>(
+      growthAi().getCapability<typeof drafts, { runId: string; analysisSummary: string; suggestions: AiWorkspaceSuggestionVo[] }>(
         GoalDecomposeKey,
       ).execute({
         goalId,
@@ -264,7 +265,7 @@ const decomposeTask: AgentTool = {
   async execute(args, ctx) {
     const { taskId, analysisSummary, suggestions: drafts } = decomposeTaskSchema.parse(args);
     const [result, context] = await Promise.all([
-      getAiCapability<typeof drafts, { runId: string; analysisSummary: string; suggestions: AiWorkspaceSuggestionVo[] }>(
+      growthAi().getCapability<typeof drafts, { runId: string; analysisSummary: string; suggestions: AiWorkspaceSuggestionVo[] }>(
         TaskDecomposeKey,
       ).execute({
         taskId,

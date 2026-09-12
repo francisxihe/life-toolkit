@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useGoalContext } from '../context';
 import { useGoalDetailContext } from '../../components/goal-detail/context';
-import { HabitService } from '@true-north/web-service';
+import { HabitService } from '../../../../client';
 import { IMPORTANCE_MAP } from '../../constants';
 import styles from './style.module.less';
 

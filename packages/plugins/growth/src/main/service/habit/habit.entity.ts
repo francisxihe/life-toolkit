@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Entity, Column, ManyToMany, JoinTable, ManyToOne, JoinColumn } from 'typeorm';
 import { Difficulty, HabitStatus, Importance } from '@true-north/enum';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { Goal } from '../goal/goal.entity';
 import { Repeat } from '../repeat/repeat.entity';
 

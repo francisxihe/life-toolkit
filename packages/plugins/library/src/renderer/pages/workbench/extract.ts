@@ -1,10 +1,11 @@
 import { message } from '@sue/design-web-react';
 import { Modal } from '@sue/design-web-react';
-import { LibraryController } from '@true-north/web-service';
+import { LibraryController } from '../../../client';
 import type { WorkbenchExtractHandler } from '@true-north/plugin-sdk';
 
 export const libraryExtractHandler: WorkbenchExtractHandler = async ({ result, url }) => {
-  if (!result.markdownPath) {
+  const extracted = result as { markdownPath?: string; title?: string; articleDir?: string };
+  if (!extracted.markdownPath) {
     message.success('已拉取正文');
     return;
   }
@@ -23,10 +24,10 @@ export const libraryExtractHandler: WorkbenchExtractHandler = async ({ result, u
     });
   }
   await LibraryController.create({
-    title: result.title || url || '未命名文稿',
+    title: extracted.title || url || '未命名文稿',
     url,
-    markdownPath: result.markdownPath,
-    articleDir: result.articleDir || undefined,
+    markdownPath: extracted.markdownPath,
+    articleDir: extracted.articleDir || undefined,
     saveMode,
     existingId: existing?.id,
   });

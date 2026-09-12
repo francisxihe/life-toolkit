@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useNavigate } from 'react-router-dom';
 import type { GrowthArea } from '@true-north/plugin-growth/contract';
 import { growthHref } from '@true-north/plugin-growth/contract';
-import useLocale from '@/utils/useLocale';
+import { useLocale } from '@true-north/plugin-sdk/renderer';
 import TodoPage from './todo';
 import TaskPage from './task';
 import HabitPage from './habit';

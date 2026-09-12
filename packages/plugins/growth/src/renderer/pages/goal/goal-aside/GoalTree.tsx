@@ -9,11 +9,11 @@ import {
 } from '@sue/design-web-react';
 import { Copy, Pencil, Plus, Trash2 } from 'lucide-react';
 import dayjs from 'dayjs';
-import ContextMenu from '@/components/ContextMenu';
+import { ContextMenu } from '@true-north/plugin-ui';
 import { GoalVo } from '@true-north/vo';
 import { useGoalContext } from '../context';
 import { useGoalDetail } from '../../components/goal-detail';
-import { GoalService } from '@true-north/web-service';
+import { GoalService } from '../../../../client';
 import styles from './style.module.less';
 
 interface TreeNodeData {

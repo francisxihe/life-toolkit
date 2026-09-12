@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@true-north/plugin-sdk/host';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@true-north/plugin-sdk/main';
 import type { BudgetVo, CreateBudgetVo, CreateTransactionVo, TransactionVo } from '@true-north/vo';
 import { expenseService } from './expense.service';
 

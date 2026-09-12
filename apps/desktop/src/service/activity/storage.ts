@@ -1,9 +1,9 @@
-import { pluginStore } from '@true-north/plugin-sdk/host';
-import type { HostStorageRuntime } from '@true-north/plugin-sdk/host';
+import type { HostStorageRuntime } from '@true-north/plugin-sdk/main';
+import { getPluginHost } from '../../plugin/active-host';
+import { HOST_ACTIVITY_STORE_ID } from '../../plugin/host-ids';
 
-/** Host Activity schema namespace in the shared store (not a plugin id). */
-export const HOST_ACTIVITY_STORE_ID = 'activity' as const;
+export { HOST_ACTIVITY_STORE_ID };
 
 export function store(): HostStorageRuntime {
-  return pluginStore(HOST_ACTIVITY_STORE_ID);
+  return getPluginHost().storage.get(HOST_ACTIVITY_STORE_ID);
 }

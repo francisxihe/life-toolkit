@@ -7,7 +7,7 @@ import { Bell, Loader2, Power, Settings, User } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import Logo from '@/assets/logo.svg';
 import MessageBox from '@/components/MessageBox';
-import { getRendererRuntimeOptional } from '@true-north/plugin-sdk';
+import { useRendererPlatformOptional } from '@true-north/plugin-sdk/renderer';
 import { generatePermission } from '@/router/routes';
 import { GlobalState } from '@/store';
 import useLocale from '@/utils/useLocale';
@@ -24,7 +24,7 @@ export function AppAside() {
   const dispatch = useDispatch();
   const [, setUserStatus] = useStorage('userStatus');
   const [role] = useStorage('userRole', 'admin');
-  const runtime = getRendererRuntimeOptional();
+  const runtime = useRendererPlatformOptional();
   const actionSlots = [...(runtime?.shellSlots || [])]
     .filter((slot) => slot.slot === 'aside-actions')
     .sort((a, b) => (a.order || 0) - (b.order || 0));

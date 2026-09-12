@@ -1,6 +1,6 @@
 import { Checkbox, Modal } from '@sue/design-web-react';
 import styles from './style.module.less';
-import { TodoService } from '@true-north/web-service';
+import { TodoService } from '../../../../client';
 import { TodoVo } from '@true-north/vo';
 import DoneTimeConfirm from './DoneTimeConfirm';
 import { useRef } from 'react';

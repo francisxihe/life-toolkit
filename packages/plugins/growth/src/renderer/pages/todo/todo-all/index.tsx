@@ -5,7 +5,7 @@ import { TodoFilters } from './TodoFilters';
 import { Button, Flex, message } from '@sue/design-web-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
-import { TodoService } from '@true-north/web-service';
+import { TodoService } from '../../../../client';
 import { TodoStatus } from '@true-north/enum';
 import { TodoAllProvider } from './context';
 import TodoTable from './TodoTable';

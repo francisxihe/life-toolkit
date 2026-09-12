@@ -13,8 +13,8 @@ import {
   TaskWithoutRelationsVo,
   TaskPageFilterVo,
 } from '@true-north/vo';
-import { TaskService } from '@true-north/web-service';
-import { createInjectState } from '@/utils/createInjectState';
+import { TaskService } from '../../../../client';
+import { createInjectState } from '@true-north/common-web-utils';
 import { TaskStatus } from '@true-north/enum';
 
 function useSyncState<T>(

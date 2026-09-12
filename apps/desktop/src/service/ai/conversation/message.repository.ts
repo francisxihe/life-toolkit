@@ -1,5 +1,5 @@
 import { store } from '../storage';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 import { AiMessage } from './message.entity';
 
 export type AiMessageFilterDto = {

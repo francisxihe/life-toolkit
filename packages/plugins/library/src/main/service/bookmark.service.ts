@@ -5,7 +5,7 @@ import { BookmarkFileStatus, BookmarkSaveMode } from '@true-north/enum';
 import type { BookmarkFilterVo, BookmarkVo, CreateBookmarkVo, UpdateBookmarkVo } from '@true-north/vo';
 import { store } from '../storage';
 import { Bookmark } from './bookmark.entity';
-import { recordDomainActivity } from '../ports';
+import { recordLibraryActivity, unlinkLibraryEntity } from '../context';
 
 function toIso(value: Date | string | undefined): string {
   if (!value) return new Date().toISOString();
@@ -109,11 +109,10 @@ export class BookmarkService {
     const saved = await repo.save(entity);
     const vo = await toVo(saved);
     if (!options?.skipActivity) {
-      await recordDomainActivity({
+      await recordLibraryActivity({
         title: vo.title,
-        summary: vo.url,
-        source: 'workbench',
-        links: [{ domain: 'bookmark', entityId: vo.id, role: 'bookmark', label: vo.title }],
+        entityId: vo.id,
+        label: vo.title,
       });
     }
     return vo;
@@ -133,8 +132,7 @@ export class BookmarkService {
 
   async delete(id: string): Promise<boolean> {
     await this.repo().softDelete(id);
-    const { unlinkDomain } = await import('../ports');
-    await unlinkDomain('bookmark', id);
+    await unlinkLibraryEntity(id);
     return true;
   }
 

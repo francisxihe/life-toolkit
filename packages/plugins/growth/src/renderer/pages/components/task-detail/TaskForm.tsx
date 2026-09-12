@@ -8,7 +8,7 @@ import {
 } from './context';
 import GoalTreeSelector from '../GoalTreeSelector';
 import { useTaskFormConstraints } from './hooks';
-import { TaskService, GoalService } from '@true-north/web-service';
+import { TaskService, GoalService } from '../../../../client';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
 
 const RangePicker = DatePicker.RangePicker;

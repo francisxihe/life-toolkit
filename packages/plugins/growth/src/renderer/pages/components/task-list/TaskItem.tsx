@@ -4,7 +4,7 @@ import { Tag, Popover, Button, Flex, Tooltip } from '@sue/design-web-react';
 import { CirclePlay, Ellipsis, Flag, Flame } from 'lucide-react';
 import IconSelector from '../../components/IconSelector';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { TaskService } from '@true-north/web-service';
+import { TaskService } from '../../../../client';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import dayjs from 'dayjs';

@@ -5,8 +5,8 @@ import { Habit } from './habit.entity';
 import { Goal } from '../goal/goal.entity';
 import { Todo } from '../todo/todo.entity';
 import { HabitStatus, Difficulty } from '@true-north/enum';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 
 export interface HabitRepository extends BaseRepository<Habit, HabitFilterDto> {
   findWithRelations(id: string, relations?: string[]): Promise<Habit>;

@@ -1,5 +1,5 @@
 import type { Todo as TodoVO, ResponseListVo, ResponsePageVo } from '@true-north/vo';
-import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/host';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/main';
 import {
   TodoFilterDto,
   TodoPageFilterDto,

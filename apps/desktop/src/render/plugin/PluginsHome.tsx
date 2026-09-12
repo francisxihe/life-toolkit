@@ -4,7 +4,7 @@ import { Flex, Input } from '@sue/design-web-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { ChevronRight, Search } from 'lucide-react';
-import { getRendererRuntime } from '@true-north/plugin-sdk';
+import { useRendererPlatform } from '@true-north/plugin-sdk/renderer';
 import type { PluginRuntimeEntry } from '@true-north/plugin-sdk';
 import useLocale from '@/utils/useLocale';
 import { ActivityTimeline } from './activity/ActivityTimeline';
@@ -35,7 +35,7 @@ export default function PluginsHome() {
   const t = useLocale();
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
-  const entries = getRendererRuntime().plugins;
+  const entries = useRendererPlatform().plugins;
   const normalized = query.trim().toLowerCase();
   const filtered = useMemo(
     () => entries.filter((entry) => matchesQuery(t, entry, normalized)),

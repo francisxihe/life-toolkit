@@ -1,6 +1,6 @@
 import { Drawer, Popover } from '@sue/design-web-react';
 import { useState } from 'react';
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import GoalEditor, { GoalEditorFooter, GoalEditorProps } from './GoalEditor';
 import GoalForeign from './goal-foreign';
 import GoalForm from './GoalForm';

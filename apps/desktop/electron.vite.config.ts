@@ -20,21 +20,18 @@ const profileDefine = {
   'process.env.TN_DEV_PROFILE': JSON.stringify(devProfile),
 };
 
-function pluginPackageAliases() {
-  const plugins = ['growth', 'expense', 'purchase', 'library'];
-  const aliases: Record<string, string> = {};
-  for (const id of plugins) {
-    const pkg = path.resolve(currentDirPath, `../../packages/plugins/${id}`);
-    aliases[`@true-north/plugin-${id}/manifest`] = path.join(pkg, 'src/manifest.ts');
-    aliases[`@true-north/plugin-${id}/contract`] = path.join(pkg, 'src/contract/index.ts');
-    aliases[`@true-north/plugin-${id}/main`] = path.join(pkg, 'src/main/index.ts');
-    aliases[`@true-north/plugin-${id}/renderer`] = path.join(pkg, 'src/renderer/index.tsx');
-    aliases[`@true-north/plugin-${id}/wiki`] = path.join(pkg, 'wiki/index.ts');
-  }
-  return aliases;
-}
+const pluginSdkSrc = path.resolve(currentDirPath, '../../packages/plugin-sdk/src');
+const pluginSdkMain = path.resolve(pluginSdkSrc, 'main/index.ts');
+const pluginSdkRenderer = path.resolve(pluginSdkSrc, 'renderer/index.ts');
+const pluginSdkSqlite = path.resolve(pluginSdkSrc, 'sqlite/index.ts');
 
-const pluginAliases = pluginPackageAliases();
+const pluginSdkAliases = [
+  { find: '@true-north/plugin-sdk/renderer', replacement: pluginSdkRenderer },
+  { find: '@true-north/plugin-sdk/sqlite', replacement: pluginSdkSqlite },
+  { find: '@true-north/plugin-sdk/main', replacement: pluginSdkMain },
+  { find: '@true-north/plugin-sdk/host', replacement: pluginSdkMain },
+  { find: '@true-north/plugin-sdk', replacement: pluginSdkSrc },
+];
 
 function resolveProductWikiOutsideRoot(): Plugin {
   const extensions = ['', '.ts', '.tsx', '.js', '.json'];
@@ -95,19 +92,14 @@ function desktopLabPage(): Plugin {
   };
 }
 
-const pluginSdkSrc = path.resolve(currentDirPath, '../../packages/plugin-sdk/src');
-const pluginSdkHost = path.resolve(pluginSdkSrc, 'host/index.ts');
-
 export default defineConfig({
   main: {
     resolve: {
       alias: [
-        { find: '@true-north/plugin-sdk/host', replacement: pluginSdkHost },
-        { find: '@true-north/plugin-sdk', replacement: pluginSdkSrc },
+        ...pluginSdkAliases,
         { find: '@business', replacement: path.resolve(srcDir, 'service') },
         { find: '@db', replacement: path.resolve(srcDir, 'service/db') },
         { find: '@', replacement: path.resolve(srcDir, 'main') },
-        ...Object.entries(pluginAliases).map(([find, replacement]) => ({ find, replacement })),
         { find: '@true-north/enum', replacement: path.resolve(currentDirPath, '../../packages/business/enum/index.ts') },
         { find: '@true-north/vo', replacement: path.resolve(currentDirPath, '../../packages/business/vo/index.ts') },
         {
@@ -152,6 +144,8 @@ export default defineConfig({
                 path.resolve(srcDir, 'service/**/*'),
                 path.resolve(srcDir, 'plugin/**/*'),
                 path.resolve(currentDirPath, '../../packages/plugin-sdk/src/**/*'),
+                path.resolve(currentDirPath, '../../packages/plugin-contract/src/**/*'),
+                path.resolve(currentDirPath, '../../packages/plugin-ui/src/**/*'),
                 path.resolve(currentDirPath, '../../packages/plugins/**/*'),
                 ...(isProductDev
                   ? [
@@ -253,15 +247,7 @@ export default defineConfig({
           find: '@',
           replacement: path.resolve(srcDir, 'render'),
         },
-        {
-          find: '@true-north/plugin-sdk/host',
-          replacement: pluginSdkHost,
-        },
-        {
-          find: '@true-north/plugin-sdk',
-          replacement: pluginSdkSrc,
-        },
-        ...Object.entries(pluginAliases).map(([find, replacement]) => ({ find, replacement })),
+        ...pluginSdkAliases,
         {
           find: '@true-north/enum',
           replacement: path.resolve(currentDirPath, '../../packages/business/enum/index.ts'),
@@ -316,12 +302,9 @@ export default defineConfig({
       include: [
         'react',
         'react-dom',
-        'react-dnd',
-        'react-dnd-html5-backend',
         'mitt',
         'lodash-es',
         'marked',
-        'dompurify',
       ],
       exclude: ['@true-north/common-web-utils', 'chinese-holiday-calendar'],
     },

@@ -1,5 +1,5 @@
 import { TrackTime } from '../entity';
-import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/main';
 import { IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { TrackTime as TrackTimeVO, ResponsePageVo, ResponseListVo } from '@true-north/vo';

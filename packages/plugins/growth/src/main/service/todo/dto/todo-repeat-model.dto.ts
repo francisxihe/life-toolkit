@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/main';
 import { IntersectionType } from 'francis-mapped-types';
 import { TodoRepeat, TodoRepeatWithoutRelations } from '../todo-repeat.entity';
 import type { Todo as TodoVO } from '@true-north/vo';

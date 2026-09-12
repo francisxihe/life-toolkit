@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@true-north/plugin-sdk/host';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@true-north/plugin-sdk/main';
 import type { BookmarkFilterVo, BookmarkVo, CreateBookmarkVo, UpdateBookmarkVo } from '@true-north/vo';
 import { bookmarkService } from './bookmark.service';
 

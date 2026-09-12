@@ -3,7 +3,7 @@ import { Empty } from '@sue/design-web-react';
 import { useGoalDetailContext } from '../context';
 import GoalList from '../../goal-list';
 import { useGoalDetail } from '..';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 
 export function GoalChildren(props: {
   onChangeGoal?: (id: string) => Promise<void>;

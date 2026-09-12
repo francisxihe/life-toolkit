@@ -1,8 +1,8 @@
 import { store } from '../../storage';
 import { TodoFilterDto } from './dto';
 import { Todo } from './todo.entity';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 import { TodoRelatedType } from '@true-north/enum';
 import dayjs from 'dayjs';
 

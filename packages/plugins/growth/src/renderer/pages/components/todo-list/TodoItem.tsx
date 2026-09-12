@@ -10,7 +10,7 @@ import { CirclePlay, Flag, Flame, Repeat, X } from 'lucide-react';
 import { isToday } from 'date-fns';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import IconSelector from '../../components/IconSelector';
-import { TodoService } from '@true-north/web-service';
+import { TodoService } from '../../../../client';
 import { TodoWithoutRelationsVo } from '@true-north/vo';
 import dayjs from 'dayjs';
 import clsx from 'clsx';

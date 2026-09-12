@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { TaskVo } from '@true-north/vo';
-import { TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
+import { TaskService, TodoService, TrackTimeController } from '../../../../client';
 import { TrackTimeRelatedType } from '@true-north/enum';
 import { message } from '@sue/design-web-react';
-import { createInjectState } from '@/utils/createInjectState';
+import { createInjectState } from '@true-north/common-web-utils';
 
 export type TaskDetailContextProps = {
   taskId: string;

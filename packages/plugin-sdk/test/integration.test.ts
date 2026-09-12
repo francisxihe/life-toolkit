@@ -2,13 +2,11 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
   PLUGIN_API_VERSION,
-  REQUIRED_PLUGIN_IDS,
   assemblePluginCatalog,
   validateManifests,
   parsePluginManifest,
   normalizeCaptureSuggestion,
-  mergeTodaySnapshots,
-  activityRefFromLegacyDomain,
+  mergeTodaySections,
 } from '../src/index.ts';
 import type { PluginManifest } from '../src/index.ts';
 
@@ -16,16 +14,16 @@ function manifest(overrides: Partial<PluginManifest> & Pick<PluginManifest, 'plu
   return parsePluginManifest({
     apiVersion: PLUGIN_API_VERSION,
     version: '0.1.0',
+    catalog: { nameKey: overrides.pluginId },
     contributions: {},
     ...overrides,
   });
 }
 
-test('host catalog can assemble with no required plugins', async () => {
-  const catalog = await assemblePluginCatalog([], { loadRuntime: false });
+test('host catalog can assemble with no plugins', async () => {
+  const catalog = await assemblePluginCatalog([], { side: 'manifest' });
   assert.deepEqual(catalog.plugins, []);
   assert.equal(catalog.issues.length, 0);
-  assert.deepEqual([...REQUIRED_PLUGIN_IDS], []);
 });
 
 test('adding growth surfaces ipc, ai, workbench and today', async () => {
@@ -35,65 +33,55 @@ test('adding growth surfaces ipc, ai, workbench and today', async () => {
         manifest: manifest({
           pluginId: 'growth',
           contributions: {
-            ipc: [{ id: 'todo', routePrefix: '/todo' }],
-            ai: { toolNames: ['search_goals'], capabilityKeys: ['goal.decompose'] },
-            workbench: { workspaceKeys: ['goal.decompose'] },
-            activity: { today: true, entityTypes: ['todo'] },
+            ipc: { todo: { routePrefix: '/todo' } },
+            ai: { tools: { search_goals: { name: 'search_goals' } }, capabilities: { decompose: { key: 'goal.decompose' } } },
+            workbench: { workspaces: { decompose: { key: 'goal.decompose' } } },
+            activity: {
+              today: { todos: { kind: 'list', titleKey: 'today.todos' } },
+              entityTypes: ['todo'],
+            },
           },
         }),
       },
     ],
-    { loadRuntime: false },
+    { side: 'manifest' },
   );
   const growth = catalog.plugins.find((plugin) => plugin.manifest.pluginId === 'growth');
   assert.ok(growth);
-  assert.equal(growth.manifest.contributions.ipc?.[0]?.routePrefix, '/todo');
-  assert.equal(growth.manifest.contributions.ai?.toolNames?.[0], 'search_goals');
-  assert.equal(growth.manifest.contributions.workbench?.workspaceKeys?.[0], 'goal.decompose');
-  assert.equal(growth.manifest.contributions.activity?.today, true);
+  assert.equal(growth.manifest.contributions.ipc?.todo?.routePrefix, '/todo');
+  assert.equal(growth.manifest.contributions.ai?.tools?.search_goals?.name, 'search_goals');
+  assert.equal(growth.manifest.contributions.workbench?.workspaces?.decompose?.key, 'goal.decompose');
+  assert.equal(growth.manifest.contributions.activity?.today?.todos?.kind, 'list');
   assert.equal(catalog.plugins.some((plugin) => plugin.manifest.pluginId === 'ai'), false);
   assert.equal(catalog.plugins.some((plugin) => plugin.manifest.pluginId === 'workbench'), false);
   assert.equal(catalog.plugins.some((plugin) => plugin.manifest.pluginId === 'activity'), false);
 });
 
-test('disabling optional plugin does not assemble it', async () => {
-  const catalog = await assemblePluginCatalog(
-    [
-      { manifest: manifest({ pluginId: 'growth' }) },
-      { manifest: manifest({ pluginId: 'expense' }) },
-    ],
-    { disabledPluginIds: ['growth'], loadRuntime: false },
-  );
-  assert.deepEqual(
-    catalog.plugins.map((plugin) => plugin.manifest.pluginId),
-    ['expense'],
-  );
-});
-
-test('required plugins cannot be disabled', () => {
-  const issues = validateManifests(
-    [manifest({ pluginId: 'growth', required: true })],
-    { disabledPluginIds: ['growth'] },
-  );
-  assert.equal(issues.some((issue) => issue.code === 'required-disabled'), true);
-});
-
-test('capture suggestion normalizes legacy kind', () => {
+test('capture suggestion normalizes missing type from kind', () => {
   const next = normalizeCaptureSuggestion({ id: 's1', kind: 'todo', payload: { title: 'x' } } as never);
-  assert.equal(next.type, 'growth.todo');
+  assert.equal(next.type, 'todo');
+  assert.equal(next.status, 'selected');
 });
 
-test('today snapshots merge across plugins', () => {
-  const merged = mergeTodaySnapshots([
-    { focusSeconds: 10, todos: [{ id: '1', name: 'a', planDate: '2026-09-11', overdue: false }] },
-    { focusSeconds: 5, habits: [{ id: 'h', name: 'b' }] },
+test('today sections merge across plugins', () => {
+  const merged = mergeTodaySections([
+    [{ id: 'growth.todos', kind: 'list', titleKey: 'todo', items: [{ id: '1', label: 'a' }] }],
+    [{ id: 'growth.habits', kind: 'list', titleKey: 'habit', items: [{ id: 'h', label: 'b' }] }],
   ]);
-  assert.equal(merged.focusSeconds, 15);
-  assert.equal(merged.todos.length, 1);
-  assert.equal(merged.habits.length, 1);
+  assert.equal(merged.length, 2);
+  assert.equal(merged.flatMap((section) => section.items || []).length, 2);
 });
 
-test('legacy activity domain maps to plugin entity ref', () => {
-  const ref = activityRefFromLegacyDomain('todo', 'abc');
-  assert.deepEqual(ref, { pluginId: 'growth', entityType: 'todo', entityId: 'abc' });
+test('duplicate routes still fail catalog validation', () => {
+  const issues = validateManifests([
+    manifest({
+      pluginId: 'growth',
+      contributions: { ipc: { todo: { routePrefix: '/dup' } } },
+    }),
+    manifest({
+      pluginId: 'expense',
+      contributions: { ipc: { expense: { routePrefix: '/dup' } } },
+    }),
+  ]);
+  assert.equal(issues.some((issue) => issue.code === 'duplicate-controller'), true);
 });

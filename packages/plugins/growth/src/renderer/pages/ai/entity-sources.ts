@@ -1,5 +1,5 @@
 import type { NavigateFunction } from 'react-router-dom';
-import { GoalService, TaskService } from '@true-north/web-service';
+import { GoalService, TaskService } from '../../../client';
 import { openTaskDrawer } from '../task/detail/TaskDrawer';
 import { growthHref } from '@true-north/plugin-growth/contract';
 import type { AiEntitySource } from '@true-north/plugin-sdk';

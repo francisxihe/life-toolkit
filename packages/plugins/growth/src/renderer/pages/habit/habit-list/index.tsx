@@ -1,5 +1,5 @@
 import React from 'react';
-import DefaultPage from '@/components/Layout/DefaultPage';
+import { DefaultPage } from '@true-north/plugin-ui';
 import HabitListFilter from './HabitListFilter';
 import { HabitListProvider, useHabitListContext } from './context';
 import HabitListTable from './HabitListTable';
@@ -8,7 +8,7 @@ import { Plus } from 'lucide-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import { CreateHabit } from '../components/CreateHabit';
 import styles from './style.module.less';
 

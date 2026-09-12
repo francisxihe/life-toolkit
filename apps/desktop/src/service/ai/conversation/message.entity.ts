@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Column, Entity, Index } from 'typeorm';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { AiMessageRole } from '@true-north/enum';
 import type { AiMessagePartVo } from '@true-north/vo';
 

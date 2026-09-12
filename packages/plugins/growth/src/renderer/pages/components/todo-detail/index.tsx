@@ -1,9 +1,9 @@
 'use client';
 
 import { Drawer } from '@sue/design-web-react';
-import type { TodoFormData } from '@true-north/web-service';
+import type { TodoFormData } from '../../../../client';
 import type { TodoVo } from '@true-north/vo';
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import { TodoDetailProvider } from './context';
 import TodoForm from './TodoForm';
 

@@ -6,7 +6,7 @@ import { Calendar } from 'lucide-react';
 
 import { useExpenses } from '../context';
 import { PERIODS } from '../constants';
-import { TagSelector } from '@/components/TagSelector';
+import { TagSelector } from '@true-north/plugin-ui';
 import dayjs, { Dayjs } from 'dayjs';
 
 export default function BudgetFilters() {

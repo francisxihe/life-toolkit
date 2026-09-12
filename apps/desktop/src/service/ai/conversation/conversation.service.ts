@@ -141,7 +141,7 @@ export class ConversationService {
     const id = refId?.trim();
     if (!type) throw AiPlatformError.internal('缺少 refType');
     if (!id) throw AiPlatformError.internal('缺少 refId');
-    const resolved = await entityResolverRegistry.resolve(type, id);
+    const resolved = await entityResolverRegistry().resolve(type, id);
     const existing = await this.conversationRepository.findByFilter({ refType: type, refId: id });
     if (existing[0]) {
       return { conversation: toConversationVo(existing[0]), created: false };

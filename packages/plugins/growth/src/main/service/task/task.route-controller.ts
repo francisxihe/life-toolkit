@@ -1,6 +1,6 @@
 import type { Task as TaskVO, ResponsePageVo, ResponseListVo } from '@true-north/vo';
 import { TaskService, taskService as defaultTaskService } from './task.service';
-import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/host';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/main';
 import { TaskFilterDto, TaskPageFilterDto, UpdateTaskDto, CreateTaskDto, TaskDto } from './dto';
 
 @Controller('/task')

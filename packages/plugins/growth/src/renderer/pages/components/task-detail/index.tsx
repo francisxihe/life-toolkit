@@ -1,6 +1,6 @@
 import { Drawer, Popover } from '@sue/design-web-react';
 import { useState } from 'react';
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import TaskEditor, { TaskEditorProps } from './TaskEditor';
 import TaskCreator, { TaskCreatorProps } from './TaskCreator';
 

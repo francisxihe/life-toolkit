@@ -1,6 +1,6 @@
 import { Checkbox } from '@sue/design-web-react';
 import styles from './style.module.less';
-import { TaskService } from '@true-north/web-service';
+import { TaskService } from '../../../../client';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { emitTaskChanged } from '../../events';
 import { TaskStatus } from '@true-north/enum';

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Button, Card, Col, Flex, Row, Spin, Statistic, message } from '@sue/design-web-react';
 import { Check, ChevronRight, CircleCheck, Clock, Flag, Flame } from 'lucide-react';
 import { GoalStatus, HabitStatus, TaskStatus, TodoRelatedType, TodoStatus } from '@true-north/enum';
-import { GoalService, HabitService, TaskService, TodoService, TrackTimeController } from '@true-north/web-service';
+import { GoalService, HabitService, TaskService, TodoService, TrackTimeController } from '../../../client';
 import { HabitVo, TaskWithoutRelationsVo, TodoVo } from '@true-north/vo';
 import { useNavigate } from 'react-router-dom';
 import { growthHref } from '@true-north/plugin-growth/contract';

@@ -5,7 +5,7 @@ import {
 } from './context';
 import GoalForm from './GoalForm';
 import { Button, Flex } from '@sue/design-web-react';
-import { GoalService, GoalMapping } from '@true-north/web-service';
+import { GoalService, GoalMapping } from '../../../../client';
 import GoalForeign from './goal-foreign';
 
 export type GoalEditorProps = {

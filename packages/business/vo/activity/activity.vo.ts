@@ -45,12 +45,38 @@ export type ActivityFilterVo = {
 };
 
 export type HomeTodayVo = {
-  spent: number;
-  pendingPurchases: number;
-  focusSeconds: number;
-  bookmarkCount: number;
-  todos: Array<{ id: string; name: string; planDate: string; overdue: boolean }>;
-  habits: Array<{ id: string; name: string; cycleTodoId?: string }>;
-  purchases: Array<{ id: string; name: string; neededAt?: string }>;
-  runningFocus?: { id: string; label?: string; startedAt: string };
+  sections: Array<{
+    id: string;
+    kind: 'metric' | 'list' | 'timer';
+    titleKey: string;
+    order?: number;
+    value?: number;
+    unit?: string;
+    items?: Array<{
+      id: string;
+      label: string;
+      href?: string;
+      overdue?: boolean;
+      pluginId?: string;
+      entityType?: string;
+      actions?: Array<{
+        id: string;
+        labelKey: string;
+        disabled?: boolean;
+        command?: {
+          method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+          path: string;
+          payload?: Record<string, unknown>;
+        };
+        hostAction?: string;
+      }>;
+      meta?: Record<string, unknown>;
+    }>;
+    timer?: {
+      id: string;
+      label?: string;
+      startedAt: string;
+      hostAction?: string;
+    };
+  }>;
 };

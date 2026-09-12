@@ -1,6 +1,6 @@
 import { Select, Row, Col } from '@sue/design-web-react';
 
-import { TableFilter } from '@/components/Layout/TableFilter';
+import { TableFilter } from '@true-north/plugin-ui';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { useHabitListContext } from './context';
 

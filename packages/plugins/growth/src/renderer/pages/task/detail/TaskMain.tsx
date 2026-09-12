@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { TaskVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
-import { TaskService } from '@true-north/web-service';
+import { TaskService } from '../../../../client';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { useTaskDetailContext } from './context';

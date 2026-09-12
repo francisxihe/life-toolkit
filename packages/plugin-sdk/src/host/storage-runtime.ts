@@ -1,5 +1,5 @@
 import type { DataSource, EntityManager, EntityTarget, ObjectLiteral, Repository, TreeRepository } from 'typeorm';
-import type { HostStorageCapability, PluginStorageHandle } from '../storage-protocol.ts';
+import type { HostStorageCapability } from '@true-north/plugin-contract';
 
 export type HostStorageRuntime = {
   capability: HostStorageCapability;
@@ -11,20 +11,44 @@ export type HostStorageRuntime = {
   runInTransaction<T>(run: (tx: HostStorageRuntime) => Promise<T>): Promise<T>;
 };
 
-const stores = new Map<string, HostStorageRuntime>();
+export type PluginStorageHandle = {
+  pluginId: string;
+  capability: HostStorageCapability;
+  query(sql: string, params?: unknown[]): Promise<unknown>;
+  runInTransaction<T>(run: (tx: PluginStorageHandle) => Promise<T>): Promise<T>;
+};
 
-export function storeIdsForDataSource(dataSource: DataSource): string[] {
-  return [...stores.entries()]
-    .filter(([, runtime]) => runtime.dataSource === dataSource)
-    .map(([id]) => id);
+export class StorageRegistry {
+  private readonly stores = new Map<string, HostStorageRuntime>();
+
+  bind(id: string, runtime: HostStorageRuntime) {
+    this.stores.set(id, runtime);
+  }
+
+  get(id: string): HostStorageRuntime {
+    const runtime = this.stores.get(id);
+    if (!runtime) throw new Error(`Storage is not bound for ${id}`);
+    return runtime;
+  }
+
+  unbind(id: string) {
+    this.stores.delete(id);
+  }
+
+  idsForDataSource(dataSource: DataSource): string[] {
+    return [...this.stores.entries()]
+      .filter(([, runtime]) => runtime.dataSource === dataSource)
+      .map(([id]) => id);
+  }
 }
 
 export function createHostStorageRuntime(
   dataSource: DataSource,
   manager?: EntityManager,
-  options?: { capability?: HostStorageCapability },
+  options?: { capability?: HostStorageCapability; registry?: StorageRegistry },
 ): HostStorageRuntime {
-  const capability = options?.capability ?? 'host-shared-transactional';
+  const capability = options?.capability ?? 'self-managed';
+  const registry = options?.registry;
   const target = manager ?? dataSource;
   const runtime: HostStorageRuntime = {
     capability,
@@ -36,16 +60,16 @@ export function createHostStorageRuntime(
     runInTransaction: async (run) => {
       if (manager) return run(runtime);
       return dataSource.transaction(async (tx) => {
-        const nested = createHostStorageRuntime(dataSource, tx, { capability });
-        const ownedIds = storeIdsForDataSource(dataSource);
-        const previous = ownedIds.map((id) => [id, stores.get(id)] as const);
-        for (const id of ownedIds) bindPluginStore(id, nested);
+        const nested = createHostStorageRuntime(dataSource, tx, { capability, registry });
+        const ownedIds = registry?.idsForDataSource(dataSource) || [];
+        const previous = ownedIds.map((id) => [id, registry?.get(id)] as const);
+        for (const id of ownedIds) registry?.bind(id, nested);
         try {
           return await run(nested);
         } finally {
           for (const [id, prev] of previous) {
-            if (prev) bindPluginStore(id, prev);
-            else unbindPluginStore(id);
+            if (prev) registry?.bind(id, prev);
+            else registry?.unbind(id);
           }
         }
       });
@@ -61,20 +85,4 @@ export function asPluginStorageHandle(pluginId: string, runtime: HostStorageRunt
     query: (sql, params) => runtime.query(sql, params),
     runInTransaction: (run) => runtime.runInTransaction((tx) => run(asPluginStorageHandle(pluginId, tx))),
   };
-}
-
-export function bindPluginStore(pluginId: string, runtime: HostStorageRuntime) {
-  stores.set(pluginId, runtime);
-}
-
-export function pluginStore(pluginId: string): HostStorageRuntime {
-  const runtime = stores.get(pluginId);
-  if (!runtime) {
-    throw new Error(`Storage is not bound for plugin ${pluginId}`);
-  }
-  return runtime;
-}
-
-export function unbindPluginStore(pluginId: string) {
-  stores.delete(pluginId);
 }

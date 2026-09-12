@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Difficulty } from '@true-north/enum';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { TaskFormData } from '@true-north/web-service';
+import { TaskFormData } from '../../../../client';
 import { TaskVo, GoalVo } from '@true-north/vo';
 
 export const useTaskFormConstraints = (

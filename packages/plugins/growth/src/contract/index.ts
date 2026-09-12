@@ -1,4 +1,4 @@
-import { pluginPath } from '@true-north/plugin-sdk';
+import { pluginPath } from '@true-north/plugin-contract';
 
 export const GROWTH_PLUGIN_ID = 'growth';
 export const GoalDecomposeKey = 'goal.decompose';

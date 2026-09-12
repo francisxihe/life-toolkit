@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { useTaskAllContext } from './context';
 import { useState } from 'react';
-import { TaskService } from '@true-north/web-service';
+import { TaskService } from '../../../../client';
 import { TaskVo } from '@true-north/vo';
 import { emitTaskChanged } from '../../events';
 import { TaskStatus } from '@true-north/enum';

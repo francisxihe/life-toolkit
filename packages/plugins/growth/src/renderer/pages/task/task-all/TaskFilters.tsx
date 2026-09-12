@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { TaskPageFilterVo } from '@true-north/vo';
 import { useTaskAllContext } from './context';
-import { TableFilter } from '@/components/Layout/TableFilter';
+import { TableFilter } from '@true-north/plugin-ui';
 import { TaskStatus } from '@true-north/enum';
 import GoalTreeSelector from '../../components/GoalTreeSelector';
 

@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { Flex } from '@sue/design-web-react';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
-import { TaskService } from '@true-north/web-service';
+import { TaskService } from '../../../../client';
 import { TaskWithoutRelationsVo } from '@true-north/vo';
 import { TaskStatus } from '@true-north/enum';
 import DayAgendaCalendar, {

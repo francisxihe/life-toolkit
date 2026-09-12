@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import dayjs from 'dayjs';
 import { Difficulty, GoalType, Importance } from '@true-north/enum';
 import { DIFFICULTY_MAP, IMPORTANCE_MAP } from '../../constants';
-import { GoalFormData } from '@true-north/web-service';
+import { GoalFormData } from '../../../../client';
 import { GoalVo } from '@true-north/vo';
 
 export const useGoalFormConstraints = (parentGoal: GoalVo) => {

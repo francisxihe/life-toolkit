@@ -1,8 +1,8 @@
 import { Goal } from './goal.entity';
 import { GoalFilterDto } from './dto';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
 import { store } from '../../storage';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 
 export interface GoalRepository extends BaseRepository<Goal, GoalFilterDto> {
   findWithRelations(id: string, relations?: string[]): Promise<Goal>;

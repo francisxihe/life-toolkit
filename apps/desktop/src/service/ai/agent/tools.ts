@@ -37,14 +37,20 @@ export class AgentToolRegistry {
   }
 }
 
-export const agentToolRegistry = new AgentToolRegistry();
+let attached: AgentToolRegistry | null = null;
+
+export function attachAgentToolRegistry(registry: AgentToolRegistry) {
+  attached = registry;
+}
 
 export function findAgentTool(name: string): AgentTool | undefined {
-  return agentToolRegistry.find(name);
+  if (!attached) throw new Error('Agent tools are not attached');
+  return attached.find(name);
 }
 
 export function listAgentTools(): AgentTool[] {
-  return agentToolRegistry.list();
+  if (!attached) throw new Error('Agent tools are not attached');
+  return attached.list();
 }
 
 function summarizeArgs(args: Record<string, unknown>): string {

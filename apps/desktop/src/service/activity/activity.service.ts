@@ -1,13 +1,11 @@
 import type { EntityManager } from 'typeorm';
 import {
-  activityRefFromLegacyDomain,
-  legacyDomainFromActivityRef,
-  mergeTodaySnapshots,
+  mergeTodaySections,
   normalizeCaptureSuggestion,
   type ActivityEntityRef,
   type CaptureAdopter,
-  type TodayContribution,
-  type TodaySnapshot,
+  type TodaySectionContribution,
+  type TodaySectionSnapshot,
 } from '@true-north/plugin-sdk';
 import { ActivityDomain, ActivitySource } from '@true-north/enum';
 import type {
@@ -22,6 +20,30 @@ import { store } from './storage';
 import { Activity } from './activity.entity';
 import { ActivityLink } from './activity-link.entity';
 
+const HOST_LEGACY_DOMAIN_TO_REF: Record<string, { pluginId: string; entityType: string }> = {
+  todo: { pluginId: 'growth', entityType: 'todo' },
+  habit: { pluginId: 'growth', entityType: 'habit' },
+  task: { pluginId: 'growth', entityType: 'task' },
+  goal: { pluginId: 'growth', entityType: 'goal' },
+  focus: { pluginId: 'growth', entityType: 'track-time' },
+  expense: { pluginId: 'expense', entityType: 'transaction' },
+  purchase: { pluginId: 'purchase', entityType: 'purchase' },
+  bookmark: { pluginId: 'library', entityType: 'bookmark' },
+};
+
+function hostRefFromDomain(domain: string, entityId: string): ActivityEntityRef {
+  const mapped = HOST_LEGACY_DOMAIN_TO_REF[domain];
+  if (mapped) return { ...mapped, entityId };
+  return { pluginId: domain, entityType: domain, entityId };
+}
+
+function hostDomainFromRef(ref: ActivityEntityRef): string {
+  const entry = Object.entries(HOST_LEGACY_DOMAIN_TO_REF).find(
+    ([, value]) => value.pluginId === ref.pluginId && value.entityType === ref.entityType,
+  );
+  return entry?.[0] || ref.entityType;
+}
+
 function toIso(value: Date | string | undefined): string {
   if (!value) return new Date().toISOString();
   return value instanceof Date ? value.toISOString() : new Date(value).toISOString();
@@ -31,7 +53,7 @@ function linkRef(link: ActivityLink): ActivityEntityRef {
   if (link.pluginId && link.entityType) {
     return { pluginId: link.pluginId, entityType: link.entityType, entityId: link.entityId };
   }
-  return activityRefFromLegacyDomain(String(link.domain), link.entityId);
+  return hostRefFromDomain(String(link.domain), link.entityId);
 }
 
 function toLinkVo(entity: ActivityLink): ActivityLinkVo {
@@ -41,7 +63,7 @@ function toLinkVo(entity: ActivityLink): ActivityLinkVo {
     activityId: entity.activityId,
     pluginId: ref.pluginId,
     entityType: ref.entityType,
-    domain: (entity.domain || legacyDomainFromActivityRef(ref)) as ActivityLinkVo['domain'],
+    domain: (entity.domain || hostDomainFromRef(ref)) as ActivityLinkVo['domain'],
     entityId: entity.entityId,
     role: entity.role,
     label: entity.label,
@@ -74,13 +96,13 @@ function resolveLinkInput(link: CreateActivityVo['links'][number]): ActivityEnti
       label: link.label,
     };
   }
-  const ref = activityRefFromLegacyDomain(String(link.domain || 'todo'), link.entityId);
+  const ref = hostRefFromDomain(String(link.domain || 'todo'), link.entityId);
   return { ...ref, role: link.role, label: link.label };
 }
 
 export class ActivityService {
   private captureAdopters = new Map<string, CaptureAdopter>();
-  private todayCollectors: TodayContribution[] = [];
+  private todayCollectors: TodaySectionContribution[] = [];
   private workspaceWriter: {
     patch(messageId: string, payload: Record<string, unknown>, manager?: EntityManager): Promise<void>;
   } | null = null;
@@ -89,7 +111,7 @@ export class ActivityService {
     this.captureAdopters = new Map(adopters.map((adopter) => [adopter.type, adopter]));
   }
 
-  configureToday(collectors: TodayContribution[]) {
+  configureToday(collectors: TodaySectionContribution[]) {
     this.todayCollectors = collectors;
   }
 
@@ -124,7 +146,7 @@ export class ActivityService {
               activityId: saved.id,
               pluginId: ref.pluginId,
               entityType: ref.entityType,
-              domain: legacyDomainFromActivityRef(ref) as ActivityDomain,
+              domain: hostDomainFromRef(ref) as ActivityDomain,
               entityId: ref.entityId,
               role: ref.role,
               label: ref.label,
@@ -166,7 +188,7 @@ export class ActivityService {
   }
 
   async unlink(domain: ActivityDomain | `${ActivityDomain}`, entityId: string): Promise<void> {
-    return this.unlinkRef(activityRefFromLegacyDomain(domain, entityId));
+    return this.unlinkRef(hostRefFromDomain(domain, entityId));
   }
 
   async unlinkRef(ref: ActivityEntityRef): Promise<void> {
@@ -179,7 +201,7 @@ export class ActivityService {
           pluginId: ref.pluginId,
           entityType: ref.entityType,
           entityId: ref.entityId,
-          domain: legacyDomainFromActivityRef(ref),
+          domain: hostDomainFromRef(ref) as ActivityDomain,
         },
       )
       .execute();
@@ -213,7 +235,7 @@ export class ActivityService {
         entityId: created.entityId,
         role: created.role,
         label: created.label,
-        domain: legacyDomainFromActivityRef(created) as CreateActivityVo['links'][number]['domain'],
+        domain: hostDomainFromRef(created) as CreateActivityVo['links'][number]['domain'],
       });
       accepted.set(suggestion.id, { ...suggestion, status: 'accepted' });
     }
@@ -261,10 +283,10 @@ export class ActivityService {
   }
 
   async homeToday(): Promise<HomeTodayVo> {
-    const parts: Array<Partial<TodaySnapshot>> = await Promise.all(
-      this.todayCollectors.map((collector) => collector.collect()),
+    const parts: TodaySectionSnapshot[][] = await Promise.all(
+      this.todayCollectors.map(async (collector) => [await collector.collect()]),
     );
-    return mergeTodaySnapshots(parts);
+    return { sections: mergeTodaySections(parts) as HomeTodayVo['sections'] };
   }
 }
 

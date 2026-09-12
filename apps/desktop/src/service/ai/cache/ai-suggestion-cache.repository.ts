@@ -1,5 +1,5 @@
 import { store } from '../storage';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 import { AiSuggestionCache } from './ai-suggestion-cache.entity';
 
 export type AiSuggestionCacheFilterDto = {

@@ -3,7 +3,7 @@ import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, useParams, Outlet } from 'react-router-dom';
-import { getRendererRuntime } from '@true-north/plugin-sdk';
+import { useRendererPlatform } from '@true-north/plugin-sdk/renderer';
 import useLocale from '@/utils/useLocale';
 import { pluginPaths } from './paths';
 import styles from './PluginsShell.module.less';
@@ -12,7 +12,7 @@ export function PluginsShell() {
   const t = useLocale();
   const navigate = useNavigate();
   const { pluginKey } = useParams();
-  const current = getRendererRuntime().plugins.find((entry) => entry.pluginId === pluginKey);
+  const current = useRendererPlatform().plugins.find((entry) => entry.pluginId === pluginKey);
   const Icon = current?.icon;
 
   if (!pluginKey) {

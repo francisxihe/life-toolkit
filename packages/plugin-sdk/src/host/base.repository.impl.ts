@@ -2,8 +2,8 @@ import { Repository, SelectQueryBuilder, DeleteResult, UpdateResult } from 'type
 import { BaseEntity } from './base.entity.ts';
 
 export class BaseRepositoryImpl<Entity extends BaseEntity, FilterDto> {
-  repo: Repository<Entity>;
-  buildQuery: (filter: FilterDto) => SelectQueryBuilder<Entity>;
+  repo!: Repository<Entity>;
+  buildQuery!: (filter: FilterDto) => SelectQueryBuilder<Entity>;
 
   constructor(
     repo: Repository<Entity> | (() => Repository<Entity>),

@@ -1,4 +1,4 @@
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { TrackTimeRelatedType } from '@true-north/enum';
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Task } from '../task/task.entity';

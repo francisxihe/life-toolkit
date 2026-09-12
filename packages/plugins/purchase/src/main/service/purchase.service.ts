@@ -4,7 +4,7 @@ import { PurchaseStatus } from '@true-north/enum';
 import type { CreatePurchaseVo, PurchaseFilterVo, PurchaseVo, UpdatePurchaseVo } from '@true-north/vo';
 import { store } from '../storage';
 import { PurchaseItem } from './purchase.entity';
-import { recordDomainActivity } from '../ports';
+import { recordPurchaseActivity, unlinkPurchaseEntity } from '../context';
 
 function toIso(value: Date | string | undefined): string | undefined {
   if (!value) return undefined;
@@ -66,10 +66,10 @@ export class PurchaseService {
     const saved = await repo.save(entity);
     const vo = toVo(saved);
     if (!options?.skipActivity) {
-      await recordDomainActivity({
+      await recordPurchaseActivity({
         title: vo.name,
-        source: 'domain',
-        links: [{ domain: 'purchase', entityId: vo.id, role: 'purchase', label: vo.name }],
+        entityId: vo.id,
+        label: vo.name,
       });
     }
     return vo;
@@ -96,8 +96,7 @@ export class PurchaseService {
 
   async delete(id: string): Promise<boolean> {
     await this.repo().softDelete(id);
-    const { unlinkDomain } = await import('../ports');
-    await unlinkDomain('purchase', id);
+    await unlinkPurchaseEntity(id);
     return true;
   }
 }

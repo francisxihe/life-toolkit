@@ -1,7 +1,7 @@
 import { store } from '../../storage';
 import { Repeat } from './repeat.entity';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 
 export type RepeatFilterDto = {
   includeIds?: string[];

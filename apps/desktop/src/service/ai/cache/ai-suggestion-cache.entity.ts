@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Column, Entity, Index } from 'typeorm';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 
 @Entity('ai_suggestion_cache')
 @Index('idx_ai_suggestion_cache_lookup', ['capabilityKey', 'refType', 'refId'], { unique: true })

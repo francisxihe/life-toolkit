@@ -11,8 +11,8 @@ import {
   TaskFormData,
   TaskService,
   TaskMapping,
-} from '@true-north/web-service';
-import { createInjectState } from '@/utils/createInjectState';
+} from '../../../../client';
+import { createInjectState } from '@true-north/common-web-utils';
 import dayjs from 'dayjs';
 import { message } from '@sue/design-web-react';
 import { emitTaskChanged } from '../../events';

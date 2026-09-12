@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@true-north/plugin-sdk/host';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@true-north/plugin-sdk/main';
 import type {
   CancelStreamResponseVo,
   ConversationVo,
@@ -23,7 +23,7 @@ import type {
   TaskDecomposeResponseVo,
 } from '@true-north/vo';
 import { AiPlatformError, toIpcError } from './ai-error';
-import { capabilityRegistry } from './capability/capability.registry';
+import type { CapabilityRegistry } from './capability/capability.registry';
 import { conversationService } from './conversation/conversation.service';
 import { runtimeService } from './runtime';
 
@@ -31,8 +31,14 @@ import { runtimeService } from './runtime';
 export class AiController {
   constructor(
     private readonly conversations = conversationService,
-    private readonly runtime = runtimeService
+    private readonly runtime = runtimeService,
+    private readonly capabilities?: CapabilityRegistry,
   ) {}
+
+  private capabilityRegistry(): CapabilityRegistry {
+    if (!this.capabilities) throw new Error('AI capabilities are not attached');
+    return this.capabilities;
+  }
 
   @Get('/runtime/agents', { description: '本机编码 Agent 探测列表' })
   async listRuntimeAgents(): Promise<RuntimeAgentVo[]> {
@@ -66,7 +72,7 @@ export class AiController {
   async decomposeGoal(@Body() body: GoalDecomposeRequestVo): Promise<GoalDecomposeResponseVo> {
     try {
       if (!body?.goalId?.trim()) throw AiPlatformError.internal('缺少 goalId');
-      return (await capabilityRegistry.get('goal.decompose').execute(body)) as GoalDecomposeResponseVo;
+      return (await this.capabilityRegistry().get('goal.decompose').execute(body)) as GoalDecomposeResponseVo;
     } catch (error) {
       throw toIpcError(error);
     }
@@ -76,7 +82,7 @@ export class AiController {
   async decomposeTask(@Body() body: TaskDecomposeRequestVo): Promise<TaskDecomposeResponseVo> {
     try {
       if (!body?.taskId?.trim()) throw AiPlatformError.internal('缺少 taskId');
-      return (await capabilityRegistry.get('task.decompose').execute(body)) as TaskDecomposeResponseVo;
+      return (await this.capabilityRegistry().get('task.decompose').execute(body)) as TaskDecomposeResponseVo;
     } catch (error) {
       throw toIpcError(error);
     }
@@ -89,7 +95,7 @@ export class AiController {
   ): Promise<unknown> {
     try {
       if (!key?.trim()) throw AiPlatformError.internal('缺少 capability key');
-      return await capabilityRegistry.get(key.trim()).execute(body || {});
+      return await this.capabilityRegistry().get(key.trim()).execute(body || {});
     } catch (error) {
       throw toIpcError(error);
     }

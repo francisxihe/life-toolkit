@@ -1,4 +1,4 @@
-import type { PluginStorageHandle } from '@true-north/plugin-sdk';
+import type { PluginStorageHandle } from '@true-north/plugin-sdk/main';
 
 export const aiMigrations = [
   {

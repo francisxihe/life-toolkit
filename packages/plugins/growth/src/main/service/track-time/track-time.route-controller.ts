@@ -1,7 +1,7 @@
 import type { TrackTime as TrackTimeVO, ResponseListVo, ResponsePageVo } from '@true-north/vo';
 import { CreateTrackTimeDto, UpdateTrackTimeDto, TrackTimeDto, TrackTimeFilterDto } from './dto';
 import { TrackTimeService, trackTimeService as defaultTrackTimeService } from './track-time.service';
-import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/host';
+import { Post, Get, Put, Delete, Controller, Body, Param, Query } from '@true-north/plugin-sdk/main';
 import { TrackTimeRelatedType } from '@true-north/enum';
 
 @Controller('/trackTime')

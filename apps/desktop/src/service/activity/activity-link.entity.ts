@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { ActivityDomain } from '@true-north/enum';
 
 @Entity('activity_link')

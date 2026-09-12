@@ -1,12 +1,9 @@
-import type { ActivityPort, CreateActivityInput, TodayContribution, CaptureAdopter } from '@true-north/plugin-sdk';
-import {
-  activityRefFromLegacyDomain,
-  type ActivityEntityRef,
-} from '@true-north/plugin-sdk';
+import type { ActivityPort, CreateActivityInput, TodaySectionContribution, CaptureAdopter } from '@true-north/plugin-sdk';
+import type { ActivityEntityRef } from '@true-north/plugin-sdk';
 import { activityService } from './activity.service';
 
-let activityPort: ActivityPort = {
-  record: async (input) => {
+const activityPort: ActivityPort = {
+  record: async (input: CreateActivityInput) => {
     await activityService.create({
       title: input.title,
       summary: input.summary,
@@ -27,20 +24,8 @@ let activityPort: ActivityPort = {
   },
 };
 
-export function bindActivityPort(port: ActivityPort) {
-  activityPort = port;
-}
-
 export function getActivityPort(): ActivityPort {
   return activityPort;
-}
-
-export async function recordDomainActivity(input: CreateActivityInput) {
-  return activityPort.record(input);
-}
-
-export async function unlinkDomain(domain: string, entityId: string) {
-  return activityPort.unlink(activityRefFromLegacyDomain(domain, entityId));
 }
 
 export async function unlinkRef(ref: ActivityEntityRef) {
@@ -51,6 +36,6 @@ export function bindCaptureAdopters(adopters: CaptureAdopter[]) {
   activityService.configureCaptureAdopters(adopters);
 }
 
-export function bindTodayContributions(contributions: TodayContribution[]) {
+export function bindTodayContributions(contributions: TodaySectionContribution[]) {
   activityService.configureToday(contributions);
 }

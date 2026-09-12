@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./plugin": {
+      "types": "./src/plugin.ts",
+      "import": "./src/plugin.ts",
+      "default": "./src/plugin.ts"
+    },
     "./manifest": {
       "types": "./src/manifest.ts",
       "import": "./src/manifest.ts",
@@ -31,10 +36,15 @@
     }
   },
   "dependencies": {
+    "@true-north/plugin-contract": "workspace:*",
     "@true-north/plugin-sdk": "workspace:*",
+    "@true-north/plugin-ui": "workspace:*",
     "@true-north/enum": "workspace:*",
     "@true-north/vo": "workspace:*",
-    "@true-north/web-service": "workspace:*",
+    "@sue/design-web-react": "0.0.3-beta.1",
+    "lucide-react": "^0.460.0",
+    "@ylib/product-surface-react": "0.0.2",
+    "@ylib/product-server": "0.0.7",
     "dayjs": "^1.11.13",
     "zod": "^3.24.1"
   },
@@ -43,5 +53,8 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.25.1",
     "typeorm": "^0.3.17"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   }
 }

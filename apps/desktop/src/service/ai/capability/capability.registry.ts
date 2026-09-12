@@ -25,5 +25,3 @@ export class CapabilityRegistry {
     return this.capabilities.has(key);
   }
 }
-
-export const capabilityRegistry = new CapabilityRegistry();

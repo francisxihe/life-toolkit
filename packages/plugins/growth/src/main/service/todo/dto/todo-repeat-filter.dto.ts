@@ -1,7 +1,7 @@
-import { PageFilterDto } from '@true-north/plugin-sdk/host';
+import { PageFilterDto } from '@true-north/plugin-sdk/main';
 import { TodoRepeatDto } from './todo-repeat-model.dto';
 import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
-import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/host';
+import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/main';
 
 export class TodoRepeatFilterDto extends IntersectionType(
   BaseFilterDto,

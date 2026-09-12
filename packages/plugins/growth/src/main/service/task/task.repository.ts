@@ -1,8 +1,8 @@
 import { Task } from './task.entity';
 import { TaskFilterDto } from './dto';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
 import { store } from '../../storage';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 
 export interface TaskRepository extends BaseRepository<Task, TaskFilterDto> {
   updateWithParent(taskUpdate: Task): Promise<Task>;

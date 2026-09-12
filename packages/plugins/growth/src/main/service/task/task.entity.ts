@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { Difficulty, TaskStatus } from '@true-north/enum';
 import { Goal } from '../goal/goal.entity';
 import { Entity, Column, TreeChildren, TreeParent, Tree, ManyToOne } from 'typeorm';

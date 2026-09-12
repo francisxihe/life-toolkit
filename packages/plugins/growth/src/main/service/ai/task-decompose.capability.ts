@@ -2,7 +2,8 @@ import { randomUUID } from 'crypto';
 import { z } from 'zod';
 import { AiSuggestionKind, TaskDecomposeKey } from '@true-north/enum';
 import type { AiSuggestionVo, TaskDecomposeRequestVo, TaskDecomposeResponseVo } from '@true-north/vo';
-import { AiPlatformError, cacheService, fingerprintPromptContext } from '@true-north/plugin-sdk';
+import { AiPlatformError } from '@true-north/plugin-sdk';
+import { growthAi } from '../../context';
 import { taskContextBuilder } from './task-context.builder';
 
 const TOTAL_CAP = 8;
@@ -92,11 +93,11 @@ export class TaskDecomposeCapability {
 
   async execute(input: TaskDecomposeRequestVo): Promise<TaskDecomposeResponseVo> {
     const context = await taskContextBuilder.build(input.taskId);
-    const contextFingerprint = fingerprintPromptContext(context.promptContext);
+    const contextFingerprint = growthAi().cache.fingerprintPromptContext(context.promptContext);
 
     const hasDrafts = Array.isArray(input.suggestions) && input.suggestions.length > 0;
     if (!hasDrafts) {
-      const cached = await cacheService.findMatching<TaskDecomposeResponseVo>({
+      const cached = await growthAi().cache.findMatching<TaskDecomposeResponseVo>({
         capabilityKey: this.key,
         refType: REF_TYPE,
         refId: input.taskId,
@@ -136,7 +137,7 @@ export class TaskDecomposeCapability {
       suggestions,
     };
 
-    await cacheService.upsert({
+    await growthAi().cache.upsert({
       capabilityKey: this.key,
       refType: REF_TYPE,
       refId: input.taskId,

@@ -24,8 +24,8 @@ import RepeatSelector, {
 } from '@true-north/components-repeat';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
-import type { TodoFormData } from '@true-north/web-service';
-import { TrackTimeController } from '@true-north/web-service';
+import type { TodoFormData } from '../../../../client';
+import { TrackTimeController } from '../../../../client';
 import {
   TodoRelatedType,
   TodoStatus,

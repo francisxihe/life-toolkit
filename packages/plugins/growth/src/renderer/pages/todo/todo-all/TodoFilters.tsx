@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { IMPORTANCE_MAP, URGENCY_MAP } from '../../constants';
 import { useTodoAllContext } from './context';
 import { TodoPageFilterVo } from '@true-north/vo';
-import { TableFilter } from '@/components/Layout/TableFilter';
+import { TableFilter } from '@true-north/plugin-ui';
 import { TodoStatus } from '@true-north/enum';
 
 const DatePickerRange = DatePicker.RangePicker;

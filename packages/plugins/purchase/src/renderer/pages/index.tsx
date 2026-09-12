@@ -4,7 +4,7 @@ import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { PurchaseStatus } from '@true-north/enum';
 import type { CreatePurchaseVo, PurchaseVo } from '@true-north/vo';
-import { PurchaseController } from '@true-north/web-service';
+import { PurchaseController } from '../../client';
 import dayjs from 'dayjs';
 
 const STATUS_LABEL: Record<string, string> = {

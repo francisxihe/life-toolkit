@@ -1,6 +1,6 @@
 import { HabitStatus, TaskStatus, TodoRelatedType, TodoRepeatStatus } from '@true-north/enum';
 import { randomUUID } from 'crypto';
-import type { PluginStorageHandle } from '@true-north/plugin-sdk';
+import type { PluginStorageHandle } from '@true-north/plugin-sdk/main';
 
 type Query = PluginStorageHandle['query'];
 

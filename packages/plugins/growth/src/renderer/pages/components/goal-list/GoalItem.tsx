@@ -3,7 +3,7 @@
 import { Popover, Button, Card } from '@sue/design-web-react';
 import { Ellipsis, Flag, Mountain } from 'lucide-react';
 import IconSelector from '../IconSelector';
-import { GoalService } from '@true-north/web-service';
+import { GoalService } from '../../../../client';
 import { IMPORTANCE_MAP, DIFFICULTY_MAP } from '../../constants';
 import { GoalVo } from '@true-north/vo';
 import clsx from 'clsx';

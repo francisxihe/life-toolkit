@@ -5,7 +5,7 @@ import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import { useExpenses } from '../context';
 import { useCreateTransaction } from './CreateTransaction';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 
 export default function Transactions() {
   const { addTransaction } = useExpenses();

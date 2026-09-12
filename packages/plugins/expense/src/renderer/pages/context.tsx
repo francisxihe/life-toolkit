@@ -14,7 +14,7 @@ import {
   BudgetVo,
   CreateBudgetVo,
 } from '@true-north/vo';
-import { ExpenseController } from '@true-north/web-service';
+import { ExpenseController } from '../../client';
 import { useEffect } from 'react';
 interface ExpensesContextType {
   transactionList: TransactionVo[];

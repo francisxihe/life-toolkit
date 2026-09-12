@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Space, message, Divider, Row, Col } from '@sue/design-web-react';
 
-import { HabitController } from '@true-north/web-service';
+import { HabitController } from '../../../../client';
 import { CreateHabitVo, GoalVo, HabitVo } from '@true-north/vo';
 import { Difficulty } from '@true-north/enum';
 import dayjs from 'dayjs';

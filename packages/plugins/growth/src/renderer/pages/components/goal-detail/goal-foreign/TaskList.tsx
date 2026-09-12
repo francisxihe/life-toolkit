@@ -1,7 +1,7 @@
 import { Empty } from '@sue/design-web-react';
 import clsx from 'clsx';
 import { openTaskDrawer } from '../../../task/detail/TaskDrawer';
-import { CreateButton } from '@/components/Button/CreateButton';
+import { CreateButton } from '@true-north/plugin-ui';
 import { useGoalDetailContext } from '../context';
 import { useTaskDetail } from '../..';
 import TaskList from '../../task-list';

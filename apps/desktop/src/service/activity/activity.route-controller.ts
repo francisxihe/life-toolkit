@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@true-north/plugin-sdk/host';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@true-north/plugin-sdk/main';
 import type {
   ActivityFilterVo,
   ActivityVo,

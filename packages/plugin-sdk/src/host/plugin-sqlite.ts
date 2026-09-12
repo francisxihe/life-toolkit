@@ -2,15 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { DataSource, type EntityTarget, type ObjectLiteral } from 'typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import type { PluginQueryPort, PluginRecord, PluginSpace, PluginStorageHandle } from '../storage-protocol.ts';
+import type { PluginQueryPort, PluginRecord, PluginSpace } from '@true-north/plugin-contract';
 import { PluginSchemaLedger } from './schema-ledger.entity.ts';
 import { ensureEntitySchema } from './ensure-schema.ts';
 import {
   asPluginStorageHandle,
-  bindPluginStore,
   createHostStorageRuntime,
-  pluginStore,
-  unbindPluginStore,
+  type HostStorageRuntime,
+  type PluginStorageHandle,
 } from './storage-runtime.ts';
 
 const HOST_LEGACY_TABLES = new Set([
@@ -102,10 +101,13 @@ export async function importLegacySqliteTables(
   }
 }
 
-export async function applyPluginMigrations(pluginId: string, migrations: PluginMigration[] = []) {
+export async function applyPluginMigrations(
+  runtime: HostStorageRuntime,
+  pluginId: string,
+  migrations: PluginMigration[] = [],
+) {
   const sorted = [...migrations].sort((a, b) => a.version - b.version);
   if (!sorted.length) return;
-  const runtime = pluginStore(pluginId);
   const ledgerRepo = runtime.getRepository(PluginSchemaLedger);
   const current = await ledgerRepo.findOne({ where: { pluginId } });
   let version = current?.version ?? 0;
@@ -144,22 +146,15 @@ export async function openPluginSqliteStore(options: OpenPluginSqliteStoreOption
     await importLegacySqliteTables(dataSource, options.space.legacySharedDbPath, options.extraLegacyTables);
   }
   const runtime = createHostStorageRuntime(dataSource, undefined, { capability: 'self-managed' });
-  bindPluginStore(options.pluginId, runtime);
-  await applyPluginMigrations(options.pluginId, options.migrations);
+  await applyPluginMigrations(runtime, options.pluginId, options.migrations);
   return runtime;
 }
 
-export async function closePluginSqliteStore(pluginId: string) {
-  let runtime: ReturnType<typeof pluginStore> | undefined;
-  try {
-    runtime = pluginStore(pluginId);
-  } catch {
-    return;
-  }
+export async function closePluginSqliteStore(runtime: HostStorageRuntime | undefined) {
+  if (!runtime) return;
   if (runtime.dataSource.isInitialized) {
     await runtime.dataSource.destroy();
   }
-  unbindPluginStore(pluginId);
 }
 
 export type QuerySource<T extends ObjectLiteral = ObjectLiteral> = {
@@ -168,7 +163,11 @@ export type QuerySource<T extends ObjectLiteral = ObjectLiteral> = {
   label: (row: T) => string;
 };
 
-export function createRepositoryQueryPort(pluginId: string, sources: QuerySource[]): PluginQueryPort {
+export function createRepositoryQueryPort(
+  pluginId: string,
+  runtime: HostStorageRuntime,
+  sources: QuerySource[],
+): PluginQueryPort {
   const byType = new Map(sources.map((source) => [source.entityType, source]));
 
   function toRecord(source: QuerySource, row: ObjectLiteral): PluginRecord {
@@ -184,13 +183,13 @@ export function createRepositoryQueryPort(pluginId: string, sources: QuerySource
     async get(entityType, id) {
       const source = byType.get(entityType);
       if (!source) return null;
-      const row = await pluginStore(pluginId).getRepository(source.entity).findOne({ where: { id } as never });
+      const row = await runtime.getRepository(source.entity).findOne({ where: { id } as never });
       return row ? toRecord(source, row) : null;
     },
     async list(query) {
       const source = byType.get(query.entityType);
       if (!source) return [];
-      const rows = await pluginStore(pluginId).getRepository(source.entity).find();
+      const rows = await runtime.getRepository(source.entity).find();
       const needle = query.q?.trim().toLowerCase();
       const matched = needle
         ? rows.filter((row) => toRecord(source, row).label.toLowerCase().includes(needle))

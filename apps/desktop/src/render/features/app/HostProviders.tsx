@@ -1,16 +1,16 @@
 import type { ReactNode } from 'react';
-import { getRendererRuntimeOptional } from '@true-north/plugin-sdk';
+import { useRendererPlatform } from '@true-north/plugin-sdk/renderer';
 import { AiSessionProvider } from '@/features/ai/context';
 import { createAiWorkspaceHost } from '@/features/ai/workspace-host';
 import { WorkbenchProvider } from '@/features/workbench';
 
 export function HostProviders({ children }: { children: ReactNode }) {
-  const runtime = getRendererRuntimeOptional();
-  const extract = runtime?.workbenchActions.find((action) => action.id.endsWith('.extract'));
-  const pluginProviders = [...(runtime?.shellSlots || [])]
+  const platform = useRendererPlatform();
+  const extract = platform.workbenchActions.find((action) => action.id.endsWith('.extract'));
+  const pluginProviders = [...platform.shellSlots]
     .filter((slot) => slot.slot === 'app-providers')
     .sort((a, b) => (a.order || 0) - (b.order || 0));
-  const overlays = [...(runtime?.shellSlots || [])]
+  const overlays = [...platform.shellSlots]
     .filter((slot) => slot.slot === 'page-overlay')
     .sort((a, b) => (a.order || 0) - (b.order || 0));
 
@@ -30,8 +30,8 @@ export function HostProviders({ children }: { children: ReactNode }) {
 
   return (
     <WorkbenchProvider
-      tools={(runtime?.workbenchTools || []) as never}
-      workspaceHost={runtime?.workspaceHost || createAiWorkspaceHost()}
+      tools={(platform.workbenchTools || []) as never}
+      workspaceHost={platform.state.workspaceHost || createAiWorkspaceHost()}
       extractHandler={
         extract
           ? async (input) => {
@@ -40,7 +40,7 @@ export function HostProviders({ children }: { children: ReactNode }) {
           : undefined
       }
     >
-      <AiSessionProvider entitySources={runtime?.createEntitySources || (() => [])}>{tree}</AiSessionProvider>
+      <AiSessionProvider entitySources={platform.state.createEntitySources || (() => [])}>{tree}</AiSessionProvider>
     </WorkbenchProvider>
   );
 }

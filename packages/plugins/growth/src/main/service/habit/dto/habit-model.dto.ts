@@ -1,5 +1,5 @@
 import { Habit, HabitWithoutRelations } from '../habit.entity';
-import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/main';
 import { IntersectionType } from 'francis-mapped-types';
 import dayjs from 'dayjs';
 import type { Habit as HabitVO, ResponseListVo, ResponsePageVo } from '@true-north/vo';

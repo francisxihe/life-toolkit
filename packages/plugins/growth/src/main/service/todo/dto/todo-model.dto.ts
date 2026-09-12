@@ -1,4 +1,4 @@
-import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/host';
+import { BaseModelDto, BaseMapper } from '@true-north/plugin-sdk/main';
 import { IntersectionType } from 'francis-mapped-types';
 import { Todo, TodoWithoutRelations } from '../todo.entity';
 import { TaskDto } from '../../task/dto/task-model.dto';

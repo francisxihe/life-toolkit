@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { GoalVo } from '@true-north/vo';
-import { GoalService, TaskService } from '@true-north/web-service';
+import { GoalService, TaskService } from '../../../client';
 import { message } from '@sue/design-web-react';
 import { GoalStatus, GoalType, Importance, Difficulty } from '@true-north/enum';
 import { createInjectState } from '@true-north/common-web-utils';

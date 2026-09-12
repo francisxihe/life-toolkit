@@ -2,8 +2,8 @@
 
 import { useState, Dispatch, SetStateAction, useRef, useEffect } from 'react';
 import { TodoVo, TodoPageFilterVo } from '@true-north/vo';
-import { TodoService } from '@true-north/web-service';
-import { createInjectState } from '@/utils/createInjectState';
+import { TodoService } from '../../../../client';
+import { createInjectState } from '@true-north/common-web-utils';
 import { TodoStatus } from '@true-north/enum';
 
 function useSyncState<T>(

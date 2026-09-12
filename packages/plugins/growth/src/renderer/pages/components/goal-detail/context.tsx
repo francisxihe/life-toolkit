@@ -6,8 +6,8 @@ import {
   GoalFormData,
   GoalService,
   GoalMapping,
-} from '@true-north/web-service';
-import { createInjectState } from '@/utils/createInjectState';
+} from '../../../../client';
+import { createInjectState } from '@true-north/common-web-utils';
 import { GoalType, GoalStatus, Importance, Difficulty } from '@true-north/enum';
 import dayjs from 'dayjs';
 

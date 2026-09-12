@@ -3,7 +3,7 @@ import { Table, Button, Modal, message, Tag, Flex } from '@sue/design-web-react'
 import dayjs from 'dayjs';
 import { URGENCY_MAP, IMPORTANCE_MAP } from '../../constants';
 import { useTodoAllContext } from './context';
-import { TodoService } from '@true-north/web-service';
+import { TodoService } from '../../../../client';
 import {
   useTodoDetail,
   formatPlanTime,

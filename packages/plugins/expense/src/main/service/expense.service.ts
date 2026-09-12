@@ -9,7 +9,7 @@ import type {
   CreateTransactionVo,
   TransactionVo,
 } from '@true-north/vo';
-import { recordDomainActivity } from '../ports';
+import { recordExpenseActivity, unlinkExpenseEntity } from '../context';
 
 function toIso(value: Date | string | undefined): string {
   if (!value) return new Date().toISOString();
@@ -87,11 +87,10 @@ export class ExpenseService {
     const saved = await repo.save(entity);
     const vo = toTransactionVo(saved);
     if (!options?.skipActivity) {
-      await recordDomainActivity({
+      await recordExpenseActivity({
         title: vo.description || (vo.type === 'income' ? '收入' : '支出'),
-        summary: `${vo.type === 'income' ? '+' : '-'}${vo.amount}`,
-        source: 'domain',
-        links: [{ domain: 'expense', entityId: vo.id, role: 'expense', label: vo.description }],
+        entityId: vo.id,
+        label: vo.description,
       });
     }
     return vo;
@@ -111,8 +110,7 @@ export class ExpenseService {
 
   async deleteTransaction(id: string): Promise<boolean> {
     await this.transactions().softDelete(id);
-    const { unlinkDomain } = await import('../ports');
-    await unlinkDomain('expense', id);
+    await unlinkExpenseEntity(id);
     return true;
   }
 

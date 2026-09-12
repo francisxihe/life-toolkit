@@ -1,10 +1,20 @@
 import { randomUUID } from 'crypto';
 import { z } from 'zod';
-import { captureTypeFromLegacyKind } from '@true-north/plugin-sdk';
 import { ActivityCaptureKey } from '@true-north/enum';
 import type { CapturePayloadVo, CaptureSuggestionVo } from '@true-north/vo';
 
 const TOTAL_CAP = 8;
+
+const HOST_CAPTURE_TYPE_FROM_KIND: Record<string, string> = {
+  todo: 'growth.todo',
+  expense: 'expense.transaction',
+  purchase: 'purchase.item',
+  bookmark: 'library.bookmark',
+};
+
+function captureTypeFromLegacyKind(kind: string) {
+  return HOST_CAPTURE_TYPE_FROM_KIND[kind] || kind;
+}
 
 const draftSchema = z.object({
   kind: z.enum(['todo', 'expense', 'purchase', 'bookmark']),

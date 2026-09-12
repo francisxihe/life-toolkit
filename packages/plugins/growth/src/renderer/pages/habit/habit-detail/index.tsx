@@ -18,13 +18,13 @@ import {
   Col,
 } from '@sue/design-web-react';
 import { Check, ChevronLeft, Pause, Pencil, Play, Trash2, X } from 'lucide-react';
-import { HabitService, TodoController, GoalController } from '@true-north/web-service';
+import { HabitService, TodoController, GoalController } from '../../../../client';
 import { HabitVo } from '@true-north/vo';
 import { HABIT_STATUS_OPTIONS } from '../constants';
 import { useHabitContext } from '../context';
 import { HabitStatus, TodoRelatedType } from '@true-north/enum';
 import { DIFFICULTY_MAP } from '../../constants';
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import { CreateHabit } from '../components/CreateHabit';
 import { emitHabitChanged } from '../../events';
 import { growthHref } from '@true-north/plugin-growth/contract';

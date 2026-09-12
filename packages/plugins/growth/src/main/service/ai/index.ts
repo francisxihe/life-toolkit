@@ -1,9 +1,9 @@
-import type { AiDomainContribution } from '@true-north/plugin-sdk';
+import type { AiContribution } from '@true-north/plugin-sdk';
 import { goalDecomposeCapability } from './goal-decompose.capability';
 import { taskDecomposeCapability } from './task-decompose.capability';
 import { growthAgentTools } from './tools';
 
-export const growthAiContribution: AiDomainContribution = {
+export const growthAiContribution: AiContribution = {
   capabilities: [goalDecomposeCapability, taskDecomposeCapability],
   tools: growthAgentTools,
   agentInstructions: `通过 MCP 工具读写目标与任务：search_goals、search_tasks、get_goal、get_task、decompose_goal、decompose_task。

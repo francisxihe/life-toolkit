@@ -25,10 +25,10 @@ import {
   TodoStatus,
 } from '@true-north/enum';
 import type { AiDecomposePayloadVo, AiWorkspacePayloadVo, AiWorkspaceSuggestionVo } from '@true-north/vo';
-import { GoalService, HabitService, TaskService, TodoService } from '@true-north/web-service';
+import { GoalService, HabitService, TaskService, TodoService } from '../../../../client';
 import { createDefaultRepeatSetting } from '@true-north/components-repeat';
 import { RepeatEndMode, RepeatMode } from '@true-north/components-repeat/types';
-import { drawerBodyStyles } from '@/utils/drawerStyles';
+import { drawerBodyStyles } from '@true-north/plugin-ui';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import type { WorkbenchToolProps } from '@true-north/plugin-sdk';

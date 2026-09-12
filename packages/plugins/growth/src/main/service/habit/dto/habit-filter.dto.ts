@@ -1,10 +1,10 @@
-import { PageFilterDto } from '@true-north/plugin-sdk/host';
+import { PageFilterDto } from '@true-north/plugin-sdk/main';
 import { HabitDto } from './habit-model.dto';
 import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsDateString, IsBoolean } from 'class-validator';
 import { HabitFilterVo, HabitPageFilterVo } from '@true-north/vo';
 import { HabitStatus, Importance, Difficulty } from '@true-north/enum';
-import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/host';
+import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/main';
 
 export class HabitFilterDto extends IntersectionType(
   BaseFilterDto,

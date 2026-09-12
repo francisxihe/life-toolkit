@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@true-north/plugin-sdk/host';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@true-north/plugin-sdk/main';
 import type { CreatePurchaseVo, PurchaseFilterVo, PurchaseVo, UpdatePurchaseVo } from '@true-north/vo';
 import { purchaseService } from './purchase.service';
 

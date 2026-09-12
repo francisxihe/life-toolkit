@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@true-north/plugin-sdk/host';
+import { BaseEntity } from '@true-north/plugin-sdk/main';
 import { PurchaseStatus } from '@true-north/enum';
 
 @Entity('purchase_item')

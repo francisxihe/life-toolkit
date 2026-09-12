@@ -21,10 +21,9 @@ import {
   TaskService,
   TodoService,
   TrackTimeController,
-} from '@true-north/web-service';
-import { registerFocusOpener } from '@true-north/plugin-sdk';
-import Flip from '@/features/timer/normal/Flip';
-import { getTimeArr } from '@/features/timer/utils';
+} from '../../../client';
+import Flip from '../timer/normal/Flip';
+import { getTimeArr } from '../timer/utils';
 import { ProductSurface } from '@ylib/product-surface-react';
 import { productRef } from '@ylib/product-server';
 import styles from './style.module.less';
@@ -172,10 +171,8 @@ export function FocusTimerProvider({
 
   useEffect(() => {
     registeredOpen = open;
-    registerFocusOpener(open);
     return () => {
       if (registeredOpen === open) registeredOpen = null;
-      registerFocusOpener(null);
     };
   }, [open]);
 

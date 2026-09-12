@@ -1,8 +1,8 @@
 import { store } from '../../storage';
 import { TrackTimeFilterDto } from './dto';
 import { TrackTime } from './entity';
-import { BaseRepository } from '@true-north/plugin-sdk/host';
-import { BaseRepositoryImpl } from '@true-north/plugin-sdk/host';
+import { BaseRepository } from '@true-north/plugin-sdk/main';
+import { BaseRepositoryImpl } from '@true-north/plugin-sdk/main';
 
 export interface TrackTimeRepository extends BaseRepository<TrackTime, TrackTimeFilterDto> {
   findWithRelations(id: string, relations?: string[]): Promise<TrackTime>;

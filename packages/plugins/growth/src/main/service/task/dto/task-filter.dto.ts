@@ -1,9 +1,9 @@
-import { PageFilterDto } from '@true-north/plugin-sdk/host';
+import { PageFilterDto } from '@true-north/plugin-sdk/main';
 import { TaskDto } from './task-model.dto';
 import { PickType, IntersectionType, PartialType } from 'francis-mapped-types';
 import { IsOptional, IsString, IsArray, IsEnum, IsNumber, IsDateString, IsBoolean } from 'class-validator';
 import { TaskFilterVo, TaskPageFilterVo } from '@true-north/vo';
-import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/host';
+import { BaseFilterDto, importBaseVo } from '@true-north/plugin-sdk/main';
 
 export class TaskFilterDto extends IntersectionType(
   BaseFilterDto,
